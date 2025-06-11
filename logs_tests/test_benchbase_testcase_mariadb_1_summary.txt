@@ -1,14 +1,15 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 800s 
-    Code: 1729530658
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 1014s 
+    Code: 1748947031
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -20,22 +21,24 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
     Experiment is run once.
 
 ### Connections
-MariaDB-1-1-1024-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-1-1-1024-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:252259184
-    datadisk:1935700
+    disk:319539432
+    datadisk:1904
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1748947031
 
 ### Execution
-                    experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MariaDB-1-1-1024-1               1         16    8192          1  300.0                        157.86                                                      30764.0                                              79907.0
-
-Warehouses: 16
+                    experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MariaDB-1-1-1024-1               1         16    8192          1  300.0           0                        157.65                     156.99         0.0                                                      31711.0                                              93467.0
 
 ### Workflow
 
@@ -46,8 +49,8 @@ DBMS MariaDB-1-1-1024 - Pods [[1]]
 DBMS MariaDB-1-1-1024 - Pods [[1]]
 
 ### Loading
-                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-1-1-1024-1      285.0        1.0   1.0                 202.105263
+                    time_load  terminals  pods  Throughput [SF/h]
+MariaDB-1-1-1024-1      327.0        1.0   1.0         176.146789
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

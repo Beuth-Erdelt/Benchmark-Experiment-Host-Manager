@@ -2,20 +2,22 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729950003
-Experiment                    : starts at 2024-10-26 15:40:03.006253 (4685943.130228596)
+Experiment                    : has code 1748919033
+Experiment                    : starts at 2025-06-03 04:50:32.789068 (13111196.259618249)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
+Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['MariaDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
+Database is persisted to disk of type shared and size 30Gi.
 Loading is tested with [1] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 2] times the number of benchmarking pods.
@@ -23,96 +25,25 @@ Experiment is run 2 times.
 Cluster monitoring            : is running
 done
 MariaDB-BHT-8                 : will start now
+MariaDB-BHT-8                 : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1748919033
+MariaDB-BHT-8                 : Name of SUT service = bexhoma-sut-mariadb-bht-8-1748919033
+MariaDB-BHT-8                 : Name of SUT PVC name = bexhoma-storage-mariadb-tpch-1
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03 (that is in 900 secs)
+MariaDB-BHT-8                 : will start loading but not before 2025-06-03 02:55:05 (that is in 60 secs)
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-26 13:56:03
+MariaDB-BHT-8                 : will start loading but not before 2025-06-03 02:55:05
 done
 MariaDB-BHT-8                 : is not loaded yet
 MariaDB-BHT-8                 : start asynch loading scripts of type loaded
@@ -163,24 +94,68 @@ MariaDB-BHT-8                 : is loading
 MariaDB-BHT-8                 : is loading
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-done
-MariaDB-BHT-8                 : is loading
-done
-MariaDB-BHT-8                 : is loading
 done
 MariaDB-BHT-8                 : showing loader times
 MariaDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MariaDB-BHT-8                 : loader timespan (first to last [s]) = 873
-MariaDB-BHT-8                 : total timespan (first to last [s]) = 881
+MariaDB-BHT-8                 : loader timespan (first to last [s]) = 696
+MariaDB-BHT-8                 : total timespan (first to last [s]) = 703
 MariaDB-BHT-8                 : start asynch loading scripts of type indexed
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
 MariaDB-BHT-8                 : is loading
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is loading
@@ -333,14 +308,15 @@ MariaDB-BHT-8                 : is loading
 done
 MariaDB-BHT-8                 : benchmarks done 0 of 2. This will be client 1
 MariaDB-BHT-8-1-1             : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1729950003
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748919033
 - waiting 10s -               : done
 found
-MariaDB-BHT-8-1-1             : collecting loading metrics of SUT
-MariaDB-BHT-8-1-1             : collecting metrics of data generator
-MariaDB-BHT-8-1-1             : collecting metrics of data injector
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
+MariaDB-BHT-8-1-1             : collecting loading metrics of SUT at connection MariaDB-BHT-8-1-1
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : collecting metrics of data generator at connection MariaDB-BHT-8-1-1
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : collecting metrics of data injector at connection MariaDB-BHT-8-1-1
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 MariaDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -364,22 +340,25 @@ MariaDB-BHT-8                 : has running benchmarks
 done
 MariaDB-BHT-8                 : has running benchmarks
 MariaDB-BHT-8-1-1             : showing benchmarker times
-MariaDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 386
-MariaDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1729954151, 1729954498)]
-MariaDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1729954151, 1729954498)]}
-MariaDB-BHT-8-1-1             : collecting execution metrics of SUT
-MariaDB-BHT-8-1-1             : collecting metrics of benchmarker
+MariaDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 371
+MariaDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1748923182, 1748923510)]
+MariaDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1748923182, 1748923510)]}
+MariaDB-BHT-8-1-1             : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-1
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-1
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8                 : benchmarks done 0 of 2. This will be client 2
 MariaDB-BHT-8-1-2             : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1729950003
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748919033
 - waiting 10s -               : done
 found
-MariaDB-BHT-8-1-2             : collecting loading metrics of SUT
-MariaDB-BHT-8-1-2             : collecting metrics of data generator
-MariaDB-BHT-8-1-2             : collecting metrics of data injector
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
+MariaDB-BHT-8-1-2             : collecting loading metrics of SUT at connection MariaDB-BHT-8-1-2
+MariaDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2             : collecting metrics of data generator at connection MariaDB-BHT-8-1-2
+MariaDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2             : collecting metrics of data injector at connection MariaDB-BHT-8-1-2
+MariaDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 MariaDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -405,87 +384,53 @@ MariaDB-BHT-8                 : has running benchmarks
 done
 MariaDB-BHT-8                 : has running benchmarks
 MariaDB-BHT-8-1-2             : showing benchmarker times
-MariaDB-BHT-8-1-2             : benchmarker timespan (start to end single container [s]) = 418
-MariaDB-BHT-8-1-2             : benchmarker times (start/end per pod and container) = [(1729954581, 1729954962), (1729954581, 1729954962)]
-MariaDB-BHT-8-1-2             : found and updated times {'benchmarker': [(1729954581, 1729954962), (1729954581, 1729954962)]}
-MariaDB-BHT-8-1-2             : collecting execution metrics of SUT
-MariaDB-BHT-8-1-2             : collecting metrics of benchmarker
+MariaDB-BHT-8-1-2             : benchmarker timespan (start to end single container [s]) = 392
+MariaDB-BHT-8-1-2             : benchmarker times (start/end per pod and container) = [(1748923592, 1748923968), (1748923592, 1748923964)]
+MariaDB-BHT-8-1-2             : found and updated times {'benchmarker': [(1748923592, 1748923968), (1748923592, 1748923964)]}
+MariaDB-BHT-8-1-2             : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-2
+MariaDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-2             : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-2
+MariaDB-BHT-8-1-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8                 : can be stopped
 MariaDB-BHT-8                 : still being removed
 done
 MariaDB-BHT-8                 : starts again
+MariaDB-BHT-8                 : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1748919033
+MariaDB-BHT-8                 : Name of SUT service = bexhoma-sut-mariadb-bht-8-1748919033
+MariaDB-BHT-8                 : Name of SUT PVC name = bexhoma-storage-mariadb-tpch-1
 MariaDB-BHT-8                 : storage exists bexhoma-storage-mariadb-tpch-1
+MariaDB-BHT-8                 : label loaded copied value True
+MariaDB-BHT-8                 : label timeLoading copied value 3797
+MariaDB-BHT-8                 : label timeLoadingStart copied value 1748919306
+MariaDB-BHT-8                 : label timeLoadingEnd copied value 1748923140
+MariaDB-BHT-8                 : label indexed copied value True
+MariaDB-BHT-8                 : label time_generated copied value 1
+MariaDB-BHT-8                 : label time_indexed copied value 3089
+MariaDB-BHT-8                 : label time_ingested copied value 696
+MariaDB-BHT-8                 : label time_initconstraints copied value 3004
+MariaDB-BHT-8                 : label time_initindexes copied value 84
+MariaDB-BHT-8                 : label time_initschema copied value 5
+MariaDB-BHT-8                 : label time_initstatistics copied value 1
+MariaDB-BHT-8                 : label time_loaded copied value 5
 MariaDB-BHT-8                 : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01 (that is in 900 secs)
+MariaDB-BHT-8                 : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
+MariaDB-BHT-8                 : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
+MariaDB-BHT-8                 : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
+MariaDB-BHT-8                 : will start benchmarking but not before 2025-06-03 04:17:22 (that is in 60 secs)
 - waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
-- waiting 30s -               : done
-MariaDB-BHT-8                 : will start benchmarking but not before 2024-10-26 15:20:01
+MariaDB-BHT-8                 : will start benchmarking but not before 2025-06-03 04:17:22
 done
 MariaDB-BHT-8                 : benchmarks done 1 of 2. This will be client 1
 MariaDB-BHT-8-2-1             : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1729950003
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748919033
 - waiting 10s -               : done
-MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1729950003-2-1-ldgs5: .found
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
+MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1748919033-2-1-8j2zd: .found
 - waiting 30s -               : done
 MariaDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -509,17 +454,19 @@ MariaDB-BHT-8                 : has running benchmarks
 done
 MariaDB-BHT-8                 : has running benchmarks
 MariaDB-BHT-8-2-1             : showing benchmarker times
-MariaDB-BHT-8-2-1             : benchmarker timespan (start to end single container [s]) = 382
-MariaDB-BHT-8-2-1             : benchmarker times (start/end per pod and container) = [(1729956019, 1729956362)]
-MariaDB-BHT-8-2-1             : found and updated times {'benchmarker': [(1729956019, 1729956362)]}
-MariaDB-BHT-8-2-1             : collecting execution metrics of SUT
-MariaDB-BHT-8-2-1             : collecting metrics of benchmarker
+MariaDB-BHT-8-2-1             : benchmarker timespan (start to end single container [s]) = 356
+MariaDB-BHT-8-2-1             : benchmarker times (start/end per pod and container) = [(1748924255, 1748924593)]
+MariaDB-BHT-8-2-1             : found and updated times {'benchmarker': [(1748924255, 1748924593)]}
+MariaDB-BHT-8-2-1             : collecting execution metrics of SUT at connection MariaDB-BHT-8-2-1
+MariaDB-BHT-8-2-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-2-1             : collecting metrics of benchmarker at connection MariaDB-BHT-8-2-1
+MariaDB-BHT-8-2-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8                 : benchmarks done 1 of 2. This will be client 2
 MariaDB-BHT-8-2-2             : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1729950003
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748919033
 - waiting 10s -               : done
-MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1729950003-2-2-ggdv2: found
+MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1748919033-2-2-bkngg: ..found
 - waiting 30s -               : done
 MariaDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -547,14 +494,16 @@ MariaDB-BHT-8                 : has running benchmarks
 done
 MariaDB-BHT-8                 : has running benchmarks
 MariaDB-BHT-8-2-2             : showing benchmarker times
-MariaDB-BHT-8-2-2             : benchmarker timespan (start to end single container [s]) = 402
-MariaDB-BHT-8-2-2             : benchmarker times (start/end per pod and container) = [(1729956439, 1729956802), (1729956439, 1729956802)]
-MariaDB-BHT-8-2-2             : found and updated times {'benchmarker': [(1729956439, 1729956802), (1729956439, 1729956802)]}
-MariaDB-BHT-8-2-2             : collecting execution metrics of SUT
-MariaDB-BHT-8-2-2             : collecting metrics of benchmarker
+MariaDB-BHT-8-2-2             : benchmarker timespan (start to end single container [s]) = 425
+MariaDB-BHT-8-2-2             : benchmarker times (start/end per pod and container) = [(1748924674, 1748925037), (1748924674, 1748925037)]
+MariaDB-BHT-8-2-2             : found and updated times {'benchmarker': [(1748924674, 1748925037), (1748924674, 1748925037)]}
+MariaDB-BHT-8-2-2             : collecting execution metrics of SUT at connection MariaDB-BHT-8-2-2
+MariaDB-BHT-8-2-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-2-2             : collecting metrics of benchmarker at connection MariaDB-BHT-8-2-2
+MariaDB-BHT-8-2-2             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1748919033(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8                 : can be stopped
-Experiment                    : ends at 2024-10-26 17:34:36.503885 (4692816.627864845) - 6873.50s total
+Experiment                    : ends at 2025-06-03 06:31:53.361163 (13117276.831717204) - 6080.57s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -566,99 +515,113 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 6874s 
-    Code: 1729950003
+    Duration: 6081s 
+    Code: 1748919033
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q22.
     All instances use the same query parameters.
+    Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 30Gi.
     Loading is tested with [1] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1, 2] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254223276
-    datadisk:2148325
-    volume_size:100G
+    disk:317515964
+    datadisk:2090
+    volume_size:30G
     volume_used:2.1G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748919033
+MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254223276
-    datadisk:2148325
-    volume_size:100G
+    disk:317515968
+    datadisk:2090
+    volume_size:30G
     volume_used:2.1G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748919033
+MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254223276
-    datadisk:2148325
-    volume_size:100G
+    disk:317515968
+    datadisk:2090
+    volume_size:30G
     volume_used:2.1G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-2-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748919033
+MariaDB-BHT-8-2-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254223260
-    datadisk:2152777
-    volume_size:100G
+    disk:317515956
+    datadisk:2095
+    volume_size:30G
     volume_used:2.1G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-2-2-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748919033
+MariaDB-BHT-8-2-2-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254223260
-    datadisk:2152777
-    volume_size:100G
+    disk:317515960
+    datadisk:2095
+    volume_size:30G
     volume_used:2.1G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-BHT-8-2-2-2 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    eval_parameters
+        code:1748919033
+MariaDB-BHT-8-2-2-2 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254223260
-    datadisk:2152777
-    volume_size:100G
+    disk:317515960
+    datadisk:2095
+    volume_size:30G
     volume_used:2.1G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748919033
 
 ### Errors (failed queries)
 No errors
@@ -668,65 +631,65 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MariaDB-BHT-8-1-1-1  MariaDB-BHT-8-1-2-1  MariaDB-BHT-8-1-2-2  MariaDB-BHT-8-2-1-1  MariaDB-BHT-8-2-2-1  MariaDB-BHT-8-2-2-2
-Pricing Summary Report (TPC-H Q1)                               28532.26             27951.85             27645.66             28537.50             27396.02             27633.59
-Minimum Cost Supplier Query (TPC-H Q2)                           1270.02              1514.46              1503.39              1610.50              1489.09              1400.43
-Shipping Priority (TPC-H Q3)                                     5623.90              5868.13              5728.37              6071.85              6512.10              6523.89
-Order Priority Checking Query (TPC-H Q4)                         1243.18              1247.31              1270.45              1313.68              1366.09              1366.99
-Local Supplier Volume (TPC-H Q5)                                 3493.74              3782.52              3720.03              3459.54              3602.17              3600.33
-Forecasting Revenue Change (TPC-H Q6)                            3533.45              3399.12              3582.73              3520.58              3366.29              3376.36
-Forecasting Revenue Change (TPC-H Q7)                            3743.50              3805.28              3786.99              3815.30              3742.43              3735.43
-National Market Share (TPC-H Q8)                                 6477.36              7486.86              7266.01              6501.88              6969.15              6965.56
-Product Type Profit Measure (TPC-H Q9)                           6128.39              6591.97              6181.76              5829.31              5972.10              5973.85
-Forecasting Revenue Change (TPC-H Q10)                           3074.56              3204.57              3201.26              3192.93              3102.62              3100.40
-Important Stock Identification (TPC-H Q11)                        446.18               405.04               416.86               420.18               470.72               468.50
-Shipping Modes and Order Priority (TPC-H Q12)                   11690.80             12845.77             13182.44             12097.56             13537.52             13533.48
-Customer Distribution (TPC-H Q13)                                9683.49             11459.83             11530.21              9713.39             10975.29             10979.96
-Forecasting Revenue Change (TPC-H Q14)                          32370.14             39841.85             38843.04             28671.34             33355.61             33353.56
-Top Supplier Query (TPC-H Q15)                                   7382.23              8039.77              7956.23              8075.54              7931.11              7908.12
-Parts/Supplier Relationship (TPC-H Q16)                           766.04               713.25               719.04               741.22               726.79               721.87
-Small-Quantity-Order Revenue (TPC-H Q17)                          163.93               164.18               162.59               165.33               178.97               162.84
-Large Volume Customer (TPC-H Q18)                               10293.01             11869.76             11836.87             10088.16             11766.82             11593.94
-Discounted Revenue (TPC-H Q19)                                    387.51               323.49               304.75               296.97               301.88               323.88
-Potential Part Promotion (TPC-H Q20)                              689.49               590.11               575.17               517.21               579.64               604.38
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)            205486.01            225949.60            227415.01            201609.54            216331.01            216350.22
-Global Sales Opportunity Query (TPC-H Q22)                        423.08               442.41               423.24               420.31               452.00               440.65
+Pricing Summary Report (TPC-H Q1)                               25974.35             24684.85             24739.11             25744.04             25961.78             25820.11
+Minimum Cost Supplier Query (TPC-H Q2)                           1453.22              1677.86              1703.46              1762.40              1618.89              1619.03
+Shipping Priority (TPC-H Q3)                                     5221.88              6529.53              6493.69              7216.41              6423.40              6417.20
+Order Priority Checking Query (TPC-H Q4)                         1075.72              1336.18              1341.60              1323.22              1288.26              1287.75
+Local Supplier Volume (TPC-H Q5)                                 3287.17              3783.79              3852.58              3482.38              3748.09              3748.27
+Forecasting Revenue Change (TPC-H Q6)                            2801.76              3999.80              3944.80              3313.50              2961.49              2943.89
+Forecasting Revenue Change (TPC-H Q7)                            3639.82              3945.00              4008.61              3805.95              4300.03              4300.00
+National Market Share (TPC-H Q8)                                 6468.87              7603.58              7262.87              6879.16              7697.18              7697.15
+Product Type Profit Measure (TPC-H Q9)                           5802.95              6661.06              6938.45              6114.94              6373.02              6372.93
+Forecasting Revenue Change (TPC-H Q10)                           2955.81              2928.45              2966.85              2984.05              3205.20              3202.19
+Important Stock Identification (TPC-H Q11)                        382.23               442.78               435.66               413.34               494.31               498.47
+Shipping Modes and Order Priority (TPC-H Q12)                   11413.65             12428.21             12536.94             11768.67             12604.75             12604.79
+Customer Distribution (TPC-H Q13)                                9852.55             11791.98             12055.63              9988.15             11283.96             11281.52
+Forecasting Revenue Change (TPC-H Q14)                          31100.58             36921.43             40084.43             30354.96             35245.42             35245.52
+Top Supplier Query (TPC-H Q15)                                   6228.19              6508.01              6396.66              6582.36              6575.85              6504.29
+Parts/Supplier Relationship (TPC-H Q16)                           629.99               643.59               623.90               671.43               665.07               664.95
+Small-Quantity-Order Revenue (TPC-H Q17)                          160.92               150.71               153.73               146.73               151.15               150.50
+Large Volume Customer (TPC-H Q18)                               10162.65             11347.40             11718.83             10464.66             11239.03             11334.00
+Discounted Revenue (TPC-H Q19)                                    264.98               285.77               294.18               287.03               272.64               275.01
+Potential Part Promotion (TPC-H Q20)                              527.27               577.32               685.68               586.09               634.04               635.37
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)            194454.66            222543.33            222766.92            197089.34            213727.42            213737.84
+Global Sales Opportunity Query (TPC-H Q22)                        402.35               395.79               372.82               397.17               442.14               441.05
 
 ### Loading [s]
                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1-1           1.0          873.0         2.0     2228.0    3111.0
-MariaDB-BHT-8-1-2-1           1.0          873.0         2.0     2228.0    3111.0
-MariaDB-BHT-8-1-2-2           1.0          873.0         2.0     2228.0    3111.0
-MariaDB-BHT-8-2-1-1           1.0          873.0         2.0     2228.0    3111.0
-MariaDB-BHT-8-2-2-1           1.0          873.0         2.0     2228.0    3111.0
-MariaDB-BHT-8-2-2-2           1.0          873.0         2.0     2228.0    3111.0
+MariaDB-BHT-8-1-1-1           1.0          696.0         5.0     3089.0    3797.0
+MariaDB-BHT-8-1-2-1           1.0          696.0         5.0     3089.0    3797.0
+MariaDB-BHT-8-1-2-2           1.0          696.0         5.0     3089.0    3797.0
+MariaDB-BHT-8-2-1-1           1.0          696.0         5.0     3089.0    3797.0
+MariaDB-BHT-8-2-2-1           1.0          696.0         5.0     3089.0    3797.0
+MariaDB-BHT-8-2-2-2           1.0          696.0         5.0     3089.0    3797.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                      Geo Times [s]
 DBMS                              
-MariaDB-BHT-8-1-1-1           3.55
-MariaDB-BHT-8-1-2-1           3.67
-MariaDB-BHT-8-1-2-2           3.67
-MariaDB-BHT-8-2-1-1           3.50
-MariaDB-BHT-8-2-2-1           3.64
-MariaDB-BHT-8-2-2-2           3.65
+MariaDB-BHT-8-1-1-1           3.22
+MariaDB-BHT-8-1-2-1           3.59
+MariaDB-BHT-8-1-2-2           3.64
+MariaDB-BHT-8-2-1-1           3.44
+MariaDB-BHT-8-2-2-1           3.58
+MariaDB-BHT-8-2-2-2           3.60
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                      Power@Size [~Q/h]
 DBMS                                  
-MariaDB-BHT-8-1-1-1            1056.43
-MariaDB-BHT-8-1-2-1            1016.27
-MariaDB-BHT-8-1-2-2            1025.13
-MariaDB-BHT-8-2-1-1            1071.49
-MariaDB-BHT-8-2-2-1            1023.90
-MariaDB-BHT-8-2-2-2            1027.97
+MariaDB-BHT-8-1-1-1            1154.15
+MariaDB-BHT-8-1-2-1            1035.86
+MariaDB-BHT-8-1-2-2            1022.45
+MariaDB-BHT-8-2-1-1            1080.60
+MariaDB-BHT-8-2-2-1            1036.64
+MariaDB-BHT-8-2-2-2            1036.84
 
-### Throughput@Size
-                                                time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS              SF num_experiment num_client                                              
-MariaDB-BHT-8-1-1 1  1              1                347      1   1                   228.24
-MariaDB-BHT-8-1-2 1  1              2                381      2   1                   415.75
-MariaDB-BHT-8-2-1 1  2              1                343      1   1                   230.90
-MariaDB-BHT-8-2-2 1  2              2                363      2   1                   436.36
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                time [s]  count  SF  Throughput@Size
+DBMS              SF num_experiment num_client                                      
+MariaDB-BHT-8-1-1 1  1              1                328      1   1           241.46
+MariaDB-BHT-8-1-2 1  1              2                376      2   1           421.28
+MariaDB-BHT-8-2-1 1  2              1                338      1   1           234.32
+MariaDB-BHT-8-2-2 1  2              2                363      2   1           436.36
 
 ### Workflow
 
@@ -738,32 +701,32 @@ DBMS MariaDB-BHT-8 - Pods [[1, 2], [1, 2]]
 
 ### Ingestion - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1     1961.64     1.34         10.03                10.05
-MariaDB-BHT-8-1-2     1961.64     1.34         10.03                10.05
+MariaDB-BHT-8-1-1     2263.77     2.11          9.81                 9.84
+MariaDB-BHT-8-1-2     2263.77     2.11          9.81                 9.84
 
 ### Ingestion - Loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1        7.91     0.01           0.5                 1.15
-MariaDB-BHT-8-1-2        7.91     0.01           0.5                 1.15
+MariaDB-BHT-8-1-1        7.69     0.01           0.5                 1.16
+MariaDB-BHT-8-1-2        7.69     0.01           0.5                 1.16
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      341.40      1.0         10.11                10.13
-MariaDB-BHT-8-1-2      754.70      2.0         10.14                10.17
-MariaDB-BHT-8-2-1      325.03      1.0          2.48                 2.73
-MariaDB-BHT-8-2-2      652.58      2.0          2.51                 2.77
+MariaDB-BHT-8-1-1      318.25      1.0          9.88                 9.91
+MariaDB-BHT-8-1-2      678.67      2.0          9.89                 9.92
+MariaDB-BHT-8-2-1     3375.23      1.0         12.41                12.63
+MariaDB-BHT-8-2-2      650.38      2.0          2.56                 2.81
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1       15.74     0.05          0.24                 0.25
-MariaDB-BHT-8-1-2       30.42     0.03          0.71                 0.72
-MariaDB-BHT-8-2-1       16.13     0.01          0.25                 0.26
-MariaDB-BHT-8-2-2       31.38     0.00          0.73                 0.76
+MariaDB-BHT-8-1-1       14.94     0.00          0.26                 0.26
+MariaDB-BHT-8-1-2       25.00     0.01          0.72                 0.74
+MariaDB-BHT-8-2-1       14.09     0.01          0.25                 0.27
+MariaDB-BHT-8-2-2       31.69     0.06          0.75                 0.78
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]

@@ -2,14 +2,15 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1734668861
-Experiment                    : starts at 2024-12-20 05:27:41.707337 (4353663.114466471)
+Experiment                    : has code 1748452594
+Experiment                    : starts at 2025-05-28 19:16:33.771835 (12644757.242385998)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['DatabaseService'].
 Import is handled by 8 processes (pods).
@@ -24,19 +25,44 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 DatabaseService-BHT-8         : will start now
+DatabaseService-BHT-8         : Name of SUT pods = bexhoma-sut-databaseservice-bht-8-1748452594
+DatabaseService-BHT-8         : Name of SUT service = bexhoma-sut-databaseservice-bht-8-1748452594
+DatabaseService-BHT-8         : Name of SUT PVC name = bexhoma-storage-databaseservice-tpch-3
 DatabaseService-BHT-8         : storage exists bexhoma-storage-databaseservice-tpch-3
+DatabaseService-BHT-8         : label loaded copied value True
+DatabaseService-BHT-8         : label timeLoading copied value 343
+DatabaseService-BHT-8         : label timeLoadingStart copied value 1748451996
+DatabaseService-BHT-8         : label timeLoadingEnd copied value 1748452374
+DatabaseService-BHT-8         : label indexed copied value True
+DatabaseService-BHT-8         : label time_generated copied value 1
+DatabaseService-BHT-8         : label time_indexed copied value 219
+DatabaseService-BHT-8         : label time_ingested copied value 115
+DatabaseService-BHT-8         : label time_initconstraints copied value 154
+DatabaseService-BHT-8         : label time_initindexes copied value 27
+DatabaseService-BHT-8         : label time_initschema copied value 1
+DatabaseService-BHT-8         : label time_initstatistics copied value 40
+DatabaseService-BHT-8         : label time_loaded copied value 1
 DatabaseService-BHT-8         : loading is set to finished
 - waiting 30s -               : done
-DatabaseService-BHT-8         : will start benchmarking but not before 2024-12-20 04:29:42 (that is in 60 secs)
+DatabaseService-BHT-8         : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-BHT-8         : will start benchmarking but not before 2024-12-20 04:29:42
+DatabaseService-BHT-8         : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-BHT-8         : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-BHT-8         : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-BHT-8         : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-BHT-8         : will start benchmarking but not before 2025-05-28 17:21:06 (that is in 60 secs)
+- waiting 30s -               : done
+DatabaseService-BHT-8         : will start benchmarking but not before 2025-05-28 17:21:06
 done
 DatabaseService-BHT-8         : benchmarks done 0 of 1. This will be client 1
 DatabaseService-BHT-8-1       : start benchmarking
-Worker pods found:  []
-DatabaseService-BHT-8         : benchmarking results in folder /home/perdelt/benchmarks/1734668861
+DatabaseService-BHT-8         : benchmarking results in folder /home/perdelt/benchmarks/1748452594
 - waiting 10s -               : done
-DatabaseService-BHT-8         : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-bht-8-1734668861-1-1-8l88l: .found
+DatabaseService-BHT-8         : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-bht-8-1748452594-1-1-t2sdr: found
 - waiting 30s -               : done
 DatabaseService-BHT-8         : has running benchmarks
 - waiting 30s -               : done
@@ -44,14 +70,14 @@ DatabaseService-BHT-8         : has running benchmarks
 done
 DatabaseService-BHT-8         : has running benchmarks
 DatabaseService-BHT-8-1       : showing benchmarker times
-DatabaseService-BHT-8-1       : benchmarker timespan (start to end single container [s]) = 112
-DatabaseService-BHT-8-1       : benchmarker times (start/end per pod and container) = [(1734668997, 1734669068)]
-DatabaseService-BHT-8-1       : found and updated times {'benchmarker': [(1734668997, 1734669068)]}
-DatabaseService-BHT-8-1       : collecting metrics of benchmarker
-DatabaseService-BHT-8-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-bht-8-1734668861(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+DatabaseService-BHT-8-1       : benchmarker timespan (start to end single container [s]) = 103
+DatabaseService-BHT-8-1       : benchmarker times (start/end per pod and container) = [(1748452874, 1748452953)]
+DatabaseService-BHT-8-1       : found and updated times {'benchmarker': [(1748452874, 1748452953)]}
+DatabaseService-BHT-8-1       : collecting metrics of benchmarker at connection DatabaseService-BHT-8-1
+DatabaseService-BHT-8-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-bht-8-1748452594(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 DatabaseService-BHT-8         : can be stopped
-Experiment                    : ends at 2024-12-20 05:32:13.728204 (4353935.135337864) - 272.02s total
+Experiment                    : ends at 2025-05-28 19:23:29.162112 (12645172.632665612) - 415.39s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -63,8 +89,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=3
     Type: tpch
-    Duration: 273s 
-    Code: 1734668861
+    Duration: 416s 
+    Code: 1748452594
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -72,6 +98,7 @@ TPC-H Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
@@ -86,17 +113,19 @@ TPC-H Queries SF=3
 
 ### Connections
 DatabaseService-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:249216876
-    datadisk:39192
+    disk:301221828
+    datadisk:39
     volume_size:1.0G
     volume_used:36M
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748452594
 
 ### Errors (failed queries)
 No errors
@@ -106,47 +135,47 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 DatabaseService-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                      5785.36
-Minimum Cost Supplier Query (TPC-H Q2)                                 1938.19
-Shipping Priority (TPC-H Q3)                                           2255.59
-Order Priority Checking Query (TPC-H Q4)                               2827.21
-Local Supplier Volume (TPC-H Q5)                                       2018.18
-Forecasting Revenue Change (TPC-H Q6)                                  1062.37
-Forecasting Revenue Change (TPC-H Q7)                                  2075.73
-National Market Share (TPC-H Q8)                                       1336.07
-Product Type Profit Measure (TPC-H Q9)                                 2808.84
-Forecasting Revenue Change (TPC-H Q10)                                 2804.71
-Important Stock Identification (TPC-H Q11)                              583.68
-Shipping Modes and Order Priority (TPC-H Q12)                          2137.04
-Customer Distribution (TPC-H Q13)                                      5569.93
-Forecasting Revenue Change (TPC-H Q14)                                 1130.83
-Top Supplier Query (TPC-H Q15)                                         1321.32
-Parts/Supplier Relationship (TPC-H Q16)                                1239.32
-Small-Quantity-Order Revenue (TPC-H Q17)                               5228.78
-Large Volume Customer (TPC-H Q18)                                     17602.90
-Discounted Revenue (TPC-H Q19)                                         1735.06
-Potential Part Promotion (TPC-H Q20)                                   1018.27
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2464.08
-Global Sales Opportunity Query (TPC-H Q22)                              451.76
+Pricing Summary Report (TPC-H Q1)                                      6263.50
+Minimum Cost Supplier Query (TPC-H Q2)                                 2133.18
+Shipping Priority (TPC-H Q3)                                           2482.10
+Order Priority Checking Query (TPC-H Q4)                               3149.55
+Local Supplier Volume (TPC-H Q5)                                       2294.43
+Forecasting Revenue Change (TPC-H Q6)                                  1216.18
+Forecasting Revenue Change (TPC-H Q7)                                  2326.49
+National Market Share (TPC-H Q8)                                       1460.17
+Product Type Profit Measure (TPC-H Q9)                                 3149.31
+Forecasting Revenue Change (TPC-H Q10)                                 3091.49
+Important Stock Identification (TPC-H Q11)                              574.96
+Shipping Modes and Order Priority (TPC-H Q12)                          2474.71
+Customer Distribution (TPC-H Q13)                                      6408.21
+Forecasting Revenue Change (TPC-H Q14)                                 1287.85
+Top Supplier Query (TPC-H Q15)                                         1452.80
+Parts/Supplier Relationship (TPC-H Q16)                                1282.46
+Small-Quantity-Order Revenue (TPC-H Q17)                               6328.12
+Large Volume Customer (TPC-H Q18)                                     19081.41
+Discounted Revenue (TPC-H Q19)                                         1934.88
+Potential Part Promotion (TPC-H Q20)                                   1167.20
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2720.93
+Global Sales Opportunity Query (TPC-H Q22)                              450.14
 
 ### Loading [s]
                            timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-DatabaseService-BHT-8-1-1           1.0          123.0         1.0      196.0     326.0
+DatabaseService-BHT-8-1-1           1.0          115.0         1.0      219.0     343.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                            Geo Times [s]
 DBMS                                    
-DatabaseService-BHT-8-1-1           2.11
+DatabaseService-BHT-8-1-1           2.34
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                            Power@Size [~Q/h]
 DBMS                                        
-DatabaseService-BHT-8-1-1            5249.82
+DatabaseService-BHT-8-1-1            4750.11
 
-### Throughput@Size
-                                                      time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS                    SF num_experiment num_client                                              
-DatabaseService-BHT-8-1 3  1              1                 71      1   3                  3346.48
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                      time [s]  count  SF  Throughput@Size
+DBMS                    SF num_experiment num_client                                      
+DatabaseService-BHT-8-1 3  1              1                 79      1   3          3007.59
 
 ### Workflow
 
@@ -158,12 +187,12 @@ DBMS DatabaseService-BHT-8 - Pods [[1]]
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1        16.0        0          0.25                 0.27
+DatabaseService-BHT-8-1        15.2     0.26          0.27                 0.28
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]

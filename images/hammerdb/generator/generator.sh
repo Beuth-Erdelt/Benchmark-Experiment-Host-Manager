@@ -12,10 +12,10 @@ echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
-echo "PARALLEL $PARALLEL"
+echo "HAMMERDB_NUM_VU $HAMMERDB_NUM_VU"
 echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
 echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
@@ -37,8 +37,8 @@ if {!\$complete} { after 5000 wait_to_complete } else { exit }
 dbset db mysql
 diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
-diset tpcc mysql_user $USER
-diset tpcc mysql_pass $PASSWORD
+diset tpcc mysql_user $BEXHOMA_USER
+diset tpcc mysql_pass $BEXHOMA_PASSWORD
 diset tpcc mysql_partition true
 diset tpcc mysql_storage_engine $HAMMERDB_MYSQL_ENGINE
 diset tpcc mysql_count_ware $SF
@@ -65,8 +65,8 @@ if {!\$complete} { after 5000 wait_to_complete } else { exit }
 dbset db maria
 diset connection maria_host $BEXHOMA_HOST
 diset connection maria_port $BEXHOMA_PORT
-diset tpcc maria_user $USER
-diset tpcc maria_pass $PASSWORD
+diset tpcc maria_user $BEXHOMA_USER
+diset tpcc maria_pass $BEXHOMA_PASSWORD
 diset tpcc maria_partition true
 diset tpcc maria_storage_engine $HAMMERDB_MYSQL_ENGINE
 diset tpcc maria_count_ware $SF
@@ -96,8 +96,8 @@ diset tpcc pg_num_vu $HAMMERDB_VUSERS
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $USER
-diset tpcc pg_pass $PASSWORD
+diset tpcc pg_user $BEXHOMA_USER
+diset tpcc pg_pass $BEXHOMA_PASSWORD
 diset tpcc pg_dbase tpcc
 print dict
 buildschema
@@ -124,9 +124,9 @@ diset tpcc pg_num_vu $HAMMERDB_VUSERS
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $USER
-diset tpcc pg_pass $PASSWORD
-diset tpcc pg_dbase $DATABASE
+diset tpcc pg_user $BEXHOMA_USER
+diset tpcc pg_pass $BEXHOMA_PASSWORD
+diset tpcc pg_dbase $BEXHOMA_DATABASE
 diset tpcc pg_cituscompat true
 print dict
 buildschema

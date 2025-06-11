@@ -3,12 +3,19 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 16085s 
-    Code: 1729872311
-    This includes no queries. YCSB runs the benchmark
+    Duration: 2910s 
+    Code: 1749005908
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '1024'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 4 and 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -20,76 +27,39 @@ YCSB SF=1
     Experiment is run once.
 
 ### Connections
-MariaDB-32-4-1024-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-32-4-1024-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:256254320
-    datadisk:2034804
+    disk:334126904
+    datadisk:1888
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-32-8-1024-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:256225820
-    datadisk:2006132
-    requests_cpu:4
-    requests_memory:16Gi
-MariaDB-64-4-1024-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:256275144
-    datadisk:2055284
-    requests_cpu:4
-    requests_memory:16Gi
-MariaDB-64-8-1024-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:256242544
-    datadisk:2022516
-    requests_cpu:4
-    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1749005908
 
 ### Loading
-                   experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MariaDB-32-4-1024               1       32    1024          4                     492.044508              2032627.0             1000000                            189727.0
-MariaDB-64-4-1024               1       64    1024          4                     507.531779              1970600.0             1000000                            322175.0
-MariaDB-32-8-1024               1       32    1024          8                     524.125953              1908284.0             1000000                            229183.0
-MariaDB-64-8-1024               1       64    1024          8                     509.684853              1962444.0             1000000                            509183.0
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MariaDB-32-4-1024               1       32    1024          4           0                     648.497085              1542266.0             1000000                           1384191.0
 
 ### Execution
-                     experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MariaDB-32-4-1024-1               1       64    1024          1                        1023.57               976969.0            500264                            1307.0              499735                              3325.0
-MariaDB-32-8-1024-1               1       64    1024          1                        1023.09               977428.0            500394                            1476.0              499606                             14447.0
-MariaDB-64-4-1024-1               1       64    1024          1                        1022.60               977897.0            499337                            1511.0              500663                              3109.0
-MariaDB-64-8-1024-1               1       64    1024          1                        1023.41               977129.0            500312                            1862.0              499688                            121215.0
+                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MariaDB-32-4-1024-1               1       64    1024          1           0                        1023.51               977026.0            499957                            1635.0              500043                              2329.0
 
 ### Workflow
 
 #### Actual
-DBMS MariaDB-32-8-1024 - Pods [[1]]
 DBMS MariaDB-32-4-1024 - Pods [[1]]
-DBMS MariaDB-64-4-1024 - Pods [[1]]
-DBMS MariaDB-64-8-1024 - Pods [[1]]
 
 #### Planned
 DBMS MariaDB-32-4-1024 - Pods [[1]]
-DBMS MariaDB-32-8-1024 - Pods [[1]]
-DBMS MariaDB-64-4-1024 - Pods [[1]]
-DBMS MariaDB-64-8-1024 - Pods [[1]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

@@ -8,6 +8,7 @@ bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
@@ -15,17 +16,17 @@ echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-if [ -z "$CHILD" ]
+BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+if [ -z "$BEXHOMA_CHILD" ]
 then
-	CHILD=1
+	BEXHOMA_CHILD=1
 fi
 
 ######################## Show more parameters ########################
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
-echo "$CHILD" > /tmp/tpch/CHILD
+echo "$BEXHOMA_CHILD" > /tmp/tpch/BEXHOMA_CHILD
 
 ######################## Wait until all pods of job are ready ########################
 if test $BEXHOMA_SYNCH_GENERATE -gt 0
@@ -36,12 +37,12 @@ then
 	# wait for number of pods to be as expected
 	while : ; do
 		PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-generator-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-		echo "Found $PODS_RUNNING / $NUM_PODS running pods"
-		if  test "$PODS_RUNNING" == $NUM_PODS
+		echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
+		if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
 		then
 			echo "OK"
 			break
-        elif test "$PODS_RUNNING" -gt $NUM_PODS
+        elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
         then
             echo "Too many pods! Restart occured?"
             exit 0
@@ -61,10 +62,10 @@ echo "Start $SECONDS_START seconds"
 if test $STORE_RAW_DATA -gt 0
 then
 	# store in (distributed) file system
-	if test $NUM_PODS -gt 1
+	if test $BEXHOMA_NUM_PODS -gt 1
 	then
 		# data should be split into parts
-		destination_raw=/data/tpch/SF$SF/$NUM_PODS/$CHILD
+		destination_raw=/data/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
 	else
 		# data is not split into parts
 		destination_raw=/data/tpch/SF$SF
@@ -94,7 +95,7 @@ then
 	fi
 else
 	# only store locally
-	destination_raw=/tmp/tpch/SF$SF/$NUM_PODS/$CHILD
+	destination_raw=/tmp/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
 	mkdir -p $destination_raw
 fi
 echo "destination_raw $destination_raw"
@@ -106,16 +107,16 @@ cp /tmp/dbgen ./dbgen
 
 ######################## Execute workload ###################
 ############ Differ between single-pod and multi-pod setting ############
-if test $NUM_PODS -gt 1
+if test $BEXHOMA_NUM_PODS -gt 1
 then
-	echo "./dbgen -s $SF -S $CHILD -C $NUM_PODS"
-	time ./dbgen -s $SF -S $CHILD -C $NUM_PODS
+	echo "./dbgen -s $SF -S $BEXHOMA_CHILD -C $BEXHOMA_NUM_PODS"
+	time ./dbgen -s $SF -S $BEXHOMA_CHILD -C $BEXHOMA_NUM_PODS
 else
 	echo "./dbgen -s $SF"
 	time ./dbgen -s $SF
 fi
 
-#time /tmp/dsdgen -dir /tmp/tpcds/ -scale $SF -parallel $NUM_PODS -child $CHILD -verbose -RNGSEED $RNGSEED
+#time /tmp/dsdgen -dir /tmp/tpcds/ -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -verbose -RNGSEED $RNGSEED
 # -v for verbose
 # -q for quite
 
@@ -133,17 +134,17 @@ ls $destination_raw/*tbl* -lh
 
 ######################## Translate customer to utf8 ###################
 #echo "Translate customer to utf8"
-#if [ -f "$destination_raw/customer_${CHILD}_${NUM_PODS}.dat" ]
+#if [ -f "$destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat" ]
 #then
 #	# convert into new file
 #	echo "Convert customer.dat"
-#	iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer_${CHILD}_${NUM_PODS}.dat > customer_${CHILD}_${NUM_PODS}_utf8.dat
+#	iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat > customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat
 #	# rename to original name
-#	mv customer_${CHILD}_${NUM_PODS}_utf8.dat $destination_raw/customer_${CHILD}_${NUM_PODS}.dat
+#	mv customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
 #	# remove first character (damaged?)
-#	#tail -c +2 customer_${CHILD}_${NUM_PODS}_utf8.dat > /tmp/tpcds/customer_${CHILD}_${NUM_PODS}.dat
+#	#tail -c +2 customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat > /tmp/tpcds/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
 #	# show head of file
-#	head $destination_raw/customer_${CHILD}_${NUM_PODS}.dat
+#	head $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
 #fi
 
 ######################## Remove last character per line ###################

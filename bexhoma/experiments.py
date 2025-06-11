@@ -33,6 +33,8 @@ import logging
 import urllib3
 from os import makedirs, path
 import time
+from timeit import default_timer
+#import datetime
 import os
 from datetime import datetime, timedelta
 import re
@@ -41,6 +43,9 @@ import json
 import ast
 from types import SimpleNamespace
 from importlib.metadata import version
+from pathlib import Path
+import platform
+import math
 
 from bexhoma import evaluators
 
@@ -114,6 +119,7 @@ class default():
         self.loading_parameters = {}                                    # dict of parameters for loading component
         self.sut_parameters = {}                                        # dict of parameters for sut and worker component
         self.loading_patch = ""                                         # YAML to patch manifest for loading component
+        self.benchmarking_active = True                                 # Bool, tells if benchmarking is active (False for mode=start and mode=load)
         self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
         self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
@@ -125,6 +131,7 @@ class default():
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
+        self.loading_deactivated = False                                # Bool, tells if loading phase should be skipped
         self.num_loading = 0                                            # number of loading pods in parallel
         self.num_loading_pods = 0                                       # number of loading pods in total
         self.maintaining_active = False                                 # Bool, tells if maintaining is active
@@ -146,6 +153,145 @@ class default():
         self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.set_eval_parameters(code = self.code)
+    def process(self):
+        # should results be tested for validity?
+        test_result = self.args.test_result
+        if self.args.mode == 'start':
+            #self.start_sut()
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            print("{:30s}: has code {}".format("Experiment", self.code))
+            print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
+            print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # configure number of clients per config = 0
+            list_clients = []
+            self.add_benchmark_list(list_clients)
+            self.benchmarking_active = False
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            # run workflow
+            self.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True, stop_after_starting=True)
+            # total time of experiment
+            end = default_timer()
+            end_datetime = str(datetime.now())
+            duration_experiment = end - start
+            print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment", end_datetime, end, duration_experiment))
+            self.workload['duration'] = math.ceil(duration_experiment)
+            self.evaluate_results()
+            self.store_workflow_results()
+            self.show_summary()
+        elif self.args.mode == 'load':
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            print("{:30s}: has code {}".format("Experiment", self.code))
+            print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
+            print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # configure number of clients per config = 0
+            list_clients = []
+            self.add_benchmark_list(list_clients)
+            self.benchmarking_active = False
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            # run workflow
+            self.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True)
+            # total time of experiment
+            end = default_timer()
+            end_datetime = str(datetime.now())
+            duration_experiment = end - start
+            print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment", end_datetime, end, duration_experiment))
+            self.workload['duration'] = math.ceil(duration_experiment)
+            self.evaluate_results()
+            self.store_workflow_results()
+            self.show_summary()
+        elif self.args.mode == 'summary':
+            #self.evaluate_results()
+            #self.store_workflow_results()
+            self.show_summary()
+        else:
+            # total time of experiment
+            start = default_timer()
+            start_datetime = str(datetime.now())
+            #print("Experiment starts at {} ({})".format(start_datetime, start))
+            print("{:30s}: has code {}".format("Experiment", self.code))
+            print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
+            print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # run workflow
+            self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
+            # total time of experiment
+            end = default_timer()
+            end_datetime = str(datetime.now())
+            duration_experiment = end - start
+            print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment", end_datetime, end, duration_experiment))
+            self.workload['duration'] = math.ceil(duration_experiment)
+            ##################
+            self.evaluate_results()
+            self.store_workflow_results()
+            #self.stop_benchmarker()
+            #self.stop_sut()
+            #self.zip() # OOM? exit code 137
+            if test_result:
+                test_result_code = self.test_results()
+                if test_result_code == 0:
+                    print("Test successful!")
+            #self.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
+            self.show_summary()
+    def benchmarking_is_active(self):
+        """
+        Returns True, when this is a benchmarking experiment.
+        Returns False in case of mode=start or mode=load.
+        In that case, benchmarking phase is skipped and no results are expected.
+
+        :return: Iff there is a benchmarking phase
+        """
+        if 'benchmarking_active' in self.workload:
+            self.benchmarking_active = self.workload['benchmarking_active']
+        return self.benchmarking_active
+    def loading_is_active(self):
+        """
+        Returns True, when this is an experiment including loading.
+        Returns False in case of mode=start.
+        In that case, loading and benchmarking phases are skipped and no results are expected.
+
+        :return: Iff there is a benchmarking phase
+        """
+        if 'loading_active' in self.workload:
+            self.loading_deactivated = not self.workload['loading_active']
+        return not self.loading_deactivated
+    def result_filename_local(self, filename: str) -> str:
+        """
+        Returns filename including path in result folder.
+
+        :param filename: name of a file in a result folder
+        :param posix: iff posix format should be used
+        :return: self.path / filename
+        """
+        return self.result_filename(filename, False)
+    def result_filename_remote(self, filename: str, posix: bool = True) -> str:
+        """
+        Returns filename including path in result folder.
+
+        :param filename: name of a file in a result folder
+        :param posix: iff posix format should be used
+        :return: self.path / filename
+        """
+        path = Path(r"/results") / filename
+        if posix:
+            return path.as_posix()
+        else:
+            return str(path)
+    def result_filename(self, filename: str, posix: bool = True) -> str:
+        """
+        Returns filename including path in a local result folder.
+
+        :param filename: name of a file in a result folder
+        :param posix: iff posix format should be used
+        :return: self.path / filename
+        """
+        path = Path(self.path) / filename
+        if posix:
+            return path.as_posix()
+        else:
+            return str(path)
     def get_parameter_as_list(self,
                               parameter):
         """
@@ -183,6 +329,11 @@ class default():
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
+        mode = str(parameter['mode'])
+        if mode=='load' or mode=='start':
+            self.benchmarking_active = False
+        if mode=='start':
+            self.loading_deactivated = True
         num_experiment_to_apply = int(args.num_config)
         # configure number of clients per config
         list_clients = args.num_query_executors.split(",")
@@ -276,20 +427,21 @@ class default():
             #    # single DBMS
             #    dbms = args.dbms
             dbms = args.dbms
-            self.workload['info'] = self.workload['info']+"\nBenchmark is limited to DBMS {}.".format(dbms)
-        if len(num_loading_pods):
-            # import uses several processes in pods
-            self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
-        # fix loading
-        if not request_node_loading is None:
-            self.patch_loading(patch="""
-            spec:
-              template:
+            self.workload['info'] = self.workload['info']+"\nExperiment is limited to DBMS {}.".format(dbms)
+        if self.loading_is_active():
+            if len(num_loading_pods):
+                # import uses several processes in pods
+                self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
+            # fix loading
+            if not request_node_loading is None:
+                self.patch_loading(patch="""
                 spec:
-                  nodeSelector:
-                    kubernetes.io/hostname: {node}
-            """.format(node=request_node_loading))
-            self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
+                  template:
+                    spec:
+                      nodeSelector:
+                        kubernetes.io/hostname: {node}
+                """.format(node=request_node_loading))
+                self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
         # fix benchmarking
         if not request_node_benchmarking is None:
             self.patch_benchmarking(patch="""
@@ -313,17 +465,36 @@ class default():
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-        self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
-        self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nBenchmarking is tested with {} threads, split into {} pods.".format(num_benchmarking_threads, num_benchmarking_pods)
         if len(num_pooling_pods) > 0 and  len(num_pooling_in) > 0 and len(num_pooling_out) > 0:
             self.workload['info'] = self.workload['info']+"\nPooling is done with {} pods having {} inbound and {} outbound connections in total.".format(num_pooling_pods, num_pooling_in, num_pooling_out)
-        self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
         if self.max_sut is not None:
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
+        self.workload['benchmarking_active'] = self.benchmarking_is_active()
+        self.workload['loading_active'] = self.loading_is_active()
+    def generate_port_forward(self, service):
+        """
+        Generates command to port-forward to a service.
+        Returns it as a string
+
+        :return: Command to port-forward to SUT service as a string
+        """
+        context = self.cluster.context
+        port = self.cluster.port
+        app = self.appname
+        forward = ['kubectl', '--context {context}'.format(context=context), 'port-forward', 'service/'+service, f"{port}:{port}"]
+        command = " ".join(forward)
+        #print("{:30s}: {}".format(configuration, command))
+        return command
     def get_dashboard_pod(self,
                           pod_dashboard=''):
         """
@@ -411,7 +582,8 @@ class default():
         #intervals = int(sec)
         #time.sleep(intervals)
         #print("done")
-        return self.cluster.wait(sec, silent)
+        if sec > 0:
+            return self.cluster.wait(sec, silent)
     def delay(self,
               sec,
               silent=False):
@@ -816,10 +988,11 @@ class default():
         # specific to dbmsbenchmarker
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
-        print("Join results ", end="", flush=True)
-        cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-        self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
-        print("done!")
+        if self.benchmarking_is_active():
+            print("Join results ", end="", flush=True)
+            cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
+            self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
+            print("done!")
         print("Build evaluation cube ", end="", flush=True)
         cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
@@ -1056,7 +1229,7 @@ class default():
             if len(self.workload) > 0:
                 #configuration = self.configurations[0]
                 # write appended query config
-                filename = self.path+"/queries.config"
+                filename = self.result_filename_local("queries.config")#self.path+"/queries.config"
                 with open(filename,'r') as inp:
                     queryconfig = ast.literal_eval(inp.read())
                     for k,v in self.workload.items():
@@ -1069,9 +1242,12 @@ class default():
         cmd = {}
         # single file
         filename = 'queries.config'
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+        filename_local = self.result_filename_local(filename)
+        filename_remote = self.result_filename_remote(filename)
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
         self.cluster.kubectl(cmd['upload_results'])
-    def work_benchmark_list(self, intervals=30, stop=True):
+    def work_benchmark_list(self, intervals=30, stop_after_starting=False, stop_after_loading=False, stop_after_benchmarking=False):
         """
         Run typical workflow:
 
@@ -1080,9 +1256,12 @@ class default():
         3) start loading (at first scripts (schema or loading via pull), then optionally parallel loading pods)
         4) optionally start maintaining pods
         5) at the same time as 4. run benchmarker jobs corresponding to list given via add_benchmark_list()
+        6) remove everything when done
 
         :param intervals: Seconds to wait before checking change of status
-        :param stop: Tells if SUT should be removed when all benchmarking has finished. Set to False if we want to have loaded SUTs for inspection.
+        :param stop_after_starting: stops after phase 2)
+        :param stop_after_loading: stops after phase 3)
+        :param stop_after_benchmarking: stops after phase 5) This tells if SUT should not be removed when all benchmarking has finished. Set to True if we want to have loaded SUTs for inspection.
         """
         # test if there is a Pometheus server running in the cluster
         if self.cluster.test_if_monitoring_healthy():
@@ -1090,10 +1269,12 @@ class default():
             print("{:30s}: is running".format("Cluster monitoring"))
         else:
             self.cluster.monitor_cluster_exists = False
+        intervals_wait = 0
         do = True
         while do:
             #time.sleep(intervals)
-            self.wait(intervals)
+            self.wait(intervals_wait)
+            intervals_wait = intervals
             # count number of running and pending pods
             num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
             num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
@@ -1172,9 +1353,17 @@ class default():
                         if 'delay_prepare' in config.dockertemplate:
                             # config demands other delay
                             delay = config.dockertemplate['delay_prepare']
-                        config.loading_after_time = now + timedelta(seconds=delay)
-                        print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
-                        continue
+                        if delay > 0:
+                            config.loading_after_time = now + timedelta(seconds=delay)
+                            print("{:30s}: will start loading but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                            continue
+                        else:
+                            # start loading now
+                            if config.loading_active:
+                                config.start_loading()
+                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                            else:
+                                config.start_loading()
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
@@ -1220,9 +1409,10 @@ class default():
                         if 'delay_prepare' in config.dockertemplate:
                             # config demands other delay
                             delay = config.dockertemplate['delay_prepare']
-                        config.loading_after_time = now + timedelta(seconds=delay)
-                        print("{:30s}: will start benchmarking but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
-                        continue
+                        if delay > 0:
+                            config.loading_after_time = now + timedelta(seconds=delay)
+                            print("{:30s}: will start benchmarking but not before {} (that is in {} secs)".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S'), delay))
+                            continue
                     elif not now >= config.loading_after_time:
                         # system might not be ready yet
                         print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
@@ -1265,7 +1455,7 @@ class default():
                             #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         else:
                             # no list element left
-                            if stop:
+                            if not stop_after_benchmarking:
                                 print("{:30s}: can be stopped".format(config.configuration))
                                 app = self.cluster.appname
                                 component = 'sut'
@@ -1305,7 +1495,27 @@ class default():
                                 else:
                                     config.experiment_done = True
                             else:
-                                print("{} can be stopped, but we leave it running".format(config.configuration))
+                                print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
+                                command = config.generate_port_forward()
+                                if not 'sut_service' in self.workload:
+                                    self.workload['sut_service'] = dict()
+                                self.workload['sut_service'][config.configuration] = config.get_service_sut(config.configuration)
+                                print("{:30s}: Ready: {}".format(config.configuration, command))
+                                #print(config.num_experiment_to_apply_done, config.num_experiment_to_apply)
+                                # if we reach this point for the first time: simulate benchmarking
+                                # this collects loading metrics and prepares a connection.config and a query.config
+                                # this allows summaries like for "real" benchmarking experiments
+                                if config.client == 1 and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                    client = str(config.client)
+                                    config.client = config.client+1
+                                    if config.num_experiment_to_apply > 1:
+                                        connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                                    else:
+                                        connection=config.configuration+'-'+client
+                                    #print("{:30s}: start benchmarking".format(connection))
+                                    config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
+                                    config.num_experiment_to_apply_done = config.num_experiment_to_apply
+                                #print("{} can be stopped, but we leave it running".format(config.configuration))
                 else:
                     print("{:30s}: is loading".format(config.configuration))
             for config in self.configurations:
@@ -1384,12 +1594,15 @@ class default():
                     if config.sut_is_pending():
                         self.cluster.logger.debug("{} pending".format(config.configuration))
                         do = True
-                    if not config.loading_started:
+                    if not config.loading_started or not config.loading_finished:
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
                     if len(config.benchmark_list) > 0:
                         self.cluster.logger.debug("{} still benchmarks to run: {}".format(config.configuration, config.benchmark_list))
                         do = True
+                    if stop_after_starting:
+                        if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                            do = True
     def benchmark_list(self, list_clients):
         """
         DEPRECATED? Is not used anymore.
@@ -1513,7 +1726,9 @@ class default():
             #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
             if filename.startswith(jobname) and filename.endswith(".{container}.log".format(container=container)):
                 self.cluster.logger.debug("Found jobcontainer file {filename}".format(filename=filename))
-                (timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
+                filename_local = self.result_filename_local(filename)
+                (timing_start, timing_end) = get_job_timing(filename_local)
+                #(timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
                 self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
                     print("Error in "+filename)
@@ -1695,6 +1910,7 @@ class default():
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
+            self.workload = workload_properties
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
@@ -1706,6 +1922,11 @@ class default():
                 print("    Error: "+error)
                 for message in messages:
                     print("        "+message)
+        if 'sut_service' in workload_properties:
+            print("\n### Services")
+            for c in sorted(workload_properties['sut_service']):
+                print(c)
+                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1734,6 +1955,7 @@ class default():
                             print(info)
         #evaluation = evaluators.base(code=code, path=resultfolder)
         #####################
+        #if self.benchmarking_is_active():
         evaluate = inspector.inspector(resultfolder)
         evaluate.load_experiment(code=code, silent=True)
         query_properties = evaluate.get_experiment_query_properties()
@@ -1744,155 +1966,165 @@ class default():
             else:
                 return numQuery
         #####################
-        print("\n### Errors (failed queries)")
-        df = evaluate.get_total_errors().T
-        num_errors = df.sum().sum()
-        if num_errors > 0:
-            df_errors = df.copy()
-            df_errors = df_errors[~(df_errors == False).all(axis=1)]
-            list_error_queries = list(df_errors.index)
-            # set readable names
-            df.index = df.index.map(map_index_to_queryname)
-            # remove only False rows
-            df = df[~(df == False).all(axis=1)]
-            print(df)
-            for error in list_error_queries:
-                numQuery = error[1:]        # remove the leading "Q""
-                list_errors = evaluate.get_error(numQuery)
-                list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
-                #print(list_errors)
-                print(map_index_to_queryname(error))
-                #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
-                #print(df_error)
-                for k,v in list_errors.items():
-                    print("{}: {}".format(k,v))
-        else:
-            print("No errors")
+        if self.benchmarking_is_active():
+            print("\n### Errors (failed queries)")
+            df = evaluate.get_total_errors().T
+            num_errors = df.sum().sum()
+            if num_errors > 0:
+                df_errors = df.copy()
+                df_errors = df_errors[~(df_errors == False).all(axis=1)]
+                list_error_queries = list(df_errors.index)
+                # set readable names
+                df.index = df.index.map(map_index_to_queryname)
+                # remove only False rows
+                df = df[~(df == False).all(axis=1)]
+                print(df)
+                for error in list_error_queries:
+                    numQuery = error[1:]        # remove the leading "Q""
+                    list_errors = evaluate.get_error(numQuery)
+                    list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
+                    #print(list_errors)
+                    print(map_index_to_queryname(error))
+                    #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+                    #print(df_error)
+                    for k,v in list_errors.items():
+                        print("{}: {}".format(k,v))
+            else:
+                print("No errors")
         #####################
-        print("\n### Warnings (result mismatch)")
-        df = evaluate.get_total_warnings().T
-        num_warnings = df.sum().sum()
-        if num_warnings > 0:
-            # set readable names
-            df.index = df.index.map(map_index_to_queryname)
-            # remove only False rows
-            df = df[~(df == False).all(axis=1)]
-            print(df)
-        else:
-            print("No warnings")
+        if self.benchmarking_is_active():
+            print("\n### Warnings (result mismatch)")
+            df = evaluate.get_total_warnings().T
+            num_warnings = df.sum().sum()
+            if num_warnings > 0:
+                # set readable names
+                df.index = df.index.map(map_index_to_queryname)
+                # remove only False rows
+                df = df[~(df == False).all(axis=1)]
+                print(df)
+            else:
+                print("No warnings")
         #####################
-        print("\n### Latency of Timer Execution [ms]")
-        num_of_queries = 0
-        df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-        if not df is None:
-            df = df.sort_index().T.round(2)
-            df.index = df.index.map(map_index_to_queryname)
-            print(df)
-            num_of_queries = len(df.index)
+        if self.benchmarking_is_active():
+            print("\n### Latency of Timer Execution [ms]")
+            num_of_queries = 0
+            df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+            if not df is None:
+                df = df.sort_index().T.round(2)
+                df.index = df.index.map(map_index_to_queryname)
+                print(df)
+                num_of_queries = len(df.index)
         #####################
-        print("\n### Loading [s]")
-        times = {}
-        for c, connection in evaluate.benchmarks.dbms.items():
-            times[c]={}
-            if 'timeGenerate' in connection.connectiondata:
-                times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
-            if 'timeIngesting' in connection.connectiondata:
-                times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
-            if 'timeSchema' in connection.connectiondata:
-                times[c]['timeSchema'] = connection.connectiondata['timeSchema']
-            if 'timeIndex' in connection.connectiondata:
-                times[c]['timeIndex'] = connection.connectiondata['timeIndex']
-            if 'timeLoad' in connection.connectiondata:
-                times[c]['timeLoad'] = connection.connectiondata['timeLoad']
-        df = pd.DataFrame(times)
-        df = df.reindex(sorted(df.columns), axis=1)
-        print(df.round(2).T)
+        if self.loading_is_active():
+            print("\n### Loading [s]")
+            times = {}
+            for c, connection in evaluate.benchmarks.dbms.items():
+                times[c]={}
+                if 'timeGenerate' in connection.connectiondata:
+                    times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
+                if 'timeIngesting' in connection.connectiondata:
+                    times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
+                if 'timeSchema' in connection.connectiondata:
+                    times[c]['timeSchema'] = connection.connectiondata['timeSchema']
+                if 'timeIndex' in connection.connectiondata:
+                    times[c]['timeIndex'] = connection.connectiondata['timeIndex']
+                if 'timeLoad' in connection.connectiondata:
+                    times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+            df = pd.DataFrame(times)
+            df = df.reindex(sorted(df.columns), axis=1)
+            print(df.round(2).T)
         #####################
-        print("\n### Geometric Mean of Medians of Timer Run [s]")
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index()
-        df.columns = ['Geo Times [s]']
-        df_geo_mean_runtime = df.copy()
-        print(df.round(2))
+        if self.benchmarking_is_active():
+            print("\n### Geometric Mean of Medians of Timer Run [s]")
+            df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+            df = (df/1000.0).sort_index()
+            df.columns = ['Geo Times [s]']
+            df_geo_mean_runtime = df.copy()
+            print(df.round(2))
         #####################
-        print("\n### Power@Size ((3600*SF)/(geo times))")
-        df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index().astype('float')
-        df = float(parameter.defaultParameters['SF'])*3600./df
-        df.columns = ['Power@Size [~Q/h]']
-        df_power = df.copy()
-        print(df.round(2))
+        if self.benchmarking_is_active():
+            print("\n### Power@Size ((3600*SF)/(geo times))")
+            df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+            df = (df/1000.0).sort_index().astype('float')
+            df = float(parameter.defaultParameters['SF'])*3600./df
+            df.columns = ['Power@Size [~Q/h]']
+            df_power = df.copy()
+            print(df.round(2))
         #####################
-        # aggregate time and throughput for parallel pods
-        print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
-        df_merged_time = pd.DataFrame()
-        for connection_nr, connection in evaluate.benchmarks.dbms.items():
-            df_time = pd.DataFrame()
-            c = connection.connectiondata
-            connection_name = c['name']
-            orig_name = c['orig_name']
-            eva = evaluate.get_experiment_connection_properties(c['name'])
-            df_time.index = [connection_name]
-            #df_time['SF'] = int(SF)
-            #print(c)
-            #print(connection.name)
-            #print(connection.connection)
-            df_time['orig_name'] = orig_name
-            df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
-            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
-            #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
-            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
-            df_time['num_client'] = int(c['parameter']['client'])
-            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
-            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
-            df_merged_time = pd.concat([df_merged_time, df_time])
-        df_time = df_merged_time.sort_index()
-        benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
-        benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
-        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
-        df_benchmark.columns = ['time [s]']
-        benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
-        df_benchmark['count'] = benchmark_count['benchmark_end']
-        df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-        df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
-        #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
-        index_names = list(df_benchmark.index.names)
-        index_names[0] = "DBMS"
-        df_benchmark.rename_axis(index_names, inplace=True)
-        print(df_benchmark)
+        if self.benchmarking_is_active():
+            # aggregate time and throughput for parallel pods
+            print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
+            df_merged_time = pd.DataFrame()
+            for connection_nr, connection in evaluate.benchmarks.dbms.items():
+                df_time = pd.DataFrame()
+                c = connection.connectiondata
+                connection_name = c['name']
+                orig_name = c['orig_name']
+                eva = evaluate.get_experiment_connection_properties(c['name'])
+                df_time.index = [connection_name]
+                #df_time['SF'] = int(SF)
+                #print(c)
+                #print(connection.name)
+                #print(connection.connection)
+                df_time['orig_name'] = orig_name
+                df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+                df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+                #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
+                df_time['num_experiment'] = int(c['parameter']['numExperiment'])
+                df_time['num_client'] = int(c['parameter']['client'])
+                df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
+                df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+                df_merged_time = pd.concat([df_merged_time, df_time])
+            df_time = df_merged_time.sort_index()
+            benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
+            benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+            df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
+            df_benchmark.columns = ['time [s]']
+            benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
+            df_benchmark['count'] = benchmark_count['benchmark_end']
+            df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
+            df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+            #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+            index_names = list(df_benchmark.index.names)
+            index_names[0] = "DBMS"
+            df_benchmark.rename_axis(index_names, inplace=True)
+            print(df_benchmark)
         #####################
-        print("\n### Workflow")
-        workflow_actual = self.evaluator.reconstruct_workflow(df_time)
-        workflow_planned = workload_properties['workflow_planned']
-        if len(workflow_actual) > 0:
-            print("\n#### Actual")
-            for c in workflow_actual:
-                print("DBMS", c, "- Pods", workflow_actual[c])
-        if len(workflow_planned) > 0:
-            print("\n#### Planned")
-            for c in workflow_planned:
-                print("DBMS", c, "- Pods", workflow_planned[c])
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df_time)
+            workflow_planned = workload_properties['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual")
+                for c in workflow_actual:
+                    print("DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned")
+                for c in workflow_planned:
+                    print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
-        self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
-        self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
-        #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
-        self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
-        if num_errors == 0:
-            print("TEST passed: No SQL errors")
-        else:
-            print("TEST failed: SQL errors")
-        if num_warnings == 0:
-            print("TEST passed: No SQL warnings")
-        else:
-            print("TEST failed: SQL warnings (result mismatch)")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
-        if self.test_workflow(workflow_actual, workflow_planned):
-            print("TEST passed: Workflow as planned")
-        else:
-            print("TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+            self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
+            #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+            self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
+            if num_errors == 0:
+                print("TEST passed: No SQL errors")
+            else:
+                print("TEST failed: SQL errors")
+            if num_warnings == 0:
+                print("TEST passed: No SQL warnings")
+            else:
+                print("TEST failed: SQL warnings (result mismatch)")
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("TEST passed: Workflow as planned")
+            else:
+                print("TEST failed: Workflow not as planned")
+        if self.loading_is_active() or self.benchmarking_is_active():
+            if len(test_results_monitoring) > 0:
+                print(test_results_monitoring)
     def show_summary_monitoring_table(self, evaluate, component):
         df_monitoring = list()
         ##########
@@ -2048,6 +2280,10 @@ class tpcds(default):
         self.args = args
         self.args_dict = parameter
         mode = str(parameter['mode'])
+        if mode=='load' or mode=='start':
+            self.benchmarking_active = False
+        if mode=='start':
+            self.loading_deactivated = True
         SF = str(self.SF)
         # shuffle ordering and random parameters
         recreate_parameter = args.recreate_parameter
@@ -2071,9 +2307,28 @@ class tpcds(default):
                 type = 'tpcds',
                 defaultParameters = {'SF': SF}
             )
+        elif mode == 'load':
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-DS Data Loading SF='+str(SF),
+                info = 'This imports TPC-DS data sets.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'start':
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-DS Start DBMS',
+                info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
+                type = 'tpcds',
+                defaultParameters = {'SF': SF}
+            )
         elif mode == 'empty':
             # set benchmarking queries to dummy - SELECT 1
-            self.set_queryfile('queries-tpch-empty.config')
+            self.set_queryfile('queries-tpcds-empty.config')
             self.set_workload(
                 name = 'TPC-DS Data Dummy SF='+str(SF),
                 info = 'This experiment is for testing loading. It just runs a SELECT 1 query.',
@@ -2094,34 +2349,37 @@ class tpcds(default):
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
-        self.workload['info'] = self.workload['info']+"\nTPC-DS (SF={}) data is loaded and benchmark is executed.".format(SF)
-        if shuffle_queries:
-            self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
-        else:
-            self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q99."
-        if recreate_parameter:
-            self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
-        else:
-            self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
-        if init_columns:
-            self.workload['info'] = self.workload['info']+"\nStorage is set to columnar."
-        self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nTPC-DS (SF={}) data is loaded and benchmark is executed.".format(SF)
+        if self.benchmarking_is_active():
+            if shuffle_queries:
+                self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
+            else:
+                self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q99."
+            if recreate_parameter:
+                self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
+            else:
+                self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+            if init_columns:
+                self.workload['info'] = self.workload['info']+"\nStorage is set to columnar."
+            self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
-        if init_indexes or init_constraints or init_statistics:
-            self.set_experiment(indexing='Index')
-            init_scripts = " Import sets indexes after loading."
-            if init_constraints:
-                self.set_experiment(indexing='Index_and_Constraints')
-                init_scripts = "\nImport sets indexes and constraints after loading."
-            if init_statistics:
-                self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-                init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
-            self.workload['info'] = self.workload['info']+init_scripts
-        #self.set_experiment(script='Schema', indexing='Index')
-        if len(limit_import_table):
-            # import is limited to single table
-            self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
+        if self.loading_is_active():
+            if init_indexes or init_constraints or init_statistics:
+                self.set_experiment(indexing='Index')
+                init_scripts = " Import sets indexes after loading."
+                if init_constraints:
+                    self.set_experiment(indexing='Index_and_Constraints')
+                    init_scripts = "\nImport sets indexes and constraints after loading."
+                if init_statistics:
+                    self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+                    init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
+                self.workload['info'] = self.workload['info']+init_scripts
+            #self.set_experiment(script='Schema', indexing='Index')
+            if len(limit_import_table):
+                # import is limited to single table
+                self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
         default.prepare_testbed(self, parameter)
 
 
@@ -2175,6 +2433,10 @@ class tpch(default):
         self.args = args
         self.args_dict = parameter
         mode = str(parameter['mode'])
+        if mode=='load' or mode=='start':
+            self.benchmarking_active = False
+        if mode=='start':
+            self.loading_deactivated = True
         SF = str(self.SF)
         # shuffle ordering and random parameters
         recreate_parameter = args.recreate_parameter
@@ -2193,6 +2455,25 @@ class tpch(default):
             self.set_workload(
                 name = 'TPC-H Queries SF='+str(SF),
                 info = 'This experiment compares run time and resource consumption of TPC-H queries in different DBMS.',
+                type = 'tpch',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'load':
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-H Data Loading SF='+str(SF),
+                info = 'This imports TPC-H data sets.',
+                type = 'tpch',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'start':
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'TPC-H Start DBMS',
+                info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
                 type = 'tpch',
                 defaultParameters = {'SF': SF}
             )
@@ -2219,32 +2500,35 @@ class tpch(default):
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
-        self.workload['info'] = self.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
-        if shuffle_queries:
-            self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
-        else:
-            self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q22."
-        if recreate_parameter:
-            self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
-        else:
-            self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
-        self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
+        if self.benchmarking_is_active():
+            if shuffle_queries:
+                self.workload['info'] = self.workload['info']+"\nQuery ordering is as required by the TPC."
+            else:
+                self.workload['info'] = self.workload['info']+"\nQuery ordering is Q1 - Q22."
+            if recreate_parameter:
+                self.workload['info'] = self.workload['info']+"\nAll instances use different query parameters."
+            else:
+                self.workload['info'] = self.workload['info']+"\nAll instances use the same query parameters."
+            self.workload['info'] = self.workload['info']+"\nTimeout per query is {}.".format(timeout)
         # optionally set some indexes and constraints after import
         self.set_experiment(script='Schema')
-        if init_indexes or init_constraints or init_statistics:
-            self.set_experiment(indexing='Index')
-            init_scripts = " Import sets indexes after loading."
-            if init_constraints:
-                self.set_experiment(indexing='Index_and_Constraints')
-                init_scripts = "\nImport sets indexes and constraints after loading."
-            if init_statistics:
-                self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-                init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
-            self.workload['info'] = self.workload['info']+init_scripts
-        #self.set_experiment(script='Schema', indexing='Index')
-        if len(limit_import_table):
-            # import is limited to single table
-            self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
+        if self.loading_is_active():
+            if init_indexes or init_constraints or init_statistics:
+                self.set_experiment(indexing='Index')
+                init_scripts = " Import sets indexes after loading."
+                if init_constraints:
+                    self.set_experiment(indexing='Index_and_Constraints')
+                    init_scripts = "\nImport sets indexes and constraints after loading."
+                if init_statistics:
+                    self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
+                    init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
+                self.workload['info'] = self.workload['info']+init_scripts
+            #self.set_experiment(script='Schema', indexing='Index')
+            if len(limit_import_table):
+                # import is limited to single table
+                self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
         default.prepare_testbed(self, parameter)
 
 
@@ -2294,6 +2578,10 @@ class tpcc(default):
         self.args = args
         self.args_dict = parameter
         mode = str(parameter['mode'])
+        if mode=='load' or mode=='start':
+            self.benchmarking_active = False
+        if mode=='start':
+            self.loading_deactivated = True
         SF = str(self.SF)
         SD = int(args.scaling_duration)
         extra_latency = int(args.extra_latency)
@@ -2305,19 +2593,41 @@ class tpcc(default):
                 type = 'tpcc',
                 defaultParameters = {'SF': SF}
             )
+        elif mode == 'load':
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'HammerDB Data Loading SF={} (warehouses for TPC-C)'.format(SF),
+                info = 'This imports TPC-C data sets.',
+                type = 'tpcc',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'HammerDB Start DBMS',
+                info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
+                type = 'tpcc',
+                defaultParameters = {'SF': SF}
+            )
         self.loading_active = True
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
-        self.workload['info'] = self.workload['info']+"\nTPC-C data is generated and loaded using several threads."
-        if SF:
-            self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
-        if SD:
-            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
-        if extra_keying:
-            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
-        if extra_latency:
-            self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nTPC-C data is generated and loaded using several threads."
+        if self.loading_is_active() or self.benchmarking_is_active():
+            if SF:
+                self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
+        if self.benchmarking_is_active():
+            if SD:
+                self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
+            if extra_keying:
+                self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
+            if extra_latency:
+                self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
@@ -2409,6 +2719,7 @@ class tpcc(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
+            self.workload = workload_properties
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
@@ -2420,6 +2731,11 @@ class tpcc(default):
                 print("    Error: "+error)
                 for message in messages:
                     print("        "+message)
+        if 'sut_service' in workload_properties:
+            print("\n### Services")
+            for c in sorted(workload_properties['sut_service']):
+                print(c)
+                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2451,99 +2767,103 @@ class tpcc(default):
         #evaluate.load_experiment(code=code, silent=False)
         #evaluation = evaluators.tpcc(code=code, path=resultfolder)
         #####################
-        df = self.evaluator.get_df_loading()
-        if not df.empty:
-            print("\n### Loading")
-            print(df)
-            #df = df.sort_values(['configuration','experiment_run','client'])
-            #df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
-            #print(df)
-            #print(df.columns)
-            #df_plot = evaluation.loading_set_datatypes(df)
-            #df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
-            #df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            #df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            #print(df_aggregated)
+        if self.loading_is_active():
+            df = self.evaluator.get_df_loading()
+            if not df.empty:
+                print("\n### Loading")
+                print(df)
+                #df = df.sort_values(['configuration','experiment_run','client'])
+                #df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
+                #print(df)
+                #print(df.columns)
+                #df_plot = evaluation.loading_set_datatypes(df)
+                #df_aggregated = evaluation.loading_aggregate_by_parallel_pods(df_plot)
+                #df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+                #df_aggregated = df_aggregated[['experiment_run',"threads","target","pod_count","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+                #print(df_aggregated)
         #####################
-        df = self.evaluator.get_df_benchmarking()
         warehouses = 0
-        df = self.evaluator.get_df_benchmarking()
-        if not df.empty:
-            print("\n### Execution")
+        if self.benchmarking_is_active():
+            df = self.evaluator.get_df_benchmarking()
+            if not df.empty:
+                print("\n### Execution")
+                #print(df)
+                warehouses = int(df['sf'].max())
+                df.fillna(0, inplace=True)
+                df_plot = self.evaluator.benchmarking_set_datatypes(df)
+                df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
+                df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
+                if "P95 [ms]" in df_aggregated:
+                    # we have latencies
+                    aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                    columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+                else:
+                    aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                    columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
+                df_aggregated_reduced = df_aggregated[aggregated_list].copy()
+                for col in columns:
+                    if col in df_aggregated.columns:
+                        df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+                print(df_aggregated_reduced)
+            print("\nWarehouses:", warehouses)
+        #####################
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = workload_properties['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual")
+                for c in workflow_actual:
+                    print("DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned")
+                for c in workflow_planned:
+                    print("DBMS", c, "- Pods", workflow_planned[c])
+        #####################
+        if self.loading_is_active():
+            print("\n### Loading")
+            #connections_sorted = sorted(connections, key=lambda c: c['name']) 
+            result = dict()
+            for c in connections_sorted:
+                #print(c)
+                """
+                print(c['name'], 
+                      c['timeLoad'], 
+                      '[s] for', 
+                      c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
+                      'threads on',
+                      c['hostsystem']['node'])
+                """
+                result[c['name']] = {
+                    'time_load': c['timeIngesting'],
+                    #'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'], # these are the benchmark clients
+                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_NUM_VU'],
+                    #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
+                    'pods': c['parameter']['parallelism'],
+                }
+                #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
+            df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
             #print(df)
-            warehouses = int(df['sf'].max())
-            df.fillna(0, inplace=True)
-            df_plot = self.evaluator.benchmarking_set_datatypes(df)
-            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
-            df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
-            if "P95 [ms]" in df_aggregated:
-                # we have latencies
-                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
-                columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
-            else:
-                aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
-                columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
-            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
-            for col in columns:
-                if col in df_aggregated.columns:
-                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            print(df_aggregated_reduced)
-        print("\nWarehouses:", warehouses)
-        #####################
-        print("\n### Workflow")
-        workflow_actual = self.evaluator.reconstruct_workflow(df)
-        workflow_planned = workload_properties['workflow_planned']
-        if len(workflow_actual) > 0:
-            print("\n#### Actual")
-            for c in workflow_actual:
-                print("DBMS", c, "- Pods", workflow_actual[c])
-        if len(workflow_planned) > 0:
-            print("\n#### Planned")
-            for c in workflow_planned:
-                print("DBMS", c, "- Pods", workflow_planned[c])
-        #####################
-        print("\n### Loading")
-        #connections_sorted = sorted(connections, key=lambda c: c['name']) 
-        result = dict()
-        for c in connections_sorted:
-            #print(c)
-            """
-            print(c['name'], 
-                  c['timeLoad'], 
-                  '[s] for', 
-                  c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
-                  'threads on',
-                  c['hostsystem']['node'])
-            """
-            result[c['name']] = {
-                'time_load': c['timeIngesting'],
-                #'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'], # these are the benchmark clients
-                'terminals': c['parameter']['connection_parameter']['loading_parameters']['PARALLEL'],
-                #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
-                'pods': c['parameter']['parallelism'],
-            }
-            #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
-        df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
-        #print(df)
-        #df = df.T.pivot(columns='terminals', index='target', values='time_load')
-        df_connections = df.copy().T
-        #print(df_connections)
-        df_time_load = pd.DataFrame(df_connections['time_load'], columns=['time_load'])
-        df_tpx = (warehouses*3600.0)/df_time_load.sort_index()
-        #print(df_tpx)
-        #df_loading_tpx = df_tpx['time_load']
-        df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
-        print(df_connections)
+            #df = df.T.pivot(columns='terminals', index='target', values='time_load')
+            df_connections = df.copy().T
+            #print(df_connections)
+            df_time_load = pd.DataFrame(df_connections['time_load'], columns=['time_load'])
+            df_tpx = (warehouses*3600.0)/df_time_load.sort_index()
+            #print(df_tpx)
+            #df_loading_tpx = df_tpx['time_load']
+            df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+            print(df_connections)
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
-        self.evaluator.test_results_column(df_aggregated_reduced, "NOPM")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
-        if self.test_workflow(workflow_actual, workflow_planned):
-            print("TEST passed: Workflow as planned")
-        else:
-            print("TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            self.evaluator.test_results_column(df_aggregated_reduced, "NOPM")
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("TEST passed: Workflow as planned")
+            else:
+                print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
@@ -2764,6 +3084,10 @@ class ycsb(default):
         self.args = args
         self.args_dict = parameter
         mode = str(parameter['mode'])
+        if mode=='load' or mode=='start':
+            self.benchmarking_active = False
+        if mode=='start':
+            self.loading_deactivated = True
         SF = str(self.SF)
         SFO = str(args.scaling_factor_operations)
         if SFO == 'None':
@@ -2782,7 +3106,7 @@ class ycsb(default):
                 type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
-        else:
+        elif mode == 'load':
             # we want to profile the import
             #self.set_queries_profiling()
             self.set_workload(
@@ -2791,19 +3115,34 @@ class ycsb(default):
                 type = 'ycsb',
                 defaultParameters = {'SF': SF}
             )
+        else:
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'YCSB Start DBMS',
+                info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
+                type = 'ycsb',
+                defaultParameters = {'SF': SF}
+            )
         self.loading_active = True
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
         self.workload['info'] = self.workload['info']+"\nWorkload is '{}'.".format(args.workload.upper())
-        self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
-        self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
-        self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
-        self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nNumber of rows to insert is {}.".format(ycsb_rows)
+            self.workload['info'] = self.workload['info']+"\nOrdering of inserts is {}.".format(extra_insert_order)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nNumber of operations is {}.".format(ycsb_operations)
+            self.workload['info'] = self.workload['info']+"\nBatch size is '{}'.".format(batchsize)
         #self.workload['info'] = self.workload['info']+"\nYCSB is performed using several threads and processes."
-        self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
-        self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
-        self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
+        if self.loading_is_active() or self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nTarget is based on multiples of '{}'.".format(target_base)
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
         default.prepare_testbed(self, parameter)
     def test_results(self):
         """
@@ -2885,17 +3224,25 @@ class ycsb(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
+            self.workload = workload_properties
+        #print(workload_properties) # sut_service
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
-        print("    "+workload_properties['intro'])
+        #print("    Name: "+workload_properties['name'])
+        print("    Intro: "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
             for error, messages in workload_properties['workflow_errors'].items():
                 print("    Error: "+error)
                 for message in messages:
                     print("        "+message)
+        if 'sut_service' in workload_properties:
+            print("\n### Services")
+            for c in sorted(workload_properties['sut_service']):
+                print(c)
+                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2948,10 +3295,19 @@ class ycsb(default):
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             print(df_aggregated_loaded)
+            # Make a copy to format safely
+            #formatted_df = df_aggregated_loaded.copy()
+            # Select float columns
+            #float_cols = formatted_df.select_dtypes(include="float").columns
+            # Format float columns as strings with no dtype conflict
+            #for col in float_cols:
+            #    formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.0f}")
+            #print(df_aggregated_loaded.to_markdown(index=True)) #, disable_numparse=True)) #, floatfmt=".4f"))
             test_loading = True
         #####################
         contains_failed = False
         df = self.evaluator.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
             print("\n### Execution")
             df.fillna(0, inplace=True)
@@ -2978,21 +3334,29 @@ class ycsb(default):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             print(df_aggregated_reduced)
+            #formatted_df = df_aggregated_reduced.copy()
+            # Select float columns
+            #float_cols = formatted_df.select_dtypes(include="float").columns
+            # Format float columns as strings with no dtype conflict
+            #for col in float_cols:
+            #    formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.0f}")
+            #print(formatted_df.to_markdown(index=False))
             #print(df_aggregated_reduced.columns)
             contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
         #evaluation = evaluators.ycsb(code=code, path=path)
         #####################
-        print("\n### Workflow")
-        workflow_actual = self.evaluator.reconstruct_workflow(df)
-        workflow_planned = workload_properties['workflow_planned']
-        if len(workflow_actual) > 0:
-            print("\n#### Actual")
-            for c in workflow_actual:
-                print("DBMS", c, "- Pods", workflow_actual[c])
-        if len(workflow_planned) > 0:
-            print("\n#### Planned")
-            for c in workflow_planned:
-                print("DBMS", c, "- Pods", workflow_planned[c])
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = workload_properties['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual")
+                for c in workflow_actual:
+                    print("DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned")
+                for c in workflow_planned:
+                    print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
@@ -3001,10 +3365,11 @@ class ycsb(default):
         self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
-        if self.test_workflow(workflow_actual, workflow_planned):
-            print("TEST passed: Workflow as planned")
-        else:
-            print("TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("TEST passed: Workflow as planned")
+            else:
+                print("TEST failed: Workflow not as planned")
         silent = False
         if contains_failed:
             if not silent:
@@ -3147,6 +3512,10 @@ class benchbase(default):
         self.args = args
         self.args_dict = parameter
         mode = str(parameter['mode'])
+        if mode=='load' or mode=='start':
+            self.benchmarking_active = False
+        if mode=='start':
+            self.loading_deactivated = True
         SF = str(self.SF)
         SD = int(args.scaling_duration)*60
         target_base = int(args.target_base)
@@ -3157,8 +3526,27 @@ class benchbase(default):
         num_benchmarking_target_factors = self.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             self.set_workload(
-                name = 'Benchbase Workload SF={}'.format(SF),
+                name = 'Benchbase Workload {} SF={}'.format(type_of_benchmark, SF),
                 info = 'This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
+                type = 'benchbase',
+                defaultParameters = {'SF': SF}
+            )
+        elif mode == 'load':
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'Benchbase Data {} Loading SF={}'.format(type_of_benchmark, SF),
+                info = 'This imports a Benchbase data set.',
+                type = 'benchbase',
+                defaultParameters = {'SF': SF}
+            )
+        else:
+            # we want to profile the import
+            #self.set_queries_profiling()
+            self.set_workload(
+                name = 'Benchbase Start DBMS',
+                info = 'This just starts a SUT.',
+                intro = 'Start DBMS and do not load data.',
                 type = 'benchbase',
                 defaultParameters = {'SF': SF}
             )
@@ -3166,22 +3554,26 @@ class benchbase(default):
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.set_experiment(script='Schema')
         # note more infos about experiment in workload description
-        self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
-        if len(type_of_benchmark):
-            self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
-            if type_of_benchmark == "ycsb":
-                self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
-        if SF:
-            #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
-            self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
-        if SD:
-            self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
-        self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
-        self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
-        if extra_keying:
-            self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
-        if extra_new_connection:
-            self.workload['info'] = self.workload['info']+" There is a reconnect for each transaction."
+        if self.loading_is_active():
+            self.workload['info'] = self.workload['info']+"\nBenchbase data is generated and loaded using several threads."
+        if self.benchmarking_is_active():
+            if len(type_of_benchmark):
+                self.workload['info'] = self.workload['info']+"\nBenchmark is '{}'.".format(type_of_benchmark)
+                if type_of_benchmark == "ycsb":
+                    self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
+        if self.loading_is_active() or self.benchmarking_is_active():
+            if SF:
+                #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
+                self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
+            self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
+        if self.benchmarking_is_active():
+            self.workload['info'] = self.workload['info']+" Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+            if extra_keying:
+                self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
+            if extra_new_connection:
+                self.workload['info'] = self.workload['info']+" There is a reconnect for each transaction."
+            if SD:
+                self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         default.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
@@ -3277,17 +3669,24 @@ class benchbase(default):
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
+            self.workload = workload_properties
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
         print("    Duration: {}s ".format(workload_properties['duration']))
         print("    Code: "+code)
-        print("    "+workload_properties['intro'])
+        #print("    Name: "+workload_properties['name'])
+        print("    Intro: "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
             for error, messages in workload_properties['workflow_errors'].items():
                 print("    Error: "+error)
                 for message in messages:
                     print("        "+message)
+        if 'sut_service' in workload_properties:
+            print("\n### Services")
+            for c in sorted(workload_properties['sut_service']):
+                print(c)
+                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -3346,6 +3745,7 @@ class benchbase(default):
         #####################
         warehouses = 0
         df = self.evaluator.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
             print("\n### Execution")
             warehouses = int(df['sf'].max())
@@ -3367,60 +3767,63 @@ class benchbase(default):
         # test: show time series
         #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
         #####################
-        print("\n### Workflow")
-        workflow_actual = self.evaluator.reconstruct_workflow(df)
-        workflow_planned = workload_properties['workflow_planned']
-        if len(workflow_actual) > 0:
-            print("\n#### Actual")
-            for c in workflow_actual:
-                print("DBMS", c, "- Pods", workflow_actual[c])
-        if len(workflow_planned) > 0:
-            print("\n#### Planned")
-            for c in workflow_planned:
-                print("DBMS", c, "- Pods", workflow_planned[c])
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = workload_properties['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual")
+                for c in workflow_actual:
+                    print("DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned")
+                for c in workflow_planned:
+                    print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
-        print("\n### Loading")
-        #connections_sorted = sorted(connections, key=lambda c: c['name']) 
-        result = dict()
-        for c in connections_sorted:
-            """
-            print(c['name'], 
-                  c['timeLoad'], 
-                  '[s] for', 
-                  c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
-                  'threads on',
-                  c['hostsystem']['node'])
-            """
-            result[c['name']] = {
-                'time_load': c['timeIngesting'],
-                'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'],
-                #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
-                'pods': c['parameter']['parallelism'],
-            }
-            #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
-        df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
-        #print(df)
-        #df = df.T.pivot(columns='terminals', index='target', values='time_load')
-        df_connections = df.copy().T
-        #print(df_connections)
-        df_tpx = (warehouses*3600.0)/df_connections.sort_index()
-        #print(df_tpx)
-        #df_loading_tpx = df_tpx['time_load']
-        #df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
-        df_connections['Throughput [SF/h]'] = df_tpx['time_load']
-        df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
-        print(df_connections)
-        #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
+        if self.loading_is_active():
+            print("\n### Loading")
+            #connections_sorted = sorted(connections, key=lambda c: c['name']) 
+            result = dict()
+            for c in connections_sorted:
+                """
+                print(c['name'], 
+                      c['timeLoad'], 
+                      '[s] for', 
+                      c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'], 
+                      'threads on',
+                      c['hostsystem']['node'])
+                """
+                result[c['name']] = {
+                    'time_load': c['timeIngesting'],
+                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'],
+                    #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
+                    'pods': c['parameter']['parallelism'],
+                }
+                #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
+            df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
+            #print(df)
+            #df = df.T.pivot(columns='terminals', index='target', values='time_load')
+            df_connections = df.copy().T
+            #print(df_connections)
+            df_tpx = (warehouses*3600.0)/df_connections.sort_index()
+            #print(df_tpx)
+            #df_loading_tpx = df_tpx['time_load']
+            #df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
+            df_connections['Throughput [SF/h]'] = df_tpx['time_load']
+            df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
+            print(df_connections)
+            #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
         self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
-        if self.test_workflow(workflow_actual, workflow_planned):
-            print("TEST passed: Workflow as planned")
-        else:
-            print("TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("TEST passed: Workflow as planned")
+            else:
+                print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']

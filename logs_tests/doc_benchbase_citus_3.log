@@ -2,11 +2,12 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1744225690
-Experiment                    : starts at 2025-04-09 21:08:10.361429 (8417853.831978168)
+Experiment                    : has code 1748870442
+Experiment                    : starts at 2025-06-02 15:20:41.926438 (13062605.396988109)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [4]. Benchmarking has keying and thinking times activated.
+Benchmark is 'tpcc'. Scaling factor is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [4]. Benchmarking has keying and thinking times activated.
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['Citus'].
 Import is handled by 1 processes (pods).
@@ -21,22 +22,22 @@ Experiment is run 2 times.
 Cluster monitoring            : is running
 done
 Citus-1-1-1024                : will start now
-Citus-1-1-1024                : Name of SUT pods = bexhoma-sut-citus-1-1-1024-benchbase-128
-Citus-1-1-1024                : Name of SUT service = bexhoma-sut-citus-1-1-1024-benchbase-128
-Citus-1-1-1024                : Name of SUT PVC name = bexhoma-storage-citus-benchbase-128
-Citus-1-1-1024                : Name of Worker pods = bexhoma-worker-citus-benchbase-128
-Citus-1-1-1024                : Name of Worker service headless = bexhoma-worker-citus-benchbase-128
-Citus-1-1-1024                : storage exists bexhoma-storage-citus-benchbase-128
+Citus-1-1-1024                : Name of SUT pods = bexhoma-sut-citus-1-1-1024-benchbase-tpcc-128
+Citus-1-1-1024                : Name of SUT service = bexhoma-sut-citus-1-1-1024-benchbase-tpcc-128
+Citus-1-1-1024                : Name of SUT PVC name = bexhoma-storage-citus-benchbase-tpcc-128
+Citus-1-1-1024                : Name of Worker pods = bexhoma-worker-citus-benchbase-tpcc-128
+Citus-1-1-1024                : Name of Worker service headless = bexhoma-worker-citus-benchbase-tpcc-128
+Citus-1-1-1024                : storage exists bexhoma-storage-citus-benchbase-tpcc-128
 Citus-1-1-1024                : label loaded copied value True
-Citus-1-1-1024                : label timeLoading copied value 859
-Citus-1-1-1024                : label timeLoadingStart copied value 1744210010
-Citus-1-1-1024                : label timeLoadingEnd copied value 1744210876
+Citus-1-1-1024                : label timeLoading copied value 842
+Citus-1-1-1024                : label timeLoadingStart copied value 1748854736
+Citus-1-1-1024                : label timeLoadingEnd copied value 1748855587
 Citus-1-1-1024                : label indexed copied value True
 Citus-1-1-1024                : label time_generated copied value 0
-Citus-1-1-1024                : label time_indexed copied value 17
-Citus-1-1-1024                : label time_ingested copied value 840
-Citus-1-1-1024                : label time_initschema copied value 2
-Citus-1-1-1024                : label time_loaded copied value 2
+Citus-1-1-1024                : label time_indexed copied value 30
+Citus-1-1-1024                : label time_ingested copied value 809
+Citus-1-1-1024                : label time_initschema copied value 3
+Citus-1-1-1024                : label time_loaded copied value 3
 Citus-1-1-1024                : loading is set to finished
 - waiting 30s -               : done
 Citus-1-1-1024                : waits for health check to succeed
@@ -49,122 +50,120 @@ Citus-1-1-1024                : waits for health check to succeed
 - waiting 30s -               : done
 Citus-1-1-1024                : waits for health check to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
-Citus-1-1-1024                : found 1 / 4 running workers
-Citus-1-1-1024                : waits for health check of workers to succeed
-- waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : found 3 / 4 running workers
+Citus-1-1-1024                : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 4 / 4 running workers
 Citus-1-1-1024                : try to attach workers to master
 Citus-1-1-1024                : master found
 Citus-1-1-1024                : looking for worker pods
 - waiting 5s -                : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found running worker 1
 Citus-1-1-1024                : found running worker 2
 Citus-1-1-1024                : found running worker 3
 Citus-1-1-1024                : found running worker 4
 Citus-1-1-1024                : found 4 running workers of 4
 Citus-1-1-1024                : list of workers
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-0.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-0.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                1
 (1 row)
 
 
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-1.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-1.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                2
 (1 row)
 
 
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-2.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-2.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                3
 (1 row)
 
 
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-3.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-3.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                4
 (1 row)
 
 
-Citus-1-1-1024                : will start benchmarking but not before 2025-04-09 19:19:45 (that is in 60 secs)
+Citus-1-1-1024                : will start benchmarking but not before 2025-06-02 13:32:18 (that is in 60 secs)
 - waiting 30s -               : done
-Citus-1-1-1024                : will start benchmarking but not before 2025-04-09 19:19:45
+Citus-1-1-1024                : will start benchmarking but not before 2025-06-02 13:32:18
 done
 Citus-1-1-1024                : benchmarks done 0 of 2. This will be client 1
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 1280, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 1280, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-1-1            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-1-1-dv8t2: found
-- waiting 30s -               : done
-Citus-1-1-1024                : has running benchmarks
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-1-1-jwqgt: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -252,27 +251,27 @@ Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-1-1            : showing benchmarker times
-Citus-1-1-1024-1-1            : benchmarker timespan (start to end single container [s]) = 1344
-Citus-1-1-1024-1-1            : benchmarker times (start/end per pod and container) = [(1744226404, 1744227719)]
-Citus-1-1-1024-1-1            : found and updated times {'benchmarker': [(1744226404, 1744227719)]}
+Citus-1-1-1024-1-1            : benchmarker timespan (start to end single container [s]) = 1316
+Citus-1-1-1024-1-1            : benchmarker times (start/end per pod and container) = [(1748871158, 1748872453)]
+Citus-1-1-1024-1-1            : found and updated times {'benchmarker': [(1748871158, 1748872453)]}
 Citus-1-1-1024-1-1            : collecting execution metrics of SUT at connection Citus-1-1-1024-1-1
-Citus-1-1-1024-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-1-1            : collecting metrics of benchmarker at connection Citus-1-1-1024-1-1
-Citus-1-1-1024-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : benchmarks done 0 of 2. This will be client 2
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 2048, 'BENCHBASE_TERMINALS': 640, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 2048, 'BENCHBASE_TERMINALS': 640, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-1-2            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-1-2-n2dgg: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-1-2-2z79m: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -360,27 +359,27 @@ Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-1-2            : showing benchmarker times
-Citus-1-1-1024-1-2            : benchmarker timespan (start to end single container [s]) = 1319
-Citus-1-1-1024-1-2            : benchmarker times (start/end per pod and container) = [(1744227803, 1744229097), (1744227803, 1744229091)]
-Citus-1-1-1024-1-2            : found and updated times {'benchmarker': [(1744227803, 1744229097), (1744227803, 1744229091)]}
+Citus-1-1-1024-1-2            : benchmarker timespan (start to end single container [s]) = 1320
+Citus-1-1-1024-1-2            : benchmarker times (start/end per pod and container) = [(1748872530, 1748873828), (1748872530, 1748873819)]
+Citus-1-1-1024-1-2            : found and updated times {'benchmarker': [(1748872530, 1748873828), (1748872530, 1748873819)]}
 Citus-1-1-1024-1-2            : collecting execution metrics of SUT at connection Citus-1-1-1024-1-2
-Citus-1-1-1024-1-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-1-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-1-2            : collecting metrics of benchmarker at connection Citus-1-1-1024-1-2
-Citus-1-1-1024-1-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-1-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : benchmarks done 0 of 2. This will be client 3
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '5', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 819, 'BENCHBASE_TERMINALS': 256, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 819, 'BENCHBASE_TERMINALS': 256, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-1-3            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-1-3-fxv9s: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-1-3-2v86c: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -469,26 +468,26 @@ done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-1-3            : showing benchmarker times
 Citus-1-1-1024-1-3            : benchmarker timespan (start to end single container [s]) = 1325
-Citus-1-1-1024-1-3            : benchmarker times (start/end per pod and container) = [(1744229179, 1744230478), (1744229179, 1744230450), (1744229178, 1744230452), (1744229178, 1744230461), (1744229178, 1744230461)]
-Citus-1-1-1024-1-3            : found and updated times {'benchmarker': [(1744229179, 1744230478), (1744229179, 1744230450), (1744229178, 1744230452), (1744229178, 1744230461), (1744229178, 1744230461)]}
+Citus-1-1-1024-1-3            : benchmarker times (start/end per pod and container) = [(1748873906, 1748875201), (1748873907, 1748875201), (1748873906, 1748875174), (1748873907, 1748875211), (1748873907, 1748875165)]
+Citus-1-1-1024-1-3            : found and updated times {'benchmarker': [(1748873906, 1748875201), (1748873907, 1748875201), (1748873906, 1748875174), (1748873907, 1748875211), (1748873907, 1748875165)]}
 Citus-1-1-1024-1-3            : collecting execution metrics of SUT at connection Citus-1-1-1024-1-3
-Citus-1-1-1024-1-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-1-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-1-3            : collecting metrics of benchmarker at connection Citus-1-1-1024-1-3
-Citus-1-1-1024-1-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-1-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : benchmarks done 0 of 2. This will be client 4
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '10', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 409, 'BENCHBASE_TERMINALS': 128, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 409, 'BENCHBASE_TERMINALS': 128, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-1-4            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-1-4-5w2xd: .found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-1-4-45l7q: .found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -574,36 +573,36 @@ Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-1-4            : showing benchmarker times
-Citus-1-1-1024-1-4            : benchmarker timespan (start to end single container [s]) = 1320
-Citus-1-1-1024-1-4            : benchmarker times (start/end per pod and container) = [(1744230562, 1744231816), (1744230561, 1744231825), (1744230562, 1744231836), (1744230562, 1744231824), (1744230562, 1744231833), (1744230562, 1744231829), (1744230562, 1744231823), (1744230562, 1744231862), (1744230561, 1744231844), (1744230562, 1744231816)]
-Citus-1-1-1024-1-4            : found and updated times {'benchmarker': [(1744230562, 1744231816), (1744230561, 1744231825), (1744230562, 1744231836), (1744230562, 1744231824), (1744230562, 1744231833), (1744230562, 1744231829), (1744230562, 1744231823), (1744230562, 1744231862), (1744230561, 1744231844), (1744230562, 1744231816)]}
+Citus-1-1-1024-1-4            : benchmarker timespan (start to end single container [s]) = 1325
+Citus-1-1-1024-1-4            : benchmarker times (start/end per pod and container) = [(1748875292, 1748876558), (1748875293, 1748876562), (1748875292, 1748876562), (1748875292, 1748876565), (1748875292, 1748876599), (1748875293, 1748876569), (1748875293, 1748876565), (1748875293, 1748876582), (1748875293, 1748876564), (1748875292, 1748876563)]
+Citus-1-1-1024-1-4            : found and updated times {'benchmarker': [(1748875292, 1748876558), (1748875293, 1748876562), (1748875292, 1748876562), (1748875292, 1748876565), (1748875292, 1748876599), (1748875293, 1748876569), (1748875293, 1748876565), (1748875293, 1748876582), (1748875293, 1748876564), (1748875292, 1748876563)]}
 Citus-1-1-1024-1-4            : collecting execution metrics of SUT at connection Citus-1-1-1024-1-4
-Citus-1-1-1024-1-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-1-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-1-4            : collecting metrics of benchmarker at connection Citus-1-1-1024-1-4
-Citus-1-1-1024-1-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-1-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : can be stopped
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : still being removed
 done
 Citus-1-1-1024                : starts again
-Citus-1-1-1024                : Name of SUT pods = bexhoma-sut-citus-1-1-1024-benchbase-128
-Citus-1-1-1024                : Name of SUT service = bexhoma-sut-citus-1-1-1024-benchbase-128
-Citus-1-1-1024                : Name of SUT PVC name = bexhoma-storage-citus-benchbase-128
-Citus-1-1-1024                : Name of Worker pods = bexhoma-worker-citus-benchbase-128
-Citus-1-1-1024                : Name of Worker service headless = bexhoma-worker-citus-benchbase-128
-Citus-1-1-1024                : storage exists bexhoma-storage-citus-benchbase-128
+Citus-1-1-1024                : Name of SUT pods = bexhoma-sut-citus-1-1-1024-benchbase-tpcc-128
+Citus-1-1-1024                : Name of SUT service = bexhoma-sut-citus-1-1-1024-benchbase-tpcc-128
+Citus-1-1-1024                : Name of SUT PVC name = bexhoma-storage-citus-benchbase-tpcc-128
+Citus-1-1-1024                : Name of Worker pods = bexhoma-worker-citus-benchbase-tpcc-128
+Citus-1-1-1024                : Name of Worker service headless = bexhoma-worker-citus-benchbase-tpcc-128
+Citus-1-1-1024                : storage exists bexhoma-storage-citus-benchbase-tpcc-128
 Citus-1-1-1024                : label loaded copied value True
-Citus-1-1-1024                : label timeLoading copied value 859
-Citus-1-1-1024                : label timeLoadingStart copied value 1744210010
-Citus-1-1-1024                : label timeLoadingEnd copied value 1744210876
+Citus-1-1-1024                : label timeLoading copied value 842
+Citus-1-1-1024                : label timeLoadingStart copied value 1748854736
+Citus-1-1-1024                : label timeLoadingEnd copied value 1748855587
 Citus-1-1-1024                : label indexed copied value True
 Citus-1-1-1024                : label time_generated copied value 0
-Citus-1-1-1024                : label time_indexed copied value 17
-Citus-1-1-1024                : label time_ingested copied value 840
-Citus-1-1-1024                : label time_initschema copied value 2
-Citus-1-1-1024                : label time_loaded copied value 2
+Citus-1-1-1024                : label time_indexed copied value 30
+Citus-1-1-1024                : label time_ingested copied value 809
+Citus-1-1-1024                : label time_initschema copied value 3
+Citus-1-1-1024                : label time_loaded copied value 3
 Citus-1-1-1024                : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
@@ -615,130 +614,132 @@ Citus-1-1-1024                : waits for health check to succeed
 - waiting 30s -               : done
 Citus-1-1-1024                : waits for health check to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : waits for health check to succeed
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0']
+Citus-1-1-1024                : found 0 / 4 running workers
+Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0']
+Citus-1-1-1024                : found 0 / 4 running workers
+Citus-1-1-1024                : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1']
 Citus-1-1-1024                : found 1 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2']
 Citus-1-1-1024                : found 2 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 3 / 4 running workers
 Citus-1-1-1024                : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : found 3 / 4 running workers
-Citus-1-1-1024                : waits for health check of workers to succeed
-- waiting 30s -               : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found 4 / 4 running workers
 Citus-1-1-1024                : try to attach workers to master
 Citus-1-1-1024                : master found
 Citus-1-1-1024                : looking for worker pods
 - waiting 5s -                : done
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 Citus-1-1-1024                : found running worker 1
 Citus-1-1-1024                : found running worker 2
 Citus-1-1-1024                : found running worker 3
 Citus-1-1-1024                : found running worker 4
 Citus-1-1-1024                : found 4 running workers of 4
 Citus-1-1-1024                : list of workers
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-0.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-0.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                1
 (1 row)
 
 
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-1.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-1.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                2
 (1 row)
 
 
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-2.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-2.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                3
 (1 row)
 
 
-Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-128-3.bexhoma-worker-citus-benchbase-128 attached
+Citus-1-1-1024                : worker bexhoma-worker-citus-benchbase-tpcc-128-3.bexhoma-worker-citus-benchbase-tpcc-128 attached
   master_add_node 
 -----------------
                4
 (1 row)
 
 
-Citus-1-1-1024                : will start benchmarking but not before 2025-04-09 21:04:42 (that is in 60 secs)
+Citus-1-1-1024                : will start benchmarking but not before 2025-06-02 15:16:56 (that is in 60 secs)
 - waiting 30s -               : done
-Citus-1-1-1024                : will start benchmarking but not before 2025-04-09 21:04:42
+Citus-1-1-1024                : will start benchmarking but not before 2025-06-02 15:16:56
 done
 Citus-1-1-1024                : benchmarks done 1 of 2. This will be client 1
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 1280, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 1280, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-2-1            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-2-1-xvthn: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-2-1-ts5l4: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -828,27 +829,27 @@ Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-2-1            : showing benchmarker times
-Citus-1-1-1024-2-1            : benchmarker timespan (start to end single container [s]) = 1343
-Citus-1-1-1024-2-1            : benchmarker times (start/end per pod and container) = [(1744232701, 1744234015)]
-Citus-1-1-1024-2-1            : found and updated times {'benchmarker': [(1744232701, 1744234015)]}
+Citus-1-1-1024-2-1            : benchmarker timespan (start to end single container [s]) = 1345
+Citus-1-1-1024-2-1            : benchmarker times (start/end per pod and container) = [(1748877436, 1748878759)]
+Citus-1-1-1024-2-1            : found and updated times {'benchmarker': [(1748877436, 1748878759)]}
 Citus-1-1-1024-2-1            : collecting execution metrics of SUT at connection Citus-1-1-1024-2-1
-Citus-1-1-1024-2-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-2-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-2-1            : collecting metrics of benchmarker at connection Citus-1-1-1024-2-1
-Citus-1-1-1024-2-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-2-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : benchmarks done 1 of 2. This will be client 2
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '2', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 2048, 'BENCHBASE_TERMINALS': 640, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 2048, 'BENCHBASE_TERMINALS': 640, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-2-2            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-2-2-28knm: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-2-2-jjdrz: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -931,34 +932,32 @@ Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
-done
-Citus-1-1-1024                : has running benchmarks
-done
+- waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-2-2            : showing benchmarker times
-Citus-1-1-1024-2-2            : benchmarker timespan (start to end single container [s]) = 1351
-Citus-1-1-1024-2-2            : benchmarker times (start/end per pod and container) = [(1744234098, 1744235414), (1744234098, 1744235382)]
-Citus-1-1-1024-2-2            : found and updated times {'benchmarker': [(1744234098, 1744235414), (1744234098, 1744235382)]}
+Citus-1-1-1024-2-2            : benchmarker timespan (start to end single container [s]) = 1320
+Citus-1-1-1024-2-2            : benchmarker times (start/end per pod and container) = [(1748878838, 1748880139), (1748878838, 1748880151)]
+Citus-1-1-1024-2-2            : found and updated times {'benchmarker': [(1748878838, 1748880139), (1748878838, 1748880151)]}
 Citus-1-1-1024-2-2            : collecting execution metrics of SUT at connection Citus-1-1-1024-2-2
-Citus-1-1-1024-2-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-2-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-2-2            : collecting metrics of benchmarker at connection Citus-1-1-1024-2-2
-Citus-1-1-1024-2-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-2-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : benchmarks done 1 of 2. This will be client 3
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '5', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 819, 'BENCHBASE_TERMINALS': 256, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 819, 'BENCHBASE_TERMINALS': 256, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-2-3            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-2-3-4l7xg: found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-2-3-gzrk8: found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -1040,31 +1039,33 @@ Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
+Citus-1-1-1024                : has running benchmarks
+done
 Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-2-3            : showing benchmarker times
-Citus-1-1-1024-2-3            : benchmarker timespan (start to end single container [s]) = 1295
-Citus-1-1-1024-2-3            : benchmarker times (start/end per pod and container) = [(1744235505, 1744236779), (1744235505, 1744236791), (1744235505, 1744236788), (1744235505, 1744236766), (1744235505, 1744236782)]
-Citus-1-1-1024-2-3            : found and updated times {'benchmarker': [(1744235505, 1744236779), (1744235505, 1744236791), (1744235505, 1744236788), (1744235505, 1744236766), (1744235505, 1744236782)]}
+Citus-1-1-1024-2-3            : benchmarker timespan (start to end single container [s]) = 1328
+Citus-1-1-1024-2-3            : benchmarker times (start/end per pod and container) = [(1748880216, 1748881481), (1748880217, 1748881488), (1748880217, 1748881506), (1748880216, 1748881516), (1748880216, 1748881482)]
+Citus-1-1-1024-2-3            : found and updated times {'benchmarker': [(1748880216, 1748881481), (1748880217, 1748881488), (1748880217, 1748881506), (1748880216, 1748881516), (1748880216, 1748881482)]}
 Citus-1-1-1024-2-3            : collecting execution metrics of SUT at connection Citus-1-1-1024-2-3
-Citus-1-1-1024-2-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-2-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-2-3            : collecting metrics of benchmarker at connection Citus-1-1-1024-2-3
-Citus-1-1-1024-2-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-2-3            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : benchmarks done 1 of 2. This will be client 4
-Citus-1-1-1024                : we will change parameters of benchmark as {'PARALLEL': '10', 'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 409, 'BENCHBASE_TERMINALS': 128, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
+Citus-1-1-1024                : we will change parameters of benchmark as {'SF': '128', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 409, 'BENCHBASE_TERMINALS': 128, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_REPLICAS': 1, 'BENCHBASE_STATUS_INTERVAL': 30000, 'BENCHBASE_KEY_AND_THINK': 'true'}
 Citus-1-1-1024-2-4            : start benchmarking
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-0
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-1
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-2
-Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-128-3
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1744225690
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-0
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-1
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-2
+Citus-1-1-1024                : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-128-3
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Citus-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1748870442
 - waiting 10s -               : done
-Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1744225690-2-4-44qnh: .found
+Citus-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-citus-1-1-1024-1748870442-2-4-47tzh: .found
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
@@ -1144,24 +1145,26 @@ Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
+Citus-1-1-1024                : has running benchmarks
+done
 Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 done
 Citus-1-1-1024                : has running benchmarks
 Citus-1-1-1024-2-4            : showing benchmarker times
-Citus-1-1-1024-2-4            : benchmarker timespan (start to end single container [s]) = 1320
-Citus-1-1-1024-2-4            : benchmarker times (start/end per pod and container) = [(1744236859, 1744238133), (1744236859, 1744238127), (1744236859, 1744238120), (1744236859, 1744238141), (1744236860, 1744238129), (1744236859, 1744238138), (1744236859, 1744238125), (1744236859, 1744238120), (1744236859, 1744238140), (1744236859, 1744238140)]
-Citus-1-1-1024-2-4            : found and updated times {'benchmarker': [(1744236859, 1744238133), (1744236859, 1744238127), (1744236859, 1744238120), (1744236859, 1744238141), (1744236860, 1744238129), (1744236859, 1744238138), (1744236859, 1744238125), (1744236859, 1744238120), (1744236859, 1744238140), (1744236859, 1744238140)]}
+Citus-1-1-1024-2-4            : benchmarker timespan (start to end single container [s]) = 1353
+Citus-1-1-1024-2-4            : benchmarker times (start/end per pod and container) = [(1748881605, 1748882902), (1748881605, 1748882923), (1748881604, 1748882869), (1748881604, 1748882865), (1748881604, 1748882895), (1748881604, 1748882866), (1748881605, 1748882906), (1748881604, 1748882867), (1748881604, 1748882870), (1748881604, 1748882864)]
+Citus-1-1-1024-2-4            : found and updated times {'benchmarker': [(1748881605, 1748882902), (1748881605, 1748882923), (1748881604, 1748882869), (1748881604, 1748882865), (1748881604, 1748882895), (1748881604, 1748882866), (1748881605, 1748882906), (1748881604, 1748882867), (1748881604, 1748882870), (1748881604, 1748882864)]}
 Citus-1-1-1024-2-4            : collecting execution metrics of SUT at connection Citus-1-1-1024-2-4
-Citus-1-1-1024-2-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024-2-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-benchbase-tpcc-128-(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 Citus-1-1-1024-2-4            : collecting metrics of benchmarker at connection Citus-1-1-1024-2-4
-Citus-1-1-1024-2-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1744225690(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
+Citus-1-1-1024-2-4            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-1-1-1024-1748870442(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
 done
 Citus-1-1-1024                : can be stopped
-Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-128-0', 'bexhoma-worker-citus-benchbase-128-1', 'bexhoma-worker-citus-benchbase-128-2', 'bexhoma-worker-citus-benchbase-128-3']
-Experiment ends at 2025-04-10 00:36:54.130520 (8430377.601073883): 12523.769095715135s total
+Citus-1-1-1024                : Worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-128-0', 'bexhoma-worker-citus-benchbase-tpcc-128-1', 'bexhoma-worker-citus-benchbase-tpcc-128-2', 'bexhoma-worker-citus-benchbase-tpcc-128-3']
+Experiment ends at 2025-06-02 18:49:51.923045 (13075155.393595543): 12549.996607434005s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -1170,14 +1173,15 @@ Result workflow not complete
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=128 (warehouses for TPC-C)
+Benchbase Workload SF=128
     Type: benchbase
-    Duration: 12524s 
-    Code: 1744225690
-    Benchbase runs the benchmark.
+    Duration: 12550s 
+    Code: 1748870442
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [4]. Benchmarking has keying and thinking times activated.
+    Benchmark is 'tpcc'. Scaling factor is 128. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [4]. Benchmarking has keying and thinking times activated.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
@@ -1192,491 +1196,489 @@ Benchbase Workload SF=128 (warehouses for TPC-C)
 
 ### Connections
 Citus-1-1-1024-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979472
+    disk:317388476
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196110348
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275391888
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363180784
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317648696
+        disk:361486720
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.4G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224036232
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:362655184
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:434860384
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-1-2 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979644
+    disk:317382036
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196112900
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392008
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363189352
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317650884
+        disk:356977844
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.4G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224965112
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364360200
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:435663576
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-1-3 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979644
+    disk:317382048
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196115280
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392072
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363189740
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317652984
+        disk:358345232
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.4G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224961756
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364356364
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:435540052
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-1-4 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979644
+    disk:317382240
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:480.0M
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:1
     worker 0
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196117652
-        volume_size:100.0G
-        volume_used:22.0G
-    worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392136
-        volume_size:100.0G
-        volume_used:14.4G
-    worker 2
-        RAM:540587528192
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:5.15.0-136-generic
-        node:cl-worker22
-        disk:363198244
-        volume_size:100.0G
-        volume_used:12.9G
-    worker 3
-        RAM:1081650987008
+        RAM:1081649897472
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker34
-        disk:317655140
+        disk:344722988
         volume_size:100.0G
-        volume_used:13.8G
+        volume_used:20.5G
+    worker 1
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224965136
+        volume_size:100.0G
+        volume_used:13.4G
+    worker 2
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364360768
+        volume_size:100.0G
+        volume_used:11.5G
+    worker 3
+        RAM:540579409920
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker22
+        disk:435528068
+        volume_size:100.0G
+        volume_used:12.8G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979820
+    disk:317382260
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363199300
+        disk:435541456
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392292
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344738532
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196121040
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224988908
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351340
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364367480
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-2 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979820
+    disk:317382456
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363200180
+        disk:435541672
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392356
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344740640
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196123464
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224992160
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351424
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364372704
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-3 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979996
+    disk:317382468
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363208700
+        disk:435529284
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392480
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344730080
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196126044
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224982784
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351456
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364376000
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 Citus-1-1-1024-2-4 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201979996
+    disk:317382660
     volume_size:100.0G
-    volume_used:604.0M
+    volume_used:464.0M
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:2
     worker 0
-        RAM:540587528192
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-136-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:363209068
+        disk:435529412
         volume_size:100.0G
-        volume_used:20.9G
+        volume_used:19.4G
     worker 1
-        RAM:540595875840
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-136-generic
-        node:cl-worker23
-        disk:275392540
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:344732060
         volume_size:100.0G
-        volume_used:13.6G
+        volume_used:12.6G
     worker 2
-        RAM:1081965506560
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:1196128244
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:224985936
         volume_size:100.0G
-        volume_used:12.2G
+        volume_used:10.8G
     worker 3
-        RAM:540595879936
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker25
-        disk:204351488
+        RAM:541008568320
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-140-generic
+        node:cl-worker13
+        disk:364380020
         volume_size:100.0G
-        volume_used:12.9G
+        volume_used:11.9G
     eval_parameters
-                code:1744225690
+                code:1748870442
                 BEXHOMA_REPLICAS:1
                 BEXHOMA_SHARDS:48
                 BEXHOMA_WORKERS:4
 
 ### Execution
                     experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-Citus-1-1-1024-1-1               1       1280    4096          1  1200.0           0                         60.77                      60.49       99.22                                                     194436.0                                             137768.0
-Citus-1-1-1024-1-2               1       1280    4096          2  1200.0           0                         61.02                      60.73       99.61                                                     135335.0                                              44913.5
-Citus-1-1-1024-1-3               1       1280    4095          5  1200.0           0                         61.32                      61.03      100.10                                                     129204.0                                              45583.0
-Citus-1-1-1024-1-4               1       1280    4090         10  1200.0           0                         60.99                      60.72       99.60                                                     150526.0                                              46910.0
-Citus-1-1-1024-2-1               2       1280    4096          1  1200.0           0                         60.98                      60.73       99.61                                                     193737.0                                              58991.0
-Citus-1-1-1024-2-2               2       1280    4096          2  1200.0           0                         61.19                      60.89       99.88                                                     147501.0                                              45104.0
-Citus-1-1-1024-2-3               2       1280    4095          5  1200.0           0                         61.20                      60.93       99.95                                                     130050.0                                              42462.4
-Citus-1-1-1024-2-4               2       1280    4090         10  1200.0           0                         61.15                      60.88       99.86                                                     122215.0                                              43099.0
-
-Warehouses: 128
+Citus-1-1-1024-1-1               1       1280    4096          1  1200.0           0                         60.66                      60.38       99.04                                                     217944.0                                             135049.0
+Citus-1-1-1024-1-2               1       1280    4096          2  1200.0           0                         61.00                      60.70       99.56                                                     160434.0                                              52965.5
+Citus-1-1-1024-1-3               1       1280    4095          5  1200.0           0                         60.98                      60.69       99.55                                                     137720.0                                              51431.6
+Citus-1-1-1024-1-4               1       1280    4090         10  1200.0           0                         60.98                      60.73       99.62                                                     144851.0                                              51534.2
+Citus-1-1-1024-2-1               2       1280    4096          1  1200.0           0                         60.94                      60.66       99.50                                                     211963.0                                              65532.0
+Citus-1-1-1024-2-2               2       1280    4096          2  1200.0           0                         61.47                      61.19      100.37                                                     141000.0                                              50541.0
+Citus-1-1-1024-2-3               2       1280    4095          5  1200.0           0                         61.06                      60.78       99.70                                                     131773.0                                              48938.2
+Citus-1-1-1024-2-4               2       1280    4090         10  1200.0           0                         61.14                      60.86       99.83                                                     123939.0                                              54983.3
 
 ### Workflow
 
 #### Actual
-DBMS Citus-1-1-1024 - Pods [[10, 5, 2, 1], [5, 10, 2, 1]]
+DBMS Citus-1-1-1024 - Pods [[10, 2, 5, 1], [5, 2, 10, 1]]
 
 #### Planned
 DBMS Citus-1-1-1024 - Pods [[1, 2, 5, 10], [1, 2, 5, 10]]
 
 ### Loading
-                    time_load  terminals  pods  Imported warehouses [1/h]
-Citus-1-1-1024-1-1      840.0        1.0   1.0                 548.571429
-Citus-1-1-1024-1-2      840.0        1.0   2.0                 548.571429
-Citus-1-1-1024-1-3      840.0        1.0   5.0                 548.571429
-Citus-1-1-1024-1-4      840.0        1.0  10.0                 548.571429
-Citus-1-1-1024-2-1      840.0        1.0   1.0                 548.571429
-Citus-1-1-1024-2-2      840.0        1.0   2.0                 548.571429
-Citus-1-1-1024-2-3      840.0        1.0   5.0                 548.571429
-Citus-1-1-1024-2-4      840.0        1.0  10.0                 548.571429
+                    time_load  terminals  pods  Throughput [SF/h]
+Citus-1-1-1024-1-1      809.0        1.0   1.0         569.592089
+Citus-1-1-1024-1-2      809.0        1.0   2.0         569.592089
+Citus-1-1-1024-1-3      809.0        1.0   5.0         569.592089
+Citus-1-1-1024-1-4      809.0        1.0  10.0         569.592089
+Citus-1-1-1024-2-1      809.0        1.0   1.0         569.592089
+Citus-1-1-1024-2-2      809.0        1.0   2.0         569.592089
+Citus-1-1-1024-2-3      809.0        1.0   5.0         569.592089
+Citus-1-1-1024-2-4      809.0        1.0  10.0         569.592089
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-1-1-1024-1-1     3213.56     1.24         33.36                54.50
-Citus-1-1-1024-1-2     3148.25     0.99         34.48                56.97
-Citus-1-1-1024-1-3     3137.68     0.93         34.91                58.53
-Citus-1-1-1024-1-4     3160.31     1.54         35.07                59.37
-Citus-1-1-1024-2-1     3090.74     1.28         30.93                51.07
-Citus-1-1-1024-2-2     3116.33     1.65         32.42                54.01
-Citus-1-1-1024-2-3     3123.71     1.37         33.38                56.32
-Citus-1-1-1024-2-4     3114.01     1.17         33.95                57.72
+Citus-1-1-1024-1-1     5163.28     1.82         39.53                57.11
+Citus-1-1-1024-1-2     8203.95     1.45         40.17                59.40
+Citus-1-1-1024-1-3     5934.14     1.57         40.84                60.93
+Citus-1-1-1024-1-4     4074.21     1.59         41.34                62.06
+Citus-1-1-1024-2-1     3964.31     2.38         37.33                54.67
+Citus-1-1-1024-2-2     7189.77     1.87         38.84                57.53
+Citus-1-1-1024-2-3     3958.14     2.27         39.49                59.26
+Citus-1-1-1024-2-4     4007.93     1.85         40.28                60.71
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-1-1-1024-1-1      352.42     1.00          4.04                 4.04
-Citus-1-1-1024-1-2      352.42     0.60          7.90                 7.90
-Citus-1-1-1024-1-3      486.89     1.01         10.70                10.70
-Citus-1-1-1024-1-4      618.90     1.40         15.16                15.16
-Citus-1-1-1024-2-1      364.47     0.66          4.05                 4.05
-Citus-1-1-1024-2-2      364.47     1.00          7.95                 7.95
-Citus-1-1-1024-2-3      544.68     1.93          9.79                 9.79
-Citus-1-1-1024-2-4      636.80     1.04         14.26                14.26
+Citus-1-1-1024-1-1      299.42     0.21          5.11                 5.11
+Citus-1-1-1024-1-2      341.25     0.24          9.03                 9.03
+Citus-1-1-1024-1-3      530.53     3.19         10.99                10.99
+Citus-1-1-1024-1-4      812.79     2.35         13.35                13.35
+Citus-1-1-1024-2-1      313.08     0.79          4.03                 4.03
+Citus-1-1-1024-2-2      391.33     1.05          9.10                 9.10
+Citus-1-1-1024-2-3      505.76     1.24         13.11                13.11
+Citus-1-1-1024-2-4      775.80     3.07         14.32                14.32
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

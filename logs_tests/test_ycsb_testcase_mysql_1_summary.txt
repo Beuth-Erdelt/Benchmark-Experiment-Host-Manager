@@ -3,12 +3,19 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 24657s 
-    Code: 1729789153
-    This includes no queries. YCSB runs the benchmark
+    Duration: 6527s 
+    Code: 1748961165
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MySQL'].
     Import is handled by 4 and 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -20,72 +27,38 @@ YCSB SF=1
     Experiment is run once.
 
 ### Connections
-MySQL-32-4-131072-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+MySQL-32-4-1024-1 uses docker image mysql:8.4.0
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:265919812
-    datadisk:11704204
+    disk:343876448
+    datadisk:11422
     requests_cpu:4
     requests_memory:16Gi
-MySQL-32-8-131072-1 uses docker image mysql:8.4.0
-    RAM:541008605184
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:265883304
-    datadisk:11667352
-    requests_cpu:4
-    requests_memory:16Gi
-MySQL-64-4-131072-1 uses docker image mysql:8.4.0
-    RAM:541008605184
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:265908208
-    datadisk:11691916
-    requests_cpu:4
-    requests_memory:16Gi
-MySQL-64-8-131072-1 uses docker image mysql:8.4.0
-    RAM:541008605184
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:265883808
-    datadisk:11667348
-    requests_cpu:4
-    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1748961165
 
 ### Loading
-                   experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MySQL-32-4-131072               1       32  131072          4                     279.535769              3577679.0             1000000                            447103.0
-MySQL-64-4-131072               1       64  131072          4                     515.360850              1940611.0             1000000                            573055.0
-MySQL-32-8-131072               1       32  131072          8                     292.402915              3420677.0             1000000                            435071.0
-MySQL-64-8-131072               1       64  131072          8                     527.711701              1896030.0             1000000                            526015.0
+                 experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MySQL-32-4-1024               1       32    1024          4           0                      263.48948              3796007.0             1000000                            459135.0
 
 ### Execution
-                     experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MySQL-32-4-131072-1               1       64  131072          1                         441.39              2265572.0            500764                            1224.0              499236                           4771839.0
-MySQL-32-8-131072-1               1       64  131072          1                         452.42              2210330.0            499025                            1191.0              500975                           4616191.0
-MySQL-64-4-131072-1               1       64  131072          1                         416.63              2400183.0            500586                            1217.0              499414                           4993023.0
-MySQL-64-8-131072-1               1       64  131072          1                         440.68              2269211.0            499339                            1238.0              500661                           4751359.0
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MySQL-32-4-1024-1               1       64    1024          1           0                         453.61              2204559.0            499502                            3651.0              500498                           4349951.0
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-32-4-131072 - Pods [[1]]
-DBMS MySQL-32-8-131072 - Pods [[1]]
-DBMS MySQL-64-8-131072 - Pods [[1]]
-DBMS MySQL-64-4-131072 - Pods [[1]]
+DBMS MySQL-32-4-1024 - Pods [[1]]
 
 #### Planned
-DBMS MySQL-32-4-131072 - Pods [[1]]
-DBMS MySQL-32-8-131072 - Pods [[1]]
-DBMS MySQL-64-4-131072 - Pods [[1]]
-DBMS MySQL-64-8-131072 - Pods [[1]]
+DBMS MySQL-32-4-1024 - Pods [[1]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

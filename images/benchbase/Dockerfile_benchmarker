@@ -1,3 +1,20 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker Benchbase
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "benchmarker".
+#
+# Base Image: benchbase.azurecr.io/benchbase
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+######################################################################################
 FROM benchbase.azurecr.io/benchbase
 
 USER root
@@ -8,11 +25,9 @@ COPY ./config /tmp/config/
 RUN chown -R containeruser:containergroup /tmp/config/
 
 ENV SF=1
-ENV NUM_PODS=4
-ENV CHILD=1
-ENV RNGSEED=123
-ENV CONNECTION=mysql
-ENV EXPERIMENT=12345
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
 ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
 ENV BEXHOMA_PORT 3306
@@ -20,11 +35,12 @@ ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
 ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
 ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
 ENV BEXHOMA_USER root
 ENV BEXHOMA_PASSWORD root
 ENV BEXHOMA_DATABASE demo
-ENV DBMSBENCHMARKER_START 0
-ENV DBMSBENCHMARKER_NOW 0
+ENV BEXHOMA_TIME_START 0
+ENV BEXHOMA_TIME_NOW 0
 ENV BENCHBASE_BENCH tpcc
 ENV BENCHBASE_PROFILE postgres
 ENV BENCHBASE_TARGET 100
@@ -33,8 +49,8 @@ ENV BENCHBASE_TERMINALS 1
 ENV BENCHBASE_BATCHSIZE 128
 ENV BENCHBASE_ISOLATION "TRANSACTION_SERIALIZABLE"
 ENV BENCHBASE_STATUS_INTERVAL=
-ENV BENCHBASE_KEY_AND_THINK=false
 ENV BENCHBASE_NEWCONNPERTXN=false
+ENV BENCHBASE_KEY_AND_THINK=false
 ENV BENCHBASE_YCSB_WEIGHTS=100,0,0,0,0,0
 ENV BENCHBASE_YCSB_WORKLOAD=a
 

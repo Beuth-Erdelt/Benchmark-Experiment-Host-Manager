@@ -2,607 +2,1332 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729813850
-Experiment                    : starts at 2024-10-25 01:50:49.932494 (4549790.056475407)
+Experiment                    : has code 1748967737
+Experiment                    : starts at 2025-06-03 18:22:17.398560 (13159900.869112287)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 1000000.
+Batch size is ''.
+Target is based on multiples of '1024'.
+Factors for loading are [1].
+Factors for benchmarking are [1].
+Experiment uses bexhoma version 0.8.7.
 Benchmark is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
+Database is persisted to disk of type shared and size 50Gi.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
 - waiting 30s -               : done
-MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-1024               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
-MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-1024               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
-MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-1024               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
-MySQL-64-8-131072             : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-64-8-1024               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
-MySQL-64-8-131072             : will start now
+MySQL-64-8-1024               : will start now
+MySQL-64-8-1024               : Name of SUT pods = bexhoma-sut-mysql-64-8-1024-1748967737
+MySQL-64-8-1024               : Name of SUT service = bexhoma-sut-mysql-64-8-1024-1748967737
+MySQL-64-8-1024               : Name of SUT PVC name = bexhoma-storage-mysql-ycsb-1
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50 (that is in 900 secs)
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : is not loaded yet
+MySQL-64-8-1024               : will start loading but not before 2025-06-03 16:35:55 (that is in 60 secs)
 - waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
-- waiting 30s -               : done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : will start loading but not before 2024-10-25 00:08:50
+MySQL-64-8-1024               : is not loaded yet
+MySQL-64-8-1024               : will start loading but not before 2025-06-03 16:35:55
 done
-MySQL-64-8-131072             : is not loaded yet
-MySQL-64-8-131072             : start asynch loading scripts of type loaded
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is not loaded yet
+MySQL-64-8-1024               : start asynch loading scripts of type loaded
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 - waiting 30s -               : done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
+- waiting 30s -               : done
+MySQL-64-8-1024               : is loading
 done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 done
-MySQL-64-8-131072             : is loading
+MySQL-64-8-1024               : is loading
 done
-MySQL-64-8-131072             : showing loader times
-MySQL-64-8-131072             : loader timespan (first to last [s]) = 4356
-MySQL-64-8-131072             : benchmarks done 0 of 2. This will be client 1
-MySQL-64-8-131072             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
-MySQL-64-8-131072-1-1         : start benchmarking
-MySQL-64-8-131072             : benchmarking results in folder /home/perdelt/benchmarks/1729813850
+MySQL-64-8-1024               : is loading
+done
+MySQL-64-8-1024               : showing loader times
+MySQL-64-8-1024               : loader timespan (first to last [s]) = 15408
+MySQL-64-8-1024               : start asynch loading scripts of type indexed
+MySQL-64-8-1024               : is loading
+done
+MySQL-64-8-1024               : benchmarks done 0 of 2. This will be client 1
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
+MySQL-64-8-1024-1-1           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1748967737
 - waiting 10s -               : done
-MySQL-64-8-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-131072-1729813850-1-1-8b75p: found
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1748967737-1-1-n88nn: found
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
 done
-MySQL-64-8-131072             : has running benchmarks
-MySQL-64-8-131072-1-1         : showing benchmarker times
-MySQL-64-8-131072-1-1         : benchmarker timespan (start to end single container [s]) = 583
-MySQL-64-8-131072-1-1         : benchmarker times (start/end per pod and container) = [(1729819330, 1729819904)]
-MySQL-64-8-131072-1-1         : found and updated times {'benchmarker': [(1729819330, 1729819904)]}
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-1-1           : showing benchmarker times
+MySQL-64-8-1024-1-1           : benchmarker timespan (start to end single container [s]) = 1256
+MySQL-64-8-1024-1-1           : benchmarker times (start/end per pod and container) = [(1748984041, 1748985264)]
+MySQL-64-8-1024-1-1           : found and updated times {'benchmarker': [(1748984041, 1748985264)]}
 done
-MySQL-64-8-131072             : can be stopped
-MySQL-64-8-131072             : still being removed
+MySQL-64-8-1024               : can be stopped
+MySQL-64-8-1024               : still being removed
 - waiting 30s -               : done
-MySQL-64-8-131072             : still being removed
+MySQL-64-8-1024               : still being removed
 - waiting 30s -               : done
-MySQL-64-8-131072             : still being removed
+MySQL-64-8-1024               : still being removed
+- waiting 30s -               : done
+MySQL-64-8-1024               : still being removed
+- waiting 30s -               : done
+MySQL-64-8-1024               : still being removed
 done
-MySQL-64-8-131072             : starts again
-MySQL-64-8-131072             : storage exists bexhoma-storage-mysql-ycsb-1
-MySQL-64-8-131072             : loading is set to finished
+MySQL-64-8-1024               : starts again
+MySQL-64-8-1024               : Name of SUT pods = bexhoma-sut-mysql-64-8-1024-1748967737
+MySQL-64-8-1024               : Name of SUT service = bexhoma-sut-mysql-64-8-1024-1748967737
+MySQL-64-8-1024               : Name of SUT PVC name = bexhoma-storage-mysql-ycsb-1
+MySQL-64-8-1024               : storage exists bexhoma-storage-mysql-ycsb-1
+MySQL-64-8-1024               : label loaded copied value True
+MySQL-64-8-1024               : label timeLoading copied value 15431
+MySQL-64-8-1024               : label timeLoadingStart copied value 1748968557
+MySQL-64-8-1024               : label timeLoadingEnd copied value 1748984006
+MySQL-64-8-1024               : label indexed copied value True
+MySQL-64-8-1024               : label time_generated copied value 0
+MySQL-64-8-1024               : label time_indexed copied value 1
+MySQL-64-8-1024               : label time_ingested copied value 15408
+MySQL-64-8-1024               : label time_initschema copied value 22
+MySQL-64-8-1024               : label time_loaded copied value 22
+MySQL-64-8-1024               : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33 (that is in 900 secs)
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
+MySQL-64-8-1024               : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
+MySQL-64-8-1024               : will start benchmarking but not before 2025-06-03 21:22:09 (that is in 60 secs)
 - waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
-- waiting 30s -               : done
-MySQL-64-8-131072             : will start benchmarking but not before 2024-10-25 01:49:33
+MySQL-64-8-1024               : will start benchmarking but not before 2025-06-03 21:22:09
 done
-MySQL-64-8-131072             : benchmarks done 1 of 2. This will be client 1
-MySQL-64-8-131072             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 131072, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': ''}
-MySQL-64-8-131072-2-1         : start benchmarking
-MySQL-64-8-131072             : benchmarking results in folder /home/perdelt/benchmarks/1729813850
+MySQL-64-8-1024               : benchmarks done 1 of 2. This will be client 1
+MySQL-64-8-1024               : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
+MySQL-64-8-1024-2-1           : start benchmarking
+MySQL-64-8-1024               : benchmarking results in folder /home/perdelt/benchmarks/1748967737
 - waiting 10s -               : done
-MySQL-64-8-131072             : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-131072-1729813850-2-1-bk4fs: found
+MySQL-64-8-1024               : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-1024-1748967737-2-1-pnctg: found
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
 - waiting 30s -               : done
-MySQL-64-8-131072             : has running benchmarks
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-1024               : has running benchmarks
 done
-MySQL-64-8-131072             : has running benchmarks
-MySQL-64-8-131072-2-1         : showing benchmarker times
-MySQL-64-8-131072-2-1         : benchmarker timespan (start to end single container [s]) = 522
-MySQL-64-8-131072-2-1         : benchmarker times (start/end per pod and container) = [(1729820980, 1729821472)]
-MySQL-64-8-131072-2-1         : found and updated times {'benchmarker': [(1729820980, 1729821472)]}
+MySQL-64-8-1024               : has running benchmarks
+MySQL-64-8-1024-2-1           : showing benchmarker times
+MySQL-64-8-1024-2-1           : benchmarker timespan (start to end single container [s]) = 1282
+MySQL-64-8-1024-2-1           : benchmarker times (start/end per pod and container) = [(1748985734, 1748986988)]
+MySQL-64-8-1024-2-1           : found and updated times {'benchmarker': [(1748985734, 1748986988)]}
 done
-MySQL-64-8-131072             : can be stopped
-Experiment                    : ends at 2024-10-25 03:58:51.686682 (4557471.810661421) - 7681.75s total
+MySQL-64-8-1024               : can be stopped
+Experiment                    : ends at 2025-06-03 23:44:06.989896 (13179210.460449245) - 19309.59s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Benchmarking                                     connection  ... [UPDATE].Return=OK
-connection_pod                                  ...                   
-MySQL-64-8-131072-1-1-1  MySQL-64-8-131072-1-1  ...             500717
-MySQL-64-8-131072-2-1-1  MySQL-64-8-131072-2-1  ...             500156
-
-[2 rows x 43 columns]
-Workflow {'MySQL-64-8-131072': [[1], [1]]}
-Loading                             connection  ... [INSERT].Return=OK
-connection_pod                          ...                   
-MySQL-64-8-131072-1  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-2  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-3  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-4  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-5  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-6  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-7  MySQL-64-8-131072  ...             125000
-MySQL-64-8-131072-8  MySQL-64-8-131072  ...             125000
-
-[8 rows x 36 columns]
 Result workflow complete
 
 ## Show Summary
@@ -610,65 +1335,81 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 7682s 
-    Code: 1729813850
-    This includes no queries. YCSB runs the benchmark
+    Duration: 19310s 
+    Code: 1748967737
+    YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 1000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '131072'. Factors for loading are [1]. Factors for benchmarking are [1].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '1024'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MySQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-MySQL-64-8-131072-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+MySQL-64-8-1024-1-1 uses docker image mysql:8.4.0
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254216800
-    datadisk:11667074
-    volume_size:100G
+    disk:332180160
+    datadisk:11394
+    volume_size:50G
     volume_used:12G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-64-8-131072-2-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1748967737
+MySQL-64-8-1024-2-1 uses docker image mysql:8.4.0
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254216964
-    datadisk:12843655
-    volume_size:100G
+    disk:332180172
+    datadisk:12541
+    volume_size:50G
     volume_used:13G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:2
+    eval_parameters
+        code:1748967737
 
 ### Loading
-                   experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MySQL-64-8-131072               1       64  131072          8                     230.028381              4355729.0             1000000                           5792767.0
+                 experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MySQL-64-8-1024               1       64    1024          8           0                       64.94317             15407746.0             1000000                          17160191.0
 
 ### Execution
-                       experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MySQL-64-8-131072-1-1               1       64  131072          1                        1745.88               572777.0            499283                             990.0              500717                           1013759.0
-MySQL-64-8-131072-2-1               2       64  131072          1                        2031.88               492154.0            499844                           33503.0              500156                            840191.0
+                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MySQL-64-8-1024-1-1               1       64    1024          1           0                         817.40              1223395.0            500318                            1171.0              499682                           3080191.0
+MySQL-64-8-1024-2-1               2       64    1024          1           0                         797.83              1253393.0            500345                           40767.0              499655                           2985983.0
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-64-8-131072 - Pods [[1], [1]]
+DBMS MySQL-64-8-1024 - Pods [[1], [1]]
 
 #### Planned
-DBMS MySQL-64-8-131072 - Pods [[1], [1]]
+DBMS MySQL-64-8-1024 - Pods [[1], [1]]
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

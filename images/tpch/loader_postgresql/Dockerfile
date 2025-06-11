@@ -1,3 +1,21 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker TPC-H
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: alpine:3.15
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Pre-generated data is loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+# PostgreSQL client is installed.
+######################################################################################
 #FROM debian:stable-20221004-slim
 FROM alpine:3.15
 
@@ -13,13 +31,21 @@ RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-s
 
 RUN apk update && apk --update add postgresql-client
 
-ENV NUM_PODS=4
-ENV CHILD=1
+ENV SF=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
-ENV BEXHOMA_PORT 50000
-ENV BEXHOMA_CONNECTION="monetdb"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
-ENV DATABASE postgres
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
 ENV STORE_RAW_DATA=0
 ENV BEXHOMA_SYNCH_LOAD 0
 ENV BEXHOMA_USER postgres

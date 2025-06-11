@@ -3,89 +3,95 @@
 ### Workload
 TPC-H Queries SF=100
     Type: tpch
-    Duration: 1847s 
-    Code: 1728337600
+    Duration: 9645s 
+    Code: 1748418609
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=100) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q22.
     All instances use the same query parameters.
+    Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 300Gi.
+    Database is persisted to disk of type shared and size 1000Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
-    RAM:541008605184
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:248971704
-    datadisk:219980828
-    volume_size:300G
-    volume_used:210G
+    disk:301220308
+    datadisk:213089
+    volume_size:1000G
+    volume_used:209G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748418609
 
 ### Errors (failed queries)
-No errors
+                                MonetDB-BHT-8-1-1
+Discounted Revenue (TPC-H Q19)               True
+Discounted Revenue (TPC-H Q19)
+MonetDB-BHT-8-1-1: numRun 1: : java.sql.SQLException: Query aborted due to timeout
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MonetDB-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                            637721.03
-Minimum Cost Supplier Query (TPC-H Q2)                        28708.97
-Shipping Priority (TPC-H Q3)                                  79925.53
-Order Priority Checking Query (TPC-H Q4)                      89958.19
-Local Supplier Volume (TPC-H Q5)                              47184.89
-Forecasting Revenue Change (TPC-H Q6)                          8206.29
-Forecasting Revenue Change (TPC-H Q7)                         10794.91
-National Market Share (TPC-H Q8)                             134400.81
-Product Type Profit Measure (TPC-H Q9)                        34328.54
-Forecasting Revenue Change (TPC-H Q10)                        63909.34
-Important Stock Identification (TPC-H Q11)                     6428.52
-Shipping Modes and Order Priority (TPC-H Q12)                 13313.75
-Customer Distribution (TPC-H Q13)                            230882.81
-Forecasting Revenue Change (TPC-H Q14)                         7139.99
-Top Supplier Query (TPC-H Q15)                                10173.02
-Parts/Supplier Relationship (TPC-H Q16)                       13641.87
-Small-Quantity-Order Revenue (TPC-H Q17)                      42008.34
-Large Volume Customer (TPC-H Q18)                             52259.31
-Discounted Revenue (TPC-H Q19)                                14101.50
-Potential Part Promotion (TPC-H Q20)                          11211.91
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           23796.97
-Global Sales Opportunity Query (TPC-H Q22)                     6541.88
+Pricing Summary Report (TPC-H Q1)                            251831.87
+Minimum Cost Supplier Query (TPC-H Q2)                         1950.89
+Shipping Priority (TPC-H Q3)                                  14166.02
+Order Priority Checking Query (TPC-H Q4)                      15180.64
+Local Supplier Volume (TPC-H Q5)                              10880.50
+Forecasting Revenue Change (TPC-H Q6)                          7369.26
+Forecasting Revenue Change (TPC-H Q7)                         11308.37
+National Market Share (TPC-H Q8)                              64562.58
+Product Type Profit Measure (TPC-H Q9)                        16805.17
+Forecasting Revenue Change (TPC-H Q10)                        27650.78
+Important Stock Identification (TPC-H Q11)                     1264.27
+Shipping Modes and Order Priority (TPC-H Q12)                  5209.90
+Customer Distribution (TPC-H Q13)                            122043.14
+Forecasting Revenue Change (TPC-H Q14)                         7956.57
+Top Supplier Query (TPC-H Q15)                                10030.79
+Parts/Supplier Relationship (TPC-H Q16)                       12361.31
+Small-Quantity-Order Revenue (TPC-H Q17)                      17835.86
+Large Volume Customer (TPC-H Q18)                             20898.84
+Potential Part Promotion (TPC-H Q20)                          67758.20
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           20541.82
+Global Sales Opportunity Query (TPC-H Q22)                     7484.85
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0         1686.0         7.0     5358.0    7061.0
+MonetDB-BHT-8-1-1           1.0         1780.0         8.0     5625.0    7421.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1          29.77
+MonetDB-BHT-8-1-1          16.31
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           12333.63
+MonetDB-BHT-8-1-1           23353.41
 
-### Throughput@Size
-                                               time [s]  count   SF  Throughput@Size [~GB/h]
-DBMS            SF  num_experiment num_client                                               
-MonetDB-BHT-8-1 100 1              1               1587      1  100                  4990.55
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                               time [s]  count   SF  Throughput@Size
+DBMS            SF  num_experiment num_client                                       
+MonetDB-BHT-8-1 100 1              1               1963      1  100          3851.25
 
 ### Workflow
 
@@ -95,18 +101,30 @@ DBMS MonetDB-BHT-8 - Pods [[1]]
 #### Planned
 DBMS MonetDB-BHT-8 - Pods [[1]]
 
+### Ingestion - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1    19779.65    12.19        114.37               203.68
+
+### Ingestion - Loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1     2698.77     1.39         52.92               106.26
+
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1     6613.58    23.16         46.78                85.29
+MonetDB-BHT-8-1     9636.82    39.74        135.56               471.53
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       22.14     0.02          0.33                 0.35
+MonetDB-BHT-8-1       29.24     0.14          0.31                 0.31
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST failed: SQL errors
+TEST passed: No SQL warnings
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned

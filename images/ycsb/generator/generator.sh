@@ -14,19 +14,19 @@ echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 echo "BEXHOMA_DBMS:$BEXHOMA_DBMS"
 
 ######################## Wait for synched starting time ########################
-echo "benchmark started at $DBMSBENCHMARKER_NOW"
-echo "benchmark should wait until $DBMSBENCHMARKER_START"
-if test "$DBMSBENCHMARKER_START" != "0"
+echo "benchmark started at $BEXHOMA_TIME_NOW"
+echo "benchmark should wait until $BEXHOMA_TIME_START"
+if test "$BEXHOMA_TIME_START" != "0"
 then
-    benchmark_start_epoch=$(date -u -d "$DBMSBENCHMARKER_NOW" +%s)
+    benchmark_start_epoch=$(date -u -d "$BEXHOMA_TIME_NOW" +%s)
     echo "that is $benchmark_start_epoch"
 
     TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
     echo "now is $current_epoch"
     current_epoch=$(date -u +%s)
     echo "that is $current_epoch"
-    target_epoch=$(date -u -d "$DBMSBENCHMARKER_START" +%s)
-    echo "wait until $DBMSBENCHMARKER_START"
+    target_epoch=$(date -u -d "$BEXHOMA_TIME_START" +%s)
+    echo "wait until $BEXHOMA_TIME_START"
     echo "that is $target_epoch"
     sleep_seconds=$(( $target_epoch - $current_epoch ))
     echo "that is wait $sleep_seconds seconds"
@@ -46,10 +46,10 @@ fi
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-if [ -z "$CHILD" ]
+BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+if [ -z "$BEXHOMA_CHILD" ]
 then
-    CHILD=1
+    BEXHOMA_CHILD=1
 fi
 
 ######################## Adjust parameter to job number ########################
@@ -65,22 +65,22 @@ fi
 
 ######################## Generate workflow ########################
 # for parallel benchmarking pods
-OPERATIONS_TOTAL=$(($YCSB_OPERATIONS*$NUM_PODS))
+OPERATIONS_TOTAL=$(($YCSB_OPERATIONS*$BEXHOMA_NUM_PODS))
 # for loading phase
-ROW_PART=$(($YCSB_ROWS/$NUM_PODS))
-ROW_START=$(($YCSB_ROWS/$NUM_PODS*($CHILD-1)))
+ROW_PART=$(($YCSB_ROWS/$BEXHOMA_NUM_PODS))
+ROW_START=$(($YCSB_ROWS/$BEXHOMA_NUM_PODS*($BEXHOMA_CHILD-1)))
 # for benchmarking phase - workload E, we again insert 5% new rows
 #ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
 # assume 100% of operations are INSERTs
 ROWS_TO_INSERT=$OPERATIONS_TOTAL
-ROW_PART_AFTER_LOADING=$(($ROWS_TO_INSERT/$NUM_PODS))
-ROW_START_AFTER_LOADING=$(($ROWS_TO_INSERT/$NUM_PODS*($CHILD-1)+$YCSB_ROWS))
+ROW_PART_AFTER_LOADING=$(($ROWS_TO_INSERT/$BEXHOMA_NUM_PODS))
+ROW_START_AFTER_LOADING=$(($ROWS_TO_INSERT/$BEXHOMA_NUM_PODS*($BEXHOMA_CHILD-1)+$YCSB_ROWS))
 # if new rows are to be inserted in benchmark, too
 ROWS_AFTER_BENCHMARK=$((ROW_START_AFTER_LOADING+ROW_PART_AFTER_LOADING))
 
 ######################## Show more parameters ########################
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 echo "YCSB_ROWS $YCSB_ROWS"
 echo "ROW_PART $ROW_PART"
@@ -109,7 +109,7 @@ then
         # wait for number of pods to be as expected
         while : ; do
             PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-            echo "Found $PODS_RUNNING / $NUM_PODS running pods"
+            echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
             if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
             then
                 echo "PODS_RUNNING contains a number."
@@ -117,11 +117,11 @@ then
                 echo "PODS_RUNNING does not contain a number."
                 exit 0
             fi
-            if  test "$PODS_RUNNING" == $NUM_PODS
+            if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
             then
                 echo "OK"
                 break
-            elif test "$PODS_RUNNING" -gt $NUM_PODS
+            elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
             then
                 echo "Too many pods! Restart occured?"
                 exit 0
@@ -225,7 +225,7 @@ target=$YCSB_TARGET
 #cat workload_test
 cat $FILENAME
 
-# echo "$CHILD" > /tmp/ycsb/CHILD
+# echo "$BEXHOMA_CHILD" > /tmp/ycsb/BEXHOMA_CHILD
 
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS

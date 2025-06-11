@@ -1,3 +1,21 @@
+######################################################################################
+# Dockerfile for Bexhoma - Generator TPC-H
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "generator".
+#
+# Base Image: debian:stable-20221004-slim
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Data is generated and loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+# TPC-H generator is copied from external folder.
+######################################################################################
 #FROM eclipse-temurin:11
 FROM debian:stable-20221004-slim
 
@@ -21,11 +39,20 @@ COPY ./generator.sh /tmp/generator.sh
 RUN ["chmod", "+x", "/tmp/generator.sh"]
 
 ENV SF=1
-ENV NUM_PODS=4
-ENV CHILD=1
-ENV RNGSEED=123
-ENV CONNECTION=monetdb
-ENV EXPERIMENT=12345
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_HOST="www.example.com"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
+ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
 ENV STORE_RAW_DATA=0
 ENV STORE_RAW_DATA_RECREATE=0
 ENV TRANSFORM_RAW_DATA=1

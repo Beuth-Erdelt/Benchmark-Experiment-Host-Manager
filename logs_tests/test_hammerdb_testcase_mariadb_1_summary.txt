@@ -3,12 +3,13 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1674s 
-    Code: 1729851020
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 994s 
+    Code: 1748955374
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -20,20 +21,22 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:255911580
-    datadisk:1693084
+    disk:333865940
+    datadisk:1657
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748955374
 
 ### Execution
-                   experiment_run  vusers  client  pod_count    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1  5018.0  11696.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  7651.0  17791.0         5       0
 
 Warehouses: 16
 
@@ -47,7 +50,7 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      200.0        1.0   1.0                      288.0
+MariaDB-BHT-8-1-1      230.0        1.0   1.0                 250.434783
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

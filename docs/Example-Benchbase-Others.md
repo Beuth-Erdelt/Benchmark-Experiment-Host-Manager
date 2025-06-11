@@ -82,7 +82,8 @@ This
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_twitter_simple
+```markdown
 ## Show Summary
 
 ### Workload
@@ -175,26 +176,28 @@ nohup python benchbase.py -ms 1 -tr \
 
 ### Evaluate Results
 
-```
+doc_benchbase_testcase_twitter_scale.log
+```markdown
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=100
+Benchbase Workload SF=1600
     Type: benchbase
-    Duration: 10011s 
-    Code: 1744653338
-    Benchbase runs the CH-Benchmark benchmark.
+    Duration: 5823s 
+    Code: 1747694947
+    Benchbase runs the Twitter benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'chbenchmark'. Scaling factor (e.g., number of warehouses for TPC-C) is 100. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Benchmark is 'twitter'. Scaling factor is 1600. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
+    System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [100] threads, split into [1, 2, 5, 10] pods.
+    Benchmarking is tested with [160] threads, split into [1, 2, 4, 8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
@@ -205,83 +208,113 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229528392
-    datadisk:26552
+    disk:276936752
+    datadisk:22344
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747694947
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229529532
-    datadisk:26553
+    disk:276937132
+    datadisk:22344
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747694947
 PostgreSQL-1-1-1024-3 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229530724
-    datadisk:26554
+    disk:276937296
+    datadisk:22344
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747694947
 PostgreSQL-1-1-1024-4 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229530392
-    datadisk:26554
+    disk:276937912
+    datadisk:22345
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747694947
 
 ### Execution
                        experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1        100   16384          1  1200.0           0                          1.44                       1.52         0.0                                                  146801459.0                                           39862157.0
-PostgreSQL-1-1-1024-2               1        100   16384          2  1200.0           0                          1.51                       1.59         0.0                                                  156391241.0                                           40505643.0
-PostgreSQL-1-1-1024-3               1        100   16380          5  1200.0           0                          1.50                       1.58         0.0                                                  171752857.0                                           44080615.0
-PostgreSQL-1-1-1024-4               1        100   16380         10  1200.0           0                          1.45                       1.53         0.0                                                  166367823.0                                           40179146.0
-
-Warehouses: 100
+PostgreSQL-1-1-1024-1               1        160   16384          1  1200.0           0                         14.15                      14.28         0.0                                                   22080057.0                                          11246360.00
+PostgreSQL-1-1-1024-2               1        160   16384          2  1200.0           0                         14.36                      14.50         0.0                                                   21956242.0                                          11067312.00
+PostgreSQL-1-1-1024-3               1        160   16384          4  1200.0           0                         14.40                      14.53         0.0                                                   22239180.0                                          11046725.75
+PostgreSQL-1-1-1024-4               1        160   16384          8  1200.0           0                         14.39                      14.53         0.0                                                   22184013.0                                          11045715.50
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[10, 2, 5, 1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[8, 2, 4, 1]]
 
 #### Planned
-DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 5, 10]]
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 4, 8]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      540.0        1.0   1.0                 666.666667
-PostgreSQL-1-1-1024-2      540.0        1.0   2.0                 666.666667
-PostgreSQL-1-1-1024-3      540.0        1.0   5.0                 666.666667
-PostgreSQL-1-1-1024-4      540.0        1.0  10.0                 666.666667
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1      411.0        1.0   1.0        14014.59854
+PostgreSQL-1-1-1024-2      411.0        1.0   2.0        14014.59854
+PostgreSQL-1-1-1024-3      411.0        1.0   4.0        14014.59854
+PostgreSQL-1-1-1024-4      411.0        1.0   8.0        14014.59854
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      2682.2     9.99         10.47                15.31
+PostgreSQL-1-1-1024-2      2682.2     9.99         10.47                15.31
+PostgreSQL-1-1-1024-3      2682.2     9.99         10.47                15.31
+PostgreSQL-1-1-1024-4      2682.2     9.99         10.47                15.31
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      167.01     0.45          1.29                 1.29
+PostgreSQL-1-1-1024-2      167.01     0.45          1.29                 1.29
+PostgreSQL-1-1-1024-3      167.01     0.45          1.29                 1.29
+PostgreSQL-1-1-1024-4      167.01     0.45          1.29                 1.29
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1    75763.31    63.56         15.11                20.09
+PostgreSQL-1-1-1024-2    75419.91    63.58         15.63                20.61
+PostgreSQL-1-1-1024-3    76793.22    63.59         15.40                21.04
+PostgreSQL-1-1-1024-4    75278.13    63.60         15.50                22.71
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      188.57     0.16          0.71                 0.71
+PostgreSQL-1-1-1024-2      188.57     0.18          1.53                 1.53
+PostgreSQL-1-1-1024-3      218.00     0.13          2.28                 2.28
+PostgreSQL-1-1-1024-4      266.70     0.18          3.97                 3.97
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
@@ -356,19 +389,20 @@ This
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_chbenchmark_simple.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=10
     Type: benchbase
-    Duration: 1531s 
-    Code: 1744651777
+    Duration: 1469s 
+    Code: 1747700828
     Benchbase runs the CH-Benchmark benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'chbenchmark'. Scaling factor (e.g., number of warehouses for TPC-C) is 10. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Benchmark is 'chbenchmark'. Scaling factor is 10. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -386,20 +420,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:205125460
-    datadisk:2721
+    disk:256844040
+    datadisk:2722
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1744651777
+                code:1747700828
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1        100   16384          1  300.0           0                          3.49                       3.82         0.0                                                   19986859.0                                            7325183.0
-
-Warehouses: 10
+PostgreSQL-1-1-1024-1               1        100   16384          1  300.0           0                          3.61                       3.94         0.0                                                   19443973.0                                            6507230.0
 
 ### Workflow
 
@@ -410,8 +442,8 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      102.0        1.0   1.0                 352.941176
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1       93.0        1.0   1.0         387.096774
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -448,19 +480,20 @@ nohup python benchbase.py -ms 1 -tr \
 
 ### Evaluate Results
 
-```
+doc_benchbase_testcase_chbenchmark_scale.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=100
     Type: benchbase
-    Duration: 10011s 
-    Code: 1744653338
+    Duration: 10290s 
+    Code: 1747702329
     Benchbase runs the CH-Benchmark benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'chbenchmark'. Scaling factor (e.g., number of warehouses for TPC-C) is 100. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Benchmark is 'chbenchmark'. Scaling factor is 100. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -478,80 +511,78 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229528392
+    disk:281246612
     datadisk:26552
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747702329
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229529532
+    disk:281247588
     datadisk:26553
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747702329
 PostgreSQL-1-1-1024-3 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229530724
+    disk:281248884
     datadisk:26554
     requests_cpu:4
     requests_memory:16Gi
     client:3
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747702329
 PostgreSQL-1-1-1024-4 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229530392
+    disk:281248756
     datadisk:26554
     requests_cpu:4
     requests_memory:16Gi
     client:4
     numExperiment:1
     eval_parameters
-                code:1744653338
+                code:1747702329
 
 ### Execution
                        experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1        100   16384          1  1200.0           0                          1.44                       1.52         0.0                                                  146801459.0                                           39862157.0
-PostgreSQL-1-1-1024-2               1        100   16384          2  1200.0           0                          1.51                       1.59         0.0                                                  156391241.0                                           40505643.0
-PostgreSQL-1-1-1024-3               1        100   16380          5  1200.0           0                          1.50                       1.58         0.0                                                  171752857.0                                           44080615.0
-PostgreSQL-1-1-1024-4               1        100   16380         10  1200.0           0                          1.45                       1.53         0.0                                                  166367823.0                                           40179146.0
-
-Warehouses: 100
+PostgreSQL-1-1-1024-1               1        100   16384          1  1200.0           0                          1.49                       1.57         0.0                                                  155122295.0                                           39775170.0
+PostgreSQL-1-1-1024-2               1        100   16384          2  1200.0           0                          1.48                       1.57         0.0                                                  149910286.0                                           37690642.0
+PostgreSQL-1-1-1024-3               1        100   16380          5  1200.0           0                          1.46                       1.54         0.0                                                  144308986.0                                           38445031.4
+PostgreSQL-1-1-1024-4               1        100   16380         10  1200.0           0                          1.52                       1.61         0.0                                                  158376775.0                                           37062834.3
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[10, 2, 5, 1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[10, 5, 2, 1]]
 
 #### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 5, 10]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      540.0        1.0   1.0                 666.666667
-PostgreSQL-1-1-1024-2      540.0        1.0   2.0                 666.666667
-PostgreSQL-1-1-1024-3      540.0        1.0   5.0                 666.666667
-PostgreSQL-1-1-1024-4      540.0        1.0  10.0                 666.666667
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1      509.0        1.0   1.0         707.269155
+PostgreSQL-1-1-1024-2      509.0        1.0   2.0         707.269155
+PostgreSQL-1-1-1024-3      509.0        1.0   5.0         707.269155
+PostgreSQL-1-1-1024-4      509.0        1.0  10.0         707.269155
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -620,19 +651,20 @@ This
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_ycsb_c.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
-    Duration: 1032s 
-    Code: 1746434149
+    Duration: 1031s 
+    Code: 1747712652
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'c'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -650,33 +682,33 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260648
+    disk:256417620
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746434149
+                code:1747712652
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260820
+    disk:256417620
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1746434149
+                code:1747712652
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.07                   16384.07         0.0                                                        550.0                                                458.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.05                   16384.06         0.0                                                        567.0                                                473.0
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.06                   16384.06         0.0                                                        552.0                                                462.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.08                   16384.09         0.0                                                        566.0                                                474.0
 
 ### Workflow
 
@@ -724,19 +756,20 @@ nohup python benchbase.py -tr \
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_ycsb_a.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
     Duration: 1031s 
-    Code: 1746435230
+    Code: 1747713732
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'a'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -754,33 +787,33 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260832
+    disk:256417604
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746435230
+                code:1747713732
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:233045108
-    datadisk:5993
+    disk:260204816
+    datadisk:5996
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1746435230
+                code:1747713732
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.05                   16384.06         0.0                                                        627.0                                                507.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.05                   16384.06         0.0                                                        644.0                                                521.5
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.05                   16384.06         0.0                                                        631.0                                                507.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.06                   16384.07         0.0                                                        649.0                                                523.0
 
 ### Workflow
 
@@ -792,8 +825,8 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1        6.0        1.0   1.0           600000.0
-PostgreSQL-1-1-1024-2        6.0        1.0   2.0           600000.0
+PostgreSQL-1-1-1024-1        7.0        1.0   1.0      514285.714286
+PostgreSQL-1-1-1024-2        7.0        1.0   2.0      514285.714286
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -827,19 +860,20 @@ nohup python benchbase.py -tr \
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_ycsb_b.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
-    Duration: 1032s 
-    Code: 1746436310
+    Duration: 1031s 
+    Code: 1747714812
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'b'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -857,33 +891,33 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260844
+    disk:256417616
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746436310
+                code:1747714812
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229672336
+    disk:256829112
     datadisk:2699
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1746436310
+                code:1747714812
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.06                   16384.07         0.0                                                        579.0                                                472.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.05                   16384.06         0.0                                                        585.0                                                480.5
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.14                   16384.14         0.0                                                        590.0                                                474.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.05                   16384.06         0.0                                                        590.0                                                483.0
 
 ### Workflow
 
@@ -935,19 +969,20 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_ycsb_d.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
-    Duration: 652s 
-    Code: 1746437390
+    Duration: 655s 
+    Code: 1747715893
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'd'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -965,18 +1000,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260828
+    disk:256421144
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746437390
+                code:1747715893
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.15                   16384.16         0.0                                                        561.0                                                462.0
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.06                   16384.07         0.0                                                        567.0                                                466.0
 
 ### Workflow
 
@@ -1027,19 +1062,20 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_ycsb_e.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
     Duration: 623s 
-    Code: 1746438051
+    Code: 1747716553
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'e'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -1057,18 +1093,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260832
+    disk:256421128
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746438051
+                code:1747716553
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                         72.23                      72.34         0.0                                                     759208.0                                             442653.0
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                         70.11                      70.22         0.0                                                     746867.0                                             456019.0
 
 ### Workflow
 
@@ -1080,7 +1116,7 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1        6.0        1.0   1.0           600000.0
+PostgreSQL-1-1-1024-1        7.0        1.0   1.0      514285.714286
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -1115,19 +1151,20 @@ nohup python benchbase.py -tr \
 
 At the end of a benchmark you will see a summary like
 
-```bash
+doc_benchbase_testcase_ycsb_f.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
-    Duration: 1031s 
-    Code: 1746438711
+    Duration: 1029s 
+    Code: 1747717213
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'f'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -1145,33 +1182,33 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229261000
+    disk:256421128
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746438711
+                code:1747717213
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:233184476
-    datadisk:6129
+    disk:260343692
+    datadisk:6128
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1746438711
+                code:1747717213
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.03                   16384.06         0.0                                                        953.0                                                669.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.03                   16384.06         0.0                                                        958.0                                                675.5
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.04                   16384.06         0.0                                                        950.0                                                672.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                      16384.06                   16384.06         0.0                                                        959.0                                                677.5
 
 ### Workflow
 

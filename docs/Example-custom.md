@@ -12,7 +12,7 @@ We need a dummy to mimick the existence of a DBMS managed by bexhoma and a query
 ### Dummy DBMS
 
 Inside the `docker` section of the `cluster.config` we define infos how to connect to a DBMS (keep key `Dummy` here, adjust all the rest):
-```
+```python
         'Dummy': {
             'loadData': '',
             'delay_prepare': 0,
@@ -50,7 +50,7 @@ Example: Run `python example.py run -dbms Dummy -ne 5 -nr 100` to run experiment
 The DBMSBenchmarker Docker container needs to have the required JDBC driver included.
 
 Currently, the image contains the following:
-```
+```bash
 
 ######### Specific version of PostgreSQL JDBC #########
 RUN wget https://jdbc.postgresql.org/download/postgresql-42.5.0.jar --no-check-certificate
@@ -97,7 +97,7 @@ You can connect to a Jupyter server there (password is admin).
 
 There is a variety of evaluation tools included.
 For example to compute the total throughput:
-```
+```python
 from dbmsbenchmarker import *
 
 resultfolder = "/results/"
@@ -125,7 +125,7 @@ print(time_start, time_end, time_end-time_start)
 might print something like `1691160697 1691160833 136` (total time of 136 seconds).
 
 The dict `benchmarker_times` contains (for 20 parallel benchmarkers) something like
-```
+```bash
 Dummy-BHT-1-1-1-9
   time_start:1691160740
   time_end:1691160741

@@ -2,11 +2,12 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1743765273
-Experiment                    : starts at 2025-04-04 13:14:32.813190 (7957436.283744415)
+Experiment                    : has code 1748883105
+Experiment                    : starts at 2025-06-02 18:51:45.527149 (13075268.997703532)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+Experiment uses bexhoma version 0.8.7.
 Benchmark is limited to DBMS ['Citus'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
@@ -21,7 +22,6 @@ done
 Citus-BHT-8-1                 : will start now
 Citus-BHT-8-1                 : Name of SUT pods = bexhoma-sut-citus-bht-8-1-hammerdb-16
 Citus-BHT-8-1                 : Name of SUT service = bexhoma-sut-citus-bht-8-1-hammerdb-16
-Citus-BHT-8-1                 : Name of SUT PVC name = bexhoma-storage-citus-hammerdb-16
 Citus-BHT-8-1                 : Name of Worker pods = bexhoma-worker-citus-hammerdb-16
 Citus-BHT-8-1                 : Name of Worker service headless = bexhoma-worker-citus-hammerdb-16
 - waiting 30s -               : done
@@ -98,10 +98,10 @@ Citus-BHT-8-1                 : worker bexhoma-worker-citus-hammerdb-16-2.bexhom
 
 
 Citus-BHT-8-1                 : is not loaded yet
-Citus-BHT-8-1                 : will start loading but not before 2025-04-04 11:22:11 (that is in 60 secs)
+Citus-BHT-8-1                 : will start loading but not before 2025-06-02 16:59:27 (that is in 60 secs)
 - waiting 30s -               : done
 Citus-BHT-8-1                 : is not loaded yet
-Citus-BHT-8-1                 : will start loading but not before 2025-04-04 11:22:11
+Citus-BHT-8-1                 : will start loading but not before 2025-06-02 16:59:27
 done
 Citus-BHT-8-1                 : is not loaded yet
 Citus-BHT-8-1                 : start asynch loading scripts of type loaded
@@ -113,21 +113,23 @@ Citus-BHT-8-1                 : is loading
 - waiting 30s -               : done
 Citus-BHT-8-1                 : is loading
 done
+Citus-BHT-8-1                 : is loading
+done
 Citus-BHT-8-1                 : showing loader times
-Citus-BHT-8-1                 : loader timespan (first to last [s]) = 105
+Citus-BHT-8-1                 : loader timespan (first to last [s]) = 115
 Citus-BHT-8-1                 : start asynch loading scripts of type indexed
 Citus-BHT-8-1                 : is loading
 done
 Citus-BHT-8-1                 : benchmarks done 0 of 1. This will be client 1
-Citus-BHT-8-1                 : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'citus', 'HAMMERDB_VUSERS': 16, 'USER': 'postgres', 'PASSWORD': 'password1234', 'DATABASE': 'postgres', 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'true'}
+Citus-BHT-8-1                 : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'citus', 'HAMMERDB_VUSERS': 16, 'BEXHOMA_USER': 'postgres', 'BEXHOMA_PASSWORD': 'password1234', 'BEXHOMA_DATABASE': 'postgres', 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'true'}
 Citus-BHT-8-1-1               : start benchmarking
 Citus-BHT-8-1                 : Worker pods found: ['bexhoma-worker-citus-hammerdb-16-0', 'bexhoma-worker-citus-hammerdb-16-1', 'bexhoma-worker-citus-hammerdb-16-2']
 Citus-BHT-8-1                 : distributed system - get host info for worker bexhoma-worker-citus-hammerdb-16-0
 Citus-BHT-8-1                 : distributed system - get host info for worker bexhoma-worker-citus-hammerdb-16-1
 Citus-BHT-8-1                 : distributed system - get host info for worker bexhoma-worker-citus-hammerdb-16-2
-Citus-BHT-8-1                 : benchmarking results in folder /home/perdelt/benchmarks/1743765273
+Citus-BHT-8-1                 : benchmarking results in folder /home/perdelt/benchmarks/1748883105
 - waiting 10s -               : done
-Citus-BHT-8-1                 : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1-1743765273-1-1-n4jjq: found
+Citus-BHT-8-1                 : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-8-1-1748883105-1-1-nqk7c: found
 - waiting 30s -               : done
 Citus-BHT-8-1                 : has running benchmarks
 - waiting 30s -               : done
@@ -159,13 +161,13 @@ Citus-BHT-8-1                 : has running benchmarks
 done
 Citus-BHT-8-1                 : has running benchmarks
 Citus-BHT-8-1-1               : showing benchmarker times
-Citus-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 465
-Citus-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1743765895, 1743766337)]
-Citus-BHT-8-1-1               : found and updated times {'benchmarker': [(1743765895, 1743766337)]}
+Citus-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 464
+Citus-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1748883767, 1748884211)]
+Citus-BHT-8-1-1               : found and updated times {'benchmarker': [(1748883767, 1748884211)]}
 done
 Citus-BHT-8-1                 : can be stopped
 Citus-BHT-8-1                 : Worker pods found: ['bexhoma-worker-citus-hammerdb-16-0', 'bexhoma-worker-citus-hammerdb-16-1', 'bexhoma-worker-citus-hammerdb-16-2']
-Experiment ends at 2025-04-04 13:33:09.505408 (7958552.975961531): 1116.6922171153128s total
+Experiment ends at 2025-06-02 19:10:58.185930 (13076421.656483864): 1152.6587803326547s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -176,12 +178,13 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1117s 
-    Code: 1743765273
+    Duration: 1153s 
+    Code: 1748883105
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -194,39 +197,44 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 Citus-BHT-8-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:201377888
+    disk:317426456
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:540595900416
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:5.15.0-134-generic
-        node:cl-worker23
-        disk:151410852
-    worker 1
-        RAM:540587544576
+        RAM:540579409920
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:5.15.0-134-generic
+        host:6.8.0-60-generic
         node:cl-worker22
-        disk:234755912
+        disk:436861832
+    worker 1
+        RAM:1081649897472
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-60-generic
+        node:cl-worker34
+        disk:345853416
     worker 2
-        RAM:1081965510656
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1073-nvidia
-        node:cl-worker27
-        disk:977073952
+        RAM:1081854078976
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-60-generic
+        node:cl-worker37
+        disk:226115648
+    eval_parameters
+        code:1748883105
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_SHARDS:48
+        BEXHOMA_WORKERS:3
 
 ### Execution
                  experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM       TPM  duration  errors
-Citus-BHT-8-1-1               1      16       1          1     30.12     60.59         0.0  47853.0  109891.0         5       0
+Citus-BHT-8-1-1               1      16       1          1      33.8     69.47         0.0  45897.0  105337.0         5       0
 
 Warehouses: 16
 
@@ -240,7 +248,7 @@ DBMS Citus-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-Citus-BHT-8-1-1      105.0        1.0   1.0                 548.571429
+Citus-BHT-8-1-1      115.0        1.0   1.0                 500.869565
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

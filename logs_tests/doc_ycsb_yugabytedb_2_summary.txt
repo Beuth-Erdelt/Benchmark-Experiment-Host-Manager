@@ -3,17 +3,19 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 485s 
-    Code: 1743091301
+    Duration: 1419s 
+    Code: 1747943533
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
     Number of operations is 10000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.5.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['YugabyteDB'].
     Import is handled by 8 processes (pods).
@@ -33,17 +35,17 @@ YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:184427020
+    disk:257038500
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1743091301
+        code:1747943533
 
 ### Execution
                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1           0                       32804.31               304838.0           4999231                           27887.0             5000769                             39999.0
+YugabyteDB-64-8-65536-1               1       64   65536          1           0                         8096.1              1235162.0           5000336                           57503.0             4999664                             61023.0
 
 ### Workflow
 
@@ -55,14 +57,15 @@ DBMS YugabyteDB-64-8-65536 - Pods [[1]]
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1    13353.73    15.98          7.14                23.56
+YugabyteDB-64-8-65536-1    33657.92    24.27          7.08                15.46
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      969.47     3.46          0.61                 0.61
+YugabyteDB-64-8-65536-1     1167.45     1.35          0.61                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

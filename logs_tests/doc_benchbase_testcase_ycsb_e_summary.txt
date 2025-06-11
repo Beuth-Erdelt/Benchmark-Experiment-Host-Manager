@@ -4,12 +4,12 @@
 Benchbase Workload SF=1000
     Type: benchbase
     Duration: 623s 
-    Code: 1746438051
+    Code: 1747716553
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'e'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -27,18 +27,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260832
+    disk:256421128
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746438051
+                code:1747716553
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                         72.23                      72.34         0.0                                                     759208.0                                             442653.0
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                         70.11                      70.22         0.0                                                     746867.0                                             456019.0
 
 ### Workflow
 
@@ -50,7 +50,7 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1        6.0        1.0   1.0           600000.0
+PostgreSQL-1-1-1024-1        7.0        1.0   1.0      514285.714286
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

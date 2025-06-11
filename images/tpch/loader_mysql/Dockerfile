@@ -1,3 +1,21 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker TPC-H
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: debian:stable-20240110-slim
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Pre-generated data is loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Redis client is installed.
+# MySQL client is installed.
+######################################################################################
 FROM debian:stable-20240110-slim
 
 RUN apt-get clean
@@ -36,13 +54,21 @@ ENV LANG en_US.utf8
 ENV LC_ALL="en_US.UTF-8"
 #ENV LANG="en_US.utf8"
 
-ENV NUM_PODS=4
-ENV CHILD=1
+ENV SF=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
-ENV BEXHOMA_PORT 50000
-ENV BEXHOMA_CONNECTION="monetdb"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
-ENV DATABASE tpch
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
 ENV STORE_RAW_DATA=0
 ENV BEXHOMA_SYNCH_LOAD 0
 ENV MYSQL_LOADING_THREADS 8

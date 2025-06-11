@@ -12,10 +12,10 @@ echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
-echo "PARALLEL $PARALLEL"
+echo "HAMMERDB_NUM_VU $HAMMERDB_NUM_VU"
 echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
 echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
@@ -24,19 +24,19 @@ echo "HAMMERDB_ALLWAREHOUSES $HAMMERDB_ALLWAREHOUSES"
 echo "HAMMERDB_KEYANDTHINK $HAMMERDB_KEYANDTHINK"
 
 ######################## Wait for synched starting time ########################
-echo "benchmark started at $DBMSBENCHMARKER_NOW"
-echo "benchmark should wait until $DBMSBENCHMARKER_START"
-if test "$DBMSBENCHMARKER_START" != "0"
+echo "benchmark started at $BEXHOMA_TIME_NOW"
+echo "benchmark should wait until $BEXHOMA_TIME_START"
+if test "$BEXHOMA_TIME_START" != "0"
 then
-    benchmark_start_epoch=$(date -u -d "$DBMSBENCHMARKER_NOW" +%s)
+    benchmark_start_epoch=$(date -u -d "$BEXHOMA_TIME_NOW" +%s)
     echo "that is $benchmark_start_epoch"
 
     TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
     echo "now is $current_epoch"
     current_epoch=$(date -u +%s)
     echo "that is $current_epoch"
-    target_epoch=$(date -u -d "$DBMSBENCHMARKER_START" +%s)
-    echo "wait until $DBMSBENCHMARKER_START"
+    target_epoch=$(date -u -d "$BEXHOMA_TIME_START" +%s)
+    echo "wait until $BEXHOMA_TIME_START"
     echo "that is $target_epoch"
     sleep_seconds=$(( $target_epoch - $current_epoch ))
     echo "that is wait $sleep_seconds seconds"
@@ -59,13 +59,13 @@ mkdir -p /results/$BEXHOMA_EXPERIMENT
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-if [ -z "$CHILD" ]
+BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+if [ -z "$BEXHOMA_CHILD" ]
 then
     echo "No entry found in message queue. I assume this is the first child."
-    CHILD=1
+    BEXHOMA_CHILD=1
 else
-    echo "Found entry number $CHILD in message queue."
+    echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
 ######################## Wait until all pods of job are ready ########################
@@ -75,7 +75,7 @@ redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_
 # wait for number of pods to be as expected
 while : ; do
     PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-    echo "Found $PODS_RUNNING / $NUM_PODS running pods"
+    echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
     if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
     then
         echo "PODS_RUNNING contains a number."
@@ -83,11 +83,11 @@ while : ; do
         echo "PODS_RUNNING does not contain a number."
         exit 0
     fi
-    if  test "$PODS_RUNNING" == $NUM_PODS
+    if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
     then
-        echo "OK, found $NUM_PODS ready pods."
+        echo "OK, found $BEXHOMA_NUM_PODS ready pods."
         break
-    elif test "$PODS_RUNNING" -gt $NUM_PODS
+    elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
     then
         echo "Too many pods! Restart occured?"
         exit 0
@@ -98,8 +98,8 @@ while : ; do
 done
 
 ######################## Show more parameters ########################
-echo "CHILD $CHILD"
-echo "NUM_PODS $NUM_PODS"
+echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
 ######################## Generate workflow file ########################
@@ -133,9 +133,9 @@ dbset db mysql
 diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
 diset tpcc mysql_count_ware $SF
-diset tpcc mysql_num_vu $PARALLEL
-diset tpcc mysql_user $USER
-diset tpcc mysql_pass $PASSWORD
+diset tpcc mysql_num_vu $HAMMERDB_NUM_VU
+diset tpcc mysql_user $BEXHOMA_USER
+diset tpcc mysql_pass $BEXHOMA_PASSWORD
 diset tpcc mysql_driver timed
 diset tpcc mysql_rampup $HAMMERDB_RAMPUP
 diset tpcc mysql_duration $HAMMERDB_DURATION
@@ -185,9 +185,9 @@ dbset db maria
 diset connection maria_host $BEXHOMA_HOST
 diset connection maria_port $BEXHOMA_PORT
 diset tpcc maria_count_ware $SF
-diset tpcc maria_num_vu $PARALLEL
-diset tpcc maria_user $USER
-diset tpcc maria_pass $PASSWORD
+diset tpcc maria_num_vu $HAMMERDB_NUM_VU
+diset tpcc maria_user $BEXHOMA_USER
+diset tpcc maria_pass $BEXHOMA_PASSWORD
 diset tpcc maria_driver timed
 diset tpcc maria_rampup $HAMMERDB_RAMPUP
 diset tpcc maria_duration $HAMMERDB_DURATION
@@ -220,12 +220,12 @@ dbset db pg
 diset connection pg_host $BEXHOMA_HOST
 diset connection pg_port $BEXHOMA_PORT
 diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_num_vu $HAMMERDB_NUM_VU
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $USER
-diset tpcc pg_pass $PASSWORD
+diset tpcc pg_user $BEXHOMA_USER
+diset tpcc pg_pass $BEXHOMA_PASSWORD
 diset tpcc pg_dbase tpcc
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
@@ -277,13 +277,13 @@ dbset db pg
 diset connection pg_host $BEXHOMA_HOST
 diset connection pg_port $BEXHOMA_PORT
 diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $PARALLEL
+diset tpcc pg_num_vu $HAMMERDB_NUM_VU
 diset tpcc pg_superuser postgres
 diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $USER
-diset tpcc pg_pass $PASSWORD
-diset tpcc pg_dbase $DATABASE
+diset tpcc pg_user $BEXHOMA_USER
+diset tpcc pg_pass $BEXHOMA_PASSWORD
+diset tpcc pg_dbase $BEXHOMA_DATABASE
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION

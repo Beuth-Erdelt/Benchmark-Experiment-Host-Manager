@@ -1,57 +1,64 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 794s 
-    Code: 1729531508
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 1253s 
+    Code: 1748948081
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 1 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 50Gi.
+    Database is persisted to disk of type shared and size 30Gi.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run 2 times.
 
 ### Connections
-MariaDB-1-1-1024-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-1-1-1024-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250323480
-    datadisk:1940452
-    volume_size:50G
+    disk:317590408
+    datadisk:1883
+    volume_size:30G
     volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
-MariaDB-1-1-1024-2-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1748948081
+MariaDB-1-1-1024-2-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250323476
-    datadisk:1980233
-    volume_size:50G
+    disk:317590408
+    datadisk:1927
+    volume_size:30G
     volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:2
+    eval_parameters
+                code:1748948081
 
 ### Execution
-                      experiment_run  terminals  target  pod_count  time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MariaDB-1-1-1024-1-1               1         16    8192          1  60.0                        376.43                                                      35970.0                                              40909.0
-MariaDB-1-1-1024-2-1               2         16    8192          1  60.0                        534.45                                                      34873.0                                              29917.0
-
-Warehouses: 16
+                      experiment_run  terminals  target  pod_count  time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MariaDB-1-1-1024-1-1               1         16    8192          1  60.0           0                        319.82                     318.58         0.0                                                      39237.0                                              49543.0
+MariaDB-1-1-1024-2-1               2         16    8192          1  60.0           0                        424.30                     422.77         0.0                                                      22345.0                                              33410.0
 
 ### Workflow
 
@@ -62,9 +69,9 @@ DBMS MariaDB-1-1-1024 - Pods [[1], [1]]
 DBMS MariaDB-1-1-1024 - Pods [[1], [1]]
 
 ### Loading
-                      time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-1-1-1024-1-1      325.0        1.0   1.0                 177.230769
-MariaDB-1-1-1024-2-1      325.0        1.0   1.0                 177.230769
+                      time_load  terminals  pods  Throughput [SF/h]
+MariaDB-1-1-1024-1-1      471.0        1.0   1.0         122.292994
+MariaDB-1-1-1024-2-1      471.0        1.0   1.0         122.292994
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

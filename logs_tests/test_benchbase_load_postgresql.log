@@ -1,0 +1,114 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1749628840
+Experiment                    : starts at 2025-06-11 10:00:40.608164 (13821004.078715604)
+Experiment                    : This imports a Benchbase data set.
+Benchbase data is generated and loaded using several threads. Scaling factor is 1. Target is based on multiples of '1024'.
+Experiment uses bexhoma version 0.8.7.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [64] threads, split into [8] pods.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-1-1-1024           : will start now
+PostgreSQL-1-1-1024           : Name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1749628840
+PostgreSQL-1-1-1024           : Name of SUT service = bexhoma-sut-postgresql-1-1-1024-1749628840
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : will start loading but not before 2025-06-11 08:03:43 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : will start loading but not before 2025-06-11 08:03:43
+done
+PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+done
+PostgreSQL-1-1-1024           : showing loader times
+PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 64
+PostgreSQL-1-1-1024           : start asynch loading scripts of type indexed
+PostgreSQL-1-1-1024           : is loading
+done
+PostgreSQL-1-1-1024           : can be stopped, but we leave it running
+PostgreSQL-1-1-1024           : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749628840 9091
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1749628840
+PostgreSQL-1-1-1024-1         : collecting loading metrics of SUT at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749628840(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-1024-1         : collecting metrics of data generator at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749628840(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-1024-1         : collecting metrics of data injector at connection PostgreSQL-1-1-1024-1
+PostgreSQL-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-1024-1749628840(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Experiment                    : ends at 2025-06-11 10:06:05.009559 (13821328.480112894) - 324.40s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+Benchbase Data tpcc Loading SF=1
+    Type: benchbase
+    Duration: 325s 
+    Code: 1749628840
+    Intro: Benchbase runs a TPC-C experiment.
+    This imports a Benchbase data set.
+    Benchbase data is generated and loaded using several threads. Scaling factor is 1. Target is based on multiples of '1024'.
+    Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [8] pods.
+    Experiment is run once.
+
+### Services
+PostgreSQL-1-1-1024
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749628840 9091:9091
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:387465856
+    datadisk:331
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1749628840
+
+### Loading
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1       64.0        1.0   1.0                0.0
+
+### Ingestion - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1       59.84     0.44           2.5                 2.65
+
+### Ingestion - Loader
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1       11.39        0          0.23                 0.23
+
+### Tests
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]

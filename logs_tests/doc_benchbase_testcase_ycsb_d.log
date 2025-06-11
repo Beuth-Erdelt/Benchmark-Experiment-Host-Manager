@@ -2,12 +2,12 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1746437390
-Experiment                    : starts at 2025-05-05 11:29:50.534589 (10629554.005142704)
+Experiment                    : has code 1747715893
+Experiment                    : starts at 2025-05-20 06:38:12.831646 (11908056.302200204)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'ycsb'. Workload is 'd'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-Experiment uses bexhoma version 0.8.4.
+Experiment uses bexhoma version 0.8.5.
 Benchmark is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
@@ -20,8 +20,8 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 PostgreSQL-1-1-1024           : will start now
-PostgreSQL-1-1-1024           : Name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1746437390
-PostgreSQL-1-1-1024           : Name of SUT service = bexhoma-sut-postgresql-1-1-1024-1746437390
+PostgreSQL-1-1-1024           : Name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1747715893
+PostgreSQL-1-1-1024           : Name of SUT service = bexhoma-sut-postgresql-1-1-1024-1747715893
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : waits for health check to succeed
 - waiting 30s -               : done
@@ -30,10 +30,10 @@ PostgreSQL-1-1-1024           : waits for health check to succeed
 PostgreSQL-1-1-1024           : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2025-05-05 09:33:22 (that is in 60 secs)
+PostgreSQL-1-1-1024           : will start loading but not before 2025-05-20 04:41:44 (that is in 60 secs)
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2025-05-05 09:33:22
+PostgreSQL-1-1-1024           : will start loading but not before 2025-05-20 04:41:44
 done
 PostgreSQL-1-1-1024           : is not loaded yet
 PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
@@ -45,11 +45,11 @@ PostgreSQL-1-1-1024           : start asynch loading scripts of type indexed
 PostgreSQL-1-1-1024           : is loading
 done
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1000', 'BENCHBASE_BENCH': 'ycsb', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 32, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'd'}
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '1000', 'BENCHBASE_BENCH': 'ycsb', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 32, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'd'}
 PostgreSQL-1-1-1024-1         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1746437390
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1747715893
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1746437390-1-1-ktn6k: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1747715893-1-1-kkr6j: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -73,12 +73,12 @@ PostgreSQL-1-1-1024           : has running benchmarks
 done
 PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024-1         : showing benchmarker times
-PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 343
-PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1746437669, 1746437989)]
-PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1746437669, 1746437989)]}
+PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 347
+PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1747716171, 1747716490)]
+PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1747716171, 1747716490)]}
 done
 PostgreSQL-1-1-1024           : can be stopped
-Experiment ends at 2025-05-05 11:40:42.167632 (10630205.63818454): 651.6330418363214s total
+Experiment ends at 2025-05-20 06:49:07.115022 (11908710.585575392): 654.2833751887083s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -89,13 +89,13 @@ Result workflow complete
 ### Workload
 Benchbase Workload SF=1000
     Type: benchbase
-    Duration: 652s 
-    Code: 1746437390
+    Duration: 655s 
+    Code: 1747715893
     Benchbase runs the YCSB benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'ycsb'. Workload is 'd'. Scaling factor is 1000. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -113,18 +113,18 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:229260828
+    disk:256421144
     datadisk:2297
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1746437390
+                code:1747715893
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.15                   16384.16         0.0                                                        561.0                                                462.0
+PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                      16384.06                   16384.07         0.0                                                        567.0                                                466.0
 
 ### Workflow
 

@@ -1,3 +1,23 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker YCSB
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "loader".
+#
+# Base Image: alpine:3.15
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark. Data is generated and loaded.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Java is installed.
+# Python2 is installed.
+# Redis client is installed.
+# Some JDBC driver are installed.
+######################################################################################
 #FROM alpine:latest
 FROM alpine:3.15
 
@@ -6,11 +26,9 @@ ENV YCSB=/opt/ycsb
 ENV PATH=${PATH}:/usr/bin
 
 ENV SF=1
-ENV NUM_PODS=4
-ENV CHILD=1
-ENV RNGSEED=123
-ENV CONNECTION=mysql
-ENV EXPERIMENT=12345
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
 ENV BEXHOMA_DBMS=jdbc
 ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
 ENV BEXHOMA_HOST="www.example.com"
@@ -19,12 +37,13 @@ ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
 ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
 ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
 ENV BEXHOMA_USER root
 ENV BEXHOMA_PASSWORD root
 ENV BEXHOMA_SYNCH_LOAD 1
 ENV DATABASE demo
-ENV DBMSBENCHMARKER_START 0
-ENV DBMSBENCHMARKER_NOW 0
+ENV BEXHOMA_TIME_START 0
+ENV BEXHOMA_TIME_NOW 0
 ENV YCSB_THREADCOUNT 1
 ENV YCSB_TARGET 10000
 ENV YCSB_STATUS_INTERVAL 10
@@ -51,6 +70,23 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache nano
 
 RUN apk add --no-cache make cmake gcc libc-dev
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    git \
+    autoconf \
+    automake \
+    libtool
+
+# Build and install jemalloc
+RUN git clone https://github.com/jemalloc/jemalloc.git /tmp/jemalloc && \
+    cd /tmp/jemalloc && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/jemalloc
 
 RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
 

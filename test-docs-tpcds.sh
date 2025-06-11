@@ -65,7 +65,7 @@ wait_process "ycsb"
 
 
 #### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 3 -dt -tr \
+nohup python tpcds.py -ms 1 -dt -tr \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -159,7 +159,7 @@ nohup python tpcds.py -ms 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 7200 -dt \
-  -rst shared -rss 300Gi \
+  -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
 
 
@@ -178,7 +178,7 @@ nohup python tpcds.py -ms 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 7200 -dt \
-  -rst shared -rss 300Gi \
+  -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
 
 
@@ -197,7 +197,7 @@ nohup python tpcds.py -ms 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
   -t 7200 -dt \
-  -rst shared -rss 300Gi \
+  -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
 
 #### Wait so that next experiment receives a different code

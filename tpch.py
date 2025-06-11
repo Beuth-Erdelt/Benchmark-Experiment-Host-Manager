@@ -37,10 +37,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
+    parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-m',   '--monitoring', help='activates monitoring', action='store_true')
@@ -198,6 +199,34 @@ if __name__ == '__main__':
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
                 config.set_storage(
                     storageConfiguration = 'postgresql'
+                    )
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                config.set_loading_parameters(
+                    SF = SF,
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    STORE_RAW_DATA = 1,
+                    STORE_RAW_DATA_RECREATE = 0,
+                    BEXHOMA_SYNCH_LOAD = 1,
+                    BEXHOMA_SYNCH_GENERATE = 1,
+                    TRANSFORM_RAW_DATA = 1,
+                    TPCH_TABLE = limit_import_table,
+                    )
+                config.set_benchmarking_parameters(
+                    SF = SF,
+                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                    DBMSBENCHMARKER_DEV = debugging,
+                    )
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("CedarDB" in args.dbms):
+                # PostgreSQL
+                name_format = 'CedarDB-{cluster}-{pods}'
+                config = configurations.default(experiment=experiment, docker='CedarDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                config.set_storage(
+                    storageConfiguration = 'cedardb'
                     )
                 if skip_loading:
                     config.loading_deactivated = True
@@ -395,51 +424,6 @@ if __name__ == '__main__':
     ##############
     ### branch for workflows
     ##############
-    if args.mode == 'start':
-        experiment.start_sut()
-    elif args.mode == 'load':
-        # start all DBMS
-        experiment.start_sut()
-        # configure number of clients per config = 0
-        list_clients = []
-        # total time of experiment
-        experiment.add_benchmark_list(list_clients)
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-    elif args.mode == 'summary':
-        experiment.show_summary()
-    else:
-        experiment.add_benchmark_list(list_clients)
-        # total time of experiment
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        print("{:30s}: has code {}".format("Experiment",experiment.code))
-        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
-        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
-        experiment.workload['duration'] = math.ceil(duration_experiment)
-        ##################
-        experiment.evaluate_results()
-        experiment.store_workflow_results()
-        experiment.stop_benchmarker()
-        experiment.stop_sut()
-        #experiment.zip() # OOM? exit code 137
-        if test_result:
-            test_result_code = experiment.test_results()
-            if test_result_code == 0:
-                print("Test successful!")
-        cluster.restart_dashboard()
-        experiment.show_summary()
+    experiment.add_benchmark_list(list_clients)
+    experiment.process()
 exit()

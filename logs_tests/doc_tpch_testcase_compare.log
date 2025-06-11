@@ -2,14 +2,15 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730472897
-Experiment                    : starts at 2024-11-01 15:54:56.754333 (157698.161467804)
+Experiment                    : has code 1748411287
+Experiment                    : starts at 2025-05-28 07:48:06.738189 (12603450.208743656)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 600.
 Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.7.
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -21,638 +22,483 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 PostgreSQL-BHT-8              : will start now
-MonetDB-BHT-8                 : will start now
-MariaDB-BHT-8                 : will start now
-MySQL-BHT-64                  : will start now
+PostgreSQL-BHT-8              : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1748411287
+PostgreSQL-BHT-8              : Name of SUT service = bexhoma-sut-postgresql-bht-8-1748411287
+MonetDB-BHT-8                 : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : waits for health check to succeed
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : waits for health check to succeed
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : waits for health check to succeed
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-11-01 14:56:57 (that is in 60 secs)
-MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2024-11-01 14:56:57 (that is in 60 secs)
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57 (that is in 900 secs)
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57 (that is in 900 secs)
+PostgreSQL-BHT-8              : will start loading but not before 2025-05-28 05:51:38 (that is in 60 secs)
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-11-01 14:56:57
-MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2024-11-01 14:56:57
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+PostgreSQL-BHT-8              : will start loading but not before 2025-05-28 05:51:38
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-BHT-8              : is not loaded yet
 PostgreSQL-BHT-8              : start asynch loading scripts of type loaded
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : start asynch loading scripts of type loaded
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-BHT-8              : showing loader times
 PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 1
-PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 24
+PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 26
 PostgreSQL-BHT-8              : total timespan (first to last [s]) = 34
 PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : showing loader times
-MonetDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MonetDB-BHT-8                 : loader timespan (first to last [s]) = 22
-MonetDB-BHT-8                 : total timespan (first to last [s]) = 34
-MonetDB-BHT-8                 : start asynch loading scripts of type indexed
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-done
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
-MonetDB-BHT-8-1               : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1730472897
-- waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1730472897-1-1-dm7lj: .found
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-8-1            : start benchmarking
-PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1730472897
+PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1748411287
 - waiting 10s -               : done
-found
-MonetDB-BHT-8                 : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-MonetDB-BHT-8-1               : showing benchmarker times
-MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 65
-MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1730473201, 1730473214)]
+PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1748411287-1-1-p98fb: found
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 PostgreSQL-BHT-8              : has running benchmarks
-MonetDB-BHT-8                 : can be stopped
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MonetDB-BHT-8                 : can be stopped
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-BHT-8-1            : showing benchmarker times
 PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 72
-PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1730473252, 1730473290)]
+PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1748411697, 1748411729)]
+PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1748411697, 1748411729)]}
 done
 PostgreSQL-BHT-8              : can be stopped
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MonetDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MonetDB-BHT-8                 : will start now
+MonetDB-BHT-8                 : Name of SUT pods = bexhoma-sut-monetdb-bht-8-1748411287
+MonetDB-BHT-8                 : Name of SUT service = bexhoma-sut-monetdb-bht-8-1748411287
+MariaDB-BHT-8                 : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : is not loaded yet
+MonetDB-BHT-8                 : will start loading but not before 2025-05-28 05:58:37 (that is in 60 secs)
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : is not loaded yet
+MonetDB-BHT-8                 : will start loading but not before 2025-05-28 05:58:37
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MonetDB-BHT-8                 : is not loaded yet
+MonetDB-BHT-8                 : start asynch loading scripts of type loaded
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MonetDB-BHT-8                 : showing loader times
+MonetDB-BHT-8                 : generator timespan (first to last [s]) = 1
+MonetDB-BHT-8                 : loader timespan (first to last [s]) = 23
+MonetDB-BHT-8                 : total timespan (first to last [s]) = 30
+MonetDB-BHT-8                 : start asynch loading scripts of type indexed
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
+MonetDB-BHT-8-1               : start benchmarking
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748411287
+- waiting 10s -               : done
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1748411287-1-1-94phx: .found
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MonetDB-BHT-8                 : has running benchmarks
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MonetDB-BHT-8-1               : showing benchmarker times
+MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 51
+MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1748412063, 1748412081)]
+MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1748412063, 1748412081)]}
+done
+MonetDB-BHT-8                 : can be stopped
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MonetDB-BHT-8                 : can be stopped
+MariaDB-BHT-8                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-BHT-8                 : will start now
+MariaDB-BHT-8                 : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1748411287
+MariaDB-BHT-8                 : Name of SUT service = bexhoma-sut-mariadb-bht-8-1748411287
+MySQL-BHT-64                  : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MariaDB-BHT-8                 : will start loading but not before 2025-05-28 06:06:17 (that is in 60 secs)
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-11-01 15:10:57
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-11-01 15:10:57
+MariaDB-BHT-8                 : will start loading but not before 2025-05-28 06:06:17
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MariaDB-BHT-8                 : is not loaded yet
 MariaDB-BHT-8                 : start asynch loading scripts of type loaded
 MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-BHT-8                 : showing loader times
+MariaDB-BHT-8                 : generator timespan (first to last [s]) = 1
+MariaDB-BHT-8                 : loader timespan (first to last [s]) = 248
+MariaDB-BHT-8                 : total timespan (first to last [s]) = 258
+MariaDB-BHT-8                 : start asynch loading scripts of type indexed
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
+MariaDB-BHT-8-1               : start benchmarking
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748411287
+- waiting 10s -               : done
+MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1748411287-1-1-x64qh: found
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+MariaDB-BHT-8-1               : showing benchmarker times
+MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 374
+MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1748414279, 1748414613)]
+MariaDB-BHT-8-1               : found and updated times {'benchmarker': [(1748414279, 1748414613)]}
+done
+MariaDB-BHT-8                 : can be stopped
+MySQL-BHT-64                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+done
+MySQL-BHT-64                  : will start now
+MySQL-BHT-64                  : Name of SUT pods = bexhoma-sut-mysql-bht-64-1748411287
+MySQL-BHT-64                  : Name of SUT service = bexhoma-sut-mysql-bht-64-1748411287
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-64                  : is not loaded yet
+MySQL-BHT-64                  : will start loading but not before 2025-05-28 06:50:08 (that is in 60 secs)
+- waiting 30s -               : done
+MySQL-BHT-64                  : is not loaded yet
+MySQL-BHT-64                  : will start loading but not before 2025-05-28 06:50:08
+done
 MySQL-BHT-64                  : is not loaded yet
 MySQL-BHT-64                  : start asynch loading scripts of type loaded
 MySQL-BHT-64                  : is loading
 - waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : is loading
 done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : showing loader times
 MySQL-BHT-64                  : generator timespan (first to last [s]) = 1
-MySQL-BHT-64                  : loader timespan (first to last [s]) = 671
-MySQL-BHT-64                  : total timespan (first to last [s]) = 684
+MySQL-BHT-64                  : loader timespan (first to last [s]) = 5
+MySQL-BHT-64                  : total timespan (first to last [s]) = 13
 MySQL-BHT-64                  : start asynch loading scripts of type indexed
 MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
 done
-MariaDB-BHT-8                 : showing loader times
-MariaDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MariaDB-BHT-8                 : loader timespan (first to last [s]) = 795
-MariaDB-BHT-8                 : total timespan (first to last [s]) = 804
-MariaDB-BHT-8                 : start asynch loading scripts of type indexed
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-done
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : benchmarks done 0 of 1. This will be client 1
 MySQL-BHT-64-1                : start benchmarking
-MySQL-BHT-64                  : benchmarking results in folder /home/perdelt/benchmarks/1730472897
+MySQL-BHT-64                  : benchmarking results in folder /home/perdelt/benchmarks/1748411287
 - waiting 10s -               : done
-MySQL-BHT-64                  : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-64-1730472897-1-1-77w48: found
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : has running benchmarks
+MySQL-BHT-64                  : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-64-1748411287-1-1-797hk: found
 done
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : has running benchmarks
 MySQL-BHT-64-1                : showing benchmarker times
-MySQL-BHT-64-1                : benchmarker timespan (start to end single container [s]) = 191
-MySQL-BHT-64-1                : benchmarker times (start/end per pod and container) = [(1730477385, 1730477566)]
-MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1730477385, 1730477566)]}
+MySQL-BHT-64-1                : benchmarker timespan (start to end single container [s]) = 41
+MySQL-BHT-64-1                : benchmarker times (start/end per pod and container) = [(1748415116, 1748415118)]
+MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1748415116, 1748415118)]}
 done
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : can be stopped
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-done
-MariaDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
-MariaDB-BHT-8-1               : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1730472897
-- waiting 10s -               : done
-MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1730472897-1-1-9zkwz: found
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-done
-MariaDB-BHT-8                 : has running benchmarks
-MariaDB-BHT-8-1               : showing benchmarker times
-MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 372
-MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1730477731, 1730478082)]
-MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1730477731, 1730478082)]}
-done
-MariaDB-BHT-8                 : can be stopped
-Experiment                    : ends at 2024-11-01 17:22:11.364375 (162932.771508234) - 5234.61s total
+Experiment                    : ends at 2025-05-28 08:53:03.434304 (12607346.90485771) - 3896.70s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -664,8 +510,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 5235s 
-    Code: 1730472897
+    Duration: 3897s 
+    Code: 1748411287
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -673,6 +519,7 @@ TPC-H Queries SF=1
     All instances use the same query parameters.
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -683,107 +530,137 @@ TPC-H Queries SF=1
     Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:257064956
-    datadisk:2140488
+    disk:303353844
+    datadisk:2085
     requests_cpu:4
     requests_memory:16Gi
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
-    RAM:541008605184
+    eval_parameters
+        code:1748411287
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:269237008
-    datadisk:2841028
+    disk:304157952
+    datadisk:2883
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748411287
 MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:268980384
-    datadisk:11440660
+    disk:309704012
+    datadisk:8286
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748411287
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:269236940
-    datadisk:2822240
+    disk:304029564
+    datadisk:2757
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748411287
 
 ### Errors (failed queries)
 No errors
 
 ### Warnings (result mismatch)
-No warnings
+                                                     MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                                False              False              True                 False
+Minimum Cost Supplier Query (TPC-H Q2)                           False              False              True                 False
+Shipping Priority (TPC-H Q3)                                     False              False              True                 False
+Order Priority Checking Query (TPC-H Q4)                         False              False              True                 False
+Local Supplier Volume (TPC-H Q5)                                 False              False              True                 False
+Forecasting Revenue Change (TPC-H Q6)                            False              False              True                 False
+Forecasting Revenue Change (TPC-H Q7)                            False              False              True                 False
+National Market Share (TPC-H Q8)                                 False              False              True                 False
+Product Type Profit Measure (TPC-H Q9)                           False              False              True                 False
+Forecasting Revenue Change (TPC-H Q10)                           False              False              True                 False
+Important Stock Identification (TPC-H Q11)                       False              False              True                 False
+Shipping Modes and Order Priority (TPC-H Q12)                    False              False              True                 False
+Customer Distribution (TPC-H Q13)                                False              False              True                 False
+Forecasting Revenue Change (TPC-H Q14)                           False              False              True                 False
+Top Supplier Query (TPC-H Q15)                                   False              False              True                 False
+Parts/Supplier Relationship (TPC-H Q16)                          False              False              True                 False
+Small-Quantity-Order Revenue (TPC-H Q17)                         False              False              True                 False
+Large Volume Customer (TPC-H Q18)                                False              False              True                 False
+Discounted Revenue (TPC-H Q19)                                   False              False              True                 False
+Potential Part Promotion (TPC-H Q20)                             False              False              True                 False
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)              False              False              True                 False
+Global Sales Opportunity Query (TPC-H Q22)                       False              False              True                 False
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             28002.73            1200.90          29297.84               2597.36
-Minimum Cost Supplier Query (TPC-H Q2)                         1296.29              30.40            382.98                434.98
-Shipping Priority (TPC-H Q3)                                   6416.85             113.54           4314.49                729.03
-Order Priority Checking Query (TPC-H Q4)                       1329.43              74.62           1606.01               1226.62
-Local Supplier Volume (TPC-H Q5)                               3468.90              81.88           4074.22                630.98
-Forecasting Revenue Change (TPC-H Q6)                          3290.09              38.73           4075.79                483.64
-Forecasting Revenue Change (TPC-H Q7)                          3705.18              91.55           5947.95                745.49
-National Market Share (TPC-H Q8)                               6886.23             428.40           9738.13                596.13
-Product Type Profit Measure (TPC-H Q9)                         5481.46              96.68           7562.10               1096.36
-Forecasting Revenue Change (TPC-H Q10)                         2999.73             182.62           3142.46               1452.41
-Important Stock Identification (TPC-H Q11)                      394.14              28.69            518.99                250.01
-Shipping Modes and Order Priority (TPC-H Q12)                 11623.43              64.40           6826.49                997.68
-Customer Distribution (TPC-H Q13)                              9860.00             567.74          13664.05               1998.16
-Forecasting Revenue Change (TPC-H Q14)                        29979.57              49.90           5038.49                530.90
-Top Supplier Query (TPC-H Q15)                                 7881.72              38.26          44676.04                539.25
-Parts/Supplier Relationship (TPC-H Q16)                         757.55             107.25            998.21                650.31
-Small-Quantity-Order Revenue (TPC-H Q17)                        163.17              58.71           1257.11               1959.59
-Large Volume Customer (TPC-H Q18)                             10433.42             192.86           5982.98               7797.22
-Discounted Revenue (TPC-H Q19)                                  288.05              67.24            420.32                684.68
-Potential Part Promotion (TPC-H Q20)                            521.62              81.42            800.12                714.94
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          203730.06            1727.55          18683.45                875.52
-Global Sales Opportunity Query (TPC-H Q22)                      447.10              49.97            478.97                235.42
+Pricing Summary Report (TPC-H Q1)                             26262.84            1154.13             98.94               2712.24
+Minimum Cost Supplier Query (TPC-H Q2)                         1381.55              40.78              4.09                434.90
+Shipping Priority (TPC-H Q3)                                   5506.54              88.89              2.34                767.72
+Order Priority Checking Query (TPC-H Q4)                       1111.93              67.53              2.48               1299.37
+Local Supplier Volume (TPC-H Q5)                               3584.36              82.99              2.07                670.75
+Forecasting Revenue Change (TPC-H Q6)                          3827.60              27.95              1.89                527.59
+Forecasting Revenue Change (TPC-H Q7)                          3756.69              88.71              2.70                798.87
+National Market Share (TPC-H Q8)                               6906.66             428.28              2.47                637.12
+Product Type Profit Measure (TPC-H Q9)                         6928.24             101.62              2.67               1139.08
+Forecasting Revenue Change (TPC-H Q10)                         3048.21             172.46              2.35               1271.98
+Important Stock Identification (TPC-H Q11)                      503.67              32.29              1.99                251.56
+Shipping Modes and Order Priority (TPC-H Q12)                 11621.98              68.33              1.84               1035.84
+Customer Distribution (TPC-H Q13)                             10016.65             530.09              1.76               1972.49
+Forecasting Revenue Change (TPC-H Q14)                        29781.88              38.51              1.44                579.80
+Top Supplier Query (TPC-H Q15)                                 6761.57              38.92              3.97                571.87
+Parts/Supplier Relationship (TPC-H Q16)                         622.23              87.00              2.54                575.04
+Small-Quantity-Order Revenue (TPC-H Q17)                        151.93              55.94              2.05               2009.86
+Large Volume Customer (TPC-H Q18)                             10019.30             172.42              2.25               7392.21
+Discounted Revenue (TPC-H Q19)                                  262.27            5993.08              2.39                721.18
+Potential Part Promotion (TPC-H Q20)                            582.20             124.97              2.67                715.72
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          195749.72            2024.72              2.76                951.77
+Global Sales Opportunity Query (TPC-H Q22)                      389.86              53.59              2.98                244.49
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0          795.0         2.0     2974.0    3780.0
-MonetDB-BHT-8-1-1              1.0           22.0         9.0       33.0      76.0
-MySQL-BHT-64-1-1               1.0          671.0         3.0     2730.0    3417.0
-PostgreSQL-BHT-8-1-1           1.0           24.0         1.0       92.0     127.0
+MariaDB-BHT-8-1-1              1.0          248.0         2.0     1554.0    1814.0
+MonetDB-BHT-8-1-1              1.0           23.0         9.0       35.0      74.0
+MySQL-BHT-64-1-1               1.0            5.0         3.0       11.0      27.0
+PostgreSQL-BHT-8-1-1           1.0           26.0         1.0       87.0     122.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              3.45
-MonetDB-BHT-8-1-1              0.13
-MySQL-BHT-64-1-1               3.47
-PostgreSQL-BHT-8-1-1           0.89
+MariaDB-BHT-8-1-1              3.38
+MonetDB-BHT-8-1-1              0.15
+MySQL-BHT-64-1-1               0.00
+PostgreSQL-BHT-8-1-1           0.92
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1               1086.49
-MonetDB-BHT-8-1-1              32789.20
-MySQL-BHT-64-1-1                1064.55
-PostgreSQL-BHT-8-1-1            4214.47
+MariaDB-BHT-8-1-1               1098.88
+MonetDB-BHT-8-1-1              27088.71
+MySQL-BHT-64-1-1             1271880.16
+PostgreSQL-BHT-8-1-1            4111.78
 
-### Throughput@Size
-                                                 time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS               SF num_experiment num_client                                              
-MariaDB-BHT-8-1    1  1              1                351      1   1                   225.64
-MonetDB-BHT-8-1    1  1              1                 13      1   1                  6092.31
-MySQL-BHT-64-1     1  1              1                181      1   1                   437.57
-PostgreSQL-BHT-8-1 1  1              1                 38      1   1                  2084.21
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                 time [s]  count  SF  Throughput@Size
+DBMS               SF num_experiment num_client                                      
+MariaDB-BHT-8-1    1  1              1                334      1   1           237.13
+MonetDB-BHT-8-1    1  1              1                 18      1   1          4400.00
+MySQL-BHT-64-1     1  1              1                  2      1   1         39600.00
+PostgreSQL-BHT-8-1 1  1              1                 32      1   1          2475.00
 
 ### Workflow
 
@@ -802,7 +679,7 @@ DBMS MySQL-BHT-64 - Pods [[1]]
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
-TEST passed: No SQL warnings
+TEST failed: SQL warnings (result mismatch)
 TEST passed: Workflow as planned

@@ -426,7 +426,10 @@ class logger(base):
             df = pd.read_pickle(filename_full)
         else:
             self.evaluate_results()
-            df = pd.read_pickle(filename_full)
+            if os.path.isfile(filename_full):
+                df = pd.read_pickle(filename_full)
+            else:
+                df = pd.DataFrame()
         #df#.sort_values(["configuration", "pod"])
         return df
     def get_df_loading(self):
@@ -677,7 +680,7 @@ class ycsb(logger):
             else:
                 exceptions = 0
             #workload = "A"
-            pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             result = []
             #for line in s.split("\n"):
             for line in lines:
@@ -1282,6 +1285,7 @@ class ycsb(logger):
                     df = df.iloc[remove_first:]
                 if remove_last > 0:
                     df = df.iloc[:-remove_last]
+                #print("total for aggregation", df) # index: second, column: metric value
                 if not aggregate:
                     df_total.append(df.copy())
                 else:
@@ -1301,33 +1305,50 @@ class ycsb(logger):
             df_total['avg'] = int(df_total[column].mean())
         return df_total
     def get_benchmark_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
-        #code = "1737365651"
-        #code = "1737110896"
-        #path = "/home/perdelt/benchmarks"
-        #evaluation = evaluator.ycsb(code=code, path=path)
-        client = str(client)#'49'
+        """
+        Returns a dataframes of time series of a metric, aggregated all pods per second.
+        Gets result from self.get_df_benchmarking().
+        This is all raw data as a time series.
+        Restricts to a configuration, a client and an experiment run.
+        Aggregates given metrics per second (!) over all pods.
+        Percentiles and maximum are aggregated by max.
+        Minimum is aggregated by min.
+        Average is aggregated by average.
+        Aggregation is summation otherwise.
+
+        :param metric: Metric like 'current_ops_per_sec'
+        :param configuration: Name of configuration like 'PostgreSQL-64-8-196608'
+        :param client: Number of client like 1
+        :param experiment_run: Numer of experiment run like 1
+        :return: Dataframe, index is number of second, column is (constant) value of aggregated metric
+        """
+        client = str(client)
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         #print(df)
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
-        #list_logs = df[df['client'] == client]['pod'].tolist()
-        #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
+        #print("get_benchmark_logs_timeseries_df_aggregated", df_total)
         return df_total
     def get_benchmark_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
-        #code = "1737365651"
-        #code = "1737110896"
-        #path = "/home/perdelt/benchmarks"
-        #evaluation = evaluator.ycsb(code=code, path=path)
-        client = str(client)#'49'
+        """
+        Returns list of dataframes of time series of a metric, one for each pod.
+        Gets result from self.get_df_benchmarking().
+        This is all raw data as a time series.
+        Restricts to a configuration, a client and an experiment run.
+
+        :param metric: Metric like 'current_ops_per_sec'
+        :param configuration: Name of configuration like 'PostgreSQL-64-8-196608'
+        :param client: Number of client like 1
+        :param experiment_run: Numer of experiment run like 1
+        :return: List of dataframes, index is number of second, column is value of aggregated metric
+        """
+        client = str(client)
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
-        #list_logs = df[df['client'] == client]['pod'].tolist()
-        #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
+        #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
 
 
@@ -1366,7 +1387,7 @@ class benchbase(logger):
             if len(error_timesynch) > 0:
                 # log is incomplete
                 return pd.DataFrame()
-            pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             bench = re.findall('BENCHBASE_BENCH (.+?)\n', stdout)[0]
             profile = re.findall('BENCHBASE_PROFILE (.+?)\n', stdout)[0]
             target = re.findall('BENCHBASE_TARGET (.+?)\n', stdout)[0]
@@ -1775,7 +1796,7 @@ class tpcc(logger):
             duration = re.findall('HAMMERDB_DURATION (.+?)\n', stdout)[0]
             rampup = re.findall('HAMMERDB_RAMPUP (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
-            vusers_loading = re.findall('PARALLEL (.+?)\n', stdout)[0]
+            vusers_loading = re.findall('HAMMERDB_NUM_VU (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
             allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
@@ -1786,7 +1807,7 @@ class tpcc(logger):
                 # log is incomplete
                 print(filename, "log is incomplete")
                 return pd.DataFrame()
-            pod_count = re.findall('NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             errors = re.findall('Error ', stdout)
             if len(errors) > 0:
                 # something went wrong

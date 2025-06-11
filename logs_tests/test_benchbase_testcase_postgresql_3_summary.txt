@@ -1,14 +1,15 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 703s 
-    Code: 1728365224
-    This includes no queries. Benchbase runs the benchmark
+    Duration: 858s 
+    Code: 1749128420
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
@@ -22,21 +23,23 @@ Benchbase Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:253381940
-    datadisk:4409016
+    disk:362668492
+    datadisk:4324
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1749128420
 
 ### Execution
-                       experiment_run  terminals  target  pod_count   time  Throughput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16    8192          1  300.0                        2636.1                                                      13278.0                                               6064.0
-
-Warehouses: 16
+                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1         16    8192          1  300.0           0                       1838.63                    1830.43         0.0                                                      20064.0                                               8695.0
 
 ### Workflow
 
@@ -47,24 +50,24 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 DBMS PostgreSQL-1-1-1024 - Pods [[1]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      134.0        1.0   1.0                 429.850746
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1      173.0        1.0   1.0         332.947977
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      659.59        0          3.86                 5.21
+PostgreSQL-1-1-1024-1      527.31     6.71          3.98                 5.37
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      984.23        0          1.32                 1.32
+PostgreSQL-1-1-1024-1     1592.36        0          0.98                 0.98
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     2483.87      7.5           4.8                 7.07
+PostgreSQL-1-1-1024-1     1961.93     7.15          4.66                 6.75
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1220.75     5.13          1.42                 1.42
+PostgreSQL-1-1-1024-1      980.15     3.38          1.42                 1.42
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

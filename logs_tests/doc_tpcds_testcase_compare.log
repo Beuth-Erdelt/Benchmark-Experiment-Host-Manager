@@ -2,14 +2,15 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1730390884
-Experiment                    : starts at 2024-10-31 17:08:04.038420 (75685.445554081)
+Experiment                    : has code 1748357389
+Experiment                    : starts at 2025-05-27 16:49:49.458678 (12549552.929232325)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
 All instances use the same query parameters.
-Timeout per query is 600.
+Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.7.
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -21,1191 +22,217 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 PostgreSQL-BHT-8              : will start now
+PostgreSQL-BHT-8              : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1748357389
+PostgreSQL-BHT-8              : Name of SUT service = bexhoma-sut-postgresql-bht-8-1748357389
 MonetDB-BHT-8                 : will start now
+MonetDB-BHT-8                 : Name of SUT pods = bexhoma-sut-monetdb-bht-8-1748357389
+MonetDB-BHT-8                 : Name of SUT service = bexhoma-sut-monetdb-bht-8-1748357389
 MariaDB-BHT-8                 : will start now
-MySQL-BHT-64                  : will start now
+MariaDB-BHT-8                 : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1748357389
+MariaDB-BHT-8                 : Name of SUT service = bexhoma-sut-mariadb-bht-8-1748357389
+MySQL-BHT-64                  : has to wait - 0 running and 3 pending pods: max is 3 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : waits for health check to succeed
+MonetDB-BHT-8                 : is not loaded yet
+MonetDB-BHT-8                 : will start loading but not before 2025-05-27 14:51:50 (that is in 60 secs)
+MariaDB-BHT-8                 : waits for health check to succeed
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : waits for health check to succeed
+MonetDB-BHT-8                 : is not loaded yet
+MonetDB-BHT-8                 : will start loading but not before 2025-05-27 14:51:50
+MariaDB-BHT-8                 : waits for health check to succeed
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : waits for health check to succeed
+MonetDB-BHT-8                 : is not loaded yet
+MonetDB-BHT-8                 : start asynch loading scripts of type loaded
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : waits for health check to succeed
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-10-31 16:10:05 (that is in 60 secs)
-MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2024-10-31 16:10:05 (that is in 60 secs)
+PostgreSQL-BHT-8              : will start loading but not before 2025-05-27 14:53:24 (that is in 60 secs)
+MonetDB-BHT-8                 : is loading
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05 (that is in 900 secs)
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05 (that is in 900 secs)
-- waiting 30s -               : done
+MariaDB-BHT-8                 : will start loading but not before 2025-05-27 14:53:24 (that is in 60 secs)
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
 PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : will start loading but not before 2024-10-31 16:10:05
-MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : will start loading but not before 2024-10-31 16:10:05
+PostgreSQL-BHT-8              : will start loading but not before 2025-05-27 14:53:24
+MonetDB-BHT-8                 : is loading
 MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
+MariaDB-BHT-8                 : will start loading but not before 2025-05-27 14:53:24
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
 done
 PostgreSQL-BHT-8              : is not loaded yet
 PostgreSQL-BHT-8              : start asynch loading scripts of type loaded
 PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is not loaded yet
-MonetDB-BHT-8                 : start asynch loading scripts of type loaded
 MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : showing loader times
-PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 1
-PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 136
-PostgreSQL-BHT-8              : total timespan (first to last [s]) = 147
-PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : showing loader times
-MonetDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MonetDB-BHT-8                 : loader timespan (first to last [s]) = 119
-MonetDB-BHT-8                 : total timespan (first to last [s]) = 133
-MonetDB-BHT-8                 : start asynch loading scripts of type indexed
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-MonetDB-BHT-8                 : is loading
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-BHT-8-1            : start benchmarking
-PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1730390884
-- waiting 10s -               : done
-found
-MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
-MonetDB-BHT-8-1               : start benchmarking
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1730390884
-- waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1730390884-1-1-xcnzm: found
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MonetDB-BHT-8                 : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-MonetDB-BHT-8-1               : showing benchmarker times
-MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 41
-MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1730391311, 1730391344)]
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MonetDB-BHT-8                 : can be stopped
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MonetDB-BHT-8                 : can be stopped
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is not loaded yet
-MariaDB-BHT-8                 : will start loading but not before 2024-10-31 16:24:05
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2024-10-31 16:24:05
-done
-PostgreSQL-BHT-8              : has running benchmarks
 MariaDB-BHT-8                 : is not loaded yet
 MariaDB-BHT-8                 : start asynch loading scripts of type loaded
 MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : showing loader times
+MonetDB-BHT-8                 : generator timespan (first to last [s]) = 1
+MonetDB-BHT-8                 : loader timespan (first to last [s]) = 104
+MonetDB-BHT-8                 : total timespan (first to last [s]) = 112
+MonetDB-BHT-8                 : start asynch loading scripts of type indexed
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : showing loader times
+MariaDB-BHT-8                 : generator timespan (first to last [s]) = 1
+MariaDB-BHT-8                 : loader timespan (first to last [s]) = 4
+MariaDB-BHT-8                 : total timespan (first to last [s]) = 14
+MariaDB-BHT-8                 : start asynch loading scripts of type indexed
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : is loading
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
+MonetDB-BHT-8-1               : start benchmarking
+MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748357389
+- waiting 10s -               : done
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1748357389-1-1-xxqgq: found
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : showing loader times
+PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 1
+PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 145
+PostgreSQL-BHT-8              : total timespan (first to last [s]) = 154
+PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : has running benchmarks
+MariaDB-BHT-8                 : is loading
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : has running benchmarks
+MariaDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
+MariaDB-BHT-8-1               : start benchmarking
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1748357389
+- waiting 10s -               : done
+found
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+MonetDB-BHT-8-1               : showing benchmarker times
+MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 105
+MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1748357795, 1748357833)]
+MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1748357795, 1748357833)]}
+done
+PostgreSQL-BHT-8              : is loading
+MonetDB-BHT-8                 : can be stopped
+MariaDB-BHT-8                 : has running benchmarks
+MySQL-BHT-64                  : has to wait - 3 running and 0 pending pods: max is 3 pods per cluster
+MariaDB-BHT-8-1               : showing benchmarker times
+MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 54
+MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1748357887, 1748357898)]
+MariaDB-BHT-8-1               : found and updated times {'benchmarker': [(1748357887, 1748357898)]}
+done
+PostgreSQL-BHT-8              : is loading
+MariaDB-BHT-8                 : can be stopped
+MySQL-BHT-64                  : will start now
+MySQL-BHT-64                  : Name of SUT pods = bexhoma-sut-mysql-bht-64-1748357389
+MySQL-BHT-64                  : Name of SUT service = bexhoma-sut-mysql-bht-64-1748357389
+done
+PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-8-1            : start benchmarking
+PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1748357389
+- waiting 10s -               : done
+PostgreSQL-BHT-8              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1748357389-1-1-nnh6l: .found
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : is not loaded yet
+MySQL-BHT-64                  : will start loading but not before 2025-05-27 15:04:53 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : is not loaded yet
+MySQL-BHT-64                  : will start loading but not before 2025-05-27 15:04:53
+done
+PostgreSQL-BHT-8              : has running benchmarks
 MySQL-BHT-64                  : is not loaded yet
 MySQL-BHT-64                  : start asynch loading scripts of type loaded
 MySQL-BHT-64                  : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : is loading
 done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : showing loader times
 MySQL-BHT-64                  : generator timespan (first to last [s]) = 1
-MySQL-BHT-64                  : loader timespan (first to last [s]) = 12
-MySQL-BHT-64                  : total timespan (first to last [s]) = 25
+MySQL-BHT-64                  : loader timespan (first to last [s]) = 11
+MySQL-BHT-64                  : total timespan (first to last [s]) = 19
 MySQL-BHT-64                  : start asynch loading scripts of type indexed
 MySQL-BHT-64                  : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : is loading
 done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : benchmarks done 0 of 1. This will be client 1
 MySQL-BHT-64-1                : start benchmarking
-MySQL-BHT-64                  : benchmarking results in folder /home/perdelt/benchmarks/1730390884
+MySQL-BHT-64                  : benchmarking results in folder /home/perdelt/benchmarks/1748357389
 - waiting 10s -               : done
 found
+done
+PostgreSQL-BHT-8              : has running benchmarks
+MySQL-BHT-64                  : has running benchmarks
 MySQL-BHT-64-1                : showing benchmarker times
-MySQL-BHT-64-1                : benchmarker timespan (start to end single container [s]) = 11
-MySQL-BHT-64-1                : benchmarker times (start/end per pod and container) = [(1730392222, 1730392225)]
-MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1730392222, 1730392225)]}
+MySQL-BHT-64-1                : benchmarker timespan (start to end single container [s]) = 41
+MySQL-BHT-64-1                : benchmarker times (start/end per pod and container) = [(1748358523, 1748358527)]
+MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1748358523, 1748358527)]}
 done
 PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 MySQL-BHT-64                  : can be stopped
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : showing loader times
-MariaDB-BHT-8                 : generator timespan (first to last [s]) = 1
-MariaDB-BHT-8                 : loader timespan (first to last [s]) = 1028
-MariaDB-BHT-8                 : total timespan (first to last [s]) = 1037
-MariaDB-BHT-8                 : start asynch loading scripts of type indexed
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
-done
-PostgreSQL-BHT-8              : has running benchmarks
-MariaDB-BHT-8                 : is loading
 PostgreSQL-BHT-8-1            : showing benchmarker times
-PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 3118
-PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1730391293, 1730394392)]
-MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1730391293, 1730394392)]}
-done
-PostgreSQL-BHT-8              : can be stopped
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : can be stopped
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8                 : is loading
-done
-MariaDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
-MariaDB-BHT-8-1               : start benchmarking
-MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1730390884
-- waiting 10s -               : done
-MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1730390884-1-1-kv5cv: found
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MariaDB-BHT-8                 : has running benchmarks
-done
-MariaDB-BHT-8                 : has running benchmarks
-MariaDB-BHT-8-1               : showing benchmarker times
-MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 4469
-MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1730400045, 1730404484)]
-MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1730400045, 1730404484)]}
-done
-MariaDB-BHT-8                 : can be stopped
-Experiment                    : ends at 2024-10-31 20:55:40.278742 (89341.685874295) - 13656.24s total
+PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 594
+PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1748358009, 1748358578)]
+PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1748358009, 1748358578)]}
+Experiment                    : ends at 2025-05-27 17:09:54.298887 (12550757.769441325) - 1204.84s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -1217,15 +244,16 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 13657s 
-    Code: 1730390884
+    Duration: 1205s 
+    Code: 1748357389
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q99.
     All instances use the same query parameters.
-    Timeout per query is 600.
+    Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -1236,259 +264,276 @@ TPC-DS Queries SF=1
     Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.2
-    RAM:541008605184
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:259224248
-    datadisk:4310940
+    disk:312594112
+    datadisk:165
     requests_cpu:4
     requests_memory:16Gi
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
-    RAM:541008605184
+    eval_parameters
+        code:1748357389
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Aug2024
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:272072600
-    datadisk:3147080
+    disk:312156252
+    datadisk:5600
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748357389
 MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:269644004
-    datadisk:8487676
+    disk:315320580
+    datadisk:8290
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748357389
 PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008605184
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:272072600
-    datadisk:5363964
+    disk:306844676
+    datadisk:5804
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748357389
 
 ### Errors (failed queries)
-            MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q4               False              False             False                  True
-TPC-DS Q16               True              False             False                 False
-TPC-DS Q27               True              False             False                 False
-TPC-DS Q35              False              False             False                  True
-TPC-DS Q51               True              False              True                 False
-TPC-DS Q54              False              False              True                 False
-TPC-DS Q72               True              False             False                 False
-TPC-DS Q74              False              False             False                  True
-TPC-DS Q94               True              False             False                 False
-TPC-DS Q95               True              False             False                 False
-TPC-DS Q97               True              False              True                 False
+No errors
 
 ### Warnings (result mismatch)
-            MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q3               False               True              True                  True
-TPC-DS Q4               False              False              True                 False
-TPC-DS Q5               False               True              True                  True
-TPC-DS Q6               False               True              True                  True
-TPC-DS Q7               False               True              True                 False
-TPC-DS Q9               False              False              True                 False
-TPC-DS Q10              False              False              True                 False
-TPC-DS Q11              False               True              True                 False
-TPC-DS Q12              False              False              True                 False
-TPC-DS Q13              False              False              True                 False
-TPC-DS Q15              False               True              True                  True
-TPC-DS Q16              False               True              True                  True
-TPC-DS Q17              False              False              True                 False
-TPC-DS Q18              False               True              True                  True
-TPC-DS Q19              False               True              True                  True
-TPC-DS Q20              False              False              True                 False
-TPC-DS Q21              False               True              True                  True
-TPC-DS Q22              False               True              True                  True
-TPC-DS Q25              False              False              True                 False
-TPC-DS Q26              False              False              True                 False
-TPC-DS Q27              False               True              True                  True
-TPC-DS Q28              False              False              True                 False
-TPC-DS Q29              False              False              True                 False
-TPC-DS Q30              False              False              True                 False
-TPC-DS Q31              False              False              True                 False
-TPC-DS Q32              False              False              True                 False
-TPC-DS Q33              False              False              True                  True
-TPC-DS Q35              False              False              True                 False
-TPC-DS Q38              False               True              True                  True
-TPC-DS Q40              False              False              True                 False
-TPC-DS Q42              False               True              True                  True
-TPC-DS Q44              False               True              True                  True
-TPC-DS Q45              False               True              True                  True
-TPC-DS Q47              False               True              True                 False
-TPC-DS Q48              False               True              True                  True
-TPC-DS Q49              False              False              True                 False
-TPC-DS Q50              False              False              True                 False
-TPC-DS Q51              False               True             False                  True
-TPC-DS Q52              False               True              True                  True
-TPC-DS Q53              False              False              True                 False
-TPC-DS Q55              False               True              True                  True
-TPC-DS Q56              False              False              True                  True
-TPC-DS Q57              False              False              True                 False
-TPC-DS Q60              False              False              True                 False
-TPC-DS Q61              False               True             False                  True
-TPC-DS Q62              False               True              True                  True
-TPC-DS Q63              False              False              True                 False
-TPC-DS Q64              False               True              True                  True
-TPC-DS Q65              False              False              True                  True
-TPC-DS Q66              False               True              True                  True
-TPC-DS Q67              False              False              True                  True
-TPC-DS Q69              False              False              True                 False
-TPC-DS Q71              False               True              True                  True
-TPC-DS Q72              False               True              True                  True
-TPC-DS Q74              False              False              True                 False
-TPC-DS Q75              False               True              True                  True
-TPC-DS Q76              False              False              True                 False
-TPC-DS Q77              False              False              True                 False
-TPC-DS Q78              False               True              True                  True
-TPC-DS Q79              False               True              True                  True
-TPC-DS Q80              False               True              True                  True
-TPC-DS Q81              False              False              True                 False
-TPC-DS Q82              False              False              True                 False
-TPC-DS Q83              False               True              True                  True
-TPC-DS Q84              False               True              True                  True
-TPC-DS Q87              False               True              True                  True
-TPC-DS Q88              False              False              True                 False
-TPC-DS Q89              False              False              True                 False
-TPC-DS Q90              False              False              True                 False
-TPC-DS Q91              False               True              True                  True
-TPC-DS Q92              False              False              True                 False
-TPC-DS Q93              False              False              True                  True
-TPC-DS Q94              False               True              True                  True
-TPC-DS Q95              False               True              True                  True
-TPC-DS Q96              False               True              True                  True
-TPC-DS Q97              False               True             False                  True
-TPC-DS Q98              False               True              True                 False
-TPC-DS Q99              False               True              True                  True
+               MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
+TPC-DS Q3                  False               True             False                  True
+TPC-DS Q4                  False               True             False                  True
+TPC-DS Q5                  False               True             False                  True
+TPC-DS Q6                  False               True             False                  True
+TPC-DS Q7                  False               True             False                  True
+TPC-DS Q9                  False               True             False                  True
+TPC-DS Q10                 False               True             False                  True
+TPC-DS Q11                 False               True             False                  True
+TPC-DS Q12                 False               True             False                  True
+TPC-DS Q13                 False               True             False                  True
+TPC-DS Q14a+b              False               True             False                  True
+TPC-DS Q15                 False               True             False                  True
+TPC-DS Q17                 False               True             False                  True
+TPC-DS Q18                 False               True             False                  True
+TPC-DS Q19                 False               True             False                  True
+TPC-DS Q20                 False               True             False                  True
+TPC-DS Q21                 False               True             False                  True
+TPC-DS Q22                 False               True             False                  True
+TPC-DS Q25                 False               True             False                  True
+TPC-DS Q26                 False               True             False                  True
+TPC-DS Q27                 False               True             False                  True
+TPC-DS Q28                 False               True             False                  True
+TPC-DS Q30                 False               True             False                  True
+TPC-DS Q31                 False               True             False                  True
+TPC-DS Q32                 False               True             False                  True
+TPC-DS Q33                 False               True             False                  True
+TPC-DS Q35                 False               True             False                  True
+TPC-DS Q36                 False               True             False                  True
+TPC-DS Q37                 False               True             False                  True
+TPC-DS Q38                 False               True             False                  True
+TPC-DS Q39a+b              False               True              True                  True
+TPC-DS Q40                 False               True             False                  True
+TPC-DS Q41                 False               True             False                  True
+TPC-DS Q42                 False               True             False                  True
+TPC-DS Q44                 False               True             False                  True
+TPC-DS Q45                 False               True             False                  True
+TPC-DS Q46                 False               True             False                  True
+TPC-DS Q47                 False               True             False                  True
+TPC-DS Q48                 False               True             False                  True
+TPC-DS Q49                 False               True             False                  True
+TPC-DS Q50                 False               True             False                  True
+TPC-DS Q51                 False               True             False                  True
+TPC-DS Q52                 False               True             False                  True
+TPC-DS Q53                 False               True             False                  True
+TPC-DS Q55                 False               True             False                  True
+TPC-DS Q56                 False               True             False                  True
+TPC-DS Q57                 False               True             False                  True
+TPC-DS Q60                 False               True             False                  True
+TPC-DS Q62                 False               True             False                  True
+TPC-DS Q63                 False               True             False                  True
+TPC-DS Q64                 False               True             False                  True
+TPC-DS Q65                 False               True             False                  True
+TPC-DS Q66                 False               True             False                  True
+TPC-DS Q67                 False               True             False                  True
+TPC-DS Q69                 False               True             False                  True
+TPC-DS Q70                 False               True             False                  True
+TPC-DS Q71                 False               True             False                  True
+TPC-DS Q72                 False               True             False                  True
+TPC-DS Q74                 False               True             False                  True
+TPC-DS Q75                 False               True             False                  True
+TPC-DS Q76                 False               True             False                  True
+TPC-DS Q77                 False               True             False                  True
+TPC-DS Q78                 False               True             False                  True
+TPC-DS Q79                 False               True             False                  True
+TPC-DS Q80                 False               True             False                  True
+TPC-DS Q81                 False               True             False                  True
+TPC-DS Q82                 False               True             False                  True
+TPC-DS Q83                 False               True             False                  True
+TPC-DS Q84                 False               True             False                  True
+TPC-DS Q85                 False               True             False                  True
+TPC-DS Q86                 False               True             False                  True
+TPC-DS Q87                 False               True             False                  True
+TPC-DS Q88                 False               True             False                  True
+TPC-DS Q89                 False               True             False                  True
+TPC-DS Q90                 False               True             False                  True
+TPC-DS Q91                 False               True             False                  True
+TPC-DS Q92                 False               True             False                  True
+TPC-DS Q93                 False               True             False                  True
+TPC-DS Q94                 False               True             False                  True
+TPC-DS Q95                 False               True             False                  True
+TPC-DS Q96                 False               True             False                  True
+TPC-DS Q97                 False               True             False                  True
+TPC-DS Q98                 False               True             False                  True
+TPC-DS Q99                 False               True             False                  True
 
 ### Latency of Timer Execution [ms]
 DBMS           MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q1                  93.62              53.31             86.46                 48.16
-TPC-DS Q2               15874.44             162.66             13.88                880.88
-TPC-DS Q3                  90.69              25.10              3.28                239.09
-TPC-DS Q5               31156.08             303.34             11.25               1369.51
-TPC-DS Q6                2938.08              72.35              2.63             198592.92
-TPC-DS Q7               17480.89              57.07              3.10                961.64
-TPC-DS Q8                 379.16              38.10              3.20                498.10
-TPC-DS Q9               13426.27              56.93              2.90               6251.33
-TPC-DS Q10              21616.99              61.92              3.24               1973.41
-TPC-DS Q11              73637.89             589.85              5.86             425524.32
-TPC-DS Q12                997.62              20.33              1.80                129.91
-TPC-DS Q13               3297.02             108.81              2.71                543.17
-TPC-DS Q14a+b          256000.82            2153.81             17.57              36793.27
-TPC-DS Q15               8727.57              31.46              1.50                241.33
-TPC-DS Q17               2708.11             154.98              2.09                629.51
-TPC-DS Q18               9615.23             139.64              1.91                662.08
-TPC-DS Q19                 51.25              37.07              1.66                315.19
-TPC-DS Q20               1737.43              28.36              1.50                179.67
-TPC-DS Q21              78868.66              79.31              2.52                655.25
-TPC-DS Q22                313.63            1113.05              1.25              10085.88
-TPC-DS Q23a+b          308672.84            2814.62              7.46              13954.40
-TPC-DS Q24a+b            7784.51             161.37              5.11                895.64
-TPC-DS Q25               2420.90             105.43              1.72                635.74
-TPC-DS Q26               8913.09              60.86              1.40               2247.90
-TPC-DS Q28              10148.67              73.72              2.41               2156.65
-TPC-DS Q29               2338.82              95.62              1.76                424.96
-TPC-DS Q30               1189.47              28.51              2.56              27791.55
-TPC-DS Q31              44120.71             157.34              5.17              18289.36
-TPC-DS Q32                 31.09              23.71              1.61              36745.84
-TPC-DS Q33              17629.99              23.54              3.29               1956.77
-TPC-DS Q34               3377.11              29.79              1.67                 57.05
-TPC-DS Q37              13635.77              65.83              1.33                761.84
-TPC-DS Q38              26939.53             213.15              1.46               2719.32
-TPC-DS Q39a+b          314001.80            1381.27              4.84               7467.58
-TPC-DS Q40                732.05              55.97              1.64                305.58
-TPC-DS Q41               1830.68               8.63              1.77               3690.84
-TPC-DS Q42                239.26              18.98              1.20                323.05
-TPC-DS Q43              11722.33              43.84              1.26                 56.34
-TPC-DS Q44               4218.80              57.89              1.87               1421.14
-TPC-DS Q45               6506.75              25.72              1.37                186.34
-TPC-DS Q46               6188.09              38.62              1.55                 57.75
-TPC-DS Q47              61018.14             233.42              3.86               3894.85
-TPC-DS Q48               6424.61              92.59              1.40                719.91
-TPC-DS Q49                355.28             118.93              2.99               1220.11
-TPC-DS Q50               2182.99             108.75              1.71                114.96
-TPC-DS Q52                234.68              20.55              1.14                311.10
-TPC-DS Q53                622.93              27.34              1.57                404.54
-TPC-DS Q55                238.61              15.47              0.99                312.81
-TPC-DS Q56               2151.49              29.81              2.66             263283.76
-TPC-DS Q57              31375.15             103.53              3.39               1933.91
-TPC-DS Q58              22674.25              55.65              2.90                824.76
-TPC-DS Q59              38605.98             102.15              2.51               1129.96
-TPC-DS Q60               4424.49              24.36              2.58               8870.91
-TPC-DS Q61               1624.88              32.15              1.75                305.36
-TPC-DS Q62               7321.86              32.71              2.16                274.92
-TPC-DS Q63                515.90              27.18              1.64                369.20
-TPC-DS Q64               2101.21             286.95              6.64               1297.21
-TPC-DS Q65              22528.18              96.03              1.80               1471.58
-TPC-DS Q66              14167.07             123.20              4.42                637.49
-TPC-DS Q67              27971.61             668.94              1.69               2897.00
-TPC-DS Q68               6191.93              36.29              1.70                 56.17
-TPC-DS Q69              22227.18              37.74              1.41                565.30
-TPC-DS Q71              19305.23              29.87              1.46               5424.10
-TPC-DS Q73               3345.58              23.51              1.46                 57.00
-TPC-DS Q75               5576.00             667.35              3.14               2397.57
-TPC-DS Q76               1531.84              35.88              1.60                686.03
-TPC-DS Q77              24200.99              57.25              4.01                886.87
-TPC-DS Q78              45025.15             772.71              2.53               4071.07
-TPC-DS Q79               2546.83              35.25              1.83                755.86
-TPC-DS Q80               2207.55             429.57              3.81               6700.83
-TPC-DS Q81               2971.97              34.60              1.83             120537.16
-TPC-DS Q82              13614.41              79.41              1.47                857.28
-TPC-DS Q83               3419.13              19.09              2.63                274.90
-TPC-DS Q84                165.04              31.06              4.84                 92.41
-TPC-DS Q85                349.15              39.20              2.21                176.95
-TPC-DS Q87              27065.55             263.45              1.67               2663.61
-TPC-DS Q88              25044.69              94.80              4.66               7171.83
-TPC-DS Q89                154.08              39.15              1.88                264.89
-TPC-DS Q90                400.84              18.09              1.58                249.05
-TPC-DS Q91               1613.68              24.12              1.93                 79.44
-TPC-DS Q92                 19.39              17.29              1.44               4405.16
-TPC-DS Q93                 99.48             101.48              1.48                136.08
-TPC-DS Q96               2227.12              13.80              1.17                286.26
-TPC-DS Q98               3439.88              39.91              1.54                298.20
-TPC-DS Q99              16802.98              58.95              1.53                402.79
+TPC-DS Q1                  21.90              36.53            102.51                272.86
+TPC-DS Q2                   3.00             185.99              9.64                885.29
+TPC-DS Q3                   1.80             100.01              3.76                485.42
+TPC-DS Q4                   7.81            1287.65             24.34              15763.61
+TPC-DS Q5                   2.86             251.14              9.84               1454.51
+TPC-DS Q6                   1.45              97.06              2.70             195769.23
+TPC-DS Q7                   1.29              67.99              2.48               1091.75
+TPC-DS Q8                   2.43              43.44              3.64                148.25
+TPC-DS Q9                   1.84              70.30              3.03               6179.49
+TPC-DS Q10                  2.45              57.16              3.74               3024.89
+TPC-DS Q11                  3.62             655.54              7.99              11505.92
+TPC-DS Q12                  1.42              23.81             17.05                207.75
+TPC-DS Q13                  2.11             126.79              2.63               1910.02
+TPC-DS Q14a+b               9.22            2611.46             17.26               7862.42
+TPC-DS Q15                  1.54              34.25              1.79                328.44
+TPC-DS Q16                  2.02              46.90              2.87                708.01
+TPC-DS Q17                  2.52             185.90              2.93               1032.28
+TPC-DS Q18                  2.20             126.81              2.53               1223.69
+TPC-DS Q19                  2.16              40.75              1.90                460.09
+TPC-DS Q20                  1.90              27.47              1.62                311.68
+TPC-DS Q21                  2.09              68.15              2.82                707.06
+TPC-DS Q22                  1.65            1097.26              1.79              10079.91
+TPC-DS Q23a+b               6.39            2069.42              8.69              10923.88
+TPC-DS Q24a+b               4.34             255.16              5.37               1246.86
+TPC-DS Q25                  2.15             124.52              1.96               1032.74
+TPC-DS Q26                  1.77              24.36              1.40                718.75
+TPC-DS Q27                  2.69             120.97              1.84                140.53
+TPC-DS Q28                  2.35              65.69              2.72               4795.53
+TPC-DS Q29                  2.15             121.72              2.04               1076.78
+TPC-DS Q30                  2.49              28.76              2.80              28499.49
+TPC-DS Q31                  3.62             152.87              5.27               6106.62
+TPC-DS Q32                  1.67              18.52              1.39                247.65
+TPC-DS Q33                  2.24              25.79              3.70               1053.37
+TPC-DS Q34                  2.78              27.39              1.73                 68.92
+TPC-DS Q35                  2.58              95.34              2.49               3309.00
+TPC-DS Q36                  2.03             144.05              1.69               2157.43
+TPC-DS Q37                  1.62             118.44              1.22                839.86
+TPC-DS Q38                  1.88             207.39              1.68               3365.95
+TPC-DS Q39a+b               5.07            1172.42              5.97               7333.16
+TPC-DS Q40                  1.77              77.97              1.52                341.32
+TPC-DS Q41                  1.76               9.49              2.33               3071.48
+TPC-DS Q42                  1.18              21.64              2.28                268.24
+TPC-DS Q43                  1.36              48.71              2.33                 64.56
+TPC-DS Q44                  1.65              91.54              3.15               1387.95
+TPC-DS Q45                  1.35              28.30              2.45                209.28
+TPC-DS Q46                  2.08              58.30              2.99                646.16
+TPC-DS Q47                  2.98             240.60              6.33               4133.60
+TPC-DS Q48                  1.67             101.66              3.17               1852.73
+TPC-DS Q49                  2.95             122.17              4.90               2129.06
+TPC-DS Q50                  1.83              99.98              2.68                692.06
+TPC-DS Q51                  2.03             628.91              3.63               2855.69
+TPC-DS Q52                  1.54              20.17              1.76                269.50
+TPC-DS Q53                  1.71              28.23              2.59                311.39
+TPC-DS Q54                  2.21              23.32              3.58                216.39
+TPC-DS Q55                  1.52              19.24              2.16                270.98
+TPC-DS Q56                  2.72              30.57              6.62               1163.22
+TPC-DS Q57                  2.95              90.78              5.01               2023.48
+TPC-DS Q58                  2.49              45.74              4.93               1355.18
+TPC-DS Q59                  2.32             120.77              6.77               1237.94
+TPC-DS Q60                  2.71              42.72              5.13               1141.79
+TPC-DS Q61                  2.33              37.37              2.57               3358.25
+TPC-DS Q62                  2.00              26.35              3.24                298.89
+TPC-DS Q63                  2.45              32.50              2.37                324.38
+TPC-DS Q64                  4.93             411.70              6.80               2262.71
+TPC-DS Q65                  1.72             109.31              2.26               1615.30
+TPC-DS Q66                  3.28             100.24              5.20                584.04
+TPC-DS Q67                  1.76             696.21              2.39               7014.87
+TPC-DS Q68                  1.49              45.51              2.59                 60.44
+TPC-DS Q69                  2.40              46.04              2.70                734.99
+TPC-DS Q70                  2.31              77.05              2.14               1220.64
+TPC-DS Q71                  2.01              43.47              2.77                969.36
+TPC-DS Q72                  2.12             174.16              2.59               2923.54
+TPC-DS Q73                  1.86              25.95              2.65                 68.05
+TPC-DS Q74                  3.05             219.26              4.07               4275.47
+TPC-DS Q75                  3.29             656.24              5.79               2446.02
+TPC-DS Q76                  1.87              84.61              2.69                680.76
+TPC-DS Q77                  2.86              68.57              5.25               5262.14
+TPC-DS Q78                  2.38             911.66              3.83               5055.72
+TPC-DS Q79                  1.92              57.14              2.44                544.63
+TPC-DS Q80                  2.92             457.37              3.54               1459.89
+TPC-DS Q81                  2.09              42.69              2.34             120064.91
+TPC-DS Q82                  1.54             162.37              1.84                928.82
+TPC-DS Q83                  2.35              18.05              2.98                291.77
+TPC-DS Q84                  1.58              39.50              1.74                264.04
+TPC-DS Q85                  2.05              39.12              3.27               1339.50
+TPC-DS Q86                  1.54              29.69              2.62                478.23
+TPC-DS Q87                  2.51             290.15              2.63               3312.53
+TPC-DS Q88                  3.56              97.49              5.84               6841.30
+TPC-DS Q89                  1.88              39.51              2.45                316.61
+TPC-DS Q90                  1.82              18.95              2.02               2166.51
+TPC-DS Q91                  1.70              27.27              2.99                268.79
+TPC-DS Q92                  1.41              14.80              1.84               1899.10
+TPC-DS Q93                  1.49             101.10              3.36                373.82
+TPC-DS Q94                  1.65              19.02              1.91                441.36
+TPC-DS Q95                  1.94             152.56              1.98               9522.98
+TPC-DS Q96                  1.21              14.32              1.34                277.50
+TPC-DS Q97                  1.83             254.88              2.77               1022.39
+TPC-DS Q98                  1.53              46.02              1.88                489.58
+TPC-DS Q99                  1.52              59.78              1.60                418.97
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0         1028.0         4.0     7044.0    8085.0
-MonetDB-BHT-8-1-1              1.0          119.0         9.0       42.0     184.0
-MySQL-BHT-64-1-1               1.0           12.0         8.0      242.0     275.0
-PostgreSQL-BHT-8-1-1           1.0          136.0         1.0       52.0     200.0
+MariaDB-BHT-8-1-1              1.0            4.0         4.0      125.0     143.0
+MonetDB-BHT-8-1-1              1.0          104.0         9.0       92.0     213.0
+MySQL-BHT-64-1-1               1.0           11.0         8.0      122.0     149.0
+PostgreSQL-BHT-8-1-1           1.0          145.0         1.0      142.0     297.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              3.90
-MonetDB-BHT-8-1-1              0.08
+MariaDB-BHT-8-1-1              0.00
+MonetDB-BHT-8-1-1              0.09
 MySQL-BHT-64-1-1               0.00
-PostgreSQL-BHT-8-1-1           1.08
+PostgreSQL-BHT-8-1-1           1.18
 
-### Power@Size
+### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1                926.35
-MonetDB-BHT-8-1-1              51394.70
-MySQL-BHT-64-1-1             1492286.07
-PostgreSQL-BHT-8-1-1            3377.50
+MariaDB-BHT-8-1-1            1611522.34
+MonetDB-BHT-8-1-1              43670.41
+MySQL-BHT-64-1-1             1126744.64
+PostgreSQL-BHT-8-1-1            3084.91
 
-### Throughput@Size
-                                                 time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS               SF num_experiment num_client                                              
-MariaDB-BHT-8-1    1  1              1               4439      1   1                    17.84
-MonetDB-BHT-8-1    1  1              1                 33      1   1                  2400.00
-MySQL-BHT-64-1     1  1              1                  3      1   1                 26400.00
-PostgreSQL-BHT-8-1 1  1              1               3099      1   1                    25.56
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                 time [s]  count  SF  Throughput@Size
+DBMS               SF num_experiment num_client                                      
+MariaDB-BHT-8-1    1  1              1                 11      1   1         32400.00
+MonetDB-BHT-8-1    1  1              1                 38      1   1          9378.95
+MySQL-BHT-64-1     1  1              1                  4      1   1         89100.00
+PostgreSQL-BHT-8-1 1  1              1                569      1   1           626.36
 
 ### Workflow
 
@@ -1507,7 +552,7 @@ DBMS MySQL-BHT-64 - Pods [[1]]
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
-TEST failed: SQL errors
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
 TEST failed: SQL warnings (result mismatch)
 TEST passed: Workflow as planned

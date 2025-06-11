@@ -1,14 +1,15 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16 (warehouses for TPC-C)
+Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1118s 
-    Code: 1744105055
-    Benchbase runs the benchmark.
+    Duration: 1301s 
+    Code: 1747665985
+    Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor (e.g., number of warehouses) is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Experiment uses bexhoma version 0.8.5.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -26,48 +27,46 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:205304856
-    datadisk:4307
+    disk:243308428
+    datadisk:4323
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1744105055
+                code:1747665985
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:208833364
-    datadisk:7752
+    disk:246818560
+    datadisk:7751
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1744105055
+                code:1747665985
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                       2841.22                    2828.40         0.0                                                      12089.0                                               5626.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0           4                       2566.10                    2542.35         0.0                                                      13816.0                                               6228.5
-
-Warehouses: 16
+PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                       2829.80                    2817.37         0.0                                                      12079.0                                               5648.0
+PostgreSQL-1-1-1024-2               1         16   16384          2  300.0           5                       2554.54                    2530.06         0.0                                                      13653.0                                               6256.5
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
+DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                       time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-1-1-1024-1      167.0        1.0   1.0                  344.91018
-PostgreSQL-1-1-1024-2      167.0        1.0   2.0                  344.91018
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1      157.0        1.0   1.0         366.878981
+PostgreSQL-1-1-1024-2      157.0        1.0   2.0         366.878981
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

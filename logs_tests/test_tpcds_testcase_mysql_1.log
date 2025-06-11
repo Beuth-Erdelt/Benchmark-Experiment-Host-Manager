@@ -2,13 +2,15 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1729674153
-Experiment                    : starts at 2024-10-23 11:02:32.932958 (4410093.056939557)
+Experiment                    : has code 1748927075
+Experiment                    : starts at 2025-06-03 07:04:35.117189 (13119238.587744012)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
 All instances use the same query parameters.
+Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.7.
 Benchmark is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
@@ -18,73 +20,64 @@ Loading is tested with [1] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
-Cluster monitoring            : is running
 done
-MySQL-BHT-8-1                 : will start now
+MySQL-BHT-8                   : will start now
+MySQL-BHT-8                   : Name of SUT pods = bexhoma-sut-mysql-bht-8-1748927075
+MySQL-BHT-8                   : Name of SUT service = bexhoma-sut-mysql-bht-8-1748927075
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33 (that is in 300 secs)
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : is not loaded yet
+MySQL-BHT-8                   : will start loading but not before 2025-06-03 05:10:07 (that is in 60 secs)
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-23 09:08:33
+MySQL-BHT-8                   : is not loaded yet
+MySQL-BHT-8                   : will start loading but not before 2025-06-03 05:10:07
 done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : start asynch loading scripts of type loaded
-MySQL-BHT-8-1                 : is loading
+MySQL-BHT-8                   : is not loaded yet
+MySQL-BHT-8                   : start asynch loading scripts of type loaded
+MySQL-BHT-8                   : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-BHT-8                   : is loading
 done
-MySQL-BHT-8-1                 : showing loader times
-MySQL-BHT-8-1                 : generator timespan (first to last [s]) = 1
-MySQL-BHT-8-1                 : loader timespan (first to last [s]) = 18
-MySQL-BHT-8-1                 : total timespan (first to last [s]) = 28
-MySQL-BHT-8-1                 : start asynch loading scripts of type indexed
-MySQL-BHT-8-1                 : is loading
+MySQL-BHT-8                   : showing loader times
+MySQL-BHT-8                   : generator timespan (first to last [s]) = 1
+MySQL-BHT-8                   : loader timespan (first to last [s]) = 6
+MySQL-BHT-8                   : total timespan (first to last [s]) = 15
+MySQL-BHT-8                   : start asynch loading scripts of type indexed
+MySQL-BHT-8                   : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-BHT-8                   : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-BHT-8                   : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-BHT-8                   : is loading
 done
-MySQL-BHT-8-1                 : benchmarks done 0 of 1. This will be client 1
-MySQL-BHT-8-1-1               : start benchmarking
-MySQL-BHT-8-1                 : benchmarking results in folder /home/perdelt/benchmarks/1729674153
+MySQL-BHT-8                   : benchmarks done 0 of 1. This will be client 1
+MySQL-BHT-8-1                 : start benchmarking
+MySQL-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1748927075
 - waiting 10s -               : done
-MySQL-BHT-8-1                 : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1-1729674153-1-1-kshtm: found
+MySQL-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1748927075-1-1-ltf5f: found
 done
-MySQL-BHT-8-1                 : has running benchmarks
-MySQL-BHT-8-1-1               : showing benchmarker times
-MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 41
-MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1729674715, 1729674729)]
-MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1729674715, 1729674729)]}
+MySQL-BHT-8                   : has running benchmarks
+MySQL-BHT-8-1                 : showing benchmarker times
+MySQL-BHT-8-1                 : benchmarker timespan (start to end single container [s]) = 41
+MySQL-BHT-8-1                 : benchmarker times (start/end per pod and container) = [(1748927604, 1748927614)]
+MySQL-BHT-8-1                 : found and updated times {'benchmarker': [(1748927604, 1748927614)]}
 done
-MySQL-BHT-8-1                 : can be stopped
-Experiment                    : ends at 2024-10-23 11:13:01.033923 (4410721.157903333) - 628.10s total
+MySQL-BHT-8                   : can be stopped
+Experiment                    : ends at 2025-06-03 07:14:33.425078 (13119836.895632299) - 598.31s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -96,14 +89,16 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 629s 
-    Code: 1729674153
+    Duration: 599s 
+    Code: 1748927075
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q99.
     All instances use the same query parameters.
+    Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.7.
     Benchmark is limited to DBMS ['MySQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
@@ -115,139 +110,144 @@ TPC-DS Queries SF=1
     Experiment is run once.
 
 ### Connections
-MySQL-BHT-8-1-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:261363212
-    datadisk:8487684
+    disk:326077156
+    datadisk:8290
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1748927075
 
 ### Errors (failed queries)
-            MySQL-BHT-8-1-1-1
-TPC-DS Q51               True
-TPC-DS Q54               True
-TPC-DS Q97               True
+No errors
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS           MySQL-BHT-8-1-1-1
-TPC-DS Q1                 105.32
-TPC-DS Q2                  14.26
-TPC-DS Q3                   3.14
-TPC-DS Q4                  21.25
-TPC-DS Q5                  30.41
-TPC-DS Q6                   3.37
-TPC-DS Q7                   4.12
-TPC-DS Q8                   4.91
-TPC-DS Q9                   4.11
-TPC-DS Q10                  5.49
-TPC-DS Q11                 10.34
-TPC-DS Q12                 12.25
-TPC-DS Q13                  3.79
-TPC-DS Q14a+b              22.00
-TPC-DS Q15                  2.31
-TPC-DS Q16                  4.16
-TPC-DS Q17                  3.32
-TPC-DS Q18                  3.58
-TPC-DS Q19                  2.45
-TPC-DS Q20                  2.32
-TPC-DS Q21                  3.40
-TPC-DS Q22                  2.11
-TPC-DS Q23a+b              11.59
-TPC-DS Q24a+b               8.63
-TPC-DS Q25                  2.76
-TPC-DS Q26                  2.19
-TPC-DS Q27                  2.19
-TPC-DS Q28                  3.59
-TPC-DS Q29                  2.71
-TPC-DS Q30                  4.23
-TPC-DS Q31                  7.43
-TPC-DS Q32                  2.12
-TPC-DS Q33                  5.46
-TPC-DS Q34                  2.85
-TPC-DS Q35                  3.39
-TPC-DS Q37                  2.38
-TPC-DS Q38                  3.04
-TPC-DS Q39a+b               8.26
-TPC-DS Q40                  2.38
-TPC-DS Q41                  2.81
-TPC-DS Q42                  1.96
-TPC-DS Q43                  2.23
-TPC-DS Q44                  2.88
-TPC-DS Q45                  2.24
-TPC-DS Q46                  2.48
-TPC-DS Q47                  5.55
-TPC-DS Q48                  2.62
-TPC-DS Q49                  4.18
-TPC-DS Q50                  3.15
-TPC-DS Q52                  1.90
-TPC-DS Q53                  2.43
-TPC-DS Q55                  1.93
-TPC-DS Q56                  4.46
-TPC-DS Q57                  5.18
-TPC-DS Q58                  4.39
-TPC-DS Q59                  4.02
-TPC-DS Q60                  4.56
-TPC-DS Q61                  2.70
-TPC-DS Q62                  2.81
-TPC-DS Q63                  2.16
-TPC-DS Q64                  7.58
-TPC-DS Q65                  2.41
-TPC-DS Q66                  8.95
-TPC-DS Q67                  2.34
-TPC-DS Q68                  2.33
-TPC-DS Q69                  2.66
-TPC-DS Q71                  2.74
-TPC-DS Q72                  2.74
-TPC-DS Q73                  2.37
-TPC-DS Q74                  4.47
-TPC-DS Q75                  4.62
-TPC-DS Q76                  2.32
-TPC-DS Q77                  5.85
-TPC-DS Q78                  4.07
-TPC-DS Q79                  2.02
-TPC-DS Q80                  3.96
-TPC-DS Q81                  2.71
-TPC-DS Q82                  1.88
-TPC-DS Q83                  3.26
-TPC-DS Q84                  1.88
-TPC-DS Q85                  2.54
-TPC-DS Q87                  2.28
-TPC-DS Q88                  5.21
-TPC-DS Q89                  2.26
-TPC-DS Q90                  2.21
-TPC-DS Q91                  2.23
-TPC-DS Q92                  1.86
-TPC-DS Q93                  2.05
-TPC-DS Q94                  2.36
-TPC-DS Q95                  2.61
-TPC-DS Q96                  1.70
-TPC-DS Q98                  1.93
-TPC-DS Q99                  2.10
+DBMS           MySQL-BHT-8-1-1
+TPC-DS Q1                80.42
+TPC-DS Q2                 8.16
+TPC-DS Q3                 2.96
+TPC-DS Q4                19.98
+TPC-DS Q5                12.55
+TPC-DS Q6                 3.06
+TPC-DS Q7                 4.01
+TPC-DS Q8                 5.33
+TPC-DS Q9                 4.47
+TPC-DS Q10                6.25
+TPC-DS Q11               11.03
+TPC-DS Q12               15.38
+TPC-DS Q13                3.74
+TPC-DS Q14a+b            24.16
+TPC-DS Q15                2.53
+TPC-DS Q16                3.28
+TPC-DS Q17                3.53
+TPC-DS Q18                3.44
+TPC-DS Q19                2.55
+TPC-DS Q20                2.58
+TPC-DS Q21                3.22
+TPC-DS Q22                2.17
+TPC-DS Q23a+b            13.86
+TPC-DS Q24a+b             9.12
+TPC-DS Q25                3.48
+TPC-DS Q26                2.73
+TPC-DS Q27                2.56
+TPC-DS Q28                4.57
+TPC-DS Q29                3.69
+TPC-DS Q30                5.01
+TPC-DS Q31                8.34
+TPC-DS Q32                2.62
+TPC-DS Q33                6.72
+TPC-DS Q34                2.88
+TPC-DS Q35                4.32
+TPC-DS Q36                2.84
+TPC-DS Q37                2.81
+TPC-DS Q38                3.43
+TPC-DS Q39a+b             9.14
+TPC-DS Q40                2.96
+TPC-DS Q41                2.83
+TPC-DS Q42                2.15
+TPC-DS Q43                2.52
+TPC-DS Q44                3.56
+TPC-DS Q45                2.86
+TPC-DS Q46                3.09
+TPC-DS Q47                6.34
+TPC-DS Q48                2.84
+TPC-DS Q49                5.28
+TPC-DS Q50                3.09
+TPC-DS Q51                4.38
+TPC-DS Q52                2.37
+TPC-DS Q53                2.59
+TPC-DS Q54                4.01
+TPC-DS Q55                1.87
+TPC-DS Q56                4.46
+TPC-DS Q57                5.63
+TPC-DS Q58                5.60
+TPC-DS Q59                4.81
+TPC-DS Q60               11.35
+TPC-DS Q61                2.82
+TPC-DS Q62                3.32
+TPC-DS Q63                3.41
+TPC-DS Q64                7.61
+TPC-DS Q65                2.74
+TPC-DS Q66                6.42
+TPC-DS Q67                2.35
+TPC-DS Q68                2.44
+TPC-DS Q69                3.05
+TPC-DS Q70                3.07
+TPC-DS Q71                2.58
+TPC-DS Q72                2.76
+TPC-DS Q73                2.65
+TPC-DS Q74                5.20
+TPC-DS Q75                4.93
+TPC-DS Q76                2.58
+TPC-DS Q77                6.43
+TPC-DS Q78                4.10
+TPC-DS Q79                2.95
+TPC-DS Q80                4.87
+TPC-DS Q81                3.52
+TPC-DS Q82                2.01
+TPC-DS Q83                3.90
+TPC-DS Q84                2.00
+TPC-DS Q85                3.38
+TPC-DS Q86                2.49
+TPC-DS Q87                2.73
+TPC-DS Q88                6.23
+TPC-DS Q89                3.15
+TPC-DS Q90                2.72
+TPC-DS Q91                2.81
+TPC-DS Q92                2.33
+TPC-DS Q93                2.72
+TPC-DS Q94                2.57
+TPC-DS Q95                3.27
+TPC-DS Q96                2.01
+TPC-DS Q97                3.12
+TPC-DS Q98                2.67
+TPC-DS Q99                3.12
 
 ### Loading [s]
-                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MySQL-BHT-8-1-1-1           1.0           18.0         8.0      100.0     136.0
+                 timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MySQL-BHT-8-1-1           1.0            6.0         7.0      105.0     127.0
 
 ### Geometric Mean of Medians of Timer Run [s]
-                   Geo Times [s]
-DBMS                            
-MySQL-BHT-8-1-1-1            0.0
+                 Geo Times [s]
+DBMS                          
+MySQL-BHT-8-1-1            0.0
 
-### Power@Size
-                   Power@Size [~Q/h]
-DBMS                                
-MySQL-BHT-8-1-1-1          993775.81
+### Power@Size ((3600*SF)/(geo times))
+                 Power@Size [~Q/h]
+DBMS                              
+MySQL-BHT-8-1-1          903241.48
 
-### Throughput@Size
-                                              time [s]  count  SF  Throughput@Size [~GB/h]
-DBMS            SF num_experiment num_client                                              
-MySQL-BHT-8-1-1 1  1              1                 14      1   1                  5657.14
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                            time [s]  count  SF  Throughput@Size
+DBMS          SF num_experiment num_client                                      
+MySQL-BHT-8-1 1  1              1                 10      1   1          35640.0
 
 ### Workflow
 
@@ -255,12 +255,12 @@ MySQL-BHT-8-1-1 1  1              1                 14      1   1               
 DBMS MySQL-BHT-8 - Pods [[1]]
 
 #### Planned
-DBMS MySQL-BHT-8-1 - Pods [[1]]
+DBMS MySQL-BHT-8 - Pods [[1]]
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
-TEST failed: SQL errors
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
 TEST passed: No SQL warnings
-TEST failed: Workflow not as planned
+TEST passed: Workflow as planned

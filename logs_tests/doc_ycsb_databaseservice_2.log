@@ -2,11 +2,18 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1734663819
-Experiment                    : starts at 2024-12-20 04:03:38.820550 (4348620.227677921)
+Experiment                    : has code 1748446660
+Experiment                    : starts at 2025-05-28 17:37:40.395065 (12638823.865615623)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
-Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [4].
+Factors for benchmarking are [4].
+Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
 Benchmark is limited to DBMS ['DatabaseService'].
 Import is handled by 8 processes (pods).
@@ -21,18 +28,25 @@ Experiment is run once.
 Cluster monitoring            : is running
 done
 DatabaseService-64-8-65536    : will start now
+DatabaseService-64-8-65536    : Name of SUT pods = bexhoma-sut-databaseservice-64-8-65536-1748446660
+DatabaseService-64-8-65536    : Name of SUT service = bexhoma-sut-databaseservice-64-8-65536-1748446660
 - waiting 30s -               : done
-DatabaseService-64-8-65536    : will start benchmarking but not before 2024-12-20 03:05:39 (that is in 60 secs)
+DatabaseService-64-8-65536    : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-64-8-65536    : will start benchmarking but not before 2024-12-20 03:05:39
+DatabaseService-64-8-65536    : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : waits for health check to succeed
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : will start benchmarking but not before 2025-05-28 15:41:11 (that is in 60 secs)
+- waiting 30s -               : done
+DatabaseService-64-8-65536    : will start benchmarking but not before 2025-05-28 15:41:11
 done
 DatabaseService-64-8-65536    : benchmarks done 0 of 1. This will be client 1
-DatabaseService-64-8-65536    : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': ''}
+DatabaseService-64-8-65536    : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
 DatabaseService-64-8-65536-1  : start benchmarking
-Worker pods found:  []
-DatabaseService-64-8-65536    : benchmarking results in folder /home/perdelt/benchmarks/1734663819
+DatabaseService-64-8-65536    : benchmarking results in folder /home/perdelt/benchmarks/1748446660
 - waiting 10s -               : done
-DatabaseService-64-8-65536    : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-64-8-65536-1734663819-bxk2f: found
+DatabaseService-64-8-65536    : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-64-8-65536-1748446660-nt27w: found
 - waiting 30s -               : done
 DatabaseService-64-8-65536    : has running benchmarks
 - waiting 30s -               : done
@@ -44,14 +58,14 @@ DatabaseService-64-8-65536    : has running benchmarks
 done
 DatabaseService-64-8-65536    : has running benchmarks
 DatabaseService-64-8-65536-1  : showing benchmarker times
-DatabaseService-64-8-65536-1  : benchmarker timespan (start to end single container [s]) = 162
+DatabaseService-64-8-65536-1  : benchmarker timespan (start to end single container [s]) = 161
 DatabaseService-64-8-65536-1  : benchmarker times (start/end per pod and container) = []
 DatabaseService-64-8-65536-1  : found and updated times {'benchmarker': []}
-DatabaseService-64-8-65536-1  : collecting metrics of benchmarker
-DatabaseService-64-8-65536-1  : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-64-8-65536-1734663819(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+DatabaseService-64-8-65536-1  : collecting metrics of benchmarker at connection DatabaseService-64-8-65536-1
+DatabaseService-64-8-65536-1  : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-64-8-65536-1748446660(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 DatabaseService-64-8-65536    : can be stopped
-Experiment                    : ends at 2024-12-20 04:08:59.884356 (4348941.291489666) - 321.06s total
+Experiment                    : ends at 2025-05-28 17:44:33.140806 (12639236.611359464) - 412.75s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -62,12 +76,19 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 322s 
-    Code: 1734663819
+    Duration: 413s 
+    Code: 1748446660
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'. Number of rows to insert is 1000000. Number of operations is 10000000. Batch size is ''.
-    YCSB is performed using several threads and processes. Target is based on multiples of '16384'. Factors for loading are [4]. Factors for benchmarking are [4].
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.7.
     System metrics are monitored by a cluster-wide installation.
     Benchmark is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
@@ -82,19 +103,23 @@ YCSB SF=1
 
 ### Connections
 DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008576512
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-126-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:249256004
-    datadisk:39348
+    disk:301260760
+    datadisk:39
     requests_cpu:4
     requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1748446660
 
 ### Execution
-                              experiment_run  threads  target  pod_count  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1                       64975.99               153903.0           4999780                            2423.0             5000220                             30719.0
+                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DatabaseService-64-8-65536-1               1       64   65536          1           0                       65327.88               153074.0           4999406                            1545.0             5000594                              2119.0
 
 ### Workflow
 
@@ -106,9 +131,10 @@ DBMS DatabaseService-64-8-65536 - Pods [[1]]
 
 ### Execution - Benchmarker
                               CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      745.84     6.07           0.6                 0.61
+DatabaseService-64-8-65536-1      860.16     6.97           0.6                 0.61
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

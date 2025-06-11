@@ -140,6 +140,8 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
 
 
+#### Wait so that next experiment receives a different code
+wait_process "benchbase"
 
 ###########################################
 ############## Clean Folder ###############

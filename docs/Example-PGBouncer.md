@@ -86,7 +86,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -111,13 +111,14 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-```bash
+test_ycsb_testcase_pgbouncer_1.log
+```markdown
 ## Show Summary
 
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 1593s
+    Duration: 1593s 
     Code: 1745062608
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
@@ -270,7 +271,7 @@ The first instance of the experiment mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 
-```
+```bash
 +----------------------------------------------+-----------------+--------------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                      | configuration   | experiment         | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +==============================================+=================+====================+==============+===================+=================+======================+===========+==========+========+========+
@@ -280,14 +281,14 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-
-```bash
+test_ycsb_testcase_pgbouncer_2.log
+```markdown
 ## Show Summary
 
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 2537s
+    Duration: 2537s 
     Code: 1745066294
     YCSB tool runs the benchmark.
     This experiment compares run time and resource consumption of YCSB queries.
@@ -410,7 +411,7 @@ TEST passed: Workflow as planned
 
 In `cluster.config` there is a section:
 
-```
+```python
 'PGBouncer': {
     'loadData': 'psql -U postgres < {scriptname}',
     'template': {
@@ -484,18 +485,19 @@ nohup python benchbase.py -ms 1 -tr \
 
 ### Evaluate Results
 
-```bash
+doc_benchbase_testcase_newconn.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1181s 
-    Code: 1745302456
+    Duration: 1764s 
+    Code: 1745334281
     Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 10 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction.
     Experiment uses bexhoma version 0.8.4.
     Benchmark is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
@@ -503,7 +505,7 @@ Benchbase Workload SF=16
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is tested with [32] threads, split into [1, 2] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
@@ -514,33 +516,33 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:206799668
-    datadisk:4324
+    disk:206800764
+    datadisk:4323
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1745302456
+                code:1745334281
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:207525888
-    datadisk:5033
+    disk:208119280
+    datadisk:5611
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1745302456
+                code:1745334281
 
 ### Execution
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                        803.23                     468.27         0.0                                                      35400.0                                              19912.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0           0                        657.23                     653.14         0.0                                                      38464.0                                              24330.0
+PostgreSQL-1-1-1024-1               1         32   16384          1  600.0           0                       1376.07                     467.82         0.0                                                      39122.0                                              23250.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  600.0           1                       1069.23                     912.18         0.0                                                      45573.0                                              29926.5
 
 ### Workflow
 
@@ -552,8 +554,8 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1      169.0        1.0   1.0         340.828402
-PostgreSQL-1-1-1024-2      169.0        1.0   2.0         340.828402
+PostgreSQL-1-1-1024-1      155.0        1.0   1.0         371.612903
+PostgreSQL-1-1-1024-2      155.0        1.0   2.0         371.612903
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -586,18 +588,19 @@ nohup python benchbase.py -ms 1 -tr \
 
 ### Evaluate Results
 
-```bash
+doc_benchbase_testcase_newconn_pool.log
+```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
     Type: benchbase
-    Duration: 1997s 
-    Code: 1745330708
+    Duration: 1727s 
+    Code: 1745336081
     Benchbase runs the TPC-C benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
+    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 10 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction.
     Experiment uses bexhoma version 0.8.4.
     Benchmark is limited to DBMS ['PGBouncer'].
     Import is handled by 1 processes (pods).
@@ -605,7 +608,7 @@ Benchbase Workload SF=16
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is tested with [32] threads, split into [1, 2] pods.
     Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
@@ -617,46 +620,46 @@ pgb-1-2-32-32-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:206800728
+    disk:206801068
     datadisk:4323
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1745330708
+                code:1745336081
 pgb-1-2-32-32-2 uses docker image postgres:16.1
     RAM:541008592896
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-134-generic
     node:cl-worker11
-    disk:207458900
-    datadisk:4966
+    disk:207951228
+    datadisk:5447
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1745330708
+                code:1745336081
 
 ### Execution
                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-pgb-1-2-32-32-1               1         16   16384          1  300.0           0                        936.98                     468.51         0.0                                                      35352.0                                              17069.0
-pgb-1-2-32-32-2               1         16   16384          2  300.0           2                        766.86                     760.68         0.0                                                      41835.0                                              20850.0
+pgb-1-2-32-32-1               1         32   16384          1  600.0           1                       1632.17                     467.24         0.0                                                      30530.0                                              19602.0
+pgb-1-2-32-32-2               1         32   16384          2  600.0           2                       1529.88                     934.00         0.0                                                      38417.0                                              20915.0
 
 ### Workflow
 
 #### Actual
-DBMS pgb-1-2-32-32 - Pods [[2, 1]]
+DBMS pgb-1-2-32-32 - Pods [[1, 2]]
 
 #### Planned
 DBMS pgb-1-2-32-32 - Pods [[1, 2]]
 
 ### Loading
                  time_load  terminals  pods  Throughput [SF/h]
-pgb-1-2-32-32-1      148.0        1.0   1.0         389.189189
-pgb-1-2-32-32-2      148.0        1.0   2.0         389.189189
+pgb-1-2-32-32-1      154.0        1.0   1.0         374.025974
+pgb-1-2-32-32-2      154.0        1.0   2.0         374.025974
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

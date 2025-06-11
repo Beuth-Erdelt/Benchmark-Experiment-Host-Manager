@@ -22,12 +22,8 @@ import logging
 import urllib3
 import logging
 import argparse
-import time
-from timeit import default_timer
-import datetime
 import pandas as pd
 import types
-import math
 
 
 urllib3.disable_warnings()
@@ -43,16 +39,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
+    parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-m',   '--monitoring', help='activates monitoring for sut', action='store_true')
     parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
     parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
     parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="")
+    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
     parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
     parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
     parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
@@ -116,8 +113,6 @@ if __name__ == '__main__':
     timeout = int(args.timeout)
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
-    # should results be tested for validity?
-    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -126,6 +121,8 @@ if __name__ == '__main__':
         list_clients = []
     # do not ingest, start benchmarking immediately
     skip_loading = args.skip_loading
+    # do not remove SUTs after benchmarking
+    #skip_shutdown = args.skip_shutdown
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
@@ -220,6 +217,68 @@ if __name__ == '__main__':
                     config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'postgresql'
+                        )
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = scaling_logging,
+                        BEXHOMA_DBMS = "jdbc",
+                        YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                        YCSB_INSERTORDER = extra_insert_order,
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = scaling_logging,
+                                        BEXHOMA_DBMS = "jdbc",
+                                        YCSB_MEASUREMENT_TYPE = "hdrhistogram",
+                                        YCSB_INSERTORDER = extra_insert_order,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                if ("CedarDB" in args.dbms):
+                    # PostgreSQL
+                    name_format = 'CedarDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='CedarDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    config.set_storage(
+                        storageConfiguration = 'cedardb'
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
@@ -942,54 +1001,5 @@ if __name__ == '__main__':
     ##############
     ### branch for workflows
     ##############
-    if args.mode == 'start':
-        experiment.start_sut()
-    elif args.mode == 'load':
-        # start all DBMS
-        experiment.start_sut()
-        # configure number of clients per config = 0
-        list_clients = []
-        # total time of experiment
-        experiment.add_benchmark_list(list_clients)
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-    elif args.mode == 'summary':
-        #experiment.evaluate_results()
-        #experiment.store_workflow_results()
-        experiment.show_summary()
-    else:
-        # total time of experiment
-        start = default_timer()
-        start_datetime = str(datetime.datetime.now())
-        #print("Experiment starts at {} ({})".format(start_datetime, start))
-        print("{:30s}: has code {}".format("Experiment",experiment.code))
-        print("{:30s}: starts at {} ({})".format("Experiment",start_datetime, start))
-        print("{:30s}: {}".format("Experiment",experiment.workload['info']))
-        # run workflow
-        experiment.work_benchmark_list()
-        # total time of experiment
-        end = default_timer()
-        end_datetime = str(datetime.datetime.now())
-        duration_experiment = end - start
-        #print("Experiment ends at {} ({}): {}s total".format(end_datetime, end, duration_experiment))
-        print("{:30s}: ends at {} ({}) - {:.2f}s total".format("Experiment",end_datetime, end, duration_experiment))
-        experiment.workload['duration'] = math.ceil(duration_experiment)
-        ##################
-        experiment.evaluate_results()
-        experiment.store_workflow_results()
-        experiment.stop_benchmarker()
-        experiment.stop_sut()
-        #experiment.zip() # OOM? exit code 137
-        if test_result:
-            test_result_code = experiment.test_results()
-            if test_result_code == 0:
-                print("Test successful!")
-        #cluster.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
-        experiment.show_summary()
+    experiment.process()
 exit()

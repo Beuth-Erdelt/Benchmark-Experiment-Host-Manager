@@ -1,0 +1,71 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1749628596
+Experiment                    : starts at 2025-06-11 09:56:36.644179 (13820760.114729336)
+Experiment                    : This just starts a SUT.
+Experiment uses bexhoma version 0.8.7.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+SUT is fixed to cl-worker11.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-1-1-1024           : will start now
+PostgreSQL-1-1-1024           : Name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1749628596
+PostgreSQL-1-1-1024           : Name of SUT service = bexhoma-sut-postgresql-1-1-1024-1749628596
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : will start benchmarking but not before 2025-06-11 07:59:38 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : will start benchmarking but not before 2025-06-11 07:59:38
+done
+PostgreSQL-1-1-1024           : can be stopped, but we leave it running
+PostgreSQL-1-1-1024           : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749628596 9091
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1749628596
+Experiment                    : ends at 2025-06-11 09:59:43.066134 (13820946.53668828) - 186.42s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+Benchbase Start DBMS
+    Type: benchbase
+    Duration: 187s 
+    Code: 1749628596
+    Intro: Start DBMS and do not load data.
+    This just starts a SUT.
+    Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    SUT is fixed to cl-worker11.
+    Experiment is run once.
+
+### Services
+PostgreSQL-1-1-1024
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749628596 9091:9091
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:387168592
+    datadisk:39
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1749628596
+
+### Tests
