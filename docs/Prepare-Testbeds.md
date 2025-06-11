@@ -19,7 +19,7 @@ The evaluation includes a "Services" section that shows how to connect to the DB
 
 
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
-```markdown
+```bash
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
@@ -32,17 +32,26 @@ mkdir -p $LOG_DIR
 
 You can watch for all components of these experiments by
 
-```markdown
+```bash
 kubectl get all -l app=bexhoma,usecase=ycsb
 ```
 
 You can remove all components of these experiments by
 
-```markdown
+```bash
 kubectl delete all -l app=bexhoma,usecase=ycsb
 ```
 
 ### Start DBMS
+
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  --workload c \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_ycsb_start_postgresql.log &
+```
 
 test_ycsb_start_postgresql.log
 ```markdown
@@ -88,6 +97,16 @@ TEST passed: Result contains no FAILED column
 
 
 ### Start DBMS and Load Data
+
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  --workload c \
+  -m -mc \
+  -nlp 8 -nlt 64 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_ycsb_load_postgresql.log &
+```
 
 test_ycsb_load_postgresql.log
 ```markdown
@@ -155,6 +174,16 @@ TEST passed: Result contains no FAILED column
 
 
 ### Start DBMS and Load Data and Run Workload
+
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  --workload c \
+  -m -mc \
+  -nlp 8 -nlt 64 -nbp 8 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_ycsb_run_postgresql.log &
+```
 
 test_ycsb_run_postgresql.log
 ```markdown
@@ -255,17 +284,25 @@ TEST passed: Result contains no FAILED column
 
 You can watch for all components of these experiments by
 
-```markdown
+```bash
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 ```
 
 You can remove all components of these experiments by
 
-```markdown
+```bash
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 ```
 
 ### Start DBMS
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_benchbase_start_postgresql.log &
+```
 
 test_benchbase_start_postgresql.log
 ```markdown
@@ -309,6 +346,15 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
 
 
 ### Start DBMS and Load Data
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 8 -nlt 64 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_benchbase_load_postgresql.log &
+```
 
 test_benchbase_load_postgresql.log
 ```markdown
@@ -370,6 +416,15 @@ TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 
 
 ### Start DBMS and Load Data and Run Workload
+
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 1 -nlt 64 -nbp 8 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql.log &
+```
 
 test_benchbase_run_postgresql.log
 ```markdown
@@ -462,17 +517,25 @@ TEST passed: Workflow as planned
 
 You can watch for all components of these experiments by
 
-```markdown
+```bash
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 ```
 
 You can remove all components of these experiments by
 
-```markdown
+```bash
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 ```
 
 ### Start DBMS
+
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_hammerdb_start_postgresql.log &
+```
 
 test_hammerdb_start_postgresql.log
 ```markdown
@@ -514,6 +577,15 @@ PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
 
 
 ### Start DBMS and Load Data
+
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_hammerdb_load_postgresql.log &
+```
 
 test_hammerdb_load_postgresql.log
 ```markdown
@@ -574,6 +646,15 @@ TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
 
 
 ### Start DBMS and Load Data and Run Workload
+
+```bash
+nohup python hammerdb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_hammerdb_run_postgresql.log &
+```
 
 test_hammerdb_run_postgresql.log
 ```markdown
@@ -667,17 +748,25 @@ TEST passed: Workflow as planned
 
 You can watch for all components of these experiments by
 
-```markdown
+```bash
 kubectl get all -l app=bexhoma,usecase=tpc-h
 ```
 
 You can remove all components of these experiments by
 
-```markdown
+```bash
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 ```
 
 ### Start DBMS
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_tpch_start_postgresql.log &
+```
 
 test_tpch_start_postgresql.log
 ```markdown
@@ -719,6 +808,15 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
 
 
 ### Start DBMS and Load Data
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_tpch_load_postgresql.log &
+```
 
 test_tpch_load_postgresql.log
 ```markdown
@@ -769,6 +867,15 @@ PostgreSQL-BHT-1-1           0.0          109.0         1.0       92.0     203.0
 
 
 ### Start DBMS and Load Data and Run Workload
+
+```bash
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql.log &
+```
 
 test_tpch_run_postgresql.log
 ```markdown
@@ -909,17 +1016,25 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 
 You can watch for all components of these experiments by
 
-```markdown
+```bash
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 ```
 
 You can remove all components of these experiments by
 
-```markdown
+```bash
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 ```
 
 ### Start DBMS
+
+```bash
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_tpcds_start_postgresql.log &
+```
 
 test_tpcds_start_postgresql.log
 ```markdown
@@ -961,6 +1076,15 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
 
 
 ### Start DBMS and Load Data
+
+```bash
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_tpcds_load_postgresql.log &
+```
 
 test_tpcds_load_postgresql.log
 ```markdown
@@ -1011,6 +1135,15 @@ PostgreSQL-BHT-1-1           0.0            0.0         1.0        1.0       3.0
 
 
 ### Start DBMS and Load Data and Run Workload
+
+```bash
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpcds_run_postgresql.log &
+```
 
 test_tpcds_run_postgresql.log
 ```markdown
