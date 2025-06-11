@@ -82,7 +82,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -108,7 +108,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_ycsb_testcase_loading.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -353,7 +353,7 @@ This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
 Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
 
 doc_ycsb_testcase_benchmarking.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -493,7 +493,7 @@ nohup python ycsb.py -ms 1 -tr \
 If monitoring is activated, the summary also contains a section like this:
 
 doc_ycsb_testcase_monitoring.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -674,7 +674,7 @@ In this example `-nc` is set to two, that is the complete experiment is repeated
 The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
-```
+```bash
 +------------------------------------------+-----------------+---------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                  | configuration   | experiment    | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
 +==========================================+=================+===============+==============+===================+============+======================+===========+==========+========+========+
@@ -687,7 +687,7 @@ All other instances just use the database without generating and loading data.
 The result looks something like
 
 doc_ycsb_testcase_storage.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -909,7 +909,7 @@ nohup python ycsb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_ycsb_testcase_a.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1046,7 +1046,7 @@ nohup python ycsb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_ycsb_testcase_b.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1183,7 +1183,7 @@ nohup python ycsb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_ycsb_testcase_c.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1329,7 +1329,7 @@ nohup python ycsb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_ycsb_testcase_d.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1453,7 +1453,7 @@ nohup python ycsb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_ycsb_testcase_e.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1571,7 +1571,7 @@ nohup python ycsb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_ycsb_testcase_f.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

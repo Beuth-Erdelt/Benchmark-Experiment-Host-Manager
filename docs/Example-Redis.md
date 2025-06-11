@@ -90,7 +90,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -116,7 +116,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_ycsb_redis_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -230,7 +230,7 @@ In the following example, this means that used memory, CPU time, etc. are summed
 ## Distributed DBMS
 
 If you want to deploy Redis as a cluster, you can adjust the number of workers `-nw` when calling the script:
-```
+```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
@@ -254,7 +254,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields something like
 
 doc_ycsb_redis_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -371,7 +371,7 @@ TEST passed: Result contains no FAILED column
 We can set the number of replicas with the parameter `-nwr`.
 Note that Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` creates 6 worker nodes, 3 for sharding and another 3 for the (single) replicas.
 
-```
+```bash
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
@@ -396,7 +396,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields something like
 
 doc_ycsb_redis_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -564,7 +564,7 @@ In this example `-nc` is set to two, that is the complete experiment is repeated
 The first instance of Redis mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
-```
+```bash
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
@@ -575,7 +575,7 @@ All other instances just use the database without generating and loading data.
 The result looks something like
 
 doc_ycsb_redis_4.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -717,7 +717,7 @@ The first volume is attached to the (dummy) coordinator and is used to persist i
 The other volumes (worker volumes) are attached to the worker pods and store the actual data.
 
 
-```
+```bash
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
@@ -738,7 +738,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 The result looks something like
 
 doc_ycsb_redis_5.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -912,7 +912,7 @@ TEST passed: Result contains no FAILED column
 
 In `cluster.config` there is a section:
 
-```
+```python
 'Redis': {
     'loadData': 'redis-cli < {scriptname}',
     'delay_prepare': 0,

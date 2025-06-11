@@ -116,7 +116,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_tpcds_testcase_compare.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -601,7 +601,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 If monitoring is activated, the summary also contains a section like this:
 
 doc_tpcds_testcase_monitoring.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -832,7 +832,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
 doc_tpcds_testcase_throughput.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1080,7 +1080,7 @@ In this example `-nc` is set to two, that is the complete experiment is repeated
 The first instance of MonetDB mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
-```
+```bash
 +-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
 +=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
@@ -1101,7 +1101,7 @@ All other instances just use the database without generating and loading data.
 The result looks something like
 
 doc_tpcds_testcase_storage.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1353,7 +1353,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
 ### Evaluate Results
 
 doc_tpcds_testcase_profiling.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1970,7 +1970,7 @@ The disk is of storageClass shared and of size 1000Gi and 156G of that space is 
 It took about 4000s to build this database.
 Currently no DBMS is running.
 
-```
+```bash
 Dashboard: Running
 Message Queue: Running
 Data directory: Running
@@ -1988,7 +1988,7 @@ Cluster Prometheus: Running
 At the end of a benchmark you will see a summary like
 
 doc_tpcds_monetdb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2219,7 +2219,7 @@ nohup python tpcds.py -ms 1 \
 ### Evaluate Results
 
 doc_tpcds_monetdb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2501,7 +2501,7 @@ nohup python tpcds.py -ms 1 \
 ### Evaluate Results
 
 doc_tpcds_monetdb_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

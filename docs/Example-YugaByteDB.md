@@ -86,7 +86,7 @@ Optionally: Connect to the installation
 
 
 Optionally: Use [YugabyteDB connection manager](https://docs.yugabyte.com/preview/explore/going-beyond-sql/connection-mgr-ysql/) by adding
-```
+```bash
 gflags.tserver.enable_ysql_conn_mgr=true,\
 gflags.tserver.allowed_preview_flags_csv=enable_ysql_conn_mgr,\
 ```
@@ -152,7 +152,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -178,7 +178,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_ycsb_yugabytedb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -308,7 +308,7 @@ nohup python ycsb.py -ms 1 -tr \
 This skips loading (`-sl`), as data is already present in the database.
 
 doc_ycsb_yugabytedb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -424,7 +424,7 @@ nohup python ycsb.py -ms 1 -tr \
 This will add a PVC to the Dummy DBMS.
 Nothing will be stored there, but it maintains status information about previous loading processes.
 
-```
+```bash
 +-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
 +=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
@@ -442,7 +442,7 @@ If YugabyteDB is restarted or data is delete somehow, this PVC information will 
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
 doc_ycsb_yugabytedb_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -544,7 +544,7 @@ If you want YugabyteDB to have real persistent storage, remove the line `storage
 
 In `cluster.config` there is a section:
 
-```
+```python
 'YugabyteDB': {
     'loadData': 'psql -U yugabyte --host yb-tserver-service.{namespace}.svc.cluster.local --port 5433 < {scriptname}',
     'template': {
@@ -576,7 +576,7 @@ In the Docker files for YCSB
 * https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile
 
 there is a section about including the needed JDBC driver:
-```
+```bash
 ######### Specific version of YugabyteDB JDBC #########
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
 RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
@@ -635,7 +635,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields
 
 doc_benchbase_yugabytedb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -740,7 +740,7 @@ The setup is the same as for YCSB (see above).
 
 However the connection string this time is not read from `cluster.config`, but instead constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
 
-```
+```bash
 BENCHBASE_PROFILE = 'postgres',
 BEXHOMA_DATABASE = 'yugabyte',
 BEXHOMA_USER = "yugabyte",
@@ -773,7 +773,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields
 
 doc_benchbase_yugabytedb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

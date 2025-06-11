@@ -46,7 +46,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_tpch_testcase_postgresql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -175,7 +175,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_postgresql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -305,7 +305,7 @@ TEST passed: Workflow as planned
 
 #### TPC-H Throughput Test
 
-```
+```bash
 kubectl delete pvc bexhoma-storage-postgresql-tpch-1
 ```
 
@@ -330,7 +330,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_postgresql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -585,7 +585,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_tpch_testcase_mysql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -713,7 +713,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mysql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -866,7 +866,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mysql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1114,7 +1114,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_tpch_testcase_mariadb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1243,7 +1243,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mariadb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1373,7 +1373,7 @@ TEST passed: Workflow as planned
 
 #### TPC-H Throughput Test
 
-```
+```bash
 kubectl delete pvc bexhoma-storage-mariadb-tpch-1
 ```
 
@@ -1397,7 +1397,7 @@ nohup python tpch.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mariadb_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1665,7 +1665,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_postgresql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1754,7 +1754,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_postgresql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1857,7 +1857,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_postgresql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1960,7 +1960,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 30 minutes) something like
 
 test_benchbase_testcase_postgresql_4.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2206,7 +2206,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mysql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2294,7 +2294,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mysql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2395,7 +2395,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mysql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2497,7 +2497,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 30 minutes) something like
 
 test_benchbase_testcase_mysql_4.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2735,7 +2735,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mariadb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2824,7 +2824,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mariadb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2927,7 +2927,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mariadb_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3030,7 +3030,7 @@ nohup python benchbase.py -ms 1 -tr \
 yields (after ca. 30 minutes) something like
 
 test_benchbase_testcase_mariadb_4.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3282,7 +3282,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 10 minutes)
 
 test_hammerdb_testcase_postgresql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3361,7 +3361,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 15 minutes)
 
 test_hammerdb_testcase_postgresql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3463,7 +3463,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 60 minutes)
 
 test_hammerdb_testcase_postgresql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3671,7 +3671,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 10 minutes)
 
 test_hammerdb_testcase_mysql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3749,7 +3749,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 15 minutes)
 
 test_hammerdb_testcase_mysql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3850,7 +3850,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 60 minutes)
 
 test_hammerdb_testcase_mysql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4049,7 +4049,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 10 minutes)
 
 test_hammerdb_testcase_mariadb_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4131,7 +4131,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 15 minutes)
 
 test_hammerdb_testcase_mariadb_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4236,7 +4236,7 @@ nohup python hammerdb.py -ms 1 -tr \
 yields (after ca. 60 minutes)
 
 test_hammerdb_testcase_mariadb_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4477,7 +4477,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_ycsb_testcase_postgresql_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4569,7 +4569,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_ycsb_testcase_postgresql_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4682,7 +4682,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields (after ca. 15 minutes) something like
 
 test_ycsb_testcase_postgresql_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4892,7 +4892,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields (after ca. 5 minutes) something like
 
 test_ycsb_testcase_postgresql_4.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -4983,7 +4983,7 @@ nohup python ycsb.py -ms 1 -tr \
 yields (after ca. 10 minutes) something like
 
 test_ycsb_testcase_postgresql_5.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
