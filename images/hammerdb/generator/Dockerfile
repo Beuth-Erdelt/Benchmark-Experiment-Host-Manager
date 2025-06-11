@@ -4,7 +4,7 @@
 #
 # This Dockerfile builds an image for a Bexhoma component "loader".
 #
-# Base Image: tpcorg/hammerdb:v4.12
+# Base Image: tpcorg/hammerdb:v5.0
 #
 # Author: Patrick K. Erdelt
 # Email: patrick.erdelt@bht-berlin.de
@@ -13,7 +13,7 @@
 # Description: This container runs a driver for a benchmark. Data is generated and loaded.
 # The configuration is given by environment variables.
 ######################################################################################
-FROM tpcorg/hammerdb:v4.12
+FROM tpcorg/hammerdb:v5.0
 
 COPY ./generator.sh ./generator.sh
 RUN ["chmod", "+x", "./generator.sh"]
