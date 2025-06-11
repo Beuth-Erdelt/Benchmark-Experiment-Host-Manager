@@ -154,7 +154,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -180,7 +180,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_ycsb_databaseservice_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -290,7 +290,7 @@ nohup python ycsb.py -ms 2 -tr \
 This skips loading (`-sl`), as data is already present in the database.
 
 doc_ycsb_databaseservice_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -401,7 +401,7 @@ nohup python ycsb.py -ms 2 -tr \
 This will add a PVC to the Dummy DBMS.
 Nothing will be stored there, but it maintains status information about previous loading processes.
 
-```
+```bash
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
@@ -419,7 +419,7 @@ If data is delete somehow, this PVC information will be outdated and wrong.
 This approach helps bexhoma to persist status information, but it does not persist data inside the Cloud database.
 
 doc_ycsb_databaseservice_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -508,7 +508,7 @@ TEST passed: Result contains no FAILED column
 
 In `cluster.config` there is a section:
 
-```
+```python
 'DatabaseService': {
     'loadData': 'psql -U postgres --host mydatabase.example.com --port 5432 < {scriptname}',
     'template': {
@@ -542,7 +542,7 @@ In the Docker files for YCSB
 * https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile
 
 there is a section about including the needed JDBC driver:
-```
+```bash
 ######### Specific version of PostgreSQL JDBC #########
 RUN wget https://jdbc.postgresql.org/download/postgresql-42.5.0.jar --no-check-certificate
 RUN cp postgresql-42.5.0.jar jars/postgresql-42.5.0.jar
@@ -600,7 +600,7 @@ nohup python benchbase.py -ms 2 -tr \
 yields
 
 doc_benchbase_databaseservice_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -682,7 +682,7 @@ The setup is the same as for YCSB (see above).
 
 However the connection string this time is not only read from `cluster.config`, but are also constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
 
-```
+```bash
 BENCHBASE_PROFILE = 'postgres',
 BEXHOMA_DATABASE = 'postgres',
 ```
@@ -708,7 +708,7 @@ nohup python benchbase.py -ms 2 -tr \
 yields
 
 doc_benchbase_databaseservice_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -953,7 +953,7 @@ nohup python tpch.py -ms 2 -dt -tr \
 yields
 
 doc_tpch_testcase_databaseservice_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1109,7 +1109,7 @@ nohup python tpch.py -ms 2 -dt -tr \
 yields
 
 doc_tpch_testcase_databaseservice_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1253,7 +1253,7 @@ nohup python tpch.py -ms 2 -dt -tr \
 yields
 
 doc_tpch_testcase_databaseservice_4.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

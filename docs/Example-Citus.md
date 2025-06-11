@@ -89,7 +89,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -115,7 +115,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_ycsb_citus_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -289,7 +289,7 @@ The first one is attached to the coordinator and is used to persist infos across
 The other volumes (worker volumes) are attached to the worker pods and store the actual data.
 
 
-```
+```bash
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
@@ -310,7 +310,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 The result looks something like
 
 doc_ycsb_citus_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -487,7 +487,7 @@ TEST passed: Result contains no FAILED column
 
 In `cluster.config` there is a section:
 
-```
+```python
 'Citus': {
     'loadData': 'psql -U postgres < {scriptname}',
     'attachWorker': "psql -U postgres --command=\"SELECT * from master_add_node('{worker}.{service_sut}', 5432);\"",
@@ -563,7 +563,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_citus_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -722,7 +722,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_citus_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1071,7 +1071,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_citus_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1628,7 +1628,7 @@ nohup python hammerdb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_hammerdb_citus_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -1737,7 +1737,7 @@ nohup python hammerdb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_hammerdb_citus_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2100,7 +2100,7 @@ nohup python hammerdb.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_hammerdb_citus_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2682,7 +2682,7 @@ nohup python tpch.py -ms 1 -tr \
 ### Evaluate Results
 
 test_tpch_testcase_citus_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -2857,7 +2857,7 @@ nohup python tpch.py -ms 1 -tr \
 ### Evaluate Results
 
 test_tpch_testcase_citus_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -3247,7 +3247,7 @@ nohup python tpch.py -ms 1 -tr \
 ### Evaluate Results
 
 test_tpch_testcase_citus_3.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

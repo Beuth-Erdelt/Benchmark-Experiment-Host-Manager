@@ -86,7 +86,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -112,7 +112,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 test_ycsb_testcase_pgbouncer_1.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -271,7 +271,7 @@ The first instance of the experiment mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
 
-```
+```bash
 +----------------------------------------------+-----------------+--------------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                      | configuration   | experiment         | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +==============================================+=================+====================+==============+===================+=================+======================+===========+==========+========+========+
@@ -282,7 +282,7 @@ All other instances just use the database without generating and loading data.
 The result looks something like
 
 test_ycsb_testcase_pgbouncer_2.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -411,7 +411,7 @@ TEST passed: Workflow as planned
 
 In `cluster.config` there is a section:
 
-```
+```python
 'PGBouncer': {
     'loadData': 'psql -U postgres < {scriptname}',
     'template': {
@@ -486,7 +486,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_testcase_newconn.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -589,7 +589,7 @@ nohup python benchbase.py -ms 1 -tr \
 ### Evaluate Results
 
 doc_benchbase_testcase_newconn_pool.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload

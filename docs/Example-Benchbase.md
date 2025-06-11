@@ -75,7 +75,7 @@ This
 
 You can watch the status while benchmark is running via `bexperiments status`
 
-```
+```bash
 Dashboard: Running
 Cluster Prometheus: Running
 Message Queue: Running
@@ -101,7 +101,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_scale.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -337,7 +337,7 @@ nohup python benchbase.py -ms 1 -tr \
 The result looks something like
 
 doc_benchbase_testcase_monitoring.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -471,7 +471,7 @@ In this example `-nc` is set to two, that is the complete experiment is repeated
 The first instance of PostgreSQL mounts the volume and generates the data.
 All other instances just use the database without generating and loading data.
 
-```
+```bash
 +----------------------------------------------+-----------------+-------------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                      | configuration   | experiment        | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +==============================================+=================+===================+==============+===================+=================+======================+===========+==========+========+========+
@@ -482,7 +482,7 @@ All other instances just use the database without generating and loading data.
 The result looks something like
 
 doc_benchbase_testcase_storage.log
-```bash
+```markdown
 ## Show Summary
 
 ### Workload
@@ -598,7 +598,7 @@ nohup python benchbase.py -ms 1 -tr \
 ## Evaluate Results
 
 doc_benchbase_testcase_keytime.log
-```
+```markdown
 ## Show Summary
 
 ### Workload
