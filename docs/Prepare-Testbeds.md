@@ -686,8 +686,8 @@ test_tpch_start_postgresql.log
 ### Workload
 TPC-H Start DBMS
     Type: tpch
-    Duration: 204s 
-    Code: 1749481527
+    Duration: 216s 
+    Code: 1749623589
     Start DBMS and do not load data.
     This just starts a SUT.
     Experiment uses bexhoma version 0.8.7.
@@ -698,7 +698,7 @@ TPC-H Start DBMS
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481527 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623589 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -707,12 +707,12 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:378892260
+    disk:392432036
     datadisk:39
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749481527
+        code:1749623589
 
 ### Tests
 ```
@@ -727,8 +727,8 @@ test_tpch_load_postgresql.log
 ### Workload
 TPC-H Data Loading SF=1
     Type: tpch
-    Duration: 507s 
-    Code: 1749481784
+    Duration: 478s 
+    Code: 1749623832
     This includes the reading queries of TPC-H.
     This imports TPC-H data sets.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -744,7 +744,7 @@ TPC-H Data Loading SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481784 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623832 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -753,16 +753,16 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:381718232
+    disk:394490480
     datadisk:2757
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749481784
+        code:1749623832
 
 ### Loading [s]
                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1           0.0           74.0         4.0       92.0     172.0
+PostgreSQL-BHT-1-1           0.0          109.0         1.0       92.0     203.0
 
 ### Tests
 ```
@@ -777,8 +777,8 @@ test_tpch_run_postgresql.log
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 558s 
-    Code: 1749482338
+    Duration: 557s 
+    Code: 1749624420
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -800,7 +800,7 @@ TPC-H Queries SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749482338 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749624420 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
@@ -809,12 +809,12 @@ PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:381763564
+    disk:392131340
     datadisk:2757
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749482338
+        code:1749624420
 
 ### Errors (failed queries)
 No errors
@@ -824,47 +824,47 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-1-1-1
-Pricing Summary Report (TPC-H Q1)                                 2624.38
-Minimum Cost Supplier Query (TPC-H Q2)                             477.51
-Shipping Priority (TPC-H Q3)                                       757.73
-Order Priority Checking Query (TPC-H Q4)                          1298.87
-Local Supplier Volume (TPC-H Q5)                                   644.87
-Forecasting Revenue Change (TPC-H Q6)                              501.28
-Forecasting Revenue Change (TPC-H Q7)                              774.39
-National Market Share (TPC-H Q8)                                   602.51
-Product Type Profit Measure (TPC-H Q9)                            1139.51
-Forecasting Revenue Change (TPC-H Q10)                            1262.92
-Important Stock Identification (TPC-H Q11)                         253.28
-Shipping Modes and Order Priority (TPC-H Q12)                     1005.31
-Customer Distribution (TPC-H Q13)                                 1991.53
-Forecasting Revenue Change (TPC-H Q14)                             540.14
-Top Supplier Query (TPC-H Q15)                                     557.50
-Parts/Supplier Relationship (TPC-H Q16)                            571.59
-Small-Quantity-Order Revenue (TPC-H Q17)                          1908.32
-Large Volume Customer (TPC-H Q18)                                 7122.61
-Discounted Revenue (TPC-H Q19)                                     700.37
-Potential Part Promotion (TPC-H Q20)                               683.79
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                905.22
-Global Sales Opportunity Query (TPC-H Q22)                         256.30
+Pricing Summary Report (TPC-H Q1)                                 2578.59
+Minimum Cost Supplier Query (TPC-H Q2)                             436.17
+Shipping Priority (TPC-H Q3)                                       762.57
+Order Priority Checking Query (TPC-H Q4)                          1277.13
+Local Supplier Volume (TPC-H Q5)                                   674.93
+Forecasting Revenue Change (TPC-H Q6)                              503.71
+Forecasting Revenue Change (TPC-H Q7)                              794.98
+National Market Share (TPC-H Q8)                                   626.29
+Product Type Profit Measure (TPC-H Q9)                            1090.04
+Forecasting Revenue Change (TPC-H Q10)                            1294.25
+Important Stock Identification (TPC-H Q11)                         256.94
+Shipping Modes and Order Priority (TPC-H Q12)                     1022.04
+Customer Distribution (TPC-H Q13)                                 2102.37
+Forecasting Revenue Change (TPC-H Q14)                             554.96
+Top Supplier Query (TPC-H Q15)                                     548.31
+Parts/Supplier Relationship (TPC-H Q16)                            571.49
+Small-Quantity-Order Revenue (TPC-H Q17)                          1970.46
+Large Volume Customer (TPC-H Q18)                                 7249.02
+Discounted Revenue (TPC-H Q19)                                     709.77
+Potential Part Promotion (TPC-H Q20)                              5024.21
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                949.99
+Global Sales Opportunity Query (TPC-H Q22)                         241.19
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1-1           0.0           67.0         3.0       94.0     166.0
+PostgreSQL-BHT-1-1-1           0.0          115.0         1.0       93.0     211.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-1-1-1           0.86
+PostgreSQL-BHT-1-1-1           0.95
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-1-1-1            4191.02
+PostgreSQL-BHT-1-1-1            3806.53
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                                  time [s]  count  SF  Throughput@Size
 DBMS               SF num_experiment num_client                                      
-PostgreSQL-BHT-1-1 1  1              1                 28      1   1          2828.57
+PostgreSQL-BHT-1-1 1  1              1                 33      1   1           2400.0
 
 ### Workflow
 
@@ -876,15 +876,15 @@ DBMS PostgreSQL-BHT-1 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1      141.65     0.98          3.78                 5.32
+PostgreSQL-BHT-1-1      151.73      1.0          3.77                 5.32
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1        9.57        0           0.0                 0.73
+PostgreSQL-BHT-1-1        8.56        0           0.0                 0.73
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1       111.6        0          3.85                 5.39
+PostgreSQL-BHT-1-1      108.26        0          3.81                 5.35
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
@@ -928,18 +928,19 @@ test_tpcds_start_postgresql.log
 ### Workload
 TPC-DS Start DBMS
     Type: tpcds
-    Duration: 219s 
-    Code: 1749482968
+    Duration: 190s 
+    Code: 1749625066
     Start DBMS and do not load data.
     This just starts a SUT.
     Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     SUT is fixed to cl-worker11.
     Experiment is run once.
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749482968 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749625066 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -948,12 +949,12 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:379000608
+    disk:387775060
     datadisk:39
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749482968
+        code:1749625066
 
 ### Tests
 ```
@@ -968,13 +969,14 @@ test_tpcds_load_postgresql.log
 ### Workload
 TPC-DS Data Loading SF=1
     Type: tpcds
-    Duration: 303s 
-    Code: 1749483265
+    Duration: 267s 
+    Code: 1749625317
     This includes the reading queries of TPC-DS.
     This imports TPC-DS data sets.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
     Import sets indexes and constraints after loading and recomputes statistics.
     Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -984,7 +986,7 @@ TPC-DS Data Loading SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749483265 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749625317 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -993,16 +995,16 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:379024788
+    disk:387181832
     datadisk:40
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749483265
+        code:1749625317
 
 ### Loading [s]
                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1           0.0            0.0         5.0        7.0      13.0
+PostgreSQL-BHT-1-1           0.0            0.0         1.0        1.0       3.0
 
 ### Tests
 ```
@@ -1017,8 +1019,8 @@ test_tpcds_run_postgresql.log
 ### Workload
 TPC-DS Queries SF=1
     Type: tpcds
-    Duration: 404s 
-    Code: 1749483645
+    Duration: 328s 
+    Code: 1749625623
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
     TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -1027,6 +1029,7 @@ TPC-DS Queries SF=1
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
     Experiment uses bexhoma version 0.8.7.
+    System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -1039,7 +1042,7 @@ TPC-DS Queries SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749483645 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749625623 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
@@ -1048,12 +1051,12 @@ PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:379054424
+    disk:387181608
     datadisk:40
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749483645
+        code:1749625623
 
 ### Errors (failed queries)
             PostgreSQL-BHT-1-1-1
@@ -1066,108 +1069,108 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           PostgreSQL-BHT-1-1-1
-TPC-DS Q1                     42.52
-TPC-DS Q2                      6.01
-TPC-DS Q3                      2.23
-TPC-DS Q4                      9.52
-TPC-DS Q5                      8.26
-TPC-DS Q6                      2.60
-TPC-DS Q7                      2.17
-TPC-DS Q8                      3.63
-TPC-DS Q9                      2.79
-TPC-DS Q10                     3.73
-TPC-DS Q11                     3.46
-TPC-DS Q12                     1.79
-TPC-DS Q13                     3.55
-TPC-DS Q14a+b                 13.29
-TPC-DS Q15                     1.66
-TPC-DS Q16                     3.30
-TPC-DS Q17                    11.10
-TPC-DS Q18                     3.54
-TPC-DS Q19                     2.76
-TPC-DS Q20                     1.54
-TPC-DS Q21                     2.84
-TPC-DS Q22                     1.27
-TPC-DS Q23a+b                  9.65
-TPC-DS Q24a+b                  7.52
-TPC-DS Q25                    31.01
-TPC-DS Q26                     2.72
-TPC-DS Q27                     2.71
-TPC-DS Q28                  1727.67
-TPC-DS Q29                    16.76
-TPC-DS Q30                     3.08
-TPC-DS Q31                     5.75
-TPC-DS Q32                     2.24
-TPC-DS Q33                     5.48
-TPC-DS Q34                     3.07
-TPC-DS Q35                     5.23
-TPC-DS Q36                     2.59
-TPC-DS Q37                     2.87
-TPC-DS Q38                     3.20
-TPC-DS Q39a+b                  5.15
-TPC-DS Q40                     3.57
-TPC-DS Q41                     2.83
-TPC-DS Q42                     2.43
-TPC-DS Q43                     2.54
-TPC-DS Q44                     2.90
-TPC-DS Q45                     2.75
-TPC-DS Q46                     2.82
-TPC-DS Q47                     3.13
-TPC-DS Q48                     2.62
-TPC-DS Q49                     4.91
-TPC-DS Q50                     2.75
-TPC-DS Q51                     2.70
-TPC-DS Q52                     1.87
-TPC-DS Q53                     1.94
-TPC-DS Q54                     3.61
-TPC-DS Q55                     1.55
-TPC-DS Q56                     4.13
-TPC-DS Q57                     2.86
-TPC-DS Q58                     4.61
-TPC-DS Q59                     3.90
-TPC-DS Q60                     4.75
-TPC-DS Q61                  1892.71
-TPC-DS Q62                     5.04
-TPC-DS Q63                     2.33
-TPC-DS Q64                   127.25
+TPC-DS Q1                     48.84
+TPC-DS Q2                      6.42
+TPC-DS Q3                      2.93
+TPC-DS Q4                     11.92
+TPC-DS Q5                     10.32
+TPC-DS Q6                      3.27
+TPC-DS Q7                      3.51
+TPC-DS Q8                      5.22
+TPC-DS Q9                      3.76
+TPC-DS Q10                     5.13
+TPC-DS Q11                     4.82
+TPC-DS Q12                     2.92
+TPC-DS Q13                     5.09
+TPC-DS Q14a+b                 16.70
+TPC-DS Q15                     2.17
+TPC-DS Q16                     4.84
+TPC-DS Q17                    12.92
+TPC-DS Q18                     4.92
+TPC-DS Q19                     3.34
+TPC-DS Q20                     2.64
+TPC-DS Q21                     4.49
+TPC-DS Q22                     2.49
+TPC-DS Q23a+b                 11.17
+TPC-DS Q24a+b                  8.53
+TPC-DS Q25                    22.29
+TPC-DS Q26                     2.54
+TPC-DS Q27                     2.35
+TPC-DS Q28                  1716.68
+TPC-DS Q29                    17.61
+TPC-DS Q30                     3.26
+TPC-DS Q31                     6.20
+TPC-DS Q32                     2.37
+TPC-DS Q33                     5.41
+TPC-DS Q34                     3.21
+TPC-DS Q35                     4.54
+TPC-DS Q36                     2.78
+TPC-DS Q37                     2.43
+TPC-DS Q38                     2.96
+TPC-DS Q39a+b                  5.44
+TPC-DS Q40                     2.95
+TPC-DS Q41                     2.77
+TPC-DS Q42                     2.45
+TPC-DS Q43                     2.62
+TPC-DS Q44                     2.52
+TPC-DS Q45                     2.89
+TPC-DS Q46                     2.61
+TPC-DS Q47                     3.25
+TPC-DS Q48                     2.64
+TPC-DS Q49                     6.56
+TPC-DS Q50                     2.76
+TPC-DS Q51                     2.49
+TPC-DS Q52                     1.43
+TPC-DS Q53                     2.56
+TPC-DS Q54                     4.02
+TPC-DS Q55                     1.71
+TPC-DS Q56                     4.31
+TPC-DS Q57                     3.36
+TPC-DS Q58                     4.36
+TPC-DS Q59                     3.98
+TPC-DS Q60                     4.70
+TPC-DS Q61                  1836.64
+TPC-DS Q62                     3.55
+TPC-DS Q63                     2.18
+TPC-DS Q64                   120.97
 TPC-DS Q65                     2.45
-TPC-DS Q66                     8.81
-TPC-DS Q67                     2.92
-TPC-DS Q68                     2.82
-TPC-DS Q69                     3.18
-TPC-DS Q70                     2.87
-TPC-DS Q71                     2.92
-TPC-DS Q72                     9.34
-TPC-DS Q73                     2.62
-TPC-DS Q74                     3.28
-TPC-DS Q75                     5.72
-TPC-DS Q76                     2.50
-TPC-DS Q77                  2346.77
-TPC-DS Q78                     5.14
-TPC-DS Q79                     2.56
-TPC-DS Q80                     8.78
-TPC-DS Q81                     2.50
-TPC-DS Q82                     1.98
-TPC-DS Q83                     4.04
-TPC-DS Q84                     2.37
-TPC-DS Q85                     9.16
-TPC-DS Q86                     1.87
-TPC-DS Q87                     2.48
-TPC-DS Q88                  2952.98
-TPC-DS Q89                     2.61
-TPC-DS Q91                     3.70
-TPC-DS Q92                     2.04
-TPC-DS Q93                     1.94
-TPC-DS Q94                     3.02
-TPC-DS Q95                     3.51
-TPC-DS Q96                     1.46
-TPC-DS Q97                     2.09
-TPC-DS Q98                     1.78
-TPC-DS Q99                     2.29
+TPC-DS Q66                     8.64
+TPC-DS Q67                     2.47
+TPC-DS Q68                     2.49
+TPC-DS Q69                     3.11
+TPC-DS Q70                     2.74
+TPC-DS Q71                     2.42
+TPC-DS Q72                     9.11
+TPC-DS Q73                     2.01
+TPC-DS Q74                     2.99
+TPC-DS Q75                     5.10
+TPC-DS Q76                     2.47
+TPC-DS Q77                  2251.74
+TPC-DS Q78                     4.90
+TPC-DS Q79                     2.10
+TPC-DS Q80                     8.25
+TPC-DS Q81                     2.10
+TPC-DS Q82                     1.65
+TPC-DS Q83                     3.37
+TPC-DS Q84                     2.33
+TPC-DS Q85                     8.88
+TPC-DS Q86                     1.61
+TPC-DS Q87                     2.53
+TPC-DS Q88                  2897.69
+TPC-DS Q89                     2.74
+TPC-DS Q91                     3.76
+TPC-DS Q92                     1.87
+TPC-DS Q93                     1.73
+TPC-DS Q94                     2.79
+TPC-DS Q95                     3.20
+TPC-DS Q96                     1.39
+TPC-DS Q97                     2.87
+TPC-DS Q98                     2.55
+TPC-DS Q99                     3.09
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1-1           0.0            0.0         4.0        7.0      13.0
+PostgreSQL-BHT-1-1-1           0.0            0.0         1.0        1.0       4.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
@@ -1177,12 +1180,12 @@ PostgreSQL-BHT-1-1-1            0.0
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-1-1-1          758175.57
+PostgreSQL-BHT-1-1-1          720369.85
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                                  time [s]  count  SF  Throughput@Size
 DBMS               SF num_experiment num_client                                      
-PostgreSQL-BHT-1-1 1  1              1                 13      1   1         27138.46
+PostgreSQL-BHT-1-1 1  1              1                 18      1   1          19600.0
 
 ### Workflow
 
@@ -1192,6 +1195,22 @@ DBMS PostgreSQL-BHT - Pods [[1]]
 #### Planned
 DBMS PostgreSQL-BHT-1 - Pods [[1]]
 
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-1         0.0      0.0          2.35                 2.38
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-1           0        0           0.0                  0.0
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-1         0.0        0          2.35                 2.39
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-1           0        0           0.0                  0.0
+
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
@@ -1199,5 +1218,9 @@ TEST passed: Throughput@Size contains no 0 or NaN
 TEST failed: SQL errors
 TEST passed: No SQL warnings
 TEST failed: Workflow not as planned
+TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]
+TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
+TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
+TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 ```
 

@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Data Loading SF=1
     Type: tpch
-    Duration: 507s 
-    Code: 1749481784
+    Duration: 478s 
+    Code: 1749623832
     This includes the reading queries of TPC-H.
     This imports TPC-H data sets.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -20,7 +20,7 @@ TPC-H Data Loading SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481784 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623832 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -29,15 +29,15 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:381718232
+    disk:394490480
     datadisk:2757
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749481784
+        code:1749623832
 
 ### Loading [s]
                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1           0.0           74.0         4.0       92.0     172.0
+PostgreSQL-BHT-1-1           0.0          109.0         1.0       92.0     203.0
 
 ### Tests

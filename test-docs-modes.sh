@@ -181,68 +181,92 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 
 
-
-
-
-bexperiments stop
-python .\tpch.py start -m -mc --dbms PostgreSQL -rnn $BEXHOMA_NODE_SUT | Tee-Object -FilePath "$env:LOG_DIR/test_tpch_start_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=tpc-h
-
-bexperiments stop
-python .\tpch.py load -m -mc --dbms PostgreSQL -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -ii -ic -is -nlp 1 -nlt 1 | Tee-Object -FilePath "$env:LOG_DIR/test_tpch_load_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=tpc-h
-
-bexperiments stop
-python .\tpch.py run -m -mc --dbms PostgreSQL -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss | Tee-Object -FilePath "$env:LOG_DIR/test_tpch_run_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=tpc-h
+####################################################
+##################### TPC-H Modes ##################
+####################################################
 
 
 
 
-
-
-bexperiments stop
-python .\tpcds.py start --dbms PostgreSQL -rnn $BEXHOMA_NODE_SUT | Tee-Object -FilePath "$env:LOG_DIR/test_tpcds_start_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=tpc-ds
-
-bexperiments stop
-python .\tpcds.py load --dbms PostgreSQL -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -ii -ic -is -nlp 1 -nlt 1 | Tee-Object -FilePath "$env:LOG_DIR/test_tpcds_load_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=tpc-ds
-
-bexperiments stop
-python .\tpcds.py run --dbms PostgreSQL -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss | Tee-Object -FilePath "$env:LOG_DIR/test_tpcds_run_postgresql.log"
-kubectl get all -l app=bexhoma,usecase=tpc-ds
-
-
-
-
-
-
-
-nohup python ycsb.py -ms 1 -tr \
-  -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  -nwr 1 \
-  -nws 48 \
-  --workload a \
-  -dbms Citus \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -nlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_citus_1.log &
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_tpch_start_postgresql.log &
+
+wait_process "tpch"
+kubectl get all -l app=bexhoma,usecase=tpc-h
+kubectl delete all -l app=bexhoma,usecase=tpc-h
+
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_tpch_load_postgresql.log &
+
+wait_process "tpch"
+kubectl get all -l app=bexhoma,usecase=tpc-h
+kubectl delete all -l app=bexhoma,usecase=tpc-h
+
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql.log &
+
+wait_process "tpch"
+kubectl get all -l app=bexhoma,usecase=tpc-h
+kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 
 
-wait_process "ycsb"
+
+
+
+
+####################################################
+#################### TPC-DS Modes ##################
+####################################################
+
+
+
+
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_tpcds_start_postgresql.log &
+
+wait_process "tpcds"
+kubectl get all -l app=bexhoma,usecase=tpc-ds
+kubectl delete all -l app=bexhoma,usecase=tpc-ds
+
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_tpcds_load_postgresql.log &
+
+wait_process "tpcds"
+kubectl get all -l app=bexhoma,usecase=tpc-ds
+kubectl delete all -l app=bexhoma,usecase=tpc-ds
+
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpcds_run_postgresql.log &
+
+wait_process "tpcds"
+kubectl get all -l app=bexhoma,usecase=tpc-ds
+kubectl delete all -l app=bexhoma,usecase=tpc-ds
+
+
+
 
 
 

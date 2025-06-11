@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1749481784
-Experiment                    : starts at 2025-06-09 17:09:49.357951 (379150.2677186)
+Experiment                    : has code 1749623832
+Experiment                    : starts at 2025-06-11 08:37:12.761175 (13815996.23172714)
 Experiment                    : This imports TPC-H data sets.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Import sets indexes and constraints after loading and recomputes statistics.
@@ -17,8 +17,8 @@ Loading is tested with [1] threads, split into [1] pods.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-BHT-1              : will start now
-PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749481784
-PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749481784
+PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749623832
+PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749623832
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
@@ -27,6 +27,12 @@ PostgreSQL-BHT-1              : waits for health check to succeed
 PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is not loaded yet
+PostgreSQL-BHT-1              : will start loading but not before 2025-06-11 06:40:14 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : is not loaded yet
+PostgreSQL-BHT-1              : will start loading but not before 2025-06-11 06:40:14
+done
+PostgreSQL-BHT-1              : is not loaded yet
 PostgreSQL-BHT-1              : start asynch loading scripts of type loaded
 PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
@@ -34,10 +40,14 @@ PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
+PostgreSQL-BHT-1              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : is loading
+done
 PostgreSQL-BHT-1              : showing loader times
 PostgreSQL-BHT-1              : generator timespan (first to last [s]) = 0
-PostgreSQL-BHT-1              : loader timespan (first to last [s]) = 74
-PostgreSQL-BHT-1              : total timespan (first to last [s]) = 76
+PostgreSQL-BHT-1              : loader timespan (first to last [s]) = 109
+PostgreSQL-BHT-1              : total timespan (first to last [s]) = 110
 PostgreSQL-BHT-1              : start asynch loading scripts of type indexed
 PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
@@ -45,17 +55,19 @@ PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : is loading
 - waiting 30s -               : done
+PostgreSQL-BHT-1              : is loading
+done
 PostgreSQL-BHT-1              : can be stopped, but we leave it running
-PostgreSQL-BHT-1              : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481784 9091
-PostgreSQL-BHT-1              : benchmarking results in folder C:\data\benchmarks/1749481784
+PostgreSQL-BHT-1              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623832 9091
+PostgreSQL-BHT-1              : benchmarking results in folder /home/perdelt/benchmarks/1749623832
 PostgreSQL-BHT-1-1            : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749481784(.*)", pod=~"(.*)postgresql-bht-1-1749481784(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749623832(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-1            : collecting metrics of data generator at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749481784(.*)", pod=~"(.*)postgresql-bht-1-1749481784(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749623832(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-1            : collecting metrics of data injector at connection PostgreSQL-BHT-1-1
-PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749481784(.*)", pod=~"(.*)postgresql-bht-1-1749481784(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-Experiment                    : ends at 2025-06-09 17:18:16.296021 (379657.2061679) - 506.94s total
-Build evaluation cube done!
+PostgreSQL-BHT-1-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1749623832(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+Experiment                    : ends at 2025-06-11 08:45:10.583271 (13816474.05382528) - 477.82s total
+done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -65,8 +77,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Data Loading SF=1
     Type: tpch
-    Duration: 507s 
-    Code: 1749481784
+    Duration: 478s 
+    Code: 1749623832
     This includes the reading queries of TPC-H.
     This imports TPC-H data sets.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -82,7 +94,7 @@ TPC-H Data Loading SF=1
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481784 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623832 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -91,15 +103,15 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:381718232
+    disk:394490480
     datadisk:2757
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749481784
+        code:1749623832
 
 ### Loading [s]
                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1           0.0           74.0         4.0       92.0     172.0
+PostgreSQL-BHT-1-1           0.0          109.0         1.0       92.0     203.0
 
 ### Tests

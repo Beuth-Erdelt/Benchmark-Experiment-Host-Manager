@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1749481527
-Experiment                    : starts at 2025-06-09 17:05:31.897265 (378892.8064178)
+Experiment                    : has code 1749623589
+Experiment                    : starts at 2025-06-11 08:33:09.696843 (13815753.167396087)
 Experiment                    : This just starts a SUT.
 Experiment uses bexhoma version 0.8.7.
 System metrics are monitored by a cluster-wide installation.
@@ -12,8 +12,8 @@ SUT is fixed to cl-worker11.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-BHT-1              : will start now
-PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749481527
-PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749481527
+PostgreSQL-BHT-1              : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1749623589
+PostgreSQL-BHT-1              : Name of SUT service = bexhoma-sut-postgresql-bht-1-1749623589
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
@@ -21,11 +21,17 @@ PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-BHT-1              : waits for health check to succeed
 - waiting 30s -               : done
+PostgreSQL-BHT-1              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : will start benchmarking but not before 2025-06-11 06:36:40 (that is in 60 secs)
+- waiting 30s -               : done
+PostgreSQL-BHT-1              : will start benchmarking but not before 2025-06-11 06:36:40
+done
 PostgreSQL-BHT-1              : can be stopped, but we leave it running
-PostgreSQL-BHT-1              : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481527 9091
-PostgreSQL-BHT-1              : benchmarking results in folder C:\data\benchmarks/1749481527
-Experiment                    : ends at 2025-06-09 17:08:55.169222 (379096.0782431) - 203.27s total
-Build evaluation cube done!
+PostgreSQL-BHT-1              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623589 9091
+PostgreSQL-BHT-1              : benchmarking results in folder /home/perdelt/benchmarks/1749623589
+Experiment                    : ends at 2025-06-11 08:36:44.754829 (13815968.225382928) - 215.06s total
+done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -35,8 +41,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Start DBMS
     Type: tpch
-    Duration: 204s 
-    Code: 1749481527
+    Duration: 216s 
+    Code: 1749623589
     Start DBMS and do not load data.
     This just starts a SUT.
     Experiment uses bexhoma version 0.8.7.
@@ -47,7 +53,7 @@ TPC-H Start DBMS
 
 ### Services
 PostgreSQL-BHT-1
-    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1749481527 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749623589 9091:9091
 
 ### Connections
 PostgreSQL-BHT-1-1 uses docker image postgres:16.1
@@ -56,11 +62,11 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:378892260
+    disk:392432036
     datadisk:39
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749481527
+        code:1749623589
 
 ### Tests
