@@ -68,6 +68,16 @@ class DictToObject(object):
         self.__dict__.update(objd)
 
 
+def show_table_in_summary(df, decimals=0):
+    # Make a copy to format safely
+    formatted_df = df.copy()
+    # Select float columns
+    float_cols = formatted_df.select_dtypes(include="float").columns
+    # Format float columns as strings with no dtype conflict
+    for col in float_cols:
+        formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.{decimals}f}")
+    print(formatted_df.to_markdown(index=True)) #, disable_numparse=True)) #, floatfmt=".4f"))
+
 
 class default():
     """
@@ -1912,21 +1922,21 @@ class default():
             workload_properties = ast.literal_eval(inp.read())
             self.workload = workload_properties
         print("\n### Workload\n"+workload_properties['name'])
-        print("    Type: "+workload_properties['type'])
-        print("    Duration: {}s ".format(workload_properties['duration']))
-        print("    Code: "+code)
-        print("    "+workload_properties['intro'])
-        print("    "+workload_properties['info'].replace('\n', '\n    '))
+        print("- Type: "+workload_properties['type'])
+        print("- Duration: {}s ".format(workload_properties['duration']))
+        print("- Code: "+code)
+        print("- "+workload_properties['intro'])
+        print("- "+workload_properties['info'].replace('\n', '\n    - '))
         if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
             for error, messages in workload_properties['workflow_errors'].items():
-                print("    Error: "+error)
+                print("    - Error: "+error)
                 for message in messages:
                     print("        "+message)
         if 'sut_service' in workload_properties:
             print("\n### Services")
             for c in sorted(workload_properties['sut_service']):
-                print(c)
-                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
+                print("- "+c)
+                print("    - {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -1934,23 +1944,23 @@ class default():
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
         for c in connections_sorted:
-            print(c['name'],
+            print("- "+c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
-            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            infos = ["    - {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
             if 'worker' in c and len(c['worker']) > 0:
                 for i, worker in enumerate(c['worker']):
-                    print("    worker {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    print("    - worker {}".format(i))
+                    infos = ["        - {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
                         print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
                 for i, parameters in c['parameter']['connection_parameter'].items():
                     if i == "eval_parameters":
-                        print("    "+i)
-                        infos = ["        {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        print("    - "+i)
+                        infos = ["        - {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
         #evaluation = evaluators.base(code=code, path=resultfolder)
@@ -1978,17 +1988,18 @@ class default():
                 df.index = df.index.map(map_index_to_queryname)
                 # remove only False rows
                 df = df[~(df == False).all(axis=1)]
-                print(df)
+                #print(df)
+                show_table_in_summary(df)
                 for error in list_error_queries:
                     numQuery = error[1:]        # remove the leading "Q""
                     list_errors = evaluate.get_error(numQuery)
                     list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
                     #print(list_errors)
-                    print(map_index_to_queryname(error))
+                    print("- "+map_index_to_queryname(error))
                     #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
                     #print(df_error)
                     for k,v in list_errors.items():
-                        print("{}: {}".format(k,v))
+                        print("    - {}: {}".format(k,v))
             else:
                 print("No errors")
         #####################
@@ -2001,7 +2012,8 @@ class default():
                 df.index = df.index.map(map_index_to_queryname)
                 # remove only False rows
                 df = df[~(df == False).all(axis=1)]
-                print(df)
+                #print(df)
+                show_table_in_summary(df)
             else:
                 print("No warnings")
         #####################
@@ -2012,7 +2024,8 @@ class default():
             if not df is None:
                 df = df.sort_index().T.round(2)
                 df.index = df.index.map(map_index_to_queryname)
-                print(df)
+                show_table_in_summary(df, 2)
+                #print(df)
                 num_of_queries = len(df.index)
         #####################
         if self.loading_is_active():
@@ -2032,7 +2045,8 @@ class default():
                     times[c]['timeLoad'] = connection.connectiondata['timeLoad']
             df = pd.DataFrame(times)
             df = df.reindex(sorted(df.columns), axis=1)
-            print(df.round(2).T)
+            #print(df.round(2).T)
+            show_table_in_summary(df.round(2).T)
         #####################
         if self.benchmarking_is_active():
             print("\n### Geometric Mean of Medians of Timer Run [s]")
@@ -2040,20 +2054,22 @@ class default():
             df = (df/1000.0).sort_index()
             df.columns = ['Geo Times [s]']
             df_geo_mean_runtime = df.copy()
-            print(df.round(2))
+            #print(df.round(2))
+            show_table_in_summary(df, 4)
         #####################
         if self.benchmarking_is_active():
-            print("\n### Power@Size ((3600*SF)/(geo times))")
+            print("\n### Power@Size ((3600 * SF)/(geo times))")
             df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
             df = (df/1000.0).sort_index().astype('float')
             df = float(parameter.defaultParameters['SF'])*3600./df
             df.columns = ['Power@Size [~Q/h]']
             df_power = df.copy()
-            print(df.round(2))
+            show_table_in_summary(df_power)
+            #print(df.round(2))
         #####################
         if self.benchmarking_is_active():
             # aggregate time and throughput for parallel pods
-            print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
+            print("\n### Throughput@Size ((queries * streams * 3600 * SF)/(span of time))")
             df_merged_time = pd.DataFrame()
             for connection_nr, connection in evaluate.benchmarks.dbms.items():
                 df_time = pd.DataFrame()
@@ -2088,7 +2104,8 @@ class default():
             index_names = list(df_benchmark.index.names)
             index_names[0] = "DBMS"
             df_benchmark.rename_axis(index_names, inplace=True)
-            print(df_benchmark)
+            #print(df_benchmark)
+            show_table_in_summary(df_benchmark)
         #####################
         if self.benchmarking_is_active():
             print("\n### Workflow")
@@ -2097,11 +2114,11 @@ class default():
             if len(workflow_actual) > 0:
                 print("\n#### Actual")
                 for c in workflow_actual:
-                    print("DBMS", c, "- Pods", workflow_actual[c])
+                    print("- DBMS", c, "- Pods", workflow_actual[c])
             if len(workflow_planned) > 0:
                 print("\n#### Planned")
                 for c in workflow_planned:
-                    print("DBMS", c, "- Pods", workflow_planned[c])
+                    print("- DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         print("\n### Tests")
@@ -2111,17 +2128,17 @@ class default():
             #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
             self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
             if num_errors == 0:
-                print("TEST passed: No SQL errors")
+                print("- TEST passed: No SQL errors")
             else:
-                print("TEST failed: SQL errors")
+                print("- TEST failed: SQL errors")
             if num_warnings == 0:
-                print("TEST passed: No SQL warnings")
+                print("- TEST passed: No SQL warnings")
             else:
-                print("TEST failed: SQL warnings (result mismatch)")
+                print("- TEST failed: SQL warnings (result mismatch)")
             if self.test_workflow(workflow_actual, workflow_planned):
-                print("TEST passed: Workflow as planned")
+                print("- TEST passed: Workflow as planned")
             else:
-                print("TEST failed: Workflow not as planned")
+                print("- TEST failed: Workflow not as planned")
         if self.loading_is_active() or self.benchmarking_is_active():
             if len(test_results_monitoring) > 0:
                 print(test_results_monitoring)
@@ -2178,7 +2195,8 @@ class default():
                     test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
+                #print(df)
+                show_table_in_summary(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
             ##########
@@ -2190,7 +2208,8 @@ class default():
                     test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
+                #print(df)
+                show_table_in_summary(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
             ##########
@@ -2202,7 +2221,8 @@ class default():
                     test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
+                #print(df)
+                show_table_in_summary(df)
             #####################
             df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
             ##########
@@ -2214,7 +2234,8 @@ class default():
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
+                #print(df)
+                show_table_in_summary(df)
         return test_results.rstrip('\n')
 
 

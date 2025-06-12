@@ -302,11 +302,11 @@ class base:
                 #print(contains_zero_or_nan)
                 if contains_zero_or_nan.any():
                     if not silent:
-                        print("TEST failed: {} contains 0 or NaN".format(test_column))
+                        print("- TEST failed: {} contains 0 or NaN".format(test_column))
                     return False
                 else:
                     if not silent:
-                        print("TEST passed: {} contains no 0 or NaN".format(test_column))
+                        print("- TEST passed: {} contains no 0 or NaN".format(test_column))
                     return True
             return False
 
