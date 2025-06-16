@@ -1,0 +1,43 @@
+## Show Summary
+
+### Workload
+TPC-H Data Loading SF=1
+    Type: tpch
+    Duration: 430s 
+    Code: 1750088789
+    This includes the reading queries of TPC-H.
+    This imports TPC-H data sets.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 2 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [2] pods.
+    Experiment is run once.
+
+### Services
+PostgreSQL-BHT-2
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750088789 9091:9091
+
+### Connections
+PostgreSQL-BHT-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:398400488
+    datadisk:5476
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1750088789
+
+### Loading [s]
+                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-2-1           1.0          102.0         1.0      169.0     275.0
+
+### Tests

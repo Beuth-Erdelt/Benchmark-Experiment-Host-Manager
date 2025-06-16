@@ -222,6 +222,7 @@ if __name__ == '__main__':
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
                 config.set_experiment(script='Schema_tenant')
+                config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
                 config.num_tenants = 2
             if ("CedarDB" in args.dbms):
                 # PostgreSQL

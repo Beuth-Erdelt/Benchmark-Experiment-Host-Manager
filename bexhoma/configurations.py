@@ -2273,13 +2273,17 @@ scrape_configs:
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
         if 'JDBC' in c:
+            database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
+            schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
             c['JDBC']['url'] = c['JDBC']['url'].format(
                 serverip=serverip,
                 dbname=self.experiment.volume,
                 DBNAME=self.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],
                 timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
+                namespace=self.experiment.cluster.namespace,
+                database=database,
+                schema=schema,
                 )
         #print(c)
         return c#.copy()
@@ -2686,7 +2690,8 @@ scrape_configs:
         scriptfolder = '/tmp/'
         if self.num_tenants > 0:
             for tenant in range(self.num_tenants):
-                print(f"Tenant #{tenant}")
+                print("{:30s}: scripts for tenant #{}".format(self.configuration, tenant))
+                #print(f"Tenant #{tenant}")
                 for script in scripts:
                     filename_template = self.path_experiment_docker+'/'+script
                     if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
@@ -3214,13 +3219,17 @@ scrape_configs:
         env_default['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env_default['BEXHOMA_SUT_NAME'] = name
         if 'JDBC' in c:
+            database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
+            schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
             env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
                 serverip=servicename,
                 dbname=self.experiment.volume,
                 DBNAME=self.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],
                 timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
+                namespace=self.experiment.cluster.namespace,
+                database=database,
+                schema=schema,
                 )
             env_default['BEXHOMA_URL_LIST'] = c['JDBC']['url'].format(
                 serverip=list_of_workers_as_string,
@@ -3228,7 +3237,9 @@ scrape_configs:
                 DBNAME=self.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],
                 timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
+                namespace=self.experiment.cluster.namespace,
+                database=database,
+                schema=schema,
                 )
             env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
             env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]

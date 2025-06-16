@@ -1,0 +1,113 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1750088789
+Experiment                    : starts at 2025-06-16 17:46:29.381245 (14280952.851799281)
+Experiment                    : This imports TPC-H data sets.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.8.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 2 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [2] pods.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-BHT-2              : will start now
+PostgreSQL-BHT-2              : Name of SUT pods = bexhoma-sut-postgresql-bht-2-1750088789
+PostgreSQL-BHT-2              : Name of SUT service = bexhoma-sut-postgresql-bht-2-1750088789
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : waits for health check to succeed
+done
+PostgreSQL-BHT-2              : is not loaded yet
+PostgreSQL-BHT-2              : scripts for tenant #0
+PostgreSQL-BHT-2              : scripts for tenant #1
+#################### ['filled_0_initschema-tpch-schema.sql', 'filled_1_initschema-tpch-schema.sql']
+PostgreSQL-BHT-2              : start asynch loading scripts of type loaded
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+done
+PostgreSQL-BHT-2              : showing loader times
+PostgreSQL-BHT-2              : generator timespan (first to last [s]) = 1
+PostgreSQL-BHT-2              : loader timespan (first to last [s]) = 102
+PostgreSQL-BHT-2              : total timespan (first to last [s]) = 105
+PostgreSQL-BHT-2              : scripts for tenant #0
+PostgreSQL-BHT-2              : scripts for tenant #1
+#################### ['filled_0_initindexes-tpch-schema.sql', 'filled_0_initconstraints-tpch-schema.sql', 'filled_0_initstatistics-tpch-schema.sql', 'filled_1_initindexes-tpch-schema.sql', 'filled_1_initconstraints-tpch-schema.sql', 'filled_1_initstatistics-tpch-schema.sql']
+PostgreSQL-BHT-2              : start asynch loading scripts of type indexed
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-2              : is loading
+done
+PostgreSQL-BHT-2              : can be stopped, but we leave it running
+PostgreSQL-BHT-2              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750088789 9091
+PostgreSQL-BHT-2              : benchmarking results in folder /home/perdelt/benchmarks/1750088789
+Experiment                    : ends at 2025-06-16 17:53:39.054750 (14281382.525304358) - 429.67s total
+done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Data Loading SF=1
+    Type: tpch
+    Duration: 430s 
+    Code: 1750088789
+    This includes the reading queries of TPC-H.
+    This imports TPC-H data sets.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 2 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [2] pods.
+    Experiment is run once.
+
+### Services
+PostgreSQL-BHT-2
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750088789 9091:9091
+
+### Connections
+PostgreSQL-BHT-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:398400488
+    datadisk:5476
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1750088789
+
+### Loading [s]
+                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-2-1           1.0          102.0         1.0      169.0     275.0
+
+### Tests
