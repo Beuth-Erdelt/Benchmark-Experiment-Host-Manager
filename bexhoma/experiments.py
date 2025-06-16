@@ -2067,7 +2067,7 @@ class default():
                 #print(connection.name)
                 #print(connection.connection)
                 df_time['orig_name'] = orig_name
-                df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+                df_time['SF'] = float(c['parameter']['connection_parameter']['loading_parameters']['SF'])
                 df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
                 #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
                 df_time['num_experiment'] = int(c['parameter']['numExperiment'])
