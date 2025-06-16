@@ -878,8 +878,16 @@ class testbed():
         """
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
         self.logger.debug('testbed.kubectl({})'.format(fullcommand))
-        #print(fullcommand)
-        return os.popen(fullcommand).read()# os.system(fullcommand)
+        print(fullcommand)
+        # Try reading the output with fallback encodings
+        try:
+            result = subprocess.check_output(fullcommand, shell=True, encoding='utf-8')
+        except UnicodeDecodeError:
+            # Fallback to Latin-1 or Windows-1252
+            result = subprocess.check_output(fullcommand, shell=True, encoding='latin1')
+        print(result)
+        return result
+        #return os.popen(fullcommand).read()# os.system(fullcommand)
     def execute_command_in_pod(self, command, pod='', container='', params=''):
         """
         Runs an shell command remotely inside a container of a pod.

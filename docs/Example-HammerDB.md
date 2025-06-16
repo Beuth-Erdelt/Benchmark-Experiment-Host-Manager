@@ -102,14 +102,14 @@ doc_hammerdb_testcase_scale.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1365s 
-    Code: 1747679189
+    Duration: 1427s 
+    Code: 1749650062
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.5.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -121,34 +121,34 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:257433296
+    disk:390719260
     datadisk:3298
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747679189
+        code:1749650062
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:258367824
-    datadisk:4211
+    disk:391336920
+    datadisk:3910
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747679189
+        code:1749650062
 
 ### Execution
-                       experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1         0.0  12198.0  37864.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2         0.0  11445.0  35099.5         5       0
+                       experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1         0.0  7390.0  22685.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2         0.0  6518.5  20305.0         5       0
 
 Warehouses: 16
 
@@ -162,8 +162,8 @@ DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
-PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
+PostgreSQL-BHT-16-1-1      104.0        1.0   1.0                 553.846154
+PostgreSQL-BHT-16-1-2      104.0        1.0   2.0                 553.846154
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -324,15 +324,15 @@ doc_hammerdb_testcase_monitoring.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1938s 
-    Code: 1747742212
+    Duration: 1384s 
+    Code: 1749651503
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -344,34 +344,34 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:257396984
-    datadisk:3299
+    disk:390709484
+    datadisk:3298
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747742212
+        code:1749651503
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:258153420
-    datadisk:4038
+    disk:391075408
+    datadisk:3951
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747742212
+        code:1749651503
 
 ### Execution
                        experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency    NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1     13.33     18.48         0.0  9640.0  30025.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2     15.81     26.02         0.0  8807.5  27214.5         5       0
+PostgreSQL-BHT-16-1-1               1      16       1          1     12.83     17.24         0.0  7865.0  24254.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2     14.34     18.51         0.0  7205.5  22161.0         5       0
 
 Warehouses: 16
 
@@ -385,35 +385,35 @@ DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-16-1-1       93.0        1.0   1.0                 619.354839
-PostgreSQL-BHT-16-1-2       93.0        1.0   2.0                 619.354839
+PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
+PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      146.32     1.51          3.89                 4.58
-PostgreSQL-BHT-16-1-2      146.32     1.51          3.89                 4.58
+PostgreSQL-BHT-16-1-1      145.57        0          3.77                 4.47
+PostgreSQL-BHT-16-1-2      145.57        0          3.77                 4.47
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      362.91     7.83          0.14                 0.14
-PostgreSQL-BHT-16-1-2      362.91     7.83          0.14                 0.14
+PostgreSQL-BHT-16-1-1      134.84        0          0.15                 0.15
+PostgreSQL-BHT-16-1-2      134.84        0          0.15                 0.15
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1    25066.48    62.01          5.30                 5.99
-PostgreSQL-BHT-16-1-2    26420.40    61.67          5.49                 6.33
+PostgreSQL-BHT-16-1-1    25472.40    59.92          5.29                 5.98
+PostgreSQL-BHT-16-1-2    25629.48    59.75          5.39                 6.20
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1       49.83     0.12          0.10                 0.10
-PostgreSQL-BHT-16-1-2       49.83     0.12          0.18                 0.18
+PostgreSQL-BHT-16-1-1       37.72     0.09          0.11                 0.12
+PostgreSQL-BHT-16-1-2       37.72     0.07          0.22                 0.23
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
@@ -468,14 +468,14 @@ doc_hammerdb_testcase_storage.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 12709s 
-    Code: 1747829162
+    Duration: 1619s 
+    Code: 1749652973
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.5.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -488,38 +488,38 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:256913212
-    datadisk:3304
+    disk:386849948
+    datadisk:3303
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747829162
+        code:1749652973
 PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:256981368
-    datadisk:3875
+    disk:386843044
+    datadisk:3935
     volume_size:30G
-    volume_used:3.8G
+    volume_used:3.9G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747829162
+        code:1749652973
 
 ### Execution
-                        experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency    NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1      16       1          1     84.30    456.64         0.0  7556.0  23477.0         5       0
-PostgreSQL-BHT-8-1-2-1               2      16       1          1     50.14    464.08         0.0  7415.0  23151.0         5       0
+                        experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+PostgreSQL-BHT-8-1-1-1               1      16       1          1     12.26     17.14         0.0   7766.0  24311.0         5       0
+PostgreSQL-BHT-8-1-2-1               2      16       1          1     13.09     17.35         0.0  11291.0  34891.0         5       0
 
 Warehouses: 16
 
@@ -533,8 +533,8 @@ DBMS PostgreSQL-BHT-8-1 - Pods [[1], [1]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1-1     6620.0        1.0   1.0                   8.700906
-PostgreSQL-BHT-8-1-2-1     6620.0        1.0   1.0                   8.700906
+PostgreSQL-BHT-8-1-1-1      105.0        1.0   1.0                 548.571429
+PostgreSQL-BHT-8-1-2-1      105.0        1.0   1.0                 548.571429
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -584,15 +584,15 @@ doc_hammerdb_testcase_keytime.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 6785s 
-    Code: 1747683271
+    Duration: 6778s 
+    Code: 1749654635
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 20 minutes. Benchmarking has keying and thinking times activated. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.5.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -605,68 +605,68 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254056896
+    disk:386056036
     datadisk:3303
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747683271
+        code:1749654635
 PostgreSQL-BHT-8-1-1-2 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254056896
-    datadisk:3416
+    disk:387266532
+    datadisk:3393
     volume_size:30G
     volume_used:3.3G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747683271
+        code:1749654635
 PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057064
-    datadisk:3491
+    disk:387265244
+    datadisk:3470
     volume_size:30G
-    volume_used:3.5G
+    volume_used:3.4G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747683271
+        code:1749654635
 PostgreSQL-BHT-8-1-2-2 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:254057064
-    datadisk:3509
+    disk:386963212
+    datadisk:3488
     volume_size:30G
-    volume_used:3.5G
+    volume_used:3.4G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747683271
+        code:1749654635
 
 ### Execution
                         experiment_run  vusers  client  pod_count  efficiency   NOPM    TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1     160       1          1       99.63  205.0  630.0        20       0
-PostgreSQL-BHT-8-1-1-2               1     160       2          2       97.20  200.0  620.0        20       0
-PostgreSQL-BHT-8-1-2-1               2     160       1          1       96.71  199.0  622.0        20       0
-PostgreSQL-BHT-8-1-2-2               2     160       2          2       98.17  202.0  626.0        20       0
+PostgreSQL-BHT-8-1-1-1               1     160       1          1       97.20  200.0  617.0        20       0
+PostgreSQL-BHT-8-1-1-2               1     160       2          2      100.12  206.0  643.0        20       0
+PostgreSQL-BHT-8-1-2-1               2     160       1          1       96.71  199.0  621.0        20       0
+PostgreSQL-BHT-8-1-2-2               2     160       2          2       97.69  201.0  641.0        20       0
 
 Warehouses: 16
 
@@ -687,34 +687,34 @@ PostgreSQL-BHT-8-1-2-2      105.0        1.0   2.0                 548.571429
 
 ### Ingestion - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1      133.76     1.03          3.61                 5.18
-PostgreSQL-BHT-8-1-1-2      133.76     1.03          3.61                 5.18
+PostgreSQL-BHT-8-1-1-1      105.57      0.0          3.66                 5.19
+PostgreSQL-BHT-8-1-1-2      105.57      0.0          3.66                 5.19
 
 ### Ingestion - Loader
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1      308.05     3.55          0.08                 0.08
-PostgreSQL-BHT-8-1-1-2      308.05     3.55          0.08                 0.08
+PostgreSQL-BHT-8-1-1-1      283.04        0          0.08                 0.09
+PostgreSQL-BHT-8-1-1-2      283.04        0          0.08                 0.09
 
 ### Execution - SUT
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1      894.40     1.01          7.09                 8.56
-PostgreSQL-BHT-8-1-1-2      900.37     0.82          7.14                 8.64
-PostgreSQL-BHT-8-1-2-1     1954.31     0.83          6.54                 8.54
-PostgreSQL-BHT-8-1-2-2     1065.25     1.12          6.59                 8.60
+PostgreSQL-BHT-8-1-1-1      871.85     0.87          7.17                 8.63
+PostgreSQL-BHT-8-1-1-2      964.06     0.75          7.25                 8.74
+PostgreSQL-BHT-8-1-2-1     1025.02     0.95          6.54                 8.53
+PostgreSQL-BHT-8-1-2-2     1044.74     0.97          6.62                 8.62
 
 ### Execution - Benchmarker
                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       27.85     0.11          0.46                 0.46
-PostgreSQL-BHT-8-1-1-2       27.85     0.04          0.93                 0.93
-PostgreSQL-BHT-8-1-2-1       28.12     0.07          0.46                 0.46
-PostgreSQL-BHT-8-1-2-2       28.12     0.06          0.93                 0.93
+PostgreSQL-BHT-8-1-1-1       30.02     0.03          0.58                 0.58
+PostgreSQL-BHT-8-1-1-2       30.02     0.05          1.16                 1.17
+PostgreSQL-BHT-8-1-2-1       28.19     0.02          0.58                 0.58
+PostgreSQL-BHT-8-1-2-2       28.19     0.01          1.17                 1.17
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
