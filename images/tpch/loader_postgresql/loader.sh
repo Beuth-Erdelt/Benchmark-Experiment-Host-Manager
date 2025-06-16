@@ -8,6 +8,7 @@ SECONDS_START_SCRIPT=$SECONDS
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 echo "BEXHOMA_VOLUME:$BEXHOMA_VOLUME"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
@@ -18,6 +19,11 @@ BEXHOMA_CHILD=$(cat /tmp/tpch/BEXHOMA_CHILD )
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
+
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=1
+BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD + 1))"
+echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 
 ######################## Destination of raw data ########################
 if test $STORE_RAW_DATA -gt 0
@@ -123,7 +129,7 @@ for i in *tbl*; do
         echo "=========="
         #time mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -E UTF-8 -s "$COMMAND" - < $i &>OUTPUT.txt
         echo "psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT"
-        time psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT -c "$COMMAND" &> /tmp/OUTPUT.txt
+        time PGOPTIONS="--search_path=$BEXHOMA_SCHEMA" psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT -c "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS
         echo "End $SECONDS_END seconds"

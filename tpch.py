@@ -221,6 +221,8 @@ if __name__ == '__main__':
                     DBMSBENCHMARKER_DEV = debugging,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                config.set_experiment(script='Schema_tenant')
+                config.num_tenants = 2
             if ("CedarDB" in args.dbms):
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'

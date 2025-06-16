@@ -142,6 +142,7 @@ class default():
         self.num_maintaining = 0
         self.num_loading_pods = 0
         self.num_maintaining_pods = 0
+        self.num_tenants = 0
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
@@ -2683,7 +2684,24 @@ scrape_configs:
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
-        if len(self.ddl_parameters):
+        if self.num_tenants > 0:
+            for tenant in range(self.num_tenants):
+                print(f"Tenant #{tenant}")
+                for script in scripts:
+                    filename_template = self.path_experiment_docker+'/'+script
+                    if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
+                        with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
+                            data = initscript_template.read()
+                            #data = data.format(**self.ddl_parameters)
+                            #print(data)
+                            data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
+                            #print(data)
+                            filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
+                            filename_target = f'/filled_{tenant}_{script}'
+                            with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
+                                initscript_filled.write(data)
+                            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+filename_target))
+        elif len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
                 filename_template = self.path_experiment_docker+'/'+script
@@ -3039,6 +3057,14 @@ scrape_configs:
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
         commands = scripts.copy()
+        if self.num_tenants > 0:
+            commands_tenants = []
+            for tenant in range(self.num_tenants):
+                for c in commands:
+                    filename_filled = f'filled_{tenant}_{c}'
+                    commands_tenants.append(filename_filled)
+            commands = commands_tenants.copy()
+        print("####################", commands)
         #commands = self.initscript.copy()
         use_storage = self.use_storage()
         if use_storage:
@@ -3074,7 +3100,8 @@ scrape_configs:
                 'time_offset':time_offset,
                 'script_type':script_type,
                 'time_start_int':time_start_int,
-                'namespace':self.experiment.cluster.namespace
+                'namespace':self.experiment.cluster.namespace,
+                'num_tenants':self.num_tenants,
             }
             thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
             thread.start()
@@ -3912,7 +3939,7 @@ class kinetica(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace=''):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace='', num_tenants=0):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
