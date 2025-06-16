@@ -2,7 +2,7 @@ DROP USER 'root'@'%';
 FLUSH PRIVILEGES;
 
 CREATE USER 'root'@'%';
-ALTER USER 'root'@'%' IDENTIFIED BY 'root';
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
 
 ALTER USER 'root'@'%' REQUIRE NONE;
 

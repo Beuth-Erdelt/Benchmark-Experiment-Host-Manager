@@ -84,6 +84,7 @@ spec:
           # https://dev.mysql.com/doc/refman/8.3/en/innodb-doublewrite-buffer.html
           "--innodb-doublewrite=0",
           "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
+          "--mysql-native-password=ON",
         ]
 
         env:
