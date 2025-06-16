@@ -21,8 +21,9 @@ echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
 ######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
 BEXHOMA_NUM_PODS=1
-BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD + 1))"
+BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
 echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 
 ######################## Destination of raw data ########################
@@ -45,6 +46,9 @@ cd $destination_raw
 ######################## Show generated files ########################
 echo "Found these files:"
 ls $destination_raw/*tbl* -lh
+
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 
 ######################## Wait until all pods of job are ready ########################
 if test $BEXHOMA_SYNCH_LOAD -gt 0
@@ -70,6 +74,10 @@ then
         fi
     done
 fi
+
+
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=1
 
 ######################## Start measurement of time ########################
 bexhoma_start_epoch=$(date -u +%s)
@@ -128,7 +136,7 @@ for i in *tbl*; do
         SECONDS_START=$SECONDS
         echo "=========="
         #time mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -E UTF-8 -s "$COMMAND" - < $i &>OUTPUT.txt
-        echo "psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT"
+        echo "PGOPTIONS='--search_path=$BEXHOMA_SCHEMA' psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT"
         time PGOPTIONS="--search_path=$BEXHOMA_SCHEMA" psql -U $BEXHOMA_USER -d $BEXHOMA_DATABASE -h $BEXHOMA_HOST -p $BEXHOMA_PORT -c "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS

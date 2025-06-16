@@ -39,6 +39,27 @@ wait_process "ycsb"
 
 
 
+###########################################
+########### TPC-H Multi-Tenant ############
+###########################################
+
+nohup python tpch.py -ms 5 -tr \
+  --dbms PostgreSQL \
+  -ii -ic -is -nlp 2 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  load </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+
+wait_process "tpch"
+
+
+nohup python tpch.py -ms 5 -tr \
+  --dbms PostgreSQL \
+  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  load </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+
+
+wait_process "tpch"
 
 
 
