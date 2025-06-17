@@ -2,12 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1728551101
-Experiment                    : starts at 2024-10-10 11:05:01.253141 (3287041.377122591)
+Experiment                    : has code 1750089430
+Experiment                    : starts at 2025-06-16 17:57:10.052760 (14281593.523314323)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-Benchmark is limited to DBMS ['MySQL'].
+Experiment uses bexhoma version 0.8.8.
+Experiment is limited to DBMS ['MySQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -17,38 +18,25 @@ Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+MySQL-BHT-8-1                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MySQL-BHT-8-1                 : will start now
+MySQL-BHT-8-1                 : Name of SUT pods = bexhoma-sut-mysql-bht-8-1-1750089430
+MySQL-BHT-8-1                 : Name of SUT service = bexhoma-sut-mysql-bht-8-1-1750089430
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01 (that is in 300 secs)
+MySQL-BHT-8-1                 : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
+MySQL-BHT-8-1                 : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
+MySQL-BHT-8-1                 : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
+MySQL-BHT-8-1                 : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
+MySQL-BHT-8-1                 : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
+MySQL-BHT-8-1                 : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : will start loading but not before 2024-10-10 09:11:01
+MySQL-BHT-8-1                 : waits for health check to succeed
 done
 MySQL-BHT-8-1                 : is not loaded yet
 MySQL-BHT-8-1                 : start asynch loading scripts of type loaded
@@ -79,17 +67,16 @@ MySQL-BHT-8-1                 : is loading
 MySQL-BHT-8-1                 : is loading
 done
 MySQL-BHT-8-1                 : showing loader times
-MySQL-BHT-8-1                 : loader timespan (first to last [s]) = 385
+MySQL-BHT-8-1                 : loader timespan (first to last [s]) = 375
+MySQL-BHT-8-1                 : start asynch loading scripts of type indexed
+MySQL-BHT-8-1                 : is loading
+done
 MySQL-BHT-8-1                 : benchmarks done 0 of 1. This will be client 1
-MySQL-BHT-8-1                 : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mysql', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'USER': 'root', 'PASSWORD': 'root', 'HAMMERDB_VUSERS': 16}
+MySQL-BHT-8-1                 : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mysql', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MySQL-BHT-8-1-1               : start benchmarking
-MySQL-BHT-8-1                 : benchmarking results in folder /home/perdelt/benchmarks/1728551101
+MySQL-BHT-8-1                 : benchmarking results in folder /home/perdelt/benchmarks/1750089430
 - waiting 10s -               : done
-MySQL-BHT-8-1                 : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1-1728551101-1-1-fp4hg: found
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-BHT-8-1                 : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1-1750089430-1-1-lbldr: found
 - waiting 30s -               : done
 MySQL-BHT-8-1                 : has running benchmarks
 - waiting 30s -               : done
@@ -123,37 +110,15 @@ MySQL-BHT-8-1                 : has running benchmarks
 done
 MySQL-BHT-8-1                 : has running benchmarks
 MySQL-BHT-8-1-1               : showing benchmarker times
-MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 553
-MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1728551861, 1728552381)]
-MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1728551861, 1728552381)]}
+MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 495
+MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1750090134, 1750090616)]
+MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1750090134, 1750090616)]}
 done
 MySQL-BHT-8-1                 : can be stopped
-Experiment ends at 2024-10-10 11:27:23.268328 (3288383.392307665): 1342.015185074415s total
+Experiment                    : ends at 2025-06-16 18:17:38.996975 (14282822.467529545) - 1228.94s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-                        connection  configuration  ...   TPM   dbms
-connection_pod                                     ...             
-MySQL-BHT-8-1-1-1  MySQL-BHT-8-1-1  MySQL-BHT-8-1  ...  7789  MySQL
-
-[1 rows x 17 columns]
-connection_pod
-['16']
-vusers 16
-                      connection  configuration  ...   TPM   dbms
-MySQL-BHT-8-1-1                                  ...             
-0                MySQL-BHT-8-1-1  MySQL-BHT-8-1  ...  7789  MySQL
-
-[1 rows x 17 columns]
-MySQL-BHT-8-1-1
-['16']
-vusers 16
-Benchmarking                         connection  configuration  ...   TPM   dbms
-connection_pod                                     ...             
-MySQL-BHT-8-1-1-1  MySQL-BHT-8-1-1  MySQL-BHT-8-1  ...  7789  MySQL
-
-[1 rows x 17 columns]
-Workflow {'MySQL-BHT-8-1': [[1]]}
 Result workflow complete
 
 ## Show Summary
@@ -161,13 +126,14 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1343s 
-    Code: 1728551101
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 1229s 
+    Code: 1750089430
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Benchmark is limited to DBMS ['MySQL'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -179,18 +145,20 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:260825196
-    datadisk:11108008
+    disk:403932404
+    datadisk:10864
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750089430
 
 ### Execution
-                 experiment_run  vusers  client  pod_count    NOPM     TPM  duration  errors
-MySQL-BHT-8-1-1               1      16       1          1  3370.0  7789.0         5       0
+                 experiment_run  vusers  client  pod_count  efficiency    NOPM     TPM  duration  errors
+MySQL-BHT-8-1-1               1      16       1          1         0.0  2499.0  5772.0         5       0
 
 Warehouses: 16
 
@@ -204,7 +172,7 @@ DBMS MySQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-BHT-8-1-1      385.0        1.0   1.0                  149.61039
+MySQL-BHT-8-1-1      375.0        1.0   1.0                      153.6
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

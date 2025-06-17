@@ -3,13 +3,14 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1343s 
-    Code: 1728551101
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 1229s 
+    Code: 1750089430
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Benchmark is limited to DBMS ['MySQL'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -21,18 +22,20 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:260825196
-    datadisk:11108008
+    disk:403932404
+    datadisk:10864
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750089430
 
 ### Execution
-                 experiment_run  vusers  client  pod_count    NOPM     TPM  duration  errors
-MySQL-BHT-8-1-1               1      16       1          1  3370.0  7789.0         5       0
+                 experiment_run  vusers  client  pod_count  efficiency    NOPM     TPM  duration  errors
+MySQL-BHT-8-1-1               1      16       1          1         0.0  2499.0  5772.0         5       0
 
 Warehouses: 16
 
@@ -46,7 +49,7 @@ DBMS MySQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-BHT-8-1-1      385.0        1.0   1.0                  149.61039
+MySQL-BHT-8-1-1      375.0        1.0   1.0                      153.6
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

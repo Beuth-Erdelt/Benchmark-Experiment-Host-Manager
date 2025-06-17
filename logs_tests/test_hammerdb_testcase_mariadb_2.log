@@ -2,16 +2,14 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Cluster monitoring            : starting...
-done
-Experiment                    : has code 1748956424
-Experiment                    : starts at 2025-06-03 15:13:44.403082 (13148587.87362948)
+Experiment                    : has code 1750103774
+Experiment                    : starts at 2025-06-16 21:56:14.820147 (14295938.290698903)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.8.7.
+Experiment uses bexhoma version 0.8.8.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['MariaDB'].
+Experiment is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -21,10 +19,10 @@ Loading is tested with [8] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
-done
+Cluster monitoring            : is running
 MariaDB-BHT-8-1               : will start now
-MariaDB-BHT-8-1               : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1-1748956424
-MariaDB-BHT-8-1               : Name of SUT service = bexhoma-sut-mariadb-bht-8-1-1748956424
+MariaDB-BHT-8-1               : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1-1750103774
+MariaDB-BHT-8-1               : Name of SUT service = bexhoma-sut-mariadb-bht-8-1-1750103774
 MariaDB-BHT-8-1               : Name of SUT PVC name = bexhoma-storage-mariadb-hammerdb-16
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : waits for health check to succeed
@@ -35,43 +33,11 @@ MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-BHT-8-1               : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : waits for health check to succeed
-done
 MariaDB-BHT-8-1               : is not loaded yet
-MariaDB-BHT-8-1               : waits for monitoring
-MariaDB-BHT-8-1               : wants to monitor all components in cluster
-MariaDB-BHT-8-1               : cannot rely on preinstalled monitoring
-MariaDB-BHT-8-1               : start monitoring with prometheus pod
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.226 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.194 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.10.70 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.130 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.14.125 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.248 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.249 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.117 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.155 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.216 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.176 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.147 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.25 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.216 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.115 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.138 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.92 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.213 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.190 (added to Prometheus) of daemonset
-MariaDB-BHT-8-1               : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.239 (added to Prometheus) of daemonset
+MariaDB-BHT-8-1               : will start loading but not before 2025-06-16 19:59:46 (that is in 60 secs)
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : is not loaded yet
-MariaDB-BHT-8-1               : will start loading but not before 2025-06-03 13:19:48 (that is in 60 secs)
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : is not loaded yet
-MariaDB-BHT-8-1               : will start loading but not before 2025-06-03 13:19:48
+MariaDB-BHT-8-1               : will start loading but not before 2025-06-16 19:59:46
 done
 MariaDB-BHT-8-1               : is not loaded yet
 MariaDB-BHT-8-1               : start asynch loading scripts of type loaded
@@ -98,28 +64,24 @@ MariaDB-BHT-8-1               : is loading
 MariaDB-BHT-8-1               : is loading
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : is loading
 done
 MariaDB-BHT-8-1               : showing loader times
-MariaDB-BHT-8-1               : loader timespan (first to last [s]) = 404
+MariaDB-BHT-8-1               : loader timespan (first to last [s]) = 345
 MariaDB-BHT-8-1               : start asynch loading scripts of type indexed
 MariaDB-BHT-8-1               : is loading
 done
 MariaDB-BHT-8-1               : benchmarks done 0 of 1. This will be client 1
 MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-1             : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748956424
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1750103774
 - waiting 10s -               : done
 found
 MariaDB-BHT-8-1-1             : collecting loading metrics of SUT at connection MariaDB-BHT-8-1-1
-MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748956424(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1750103774(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 MariaDB-BHT-8-1-1             : collecting metrics of data generator at connection MariaDB-BHT-8-1-1
-MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748956424(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1750103774(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 MariaDB-BHT-8-1-1             : collecting metrics of data injector at connection MariaDB-BHT-8-1-1
-MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748956424(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1750103774(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -146,21 +108,21 @@ MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
-done
+- waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-1             : showing benchmarker times
-MariaDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 485
-MariaDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1748957252, 1748957703)]
-MariaDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1748957252, 1748957703)]}
+MariaDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 479
+MariaDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1750104388, 1750104837)]
+MariaDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1750104388, 1750104837)]}
 MariaDB-BHT-8-1-1             : collecting execution metrics of SUT at connection MariaDB-BHT-8-1-1
-MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748956424(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1750103774(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 MariaDB-BHT-8-1-1             : collecting metrics of benchmarker at connection MariaDB-BHT-8-1-1
-MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1748956424(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+MariaDB-BHT-8-1-1             : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1-1750103774(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 MariaDB-BHT-8-1               : can be stopped
-Experiment ends at 2025-06-03 15:36:20.174482 (13149943.6450357): 1355.7714062202722s total
+Experiment                    : ends at 2025-06-16 22:15:07.161797 (14297070.632351415) - 1132.34s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -171,15 +133,15 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1356s 
-    Code: 1748956424
+    Duration: 1133s 
+    Code: 1750103774
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -197,18 +159,18 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332170252
-    datadisk:1639
+    disk:392980272
+    datadisk:1640
     volume_size:30G
     volume_used:1.6G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748956424
+        code:1750103774
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1         0.0  7101.0  16547.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  11051.0  25616.0         5       0
 
 Warehouses: 16
 
@@ -222,28 +184,28 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      404.0        1.0   1.0                 142.574257
+MariaDB-BHT-8-1-1      345.0        1.0   1.0                 166.956522
 
 ### Ingestion - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      649.21     2.08          2.48                 2.51
+MariaDB-BHT-8-1-1      520.42     2.12          2.56                 2.59
 
 ### Ingestion - Loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      406.82     1.22          0.09                 0.09
+MariaDB-BHT-8-1-1      358.21     1.06          0.09                  0.1
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      513.03     1.48          2.67                  2.7
+MariaDB-BHT-8-1-1      753.47     2.14          2.73                 2.76
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1        48.5      0.1          0.06                 0.06
+MariaDB-BHT-8-1-1       70.66     0.16          0.07                 0.07
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned

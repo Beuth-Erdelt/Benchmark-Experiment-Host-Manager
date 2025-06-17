@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1748955374
-Experiment                    : starts at 2025-06-03 14:56:13.701250 (13147537.17180369)
+Experiment                    : has code 1750102784
+Experiment                    : starts at 2025-06-16 21:39:44.146747 (14294947.617301853)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.8.7.
-Benchmark is limited to DBMS ['MariaDB'].
+Experiment uses bexhoma version 0.8.8.
+Experiment is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -18,10 +18,11 @@ Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+MariaDB-BHT-8-1               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 done
 MariaDB-BHT-8-1               : will start now
-MariaDB-BHT-8-1               : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1-1748955374
-MariaDB-BHT-8-1               : Name of SUT service = bexhoma-sut-mariadb-bht-8-1-1748955374
+MariaDB-BHT-8-1               : Name of SUT pods = bexhoma-sut-mariadb-bht-8-1-1750102784
+MariaDB-BHT-8-1               : Name of SUT service = bexhoma-sut-mariadb-bht-8-1-1750102784
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
@@ -30,10 +31,10 @@ MariaDB-BHT-8-1               : waits for health check to succeed
 MariaDB-BHT-8-1               : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : is not loaded yet
-MariaDB-BHT-8-1               : will start loading but not before 2025-06-03 12:59:46 (that is in 60 secs)
+MariaDB-BHT-8-1               : will start loading but not before 2025-06-16 19:43:15 (that is in 60 secs)
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : is not loaded yet
-MariaDB-BHT-8-1               : will start loading but not before 2025-06-03 12:59:46
+MariaDB-BHT-8-1               : will start loading but not before 2025-06-16 19:43:15
 done
 MariaDB-BHT-8-1               : is not loaded yet
 MariaDB-BHT-8-1               : start asynch loading scripts of type loaded
@@ -50,20 +51,18 @@ MariaDB-BHT-8-1               : is loading
 MariaDB-BHT-8-1               : is loading
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : is loading
-- waiting 30s -               : done
-MariaDB-BHT-8-1               : is loading
 done
 MariaDB-BHT-8-1               : showing loader times
-MariaDB-BHT-8-1               : loader timespan (first to last [s]) = 230
+MariaDB-BHT-8-1               : loader timespan (first to last [s]) = 185
 MariaDB-BHT-8-1               : start asynch loading scripts of type indexed
 MariaDB-BHT-8-1               : is loading
 done
 MariaDB-BHT-8-1               : benchmarks done 0 of 1. This will be client 1
 MariaDB-BHT-8-1               : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mariadb', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
 MariaDB-BHT-8-1-1             : start benchmarking
-MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1748955374
+MariaDB-BHT-8-1               : benchmarking results in folder /home/perdelt/benchmarks/1750102784
 - waiting 10s -               : done
-MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1748955374-1-1-d9x59: found
+MariaDB-BHT-8-1               : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1-1750102784-1-1-w2xlf: found
 - waiting 30s -               : done
 MariaDB-BHT-8-1               : has running benchmarks
 - waiting 30s -               : done
@@ -95,12 +94,12 @@ MariaDB-BHT-8-1               : has running benchmarks
 done
 MariaDB-BHT-8-1               : has running benchmarks
 MariaDB-BHT-8-1-1             : showing benchmarker times
-MariaDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 465
-MariaDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1748955872, 1748956315)]
-MariaDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1748955872, 1748956315)]}
+MariaDB-BHT-8-1-1             : benchmarker timespan (start to end single container [s]) = 464
+MariaDB-BHT-8-1-1             : benchmarker times (start/end per pod and container) = [(1750103243, 1750103685)]
+MariaDB-BHT-8-1-1             : found and updated times {'benchmarker': [(1750103243, 1750103685)]}
 done
 MariaDB-BHT-8-1               : can be stopped
-Experiment ends at 2025-06-03 15:12:46.990681 (13148530.461234594): 993.2894309032708s total
+Experiment                    : ends at 2025-06-16 21:55:36.803740 (14295900.274294429) - 952.66s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -111,14 +110,14 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 994s 
-    Code: 1748955374
+    Duration: 953s 
+    Code: 1750102784
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -135,16 +134,16 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:333865940
-    datadisk:1657
+    disk:394837604
+    datadisk:1651
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748955374
+        code:1750102784
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1         0.0  7651.0  17791.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  11404.0  26579.0         5       0
 
 Warehouses: 16
 
@@ -158,7 +157,7 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      230.0        1.0   1.0                 250.434783
+MariaDB-BHT-8-1-1      185.0        1.0   1.0                 311.351351
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
