@@ -303,6 +303,249 @@ wait_process "tpch"
 
 
 
+
+
+
+###########################################
+############### TPC-DS MySQL ##############
+###########################################
+
+
+
+### TPC-H Power Test - only MySQL (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+### TPC-H Monitoring (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 10 \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_2.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mysql-tpcds-1
+sleep 30
+
+
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 10 \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "tpcds"
+
+
+
+
+###########################################
+############ TPC-DS PostgreSQL ############
+###########################################
+
+
+
+### TPC-H Power Test - only PostgreSQL (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpcds"
+
+
+### TPC-H Monitoring (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 10 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_2.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpcds"
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
+sleep 30
+
+
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 10 \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpcds"
+
+
+
+
+
+
+
+
+
+###########################################
+############## TPC-DS MariaDB #############
+###########################################
+
+
+
+### TPC-H Power Test - only MariaDB (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_1.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+### TPC-H Monitoring (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_2.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+#### Delete persistent storage
+kubectl delete pvc bexhoma-storage-mariadb-tpcds-1
+sleep 30
+
+
+### TPC-H Throughput Test (TestCases.md)
+nohup python tpcds.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 100Gi \
+  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log &
+
+#watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "tpcds"
+
+
+
+
 ###########################################
 ########### Benchbase PostgreSQL ##########
 ###########################################
@@ -1314,148 +1557,6 @@ wait_process "ycsb"
 
 
 
-###########################################
-############ TPC-DS PostgreSQL ############
-###########################################
-
-
-
-### TPC-DS Power Test - only PostgreSQL (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 1 \
-  -dt \
-  -t 3600 \
-  -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log &
-
-
-#### Wait so that next experiment receives a different code
-wait_process "tpcds"
-
-
-
-
-
-
-
-
-###########################################
-############## TPC-DS MySQL ###############
-###########################################
-
-
-### TPC-DS Power Test - only MySQL (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 1 \
-  -dt \
-  -t 3600 \
-  -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_1.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_mysql_1.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-
-
-
-
-###########################################
-############# TPC-DS MariaDB ##############
-###########################################
-
-
-### TPC-DS Power Test - only MySQL (TestCases.md)
-nohup python tpcds.py -ms 1 -tr \
-  -sf 1 \
-  -dt \
-  -t 3600 \
-  -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log &
-
-#watch -n 30 tail -n 50 $LOG_DIR/test_tpcds_testcase_mariadb_1.log
-
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-
-
-###########################################
-######### TPC-DS Compare Storage ##########
-###########################################
-
-kubectl delete pvc bexhoma-storage-mysql-tpcds-1 
-kubectl delete pvc bexhoma-storage-mariadb-tpcds-1 
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-1 
-kubectl delete pvc bexhoma-storage-postgresql-tpcds-1 
-sleep 30
-
-#### TCP-DS Compare with Persistent Storage
-nohup python tpcds.py -ms 4 -dt -tr \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -t 3600 \
-  -ii -ic -is \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_storage.log &
-
-
-#### Wait so that next experiment receives a different code
-wait_process "tpcds"
-
-
-###########################################
-######### TPC-DS Compare at SF=10 #########
-###########################################
-
-
-#### TCP-DS Compare at SF=10
-#nohup python tpcds.py -ms 6 -dt -tr \
-#  -nlp 8 \
-#  -nlt 8 \
-#  -sf 10 \
-#  -t 3600 \
-#  -ii -ic -is \
-#  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare_10.log &
-
-
-#### Wait so that next experiment receives a different code
-#wait_process "tpcds"
-
-
-
-
-
-
-
-
 
 ###########################################
 ############## Clean Folder ###############
@@ -1463,3 +1564,11 @@ wait_process "tpcds"
 
 
 clean_logs
+
+
+
+
+
+
+
+
