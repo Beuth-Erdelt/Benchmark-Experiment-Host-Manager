@@ -3677,13 +3677,14 @@ test_hammerdb_testcase_mysql_1.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1343s 
-    Code: 1728551101
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 1229s 
+    Code: 1750089430
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Benchmark is limited to DBMS ['MySQL'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -3695,18 +3696,20 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:260825196
-    datadisk:11108008
+    disk:403932404
+    datadisk:10864
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750089430
 
 ### Execution
-                 experiment_run  vusers  client  pod_count    NOPM     TPM  duration  errors
-MySQL-BHT-8-1-1               1      16       1          1  3370.0  7789.0         5       0
+                 experiment_run  vusers  client  pod_count  efficiency    NOPM     TPM  duration  errors
+MySQL-BHT-8-1-1               1      16       1          1         0.0  2499.0  5772.0         5       0
 
 Warehouses: 16
 
@@ -3720,7 +3723,7 @@ DBMS MySQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-BHT-8-1-1      385.0        1.0   1.0                  149.61039
+MySQL-BHT-8-1-1      375.0        1.0   1.0                      153.6
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -3755,14 +3758,15 @@ test_hammerdb_testcase_mysql_2.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 3696s 
-    Code: 1729598045
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 8027s 
+    Code: 1750090720
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MySQL'].
+    Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -3775,20 +3779,22 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250540992
-    datadisk:11115842
+    disk:392960236
+    datadisk:10860
     volume_size:30G
     volume_used:11G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750090720
 
 ### Execution
-                 experiment_run  vusers  client  pod_count    NOPM      TPM  duration  errors
-MySQL-BHT-8-1-1               1      16       1          1  6218.0  14441.0         5       0
+                 experiment_run  vusers  client  pod_count  efficiency    NOPM     TPM  duration  errors
+MySQL-BHT-8-1-1               1      16       1          1         0.0  1288.0  3024.0         5       0
 
 Warehouses: 16
 
@@ -3802,30 +3808,30 @@ DBMS MySQL-BHT-8-1 - Pods [[1]]
 
 ### Loading
                  time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-BHT-8-1-1     2790.0        1.0   1.0                  20.645161
+MySQL-BHT-8-1-1     6604.0        1.0   1.0                   8.721987
 
 ### Ingestion - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1     1277.89     1.02         37.45                45.49
+MySQL-BHT-8-1-1      869.56     0.44         37.45                 45.5
 
 ### Ingestion - Loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1      430.29     0.36          0.08                 0.08
+MySQL-BHT-8-1-1      361.33      0.2           0.1                  0.1
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1      772.46     2.43         22.99                 31.5
+MySQL-BHT-8-1-1      194.44     1.47         22.97                32.18
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1       37.88     0.17          0.06                 0.06
+MySQL-BHT-8-1-1        8.52     0.06          0.07                 0.07
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
@@ -3856,14 +3862,15 @@ test_hammerdb_testcase_mysql_3.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 3490s 
-    Code: 1729601826
-    This includes no queries. HammerDB runs the benchmark
+    Duration: 3902s 
+    Code: 1750098823
+    HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MySQL'].
+    Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -3876,152 +3883,168 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 MySQL-BHT-8-1-1-1 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250540988
-    datadisk:11662779
+    disk:392962848
+    datadisk:11037
     volume_size:30G
-    volume_used:12G
+    volume_used:11G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750098823
 MySQL-BHT-8-1-1-2 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250540988
-    datadisk:12037972
+    disk:392965728
+    datadisk:11230
     volume_size:30G
-    volume_used:12G
+    volume_used:11G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750098823
 MySQL-BHT-8-1-1-3 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250541160
-    datadisk:12787230
+    disk:393131856
+    datadisk:11531
+    volume_size:30G
+    volume_used:11G
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1750098823
+MySQL-BHT-8-1-1-4 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:393133892
+    datadisk:11702
+    volume_size:30G
+    volume_used:11G
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1750098823
+MySQL-BHT-8-1-2-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:393140456
+    datadisk:12083
     volume_size:30G
     volume_used:12G
     requests_cpu:4
     requests_memory:16Gi
-MySQL-BHT-8-1-1-4 uses docker image mysql:8.4.0
-    RAM:541008605184
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:250541160
-    datadisk:13271054
-    volume_size:30G
-    volume_used:13G
-    requests_cpu:4
-    requests_memory:16Gi
-MySQL-BHT-8-1-2-1 uses docker image mysql:8.4.0
-    RAM:541008605184
-    Cores:64
-    host:5.15.0-116-generic
-    node:cl-worker11
-    disk:250541160
-    datadisk:13875869
-    volume_size:30G
-    volume_used:14G
-    requests_cpu:4
-    requests_memory:16Gi
+    eval_parameters
+        code:1750098823
 MySQL-BHT-8-1-2-2 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250541160
-    datadisk:14505056
+    disk:393141932
+    datadisk:12259
     volume_size:30G
-    volume_used:14G
+    volume_used:12G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750098823
 MySQL-BHT-8-1-2-3 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250541160
-    datadisk:15095337
+    disk:393149976
+    datadisk:12569
     volume_size:30G
-    volume_used:15G
+    volume_used:12G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750098823
 MySQL-BHT-8-1-2-4 uses docker image mysql:8.4.0
-    RAM:541008605184
+    RAM:541008568320
     Cores:64
-    host:5.15.0-116-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:250541160
-    datadisk:15683884
+    disk:393150500
+    datadisk:12729
     volume_size:30G
-    volume_used:15G
+    volume_used:12G
     requests_cpu:4
     requests_memory:16Gi
+    eval_parameters
+        code:1750098823
 
 ### Execution
-                   experiment_run  vusers  client  pod_count      NOPM       TPM  duration  errors
-MySQL-BHT-8-1-1-1               1      16       1          1   6723.00  15643.00         2       0
-MySQL-BHT-8-1-1-2               1      32       2          2  11297.50  26190.00         2       0
-MySQL-BHT-8-1-1-3               1      16       3          2   6769.50  15507.50         2       0
-MySQL-BHT-8-1-1-4               1      32       4          4   9152.75  21112.75         2       0
-MySQL-BHT-8-1-2-1               2      16       1          1   9676.00  22665.00         2       0
-MySQL-BHT-8-1-2-2               2      32       2          2   8227.50  19165.00         2       0
-MySQL-BHT-8-1-2-3               2      16       3          2   8007.50  18717.00         2       0
-MySQL-BHT-8-1-2-4               2      32       4          4   8291.25  19166.00         2       0
+                   experiment_run  vusers  client  pod_count  efficiency    NOPM       TPM  duration  errors
+MySQL-BHT-8-1-1-1               1      16       1          1         0.0  2752.0   6382.00         2       0
+MySQL-BHT-8-1-1-2               1      32       2          2         0.0  4722.5  10913.00         2       0
+MySQL-BHT-8-1-1-3               1      16       3          2         0.0  1650.0   3857.50         2       0
+MySQL-BHT-8-1-1-4               1      32       4          4         0.0  7990.5  18509.75         2       0
+MySQL-BHT-8-1-2-1               2      16       1          1         0.0  2395.0   5645.00         2       0
+MySQL-BHT-8-1-2-2               2      32       2          2         0.0  3964.0   9193.00         2       0
+MySQL-BHT-8-1-2-3               2      16       3          2         0.0  2639.5   6071.50         2       0
+MySQL-BHT-8-1-2-4               2      32       4          4         0.0  4926.0  11356.25         2       0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-BHT-8-1 - Pods [[4, 2, 2, 1], [2, 4, 2, 1]]
+DBMS MySQL-BHT-8-1 - Pods [[4, 2, 1, 2], [2, 4, 1, 2]]
 
 #### Planned
 DBMS MySQL-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-BHT-8-1-1-1     2790.0        1.0   1.0                  20.645161
-MySQL-BHT-8-1-1-2     2790.0        1.0   2.0                  20.645161
-MySQL-BHT-8-1-1-3     2790.0        1.0   2.0                  20.645161
-MySQL-BHT-8-1-1-4     2790.0        1.0   4.0                  20.645161
-MySQL-BHT-8-1-2-1     2790.0        1.0   1.0                  20.645161
-MySQL-BHT-8-1-2-2     2790.0        1.0   2.0                  20.645161
-MySQL-BHT-8-1-2-3     2790.0        1.0   2.0                  20.645161
-MySQL-BHT-8-1-2-4     2790.0        1.0   4.0                  20.645161
+MySQL-BHT-8-1-1-1     6604.0        1.0   1.0                   8.721987
+MySQL-BHT-8-1-1-2     6604.0        1.0   2.0                   8.721987
+MySQL-BHT-8-1-1-3     6604.0        1.0   2.0                   8.721987
+MySQL-BHT-8-1-1-4     6604.0        1.0   4.0                   8.721987
+MySQL-BHT-8-1-2-1     6604.0        1.0   1.0                   8.721987
+MySQL-BHT-8-1-2-2     6604.0        1.0   2.0                   8.721987
+MySQL-BHT-8-1-2-3     6604.0        1.0   2.0                   8.721987
+MySQL-BHT-8-1-2-4     6604.0        1.0   4.0                   8.721987
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1-1      457.14     2.73         38.73                46.82
-MySQL-BHT-8-1-1-2      852.95     3.75         38.95                47.75
-MySQL-BHT-8-1-1-3      706.33     2.40         38.99                47.83
-MySQL-BHT-8-1-1-4      710.77     3.16         39.06                47.82
-MySQL-BHT-8-1-2-1      754.75     2.55         39.13                47.60
-MySQL-BHT-8-1-2-2      638.56     3.34         39.19                48.09
-MySQL-BHT-8-1-2-3      694.00     2.65         39.20                47.66
-MySQL-BHT-8-1-2-4      754.95     3.12         39.22                48.29
+MySQL-BHT-8-1-1-1      482.55     1.39         38.37                46.48
+MySQL-BHT-8-1-1-2      490.84     2.18         38.66                47.15
+MySQL-BHT-8-1-1-3      308.68     1.21         38.73                47.36
+MySQL-BHT-8-1-1-4      499.53     1.67         38.95                47.92
+MySQL-BHT-8-1-2-1     2618.47     1.74         77.01                94.82
+MySQL-BHT-8-1-2-2      477.33     1.67         38.66                47.99
+MySQL-BHT-8-1-2-3      347.58     1.74         38.81                48.26
+MySQL-BHT-8-1-2-4      443.20     1.76         38.92                48.66
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1-1       25.63     0.11          0.06                 0.06
-MySQL-BHT-8-1-1-2       43.92     0.14          0.17                 0.17
-MySQL-BHT-8-1-1-3       60.66     0.08          0.18                 0.18
-MySQL-BHT-8-1-1-4       33.14     0.18          0.20                 0.20
-MySQL-BHT-8-1-2-1       47.05     0.19          0.06                 0.06
-MySQL-BHT-8-1-2-2       47.05     0.14          0.17                 0.17
-MySQL-BHT-8-1-2-3       37.01     0.16          0.18                 0.18
-MySQL-BHT-8-1-2-4       41.41     0.17          0.20                 0.20
+MySQL-BHT-8-1-1-1       12.44     0.03          0.07                 0.07
+MySQL-BHT-8-1-1-2       12.86     0.05          0.21                 0.22
+MySQL-BHT-8-1-1-3       19.67     0.02          0.23                 0.23
+MySQL-BHT-8-1-1-4       19.70     0.09          0.26                 0.27
+MySQL-BHT-8-1-2-1       11.75     0.04          0.07                 0.07
+MySQL-BHT-8-1-2-2       16.38     0.06          0.21                 0.22
+MySQL-BHT-8-1-2-3       22.10     0.05          0.23                 0.23
+MySQL-BHT-8-1-2-4       11.96     0.04          0.26                 0.27
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
@@ -4055,14 +4078,14 @@ test_hammerdb_testcase_mariadb_1.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 994s 
-    Code: 1748955374
+    Duration: 953s 
+    Code: 1750102784
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -4079,16 +4102,16 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:333865940
-    datadisk:1657
+    disk:394837604
+    datadisk:1651
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748955374
+        code:1750102784
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1         0.0  7651.0  17791.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  11404.0  26579.0         5       0
 
 Warehouses: 16
 
@@ -4102,7 +4125,7 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      230.0        1.0   1.0                 250.434783
+MariaDB-BHT-8-1-1      185.0        1.0   1.0                 311.351351
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
@@ -4137,15 +4160,15 @@ test_hammerdb_testcase_mariadb_2.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1356s 
-    Code: 1748956424
+    Duration: 1133s 
+    Code: 1750103774
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -4163,18 +4186,18 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332170252
-    datadisk:1639
+    disk:392980272
+    datadisk:1640
     volume_size:30G
     volume_used:1.6G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748956424
+        code:1750103774
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1         0.0  7101.0  16547.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  11051.0  25616.0         5       0
 
 Warehouses: 16
 
@@ -4188,30 +4211,30 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      404.0        1.0   1.0                 142.574257
+MariaDB-BHT-8-1-1      345.0        1.0   1.0                 166.956522
 
 ### Ingestion - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      649.21     2.08          2.48                 2.51
+MariaDB-BHT-8-1-1      520.42     2.12          2.56                 2.59
 
 ### Ingestion - Loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      406.82     1.22          0.09                 0.09
+MariaDB-BHT-8-1-1      358.21     1.06          0.09                  0.1
 
 ### Execution - SUT
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1      513.03     1.48          2.67                  2.7
+MariaDB-BHT-8-1-1      753.47     2.14          2.73                 2.76
 
 ### Execution - Benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1        48.5      0.1          0.06                 0.06
+MariaDB-BHT-8-1-1       70.66     0.16          0.07                 0.07
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
@@ -4242,15 +4265,15 @@ test_hammerdb_testcase_mariadb_3.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 3244s 
-    Code: 1748957864
+    Duration: 3178s 
+    Code: 1750104975
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -4268,171 +4291,171 @@ MariaDB-BHT-8-1-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332170552
-    datadisk:1701
+    disk:392980956
+    datadisk:1725
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-1-2 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332170556
-    datadisk:1737
+    disk:392981692
+    datadisk:1782
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-1-3 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332170560
-    datadisk:1757
+    disk:393277240
+    datadisk:1823
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-1-4 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332170656
-    datadisk:1785
+    disk:393283676
+    datadisk:1867
     volume_size:30G
     volume_used:1.7G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-2-1 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332171792
-    datadisk:1810
+    disk:393286676
+    datadisk:1903
     volume_size:30G
-    volume_used:1.8G
+    volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-2-2 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332171796
-    datadisk:1846
+    disk:393287036
+    datadisk:1947
     volume_size:30G
-    volume_used:1.8G
+    volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-2-3 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332174248
-    datadisk:1862
+    disk:393286988
+    datadisk:1992
     volume_size:30G
-    volume_used:1.8G
+    volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 MariaDB-BHT-8-1-2-4 uses docker image mariadb:11.4.7
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:332174252
-    datadisk:1886
+    disk:393287596
+    datadisk:2036
     volume_size:30G
-    volume_used:1.8G
+    volume_used:1.9G
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748957864
+        code:1750104975
 
 ### Execution
-                     experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1-1               1      16       1          1         0.0  7796.0  18205.0         2       0
-MariaDB-BHT-8-1-1-2               1      32       2          2         0.0  5306.0  12450.0         2       0
-MariaDB-BHT-8-1-1-3               1      16       3          2         0.0  5185.0  11960.0         2       0
-MariaDB-BHT-8-1-1-4               1      32       4          4         0.0  5315.0  12280.5         2       0
-MariaDB-BHT-8-1-2-1               2      16       1          1         0.0  6297.0  14608.0         2       0
-MariaDB-BHT-8-1-2-2               2      32       2          2         0.0  3712.5   8581.0         2       0
-MariaDB-BHT-8-1-2-3               2      16       3          2         0.0  6334.5  14797.0         2       0
-MariaDB-BHT-8-1-2-4               2      32       4          4         0.0  5927.0  13791.0         2       0
+                     experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1-1               1      16       1          1         0.0  11854.0  27681.0         2       0
+MariaDB-BHT-8-1-1-2               1      32       2          2         0.0   9138.0  21218.0         2       0
+MariaDB-BHT-8-1-1-3               1      16       3          2         0.0   8589.0  19906.0         2       0
+MariaDB-BHT-8-1-1-4               1      32       4          4         0.0   7608.0  17744.0         2       0
+MariaDB-BHT-8-1-2-1               2      16       1          1         0.0  11327.0  26492.0         2       0
+MariaDB-BHT-8-1-2-2               2      32       2          2         0.0   8274.0  19100.0         2       0
+MariaDB-BHT-8-1-2-3               2      16       3          2         0.0  10246.0  23647.0         2       0
+MariaDB-BHT-8-1-2-4               2      32       4          4         0.0   8605.0  19909.0         2       0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS MariaDB-BHT-8-1 - Pods [[4, 2, 1, 2], [2, 4, 2, 1]]
+DBMS MariaDB-BHT-8-1 - Pods [[4, 2, 2, 1], [1, 2, 2, 4]]
 
 #### Planned
 DBMS MariaDB-BHT-8-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
 
 ### Loading
                      time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1-1      404.0        1.0   1.0                 142.574257
-MariaDB-BHT-8-1-1-2      404.0        1.0   2.0                 142.574257
-MariaDB-BHT-8-1-1-3      404.0        1.0   2.0                 142.574257
-MariaDB-BHT-8-1-1-4      404.0        1.0   4.0                 142.574257
-MariaDB-BHT-8-1-2-1      404.0        1.0   1.0                 142.574257
-MariaDB-BHT-8-1-2-2      404.0        1.0   2.0                 142.574257
-MariaDB-BHT-8-1-2-3      404.0        1.0   2.0                 142.574257
-MariaDB-BHT-8-1-2-4      404.0        1.0   4.0                 142.574257
+MariaDB-BHT-8-1-1-1      345.0        1.0   1.0                 166.956522
+MariaDB-BHT-8-1-1-2      345.0        1.0   2.0                 166.956522
+MariaDB-BHT-8-1-1-3      345.0        1.0   2.0                 166.956522
+MariaDB-BHT-8-1-1-4      345.0        1.0   4.0                 166.956522
+MariaDB-BHT-8-1-2-1      345.0        1.0   1.0                 166.956522
+MariaDB-BHT-8-1-2-2      345.0        1.0   2.0                 166.956522
+MariaDB-BHT-8-1-2-3      345.0        1.0   2.0                 166.956522
+MariaDB-BHT-8-1-2-4      345.0        1.0   4.0                 166.956522
 
 ### Execution - SUT
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1-1      355.16     1.02          2.27                 2.60
-MariaDB-BHT-8-1-1-2      335.14     1.44          2.38                 2.71
-MariaDB-BHT-8-1-1-3      262.41     0.60          2.40                 2.73
-MariaDB-BHT-8-1-1-4      424.14     1.83          2.47                 2.80
-MariaDB-BHT-8-1-2-1     1460.46     1.45          4.75                 5.26
-MariaDB-BHT-8-1-2-2      286.80     1.15          2.50                 2.81
-MariaDB-BHT-8-1-2-3      285.42     1.49          2.53                 2.84
-MariaDB-BHT-8-1-2-4      418.14     1.32          2.61                 2.92
+MariaDB-BHT-8-1-1-1      497.61     2.38          2.42                 2.71
+MariaDB-BHT-8-1-1-2     1092.93     2.06          2.56                 2.84
+MariaDB-BHT-8-1-1-3      386.03     1.93          2.60                 2.88
+MariaDB-BHT-8-1-1-4      840.76     3.91          2.68                 2.97
+MariaDB-BHT-8-1-2-1     2910.91     2.18          4.99                 5.46
+MariaDB-BHT-8-1-2-2      741.47     2.58          2.59                 2.93
+MariaDB-BHT-8-1-2-3      430.79     1.91          2.64                 2.98
+MariaDB-BHT-8-1-2-4      607.57     1.96          2.73                 3.07
 
 ### Execution - Benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1-1-1       32.61     0.09          0.06                 0.06
-MariaDB-BHT-8-1-1-2       32.61     0.06          0.17                 0.17
-MariaDB-BHT-8-1-1-3       25.25     0.05          0.18                 0.19
-MariaDB-BHT-8-1-1-4       24.35     0.07          0.21                 0.21
-MariaDB-BHT-8-1-2-1       29.12     0.11          0.06                 0.06
-MariaDB-BHT-8-1-2-2       29.12     0.05          0.17                 0.17
-MariaDB-BHT-8-1-2-3       21.54     0.06          0.18                 0.18
-MariaDB-BHT-8-1-2-4       25.49     0.03          0.21                 0.21
+MariaDB-BHT-8-1-1-1       42.65     0.19          0.07                 0.07
+MariaDB-BHT-8-1-1-2       42.65     0.08          0.21                 0.22
+MariaDB-BHT-8-1-1-3       31.65     0.09          0.23                 0.24
+MariaDB-BHT-8-1-1-4       34.10     0.05          0.26                 0.27
+MariaDB-BHT-8-1-2-1       42.49     0.18          0.09                 0.09
+MariaDB-BHT-8-1-2-2       42.50     0.11          0.21                 0.22
+MariaDB-BHT-8-1-2-3       36.74     0.07          0.23                 0.23
+MariaDB-BHT-8-1-2-4       35.29     0.06          0.26                 0.27
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
