@@ -13,6 +13,8 @@ echo "BEXHOMA_VOLUME:$BEXHOMA_VOLUME"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_TENANT_NUM:$BEXHOMA_TENANT_NUM"
+echo "BEXHOMA_TENANT_BY:$BEXHOMA_TENANT_BY"
 
 ######################## Show more parameters ########################
 BEXHOMA_CHILD=$(cat /tmp/tpch/BEXHOMA_CHILD )
@@ -22,9 +24,18 @@ echo "SF $SF"
 
 ######################## Multi-Tenant parameters ########################
 BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
-BEXHOMA_NUM_PODS=1
-BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
-echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
+    echo "BEXHOMA_TENANT_BY is schema"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
+    echo "BEXHOMA_TENANT_BY is database"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+else
+    echo "BEXHOMA_TENANT_BY is not set"
+fi
 
 ######################## Destination of raw data ########################
 if test $STORE_RAW_DATA -gt 0

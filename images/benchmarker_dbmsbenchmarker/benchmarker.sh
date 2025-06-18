@@ -102,6 +102,9 @@ echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
+BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
@@ -112,7 +115,7 @@ echo "Start at $bexhoma_start_epoch epoch seconds"
 if test $DBMSBENCHMARKER_DEV -gt 0
 then
     # dev environment
-    git checkout dev
+    git checkout --track origin/dev
     git pull
     git status
 fi
@@ -162,6 +165,8 @@ then
         -ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         -mps \
+        -fixdb $BEXHOMA_DATABASE \
+        -fixs $BEXHOMA_SCHEMA \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
         #-st "$BEXHOMA_TIME_START" \
@@ -179,6 +184,8 @@ else
         -ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         -mps \
+        -fixdb $BEXHOMA_DATABASE \
+        -fixs $BEXHOMA_SCHEMA \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
         #-st "$BEXHOMA_TIME_START" \
