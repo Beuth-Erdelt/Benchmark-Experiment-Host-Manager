@@ -1,11 +1,62 @@
+DEBUG:bexhoma:testbed.set_experiments()
+DEBUG:bexhoma:testbed.set_experiment()
+DEBUG:bexhoma:testbed.cluster_access(perdelt)
+DEBUG:bexhoma:testbed.get_pvc()
+DEBUG:bexhoma:get_pvc(app=bexhoma,component=data-source)
+DEBUG:bexhoma:testbed.get_pvc()
+DEBUG:bexhoma:get_pvc(app=bexhoma,component=results)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:testbed.get_dashboard_pod_name()=exists
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
+DEBUG:bexhoma:testbed.start_messagequeue()=exists
+DEBUG:bexhoma:testbed.test_if_monitoring_healthy()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:testbed.get_dashboard_pod_name()=exists
+DEBUG:bexhoma:Inside pod bexhoma-dashboard-7bb749fbb4-n6qxf
+DEBUG:bexhoma:Test URL https://prometheus.datexis.com/api/v1/query_range?query=sum%28node_memory_MemTotal_bytes%29&start=1750245332&end=1750245392&step=60
+DEBUG:bexhoma:Command curl -L --max-time 10 -is 'https://prometheus.datexis.com/api/v1/query_range?query=sum%28node_memory_MemTotal_bytes%29&start=1750245332&end=1750245392&step=60' | head -n 1 | cut -d ' ' -f2
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-7bb749fbb4-n6qxf --container=dashboard -- sh -c "curl -L --max-time 10 -is 'https://prometheus.datexis.com/api/v1/query_range?query=sum%28node_memory_MemTotal_bytes%29&start=1750245332&end=1750245392&step=60' | head -n 1 | cut -d ' ' -f2")
+DEBUG:bexhoma:Status 200
+
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:configuration.start_sut(name=bexhoma-sut-postgresql-bht-2-1750252832)
+DEBUG:bexhoma:testbed.get_deployments(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:configuration.create_manifest_deployment({'BEXHOMA_WORKER_LIST': '', 'BEXHOMA_WORKER_LIST_SPACE': '', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-postgresql-bht-2-1750252832', 'STATEFULSET_NAME': 'bexhoma-worker-postgresql-1750252832'})
+DEBUG:bexhoma:configuration.create_manifest_deployment({'BEXHOMA_WORKER_LIST': '', 'BEXHOMA_WORKER_LIST_SPACE': '', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-postgresql-bht-2-1750252832', 'STATEFULSET_NAME': 'bexhoma-worker-postgresql-1750252832'})
+DEBUG:bexhoma:Deploy /home/perdelt/benchmarks/1750252832/bexhoma-sut-postgresql-bht-2-1750252832.yml
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1750252832/bexhoma-sut-postgresql-bht-2-1750252832.yml)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
 Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1750088789
-Experiment                    : starts at 2025-06-16 17:46:29.381245 (14280952.851799281)
-Experiment                    : This imports TPC-H data sets.
+Experiment                    : has code 1750252832
+Experiment                    : starts at 2025-06-18 15:20:32.150400 (14444995.620954702)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 600.
 Import sets indexes and constraints after loading and recomputes statistics.
 Experiment uses bexhoma version 0.8.8.
 Experiment is limited to DBMS ['PostgreSQL'].
@@ -14,17 +65,321 @@ Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
 Loading is tested with [1] threads, split into [2] pods.
+Benchmarking is tested with [64] threads, split into [2] pods.
+Benchmarking is run as [2] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-BHT-2              : will start now
-PostgreSQL-BHT-2              : Name of SUT pods = bexhoma-sut-postgresql-bht-2-1750088789
-PostgreSQL-BHT-2              : Name of SUT service = bexhoma-sut-postgresql-bht-2-1750088789
-- waiting 30s -               : done
+PostgreSQL-BHT-2              : Name of SUT pods = bexhoma-sut-postgresql-bht-2-1750252832
+PostgreSQL-BHT-2              : Name of SUT service = bexhoma-sut-postgresql-bht-2-1750252832
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.is_pod_ready()
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : waits for health check to succeed
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.is_pod_ready()
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : waits for health check to succeed
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.is_pod_ready()
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : waits for health check to succeed
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.is_pod_ready()
+DEBUG:bexhoma:start_loading(PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:check if bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf is running
+DEBUG:bexhoma:testbed.get_services()
+DEBUG:bexhoma:get_services(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_ports_of_service()
+DEBUG:bexhoma:get_ports_of_serviceapp=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:configuration.load_data()
+DEBUG:bexhoma:configuration.prepare_init_dbms()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_0_initschema-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_0_initschema-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_1_initschema-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_1_initschema-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:load_data_asynch(app=bexhoma, component='sut', experiment=1750252832, configuration=PostgreSQL-BHT-2, pod_sut=bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf, scriptfolder=/tmp/, commands=['filled_0_initschema-tpch-schema.sql', 'filled_1_initschema-tpch-schema.sql'], loadData=psql -U postgres < {scriptname}, path=/home/perdelt/benchmarks/1750252832, volume=, context=perdelt, service_name=bexhoma-sut-postgresql-bht-2-1750252832, time_offset=0, time_start_int=0, script_type=loaded, namespace=perdelt)
+DEBUG:load_data_asynch:#### time_scriptgroup_start: 14445118.135002932
+DEBUG:load_data_asynch:#### timeLoadingStart: 1750252954
+DEBUG:load_data_asynch:#### timeLoading before scrips: 0
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pods bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --overwrite loaded=False timeLoadingStart="1750252954")
+DEBUG:bexhoma:start_loading_pod(PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
+DEBUG:bexhoma:I am using messagequeue bexhoma-messagequeue-865dd9b44d-8f82v
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-messagequeue-865dd9b44d-8f82v -- sh -c "redis-cli rpush bexhoma-loading-PostgreSQL-BHT-2-1750252832 1 ")
+DEBUG:load_data_asynch:pod/bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf labeled
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_0_initschema-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
+DEBUG:bexhoma:I am using messagequeue bexhoma-messagequeue-865dd9b44d-8f82v
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-messagequeue-865dd9b44d-8f82v -- sh -c "redis-cli rpush bexhoma-loading-PostgreSQL-BHT-2-1750252832 2 ")
+DEBUG:load_data_asynch:CREATE SCHEMA
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:#### script=filled_0_initschema time=0.2102686483412981
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_1_initschema-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
+DEBUG:bexhoma:I am using messagequeue bexhoma-messagequeue-865dd9b44d-8f82v
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-messagequeue-865dd9b44d-8f82v -- sh -c "redis-cli set bexhoma-loader-podcount-PostgreSQL-BHT-2-1750252832 0 ")
+DEBUG:load_data_asynch:CREATE SCHEMA
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:#### script=filled_1_initschema time=0.18985883332788944
+DEBUG:load_data_asynch:#### time_scriptgroup_end: 14445118.641630111
+DEBUG:load_data_asynch:#### timeLoadingEnd: 1750252955
+DEBUG:load_data_asynch:#### timeLoading after scrips: 1
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pods bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --overwrite timeLoadingEnd="1750252955"  loaded=True time_loaded=1 timeLoading=1 time_filled_0_initschema=1 time_filled_1_initschema=1)
+DEBUG:load_data_asynch:pod/bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf labeled
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:bexhoma:configuration.create_manifest_loading()
+DEBUG:bexhoma:create_manifest_loading:env={'BEXHOMA_TIME_NOW': '2025-06-18 13:22:35', 'BEXHOMA_TIME_START': 0, 'SF': '1', 'PODS_TOTAL': '2', 'PODS_PARALLEL': '2', 'STORE_RAW_DATA': 1, 'STORE_RAW_DATA_RECREATE': 0, 'BEXHOMA_SYNCH_LOAD': 1, 'BEXHOMA_SYNCH_GENERATE': 1, 'TRANSFORM_RAW_DATA': 1, 'TPCH_TABLE': ''}
+DEBUG:bexhoma:configuration.create_manifest_job(bexhoma-loading-postgresql-bht-2-1750252832-1-1)
+DEBUG:bexhoma:{'BEXHOMA_HOST': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_CLIENT': 0, 'BEXHOMA_EXPERIMENT': '1750252832', 'BEXHOMA_CONNECTION': 'PostgreSQL-BHT-2', 'BEXHOMA_CONFIGURATION': 'PostgreSQL-BHT-2', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'tpch', 'BEXHOMA_EXPERIMENT_RUN': '1', 'BEXHOMA_PARALLEL': '2', 'BEXHOMA_NUM_PODS': '2', 'PARALLEL': '2', 'NUM_PODS': '2', 'BEXHOMA_WORKER_LIST': '', 'BEXHOMA_WORKER_LIST_SPACE': '', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-postgresql-bht-2-1750252832:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_URL_LIST': 'jdbc:postgresql://:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_USER': 'postgres', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_TIME_NOW': '2025-06-18 13:22:35', 'BEXHOMA_TIME_START': 0, 'SF': '1', 'PODS_TOTAL': '2', 'PODS_PARALLEL': '2', 'STORE_RAW_DATA': 1, 'STORE_RAW_DATA_RECREATE': 0, 'BEXHOMA_SYNCH_LOAD': 1, 'BEXHOMA_SYNCH_GENERATE': 1, 'TRANSFORM_RAW_DATA': 1, 'TPCH_TABLE': ''}
+DEBUG:bexhoma:apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: bexhoma
+    component: loading
+    configuration: default
+    experiment: default
+    client: default
+  name: bexhoma-sensor
+spec:
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app: bexhoma
+        component: loading
+        configuration: default
+        experiment: default
+        client: default
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: dockerhub
+      nodeSelector:
+        kubernetes.io/hostname: cl-worker19
+      tolerations:
+      - key: nvidia.com/gpu
+        effect: NoSchedule
+      initContainers:
+      - name: datagenerator
+        image: bexhoma/generator_tpch:latest
+        imagePullPolicy: Always
+        env:
+        - name: BEXHOMA_HOST
+          value: bexhoma-sut-postgresql-aws-1234567890
+        - name: BEXHOMA_PORT
+          value: '9091'
+        - name: BEXHOMA_CONNECTION
+          value: postgresql
+        - name: BEXHOMA_EXPERIMENT
+          value: '1234567890'
+        - name: BEXHOMA_SCHEMA
+          value: public
+        - name: PARALLEL
+          value: '24'
+        - name: CHILD
+          value: '1'
+        - name: SF
+          value: '500'
+        - name: RNGSEED
+          value: '123'
+        resources: null
+        volumeMounts:
+        - name: datadir
+          mountPath: /tmp/tpch/
+        - mountPath: /data
+          name: benchmark-data-volume
+      containers:
+      - name: sensor
+        image: bexhoma/loader_tpch_postgresql:latest
+        imagePullPolicy: Always
+        env:
+        - name: BEXHOMA_HOST
+          value: bexhoma-sut-postgresql-aws-1658676533
+        - name: BEXHOMA_PORT
+          value: '9091'
+        - name: BEXHOMA_CONNECTION
+          value: postgresql
+        - name: BEXHOMA_EXPERIMENT
+          value: '1234'
+        - name: PARALLEL
+          value: '24'
+        - name: CHILD
+          value: '1'
+        - name: SF
+          value: '500'
+        - name: RNGSEED
+          value: '123'
+        resources: null
+        volumeMounts:
+        - name: datadir
+          mountPath: /tmp/tpch/
+        - mountPath: /data
+          name: benchmark-data-volume
+      restartPolicy: Never
+      volumes:
+      - name: datadir
+        emptyDir:
+          medium: Memory
+      - name: benchmark-data-volume
+        persistentVolumeClaim:
+          claimName: bexhoma-data
+
+DEBUG:bexhoma:configuration.create_manifest_job({'BEXHOMA_HOST': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_PORT': '9091', 'BEXHOMA_CONNECTION': 'PostgreSQL-BHT-2', 'BEXHOMA_EXPERIMENT': '1750252832', 'PARALLEL': '2', 'CHILD': '1', 'SF': '1', 'RNGSEED': '123', 'BEXHOMA_CLIENT': 0, 'BEXHOMA_CONFIGURATION': 'PostgreSQL-BHT-2', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'tpch', 'BEXHOMA_EXPERIMENT_RUN': '1', 'BEXHOMA_PARALLEL': '2', 'BEXHOMA_NUM_PODS': '2', 'NUM_PODS': '2', 'BEXHOMA_WORKER_LIST': '', 'BEXHOMA_WORKER_LIST_SPACE': '', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-postgresql-bht-2-1750252832:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_URL_LIST': 'jdbc:postgresql://:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_USER': 'postgres', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_TIME_NOW': '2025-06-18 13:22:35', 'BEXHOMA_TIME_START': 0, 'PODS_TOTAL': '2', 'PODS_PARALLEL': '2', 'STORE_RAW_DATA': 1, 'STORE_RAW_DATA_RECREATE': 0, 'BEXHOMA_SYNCH_LOAD': 1, 'BEXHOMA_SYNCH_GENERATE': 1, 'TRANSFORM_RAW_DATA': 1, 'TPCH_TABLE': ''})
+DEBUG:bexhoma:Deploy /home/perdelt/benchmarks/1750252832/bexhoma-loading-postgresql-bht-2-1-1.yml
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1750252832/bexhoma-loading-postgresql-bht-2-1-1.yml)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
 done
 PostgreSQL-BHT-2              : is not loaded yet
 PostgreSQL-BHT-2              : scripts for tenant #0
@@ -32,37 +387,905 @@ PostgreSQL-BHT-2              : scripts for tenant #1
 #################### ['filled_0_initschema-tpch-schema.sql', 'filled_1_initschema-tpch-schema.sql']
 PostgreSQL-BHT-2              : start asynch loading scripts of type loaded
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:Found running job bexhoma-loading-postgresql-bht-2-1750252832-1-1
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:job bexhoma-loading-postgresql-bht-2-1750252832-1-1 has success status 0
+DEBUG:bexhoma:getJobPods app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has status Running
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has status Running
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:Found running job bexhoma-loading-postgresql-bht-2-1750252832-1-1
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:job bexhoma-loading-postgresql-bht-2-1750252832-1-1 has success status 0
+DEBUG:bexhoma:getJobPods app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has status Running
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has status Running
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:Found running job bexhoma-loading-postgresql-bht-2-1750252832-1-1
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:job bexhoma-loading-postgresql-bht-2-1750252832-1-1 has success status 0
+DEBUG:bexhoma:getJobPods app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has status Running
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has status Running
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:Found running job bexhoma-loading-postgresql-bht-2-1750252832-1-1
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:job bexhoma-loading-postgresql-bht-2-1750252832-1-1 has success status 0
+DEBUG:bexhoma:getJobPods app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has status Running
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has status Running
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
+PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded 2
+DEBUG:bexhoma:Number of completions reached
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:Found running job bexhoma-loading-postgresql-bht-2-1750252832-1-1
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded 2
+DEBUG:bexhoma:Number of completions reached
+DEBUG:bexhoma:job bexhoma-loading-postgresql-bht-2-1750252832-1-1 has success status True
+DEBUG:bexhoma:getJobPods app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has status Succeeded
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has container ['sensor', 'datagenerator']
+DEBUG:bexhoma:Store logs of job bexhoma-loading-postgresql-bht-2-1750252832-1-1 pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs container sensor
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs --container=sensor)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Store logs of job bexhoma-loading-postgresql-bht-2-1750252832-1-1 pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs container datagenerator
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs --container=datagenerator)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has status Succeeded
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has container ['sensor', 'datagenerator']
+DEBUG:bexhoma:Store logs of job bexhoma-loading-postgresql-bht-2-1750252832-1-1 pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 container sensor
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 --container=sensor)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Store logs of job bexhoma-loading-postgresql-bht-2-1750252832-1-1 pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 container datagenerator
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 --container=datagenerator)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:job bexhoma-loading-postgresql-bht-2-1750252832-1-1 will be suspended and parallel loading will be considered finished
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has status Succeeded
+DEBUG:bexhoma:Store logs of job bexhoma-loading-postgresql-bht-2-1750252832-1-1 pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs has container ['sensor', 'datagenerator']
+DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has status Succeeded
+DEBUG:bexhoma:Store logs of job bexhoma-loading-postgresql-bht-2-1750252832-1-1 pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75 has container ['sensor', 'datagenerator']
+DEBUG:bexhoma:testbed.delete_pod(bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75)
+DEBUG:bexhoma:default.end_loading(bexhoma-loading-postgresql-bht-2-1750252832-1-1)
+DEBUG:bexhoma:testbed.delete_job()
+DEBUG:bexhoma:testbed.delete_job(bexhoma-loading-postgresql-bht-2-1750252832-1-1)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:Looking for files bexhoma-loading-postgresql-bht-2-1750252832-1-1*.datagenerator.log
+DEBUG:bexhoma:Found jobcontainer file bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75.datagenerator.log
+DEBUG:bexhoma:Found times (1750252959, 1750252959)
+DEBUG:bexhoma:Found jobcontainer file bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs.datagenerator.log
+DEBUG:bexhoma:Found times (1750252959, 1750252959)
+DEBUG:bexhoma:Looking for files bexhoma-loading-postgresql-bht-2-1750252832-1-1*.sensor.log
+DEBUG:bexhoma:Found jobcontainer file bexhoma-loading-postgresql-bht-2-1750252832-1-1-wcw75.sensor.log
+DEBUG:bexhoma:Found times (1750252961, 1750253091)
+DEBUG:bexhoma:Found jobcontainer file bexhoma-loading-postgresql-bht-2-1750252832-1-1-p5rqs.sensor.log
+DEBUG:bexhoma:Found times (1750252961, 1750253091)
+DEBUG:bexhoma:Generator times (duration per pod [s]): [0, 0]
+DEBUG:bexhoma:Loader times (duration per pod [s]): [130, 130]
+DEBUG:bexhoma:Total times (start/end per pod and container): [(1750252959, 1750252959), (1750252959, 1750252959), (1750252961, 1750253091), (1750252961, 1750253091)]
+DEBUG:bexhoma:LOADING LABELS
+DEBUG:bexhoma:1750252954
+DEBUG:bexhoma:1750253108
+DEBUG:bexhoma:133
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt label pods bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --overwrite loaded=True timeLoadingEnd="1750253108" timeLoadingStart="1750252954" time_ingested=130 timeLoading=133 time_generated=0)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:configuration.load_data()
+DEBUG:bexhoma:configuration.prepare_init_dbms()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_0_initindexes-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_0_initindexes-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_0_initconstraints-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_0_initconstraints-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_0_initstatistics-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_0_initstatistics-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_1_initindexes-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_1_initindexes-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_1_initconstraints-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_1_initconstraints-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dbms experiments/tpch/PostgreSQL/filled_1_initstatistics-tpch-schema.sql bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf:/tmp//filled_1_initstatistics-tpch-schema.sql)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:load_data_asynch(app=bexhoma, component='sut', experiment=1750252832, configuration=PostgreSQL-BHT-2, pod_sut=bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf, scriptfolder=/tmp/, commands=['filled_0_initindexes-tpch-schema.sql', 'filled_0_initconstraints-tpch-schema.sql', 'filled_0_initstatistics-tpch-schema.sql', 'filled_1_initindexes-tpch-schema.sql', 'filled_1_initconstraints-tpch-schema.sql', 'filled_1_initstatistics-tpch-schema.sql'], loadData=psql -U postgres < {scriptname}, path=/home/perdelt/benchmarks/1750252832, volume=, context=perdelt, service_name=bexhoma-sut-postgresql-bht-2-1750252832, time_offset=133, time_start_int=1750252954, script_type=indexed, namespace=perdelt)
+DEBUG:load_data_asynch:#### time_scriptgroup_start: 14445273.56873248
+DEBUG:load_data_asynch:#### timeLoadingStart: 1750252954
+DEBUG:load_data_asynch:#### timeLoading before scrips: 133
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pods bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --overwrite indexed=False timeLoadingStart="1750252954")
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
 done
 PostgreSQL-BHT-2              : showing loader times
-PostgreSQL-BHT-2              : generator timespan (first to last [s]) = 1
-PostgreSQL-BHT-2              : loader timespan (first to last [s]) = 102
-PostgreSQL-BHT-2              : total timespan (first to last [s]) = 105
+PostgreSQL-BHT-2              : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-2              : loader timespan (first to last [s]) = 130
+PostgreSQL-BHT-2              : total timespan (first to last [s]) = 132
 PostgreSQL-BHT-2              : scripts for tenant #0
 PostgreSQL-BHT-2              : scripts for tenant #1
 #################### ['filled_0_initindexes-tpch-schema.sql', 'filled_0_initconstraints-tpch-schema.sql', 'filled_0_initstatistics-tpch-schema.sql', 'filled_1_initindexes-tpch-schema.sql', 'filled_1_initconstraints-tpch-schema.sql', 'filled_1_initstatistics-tpch-schema.sql']
 PostgreSQL-BHT-2              : start asynch loading scripts of type indexed
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:load_data_asynch:pod/bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf labeled
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_0_initindexes-tpch-schema.sql")
+DEBUG:load_data_asynch:CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:#### script=filled_0_initindexes time=10.494437815621495
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_0_initconstraints-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:load_data_asynch:ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:#### script=filled_0_initconstraints time=47.069120747968554
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_0_initstatistics-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:load_data_asynch:ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ count nation 
+--------------
+           25
+(1 row)
+
+ count region 
+--------------
+            5
+(1 row)
+
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+INFO:  analyzing "tenant_0.customer"
+INFO:  "customer": scanned 3600 of 3600 pages, containing 150000 live rows and 0 dead rows; 150000 rows in sample, 150000 estimated total rows
+INFO:  analyzing "tenant_0.lineitem"
+INFO:  "lineitem": scanned 112600 of 112600 pages, containing 6001215 live rows and 0 dead rows; 300000 rows in sample, 6001215 estimated total rows
+INFO:  analyzing "tenant_0.nation"
+INFO:  "nation": scanned 1 of 1 pages, containing 25 live rows and 0 dead rows; 25 rows in sample, 25 estimated total rows
+INFO:  analyzing "tenant_0.orders"
+INFO:  "orders": scanned 26136 of 26136 pages, containing 1500000 live rows and 0 dead rows; 300000 rows in sample, 1500000 estimated total rows
+INFO:  analyzing "tenant_0.part"
+INFO:  "part": scanned 4128 of 4128 pages, containing 200000 live rows and 0 dead rows; 200000 rows in sample, 200000 estimated total rows
+INFO:  analyzing "tenant_0.partsupp"
+INFO:  "partsupp": scanned 17560 of 17560 pages, containing 800000 live rows and 0 dead rows; 300000 rows in sample, 800000 estimated total rows
+INFO:  analyzing "tenant_0.region"
+INFO:  "region": scanned 1 of 1 pages, containing 5 live rows and 0 dead rows; 5 rows in sample, 5 estimated total rows
+INFO:  analyzing "tenant_0.supplier"
+INFO:  "supplier": scanned 280 of 280 pages, containing 10000 live rows and 0 dead rows; 10000 rows in sample, 10000 estimated total rows
+
+DEBUG:load_data_asynch:#### script=filled_0_initstatistics time=26.998415641486645
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_1_initindexes-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:load_data_asynch:CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:load_data_asynch:#### script=filled_1_initindexes time=10.258654356002808
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_1_initconstraints-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
-- waiting 30s -               : done
+- waiting 30s -               : DEBUG:load_data_asynch:ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+ERROR:  insert or update on table "customer" violates foreign key constraint "customer_c_nationkey_fkey"
+DETAIL:  Key (c_nationkey)=(15) is not present in table "nation".
+
+DEBUG:load_data_asynch:#### script=filled_1_initconstraints time=49.00703224539757
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- bash -c "psql -U postgres < /tmp/filled_1_initstatistics-tpch-schema.sql")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:PostgreSQL-BHT-2 not loaded
+DEBUG:bexhoma:PostgreSQL-BHT-2 still benchmarks to run: [2]
+done
 PostgreSQL-BHT-2              : is loading
+- waiting 30s -               : DEBUG:load_data_asynch:ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ count nation 
+--------------
+            0
+(1 row)
+
+ count region 
+--------------
+            0
+(1 row)
+
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+INFO:  analyzing "tenant_1.customer"
+INFO:  "customer": scanned 3600 of 3600 pages, containing 150000 live rows and 0 dead rows; 150000 rows in sample, 150000 estimated total rows
+INFO:  analyzing "tenant_1.lineitem"
+INFO:  "lineitem": scanned 112600 of 112600 pages, containing 6001215 live rows and 0 dead rows; 300000 rows in sample, 6001215 estimated total rows
+INFO:  analyzing "tenant_1.nation"
+INFO:  "nation": scanned 0 of 0 pages, containing 0 live rows and 0 dead rows; 0 rows in sample, 0 estimated total rows
+INFO:  analyzing "tenant_1.orders"
+INFO:  "orders": scanned 26136 of 26136 pages, containing 1500000 live rows and 0 dead rows; 300000 rows in sample, 1500000 estimated total rows
+INFO:  analyzing "tenant_1.part"
+INFO:  "part": scanned 4128 of 4128 pages, containing 200000 live rows and 0 dead rows; 200000 rows in sample, 200000 estimated total rows
+INFO:  analyzing "tenant_1.partsupp"
+INFO:  "partsupp": scanned 17560 of 17560 pages, containing 800000 live rows and 0 dead rows; 300000 rows in sample, 800000 estimated total rows
+INFO:  analyzing "tenant_1.region"
+INFO:  "region": scanned 0 of 0 pages, containing 0 live rows and 0 dead rows; 0 rows in sample, 0 estimated total rows
+INFO:  analyzing "tenant_1.supplier"
+INFO:  "supplier": scanned 280 of 280 pages, containing 10000 live rows and 0 dead rows; 10000 rows in sample, 10000 estimated total rows
+
+DEBUG:load_data_asynch:#### script=filled_1_initstatistics time=28.502093883231282
+DEBUG:load_data_asynch:#### time_scriptgroup_end: 14445445.950779365
+DEBUG:load_data_asynch:#### timeLoadingEnd: 1750253282
+DEBUG:load_data_asynch:#### timeLoading after scrips: 306
+DEBUG:load_data_asynch:execute_command_in_pod_sut(kubectl --context perdelt label pods bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --overwrite timeLoadingEnd="1750253282"  indexed=True time_indexed=173 timeLoading=306 time_filled_0_initindexes=11 time_filled_0_initconstraints=48 time_filled_0_initstatistics=27 time_filled_1_initindexes=11 time_filled_1_initconstraints=50 time_filled_1_initstatistics=29)
+DEBUG:load_data_asynch:pod/bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf labeled
+
+DEBUG:load_data_asynch:Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:configuration.run_benchmarker_pod()
+DEBUG:bexhoma:configuration.run_benchmarker_pod(current_benchmark_connection = PostgreSQL-BHT-2-1)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:configuration.get_host_memory()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "grep MemTotal /proc/meminfo | awk '{print $2}'")
+DEBUG:bexhoma:configuration.get_host_cpu()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "more /proc/cpuinfo | grep 'model name' | head -n 1")
+DEBUG:bexhoma:configuration.get_host_gpus()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "nvidia-smi -L")
+DEBUG:bexhoma:configuration.get_host_gpu_ids()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "nvidia-smi -L")
+DEBUG:bexhoma:configuration.get_host_cores()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "grep -c ^processor /proc/cpuinfo")
+DEBUG:bexhoma:configuration.get_host_system()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "uname -r")
+DEBUG:bexhoma:configuration.get_host_node()
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods/bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf -o=json)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:configuration.get_host_diskspace_used()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "df / | awk 'NR == 2{print \$3}'")
+DEBUG:bexhoma:configuration.get_host_diskspace_used_data()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "du --block-size=1M -Ls /var/lib/postgresql/data/ | awk 'END{print \$1}'")
+DEBUG:bexhoma:configuration.get_host_volume()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "df -hP | grep volumes")
+DEBUG:bexhoma:configuration.get_host_cuda()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "nvidia-smi | grep 'CUDA'")
+DEBUG:bexhoma:configuration.get_host_memory()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "cat /proc/meminfo | grep HugePages_Total")
+DEBUG:bexhoma:configuration.get_host_memory()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "cat /proc/meminfo | grep HugePages_Free")
+DEBUG:bexhoma:configuration.get_host_cuda()
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-sut-postgresql-bht-2-1750252832-6ddbdf6c6d-l45cf --container=dbms -- sh -c "nvidia-smi | grep 'CUDA'")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:configuration.run_benchmarker_pod(): PostgreSQL-BHT-2-1
+DEBUG:bexhoma:configuration.run_benchmarker_pod(Code=1750252832)
+DEBUG:bexhoma:testbed.log_experiment()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-7bb749fbb4-n6qxf --container=dashboard -- sh -c "mkdir -p /results/1750252832")
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1750252832/queries.config bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/queries.config)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:copy config queries.config: 
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1750252832/PostgreSQL-BHT-2-1.config bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/PostgreSQL-BHT-2-1.config)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:copy config PostgreSQL-BHT-2-1.config: 
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1750252832/PostgreSQL-BHT-2-1.config bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/PostgreSQL-BHT-2-1.config)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:copy config PostgreSQL-BHT-2-1.config: 
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1750252832/connections.config bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/connections.config)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:copy config connections.config: 
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp --container dashboard /home/perdelt/benchmarks/1750252832/protocol.json bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/protocol.json)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:copy config protocol.json: 
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
+DEBUG:bexhoma:I am using messagequeue bexhoma-messagequeue-865dd9b44d-8f82v
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-messagequeue-865dd9b44d-8f82v -- sh -c "redis-cli rpush bexhoma-benchmarker-PostgreSQL-BHT-2-1-1750252832 1 ")
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=messagequeue)
+DEBUG:bexhoma:I am using messagequeue bexhoma-messagequeue-865dd9b44d-8f82v
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-messagequeue-865dd9b44d-8f82v -- sh -c "redis-cli rpush bexhoma-benchmarker-PostgreSQL-BHT-2-1-1750252832 2 ")
+DEBUG:bexhoma:configuration.create_manifest_benchmarking()
+DEBUG:bexhoma:configuration.create_manifest_job(bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1)
+DEBUG:bexhoma:{'BEXHOMA_HOST': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_CLIENT': 1, 'BEXHOMA_EXPERIMENT': '1750252832', 'BEXHOMA_CONNECTION': 'PostgreSQL-BHT-2-1', 'BEXHOMA_CONFIGURATION': 'PostgreSQL-BHT-2', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'tpch', 'BEXHOMA_EXPERIMENT_RUN': '1', 'BEXHOMA_PARALLEL': '2', 'BEXHOMA_NUM_PODS': '2', 'PARALLEL': '2', 'NUM_PODS': '2', 'BEXHOMA_WORKER_LIST': '', 'BEXHOMA_WORKER_LIST_SPACE': '', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-postgresql-bht-2-1750252832:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_URL_LIST': 'jdbc:postgresql://:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_USER': 'postgres', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_TIME_NOW': '2025-06-18 13:28:14', 'BEXHOMA_TIME_START': 0, 'DBMSBENCHMARKER_CLIENT': '2', 'DBMSBENCHMARKER_CODE': '1750252832', 'DBMSBENCHMARKER_CONNECTION': 'PostgreSQL-BHT-2-1', 'DBMSBENCHMARKER_SLEEP': '60', 'DBMSBENCHMARKER_ALIAS': 'DBMS A2', 'SF': '1', 'DBMSBENCHMARKER_RECREATE_PARAMETER': False, 'DBMSBENCHMARKER_SHUFFLE_QUERIES': False, 'DBMSBENCHMARKER_DEV': 1}
+DEBUG:bexhoma:apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: bexhoma
+    component: benchmarker
+    configuration: default
+    experiment: default
+    client: default
+  name: bexhoma-benchmarker
+spec:
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app: bexhoma
+        component: benchmarker
+        configuration: default
+        experiment: default
+        client: default
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: dockerhub
+      nodeSelector:
+        kubernetes.io/hostname: cl-worker19
+      tolerations:
+      - key: nvidia.com/gpu
+        effect: NoSchedule
+      containers:
+      - name: dbmsbenchmarker
+        image: bexhoma/benchmarker_dbmsbenchmarker:v0.14.8
+        imagePullPolicy: Always
+        env:
+        - name: MPLCONFIGDIR
+          value: /tmp/
+        - name: DBMSBENCHMARKER_CLIENT
+          value: '1'
+        - name: DBMSBENCHMARKER_CODE
+          value: '1611607321'
+        - name: DBMSBENCHMARKER_SLEEP
+          value: '60'
+        - name: DBMSBENCHMARKER_CONNECTION
+          value: MySQL-1
+        - name: DBMSBENCHMARKER_ALIAS
+          value: DBMS-A
+        - name: DBMSBENCHMARKER_DEV
+          value: '0'
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 1Gi
+          limits:
+            cpu: 16000m
+            memory: 128Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+        volumeMounts:
+        - name: bexhoma-results
+          mountPath: /results
+      restartPolicy: Never
+      volumes:
+      - name: bexhoma-results
+        persistentVolumeClaim:
+          claimName: bexhoma-results
+
+DEBUG:bexhoma:configuration.create_manifest_job({'MPLCONFIGDIR': '/tmp/', 'DBMSBENCHMARKER_CLIENT': '2', 'DBMSBENCHMARKER_CODE': '1750252832', 'DBMSBENCHMARKER_SLEEP': '60', 'DBMSBENCHMARKER_CONNECTION': 'PostgreSQL-BHT-2-1', 'DBMSBENCHMARKER_ALIAS': 'DBMS A2', 'DBMSBENCHMARKER_DEV': 1, 'BEXHOMA_HOST': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_CLIENT': 1, 'BEXHOMA_EXPERIMENT': '1750252832', 'BEXHOMA_CONNECTION': 'PostgreSQL-BHT-2-1', 'BEXHOMA_CONFIGURATION': 'PostgreSQL-BHT-2', 'BEXHOMA_SLEEP': '60', 'BEXHOMA_VOLUME': 'tpch', 'BEXHOMA_EXPERIMENT_RUN': '1', 'BEXHOMA_PARALLEL': '2', 'BEXHOMA_NUM_PODS': '2', 'PARALLEL': '2', 'NUM_PODS': '2', 'BEXHOMA_WORKER_LIST': '', 'BEXHOMA_WORKER_LIST_SPACE': '', 'BEXHOMA_SUT_NAME': 'bexhoma-sut-postgresql-bht-2-1750252832', 'BEXHOMA_URL': 'jdbc:postgresql://bexhoma-sut-postgresql-bht-2-1750252832:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_URL_LIST': 'jdbc:postgresql://:9091/postgres?reWriteBatchedInserts=true&currentSchema=DBMSBENCHMARKER_SCHEMA', 'BEXHOMA_USER': 'postgres', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_DRIVER': 'org.postgresql.Driver', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_JAR': 'postgresql-42.5.0.jar', 'BEXHOMA_TIME_NOW': '2025-06-18 13:28:14', 'BEXHOMA_TIME_START': 0, 'SF': '1', 'DBMSBENCHMARKER_RECREATE_PARAMETER': False, 'DBMSBENCHMARKER_SHUFFLE_QUERIES': False})
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt create -f /home/perdelt/benchmarks/1750252832/bexhoma-benchmarker-postgresql-bht-2-1-1.yml)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+done
+PostgreSQL-BHT-2              : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-2-1            : start benchmarking
+PostgreSQL-BHT-2              : benchmarking results in folder /home/perdelt/benchmarks/1750252832
+- waiting 10s -               : DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2,client=1
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:Pod=bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has status=Pending
+done
+PostgreSQL-BHT-2              : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv: DEBUG:bexhoma:Pod=bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has status=Pending
+.DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2,client=1
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:job-pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has status Running
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:job-pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx has status Running
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded None
+DEBUG:bexhoma:job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1 has success status 0
+found
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:job-pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has status Succeeded
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has container ['dbmsbenchmarker', '']
+DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1 pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv container dbmsbenchmarker
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv --container=dbmsbenchmarker)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:job-pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx has status Succeeded
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx has container ['dbmsbenchmarker', '']
+DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1 pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx container dbmsbenchmarker
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt logs bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx --container=dbmsbenchmarker)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:getJobStatus app=bexhoma
+DEBUG:bexhoma:api_response.spec.completions 2
+DEBUG:bexhoma:api_response.status.succeeded 2
+DEBUG:bexhoma:Number of completions reached
+DEBUG:bexhoma:job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1 has success status True
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:job-pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has status Succeeded
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv has container ['dbmsbenchmarker', '']
+DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1 pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv container dbmsbenchmarker
+DEBUG:bexhoma:testbed.delete_pod(bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:job-pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx has status Succeeded
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx -o jsonpath="{.spec.containers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt get pods bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx -o jsonpath="{.spec.initContainers[*].name}")
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:Pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx has container ['dbmsbenchmarker', '']
+DEBUG:bexhoma:Store logs of job bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1 pod bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx container dbmsbenchmarker
+DEBUG:bexhoma:testbed.delete_pod(bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx)
+DEBUG:bexhoma:default.end_benchmarking(bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1)
+DEBUG:bexhoma:get_jobs_labels app=bexhoma,component=benchmarker,experiment=1750252832
+DEBUG:bexhoma:Looking for files bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1*.dbmsbenchmarker.log
+DEBUG:bexhoma:Found jobcontainer file bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-vbnkx.dbmsbenchmarker.log
+DEBUG:bexhoma:Found times (1750253306, 1750253330)
+DEBUG:bexhoma:Found jobcontainer file bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1-9dvkv.dbmsbenchmarker.log
+DEBUG:bexhoma:Found times (1750253306, 1750253335)
+DEBUG:bexhoma:BENCHMARKING LABELS
+DEBUG:bexhoma:connection: PostgreSQL-BHT-2-1
+DEBUG:bexhoma:start_time: 1750253294
+DEBUG:bexhoma:end_time: 1750253346
+DEBUG:bexhoma:duration: 52
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1750252832/connections.config bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/connections.config -c dashboard)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:
+DEBUG:bexhoma:testbed.delete_job()
+DEBUG:bexhoma:testbed.delete_job(bexhoma-benchmarker-postgresql-bht-2-1750252832-1-1)
+done
+PostgreSQL-BHT-2              : has running benchmarks
+PostgreSQL-BHT-2-1            : showing benchmarker times
+PostgreSQL-BHT-2-1            : benchmarker timespan (start to end single container [s]) = 52
+PostgreSQL-BHT-2-1            : benchmarker times (start/end per pod and container) = [(1750253306, 1750253330), (1750253306, 1750253335)]
+PostgreSQL-BHT-2-1            : found and updated times {'benchmarker': [(1750253306, 1750253330), (1750253306, 1750253335)]}
+- waiting 30s -               : DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut)
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobStatus app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobs(app=bexhoma,component=loading,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pods_labels()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=worker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_ports_of_service()
+DEBUG:bexhoma:get_ports_of_serviceapp=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:getJobs(app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:getJobPods app=bexhoma,component=benchmarker,experiment=1750252832,configuration=PostgreSQL-BHT-2
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=sut,experiment=1750252832,configuration=PostgreSQL-BHT-2)
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:default.evaluate_results()
+DEBUG:bexhoma:testbed.get_dashboard_pod()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:testbed.get_dashboard_pod_name()=exists
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:bexhoma-dashboard-7bb749fbb4-n6qxfRunning
+DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-7bb749fbb4-n6qxf --container=dashboard -- sh -c "git pull")
 done
 PostgreSQL-BHT-2              : can be stopped, but we leave it running
-PostgreSQL-BHT-2              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750088789 9091
-PostgreSQL-BHT-2              : benchmarking results in folder /home/perdelt/benchmarks/1750088789
-Experiment                    : ends at 2025-06-16 17:53:39.054750 (14281382.525304358) - 429.67s total
+PostgreSQL-BHT-2              : Ready: kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750252832 9091
+Experiment                    : ends at 2025-06-18 15:29:36.469953 (14445539.940506972) - 544.32s total
+Join results DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-7bb749fbb4-n6qxf --container=dashboard -- sh -c "python merge.py -r /results/ -c 1750252832")
+done!
+Build evaluation cube DEBUG:bexhoma:testbed.execute_command_in_pod(kubectl --context perdelt exec bexhoma-dashboard-7bb749fbb4-n6qxf --container=dashboard -- sh -c "python benchmark.py read -e yes -r /results/1750252832")
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp bexhoma-dashboard-7bb749fbb4-n6qxf:/results/1750252832/ /home/perdelt/benchmarks/1750252832/ -c dashboard)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1750252832/ bexhoma-dashboard-7bb749fbb4-n6qxf:/results/ -c dashboard)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:default.get_workflow_list({'PostgreSQL-BHT-2': [[2]]})
+DEBUG:bexhoma:testbed.get_dashboard_pod()
+DEBUG:bexhoma:testbed.get_pods()
+DEBUG:bexhoma:get_pods label(app=bexhoma,component=dashboard)
+DEBUG:bexhoma:testbed.get_dashboard_pod_name()=exists
+DEBUG:bexhoma:testbed.get_pod_status()
+DEBUG:bexhoma:bexhoma-dashboard-7bb749fbb4-n6qxfRunning
+DEBUG:bexhoma:testbed.kubectl(kubectl --context perdelt cp /home/perdelt/benchmarks/1750252832/queries.config bexhoma-dashboard-7bb749fbb4-n6qxf:/results/queries.config -c dashboard)
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+DEBUG:bexhoma:base.test_results()
+DEBUG:bexhoma:default.show_summary()
 done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
@@ -71,13 +1294,16 @@ Experiment                    : uploading workload file
 ## Show Summary
 
 ### Workload
-TPC-H Data Loading SF=1
+TPC-H Queries SF=1
     Type: tpch
-    Duration: 430s 
-    Code: 1750088789
+    Duration: 545s 
+    Code: 1750252832
     This includes the reading queries of TPC-H.
-    This imports TPC-H data sets.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
     Experiment uses bexhoma version 0.8.8.
     Experiment is limited to DBMS ['PostgreSQL'].
@@ -86,28 +1312,109 @@ TPC-H Data Loading SF=1
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [2] pods.
+    Benchmarking is tested with [64] threads, split into [2] pods.
+    Benchmarking is run as [2] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Services
 PostgreSQL-BHT-2
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750088789 9091:9091
+    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-2-1750252832 9091:9091
 
 ### Connections
-PostgreSQL-BHT-2-1 uses docker image postgres:16.1
+PostgreSQL-BHT-2-1-1 uses docker image postgres:16.1
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:398400488
+    disk:399105448
     datadisk:5476
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1750088789
+        code:1750252832
+        TENANT_BY:schema
+        TENANT_NUM:2
+PostgreSQL-BHT-2-1-2 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:399105448
+    datadisk:5476
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1750252832
+        TENANT_BY:schema
+        TENANT_NUM:2
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-2-1-1  PostgreSQL-BHT-2-1-2
+Pricing Summary Report (TPC-H Q1)                                 2600.93               2633.87
+Minimum Cost Supplier Query (TPC-H Q2)                             346.66                122.25
+Shipping Priority (TPC-H Q3)                                       791.08                784.98
+Order Priority Checking Query (TPC-H Q4)                          1305.34               1308.05
+Local Supplier Volume (TPC-H Q5)                                   696.43                 56.86
+Forecasting Revenue Change (TPC-H Q6)                              515.86                515.80
+Forecasting Revenue Change (TPC-H Q7)                              783.44                 58.42
+National Market Share (TPC-H Q8)                                   640.83                 58.95
+Product Type Profit Measure (TPC-H Q9)                            1121.16                  6.94
+Forecasting Revenue Change (TPC-H Q10)                            1313.31                 62.50
+Important Stock Identification (TPC-H Q11)                         263.19                  3.51
+Shipping Modes and Order Priority (TPC-H Q12)                     1069.23               1068.96
+Customer Distribution (TPC-H Q13)                                 2099.02               2103.53
+Forecasting Revenue Change (TPC-H Q14)                             564.41                560.03
+Top Supplier Query (TPC-H Q15)                                     578.17                563.52
+Parts/Supplier Relationship (TPC-H Q16)                            586.53                584.95
+Small-Quantity-Order Revenue (TPC-H Q17)                          2016.68               1863.31
+Large Volume Customer (TPC-H Q18)                                 6831.42               7368.37
+Discounted Revenue (TPC-H Q19)                                     712.29                722.12
+Potential Part Promotion (TPC-H Q20)                               660.92                  6.53
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                940.58                150.69
+Global Sales Opportunity Query (TPC-H Q22)                         241.70                248.84
 
 ### Loading [s]
-                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-2-1           1.0          102.0         1.0      169.0     275.0
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-2-1-1           0.0          130.0         1.0      173.0     306.0
+PostgreSQL-BHT-2-1-2           0.0          130.0         1.0      173.0     306.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS                               
+PostgreSQL-BHT-2-1-1           0.87
+PostgreSQL-BHT-2-1-2           0.25
+
+### Power@Size ((3600*SF)/(geo times))
+                      Power@Size [~Q/h]
+DBMS                                   
+PostgreSQL-BHT-2-1-1            4161.53
+PostgreSQL-BHT-2-1-2           14468.18
+
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                  time [s]  count   SF  Throughput@Size
+DBMS               SF  num_experiment num_client                                       
+PostgreSQL-BHT-2-1 1.0 1              1                 29      2  1.0          5462.07
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-2 - Pods [[2]]
+
+#### Planned
+DBMS PostgreSQL-BHT-2 - Pods [[2]]
 
 ### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
