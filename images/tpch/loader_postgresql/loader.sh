@@ -116,15 +116,13 @@ for i in *tbl*; do
     fi
     if [[ $basename == "nation" ]]
     then
-        if test $BEXHOMA_CHILD -gt 1
-        then
+        if [ "$BEXHOMA_CHILD" -gt 1 ] && [ -z "$BEXHOMA_TENANT_BY" ]; then
             continue
         fi
     fi
     if [[ $basename == "region" ]]
     then
-        if test $BEXHOMA_CHILD -gt 1
-        then
+        if [ "$BEXHOMA_CHILD" -gt 1 ] && [ -z "$BEXHOMA_TENANT_BY" ]; then
             continue
         fi
     fi

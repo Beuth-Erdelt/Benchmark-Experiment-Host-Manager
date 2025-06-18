@@ -68,6 +68,7 @@ spec:
         - {name: BEXHOMA_PORT, value: '9091'}
         - {name: BEXHOMA_CONNECTION, value: 'postgresql'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234'}
+        - {name: BEXHOMA_SCHEMA, value: 'public'}
         - {name: PARALLEL, value: '24'}
         - {name: CHILD, value: '1'}
         - {name: SF, value: '500'}

@@ -68,6 +68,23 @@ else
     echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
+if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
+    echo "BEXHOMA_TENANT_BY is schema"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
+    echo "BEXHOMA_TENANT_BY is database"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+else
+    echo "BEXHOMA_TENANT_BY is not set"
+fi
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
+
 ######################## Wait until all pods of job are ready ########################
 echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # add this pod to counter
@@ -102,8 +119,8 @@ echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
-BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
-echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+#BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+#echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS
