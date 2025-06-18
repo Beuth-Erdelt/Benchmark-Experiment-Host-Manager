@@ -2693,7 +2693,7 @@ scrape_configs:
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
-        if self.num_tenants > 0:
+        if self.num_tenants > 0 and self.tenant_per == 'schema':
             for tenant in range(self.num_tenants):
                 print("{:30s}: scripts for tenant #{}".format(self.configuration, tenant))
                 #print(f"Tenant #{tenant}")
@@ -2711,7 +2711,17 @@ scrape_configs:
                             with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                                 initscript_filled.write(data)
                             self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+filename_target))
-        elif len(self.ddl_parameters):
+            return
+        if self.num_tenants > 0 and self.tenant_per == 'database':
+            script = 'initdatabases.sql'
+            filename_template = self.experiment.cluster.experiments_configfolder+'/'+self.path_experiment_docker+'/'+script
+            script_create_database = ''
+            for tenant in range(self.num_tenants):
+                script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
+            with open(filename_template, "w") as initscript_filled:
+                initscript_filled.write(script_create_database)
+            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=filename_template, to_name=self.pod_sut+':'+scriptfolder+script))
+        if len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
                 filename_template = self.path_experiment_docker+'/'+script
@@ -3067,18 +3077,7 @@ scrape_configs:
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
         commands = scripts.copy()
-        if self.num_tenants > 0:
-            if self.tenant_per == 'schema':
-                commands_tenants = []
-                for tenant in range(self.num_tenants):
-                    for c in commands:
-                        filename_filled = f'filled_{tenant}_{c}'
-                        commands_tenants.append(filename_filled)
-                commands = commands_tenants.copy()
-            elif self.tenant_per == 'database':
-                pass
-        print("####################", commands)
-        #commands = self.initscript.copy()
+        database = [self.dockertemplate['template']['JDBC']['database']]
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
@@ -3090,6 +3089,22 @@ scrape_configs:
             volume = name_pvc
         else:
             volume = ''
+        if self.num_tenants > 0:
+            if self.tenant_per == 'schema':
+                commands_tenants = []
+                for tenant in range(self.num_tenants):
+                    for c in commands:
+                        filename_filled = f'filled_{tenant}_{c}'
+                        commands_tenants.append(filename_filled)
+                commands = commands_tenants.copy()
+            elif self.tenant_per == 'database':
+                commands.insert(0, "initdatabases.sql")
+                databases = database.copy()
+                for tenant in range(self.num_tenants):
+                    databases.append(f'tenant_{tenant}')
+                database = databases.copy()
+        print("####################", commands)
+        #commands = self.initscript.copy()
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
         if not 'loadData' in self.dockertemplate:
             print("{:30s}: no load command found in config".format(self.configuration))
@@ -3115,6 +3130,7 @@ scrape_configs:
                 'time_start_int':time_start_int,
                 'namespace':self.experiment.cluster.namespace,
                 'num_tenants':self.num_tenants,
+                'database':database,
             }
             thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
             thread.start()
@@ -3257,6 +3273,7 @@ scrape_configs:
             env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
             env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
             env_default['BEXHOMA_DATABASE'] = c['JDBC']['database']
+            env_default['BEXHOMA_SCHEMA'] = c['JDBC']['schema']
             env_default['BEXHOMA_VOLUME'] = self.experiment.volume
             if isinstance(c['JDBC']['jar'], str):
                 env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
@@ -3962,7 +3979,7 @@ class kinetica(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace='', num_tenants=0):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace='', num_tenants=0, database=[]):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
@@ -4025,43 +4042,44 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     times_script = dict()
     shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript
-    for c in commands:
-        time_scrip_start = default_timer() # for more precise float time spans
-        #time_now = str(datetime.now())
-        #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-        filename, file_extension = os.path.splitext(c)
-        if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stdout) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stdout)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stderr) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stderr)
-        elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stdout) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stdout)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stderr) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stderr)
-        #time_now = str(datetime.now())
-        #time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-        time_scrip_end = default_timer()
-        sep = filename.find("-")
-        if sep > 0:
-            subscript_type = filename[:sep].lower()
-            times_script[subscript_type] = time_scrip_end - time_scrip_start
-            logger.debug("#### script="+str(subscript_type)+" time="+str(times_script[subscript_type]))
+    for db in database:
+        for c in commands:
+            time_scrip_start = default_timer() # for more precise float time spans
+            #time_now = str(datetime.now())
+            #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            filename, file_extension = os.path.splitext(c)
+            if file_extension.lower() == '.sql':
+                stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace, database=db), pod_sut, context)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}{database}.log'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stdout) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stdout)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}{database}.error'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stderr) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stderr)
+            elif file_extension.lower() == '.sh':
+                stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace, database=db), pod_sut, context)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}{database}.log'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stdout) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stdout)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}{database}.error'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stderr) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stderr)
+            #time_now = str(datetime.now())
+            #time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            time_scrip_end = default_timer()
+            sep = filename.find("-")
+            if sep > 0:
+                subscript_type = filename[:sep].lower()
+                times_script[subscript_type] = time_scrip_end - time_scrip_start
+                logger.debug("#### script="+str(subscript_type)+" time="+str(times_script[subscript_type]))
     # mark pod
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())

@@ -233,8 +233,9 @@ if __name__ == '__main__':
                     BEXHOMA_TENANT_NUM = config.num_tenants,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-                config.set_experiment(script='Schema_tenant')
-                config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
+                if config.tenant_per == 'schema':
+                    config.set_experiment(script='Schema_tenant')
+                    config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
                 config.set_eval_parameters(
                     TENANT_BY = config.tenant_per,
                     TENANT_NUM = config.num_tenants,
