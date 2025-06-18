@@ -3068,12 +3068,15 @@ scrape_configs:
         scriptfolder = '/tmp/'
         commands = scripts.copy()
         if self.num_tenants > 0:
-            commands_tenants = []
-            for tenant in range(self.num_tenants):
-                for c in commands:
-                    filename_filled = f'filled_{tenant}_{c}'
-                    commands_tenants.append(filename_filled)
-            commands = commands_tenants.copy()
+            if self.tenant_per == 'schema':
+                commands_tenants = []
+                for tenant in range(self.num_tenants):
+                    for c in commands:
+                        filename_filled = f'filled_{tenant}_{c}'
+                        commands_tenants.append(filename_filled)
+                commands = commands_tenants.copy()
+            elif self.tenant_per == 'database':
+                pass
         print("####################", commands)
         #commands = self.initscript.copy()
         use_storage = self.use_storage()
