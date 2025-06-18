@@ -143,6 +143,7 @@ class default():
         self.num_loading_pods = 0
         self.num_maintaining_pods = 0
         self.num_tenants = 0
+        self.tenant_per = ''                                                    #: '', or schema, database or container
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
@@ -2275,6 +2276,10 @@ scrape_configs:
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
+            if self.tenant_per == 'schema':
+                schema = 'DBMSBENCHMARKER_SCHEMA'
+            elif self.tenant_per == 'database':
+                database = 'DBMSBENCHMARKER_DATABASE'
             c['JDBC']['url'] = c['JDBC']['url'].format(
                 serverip=serverip,
                 dbname=self.experiment.volume,
@@ -3221,6 +3226,10 @@ scrape_configs:
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
+            if self.tenant_per == 'schema':
+                schema = 'DBMSBENCHMARKER_SCHEMA'
+            elif self.tenant_per == 'database':
+                database = 'DBMSBENCHMARKER_DATABASE'
             env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
                 serverip=servicename,
                 dbname=self.experiment.volume,

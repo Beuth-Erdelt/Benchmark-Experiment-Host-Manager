@@ -73,6 +73,8 @@ if __name__ == '__main__':
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node for sut', default=None)
     parser.add_argument('-rnl', '--request-node-loading', help='request a specific node for loading pods', default=None)
     parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node for benchmarking pods', default=None)
+    parser.add_argument('-mtn', '--multi-tenant-num', help='number of tenant', default=0)
+    parser.add_argument('-mtb', '--multi-tenant-by', help='one tenant per (schema, database, container)', default='')
     parser.add_argument('-tr',  '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     parser.add_argument('-ii',  '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
     parser.add_argument('-ic',  '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
@@ -122,6 +124,8 @@ if __name__ == '__main__':
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
     num_worker_shards = int(args.num_worker_shards)
+    multi_tenant_num = int(args.multi_tenant_num)
+    multi_tenant_by = args.multi_tenant_by
     ##############
     ### specific to: dbmsbenchmarker TPC-H
     ##############
@@ -197,6 +201,8 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                config.num_tenants = multi_tenant_num
+                config.tenant_per = multi_tenant_by
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                     )
@@ -213,17 +219,26 @@ if __name__ == '__main__':
                     BEXHOMA_SYNCH_GENERATE = 1,
                     TRANSFORM_RAW_DATA = 1,
                     TPCH_TABLE = limit_import_table,
+                    BEXHOMA_TENANT_BY = config.tenant_per,
+                    BEXHOMA_TENANT_NUM = config.num_tenants,
                     )
                 config.set_benchmarking_parameters(
                     SF = SF,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
+                    TENANT_BY = config.tenant_per,
+                    TENANT_NUM = config.num_tenants,
+                    BEXHOMA_TENANT_BY = config.tenant_per,
+                    BEXHOMA_TENANT_NUM = config.num_tenants,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
                 config.set_experiment(script='Schema_tenant')
                 config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
-                config.num_tenants = 2
+                config.set_eval_parameters(
+                    TENANT_BY = config.tenant_per,
+                    TENANT_NUM = config.num_tenants,
+                    )
             if ("CedarDB" in args.dbms):
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'
