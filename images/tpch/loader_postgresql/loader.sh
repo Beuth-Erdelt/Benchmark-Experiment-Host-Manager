@@ -86,6 +86,32 @@ then
     done
 fi
 
+######################## Wait until all pods of experiment are ready ########################
+if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+	if test $BEXHOMA_SYNCH_LOAD -gt 0
+	then
+		echo "Querying counter bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT"
+		# add this pod to counter
+		redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT"
+		# wait for number of pods to be as expected
+		while : ; do
+			PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT)"
+			echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+			if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+			then
+				echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+				break
+			elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+			then
+				echo "Too many pods! Restart occured?"
+				exit 0
+			else
+				echo "We have to wait"
+				sleep 1
+			fi
+		done
+	fi
+fi
 
 ######################## Multi-Tenant parameters ########################
 BEXHOMA_NUM_PODS=1

@@ -114,6 +114,37 @@ while : ; do
     fi
 done
 
+######################## Wait until all pods of experiment are ready ########################
+if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+	echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+	# add this pod to counter
+	redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+	# wait for number of pods to be as expected
+	while : ; do
+		PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
+		echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+		if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+		then
+			echo "PODS_RUNNING contains a number."
+		else
+			echo "PODS_RUNNING does not contain a number."
+			exit 0
+		fi
+		if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+		then
+			echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+			break
+		elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+		then
+			echo "Too many pods! Restart occured?"
+			exit 0
+		else
+			echo "We have to wait"
+			sleep 1
+		fi
+	done
+fi
+
 ######################## Show more parameters ########################
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
