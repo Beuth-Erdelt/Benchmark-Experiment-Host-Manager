@@ -24,15 +24,27 @@ echo "SF $SF"
 
 ######################## Multi-Tenant parameters ########################
 BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
+BEXHOMA_CHILD_TMP=$BEXHOMA_CHILD
 if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
     echo "BEXHOMA_TENANT_BY is schema"
-    BEXHOMA_NUM_PODS=1
+    #BEXHOMA_NUM_PODS=1
+	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
     BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     echo "BEXHOMA_TENANT_BY is database"
-    BEXHOMA_NUM_PODS=1
+    #BEXHOMA_NUM_PODS=1
+	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
     BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 else
     echo "BEXHOMA_TENANT_BY is not set"
 fi
@@ -114,7 +126,7 @@ if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
 fi
 
 ######################## Multi-Tenant parameters ########################
-BEXHOMA_NUM_PODS=1
+#BEXHOMA_NUM_PODS=1
 
 ######################## Start measurement of time ########################
 bexhoma_start_epoch=$(date -u +%s)

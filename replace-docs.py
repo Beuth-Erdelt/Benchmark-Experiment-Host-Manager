@@ -5,6 +5,7 @@ import re
 md_directory = 'docs'
 logs_directory = 'logs_tests'
 
+"""
 # Regular expression to match: <filename>.log\n```bash\n...``` blocks
 pattern = re.compile(r'(?P<logfile>[\w\-.\/]+\.log)\n```bash\n(.*?)\n```', re.DOTALL)
 
@@ -30,6 +31,8 @@ for filename in os.listdir(md_directory):
         new_content = pattern.sub(replace_block, content)
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(new_content)
+
+"""
 
 
 # Regular expression to match: <filename>.log\n```bash\n...``` blocks
