@@ -377,6 +377,8 @@ class default():
         skip_loading = args.skip_loading
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
+        self.num_tenants = multi_tenant_num
+        self.tenant_per = multi_tenant_by
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
@@ -479,7 +481,7 @@ class default():
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
         if multi_tenant_num > 0:
-            self.workload['info'] = self.workload['info']+"\nNumber of tenants per {} is {}.".format(multi_tenant_by, multi_tenant_num)
+            self.workload['info'] = self.workload['info']+"\nNumber of tenants is {}, one {} per tenant.".format(multi_tenant_num, multi_tenant_by)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:

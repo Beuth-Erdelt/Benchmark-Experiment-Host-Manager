@@ -50,6 +50,9 @@ ENV BENCHBASE_STATUS_INTERVAL=
 ENV BENCHBASE_NEWCONNPERTXN=false
 ENV BENCHBASE_CREATE_SCHEMA=true
 
+RUN apt update
+RUN apt install redis-tools -y
+
 COPY ./generator.sh /benchbase/generator.sh
 RUN ["chmod", "+x", "/benchbase/generator.sh"]
 RUN chown -R containeruser:containergroup /benchbase/generator.sh

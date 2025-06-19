@@ -9,4 +9,5 @@ VACUUM ANALYZE oorder;
 VACUUM ANALYZE order_line;
 VACUUM ANALYZE item;
 
+SELECT COUNT(*) AS "count warehouses" FROM warehouse;
 
