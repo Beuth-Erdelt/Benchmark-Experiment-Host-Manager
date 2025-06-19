@@ -124,8 +124,8 @@ if __name__ == '__main__':
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
     num_worker_shards = int(args.num_worker_shards)
-    multi_tenant_num = int(args.multi_tenant_num)
-    multi_tenant_by = args.multi_tenant_by
+    #multi_tenant_num = int(args.multi_tenant_num)
+    #multi_tenant_by = args.multi_tenant_by
     ##############
     ### specific to: dbmsbenchmarker TPC-H
     ##############
@@ -164,6 +164,8 @@ if __name__ == '__main__':
     experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
+    #experiment.num_tenants = multi_tenant_num
+    #experiment.tenant_per = multi_tenant_by
     # remove running dbms
     #experiment.clean()
     experiment.prepare_testbed(command_args)
@@ -199,47 +201,91 @@ if __name__ == '__main__':
             split_portion = int(loading_pods_total/loading_pods_split)
             if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
-                name_format = 'PostgreSQL-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
-                config.num_tenants = multi_tenant_num
-                config.tenant_per = multi_tenant_by
-                config.set_storage(
-                    storageConfiguration = 'postgresql'
-                    )
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    SF = SF,
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
-                    BEXHOMA_TENANT_BY = config.tenant_per,
-                    BEXHOMA_TENANT_NUM = config.num_tenants,
-                    )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    TENANT_BY = config.tenant_per,
-                    TENANT_NUM = config.num_tenants,
-                    BEXHOMA_TENANT_BY = config.tenant_per,
-                    BEXHOMA_TENANT_NUM = config.num_tenants,
-                    )
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-                if config.tenant_per == 'schema':
-                    config.set_experiment(script='Schema_tenant')
-                    config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
-                config.set_eval_parameters(
-                    TENANT_BY = config.tenant_per,
-                    TENANT_NUM = config.num_tenants,
-                    )
+                if experiment.tenant_per == 'container':
+                    for tenant in range(experiment.num_tenants):
+                        name_format = 'PostgreSQL-{cluster}-{pods}-{tenant}'
+                        config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant), dialect='PostgreSQL', alias='DBMS A2')
+                        #config.num_tenants = multi_tenant_num
+                        #config.tenant_per = multi_tenant_by
+                        config.set_storage(
+                            storageConfiguration = f'postgresql-{tenant}'
+                            )
+                        if skip_loading:
+                            config.loading_deactivated = True
+                        config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                        config.set_loading_parameters(
+                            SF = SF,
+                            PODS_TOTAL = str(loading_pods_total),
+                            PODS_PARALLEL = str(split_portion),
+                            STORE_RAW_DATA = 1,
+                            STORE_RAW_DATA_RECREATE = 0,
+                            BEXHOMA_SYNCH_LOAD = 1,
+                            BEXHOMA_SYNCH_GENERATE = 1,
+                            TRANSFORM_RAW_DATA = 1,
+                            TPCH_TABLE = limit_import_table,
+                            BEXHOMA_TENANT_BY = config.tenant_per,
+                            BEXHOMA_TENANT_NUM = config.num_tenants,
+                            )
+                        config.set_benchmarking_parameters(
+                            SF = SF,
+                            DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                            DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                            DBMSBENCHMARKER_DEV = debugging,
+                            TENANT_BY = config.tenant_per,
+                            TENANT_NUM = config.num_tenants,
+                            BEXHOMA_TENANT_BY = config.tenant_per,
+                            BEXHOMA_TENANT_NUM = config.num_tenants,
+                            )
+                        config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                        if config.tenant_per == 'schema':
+                            config.set_experiment(script='Schema_tenant')
+                            config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
+                        config.set_eval_parameters(
+                            TENANT_BY = config.tenant_per,
+                            TENANT_NUM = config.num_tenants,
+                            )
+                else:
+                    name_format = 'PostgreSQL-{cluster}-{pods}'
+                    config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                    #config.num_tenants = multi_tenant_num
+                    #config.tenant_per = multi_tenant_by
+                    config.set_storage(
+                        storageConfiguration = 'postgresql'
+                        )
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                    config.set_loading_parameters(
+                        SF = SF,
+                        PODS_TOTAL = str(loading_pods_total),
+                        PODS_PARALLEL = str(split_portion),
+                        STORE_RAW_DATA = 1,
+                        STORE_RAW_DATA_RECREATE = 0,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        BEXHOMA_SYNCH_GENERATE = 1,
+                        TRANSFORM_RAW_DATA = 1,
+                        TPCH_TABLE = limit_import_table,
+                        BEXHOMA_TENANT_BY = config.tenant_per,
+                        BEXHOMA_TENANT_NUM = config.num_tenants,
+                        )
+                    config.set_benchmarking_parameters(
+                        SF = SF,
+                        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+                        DBMSBENCHMARKER_DEV = debugging,
+                        TENANT_BY = config.tenant_per,
+                        TENANT_NUM = config.num_tenants,
+                        BEXHOMA_TENANT_BY = config.tenant_per,
+                        BEXHOMA_TENANT_NUM = config.num_tenants,
+                        )
+                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                    if config.tenant_per == 'schema':
+                        config.set_experiment(script='Schema_tenant')
+                        config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
+                    config.set_eval_parameters(
+                        TENANT_BY = config.tenant_per,
+                        TENANT_NUM = config.num_tenants,
+                        )
             if ("CedarDB" in args.dbms):
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'
