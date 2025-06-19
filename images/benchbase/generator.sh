@@ -8,19 +8,30 @@ SECONDS_START_SCRIPT=$SECONDS
 
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+echo "BEXHOMA_VOLUME:$BEXHOMA_VOLUME"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_TENANT_NUM:$BEXHOMA_TENANT_NUM"
+echo "BEXHOMA_TENANT_BY:$BEXHOMA_TENANT_BY"
 
 ######################## Get number of client in job queue ########################
-#echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-#redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-#BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+# redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$BEXHOMA_CHILD" ]
 then
-	BEXHOMA_CHILD=1
+    echo "No entry found in message queue. I assume this is the first child."
+    BEXHOMA_CHILD=1
+else
+    echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
-# echo "$BEXHOMA_CHILD" > /tmp/ycsb/BEXHOMA_CHILD
+#if [ -z "$BEXHOMA_CHILD" ]
+#then
+#	BEXHOMA_CHILD=1
+#fi
 
 
 ############ Show more parameters ############
@@ -36,7 +47,53 @@ echo "BENCHBASE_BATCHSIZE $BENCHBASE_BATCHSIZE"
 echo "BENCHBASE_CREATE_SCHEMA $BENCHBASE_CREATE_SCHEMA"
 echo "BENCHBASE_NEWCONNPERTXN $BENCHBASE_NEWCONNPERTXN"
 
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
+if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
+    echo "BEXHOMA_TENANT_BY is schema"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
+    echo "BEXHOMA_TENANT_BY is database"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+else
+    echo "BEXHOMA_TENANT_BY is not set"
+fi
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 
+######################## Wait until all pods of experiment are ready ########################
+if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+    echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    # add this pod to counter
+    redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    # wait for number of pods to be as expected
+    while : ; do
+        PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
+        echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+        if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+        then
+            echo "PODS_RUNNING contains a number."
+        else
+            echo "PODS_RUNNING does not contain a number."
+            exit 0
+        fi
+        if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+        then
+            echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+            break
+        elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+        then
+            echo "Too many pods! Restart occured?"
+            exit 0
+        else
+            echo "We have to wait"
+            sleep 1
+        fi
+    done
+fi
 
 ############ Start measurement of time of execution ############
 SECONDS_START=$SECONDS
@@ -82,6 +139,7 @@ sed -i "s/BEXHOMA_PORT/$BEXHOMA_PORT/" $FILENAME
 sed -i "s/BEXHOMA_USER/$BEXHOMA_USER/" $FILENAME
 sed -i "s/BEXHOMA_PASSWORD/$BEXHOMA_PASSWORD/" $FILENAME
 sed -i "s/BEXHOMA_DATABASE/$BEXHOMA_DATABASE/" $FILENAME
+sed -i "s/BEXHOMA_SCHEMA/$BEXHOMA_SCHEMA/" $FILENAME
 sed -i "s/BENCHBASE_TIME/$BENCHBASE_TIME/" $FILENAME
 sed -i "s/BENCHBASE_TARGET/$BENCHBASE_TARGET/" $FILENAME
 sed -i "s/BEXHOMA_SF/$SF/" $FILENAME
