@@ -372,6 +372,8 @@ class default():
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
         skip_loading = args.skip_loading
+        multi_tenant_num = int(args.multi_tenant_num)
+        multi_tenant_by = args.multi_tenant_by
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
@@ -473,6 +475,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nPooling is done with {} pods having {} inbound and {} outbound connections in total.".format(num_pooling_pods, num_pooling_in, num_pooling_out)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+        if multi_tenant_num > 0:
+            self.workload['info'] = self.workload['info']+"\nNumber of tenants per {} is {}.".format(multi_tenant_by, multi_tenant_num)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
