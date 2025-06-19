@@ -3080,7 +3080,10 @@ scrape_configs:
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
         commands = scripts.copy()
-        database = [self.dockertemplate['template']['JDBC']['database']]
+        c = self.dockertemplate['template']
+        database = c['JDBC']['database'] if 'database' in c['JDBC'] else 'default'
+        schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+        databases = [database]
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
@@ -3102,10 +3105,10 @@ scrape_configs:
                 commands = commands_tenants.copy()
             elif self.tenant_per == 'database':
                 commands.insert(0, "initdatabases.sql")
-                databases = database.copy()
+                #databases = database.copy()
                 for tenant in range(self.num_tenants):
                     databases.append(f'tenant_{tenant}')
-                database = databases.copy()
+                #database = databases.copy()
         print("####################", commands)
         #commands = self.initscript.copy()
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
@@ -3133,7 +3136,7 @@ scrape_configs:
                 'time_start_int':time_start_int,
                 'namespace':self.experiment.cluster.namespace,
                 'num_tenants':self.num_tenants,
-                'database':database,
+                'database':databases,
             }
             thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
             thread.start()
@@ -3279,8 +3282,8 @@ scrape_configs:
             env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
             env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
             env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
-            env_default['BEXHOMA_DATABASE'] = c['JDBC']['database']
-            env_default['BEXHOMA_SCHEMA'] = c['JDBC']['schema']
+            env_default['BEXHOMA_DATABASE'] = database#c['JDBC']['database']
+            env_default['BEXHOMA_SCHEMA'] = schema#c['JDBC']['schema']
             env_default['BEXHOMA_VOLUME'] = self.experiment.volume
             if isinstance(c['JDBC']['jar'], str):
                 env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
