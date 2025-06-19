@@ -109,6 +109,8 @@ class default():
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
+        self.num_maintaining_pods = 0
+        self.num_tenants = 0
         self.cluster.add_experiment(self)
         self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
         self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
@@ -1448,9 +1450,11 @@ class default():
                             config.client = config.client+1
                             if config.client > self.client:
                                 # this is the first instance of the next benchmark run
+                                print("Reset experiment counter. This is first run of client number {}.".format(config.client))
                                 self.client = config.client
                                 # reset number of clients per experiment
                                 redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
+                                self.cluster.set_pod_counter(queue=redisQueue, value=0)
                             print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                             if len(config.benchmarking_parameters_list) > 0:
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)

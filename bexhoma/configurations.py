@@ -142,8 +142,8 @@ class default():
         self.num_maintaining = 0
         self.num_loading_pods = 0
         self.num_maintaining_pods = 0
-        self.num_tenants = 0
-        self.tenant_per = ''                                                    #: '', or schema, database or container
+        self.num_tenants = self.experiment.num_tenants
+        self.tenant_per = self.experiment.tenant_per                            #: '', or schema, database or container
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
@@ -694,8 +694,8 @@ class default():
         redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
         self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         # reset number of clients per experiment
-        redisQueue = '{}-{}-{}'.format(app, 'loader-podcount', self.code)
-        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
+        #redisQueue = '{}-{}-{}'.format(app, 'loader-podcount', self.code)
+        #self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         # start job
         job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
@@ -2481,7 +2481,6 @@ scrape_configs:
         for i in range(1, parallelism+1):
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         if not only_prepare:
             # create pods
             yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
