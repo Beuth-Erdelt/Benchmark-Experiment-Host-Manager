@@ -4024,14 +4024,14 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     logger.debug("#### timeLoadingStart: "+str(timeLoadingStart))
     logger.debug("#### timeLoading before scrips: "+str(time_offset))
     # mark pod
-    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
+    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
+        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -4081,6 +4081,18 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 times_script[subscript_type] = time_scrip_end - time_scrip_start
                 logger.debug("#### script="+str(subscript_type)+" time="+str(times_script[subscript_type]))
     # mark pod
+    # get labels
+    num_tenants_ready = 0
+    if num_tenants > 0:
+        # kubectl get pod bexhoma-sut-postgresql-bht-2-1750309362-8657bf4ff5-njg5d -o jsonpath="{.metadata.labels}"
+        fullcommand = 'get pod {pod_sut} -o jsonpath="{{.metadata.labels}}"'.format(pod_sut=pod_sut)
+        labels = kubectl(fullcommand, context)
+        #print(labels)
+        labels = json.loads(labels)
+        if 'num_tenants_ready' in labels:
+            num_tenants_ready = int(labels['num_tenants_ready'])
+    num_tenants_ready = num_tenants_ready + 1
+    # set time end and number of tenants ready
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
     timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
@@ -4095,6 +4107,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # store infos in labels of sut pod and it's pvc
     labels = dict()
     labels[script_type] = 'True'
+    labels['num_tenants_ready'] = num_tenants_ready
     labels['time_{script_type}'.format(script_type=script_type)] = ceil(time_scriptgroup_end - time_scriptgroup_start)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
     labels['timeLoading'] = timeLoading

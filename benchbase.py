@@ -77,6 +77,8 @@ if __name__ == '__main__':
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
     parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
     parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
+    parser.add_argument('-mtn', '--multi-tenant-num', help='number of tenant', default=0)
+    parser.add_argument('-mtb', '--multi-tenant-by', help='one tenant per (schema, database, container)', default='')
     parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     #parser.add_argument('-nti', '--num-time', help='time per benchmark in seconds', default="60")
     parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb'])
