@@ -690,8 +690,11 @@ class default():
         for i in range(1, self.num_loading+1):
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        # reset number of clients
+        # reset number of clients per job
         redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
+        # reset number of clients per experiment
+        redisQueue = '{}-{}-{}'.format(app, 'loader-podcount', self.code)
         self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         # start job
         job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
@@ -2478,6 +2481,7 @@ scrape_configs:
         for i in range(1, parallelism+1):
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         if not only_prepare:
             # create pods
             yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
@@ -3227,6 +3231,10 @@ scrape_configs:
         env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
         env_default['BEXHOMA_PARALLEL'] = str(parallelism)
         env_default['BEXHOMA_NUM_PODS'] = str(num_pods)
+        if self.num_tenants > 0 and self.tenant_per == 'container':
+            env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(int(num_pods)*self.num_tenants)
+        else:
+            env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(num_pods)
         env_default['PARALLEL'] = str(parallelism)  # deprecated
         env_default['NUM_PODS'] = str(num_pods)     # deprecated
         name = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
