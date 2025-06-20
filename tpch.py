@@ -208,7 +208,7 @@ if __name__ == '__main__':
                         #config.num_tenants = multi_tenant_num
                         #config.tenant_per = multi_tenant_by
                         config.set_storage(
-                            storageConfiguration = f'postgresql-{tenant}'
+                            storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                             )
                         if skip_loading:
                             config.loading_deactivated = True
@@ -246,9 +246,14 @@ if __name__ == '__main__':
                     config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
                     #config.num_tenants = multi_tenant_num
                     #config.tenant_per = multi_tenant_by
-                    config.set_storage(
-                        storageConfiguration = 'postgresql'
-                        )
+                    if config.tenant_per:
+                        config.set_storage(
+                            storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
+                            )
+                    else:
+                        config.set_storage(
+                            storageConfiguration = 'postgresql'
+                            )
                     if skip_loading:
                         config.loading_deactivated = True
                     config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
