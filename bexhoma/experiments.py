@@ -3764,9 +3764,18 @@ class benchbase(default):
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
             print("\n### Execution")
+            print("\n#### Per Pod")
             warehouses = int(df['sf'].max())
+            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            #print(df_plot)
+            df_plot_filtered = pd.DataFrame()
+            for col in columns:
+                if col in df_plot.columns:
+                    df_plot_filtered[col] = df_plot.loc[:,col]
+            print(df_plot_filtered.sort_values(['experiment_run', 'client', 'child']))
+            print("\n#### Aggregated Parallel")
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             #print(df_aggregated)
             #print(df_aggregated.T)
