@@ -379,8 +379,8 @@ class default():
         multi_tenant_by = args.multi_tenant_by
         self.num_tenants = multi_tenant_num
         self.tenant_per = multi_tenant_by
-        self.workload['num_tenants'] = num_tenants
-        self.workload['tenant_per'] = tenant_per
+        self.workload['num_tenants'] = self.num_tenants
+        self.workload['tenant_per'] = self.tenant_per
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()

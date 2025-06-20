@@ -800,7 +800,7 @@ test_benchbase_run_postgresql_tenants_container.log
 ### Workload
 Benchbase Workload tpcc SF=1
     Type: benchbase
-    Duration: 1234s 
+    Duration: 1234s
     Code: 1750395704
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
@@ -885,6 +885,16 @@ PostgreSQL-1-1-1024-1-2 uses docker image postgres:16.1
                 TENANT_NUM:2
 
 ### Execution
+
+#### Per Pod
+                           experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                
+PostgreSQL-1-1-1024-0-1-1               1         10    1024       1      1  300.0           0                      0.469998                   0.473332   99.377592                                                      34826.0                                              13768.0
+PostgreSQL-1-1-1024-1-1-1               1         10    1024       1      1  300.0           0                      0.513332                   0.513332  107.775705                                                      42889.0                                              16516.0
+PostgreSQL-1-1-1024-0-2-1               1         10    1024       2      1  300.0           0                      0.473332                   0.473332   99.377598                                                      37167.0                                              14241.0
+PostgreSQL-1-1-1024-1-2-1               1         10    1024       2      1  300.0           0                      0.466665                   0.469999   98.677757                                                      35696.0                                              13238.0
+
+#### Aggregated Parallel
                          experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 PostgreSQL-1-1-1024-0-1               1         10    1024          1  300.0           0                          0.47                       0.47       99.38                                                      34826.0                                              13768.0
 PostgreSQL-1-1-1024-0-2               1         10    1024          1  300.0           0                          0.47                       0.47       99.38                                                      37167.0                                              14241.0

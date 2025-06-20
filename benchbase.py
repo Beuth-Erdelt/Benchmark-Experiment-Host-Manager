@@ -215,7 +215,7 @@ if __name__ == '__main__':
                             name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
                             config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant), alias='DBMS A')
                             config.set_storage(
-                                storageConfiguration = f'postgresql-{tenant}'
+                                storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                                 )
                             config.set_loading_parameters(
                                 #PARALLEL = str(loading_pods), # =1
@@ -279,9 +279,14 @@ if __name__ == '__main__':
                     else:
                         name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                         config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
-                        config.set_storage(
-                            storageConfiguration = 'postgresql'
-                            )
+                        if config.tenant_per:
+                            config.set_storage(
+                                storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
+                                )
+                        else:
+                            config.set_storage(
+                                storageConfiguration = 'postgresql'
+                                )
                         config.set_loading_parameters(
                             #PARALLEL = str(loading_pods), # =1
                             SF = SF,
