@@ -25,6 +25,7 @@
     ./Example-Redis.md
     ./Example-CloudDatabase.md
     ./Example-custom.md
+    ./Example-Multi-Tenant.md
     ./Tool.md
     ./Concept.md
     ./Config.md
