@@ -238,6 +238,7 @@ if __name__ == '__main__':
                             config.set_eval_parameters(
                                 TENANT_BY = config.tenant_per,
                                 TENANT_NUM = config.num_tenants,
+                                TENANT = tenant,
                                 )
                             executor_list = []
                             for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
@@ -304,7 +305,10 @@ if __name__ == '__main__':
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
                             )
-                        config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
+                        if config.num_tenants > 0:
+                            config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
+                        else:
+                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                         if config.tenant_per == 'schema':
                             config.set_experiment(script='Schema_tenant')
                             config.set_experiment(indexing='Checks_tenant')

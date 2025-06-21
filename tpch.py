@@ -240,6 +240,7 @@ if __name__ == '__main__':
                         config.set_eval_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
+                            TENANT = tenant,
                             )
                 else:
                     name_format = 'PostgreSQL-{cluster}-{pods}'
