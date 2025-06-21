@@ -38,6 +38,7 @@ import threading
 from io import StringIO
 import hiyapyco
 from math import ceil
+import time
 
 from dbmsbenchmarker import *
 
@@ -3140,7 +3141,7 @@ scrape_configs:
                         print("load_data_asynch - run scripts", thread_args)
                         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                         thread.start()
-                        sleep(1)
+                        time.sleep(1)
                 elif self.tenant_per == 'database':
                     #commands.insert(0, "initdatabases.sql")
                     ##databases = database.copy()
@@ -3198,7 +3199,32 @@ scrape_configs:
                         print("load_data_asynch - run scripts", thread_args)
                         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                         thread.start()
-                        sleep(1)
+                        time.sleep(1)
+                elif self.tenant_per == 'container':
+                    thread_args = {
+                        'app':self.appname,
+                        'component':'sut',
+                        'experiment':self.code,
+                        'configuration':self.configuration,
+                        'pod_sut':self.pod_sut,
+                        'scriptfolder':scriptfolder,
+                        'commands':commands,
+                        'loadData':self.dockertemplate['loadData'],
+                        'path':self.experiment.path,
+                        'volume':volume,
+                        'context':self.experiment.cluster.context,
+                        'service_name':service_name,
+                        'time_offset':time_offset,
+                        'script_type':script_type,
+                        'time_start_int':time_start_int,
+                        'namespace':self.experiment.cluster.namespace,
+                        'num_tenants':0,
+                        'id_tenant':0,
+                        'database':databases,
+                    }
+                    print("load_data_asynch - run scripts", thread_args)
+                    thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+                    thread.start()
                 print("####################", commands)
             else:
                 thread_args = {
@@ -4119,15 +4145,31 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     logger.debug("#### timeLoadingStart: "+str(timeLoadingStart))
     logger.debug("#### timeLoading before scrips: "+str(time_offset))
     # mark pod
-    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
-    #print(fullcommand)
+    labels = dict()
+    labels[script_type] = 'False'
+    labels[num_tenants] = num_tenants
+    if (num_tenants > 0 and id_tenant == 0) or num_tenants == 0:
+        # only the first tenant writes timeStart
+        print(f"#### First tenant {id_tenant} logs starting time")
+        labels['timeLoadingStart'] = timeLoadingStart
+        labels['num_tenants_ready'] = 0
+        #if num_tenants > 0:
+        #    labels['id_tenant'] = id_tenant
+    fullcommand = 'label pods '+pod_sut+' --overwrite '
+    for key, value in labels.items():
+        fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+    #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
+    print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
-        #print(fullcommand)
+        #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
+        fullcommand = 'label pvc '+volume+' --overwrite '
+        for key, value in labels.items():
+            fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+        print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
@@ -4179,19 +4221,31 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # get labels
     num_tenants_ready = 0
     if num_tenants > 0:
-        # kubectl get pod bexhoma-sut-postgresql-bht-2-1750309362-8657bf4ff5-njg5d -o jsonpath="{.metadata.labels}"
-        fullcommand = 'get pod {pod_sut} -o jsonpath="{{.metadata.labels}}"'.format(pod_sut=pod_sut)
-        labels = kubectl(fullcommand, context)
-        #print(labels)
-        labels = json.loads(labels)
-        if 'num_tenants_ready' in labels:
-            num_tenants_ready = int(labels['num_tenants_ready'])
-    num_tenants_ready = num_tenants_ready + 1
+        while True:
+            # kubectl get pod bexhoma-sut-postgresql-bht-2-1750309362-8657bf4ff5-njg5d -o jsonpath="{.metadata.labels}"
+            fullcommand = 'get pod {pod_sut} -o jsonpath="{{.metadata.labels}}"'.format(pod_sut=pod_sut)
+            labels = kubectl(fullcommand, context)
+            #print(labels)
+            labels = json.loads(labels)
+            print(f"#### Found labels {id_tenant}", labels)
+            if 'timeLoadingStart' in labels:
+                timeLoadingStart = int(labels['timeLoadingStart'])
+            if 'timeLoadingEnd' in labels:
+                timeLoadingEnd = int(labels['timeLoadingEnd'])
+            if 'timeLoading' in labels:
+                timeLoading = int(labels['timeLoading'])
+            if 'num_tenants_ready' in labels:
+                num_tenants_ready = int(labels['num_tenants_ready'])
+            print(f"num_tenants_ready, id_tenant: {num_tenants_ready}, {id_tenant}")
+            if num_tenants_ready == id_tenant:
+                break
+            time.sleep(1)
+        #num_tenants_ready = num_tenants_ready + 1
     # set time end and number of tenants ready
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
     timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    timeLoading = ceil(time_scriptgroup_end - time_scriptgroup_start + time_offset)
+    timeLoading = timeLoadingEnd - timeLoadingStart + time_offset # ceil(time_scriptgroup_end - time_scriptgroup_start + time_offset)
     logger.debug("#### time_scriptgroup_end: "+str(time_scriptgroup_end))
     logger.debug("#### timeLoadingEnd: "+str(timeLoadingEnd))
     logger.debug("#### timeLoading after scrips: "+str(timeLoading))
@@ -4201,14 +4255,19 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     # store infos in labels of sut pod and it's pvc
     labels = dict()
-    labels[script_type] = 'True'
-    labels['num_tenants_ready'] = num_tenants_ready
-    labels['time_{script_type}'.format(script_type=script_type)] = ceil(time_scriptgroup_end - time_scriptgroup_start)
+    labels['num_tenants_ready'] = id_tenant + 1
+    labels['time_{script_type}'.format(script_type=script_type)] = timeLoadingEnd - timeLoadingStart # ceil(time_scriptgroup_end - time_scriptgroup_start)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
-    labels['timeLoading'] = timeLoading
+    labels['timeLoadingEnd'] = timeLoadingEnd
+    if (num_tenants > 0 and id_tenant == num_tenants-1) or num_tenants == 0:
+        # only the last tenant writes "finished"
+        print(f"#### Last tenant {id_tenant} marks loading as finished")
+        labels[script_type] = 'True'
+    #labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
         labels['time_{script_type}'.format(script_type=subscript_type)] = ceil(time_subscript_type)
-    fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
+    #fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
+    fullcommand = 'label pods {pod_sut} --overwrite '.format(pod_sut=pod_sut)
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
     #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
@@ -4218,7 +4277,8 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=timeLoadingEnd)
+        #fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=timeLoadingEnd)
+        fullcommand = 'label pvc {volume} --overwrite '.format(volume=volume)
         for key, value in labels.items():
             fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
         #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
