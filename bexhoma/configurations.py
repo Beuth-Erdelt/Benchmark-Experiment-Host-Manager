@@ -3138,6 +3138,7 @@ scrape_configs:
                 'num_tenants':self.num_tenants,
                 'database':databases,
             }
+            print(thread_args)
             thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
             thread.start()
             return
