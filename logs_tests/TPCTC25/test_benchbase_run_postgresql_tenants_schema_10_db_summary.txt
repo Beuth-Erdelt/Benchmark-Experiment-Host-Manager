@@ -1,0 +1,122 @@
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=10
+    Type: benchbase
+    Duration: 1850s 
+    Code: 1750459111
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 10. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 10 minutes.
+    Experiment uses bexhoma version 0.8.8.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [100] threads, split into [1] pods.
+    Benchmarking is run as [10, 10] times the number of benchmarking pods.
+    Number of tenants is 10, one schema per tenant.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540620
+    datadisk:25312
+    volume_size:50G
+    volume_used:25G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1750459111
+                TENANT_BY:schema
+                TENANT_NUM:10
+PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541144
+    datadisk:25376
+    volume_size:50G
+    volume_used:25G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1750459111
+                TENANT_BY:schema
+                TENANT_NUM:10
+
+### Execution
+
+#### Per Pod
+                          experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                      
+PostgreSQL-1-1-1024-1-5                1        100    1024       1      1  600.0           0                      4.806662                   4.788328  100.532556                                                     101039.0                                             115847.0
+PostgreSQL-1-1-1024-1-4                1        100    1024       1      2  600.0           0                      4.754999                   4.743333   99.587854                                                      88790.0                                             170126.0
+PostgreSQL-1-1-1024-1-3                1        100    1024       1      3  600.0           0                      4.853332                   4.828332  101.372450                                                      70135.0                                              86009.0
+PostgreSQL-1-1-1024-1-7                1        100    1024       1      4  600.0           0                      4.841666                   4.826666  101.337462                                                      56429.0                                              78600.0
+PostgreSQL-1-1-1024-1-10               1        100    1024       1      5  600.0           0                      4.774995                   4.753329   99.797727                                                      45218.0                                              98637.0
+PostgreSQL-1-1-1024-1-6                1        100    1024       1      6  600.0           0                      4.748332                   4.714999   98.992971                                                      99311.0                                             107480.0
+PostgreSQL-1-1-1024-1-2                1        100    1024       1      7  600.0           0                      4.821665                   4.798332  100.742587                                                      40644.0                                             129440.0
+PostgreSQL-1-1-1024-1-1                1        100    1024       1      8  600.0           0                      4.766661                   4.736661   99.447772                                                      73551.0                                              93616.0
+PostgreSQL-1-1-1024-1-8                1        100    1024       1      9  600.0           0                      4.828332                   4.819999  101.197481                                                      39619.0                                             128940.0
+PostgreSQL-1-1-1024-1-9                1        100    1024       1     10  600.0           0                      4.789998                   4.766665  100.077729                                                     108728.0                                             104181.0
+PostgreSQL-1-1-1024-2-2                1        100    1024       2      1  600.0           0                      4.906666                   4.889999  102.667161                                                      20684.0                                               8721.0
+PostgreSQL-1-1-1024-2-1                1        100    1024       2      2  600.0           0                      4.738332                   4.713332   98.957981                                                      21387.0                                               9200.0
+PostgreSQL-1-1-1024-2-7                1        100    1024       2      3  600.0           0                      4.824999                   4.806665  100.917545                                                      21142.0                                               8960.0
+PostgreSQL-1-1-1024-2-5                1        100    1024       2      4  600.0           0                      4.851666                   4.831666  101.442448                                                      23718.0                                               9315.0
+PostgreSQL-1-1-1024-2-6                1        100    1024       2      5  600.0           0                      4.851666                   4.811666  101.022532                                                      21649.0                                               9516.0
+PostgreSQL-1-1-1024-2-4                1        100    1024       2      6  600.0           0                      4.713332                   4.691665   98.503078                                                      22191.0                                               9212.0
+PostgreSQL-1-1-1024-2-9                1        100    1024       2      7  600.0           0                      4.723332                   4.699999   98.678053                                                      21172.0                                               8945.0
+PostgreSQL-1-1-1024-2-8                1        100    1024       2      8  600.0           0                      4.671665                   4.656665   97.768240                                                      21330.0                                               9426.0
+PostgreSQL-1-1-1024-2-3                1        100    1024       2      9  600.0           0                      4.839999                   4.819999  101.197492                                                      21878.0                                               9207.0
+PostgreSQL-1-1-1024-2-10               1        100    1024       2     10  600.0           0                      4.699999                   4.679999   98.258148                                                      23366.0                                               9670.0
+
+#### Aggregated Parallel
+                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-1024-1               1       1000   10240         10  600.0           0                         47.99                      47.78         0.0                                                     108728.0                                             111287.6
+PostgreSQL-1-1-1024-2               1       1000   10240         10  600.0           0                         47.82                      47.60         0.0                                                      23718.0                                               9217.2
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-1024 - Pods [[10, 10]]
+
+#### Planned
+DBMS PostgreSQL-1-1-1024 - Pods [[10, 10]]
+
+### Loading
+                       time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-1024-1      599.0        1.0  10.0          60.100167
+PostgreSQL-1-1-1024-2      599.0        1.0  10.0          60.100167
+
+### Execution - SUT
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      166.43     0.73          8.92                20.07
+PostgreSQL-1-1-1024-2      150.82     0.29          9.91                21.34
+
+### Execution - Benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-1024-1      695.58     2.63           2.1                  2.1
+PostgreSQL-1-1-1024-2      674.91     2.52           2.1                  2.1
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
