@@ -3138,7 +3138,7 @@ scrape_configs:
                             'id_tenant':tenant,
                             'database':databases,
                         }
-                        print("load_data_asynch - run scripts", thread_args)
+                        self.logger.debug("load_data_asynch - run schema-wise scripts {}".format(thread_args))
                         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                         thread.start()
                         time.sleep(1)
@@ -3171,7 +3171,7 @@ scrape_configs:
                         'id_tenant':0,
                         'database':databases,
                     }
-                    print("load_data_asynch - create databases", thread_args)
+                    self.logger.debug("load_data_asynch - run create database scripts {}".format(thread_args))
                     load_data_asynch(**thread_args)
                     for tenant in range(self.num_tenants):
                         databases = [f'tenant_{tenant}']
@@ -3196,7 +3196,7 @@ scrape_configs:
                             'id_tenant':tenant,
                             'database':databases,
                         }
-                        print("load_data_asynch - run scripts", thread_args)
+                        self.logger.debug("load_data_asynch - run database-wise scripts {}".format(thread_args))
                         thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                         thread.start()
                         time.sleep(1)
@@ -3222,10 +3222,11 @@ scrape_configs:
                         'id_tenant':0,
                         'database':databases,
                     }
-                    print("load_data_asynch - run scripts", thread_args)
+                    self.logger.debug("load_data_asynch - run container-wise scripts {}".format(thread_args))
                     thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                     thread.start()
-                print("####################", commands)
+                #print("####################", commands)
+                print("{:30s}: runs scripts {}".format(self.configuration, commands))
             else:
                 thread_args = {
                     'app':self.appname,
@@ -3248,7 +3249,7 @@ scrape_configs:
                     'id_tenant':id_tenant,
                     'database':databases,
                 }
-                print("load_data_asynch", thread_args)
+                self.logger.debug("load_data_asynch - run scripts {}".format(thread_args))
                 thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                 thread.start()
                 return
@@ -4150,7 +4151,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     labels[num_tenants] = num_tenants
     if (num_tenants > 0 and id_tenant == 0) or num_tenants == 0:
         # only the first tenant writes timeStart
-        print(f"#### First tenant {id_tenant} logs starting time")
+        logger.debug(f"#### First tenant {id_tenant} logs starting time")
         labels['timeLoadingStart'] = timeLoadingStart
         labels['num_tenants_ready'] = 0
         #if num_tenants > 0:
@@ -4159,7 +4160,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
     #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
-    print(fullcommand)
+    #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
@@ -4169,7 +4170,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         fullcommand = 'label pvc '+volume+' --overwrite '
         for key, value in labels.items():
             fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
-        print(fullcommand)
+        #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = proc.communicate()
@@ -4227,7 +4228,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
             labels = kubectl(fullcommand, context)
             #print(labels)
             labels = json.loads(labels)
-            print(f"#### Found labels {id_tenant}", labels)
+            logger.debug(f"#### Found labels {id_tenant}: {labels}")
             if 'timeLoadingStart' in labels:
                 timeLoadingStart = int(labels['timeLoadingStart'])
             if 'timeLoadingEnd' in labels:
@@ -4236,7 +4237,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
                 timeLoading = int(labels['timeLoading'])
             if 'num_tenants_ready' in labels:
                 num_tenants_ready = int(labels['num_tenants_ready'])
-            print(f"num_tenants_ready, id_tenant: {num_tenants_ready}, {id_tenant}")
+            logger.debug(f"num_tenants_ready, id_tenant: {num_tenants_ready}, {id_tenant}")
             if num_tenants_ready == id_tenant:
                 break
             time.sleep(1)
@@ -4261,7 +4262,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     labels['timeLoadingEnd'] = timeLoadingEnd
     if (num_tenants > 0 and id_tenant == num_tenants-1) or num_tenants == 0:
         # only the last tenant writes "finished"
-        print(f"#### Last tenant {id_tenant} marks loading as finished")
+        logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")
         labels[script_type] = 'True'
     #labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
