@@ -1454,7 +1454,7 @@ class default():
                             config.client = config.client+1
                             if config.client > self.client:
                                 # this is the first instance of the next benchmark run
-                                print("Reset experiment counter. This is first run of client number {}.".format(config.client-1))
+                                print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
                                 self.client = config.client
                                 # reset number of clients per experiment
                                 redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
