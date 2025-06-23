@@ -3148,31 +3148,33 @@ scrape_configs:
                     #for tenant in range(self.num_tenants):
                     #    databases.append(f'tenant_{tenant}')
                     ##database = databases.copy()
-                    commands_create_databases = ["initdatabases.sql"]
-                    script_type_create_databases = "tenants"
-                    thread_args = {
-                        'app':self.appname,
-                        'component':'sut',
-                        'experiment':self.code,
-                        'configuration':self.configuration,
-                        'pod_sut':self.pod_sut,
-                        'scriptfolder':scriptfolder,
-                        'commands':commands_create_databases,
-                        'loadData':self.dockertemplate['loadData'],
-                        'path':self.experiment.path,
-                        'volume':volume,
-                        'context':self.experiment.cluster.context,
-                        'service_name':service_name,
-                        'time_offset':time_offset,
-                        'script_type':script_type_create_databases,
-                        'time_start_int':time_start_int,
-                        'namespace':self.experiment.cluster.namespace,
-                        'num_tenants':0,
-                        'id_tenant':0,
-                        'database':databases,
-                    }
-                    self.logger.debug("load_data_asynch - run create database scripts {}".format(thread_args))
-                    load_data_asynch(**thread_args)
+                    if script_type == 'loaded':
+                        # create databases before first script (only)
+                        commands_create_databases = ["initdatabases.sql"]
+                        script_type_create_databases = "tenants"
+                        thread_args = {
+                            'app':self.appname,
+                            'component':'sut',
+                            'experiment':self.code,
+                            'configuration':self.configuration,
+                            'pod_sut':self.pod_sut,
+                            'scriptfolder':scriptfolder,
+                            'commands':commands_create_databases,
+                            'loadData':self.dockertemplate['loadData'],
+                            'path':self.experiment.path,
+                            'volume':volume,
+                            'context':self.experiment.cluster.context,
+                            'service_name':service_name,
+                            'time_offset':time_offset,
+                            'script_type':script_type_create_databases,
+                            'time_start_int':time_start_int,
+                            'namespace':self.experiment.cluster.namespace,
+                            'num_tenants':0,
+                            'id_tenant':0,
+                            'database':databases,
+                        }
+                        self.logger.debug("load_data_asynch - run create database scripts {}".format(thread_args))
+                        load_data_asynch(**thread_args)
                     for tenant in range(self.num_tenants):
                         databases = [f'tenant_{tenant}']
                         thread_args = {
@@ -4264,6 +4266,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
         # only the last tenant writes "finished"
         logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")
         labels[script_type] = 'True'
+        labels['timeLoading'] = timeLoading
     #labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
         labels['time_{script_type}'.format(script_type=subscript_type)] = ceil(time_subscript_type)
