@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 1958s 
-    Code: 1750412231
+    Duration: 757s 
+    Code: 1750590405
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -13,6 +13,7 @@ TPC-H Queries SF=1
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
     Experiment uses bexhoma version 0.8.8.
+    System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 10 processes (pods).
     Loading is fixed to cl-worker19.
@@ -32,14 +33,14 @@ PostgreSQL-BHT-10-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-10 uses docker image postgres:16.1
@@ -48,14 +49,14 @@ PostgreSQL-BHT-10-1-10 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-2 uses docker image postgres:16.1
@@ -64,14 +65,14 @@ PostgreSQL-BHT-10-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-3 uses docker image postgres:16.1
@@ -80,14 +81,14 @@ PostgreSQL-BHT-10-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-4 uses docker image postgres:16.1
@@ -96,14 +97,14 @@ PostgreSQL-BHT-10-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-5 uses docker image postgres:16.1
@@ -112,14 +113,14 @@ PostgreSQL-BHT-10-1-5 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-6 uses docker image postgres:16.1
@@ -128,14 +129,14 @@ PostgreSQL-BHT-10-1-6 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-7 uses docker image postgres:16.1
@@ -144,14 +145,14 @@ PostgreSQL-BHT-10-1-7 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-8 uses docker image postgres:16.1
@@ -160,14 +161,14 @@ PostgreSQL-BHT-10-1-8 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-1-9 uses docker image postgres:16.1
@@ -176,14 +177,14 @@ PostgreSQL-BHT-10-1-9 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402151944
-    datadisk:27408
+    disk:424611744
+    datadisk:27406
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-1 uses docker image postgres:16.1
@@ -192,14 +193,14 @@ PostgreSQL-BHT-10-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-10 uses docker image postgres:16.1
@@ -208,14 +209,14 @@ PostgreSQL-BHT-10-2-10 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-2 uses docker image postgres:16.1
@@ -224,14 +225,14 @@ PostgreSQL-BHT-10-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-3 uses docker image postgres:16.1
@@ -240,14 +241,14 @@ PostgreSQL-BHT-10-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-4 uses docker image postgres:16.1
@@ -256,14 +257,14 @@ PostgreSQL-BHT-10-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-5 uses docker image postgres:16.1
@@ -272,14 +273,14 @@ PostgreSQL-BHT-10-2-5 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-6 uses docker image postgres:16.1
@@ -288,14 +289,14 @@ PostgreSQL-BHT-10-2-6 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-7 uses docker image postgres:16.1
@@ -304,14 +305,14 @@ PostgreSQL-BHT-10-2-7 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-8 uses docker image postgres:16.1
@@ -320,14 +321,14 @@ PostgreSQL-BHT-10-2-8 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 PostgreSQL-BHT-10-2-9 uses docker image postgres:16.1
@@ -336,14 +337,14 @@ PostgreSQL-BHT-10-2-9 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:402152184
+    disk:424612548
     datadisk:27408
     volume_size:50G
     volume_used:27G
-    requests_cpu:4
+    requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750412231
+        code:1750590405
         TENANT_BY:database
         TENANT_NUM:10
 
@@ -355,28 +356,28 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-10-1-1  PostgreSQL-BHT-10-1-10  PostgreSQL-BHT-10-1-2  PostgreSQL-BHT-10-1-3  PostgreSQL-BHT-10-1-4  PostgreSQL-BHT-10-1-5  PostgreSQL-BHT-10-1-6  PostgreSQL-BHT-10-1-7  PostgreSQL-BHT-10-1-8  PostgreSQL-BHT-10-1-9  PostgreSQL-BHT-10-2-1  PostgreSQL-BHT-10-2-10  PostgreSQL-BHT-10-2-2  PostgreSQL-BHT-10-2-3  PostgreSQL-BHT-10-2-4  PostgreSQL-BHT-10-2-5  PostgreSQL-BHT-10-2-6  PostgreSQL-BHT-10-2-7  PostgreSQL-BHT-10-2-8  PostgreSQL-BHT-10-2-9
-Pricing Summary Report (TPC-H Q1)                                  3599.18                 3669.72                3711.53                3626.44                3689.51                3612.08                3596.96                3753.31                3678.52                3651.58                3521.87                 3417.75                3608.01                3685.79                3687.56                3600.13                3374.48                3722.04                3539.98                3656.18
-Minimum Cost Supplier Query (TPC-H Q2)                              553.85                  516.45                 533.58                 512.84                 556.85                 555.03                 552.13                 521.26                 501.65                 561.31                 589.82                  570.39                 537.89                 535.53                 534.36                 525.07                 575.85                 502.61                 579.98                 522.28
-Shipping Priority (TPC-H Q3)                                        928.18                  921.19                 948.46                 981.98                 970.22                 955.39                 879.41                 942.60                 957.31                 910.63                 911.32                  913.88                 934.82                 918.85                 911.70                 917.37                 946.62                 918.24                 897.51                 944.93
-Order Priority Checking Query (TPC-H Q4)                           1530.46                 1507.31                1512.51                1495.35                1474.14                1516.87                1493.80                1533.56                1520.26                1458.27                1563.24                 1477.88                1575.38                1510.63                1547.68                1526.43                1561.34                1539.13                1559.23                1542.53
-Local Supplier Volume (TPC-H Q5)                                    860.10                  860.12                 900.49                 900.83                 931.35                 878.04                 854.71                 892.66                 930.97                 835.07                 812.60                  804.30                 934.88                 898.44                 905.32                 900.43                 811.15                 893.64                 810.85                 957.88
-Forecasting Revenue Change (TPC-H Q6)                               660.69                  661.43                 667.90                 655.96                 659.08                 665.18                 668.58                 675.00                 675.27                 677.38                 659.93                  635.58                 645.51                 661.27                 661.73                 655.49                 615.63                 670.54                 675.11                 641.75
-Forecasting Revenue Change (TPC-H Q7)                              1065.73                 1026.48                1015.88                1089.97                1050.73                1025.88                1026.50                1034.24                1047.22                1038.97                1067.06                 1061.74                 955.14                1012.63                 987.91                1011.28                1038.00                 998.70                1045.82                 954.13
-National Market Share (TPC-H Q8)                                    844.98                  822.66                 779.06                 823.89                 791.84                 791.58                 826.52                 821.66                 791.20                 831.97                 819.73                  820.75                 761.94                 802.88                 795.60                 779.39                 857.24                 778.31                 797.49                 753.32
-Product Type Profit Measure (TPC-H Q9)                             1334.58                 1389.54                1332.54                1308.05                1351.80                1310.85                1362.20                1300.80                1291.82                1388.73                1359.38                 1391.47                1238.64                1312.36                1291.04                1312.46                1411.23                1288.95                1310.30                1265.14
-Forecasting Revenue Change (TPC-H Q10)                             1425.79                 1447.62                1395.51                1381.13                1414.16                1394.18                1328.56                1388.39                1417.06                1448.96                1432.70                 1382.65                1415.60                1539.15                1414.63                1488.00                1445.63                1482.70                1386.25                1509.68
-Important Stock Identification (TPC-H Q11)                          287.35                  285.98                 317.30                 297.51                 349.39                 326.19                 299.63                 301.46                 339.41                 294.00                 283.14                  286.18                 321.36                 299.61                 306.42                 319.06                 301.07                 318.95                 324.43                 281.02
-Shipping Modes and Order Priority (TPC-H Q12)                      1126.05                 1219.10                1189.72                1193.20                1214.74                1126.21                1147.16                1182.18                1118.83                1158.05                1172.92                 1189.50                1085.90                1086.28                1158.53                1166.04                1243.18                1102.31                1152.98                1086.74
-Customer Distribution (TPC-H Q13)                                  2104.77                 2320.40                2516.55                2195.21                2421.04                2643.02                2097.46                2390.93                2774.59                2117.24                2334.10                 2186.83                2240.50                2196.26                2112.69                2303.00                2151.02                2255.81                2176.02                2194.99
-Forecasting Revenue Change (TPC-H Q14)                              593.35                  638.78                 655.31                 619.48                 634.57                 626.90                 575.36                 655.31                 644.02                 588.95                 622.58                  575.17                 660.50                 676.09                 664.84                 669.60                 567.32                 682.37                 646.19                 702.03
-Top Supplier Query (TPC-H Q15)                                      687.73                  638.69                 665.65                 632.33                 658.19                 645.89                 628.96                 671.44                 593.36                 631.49                 658.47                  658.99                 671.88                 671.45                 665.83                 685.21                 646.23                 605.72                 682.08                 625.13
-Parts/Supplier Relationship (TPC-H Q16)                             665.22                  652.73                 607.88                 645.53                 653.20                 610.20                 687.66                 605.18                 586.57                 638.35                 676.33                  684.74                 739.38                 672.15                 703.54                 629.60                 739.79                 586.68                 609.81                 590.09
-Small-Quantity-Order Revenue (TPC-H Q17)                           2237.40                 2293.92                2241.24                2150.88                2134.04                2131.76                2256.18                2179.44                2266.42                2365.90                2196.75                 2368.39                2221.97                2271.57                2140.56                2135.95                2385.18                2199.77                2247.68                2203.97
-Large Volume Customer (TPC-H Q18)                                 10292.42                 9220.70                9952.35               10859.51               10577.74                9175.86                9016.87               10346.67                9689.15                9550.69                9914.50                 9311.39               10325.87               10410.94               10081.26                9707.81                9796.88                9721.44               10853.04                9376.28
-Discounted Revenue (TPC-H Q19)                                      803.00                  745.18                 830.47                 809.42                 826.35                 770.87                 883.62                 808.25                 847.30                 797.99                 790.25                  765.08                 772.31                 769.74                 799.72                 798.67                 796.79                 767.30                 746.36                 773.00
-Potential Part Promotion (TPC-H Q20)                                830.50                  763.53                 790.95                 719.15                 747.47                 816.02                 821.07                 706.57                 740.46                 831.01                 789.53                  802.16                 727.45                 747.12                 728.95                 758.02                 806.73                 738.06                 769.51                 761.36
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                 979.77                 1046.26                1023.37                1016.26                1031.23                1000.16                1045.81                1014.27                1020.19                1080.80                1000.01                  998.66                 974.95                 975.23                 979.20                 986.80                1001.20                 982.87                 955.95                 971.86
-Global Sales Opportunity Query (TPC-H Q22)                          298.81                  268.23                 253.27                 264.09                 263.77                 261.42                 334.19                 265.06                 265.06                 272.62                 262.71                  257.88                 240.23                 234.06                 240.97                 246.49                 268.39                 241.28                 232.06                 251.12
+Pricing Summary Report (TPC-H Q1)                                 18117.48                18288.73               15350.35               20125.90               20857.23               21030.51               19583.66               21132.92               22604.06               19959.69                3869.04                 3629.38                3882.85                3802.38                3842.19                3892.26                3847.47                3720.76                3820.14                3720.85
+Minimum Cost Supplier Query (TPC-H Q2)                             5831.39                 4977.16                5196.54                4471.32                4831.79                5725.24                7854.59                7092.49                6447.27                4898.31                 540.09                  589.95                 545.94                 536.20                 530.18                 542.40                 517.73                 553.79                 518.31                 504.03
+Shipping Priority (TPC-H Q3)                                       5888.57                 5859.48                6925.94                8102.12               10195.69                9670.04                9647.03                6551.03                7652.25                8090.77                1098.27                 1020.55                1111.56                1086.15                1032.89                1084.48                1033.42                1000.47                1086.32                1105.02
+Order Priority Checking Query (TPC-H Q4)                           1463.24                 1440.15                1486.48                1491.93                1637.32                1607.00                1588.82                1536.15                1600.75                1455.87                1586.06                 1650.42                1601.37                1580.58                1618.75                1625.54                1599.78                1604.68                1657.05                1581.00
+Local Supplier Volume (TPC-H Q5)                                    793.44                  785.25                 816.71                 813.02                 873.57                 878.62                 883.04                 861.78                 856.82                 823.13                1002.12                  940.32                1038.89                 970.32                 958.10                 983.13                 996.87                 903.36                 972.20                 967.83
+Forecasting Revenue Change (TPC-H Q6)                               607.95                  620.42                 603.39                 632.37                 650.93                 646.36                 667.08                 644.67                 618.94                 637.98                 741.94                  761.18                 737.38                 709.36                 743.81                 725.16                 748.31                 753.88                 736.79                 709.74
+Forecasting Revenue Change (TPC-H Q7)                              1048.78                 1100.78                1141.71                1204.10                1125.37                1116.00                1026.14                1053.72                1069.18                1137.78                1093.73                 1114.13                1059.25                1078.50                1070.02                1106.08                1071.48                1068.07                1069.02                1100.38
+National Market Share (TPC-H Q8)                                    882.38                  918.66                1134.21                1009.68                 874.19                 892.93                 919.20                 895.90                1015.24                1022.95                 873.62                  942.37                 914.10                 880.15                 903.44                 875.83                 919.26                 908.35                 873.57                 898.68
+Product Type Profit Measure (TPC-H Q9)                             1867.20                 2284.86                2070.87                1996.75                2173.54                1910.33                1967.85                2214.18                1802.14                1799.11                1349.81                 1467.63                1404.43                1430.02                1468.01                1380.91                1474.55                1486.28                1359.13                1449.28
+Forecasting Revenue Change (TPC-H Q10)                             1604.44                 1601.75                1596.20                1420.68                1509.31                1435.77                1462.51                1462.19                1432.24                1534.20                1473.94                 1534.90                1514.31                1508.17                1539.59                1515.50                1516.86                1497.77                1535.80                1486.31
+Important Stock Identification (TPC-H Q11)                          317.57                  316.49                 338.51                 286.06                 287.11                 285.92                 285.85                 291.74                 305.03                 301.11                 315.25                  287.24                 326.65                 343.18                 308.70                 340.99                 306.06                 289.90                 333.44                 337.57
+Shipping Modes and Order Priority (TPC-H Q12)                      1181.16                 1290.19                1306.56                1197.46                1199.33                1185.27                1184.57                1148.56                1209.38                1198.97                1289.79                 1270.12                1258.25                1242.22                1365.52                1286.27                1391.92                1253.50                1277.57                1246.54
+Customer Distribution (TPC-H Q13)                                  2113.51                 2327.12                2334.02                2083.60                2188.39                2185.24                2108.39                2140.86                2170.34                2117.43                1965.10                 2164.44                1990.35                2201.25                2242.85                2139.16                2155.33                2186.49                2040.56                2177.65
+Forecasting Revenue Change (TPC-H Q14)                              685.16                  660.04                 669.06                 624.27                 703.78                 727.02                 663.53                 642.07                 687.04                 671.16                 740.12                  665.46                 805.75                 784.80                 802.01                 785.46                 764.61                 640.91                 752.64                 799.73
+Top Supplier Query (TPC-H Q15)                                      663.28                  673.55                 679.30                 666.18                 756.24                 713.21                 706.11                 664.76                 725.40                 655.62                 833.19                  843.99                 798.30                 743.88                 827.34                 764.11                 831.20                 862.61                 798.87                 794.95
+Parts/Supplier Relationship (TPC-H Q16)                             598.55                  661.29                 617.27                 610.16                 710.13                 654.98                 669.31                 602.24                 742.17                 622.85                 641.88                  781.79                 606.47                 604.77                 609.14                 620.42                 606.22                 827.99                 668.68                 637.84
+Small-Quantity-Order Revenue (TPC-H Q17)                           2138.40                 2377.56                2312.25                2171.23                2457.32                2462.82                2301.56                2415.29                2435.83                2399.09                2156.92                 2339.45                2186.74                2277.26                2169.37                2138.70                2171.39                2269.95                2228.79                2231.27
+Large Volume Customer (TPC-H Q18)                                  7679.75                 7960.77                7363.67                8554.07                8613.97                8133.01                8516.55                8824.56                9019.01                8887.54               10593.70                 9642.60                9580.87               10099.42                9809.44                9960.53                9365.86               10511.79               10243.18                9471.74
+Discounted Revenue (TPC-H Q19)                                      946.55                  957.33                 858.87                 915.53                 814.50                 832.74                 834.55                 807.95                 799.45                 838.83                 900.51                  951.56                 967.28                 838.03                 945.53                 918.00                 900.13                 926.89                 890.39                 940.32
+Potential Part Promotion (TPC-H Q20)                                901.09                  970.11                 743.10                 713.40                 710.34                 718.29                 790.01                 707.37                 726.07                 783.03                 759.13                  788.21                 731.99                 756.91                 678.99                 707.21                 762.97                 787.84                 800.77                 802.86
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                1719.70                 1375.66                3817.41                2124.63                1427.83                1811.60                1597.35                2049.57                1164.35                1483.81                1169.49                 1125.68                1183.60                1230.73                1241.31                1238.64                1112.78                1189.62                1188.89                1183.07
+Global Sales Opportunity Query (TPC-H Q22)                          356.19                  383.78                 391.72                 397.31                 331.80                 316.91                 303.85                 433.70                 274.84                 299.95                 234.49                  279.95                 265.07                 231.59                 275.66                 266.13                 299.69                 246.18                 245.20                 263.24
 
 ### Loading [s]
                         timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
@@ -404,56 +405,56 @@ PostgreSQL-BHT-10-2-9            0.0          388.0        25.0      897.0    13
 ### Geometric Mean of Medians of Timer Run [s]
                         Geo Times [s]
 DBMS                                 
-PostgreSQL-BHT-10-1-1            1.04
-PostgreSQL-BHT-10-1-10           1.03
-PostgreSQL-BHT-10-1-2            1.04
-PostgreSQL-BHT-10-1-3            1.03
-PostgreSQL-BHT-10-1-4            1.05
-PostgreSQL-BHT-10-1-5            1.03
-PostgreSQL-BHT-10-1-6            1.03
-PostgreSQL-BHT-10-1-7            1.03
-PostgreSQL-BHT-10-1-8            1.04
-PostgreSQL-BHT-10-1-9            1.03
-PostgreSQL-BHT-10-2-1            1.03
-PostgreSQL-BHT-10-2-10           1.02
-PostgreSQL-BHT-10-2-2            1.02
-PostgreSQL-BHT-10-2-3            1.03
-PostgreSQL-BHT-10-2-4            1.02
-PostgreSQL-BHT-10-2-5            1.03
-PostgreSQL-BHT-10-2-6            1.04
-PostgreSQL-BHT-10-2-7            1.01
-PostgreSQL-BHT-10-2-8            1.02
-PostgreSQL-BHT-10-2-9            1.01
+PostgreSQL-BHT-10-1-1            1.42
+PostgreSQL-BHT-10-1-10           1.45
+PostgreSQL-BHT-10-1-2            1.51
+PostgreSQL-BHT-10-1-3            1.45
+PostgreSQL-BHT-10-1-4            1.47
+PostgreSQL-BHT-10-1-5            1.47
+PostgreSQL-BHT-10-1-6            1.48
+PostgreSQL-BHT-10-1-7            1.47
+PostgreSQL-BHT-10-1-8            1.44
+PostgreSQL-BHT-10-1-9            1.43
+PostgreSQL-BHT-10-2-1            1.09
+PostgreSQL-BHT-10-2-10           1.12
+PostgreSQL-BHT-10-2-2            1.10
+PostgreSQL-BHT-10-2-3            1.09
+PostgreSQL-BHT-10-2-4            1.11
+PostgreSQL-BHT-10-2-5            1.10
+PostgreSQL-BHT-10-2-6            1.10
+PostgreSQL-BHT-10-2-7            1.11
+PostgreSQL-BHT-10-2-8            1.10
+PostgreSQL-BHT-10-2-9            1.10
 
 ### Power@Size ((3600*SF)/(geo times))
                         Power@Size [~Q/h]
 DBMS                                     
-PostgreSQL-BHT-10-1-1             3466.81
-PostgreSQL-BHT-10-1-10            3500.71
-PostgreSQL-BHT-10-1-2             3459.19
-PostgreSQL-BHT-10-1-3             3497.96
-PostgreSQL-BHT-10-1-4             3422.06
-PostgreSQL-BHT-10-1-5             3492.88
-PostgreSQL-BHT-10-1-6             3479.23
-PostgreSQL-BHT-10-1-7             3484.09
-PostgreSQL-BHT-10-1-8             3469.51
-PostgreSQL-BHT-10-1-9             3486.50
-PostgreSQL-BHT-10-2-1             3482.57
-PostgreSQL-BHT-10-2-10            3532.17
-PostgreSQL-BHT-10-2-2             3513.77
-PostgreSQL-BHT-10-2-3             3504.20
-PostgreSQL-BHT-10-2-4             3518.23
-PostgreSQL-BHT-10-2-5             3503.55
-PostgreSQL-BHT-10-2-6             3466.63
-PostgreSQL-BHT-10-2-7             3557.34
-PostgreSQL-BHT-10-2-8             3521.90
-PostgreSQL-BHT-10-2-9             3568.91
+PostgreSQL-BHT-10-1-1             2534.60
+PostgreSQL-BHT-10-1-10            2481.44
+PostgreSQL-BHT-10-1-2             2390.66
+PostgreSQL-BHT-10-1-3             2481.87
+PostgreSQL-BHT-10-1-4             2442.14
+PostgreSQL-BHT-10-1-5             2443.83
+PostgreSQL-BHT-10-1-6             2438.04
+PostgreSQL-BHT-10-1-7             2441.87
+PostgreSQL-BHT-10-1-8             2494.28
+PostgreSQL-BHT-10-1-9             2520.92
+PostgreSQL-BHT-10-2-1             3295.90
+PostgreSQL-BHT-10-2-10            3224.47
+PostgreSQL-BHT-10-2-2             3260.48
+PostgreSQL-BHT-10-2-3             3299.72
+PostgreSQL-BHT-10-2-4             3250.24
+PostgreSQL-BHT-10-2-5             3265.13
+PostgreSQL-BHT-10-2-6             3259.19
+PostgreSQL-BHT-10-2-7             3257.33
+PostgreSQL-BHT-10-2-8             3270.68
+PostgreSQL-BHT-10-2-9             3260.29
 
 ### Throughput@Size ((queries*streams*3600*SF)/(span of time))
                                                    time [s]  count   SF  Throughput@Size
 DBMS                SF  num_experiment num_client                                       
-PostgreSQL-BHT-10-1 1.0 1              1                 38     10  1.0         20842.11
-PostgreSQL-BHT-10-2 1.0 1              2                 38     10  1.0         20842.11
+PostgreSQL-BHT-10-1 1.0 1              1                 71     10  1.0         11154.93
+PostgreSQL-BHT-10-2 1.0 1              2                 37     10  1.0         21405.41
 
 ### Workflow
 
@@ -463,6 +464,16 @@ DBMS PostgreSQL-BHT-10 - Pods [[10, 10]]
 #### Planned
 DBMS PostgreSQL-BHT-10 - Pods [[10, 10]]
 
+### Execution - SUT
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-10-1     1356.82     1.05         21.54                38.78
+PostgreSQL-BHT-10-2     1507.78    26.82         24.56                42.17
+
+### Execution - Benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-10-1      116.53      0.0          0.24                 0.25
+PostgreSQL-BHT-10-2      116.53      0.0          0.24                 0.25
+
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
@@ -470,3 +481,5 @@ TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
