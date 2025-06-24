@@ -3,12 +3,12 @@
 ### Workload
 Benchbase Workload tpcc SF=10
     Type: benchbase
-    Duration: 801s 
-    Code: 1750686487
+    Duration: 1810s 
+    Code: 1750703957
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 10. Target is based on multiples of '16384'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+    Benchmark is 'tpcc'. Scaling factor is 10. Target is based on multiples of '16384'. Factors for benchmarking are [1]. Benchmarking runs for 10 minutes.
     Experiment uses bexhoma version 0.8.8.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
@@ -30,7 +30,7 @@ PostgreSQL-1-1-16384-0-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:424648132
+    disk:424781764
     datadisk:2720
     volume_size:10G
     volume_used:2.7G
@@ -39,7 +39,7 @@ PostgreSQL-1-1-16384-0-1 uses docker image postgres:16.1
     client:1
     numExperiment:1
     eval_parameters
-                code:1750686487
+                code:1750703957
                 TENANT_BY:container
                 TENANT_NUM:2
 PostgreSQL-1-1-16384-0-2 uses docker image postgres:16.1
@@ -48,16 +48,16 @@ PostgreSQL-1-1-16384-0-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:424649412
-    datadisk:4146
+    disk:424784920
+    datadisk:6495
     volume_size:10G
-    volume_used:4.1G
+    volume_used:6.3G
     requests_cpu:2
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1750686487
+                code:1750703957
                 TENANT_BY:container
                 TENANT_NUM:2
 PostgreSQL-1-1-16384-1-1 uses docker image postgres:16.1
@@ -66,7 +66,7 @@ PostgreSQL-1-1-16384-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:424648316
+    disk:424781500
     datadisk:2720
     volume_size:10G
     volume_used:2.7G
@@ -75,7 +75,7 @@ PostgreSQL-1-1-16384-1-1 uses docker image postgres:16.1
     client:1
     numExperiment:1
     eval_parameters
-                code:1750686487
+                code:1750703957
                 TENANT_BY:container
                 TENANT_NUM:2
                 TENANT:1
@@ -85,16 +85,16 @@ PostgreSQL-1-1-16384-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:424649532
-    datadisk:4169
+    disk:424785028
+    datadisk:6642
     volume_size:10G
-    volume_used:4.0G
+    volume_used:6.3G
     requests_cpu:2
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1750686487
+                code:1750703957
                 TENANT_BY:container
                 TENANT_NUM:2
                 TENANT:1
@@ -104,23 +104,23 @@ PostgreSQL-1-1-16384-1-2 uses docker image postgres:16.1
 #### Per Pod
                             experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                                        
-PostgreSQL-1-1-16384-0-1-1               1        100   16384       1      1  120.0           8                   3128.449961                3087.324961         0.0                                                      86364.0                                              31949.0
-PostgreSQL-1-1-16384-1-1-1               1        100   16384       1      1  120.0          12                   3161.498518                3119.581871         0.0                                                      84561.0                                              31615.0
-PostgreSQL-1-1-16384-1-2-1               1        100   16384       2      1  120.0          14                   3720.548569                3665.756924         0.0                                                      71792.0                                              26865.0
-PostgreSQL-1-1-16384-0-2-1               1        100   16384       2      1  120.0           6                   3688.532303                3634.732318         0.0                                                      72245.0                                              27100.0
+PostgreSQL-1-1-16384-0-1-1               1        100   16384       1      1  600.0          20                   1709.988277                1691.241610         0.0                                                     125803.0                                              58467.0
+PostgreSQL-1-1-16384-1-1-1               1        100   16384       1      1  600.0          17                   1771.516586                1752.481587         0.0                                                     125337.0                                              56438.0
+PostgreSQL-1-1-16384-1-2-1               1        100   16384       2      1  600.0         383                   1754.433283                1726.963284         0.0                                                      79085.0                                              55421.0
+PostgreSQL-1-1-16384-0-2-1               1        100   16384       2      1  600.0         562                   1851.093265                1820.464933         0.0                                                      71619.0                                              53205.0
 
 #### Aggregated Parallel
                           experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-16384-0-1               1        100   16384          1  120.0           8                       3128.45                    3087.32         0.0                                                      86364.0                                              31949.0
-PostgreSQL-1-1-16384-0-2               1        100   16384          1  120.0           6                       3688.53                    3634.73         0.0                                                      72245.0                                              27100.0
-PostgreSQL-1-1-16384-1-1               1        100   16384          1  120.0          12                       3161.50                    3119.58         0.0                                                      84561.0                                              31615.0
-PostgreSQL-1-1-16384-1-2               1        100   16384          1  120.0          14                       3720.55                    3665.76         0.0                                                      71792.0                                              26865.0
+PostgreSQL-1-1-16384-0-1               1        100   16384          1  600.0          20                       1709.99                    1691.24         0.0                                                     125803.0                                              58467.0
+PostgreSQL-1-1-16384-0-2               1        100   16384          1  600.0         562                       1851.09                    1820.46         0.0                                                      71619.0                                              53205.0
+PostgreSQL-1-1-16384-1-1               1        100   16384          1  600.0          17                       1771.52                    1752.48         0.0                                                     125337.0                                              56438.0
+PostgreSQL-1-1-16384-1-2               1        100   16384          1  600.0         383                       1754.43                    1726.96         0.0                                                      79085.0                                              55421.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-16384-0 - Pods [[1, 1]]
 DBMS PostgreSQL-1-1-16384-1 - Pods [[1, 1]]
+DBMS PostgreSQL-1-1-16384-0 - Pods [[1, 1]]
 
 #### Planned
 DBMS PostgreSQL-1-1-16384-0 - Pods [[1, 1]]
@@ -128,38 +128,38 @@ DBMS PostgreSQL-1-1-16384-1 - Pods [[1, 1]]
 
 ### Loading
                           time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-16384-0-1      116.0        1.0   1.0         310.344828
-PostgreSQL-1-1-16384-0-2      116.0        1.0   1.0         310.344828
-PostgreSQL-1-1-16384-1-1      124.0        1.0   1.0         290.322581
-PostgreSQL-1-1-16384-1-2      124.0        1.0   1.0         290.322581
+PostgreSQL-1-1-16384-0-1      142.0        1.0   1.0         253.521127
+PostgreSQL-1-1-16384-0-2      142.0        1.0   1.0         253.521127
+PostgreSQL-1-1-16384-1-1      117.0        1.0   1.0         307.692308
+PostgreSQL-1-1-16384-1-2      117.0        1.0   1.0         307.692308
 
 ### Ingestion - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1      474.98     0.00          3.54                 4.58
-PostgreSQL-1-1-16384-0-2      474.98     0.00          3.54                 4.58
-PostgreSQL-1-1-16384-1-1      457.00     5.19          3.36                 4.40
-PostgreSQL-1-1-16384-1-2      457.00     5.19          3.36                 4.40
+PostgreSQL-1-1-16384-0-1      500.62     4.43          3.38                 4.41
+PostgreSQL-1-1-16384-0-2      500.62     4.43          3.38                 4.41
+PostgreSQL-1-1-16384-1-1      441.13     0.47          3.54                 4.58
+PostgreSQL-1-1-16384-1-2      441.13     0.47          3.54                 4.58
 
 ### Ingestion - Loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1      547.59     3.51          1.06                 1.06
-PostgreSQL-1-1-16384-0-2      547.59     3.51          1.06                 1.06
-PostgreSQL-1-1-16384-1-1      489.79     0.00          1.06                 1.06
-PostgreSQL-1-1-16384-1-2      489.79     0.00          1.06                 1.06
+PostgreSQL-1-1-16384-0-1      528.99     4.96          0.93                 0.93
+PostgreSQL-1-1-16384-0-2      528.99     4.96          0.93                 0.93
+PostgreSQL-1-1-16384-1-1      539.96     4.50          0.95                 0.95
+PostgreSQL-1-1-16384-1-2      539.96     4.50          0.95                 0.95
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1     2046.64     19.9          4.54                 5.90
-PostgreSQL-1-1-16384-0-2     2251.24      0.0          4.76                 6.36
-PostgreSQL-1-1-16384-1-1     2249.56      0.0          4.59                 5.99
-PostgreSQL-1-1-16384-1-2     2310.06     19.1          4.75                 6.35
+PostgreSQL-1-1-16384-0-1     9469.77    19.65          5.22                 7.13
+PostgreSQL-1-1-16384-0-2    14619.74    18.80          6.15                 8.86
+PostgreSQL-1-1-16384-1-1     9771.34    19.29          5.25                 7.19
+PostgreSQL-1-1-16384-1-2    14894.27    19.08          6.15                 8.87
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1      246.33     3.58          1.32                 1.32
-PostgreSQL-1-1-16384-0-2      307.62     3.97          2.95                 2.95
-PostgreSQL-1-1-16384-1-1      258.80     3.53          1.46                 1.46
-PostgreSQL-1-1-16384-1-2      327.87     0.00          2.99                 2.99
+PostgreSQL-1-1-16384-0-1     1571.75     3.28          2.75                 2.75
+PostgreSQL-1-1-16384-0-2     1571.75     3.68          4.93                 4.93
+PostgreSQL-1-1-16384-1-1     1624.06     3.55          2.85                 2.85
+PostgreSQL-1-1-16384-1-2     1624.06     3.68          4.44                 4.44
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

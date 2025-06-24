@@ -71,6 +71,8 @@ for i in {1..1}; do
         -rst shared -rss "$BEXHOMA_SIZE_ALL" \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_schema_${BEXHOMA_TENANTS}_db.log"
 
+    bexperiments stop
+
     # Run database mode
     python ./benchbase.py run -rc 2 -m -mc -tb 16384 -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
@@ -83,6 +85,8 @@ for i in {1..1}; do
         -rst shared -rss "$BEXHOMA_SIZE_ALL" \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_database_${BEXHOMA_TENANTS}_db.log"
 
+    bexperiments stop
+
     # Run container mode (fixed 5Gi size)
     python ./benchbase.py run -rc 2 -m -mc -tb 16384 -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
@@ -94,6 +98,9 @@ for i in {1..1}; do
         -mtn "$BEXHOMA_TENANTS" -mtb container \
         -rst shared -rss 10Gi \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_db.log"
+
+    bexperiments stop
+
     clean_logs
 done
 

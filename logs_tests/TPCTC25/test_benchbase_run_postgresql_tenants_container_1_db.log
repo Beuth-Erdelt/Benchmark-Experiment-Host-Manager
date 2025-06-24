@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1750693481
-Experiment                    : starts at 2025-06-23 17:44:41.580557 (14885645.051108375)
+Experiment                    : has code 1750767380
+Experiment                    : starts at 2025-06-24 14:16:20.083643 (14959543.554193877)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 10. Target is based on multiples of '16384'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
@@ -22,8 +22,8 @@ Number of tenants is 1, one container per tenant.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-1-1-16384-0        : will start now
-PostgreSQL-1-1-16384-0        : Name of SUT pods = bexhoma-sut-postgresql-1-1-16384-0-1750693481
-PostgreSQL-1-1-16384-0        : Name of SUT service = bexhoma-sut-postgresql-1-1-16384-0-1750693481
+PostgreSQL-1-1-16384-0        : Name of SUT pods = bexhoma-sut-postgresql-1-1-16384-0-1750767380
+PostgreSQL-1-1-16384-0        : Name of SUT service = bexhoma-sut-postgresql-1-1-16384-0-1750767380
 PostgreSQL-1-1-16384-0        : Name of SUT PVC name = bexhoma-storage-postgresql-0-1-benchbase-tpcc-10
 - waiting 30s -               : done
 PostgreSQL-1-1-16384-0        : waits for health check to succeed
@@ -35,6 +35,7 @@ PostgreSQL-1-1-16384-0        : waits for health check to succeed
 PostgreSQL-1-1-16384-0        : waits for health check to succeed
 done
 PostgreSQL-1-1-16384-0        : is not loaded yet
+#### Starting to load
 PostgreSQL-1-1-16384-0        : start asynch loading scripts of type loaded
 PostgreSQL-1-1-16384-0        : runs scripts ['initschema-benchbase.sql']
 PostgreSQL-1-1-16384-0        : is loading
@@ -46,7 +47,8 @@ PostgreSQL-1-1-16384-0        : is loading
 PostgreSQL-1-1-16384-0        : is loading
 done
 PostgreSQL-1-1-16384-0        : showing loader times
-PostgreSQL-1-1-16384-0        : loader timespan (first to last [s]) = 108
+PostgreSQL-1-1-16384-0        : loader timespan (first to last [s]) = 100
+#### Starting to index
 PostgreSQL-1-1-16384-0        : start asynch loading scripts of type indexed
 PostgreSQL-1-1-16384-0        : runs scripts ['checkschema-benchbase.sql']
 PostgreSQL-1-1-16384-0        : is loading
@@ -57,15 +59,15 @@ Experiment                    : Reset experiment counter. This is first run of c
 PostgreSQL-1-1-16384-0        : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-1-1-16384-0        : we will change parameters of benchmark as {'SF': '10', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 100, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a', 'BEXHOMA_TENANT_BY': 'container', 'BEXHOMA_TENANT_NUM': 1}
 PostgreSQL-1-1-16384-0-1      : start benchmarking
-PostgreSQL-1-1-16384-0        : benchmarking results in folder /home/perdelt/benchmarks/1750693481
+PostgreSQL-1-1-16384-0        : benchmarking results in folder /home/perdelt/benchmarks/1750767380
 - waiting 10s -               : done
 found
 PostgreSQL-1-1-16384-0-1      : collecting loading metrics of SUT at connection PostgreSQL-1-1-16384-0-1
-PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-1-1-16384-0-1      : collecting metrics of data generator at connection PostgreSQL-1-1-16384-0-1
-PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-1-1-16384-0-1      : collecting metrics of data injector at connection PostgreSQL-1-1-16384-0-1
-PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1-1-16384-0        : has running benchmarks
 - waiting 30s -               : done
@@ -75,27 +77,27 @@ PostgreSQL-1-1-16384-0        : has running benchmarks
 done
 PostgreSQL-1-1-16384-0        : has running benchmarks
 PostgreSQL-1-1-16384-0-1      : showing benchmarker times
-PostgreSQL-1-1-16384-0-1      : benchmarker timespan (start to end single container [s]) = 146
-PostgreSQL-1-1-16384-0-1      : benchmarker times (start/end per pod and container) = [(1750693820, 1750693945)]
-PostgreSQL-1-1-16384-0-1      : found and updated times {'benchmarker': [(1750693820, 1750693945)]}
+PostgreSQL-1-1-16384-0-1      : benchmarker timespan (start to end single container [s]) = 149
+PostgreSQL-1-1-16384-0-1      : benchmarker times (start/end per pod and container) = [(1750767721, 1750767845)]
+PostgreSQL-1-1-16384-0-1      : found and updated times {'benchmarker': [(1750767721, 1750767845)]}
 PostgreSQL-1-1-16384-0-1      : collecting execution metrics of SUT at connection PostgreSQL-1-1-16384-0-1
-PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-1-1-16384-0-1      : collecting metrics of benchmarker at connection PostgreSQL-1-1-16384-0-1
-PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-1      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
 PostgreSQL-1-1-16384-0        : benchmarks done 0 of 1. This will be client 2
 PostgreSQL-1-1-16384-0        : we will change parameters of benchmark as {'SF': '10', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 100, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a', 'BEXHOMA_TENANT_BY': 'container', 'BEXHOMA_TENANT_NUM': 1}
 PostgreSQL-1-1-16384-0-2      : start benchmarking
-PostgreSQL-1-1-16384-0        : benchmarking results in folder /home/perdelt/benchmarks/1750693481
+PostgreSQL-1-1-16384-0        : benchmarking results in folder /home/perdelt/benchmarks/1750767380
 - waiting 10s -               : done
 found
 PostgreSQL-1-1-16384-0-2      : collecting loading metrics of SUT at connection PostgreSQL-1-1-16384-0-2
-PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-1-1-16384-0-2      : collecting metrics of data generator at connection PostgreSQL-1-1-16384-0-2
-PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-1-1-16384-0-2      : collecting metrics of data injector at connection PostgreSQL-1-1-16384-0-2
-PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1-1-16384-0        : has running benchmarks
 - waiting 30s -               : done
@@ -105,16 +107,17 @@ PostgreSQL-1-1-16384-0        : has running benchmarks
 done
 PostgreSQL-1-1-16384-0        : has running benchmarks
 PostgreSQL-1-1-16384-0-2      : showing benchmarker times
-PostgreSQL-1-1-16384-0-2      : benchmarker timespan (start to end single container [s]) = 146
-PostgreSQL-1-1-16384-0-2      : benchmarker times (start/end per pod and container) = [(1750694011, 1750694136)]
-PostgreSQL-1-1-16384-0-2      : found and updated times {'benchmarker': [(1750694011, 1750694136)]}
+PostgreSQL-1-1-16384-0-2      : benchmarker timespan (start to end single container [s]) = 147
+PostgreSQL-1-1-16384-0-2      : benchmarker times (start/end per pod and container) = [(1750767913, 1750768038)]
+PostgreSQL-1-1-16384-0-2      : found and updated times {'benchmarker': [(1750767913, 1750768038)]}
 PostgreSQL-1-1-16384-0-2      : collecting execution metrics of SUT at connection PostgreSQL-1-1-16384-0-2
-PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-1-1-16384-0-2      : collecting metrics of benchmarker at connection PostgreSQL-1-1-16384-0-2
-PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750693481(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1-1-16384-0-2      : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1-16384-0-1750767380(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 PostgreSQL-1-1-16384-0        : can be stopped
-Experiment                    : ends at 2025-06-23 17:56:37.277903 (14886360.748457937) - 715.70s total
+PostgreSQL-1-1-16384-0        : had 0 restarts
+Experiment                    : ends at 2025-06-24 14:28:20.712318 (14960264.18287217) - 720.63s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -124,8 +127,8 @@ Experiment                    : uploading workload file
 ### Workload
 Benchbase Workload tpcc SF=10
     Type: benchbase
-    Duration: 716s 
-    Code: 1750693481
+    Duration: 721s 
+    Code: 1750767380
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -151,7 +154,7 @@ PostgreSQL-1-1-16384-0-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:424701008
+    disk:424862672
     datadisk:2720
     volume_size:10G
     volume_used:2.7G
@@ -160,7 +163,7 @@ PostgreSQL-1-1-16384-0-1 uses docker image postgres:16.1
     client:1
     numExperiment:1
     eval_parameters
-                code:1750693481
+                code:1750767380
                 TENANT_BY:container
                 TENANT_NUM:1
 PostgreSQL-1-1-16384-0-2 uses docker image postgres:16.1
@@ -169,8 +172,8 @@ PostgreSQL-1-1-16384-0-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:424702628
-    datadisk:4253
+    disk:424863220
+    datadisk:4255
     volume_size:10G
     volume_used:4.1G
     requests_cpu:2
@@ -178,7 +181,7 @@ PostgreSQL-1-1-16384-0-2 uses docker image postgres:16.1
     client:2
     numExperiment:1
     eval_parameters
-                code:1750693481
+                code:1750767380
                 TENANT_BY:container
                 TENANT_NUM:1
 
@@ -187,13 +190,13 @@ PostgreSQL-1-1-16384-0-2 uses docker image postgres:16.1
 #### Per Pod
                             experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                                        
-PostgreSQL-1-1-16384-0-1-1               1        100   16384       1      1  120.0           8                   3358.414745                3315.456436         0.0                                                      79536.0                                              29757.0
-PostgreSQL-1-1-16384-0-2-1               1        100   16384       2      1  120.0          14                   4049.057966                3989.732971         0.0                                                      63382.0                                              24683.0
+PostgreSQL-1-1-16384-0-1-1               1        100   16384       1      1  120.0          11                   3358.132591                3315.390934         0.0                                                      79403.0                                              29757.0
+PostgreSQL-1-1-16384-0-2-1               1        100   16384       2      1  120.0          11                   4091.774131                4032.924144         0.0                                                      62365.0                                              24426.0
 
 #### Aggregated Parallel
                           experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-16384-0-1               1        100   16384          1  120.0           8                       3358.41                    3315.46         0.0                                                      79536.0                                              29757.0
-PostgreSQL-1-1-16384-0-2               1        100   16384          1  120.0          14                       4049.06                    3989.73         0.0                                                      63382.0                                              24683.0
+PostgreSQL-1-1-16384-0-1               1        100   16384          1  120.0          11                       3358.13                    3315.39         0.0                                                      79403.0                                              29757.0
+PostgreSQL-1-1-16384-0-2               1        100   16384          1  120.0          11                       4091.77                    4032.92         0.0                                                      62365.0                                              24426.0
 
 ### Workflow
 
@@ -205,28 +208,28 @@ DBMS PostgreSQL-1-1-16384-0 - Pods [[1, 1]]
 
 ### Loading
                           time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-16384-0-1      108.0        1.0   1.0         333.333333
-PostgreSQL-1-1-16384-0-2      108.0        1.0   1.0         333.333333
+PostgreSQL-1-1-16384-0-1      100.0        1.0   1.0              360.0
+PostgreSQL-1-1-16384-0-2      100.0        1.0   1.0              360.0
 
 ### Ingestion - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1      463.17     2.32          3.36                  4.4
-PostgreSQL-1-1-16384-0-2      463.17     2.32          3.36                  4.4
+PostgreSQL-1-1-16384-0-1       505.1     2.06          3.67                 4.71
+PostgreSQL-1-1-16384-0-2       505.1     2.06          3.67                 4.71
 
 ### Ingestion - Loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1      430.26      6.0          0.95                 0.95
-PostgreSQL-1-1-16384-0-2      430.26      6.0          0.95                 0.95
+PostgreSQL-1-1-16384-0-1      349.14     1.89          1.08                 1.08
+PostgreSQL-1-1-16384-0-2      349.14     1.89          1.08                 1.08
 
 ### Execution - SUT
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1     2316.64    20.20          4.61                 6.02
-PostgreSQL-1-1-16384-0-2     2087.26    10.85          5.04                 6.81
+PostgreSQL-1-1-16384-0-1     2485.74    17.13          4.44                 5.75
+PostgreSQL-1-1-16384-0-2     2394.38    20.51          5.10                 6.92
 
 ### Execution - Benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-16384-0-1      410.83     6.67          1.35                 1.35
-PostgreSQL-1-1-16384-0-2      785.51     7.32          3.35                 3.35
+PostgreSQL-1-1-16384-0-1      592.60     0.00          1.72                 1.72
+PostgreSQL-1-1-16384-0-2      522.53     7.11          3.33                 3.33
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
