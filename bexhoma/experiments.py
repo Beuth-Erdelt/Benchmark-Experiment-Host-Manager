@@ -1351,11 +1351,15 @@ class default():
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
-                            if config.loading_active:
-                                config.start_loading()
-                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                            if self.tenant_per == 'container':
+                                # this container has to wait for others
+                                config.tenant_ready_to_load = True
                             else:
-                                config.start_loading()
+                                if config.loading_active:
+                                    config.start_loading()
+                                    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                                else:
+                                    config.start_loading()
                         else:
                             print("{:30s}: will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                             continue
@@ -1370,11 +1374,15 @@ class default():
                             continue
                         else:
                             # start loading now
-                            if config.loading_active:
-                                config.start_loading()
-                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                            if self.tenant_per == 'container':
+                                # this container has to wait for others
+                                config.tenant_ready_to_load = True
                             else:
-                                config.start_loading()
+                                if config.loading_active:
+                                    config.start_loading()
+                                    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                                else:
+                                    config.start_loading()
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
@@ -1400,6 +1408,30 @@ class default():
                     if status == "Succeeded":
                         self.cluster.logger.debug("Store logs of starter job pod {}".format(pod))
                         self.cluster.store_pod_log(pod_name=pod)
+                if self.tenant_per == 'container' and not config.loading_finished:
+                    # can we start loading (all tenants/containers are ready)?
+                    if not config.tenant_started_to_load:
+                        ready = True
+                        for config_tmp in self.configurations:
+                            ready = ready and config_tmp.tenant_ready_to_load
+                        if ready:
+                            print("#### Starting to load")
+                            for config_tmp in self.configurations:
+                                config_tmp.tenant_started_to_load = True
+                                if config_tmp.loading_active:
+                                    config_tmp.start_loading()
+                                    config_tmp.start_loading_pod(parallelism=config_tmp.num_loading, num_pods=config_tmp.num_loading_pods)
+                                else:
+                                    config_tmp.start_loading()
+                    elif not config.tenant_started_to_index:
+                        ready = True
+                        for config_tmp in self.configurations:
+                            ready = ready and config_tmp.tenant_ready_to_index
+                        if ready:
+                            print("#### Starting to index")
+                            for config_tmp in self.configurations:
+                                config_tmp.tenant_started_to_index = True
+                                config_tmp.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.timeLoading, time_start_int=config_tmp.timeLoadingStart, script_type='indexed')
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
@@ -1482,6 +1514,8 @@ class default():
                                     pod_sut = pods[0]
                                     for container in config.sut_containers_deployed:
                                         self.cluster.store_pod_log(pod_sut, container)
+                                    restarts = config.get_host_restarts(pod_sut)
+                                    print("{:30s}: had {} restarts".format(config.configuration, str(restarts)))
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 #pods = self.cluster.get_pods(app, component, self.code, config.configuration)

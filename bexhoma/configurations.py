@@ -145,6 +145,10 @@ class default():
         self.num_maintaining_pods = 0
         self.num_tenants = self.experiment.num_tenants
         self.tenant_per = self.experiment.tenant_per                            #: '', or schema, database or container
+        self.tenant_ready_to_load = False
+        self.tenant_started_to_load = False
+        self.tenant_ready_to_index = False
+        self.tenant_started_to_index = False
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
@@ -1915,6 +1919,26 @@ scrape_configs:
         stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
         host = stdout#os.popen(fullcommand).read()
         return host.replace('\n','')
+    def get_host_restarts(self, pod_sut=''):
+        """
+        Returns information about the sut's host name.
+        Basically this calls `kubectl get pod` to receive the information.
+
+        :return: Node name of the host
+        """
+        self.logger.debug('configuration.get_host_restarts()')
+        if len(pod_sut) == 0:
+            pod_sut = self.pod_sut
+        cmd = {}
+        #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
+        result = self.experiment.cluster.kubectl('get pods/'+pod_sut+' -o jsonpath="{.status.containerStatuses[*].restartCount}"')#self.yamlfolder+deployment)
+        #result = os.popen(fullcommand).read()
+        try:
+            #print(result)
+            return result
+        except Exception as e:
+            return ""
+        return ""
     def get_host_node(self):
         """
         Returns information about the sut's host name.
@@ -3011,7 +3035,10 @@ scrape_configs:
                     # check if there is a post-loading phase
                     if len(self.indexscript):
                         # loading has not finished (there is indexing)
-                        self.load_data(scripts=self.indexscript, time_offset=self.timeLoading, time_start_int=self.timeLoadingStart, script_type='indexed')
+                        if self.tenant_per == 'container' and not self.loading_finished:
+                            self.tenant_ready_to_index = True
+                        else:
+                            self.load_data(scripts=self.indexscript, time_offset=self.timeLoading, time_start_int=self.timeLoadingStart, script_type='indexed')
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
