@@ -48,11 +48,12 @@ wait_process "ycsb"
 #################### YCSB Modes ####################
 ####################################################
 
-BEXHOMA_DURATION=2
+BEXHOMA_DURATION=10
+BEXHOMA_TARGET=65536
 BEXHOMA_SF=10
 BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
 
-for i in {1..1}; do
+for i in {1..10}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
@@ -60,7 +61,7 @@ for i in {1..1}; do
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
-    python ./benchbase.py run -rc 2 -m -mc -tb 16384 -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -74,7 +75,7 @@ for i in {1..1}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc 2 -m -mc -tb 16384 -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -88,7 +89,7 @@ for i in {1..1}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -rc 2 -m -mc -tb 16384 -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
