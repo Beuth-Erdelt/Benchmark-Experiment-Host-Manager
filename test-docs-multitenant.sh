@@ -45,7 +45,7 @@ wait_process "ycsb"
 
 
 ####################################################
-#################### YCSB Modes ####################
+########### Benchbase TPC-C Multi-Tenant ###########
 ####################################################
 
 BEXHOMA_DURATION=10
@@ -53,7 +53,7 @@ BEXHOMA_TARGET=65536
 BEXHOMA_SF=10
 BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
 
-for i in {1..1}; do
+for i in {1..0}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
@@ -99,6 +99,78 @@ for i in {1..1}; do
         -mtn "$BEXHOMA_TENANTS" -mtb container \
         -rst shared -rss 20Gi \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_db.log"
+
+    bexperiments stop
+
+    clean_logs
+done
+
+
+
+nohup python tpch.py \
+  -mtn $BEXHOMA_TENANTS -mtb schema \
+  -sf $BEXHOMA_SF \
+  --dbms PostgreSQL \
+  -ii -ic -is \
+  -nlp $BEXHOMA_TENANTS -nbp 1 \
+  -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+  </dev/null &> "$LOG_DIR/test_tpch_run_postgresql_tenants_schema_${BEXHOMA_TENANTS}_db.log"
+
+
+####################################################
+################ TPC-H Multi-Tenant ################
+####################################################
+
+BEXHOMA_SF=10
+
+for i in {1..1}; do
+    # Set environment variables
+    export BEXHOMA_TENANTS=$i
+    tenants=$BEXHOMA_TENANTS
+    sizeInGi=$((tenants * 20))
+    export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
+
+    # Run schema mode
+    nohup python tpch.py \
+      -mtn $BEXHOMA_TENANTS -mtb schema \
+      -sf $BEXHOMA_SF \
+      --dbms PostgreSQL \
+      -ii -ic -is \
+      -nlp $BEXHOMA_TENANTS -nbp 1 \
+      -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
+      -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+      -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+      </dev/null &> "$LOG_DIR/test_tpch_run_postgresql_tenants_schema_${BEXHOMA_TENANTS}_db.log"
+
+    bexperiments stop
+
+    # Run database mode
+    nohup python tpch.py \
+      -mtn $BEXHOMA_TENANTS -mtb database \
+      -sf $BEXHOMA_SF \
+      --dbms PostgreSQL \
+      -ii -ic -is \
+      -nlp $BEXHOMA_TENANTS -nbp 1 \
+      -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
+      -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+      -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+      </dev/null &> "$LOG_DIR/test_tpch_run_postgresql_tenants_database_${BEXHOMA_TENANTS}_db.log"
+
+    bexperiments stop
+
+    # Run container mode (fixed 5Gi size)
+    nohup python tpch.py \
+      -mtn $BEXHOMA_TENANTS -mtb container \
+      -sf $BEXHOMA_SF \
+      --dbms PostgreSQL \
+      -ii -ic -is \
+      -nlp 1 -nbp 1 \
+      -ne 1,1 \
+      -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+      -rst shared -rss 20Gi \
+      </dev/null &> "$LOG_DIR/test_tpch_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_db.log"
 
     bexperiments stop
 
