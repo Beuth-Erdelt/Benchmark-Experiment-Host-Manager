@@ -53,11 +53,11 @@ BEXHOMA_TARGET=65536
 BEXHOMA_SF=10
 BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
 
-for i in {1..10}; do
+for i in {1..1}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
-    sizeInGi=$((tenants * 10))
+    sizeInGi=$((tenants * 20))
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
@@ -97,7 +97,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne 1,1 \
         -mtn "$BEXHOMA_TENANTS" -mtb container \
-        -rst shared -rss 10Gi \
+        -rst shared -rss 20Gi \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_db.log"
 
     bexperiments stop
