@@ -4177,7 +4177,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     # mark pod
     labels = dict()
     labels[script_type] = 'False'
-    labels[num_tenants] = num_tenants
+    labels["num_tenants"] = num_tenants
     if (num_tenants > 0 and id_tenant == 0) or num_tenants == 0:
         # only the first tenant writes timeStart
         logger.debug(f"#### First tenant {id_tenant} logs starting time")
