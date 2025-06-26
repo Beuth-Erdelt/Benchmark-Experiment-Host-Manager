@@ -37,6 +37,11 @@ if {!\$complete} { after 5000 wait_to_complete } else { exit }
 dbset db mysql
 diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
+# Error: can't read "mysql_ssl_options": no such variable
+# diset connection mysql_ssl true
+# diset connection mysql_ssl_ca /etc/mysql/certs/ca-cert.pem
+# diset connection mysql_ssl_cert /etc/mysql/certs/client-cert.pem
+# diset connection mysql_ssl_key /etc/mysql/certs/client-key.pem
 diset tpcc mysql_user $BEXHOMA_USER
 diset tpcc mysql_pass $BEXHOMA_PASSWORD
 diset tpcc mysql_partition true

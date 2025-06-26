@@ -7,13 +7,13 @@ cd images
 cd evaluator_dbmsbenchmarker
 python create_Dockerfiles.py
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.6 --no-cache .
-docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.8 &
+docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.9 &
 cd ..
 
 cd benchmarker_dbmsbenchmarker
 python create_Dockerfiles.py
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/benchmarker_dbmsbenchmarker:v0.13.6 --no-cache .
-docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.8 &
+docker push bexhoma/benchmarker_dbmsbenchmarker:v0.14.9 &
 cd ..
 
 ###########
@@ -82,12 +82,12 @@ cd ..
 ###########
 cd hammerdb
 cd benchmarker
-docker build -f Dockerfile -t bexhoma/benchmarker_hammerdb:4.12 .
-docker push bexhoma/benchmarker_hammerdb:4.12 &
+docker build -f Dockerfile -t bexhoma/benchmarker_hammerdb:5.0 .
+docker push bexhoma/benchmarker_hammerdb:5.0 &
 cd ..
 cd generator
-docker build -f Dockerfile -t bexhoma/generator_hammerdb:4.12 .
-docker push bexhoma/generator_hammerdb:4.12 &
+docker build -f Dockerfile -t bexhoma/generator_hammerdb:5.0 .
+docker push bexhoma/generator_hammerdb:5.0 &
 cd ..
 cd ..
 

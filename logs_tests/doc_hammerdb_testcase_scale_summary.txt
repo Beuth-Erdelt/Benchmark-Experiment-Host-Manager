@@ -3,14 +3,14 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1365s 
-    Code: 1747679189
+    Duration: 1427s 
+    Code: 1749650062
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.5.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -22,34 +22,34 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:257433296
+    disk:390719260
     datadisk:3298
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747679189
+        code:1749650062
 PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:258367824
-    datadisk:4211
+    disk:391336920
+    datadisk:3910
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1747679189
+        code:1749650062
 
 ### Execution
-                       experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1         0.0  12198.0  37864.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2         0.0  11445.0  35099.5         5       0
+                       experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1         0.0  7390.0  22685.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2         0.0  6518.5  20305.0         5       0
 
 Warehouses: 16
 
@@ -63,8 +63,8 @@ DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
-PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
+PostgreSQL-BHT-16-1-1      104.0        1.0   1.0                 553.846154
+PostgreSQL-BHT-16-1-2      104.0        1.0   2.0                 553.846154
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

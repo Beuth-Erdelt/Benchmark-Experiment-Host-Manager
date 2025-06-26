@@ -4,7 +4,7 @@
 #
 # This Dockerfile builds an image for a Bexhoma component "benchmarker".
 #
-# Base Image: tpcorg/hammerdb:v4.12
+# Base Image: tpcorg/hammerdb:v5.0
 #
 # Author: Patrick K. Erdelt
 # Email: patrick.erdelt@bht-berlin.de
@@ -15,7 +15,7 @@
 # A redis queue is consulted for further details.
 # Redis client is installed.
 ######################################################################################
-FROM tpcorg/hammerdb:v4.12
+FROM tpcorg/hammerdb:v5.0
 
 COPY ./benchmarker.sh ./benchmarker.sh
 RUN ["chmod", "+x", "./benchmarker.sh"]

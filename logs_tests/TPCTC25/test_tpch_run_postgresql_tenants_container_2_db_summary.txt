@@ -1,0 +1,207 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 659s 
+    Code: 1750862759
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 600.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.8.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 20Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 1] times the number of benchmarking pods.
+    Number of tenants is 2, one container per tenant.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-1-0-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425021084
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750862759
+        TENANT_BY:container
+        TENANT_NUM:2
+PostgreSQL-BHT-1-0-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425021152
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750862759
+        TENANT_BY:container
+        TENANT_NUM:2
+PostgreSQL-BHT-1-1-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425021100
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750862759
+        TENANT_BY:container
+        TENANT_NUM:2
+        TENANT:1
+PostgreSQL-BHT-1-1-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425021164
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750862759
+        TENANT_BY:container
+        TENANT_NUM:2
+        TENANT:1
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-1-0-1-1  PostgreSQL-BHT-1-0-2-1  PostgreSQL-BHT-1-1-1-1  PostgreSQL-BHT-1-1-2-1
+Pricing Summary Report (TPC-H Q1)                                   2614.81                 2590.03                 2665.24                 2671.37
+Minimum Cost Supplier Query (TPC-H Q2)                               440.83                  451.03                  458.65                  439.62
+Shipping Priority (TPC-H Q3)                                         798.80                  795.01                  812.88                  805.88
+Order Priority Checking Query (TPC-H Q4)                            1359.72                 1287.10                 1354.95                 1304.86
+Local Supplier Volume (TPC-H Q5)                                     699.83                  697.44                  707.64                  740.11
+Forecasting Revenue Change (TPC-H Q6)                                546.56                  542.55                  546.17                  565.57
+Forecasting Revenue Change (TPC-H Q7)                                823.20                  799.99                  817.44                  815.32
+National Market Share (TPC-H Q8)                                     667.56                  677.02                  665.04                  666.63
+Product Type Profit Measure (TPC-H Q9)                              1161.61                 1182.06                 1154.64                 1143.19
+Forecasting Revenue Change (TPC-H Q10)                              1315.65                 1291.06                 1379.35                 1321.47
+Important Stock Identification (TPC-H Q11)                           271.06                  275.89                  270.52                  268.24
+Shipping Modes and Order Priority (TPC-H Q12)                       1072.56                 1039.80                 1100.01                 1064.25
+Customer Distribution (TPC-H Q13)                                   2096.62                 2105.47                 2164.49                 2151.50
+Forecasting Revenue Change (TPC-H Q14)                               573.82                  596.91                  587.89                  587.99
+Top Supplier Query (TPC-H Q15)                                       582.56                  600.62                  595.39                  596.29
+Parts/Supplier Relationship (TPC-H Q16)                              575.66                  583.28                  601.93                  565.48
+Small-Quantity-Order Revenue (TPC-H Q17)                            2054.18                 2060.51                 2201.14                 2180.80
+Large Volume Customer (TPC-H Q18)                                   7073.02                 8292.19                 7462.70                 7219.88
+Discounted Revenue (TPC-H Q19)                                       748.47                  724.80                  723.74                  735.69
+Potential Part Promotion (TPC-H Q20)                                 672.56                  647.99                  715.23                  693.39
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  979.20                  956.87                  961.79                  933.05
+Global Sales Opportunity Query (TPC-H Q22)                           260.24                  243.24                  247.99                  244.31
+
+### Loading [s]
+                        timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-1-0-1-1           0.0          105.0         1.0      216.0     325.0
+PostgreSQL-BHT-1-0-2-1           0.0          105.0         1.0      216.0     325.0
+PostgreSQL-BHT-1-1-1-1           0.0          107.0         1.0      217.0     327.0
+PostgreSQL-BHT-1-1-2-1           0.0          107.0         1.0      217.0     327.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                        Geo Times [s]
+DBMS                                 
+PostgreSQL-BHT-1-0-1-1           0.90
+PostgreSQL-BHT-1-0-2-1           0.90
+PostgreSQL-BHT-1-1-1-1           0.91
+PostgreSQL-BHT-1-1-2-1           0.90
+
+### Power@Size ((3600*SF)/(geo times))
+                        Power@Size [~Q/h]
+DBMS                                     
+PostgreSQL-BHT-1-0-1-1            4020.67
+PostgreSQL-BHT-1-0-2-1            4020.09
+PostgreSQL-BHT-1-1-1-1            3958.33
+PostgreSQL-BHT-1-1-2-1            4007.24
+
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                    time [s]  count   SF  Throughput@Size
+DBMS                 SF  num_experiment num_client                                       
+PostgreSQL-BHT-1-0-1 1.0 1              1                 31      1  1.0          2554.84
+PostgreSQL-BHT-1-0-2 1.0 1              2                 31      1  1.0          2554.84
+PostgreSQL-BHT-1-1-1 1.0 1              1                 32      1  1.0          2475.00
+PostgreSQL-BHT-1-1-2 1.0 1              2                 30      1  1.0          2640.00
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1 - Pods [[1, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-1 - Pods [[1, 1]]
+
+### Ingestion - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1      150.07      1.0          3.70                 5.76
+PostgreSQL-BHT-1-0-2      150.07      1.0          3.70                 5.76
+PostgreSQL-BHT-1-1-1      153.63      1.0          3.72                 5.74
+PostgreSQL-BHT-1-1-2      153.63      1.0          3.72                 5.74
+
+### Ingestion - Loader
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1        7.28      0.0           0.0                 0.43
+PostgreSQL-BHT-1-0-2        7.28      0.0           0.0                 0.43
+PostgreSQL-BHT-1-1-1       12.51      0.1           0.0                 0.30
+PostgreSQL-BHT-1-1-2       12.51      0.1           0.0                 0.30
+
+### Execution - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1       61.73     0.00          3.79                 5.41
+PostgreSQL-BHT-1-0-2        0.40     0.00          3.81                 5.43
+PostgreSQL-BHT-1-1-1      100.84     0.00          7.21                 8.83
+PostgreSQL-BHT-1-1-2      116.03     2.13          3.81                 5.43
+
+### Execution - Benchmarker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1        0.11      0.0          0.00                 0.00
+PostgreSQL-BHT-1-0-2       11.98      0.0          0.24                 0.24
+PostgreSQL-BHT-1-1-1        0.00      0.0          0.00                 0.00
+PostgreSQL-BHT-1-1-2       11.63      0.0          0.24                 0.24
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST failed: Workflow not as planned
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]

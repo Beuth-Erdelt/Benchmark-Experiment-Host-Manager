@@ -8,9 +8,14 @@ SECONDS_START_SCRIPT=$SECONDS
 
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+echo "BEXHOMA_VOLUME:$BEXHOMA_VOLUME"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_TENANT_NUM:$BEXHOMA_TENANT_NUM"
+echo "BEXHOMA_TENANT_BY:$BEXHOMA_TENANT_BY"
 
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $BEXHOMA_TIME_NOW"
@@ -54,6 +59,23 @@ else
     echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
+if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
+    echo "BEXHOMA_TENANT_BY is schema"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
+    echo "BEXHOMA_TENANT_BY is database"
+    BEXHOMA_NUM_PODS=1
+    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+else
+    echo "BEXHOMA_TENANT_BY is not set"
+fi
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
+
 ######################## Wait until all pods of job are ready ########################
 echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # add this pod to counter
@@ -82,6 +104,37 @@ while : ; do
         sleep 1
     fi
 done
+
+######################## Wait until all pods of experiment are ready ########################
+if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+    echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    # add this pod to counter
+    redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    # wait for number of pods to be as expected
+    while : ; do
+        PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
+        echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+        if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+        then
+            echo "PODS_RUNNING contains a number."
+        else
+            echo "PODS_RUNNING does not contain a number."
+            exit 0
+        fi
+        if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+        then
+            echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+            break
+        elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+        then
+            echo "Too many pods! Restart occured?"
+            exit 0
+        else
+            echo "We have to wait"
+            sleep 1
+        fi
+    done
+fi
 
 ######################## Show more parameters ########################
 echo "SF $SF"
@@ -140,6 +193,7 @@ sed -i "s/BEXHOMA_PORT/$BEXHOMA_PORT/" $FILENAME
 sed -i "s/BEXHOMA_USER/$BEXHOMA_USER/" $FILENAME
 sed -i "s/BEXHOMA_PASSWORD/$BEXHOMA_PASSWORD/" $FILENAME
 sed -i "s/BEXHOMA_DATABASE/$BEXHOMA_DATABASE/" $FILENAME
+sed -i "s/BEXHOMA_SCHEMA/$BEXHOMA_SCHEMA/" $FILENAME
 sed -i "s/BENCHBASE_TIME/$BENCHBASE_TIME/" $FILENAME
 sed -i "s/BENCHBASE_TARGET/$BENCHBASE_TARGET/" $FILENAME
 sed -i "s/BEXHOMA_SF/$SF/" $FILENAME

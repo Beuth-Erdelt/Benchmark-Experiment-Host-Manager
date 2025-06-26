@@ -21,7 +21,8 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: sensor
-        image: bexhoma/generator_hammerdb:4.12
+        #image: bexhoma/generator_hammerdb:4.12
+        image: bexhoma/generator_hammerdb:5.0
         imagePullPolicy: Always
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-timescaledb-aws-1658676533'}

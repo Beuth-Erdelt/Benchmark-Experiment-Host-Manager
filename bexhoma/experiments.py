@@ -108,6 +108,9 @@ class default():
             singleConnection = True)
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
+        self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
+        self.num_maintaining_pods = 0
+        self.num_tenants = 0
         self.cluster.add_experiment(self)
         self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
         self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
@@ -348,6 +351,7 @@ class default():
             numRun = int(args.num_run)
         else:
             numRun = 0
+        self.workload['num_run'] = numRun
         if 'datatransfer' in parameter:
             datatransfer = args.datatransfer
         else:
@@ -372,6 +376,12 @@ class default():
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
         skip_loading = args.skip_loading
+        multi_tenant_num = int(args.multi_tenant_num)
+        multi_tenant_by = args.multi_tenant_by
+        self.num_tenants = multi_tenant_num
+        self.tenant_per = multi_tenant_by
+        self.workload['num_tenants'] = self.num_tenants
+        self.workload['tenant_per'] = self.tenant_per
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
@@ -461,6 +471,8 @@ class default():
                     'kubernetes.io/hostname': request_node_name
                 })        
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        if numRun > 1:
+            self.workload['info'] = self.workload['info']+"\nEach query is repeated {} times.".format(numRun)
         if skip_loading:
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
@@ -473,6 +485,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nPooling is done with {} pods having {} inbound and {} outbound connections in total.".format(num_pooling_pods, num_pooling_in, num_pooling_out)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
+        if multi_tenant_num > 0:
+            self.workload['info'] = self.workload['info']+"\nNumber of tenants is {}, one {} per tenant.".format(multi_tenant_num, multi_tenant_by)
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:
@@ -1340,11 +1354,15 @@ class default():
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
-                            if config.loading_active:
-                                config.start_loading()
-                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                            if self.tenant_per == 'container':
+                                # this container has to wait for others
+                                config.tenant_ready_to_load = True
                             else:
-                                config.start_loading()
+                                if config.loading_active:
+                                    config.start_loading()
+                                    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                                else:
+                                    config.start_loading()
                         else:
                             print("{:30s}: will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                             continue
@@ -1359,11 +1377,15 @@ class default():
                             continue
                         else:
                             # start loading now
-                            if config.loading_active:
-                                config.start_loading()
-                                config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                            if self.tenant_per == 'container':
+                                # this container has to wait for others
+                                config.tenant_ready_to_load = True
                             else:
-                                config.start_loading()
+                                if config.loading_active:
+                                    config.start_loading()
+                                    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                                else:
+                                    config.start_loading()
                 # check if maintaining
                 if config.loading_finished and len(config.benchmark_list) > 0:
                     if config.monitoring_active and not config.monitoring_is_running():
@@ -1389,6 +1411,30 @@ class default():
                     if status == "Succeeded":
                         self.cluster.logger.debug("Store logs of starter job pod {}".format(pod))
                         self.cluster.store_pod_log(pod_name=pod)
+                if self.tenant_per == 'container' and not config.loading_finished:
+                    # can we start loading (all tenants/containers are ready)?
+                    if not config.tenant_started_to_load:
+                        ready = True
+                        for config_tmp in self.configurations:
+                            ready = ready and config_tmp.tenant_ready_to_load
+                        if ready:
+                            print("#### Starting to load")
+                            for config_tmp in self.configurations:
+                                config_tmp.tenant_started_to_load = True
+                                if config_tmp.loading_active:
+                                    config_tmp.start_loading()
+                                    config_tmp.start_loading_pod(parallelism=config_tmp.num_loading, num_pods=config_tmp.num_loading_pods)
+                                else:
+                                    config_tmp.start_loading()
+                    elif not config.tenant_started_to_index:
+                        ready = True
+                        for config_tmp in self.configurations:
+                            ready = ready and config_tmp.tenant_ready_to_index
+                        if ready:
+                            print("#### Starting to index")
+                            for config_tmp in self.configurations:
+                                config_tmp.tenant_started_to_index = True
+                                config_tmp.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.timeLoading, time_start_int=config_tmp.timeLoadingStart, script_type='indexed')
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
@@ -1441,6 +1487,13 @@ class default():
                             parallelism = config.benchmark_list.pop(0)
                             client = str(config.client)
                             config.client = config.client+1
+                            if config.client > self.client:
+                                # this is the first instance of the next benchmark run
+                                print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
+                                self.client = config.client
+                                # reset number of clients per experiment
+                                redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
+                                self.cluster.set_pod_counter(queue=redisQueue, value=0)
                             print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                             if len(config.benchmarking_parameters_list) > 0:
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
@@ -1464,6 +1517,8 @@ class default():
                                     pod_sut = pods[0]
                                     for container in config.sut_containers_deployed:
                                         self.cluster.store_pod_log(pod_sut, container)
+                                    restarts = config.get_host_restarts(pod_sut)
+                                    print("{:30s}: had {} restarts".format(config.configuration, str(restarts)))
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
@@ -1930,6 +1985,8 @@ class default():
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
+        num_run = workload_properties['num_run'] if 'num_run' in workload_properties else 1
+        #print("num_run", num_run)
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
@@ -2046,14 +2103,16 @@ class default():
             print("\n### Power@Size ((3600*SF)/(geo times))")
             df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
             df = (df/1000.0).sort_index().astype('float')
-            df = float(parameter.defaultParameters['SF'])*3600./df
+            #print(workload_properties['defaultParameters'])
+            #print(workload_properties['defaultParameters']['SF'])
+            df = float(workload_properties['defaultParameters']['SF'])*3600./df
             df.columns = ['Power@Size [~Q/h]']
             df_power = df.copy()
             print(df.round(2))
         #####################
         if self.benchmarking_is_active():
             # aggregate time and throughput for parallel pods
-            print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
+            print("\n### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))")
             df_merged_time = pd.DataFrame()
             for connection_nr, connection in evaluate.benchmarks.dbms.items():
                 df_time = pd.DataFrame()
@@ -2067,7 +2126,7 @@ class default():
                 #print(connection.name)
                 #print(connection.connection)
                 df_time['orig_name'] = orig_name
-                df_time['SF'] = int(c['parameter']['connection_parameter']['loading_parameters']['SF'])
+                df_time['SF'] = float(c['parameter']['connection_parameter']['loading_parameters']['SF'])
                 df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
                 #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
                 df_time['num_experiment'] = int(c['parameter']['numExperiment'])
@@ -2083,7 +2142,7 @@ class default():
             benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
             df_benchmark['count'] = benchmark_count['benchmark_end']
             df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-            df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+            df_benchmark['Throughput@Size'] = (num_run*num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
             #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
             index_names = list(df_benchmark.index.names)
             index_names[0] = "DBMS"
@@ -3748,9 +3807,18 @@ class benchbase(default):
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
             print("\n### Execution")
+            print("\n#### Per Pod")
             warehouses = int(df['sf'].max())
+            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.evaluator.benchmarking_set_datatypes(df)
+            #print(df_plot)
+            df_plot_filtered = pd.DataFrame()
+            for col in columns:
+                if col in df_plot.columns:
+                    df_plot_filtered[col] = df_plot.loc[:,col]
+            print(df_plot_filtered.sort_values(['experiment_run', 'client', 'child']))
+            print("\n#### Aggregated Parallel")
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             #print(df_aggregated)
             #print(df_aggregated.T)

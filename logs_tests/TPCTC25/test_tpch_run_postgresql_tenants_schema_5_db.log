@@ -1,0 +1,446 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1750868888
+Experiment                    : starts at 2025-06-25 18:28:07.938073 (15061051.40862408)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 600.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.8.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 5 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 100Gi.
+Loading is tested with [1] threads, split into [5] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [5, 5] times the number of benchmarking pods.
+Number of tenants is 5, one schema per tenant.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-BHT-5              : will start now
+PostgreSQL-BHT-5              : Name of SUT pods = bexhoma-sut-postgresql-bht-5-1750868888
+PostgreSQL-BHT-5              : Name of SUT service = bexhoma-sut-postgresql-bht-5-1750868888
+PostgreSQL-BHT-5              : Name of SUT PVC name = bexhoma-storage-postgresql-schema-5-tpch-1
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : waits for health check to succeed
+done
+PostgreSQL-BHT-5              : is not loaded yet
+PostgreSQL-BHT-5              : scripts for tenant #0
+PostgreSQL-BHT-5              : scripts for tenant #1
+PostgreSQL-BHT-5              : scripts for tenant #2
+PostgreSQL-BHT-5              : scripts for tenant #3
+PostgreSQL-BHT-5              : scripts for tenant #4
+PostgreSQL-BHT-5              : start asynch loading scripts of type loaded
+PostgreSQL-BHT-5              : runs scripts ['initschema-tpch-schema.sql']
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+done
+PostgreSQL-BHT-5              : showing loader times
+PostgreSQL-BHT-5              : generator timespan (first to last [s]) = 20
+PostgreSQL-BHT-5              : loader timespan (first to last [s]) = 234
+PostgreSQL-BHT-5              : total timespan (first to last [s]) = 257
+PostgreSQL-BHT-5              : scripts for tenant #0
+PostgreSQL-BHT-5              : scripts for tenant #1
+PostgreSQL-BHT-5              : scripts for tenant #2
+PostgreSQL-BHT-5              : scripts for tenant #3
+PostgreSQL-BHT-5              : scripts for tenant #4
+PostgreSQL-BHT-5              : start asynch loading scripts of type indexed
+PostgreSQL-BHT-5              : runs scripts ['initindexes-tpch-schema.sql', 'initconstraints-tpch-schema.sql', 'initstatistics-tpch-schema.sql']
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-5              : is loading
+done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+PostgreSQL-BHT-5              : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-5-1            : start benchmarking
+PostgreSQL-BHT-5              : benchmarking results in folder /home/perdelt/benchmarks/1750868888
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-5-1            : collecting loading metrics of SUT at connection PostgreSQL-BHT-5-1
+PostgreSQL-BHT-5-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-5-1            : collecting metrics of data generator at connection PostgreSQL-BHT-5-1
+PostgreSQL-BHT-5-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-5-1            : collecting metrics of data injector at connection PostgreSQL-BHT-5-1
+PostgreSQL-BHT-5-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-BHT-5              : has running benchmarks
+PostgreSQL-BHT-5-1            : showing benchmarker times
+PostgreSQL-BHT-5-1            : benchmarker timespan (start to end single container [s]) = 67
+PostgreSQL-BHT-5-1            : benchmarker times (start/end per pod and container) = [(1750869467, 1750869497), (1750869467, 1750869497), (1750869467, 1750869499), (1750869466, 1750869497), (1750869467, 1750869499)]
+PostgreSQL-BHT-5-1            : found and updated times {'benchmarker': [(1750869467, 1750869497), (1750869467, 1750869497), (1750869467, 1750869499), (1750869466, 1750869497), (1750869467, 1750869499)]}
+PostgreSQL-BHT-5-1            : collecting execution metrics of SUT at connection PostgreSQL-BHT-5-1
+PostgreSQL-BHT-5-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-5-1            : collecting metrics of benchmarker at connection PostgreSQL-BHT-5-1
+PostgreSQL-BHT-5-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+PostgreSQL-BHT-5              : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-5-2            : start benchmarking
+PostgreSQL-BHT-5              : benchmarking results in folder /home/perdelt/benchmarks/1750868888
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-5-2            : collecting loading metrics of SUT at connection PostgreSQL-BHT-5-2
+PostgreSQL-BHT-5-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-5-2            : collecting metrics of data generator at connection PostgreSQL-BHT-5-2
+PostgreSQL-BHT-5-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-5-2            : collecting metrics of data injector at connection PostgreSQL-BHT-5-2
+PostgreSQL-BHT-5-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-BHT-5              : has running benchmarks
+PostgreSQL-BHT-5-2            : showing benchmarker times
+PostgreSQL-BHT-5-2            : benchmarker timespan (start to end single container [s]) = 68
+PostgreSQL-BHT-5-2            : benchmarker times (start/end per pod and container) = [(1750869580, 1750869612), (1750869581, 1750869612), (1750869580, 1750869613), (1750869580, 1750869611), (1750869580, 1750869612)]
+PostgreSQL-BHT-5-2            : found and updated times {'benchmarker': [(1750869580, 1750869612), (1750869581, 1750869612), (1750869580, 1750869613), (1750869580, 1750869611), (1750869580, 1750869612)]}
+PostgreSQL-BHT-5-2            : collecting execution metrics of SUT at connection PostgreSQL-BHT-5-2
+PostgreSQL-BHT-5-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-5-2            : collecting metrics of benchmarker at connection PostgreSQL-BHT-5-2
+PostgreSQL-BHT-5-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-5-1750868888(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-BHT-5              : can be stopped
+PostgreSQL-BHT-5              : had 0 restarts
+Experiment                    : ends at 2025-06-25 18:41:16.489369 (15061839.9599235) - 788.55s total
+Join results done!
+done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 789s 
+    Code: 1750868888
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 600.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.8.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 5 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 100Gi.
+    Loading is tested with [1] threads, split into [5] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [5, 5] times the number of benchmarking pods.
+    Number of tenants is 5, one schema per tenant.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-5-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104280
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-1-2 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104280
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-1-3 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104280
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-1-4 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104280
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-1-5 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104280
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104320
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-2-2 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104320
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-2-3 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104320
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-2-4 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104320
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+PostgreSQL-BHT-5-2-5 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425104320
+    datadisk:13647
+    volume_size:100G
+    volume_used:14G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750868888
+        TENANT_BY:schema
+        TENANT_NUM:5
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-5-1-1  PostgreSQL-BHT-5-1-2  PostgreSQL-BHT-5-1-3  PostgreSQL-BHT-5-1-4  PostgreSQL-BHT-5-1-5  PostgreSQL-BHT-5-2-1  PostgreSQL-BHT-5-2-2  PostgreSQL-BHT-5-2-3  PostgreSQL-BHT-5-2-4  PostgreSQL-BHT-5-2-5
+Pricing Summary Report (TPC-H Q1)                                 2746.22               2770.35               2743.30               2678.36               2716.69               2744.38               2793.39               2739.12               2735.42               2733.71
+Minimum Cost Supplier Query (TPC-H Q2)                             506.10                457.06                468.71                459.27                483.25                450.12                455.32                464.35                458.65                458.95
+Shipping Priority (TPC-H Q3)                                       909.17                926.25                885.09                869.76                871.16                915.29                941.64                883.47                880.66                879.66
+Order Priority Checking Query (TPC-H Q4)                          1487.42               1479.31               1430.35               1408.76               1409.70               1464.35               1446.00               1437.75               1400.04               1406.80
+Local Supplier Volume (TPC-H Q5)                                   818.41                825.87                769.90                767.21                772.16                812.75                816.55                780.36                775.99                779.70
+Forecasting Revenue Change (TPC-H Q6)                              648.04                633.78                585.39                584.78                611.60                638.12                624.92                592.30                579.96                612.82
+Forecasting Revenue Change (TPC-H Q7)                              922.52                928.75                901.48                872.62                892.63                908.91                895.79                867.94                893.30                863.03
+National Market Share (TPC-H Q8)                                   749.73                760.97                728.36                706.23                733.42                763.19                765.58                715.82                719.42                725.85
+Product Type Profit Measure (TPC-H Q9)                            1380.47               1367.84               1268.90               1254.49               1272.98               1332.61               1354.53               1240.78               1221.16               1238.65
+Forecasting Revenue Change (TPC-H Q10)                            1452.66               1460.22               1407.56               1402.70               1393.74               1478.01               1450.32               1400.78               1395.73               1387.23
+Important Stock Identification (TPC-H Q11)                         276.32                277.77                302.77                279.12                268.49                271.54                276.31                303.89                274.63                282.73
+Shipping Modes and Order Priority (TPC-H Q12)                     1194.03               1205.54               1177.25               1152.48               1165.97               1206.70               1222.70               1168.04               1126.53               1134.54
+Customer Distribution (TPC-H Q13)                                 2126.89               2059.56               2072.48               2089.42               2081.68               2143.44               1961.10               2105.35               2076.88               2043.24
+Forecasting Revenue Change (TPC-H Q14)                             640.02                657.50                616.99                612.49                629.18                659.67                664.56                613.49                630.90                636.80
+Top Supplier Query (TPC-H Q15)                                     645.91                657.01                626.19                623.76                643.27                665.90                659.25                643.13                621.88                670.32
+Parts/Supplier Relationship (TPC-H Q16)                            580.27                575.58                601.48                589.20                569.65                602.36                590.16                600.81                589.64                587.07
+Small-Quantity-Order Revenue (TPC-H Q17)                          2089.57               2109.37               2065.42               2174.68               2126.05               2140.88               1995.37               2052.50               2094.55               2051.38
+Large Volume Customer (TPC-H Q18)                                 8437.22               8763.58               7685.09               7185.47               8497.41               7827.25               9184.67               7358.39               7985.15               8142.92
+Discounted Revenue (TPC-H Q19)                                     799.24                819.52                761.78                768.05                791.75                799.39                789.76                767.84                774.06                782.88
+Potential Part Promotion (TPC-H Q20)                               704.45                724.21                726.88                714.39                729.12                686.12                678.57                675.89                679.82                699.56
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               1032.13               1042.66               1014.19               1024.88               1002.50               1021.18                993.26               1007.32                996.70                990.26
+Global Sales Opportunity Query (TPC-H Q22)                         258.87                260.64                268.73                274.77                250.38                241.85                233.65                247.11                244.11                235.16
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-5-1-1          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-1-2          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-1-3          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-1-4          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-1-5          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-2-1          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-2-2          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-2-3          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-2-4          20.0          234.0         5.0      382.0     644.0
+PostgreSQL-BHT-5-2-5          20.0          234.0         5.0      382.0     644.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS                               
+PostgreSQL-BHT-5-1-1           0.98
+PostgreSQL-BHT-5-1-2           0.98
+PostgreSQL-BHT-5-1-3           0.95
+PostgreSQL-BHT-5-1-4           0.94
+PostgreSQL-BHT-5-1-5           0.95
+PostgreSQL-BHT-5-2-1           0.97
+PostgreSQL-BHT-5-2-2           0.97
+PostgreSQL-BHT-5-2-3           0.94
+PostgreSQL-BHT-5-2-4           0.94
+PostgreSQL-BHT-5-2-5           0.94
+
+### Power@Size ((3600*SF)/(geo times))
+                      Power@Size [~Q/h]
+DBMS                                   
+PostgreSQL-BHT-5-1-1            3679.82
+PostgreSQL-BHT-5-1-2            3669.80
+PostgreSQL-BHT-5-1-3            3774.10
+PostgreSQL-BHT-5-1-4            3822.14
+PostgreSQL-BHT-5-1-5            3777.02
+PostgreSQL-BHT-5-2-1            3716.96
+PostgreSQL-BHT-5-2-2            3727.55
+PostgreSQL-BHT-5-2-3            3815.25
+PostgreSQL-BHT-5-2-4            3839.31
+PostgreSQL-BHT-5-2-5            3814.81
+
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                  time [s]  count   SF  Throughput@Size
+DBMS               SF  num_experiment num_client                                       
+PostgreSQL-BHT-5-1 1.0 1              1                 32      5  1.0          12375.0
+PostgreSQL-BHT-5-2 1.0 1              2                 33      5  1.0          12000.0
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-5 - Pods [[5, 5]]
+
+#### Planned
+DBMS PostgreSQL-BHT-5 - Pods [[5, 5]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-5-1      549.58     5.47          9.05                18.29
+PostgreSQL-BHT-5-2      549.58     5.47          9.05                18.29
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-5-1       65.59     0.13          0.02                 0.91
+PostgreSQL-BHT-5-2       65.59     0.13          0.02                 0.91
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-5-1      450.71      0.0         20.58                28.56
+PostgreSQL-BHT-5-2      610.90      0.0          9.72                17.71
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-5-1         0.0      0.0           0.0                  0.0
+PostgreSQL-BHT-5-2         0.0      0.0           0.0                  0.0
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]

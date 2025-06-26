@@ -1,0 +1,557 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 1799s 
+    Code: 1750456863
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 600.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.8.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 10Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 1] times the number of benchmarking pods.
+    Number of tenants is 10, one container per tenant.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-1-0-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540696
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-0-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541028
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-1-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540880
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-1-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541048
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-2-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540720
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-2-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541064
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-3-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540736
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-3-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541080
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-4-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540756
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-4-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541092
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-5-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540772
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-5-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541104
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-6-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540788
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-6-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541120
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-7-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540808
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-7-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541136
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-8-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540828
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-8-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541148
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-9-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424540844
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+PostgreSQL-BHT-1-9-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:424541164
+    datadisk:2757
+    volume_size:10G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750456863
+        TENANT_BY:container
+        TENANT_NUM:10
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-1-0-1-1  PostgreSQL-BHT-1-0-2-1  PostgreSQL-BHT-1-1-1-1  PostgreSQL-BHT-1-1-2-1  PostgreSQL-BHT-1-2-1-1  PostgreSQL-BHT-1-2-2-1  PostgreSQL-BHT-1-3-1-1  PostgreSQL-BHT-1-3-2-1  PostgreSQL-BHT-1-4-1-1  PostgreSQL-BHT-1-4-2-1  PostgreSQL-BHT-1-5-1-1  PostgreSQL-BHT-1-5-2-1  PostgreSQL-BHT-1-6-1-1  PostgreSQL-BHT-1-6-2-1  PostgreSQL-BHT-1-7-1-1  PostgreSQL-BHT-1-7-2-1  PostgreSQL-BHT-1-8-1-1  PostgreSQL-BHT-1-8-2-1  PostgreSQL-BHT-1-9-1-1  PostgreSQL-BHT-1-9-2-1
+Pricing Summary Report (TPC-H Q1)                                  21645.49                 4951.22                25067.66                 4904.01                19509.72                 5242.14                20465.27                 5161.80                21680.32                 4780.62                19757.73                 5087.88                19881.17                 5080.36                22530.30                 4727.18                17590.80                 5045.50                18570.42                 4540.62
+Minimum Cost Supplier Query (TPC-H Q2)                              8491.56                  561.90                 6895.44                  518.98                 5464.48                  539.08                 5059.62                  485.89                 5043.22                  535.52                 6318.37                  508.88                 5585.96                  471.51                 4694.27                  477.23                 5801.37                  532.34                 5083.66                  545.96
+Shipping Priority (TPC-H Q3)                                        6440.75                  989.51                 7989.65                  997.89                 7337.92                 1002.68                 6823.01                 1020.24                 7614.22                  948.69                 6871.28                 1051.00                 9635.29                 1037.22                 6923.65                 1003.74                 8709.46                 1000.96                 8814.40                  863.74
+Order Priority Checking Query (TPC-H Q4)                            1518.93                 1540.37                 1485.10                 1628.47                 1336.21                 1599.08                 1343.54                 1563.77                 1499.75                 1533.70                 1401.83                 1451.83                 1476.26                 1598.94                 1513.34                 1530.10                 1325.01                 1545.75                 1338.11                 1521.82
+Local Supplier Volume (TPC-H Q5)                                     753.36                  970.49                  709.61                  949.53                  737.53                  954.51                  845.44                  998.66                  823.45                  807.90                  827.98                  879.03                  832.31                  993.68                  774.71                  984.20                  775.19                  943.64                  812.29                  710.52
+Forecasting Revenue Change (TPC-H Q6)                                575.85                  666.34                  524.07                  661.20                  591.97                  667.86                  583.52                  660.39                  596.83                  623.83                  582.30                  652.40                  580.85                  631.59                  626.01                  672.15                  588.51                  693.21                  578.41                  608.09
+Forecasting Revenue Change (TPC-H Q7)                               1033.03                 1062.30                  882.81                 1018.24                 1065.49                 1007.03                 1100.01                 1016.51                 1001.10                 1005.59                 1048.00                 1054.53                  906.76                  990.09                 1011.30                 1012.76                 1284.45                 1032.62                 1015.34                 1020.31
+National Market Share (TPC-H Q8)                                     821.02                  798.68                  965.83                  772.55                  894.23                  830.67                  920.46                  846.53                  735.23                  822.33                  807.65                  814.51                 1034.90                  845.92                  852.32                  825.11                  899.17                  785.08                  851.48                  853.03
+Product Type Profit Measure (TPC-H Q9)                              1787.68                 1256.06                 1635.10                 1173.91                 1670.98                 1179.22                 2093.04                 1195.16                 1982.75                 1350.68                 1947.97                 1231.59                 1716.42                 1180.10                 1792.75                 1124.84                 1650.68                 1204.15                 1676.69                 1421.27
+Forecasting Revenue Change (TPC-H Q10)                              1299.82                 1328.87                 1333.96                 1412.91                 1416.10                 1304.16                 1379.64                 1323.71                 1361.91                 1346.25                 1372.01                 1372.06                 1348.12                 1339.79                 1445.44                 1332.75                 1382.94                 1441.84                 1372.16                 1416.27
+Important Stock Identification (TPC-H Q11)                           282.42                  280.00                  283.38                  326.55                  294.10                  310.00                  294.02                  317.24                  264.08                  266.09                  321.26                  300.06                  268.63                  323.47                  266.56                  289.05                  271.63                  293.32                  274.22                  283.13
+Shipping Modes and Order Priority (TPC-H Q12)                       1135.21                 1217.31                 1043.86                 1132.56                 1105.81                 1098.68                 1103.04                 1196.51                 1034.06                 1143.51                 1112.52                 1144.05                 1014.91                 1176.02                 1060.77                 1186.51                 1087.98                 1069.01                 1093.50                 1168.00
+Customer Distribution (TPC-H Q13)                                   2184.70                 2394.00                 2526.26                 2182.98                 2491.75                 2060.17                 2365.67                 2147.43                 2265.84                 2153.46                 2428.54                 2221.79                 2265.04                 2593.16                 2189.28                 2090.84                 2155.78                 2365.24                 2163.42                 2195.59
+Forecasting Revenue Change (TPC-H Q14)                               549.60                  711.26                  682.69                  712.49                  561.00                  706.94                  613.63                  721.92                  570.73                  544.37                  594.97                  625.89                  573.39                  678.06                  563.16                  594.74                  559.89                  736.11                  587.63                  567.97
+Top Supplier Query (TPC-H Q15)                                       566.37                  737.13                  763.21                  687.40                  601.18                  722.99                  600.76                  728.38                  563.70                  733.49                  584.28                  735.04                  562.28                  642.85                  578.27                  714.49                  630.93                  701.31                  638.55                  711.29
+Parts/Supplier Relationship (TPC-H Q16)                              625.22                  598.42                  863.55                  594.29                  627.87                  593.93                  605.93                  589.28                  573.14                  767.88                  585.44                  674.24                  586.87                  576.87                  583.01                  641.57                  654.06                  600.39                  606.70                  766.92
+Small-Quantity-Order Revenue (TPC-H Q17)                            2739.53                 2236.60                 2816.40                 1993.24                 2055.79                 2010.70                 2047.23                 1978.01                 2024.53                 2010.26                 1964.41                 2096.54                 2058.97                 1997.02                 2010.03                 2015.92                 2081.16                 2103.48                 1887.19                 2132.02
+Large Volume Customer (TPC-H Q18)                                   9358.04                11983.59                 8778.71                12790.57                10209.71                12123.52                10788.26                11630.97                10392.51                11041.26                11071.01                11971.84                10767.83                13017.90                10321.96                12050.00                11217.56                13270.04                 9704.29                11465.59
+Discounted Revenue (TPC-H Q19)                                       728.91                  825.95                  686.91                  745.58                  831.53                  809.41                  824.44                  766.28                  776.29                  720.08                  839.00                  768.95                  797.30                  790.46                  861.34                  831.27                  835.97                  789.65                  768.27                  750.91
+Potential Part Promotion (TPC-H Q20)                                 719.48                  758.14                  676.70                  784.40                  792.02                  745.55                  828.84                  751.19                  725.80                  739.84                  873.68                  719.23                  819.97                  797.34                  802.97                  736.21                  798.38                  693.89                  726.53                  713.67
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                 1788.74                  990.27                 1740.85                  922.58                 1790.62                 1014.14                 1842.37                 1053.54                 1490.90                 1035.14                 1717.96                  995.13                 1739.43                  903.70                 1576.68                 1042.88                 1456.97                  917.22                 2045.56                 1013.90
+Global Sales Opportunity Query (TPC-H Q22)                           345.79                  227.56                  291.84                  227.70                  383.13                  231.04                  352.68                  239.26                  283.17                  228.81                  473.58                  246.80                  723.71                  217.60                  331.22                  227.64                  308.89                  215.39                  438.36                  302.22
+
+### Loading [s]
+                        timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-1-0-1-1           0.0          122.0         3.0       94.0     350.0
+PostgreSQL-BHT-1-0-2-1           0.0          122.0         3.0       94.0     350.0
+PostgreSQL-BHT-1-1-1-1           0.0          127.0         3.0       94.0     352.0
+PostgreSQL-BHT-1-1-2-1           0.0          127.0         3.0       94.0     352.0
+PostgreSQL-BHT-1-2-1-1           0.0          122.0         3.0       92.0     244.0
+PostgreSQL-BHT-1-2-2-1           0.0          122.0         3.0       92.0     244.0
+PostgreSQL-BHT-1-3-1-1           0.0          129.0         3.0       89.0     339.0
+PostgreSQL-BHT-1-3-2-1           0.0          129.0         3.0       89.0     339.0
+PostgreSQL-BHT-1-4-1-1           0.0          126.0         3.0       93.0     331.0
+PostgreSQL-BHT-1-4-2-1           0.0          126.0         3.0       93.0     331.0
+PostgreSQL-BHT-1-5-1-1           0.0          130.0         3.0       93.0     327.0
+PostgreSQL-BHT-1-5-2-1           0.0          130.0         3.0       93.0     327.0
+PostgreSQL-BHT-1-6-1-1           0.0          127.0         3.0       96.0     237.0
+PostgreSQL-BHT-1-6-2-1           0.0          127.0         3.0       96.0     237.0
+PostgreSQL-BHT-1-7-1-1           0.0          130.0         3.0       97.0     232.0
+PostgreSQL-BHT-1-7-2-1           0.0          130.0         3.0       97.0     232.0
+PostgreSQL-BHT-1-8-1-1           0.0          125.0         3.0       99.0     315.0
+PostgreSQL-BHT-1-8-2-1           0.0          125.0         3.0       99.0     315.0
+PostgreSQL-BHT-1-9-1-1           0.0          120.0         3.0       96.0     298.0
+PostgreSQL-BHT-1-9-2-1           0.0          120.0         3.0       96.0     298.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                        Geo Times [s]
+DBMS                                 
+PostgreSQL-BHT-1-0-1-1           1.40
+PostgreSQL-BHT-1-0-2-1           1.06
+PostgreSQL-BHT-1-1-1-1           1.43
+PostgreSQL-BHT-1-1-2-1           1.04
+PostgreSQL-BHT-1-2-1-1           1.40
+PostgreSQL-BHT-1-2-2-1           1.05
+PostgreSQL-BHT-1-3-1-1           1.42
+PostgreSQL-BHT-1-3-2-1           1.05
+PostgreSQL-BHT-1-4-1-1           1.35
+PostgreSQL-BHT-1-4-2-1           1.02
+PostgreSQL-BHT-1-5-1-1           1.44
+PostgreSQL-BHT-1-5-2-1           1.05
+PostgreSQL-BHT-1-6-1-1           1.45
+PostgreSQL-BHT-1-6-2-1           1.05
+PostgreSQL-BHT-1-7-1-1           1.37
+PostgreSQL-BHT-1-7-2-1           1.03
+PostgreSQL-BHT-1-8-1-1           1.39
+PostgreSQL-BHT-1-8-2-1           1.05
+PostgreSQL-BHT-1-9-1-1           1.39
+PostgreSQL-BHT-1-9-2-1           1.04
+
+### Power@Size ((3600*SF)/(geo times))
+                        Power@Size [~Q/h]
+DBMS                                     
+PostgreSQL-BHT-1-0-1-1            2564.33
+PostgreSQL-BHT-1-0-2-1            3389.67
+PostgreSQL-BHT-1-1-1-1            2510.27
+PostgreSQL-BHT-1-1-2-1            3453.54
+PostgreSQL-BHT-1-2-1-1            2569.00
+PostgreSQL-BHT-1-2-2-1            3439.47
+PostgreSQL-BHT-1-3-1-1            2532.14
+PostgreSQL-BHT-1-3-2-1            3423.15
+PostgreSQL-BHT-1-4-1-1            2673.51
+PostgreSQL-BHT-1-4-2-1            3525.08
+PostgreSQL-BHT-1-5-1-1            2501.61
+PostgreSQL-BHT-1-5-2-1            3443.87
+PostgreSQL-BHT-1-6-1-1            2483.19
+PostgreSQL-BHT-1-6-2-1            3444.68
+PostgreSQL-BHT-1-7-1-1            2623.24
+PostgreSQL-BHT-1-7-2-1            3489.85
+PostgreSQL-BHT-1-8-1-1            2584.88
+PostgreSQL-BHT-1-8-2-1            3443.56
+PostgreSQL-BHT-1-9-1-1            2589.26
+PostgreSQL-BHT-1-9-2-1            3471.32
+
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                    time [s]  count   SF  Throughput@Size
+DBMS                 SF  num_experiment num_client                                       
+PostgreSQL-BHT-1-0-1 1.0 1              1                 67      1  1.0          1182.09
+PostgreSQL-BHT-1-0-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-1-1 1.0 1              1                 71      1  1.0          1115.49
+PostgreSQL-BHT-1-1-2 1.0 1              2                 39      1  1.0          2030.77
+PostgreSQL-BHT-1-2-1 1.0 1              1                 63      1  1.0          1257.14
+PostgreSQL-BHT-1-2-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-3-1 1.0 1              1                 65      1  1.0          1218.46
+PostgreSQL-BHT-1-3-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-4-1 1.0 1              1                 65      1  1.0          1218.46
+PostgreSQL-BHT-1-4-2 1.0 1              2                 37      1  1.0          2140.54
+PostgreSQL-BHT-1-5-1 1.0 1              1                 65      1  1.0          1218.46
+PostgreSQL-BHT-1-5-2 1.0 1              2                 39      1  1.0          2030.77
+PostgreSQL-BHT-1-6-1 1.0 1              1                 67      1  1.0          1182.09
+PostgreSQL-BHT-1-6-2 1.0 1              2                 39      1  1.0          2030.77
+PostgreSQL-BHT-1-7-1 1.0 1              1                 65      1  1.0          1218.46
+PostgreSQL-BHT-1-7-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-8-1 1.0 1              1                 64      1  1.0          1237.50
+PostgreSQL-BHT-1-8-2 1.0 1              2                 39      1  1.0          2030.77
+PostgreSQL-BHT-1-9-1 1.0 1              1                 63      1  1.0          1257.14
+PostgreSQL-BHT-1-9-2 1.0 1              2                 38      1  1.0          2084.21
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-2 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-3 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-4 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-5 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-6 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-7 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-8 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-9 - Pods [[1, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-1 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-2 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-3 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-4 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-5 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-6 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-7 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-8 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-9 - Pods [[1, 1]]
+
+### Execution - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1      136.51     0.01          3.78                 5.59
+PostgreSQL-BHT-1-0-2      161.73     2.71          3.78                 5.59
+PostgreSQL-BHT-1-1-1      131.23     0.21          3.78                 5.60
+PostgreSQL-BHT-1-1-2      166.44     0.00          3.78                 5.60
+PostgreSQL-BHT-1-2-1      137.40     0.00          3.78                 5.59
+PostgreSQL-BHT-1-2-2      168.11     2.37          3.87                 5.68
+PostgreSQL-BHT-1-3-1      142.57     2.19          3.78                 5.60
+PostgreSQL-BHT-1-3-2      163.38     0.06          3.86                 5.68
+PostgreSQL-BHT-1-4-1      139.55     2.08          3.78                 5.59
+PostgreSQL-BHT-1-4-2      154.95     0.00          3.87                 5.68
+PostgreSQL-BHT-1-5-1      144.07     0.32          3.78                 5.59
+PostgreSQL-BHT-1-5-2      161.00     0.00          3.78                 5.59
+PostgreSQL-BHT-1-6-1      139.42     0.34          3.78                 5.59
+PostgreSQL-BHT-1-6-2      162.05     0.01          3.87                 5.68
+PostgreSQL-BHT-1-7-1      140.05     0.01          3.78                 5.60
+PostgreSQL-BHT-1-7-2      162.58     2.36          3.95                 5.76
+PostgreSQL-BHT-1-8-1      137.38     2.34          3.78                 5.59
+PostgreSQL-BHT-1-8-2      159.79     2.08          3.95                 5.76
+PostgreSQL-BHT-1-9-1      136.28     0.00          3.78                 5.59
+PostgreSQL-BHT-1-9-2      155.62     0.00          3.87                 5.67
+
+### Execution - Benchmarker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1       13.14     0.01          0.24                 0.25
+PostgreSQL-BHT-1-0-2       14.57     0.22          0.23                 0.24
+PostgreSQL-BHT-1-1-1       12.82     0.00          0.23                 0.24
+PostgreSQL-BHT-1-1-2       12.71     0.01          0.23                 0.24
+PostgreSQL-BHT-1-2-1       13.13     0.01          0.24                 0.25
+PostgreSQL-BHT-1-2-2       12.57     0.01          0.23                 0.24
+PostgreSQL-BHT-1-3-1       12.87     0.25          0.24                 0.24
+PostgreSQL-BHT-1-3-2       13.07     0.21          0.23                 0.24
+PostgreSQL-BHT-1-4-1       13.06     0.20          0.24                 0.25
+PostgreSQL-BHT-1-4-2       13.93     0.28          0.23                 0.24
+PostgreSQL-BHT-1-5-1       12.67     0.24          0.23                 0.24
+PostgreSQL-BHT-1-5-2       13.84     0.01          0.24                 0.25
+PostgreSQL-BHT-1-6-1       12.63     0.23          0.23                 0.24
+PostgreSQL-BHT-1-6-2       13.20     0.01          0.23                 0.24
+PostgreSQL-BHT-1-7-1       13.48     0.01          0.24                 0.25
+PostgreSQL-BHT-1-7-2       12.82     0.00          0.24                 0.25
+PostgreSQL-BHT-1-8-1       11.70     0.01          0.23                 0.23
+PostgreSQL-BHT-1-8-2       13.47     0.00          0.24                 0.25
+PostgreSQL-BHT-1-9-1       13.80     0.00          0.23                 0.24
+PostgreSQL-BHT-1-9-2       13.43     0.00          0.23                 0.24
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST failed: Workflow not as planned
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]

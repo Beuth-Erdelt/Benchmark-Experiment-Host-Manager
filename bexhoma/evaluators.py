@@ -1395,6 +1395,7 @@ class benchbase(logger):
             #terminals = re.findall('BENCHBASE_TERMINALS (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
             keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
+            child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
             #errors = re.findall('Exception in thread ', stdout)
             errors = re.findall('error code', stdout)
@@ -1421,6 +1422,7 @@ class benchbase(logger):
                 'num_errors': num_errors,
                 'duration': duration,
                 'efficiency': 0.0,
+                'child': child,
             }
             df_header = pd.DataFrame(header, index=[0])
             if True: # num_errors == 0:
@@ -1488,6 +1490,7 @@ class benchbase(logger):
             'Latency Distribution.75th Percentile Latency (microseconds)':'float',
             'Latency Distribution.Average Latency (microseconds)':'float',
             'efficiency': 'float',
+            'child': 'int',
         })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df):
@@ -1535,6 +1538,7 @@ class benchbase(logger):
                 'Latency Distribution.75th Percentile Latency (microseconds)':'max',
                 'Latency Distribution.Average Latency (microseconds)':'mean',
                 'efficiency': 'sum',
+                'child': 'count',
             }
             #print(grp.agg(aggregate))
             dict_grp = dict()

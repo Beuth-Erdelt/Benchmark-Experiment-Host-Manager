@@ -38,6 +38,7 @@ import threading
 from io import StringIO
 import hiyapyco
 from math import ceil
+import time
 
 from dbmsbenchmarker import *
 
@@ -142,6 +143,12 @@ class default():
         self.num_maintaining = 0
         self.num_loading_pods = 0
         self.num_maintaining_pods = 0
+        self.num_tenants = self.experiment.num_tenants
+        self.tenant_per = self.experiment.tenant_per                            #: '', or schema, database or container
+        self.tenant_ready_to_load = False
+        self.tenant_started_to_load = False
+        self.tenant_ready_to_index = False
+        self.tenant_started_to_index = False
         # are there other components?
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
@@ -688,9 +695,12 @@ class default():
         for i in range(1, self.num_loading+1):
             #redisClient.rpush(redisQueue, i)
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        # reset number of clients
+        # reset number of clients per job
         redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
         self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
+        # reset number of clients per experiment
+        #redisQueue = '{}-{}-{}'.format(app, 'loader-podcount', self.code)
+        #self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         # start job
         job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
@@ -1909,6 +1919,26 @@ scrape_configs:
         stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
         host = stdout#os.popen(fullcommand).read()
         return host.replace('\n','')
+    def get_host_restarts(self, pod_sut=''):
+        """
+        Returns information about the sut's host name.
+        Basically this calls `kubectl get pod` to receive the information.
+
+        :return: Node name of the host
+        """
+        self.logger.debug('configuration.get_host_restarts()')
+        if len(pod_sut) == 0:
+            pod_sut = self.pod_sut
+        cmd = {}
+        #fullcommand = 'kubectl get pods/'+self.pod_sut+' -o=json'
+        result = self.experiment.cluster.kubectl('get pods/'+pod_sut+' -o jsonpath="{.status.containerStatuses[*].restartCount}"')#self.yamlfolder+deployment)
+        #result = os.popen(fullcommand).read()
+        try:
+            #print(result)
+            return result
+        except Exception as e:
+            return ""
+        return ""
     def get_host_node(self):
         """
         Returns information about the sut's host name.
@@ -2272,13 +2302,21 @@ scrape_configs:
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
         if 'JDBC' in c:
+            database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
+            schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
+            if self.tenant_per == 'schema':
+                schema = 'DBMSBENCHMARKER_SCHEMA'
+            elif self.tenant_per == 'database':
+                database = 'DBMSBENCHMARKER_DATABASE'
             c['JDBC']['url'] = c['JDBC']['url'].format(
                 serverip=serverip,
                 dbname=self.experiment.volume,
                 DBNAME=self.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],
                 timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
+                namespace=self.experiment.cluster.namespace,
+                database=database,
+                schema=schema,
                 )
         #print(c)
         return c#.copy()
@@ -2683,6 +2721,34 @@ scrape_configs:
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
+        if self.num_tenants > 0 and self.tenant_per == 'schema':
+            for tenant in range(self.num_tenants):
+                print("{:30s}: scripts for tenant #{}".format(self.configuration, tenant))
+                #print(f"Tenant #{tenant}")
+                for script in scripts:
+                    filename_template = self.path_experiment_docker+'/'+script
+                    if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
+                        with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
+                            data = initscript_template.read()
+                            #data = data.format(**self.ddl_parameters)
+                            #print(data)
+                            data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
+                            #print(data)
+                            filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
+                            filename_target = f'/filled_{tenant}_{script}'
+                            with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
+                                initscript_filled.write(data)
+                            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+filename_target))
+            return
+        if self.num_tenants > 0 and self.tenant_per == 'database':
+            script = 'initdatabases.sql'
+            filename_template = self.experiment.cluster.experiments_configfolder+'/'+self.path_experiment_docker+'/'+script
+            script_create_database = ''
+            for tenant in range(self.num_tenants):
+                script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
+            with open(filename_template, "w") as initscript_filled:
+                initscript_filled.write(script_create_database)
+            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=filename_template, to_name=self.pod_sut+':'+scriptfolder+script))
         if len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
@@ -2969,7 +3035,10 @@ scrape_configs:
                     # check if there is a post-loading phase
                     if len(self.indexscript):
                         # loading has not finished (there is indexing)
-                        self.load_data(scripts=self.indexscript, time_offset=self.timeLoading, time_start_int=self.timeLoadingStart, script_type='indexed')
+                        if self.tenant_per == 'container' and not self.loading_finished:
+                            self.tenant_ready_to_index = True
+                        else:
+                            self.load_data(scripts=self.indexscript, time_offset=self.timeLoading, time_start_int=self.timeLoadingStart, script_type='indexed')
         else:
             loading_pods_active = False
         # check if asynch loading outside cluster is done
@@ -3039,7 +3108,10 @@ scrape_configs:
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
         commands = scripts.copy()
-        #commands = self.initscript.copy()
+        c = self.dockertemplate['template']
+        database = c['JDBC']['database'] if 'database' in c['JDBC'] else 'default'
+        schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+        databases = [database]
         use_storage = self.use_storage()
         if use_storage:
             #storage_label = 'tpc-ds-1'
@@ -3051,34 +3123,165 @@ scrape_configs:
             volume = name_pvc
         else:
             volume = ''
+        #commands = self.initscript.copy()
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
         if not 'loadData' in self.dockertemplate:
             print("{:30s}: no load command found in config".format(self.configuration))
             return
         else:
-            self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
+            #self.logger.debug("load_data_asynch(app="+self.appname+", component='sut', experiment="+self.code+", configuration="+self.configuration+", pod_sut="+self.pod_sut+", scriptfolder="+scriptfolder+", commands="+str(commands)+", loadData="+self.dockertemplate['loadData']+", path="+self.experiment.path+", volume="+volume+", context="+self.experiment.cluster.context+", service_name="+service_name+", time_offset="+str(time_offset)+", time_start_int="+str(time_start_int)+", script_type="+str(script_type)+", namespace="+self.experiment.cluster.namespace+")")
             #result = load_data_asynch(app=self.appname, component='sut', experiment=self.code, configuration=self.configuration, pod_sut=self.pod_sut, scriptfolder=scriptfolder, commands=commands, loadData=self.dockertemplate['loadData'], path=self.experiment.path)
-            thread_args = {
-                'app':self.appname,
-                'component':'sut',
-                'experiment':self.code,
-                'configuration':self.configuration,
-                'pod_sut':self.pod_sut,
-                'scriptfolder':scriptfolder,
-                'commands':commands,
-                'loadData':self.dockertemplate['loadData'],
-                'path':self.experiment.path,
-                'volume':volume,
-                'context':self.experiment.cluster.context,
-                'service_name':service_name,
-                'time_offset':time_offset,
-                'script_type':script_type,
-                'time_start_int':time_start_int,
-                'namespace':self.experiment.cluster.namespace
-            }
-            thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
-            thread.start()
-            return
+            if self.num_tenants > 0:
+                if self.tenant_per == 'schema':
+                    #commands_tenants = []
+                    #for tenant in range(self.num_tenants):
+                    #    for c in commands:
+                    #        filename_filled = f'filled_{tenant}_{c}'
+                    #        commands_tenants.append(filename_filled)
+                    #commands = commands_tenants.copy()
+                    for tenant in range(self.num_tenants):
+                        commands_tenants = []
+                        for c in commands:
+                            filename_filled = f'filled_{tenant}_{c}'
+                            commands_tenants.append(filename_filled)
+                        thread_args = {
+                            'app':self.appname,
+                            'component':'sut',
+                            'experiment':self.code,
+                            'configuration':self.configuration,
+                            'pod_sut':self.pod_sut,
+                            'scriptfolder':scriptfolder,
+                            'commands':commands_tenants,
+                            'loadData':self.dockertemplate['loadData'],
+                            'path':self.experiment.path,
+                            'volume':volume,
+                            'context':self.experiment.cluster.context,
+                            'service_name':service_name,
+                            'time_offset':time_offset,
+                            'script_type':script_type,
+                            'time_start_int':time_start_int,
+                            'namespace':self.experiment.cluster.namespace,
+                            'num_tenants':self.num_tenants,
+                            'id_tenant':tenant,
+                            'database':databases,
+                        }
+                        self.logger.debug("load_data_asynch - run schema-wise scripts {}".format(thread_args))
+                        thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+                        thread.start()
+                        time.sleep(1)
+                elif self.tenant_per == 'database':
+                    #commands.insert(0, "initdatabases.sql")
+                    ##databases = database.copy()
+                    #for tenant in range(self.num_tenants):
+                    #    databases.append(f'tenant_{tenant}')
+                    ##database = databases.copy()
+                    if script_type == 'loaded':
+                        # create databases before first script (only)
+                        commands_create_databases = ["initdatabases.sql"]
+                        script_type_create_databases = "tenants"
+                        thread_args = {
+                            'app':self.appname,
+                            'component':'sut',
+                            'experiment':self.code,
+                            'configuration':self.configuration,
+                            'pod_sut':self.pod_sut,
+                            'scriptfolder':scriptfolder,
+                            'commands':commands_create_databases,
+                            'loadData':self.dockertemplate['loadData'],
+                            'path':self.experiment.path,
+                            'volume':volume,
+                            'context':self.experiment.cluster.context,
+                            'service_name':service_name,
+                            'time_offset':time_offset,
+                            'script_type':script_type_create_databases,
+                            'time_start_int':time_start_int,
+                            'namespace':self.experiment.cluster.namespace,
+                            'num_tenants':0,
+                            'id_tenant':0,
+                            'database':databases,
+                        }
+                        self.logger.debug("load_data_asynch - run create database scripts {}".format(thread_args))
+                        load_data_asynch(**thread_args)
+                    for tenant in range(self.num_tenants):
+                        databases = [f'tenant_{tenant}']
+                        thread_args = {
+                            'app':self.appname,
+                            'component':'sut',
+                            'experiment':self.code,
+                            'configuration':self.configuration,
+                            'pod_sut':self.pod_sut,
+                            'scriptfolder':scriptfolder,
+                            'commands':commands,
+                            'loadData':self.dockertemplate['loadData'],
+                            'path':self.experiment.path,
+                            'volume':volume,
+                            'context':self.experiment.cluster.context,
+                            'service_name':service_name,
+                            'time_offset':time_offset,
+                            'script_type':script_type,
+                            'time_start_int':time_start_int,
+                            'namespace':self.experiment.cluster.namespace,
+                            'num_tenants':self.num_tenants,
+                            'id_tenant':tenant,
+                            'database':databases,
+                        }
+                        self.logger.debug("load_data_asynch - run database-wise scripts {}".format(thread_args))
+                        thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+                        thread.start()
+                        time.sleep(1)
+                elif self.tenant_per == 'container':
+                    thread_args = {
+                        'app':self.appname,
+                        'component':'sut',
+                        'experiment':self.code,
+                        'configuration':self.configuration,
+                        'pod_sut':self.pod_sut,
+                        'scriptfolder':scriptfolder,
+                        'commands':commands,
+                        'loadData':self.dockertemplate['loadData'],
+                        'path':self.experiment.path,
+                        'volume':volume,
+                        'context':self.experiment.cluster.context,
+                        'service_name':service_name,
+                        'time_offset':time_offset,
+                        'script_type':script_type,
+                        'time_start_int':time_start_int,
+                        'namespace':self.experiment.cluster.namespace,
+                        'num_tenants':0,
+                        'id_tenant':0,
+                        'database':databases,
+                    }
+                    self.logger.debug("load_data_asynch - run container-wise scripts {}".format(thread_args))
+                    thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+                    thread.start()
+                #print("####################", commands)
+                print("{:30s}: runs scripts {}".format(self.configuration, commands))
+            else:
+                thread_args = {
+                    'app':self.appname,
+                    'component':'sut',
+                    'experiment':self.code,
+                    'configuration':self.configuration,
+                    'pod_sut':self.pod_sut,
+                    'scriptfolder':scriptfolder,
+                    'commands':commands,
+                    'loadData':self.dockertemplate['loadData'],
+                    'path':self.experiment.path,
+                    'volume':volume,
+                    'context':self.experiment.cluster.context,
+                    'service_name':service_name,
+                    'time_offset':time_offset,
+                    'script_type':script_type,
+                    'time_start_int':time_start_int,
+                    'namespace':self.experiment.cluster.namespace,
+                    'num_tenants':self.num_tenants,
+                    'id_tenant':id_tenant,
+                    'database':databases,
+                }
+                self.logger.debug("load_data_asynch - run scripts {}".format(thread_args))
+                thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
+                thread.start()
+                return
     def get_patched_yaml(self, file, patch=""):
         """
         Applies a YAML formatted patch to a YAML file and returns merged result as a YAML object.
@@ -3171,6 +3374,10 @@ scrape_configs:
         env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
         env_default['BEXHOMA_PARALLEL'] = str(parallelism)
         env_default['BEXHOMA_NUM_PODS'] = str(num_pods)
+        if self.num_tenants > 0 and self.tenant_per == 'container':
+            env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(int(num_pods)*self.num_tenants)
+        else:
+            env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(num_pods)
         env_default['PARALLEL'] = str(parallelism)  # deprecated
         env_default['NUM_PODS'] = str(num_pods)     # deprecated
         name = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
@@ -3187,13 +3394,21 @@ scrape_configs:
         env_default['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env_default['BEXHOMA_SUT_NAME'] = name
         if 'JDBC' in c:
+            database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
+            schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
+            if self.tenant_per == 'schema':
+                schema = 'DBMSBENCHMARKER_SCHEMA'
+            elif self.tenant_per == 'database':
+                database = 'DBMSBENCHMARKER_DATABASE'
             env_default['BEXHOMA_URL'] = c['JDBC']['url'].format(
                 serverip=servicename,
                 dbname=self.experiment.volume,
                 DBNAME=self.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],
                 timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
+                namespace=self.experiment.cluster.namespace,
+                database=database,
+                schema=schema,
                 )
             env_default['BEXHOMA_URL_LIST'] = c['JDBC']['url'].format(
                 serverip=list_of_workers_as_string,
@@ -3201,12 +3416,15 @@ scrape_configs:
                 DBNAME=self.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],
                 timeout_ms=c['connectionmanagement']['timeout']*1000,
-                namespace=self.experiment.cluster.namespace
+                namespace=self.experiment.cluster.namespace,
+                database=database,
+                schema=schema,
                 )
             env_default['BEXHOMA_USER'] = c['JDBC']['auth'][0]
             env_default['BEXHOMA_PASSWORD'] = c['JDBC']['auth'][1]
             env_default['BEXHOMA_DRIVER'] = c['JDBC']['driver']
-            env_default['BEXHOMA_DATABASE'] = c['JDBC']['database']
+            env_default['BEXHOMA_DATABASE'] = database#c['JDBC']['database']
+            env_default['BEXHOMA_SCHEMA'] = schema#c['JDBC']['schema']
             env_default['BEXHOMA_VOLUME'] = self.experiment.volume
             if isinstance(c['JDBC']['jar'], str):
                 env_default['BEXHOMA_JAR'] = c['JDBC']['jar']
@@ -3912,7 +4130,7 @@ class kinetica(default):
 
 
 #@fire_and_forget
-def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace=''):
+def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptfolder, commands, loadData, path, volume, context, service_name, time_offset=0, time_start_int=0, script_type='loaded', namespace='', num_tenants=0, id_tenant=0, database=[]):
     logger = logging.getLogger('load_data_asynch')
     #with open('asynch.test.log','w') as file:
     #    file.write('started')
@@ -3957,14 +4175,30 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     logger.debug("#### timeLoadingStart: "+str(timeLoadingStart))
     logger.debug("#### timeLoading before scrips: "+str(time_offset))
     # mark pod
-    fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
+    labels = dict()
+    labels[script_type] = 'False'
+    labels[num_tenants] = num_tenants
+    if (num_tenants > 0 and id_tenant == 0) or num_tenants == 0:
+        # only the first tenant writes timeStart
+        logger.debug(f"#### First tenant {id_tenant} logs starting time")
+        labels['timeLoadingStart'] = timeLoadingStart
+        labels['num_tenants_ready'] = 0
+        #if num_tenants > 0:
+        #    labels['id_tenant'] = id_tenant
+    fullcommand = 'label pods '+pod_sut+' --overwrite '
+    for key, value in labels.items():
+        fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+    #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
     #print(fullcommand)
     kubectl(fullcommand, context)
     #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark pvc
-        fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart)
+        #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=False timeLoadingStart="{timeLoadingStart}" num_tenants="{num_tenants}"'.format(script_type=script_type, timeLoadingStart=timeLoadingStart, num_tenants=num_tenants)
+        fullcommand = 'label pvc '+volume+' --overwrite '
+        for key, value in labels.items():
+            fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
         #print(fullcommand)
         kubectl(fullcommand, context)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -3975,48 +4209,73 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     times_script = dict()
     shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     #commands = self.initscript
-    for c in commands:
-        time_scrip_start = default_timer() # for more precise float time spans
-        #time_now = str(datetime.now())
-        #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-        filename, file_extension = os.path.splitext(c)
-        if file_extension.lower() == '.sql':
-            stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stdout) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stdout)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stderr) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stderr)
-        elif file_extension.lower() == '.sh':
-            stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace), pod_sut, context)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.log'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stdout) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stdout)
-            filename_log = path+'/{app}-loading-{configuration}-{filename}{extension}.error'.format(app=app, configuration=configuration, filename=filename, extension=file_extension.lower()).lower()
-            #print(filename_log)
-            if len(stderr) > 0:
-                with open(filename_log,'w') as file:
-                    file.write(stderr)
-        #time_now = str(datetime.now())
-        #time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-        time_scrip_end = default_timer()
-        sep = filename.find("-")
-        if sep > 0:
-            subscript_type = filename[:sep].lower()
-            times_script[subscript_type] = time_scrip_end - time_scrip_start
-            logger.debug("#### script="+str(subscript_type)+" time="+str(times_script[subscript_type]))
+    for db in database:
+        for c in commands:
+            time_scrip_start = default_timer() # for more precise float time spans
+            #time_now = str(datetime.now())
+            #time_scrip_start = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            filename, file_extension = os.path.splitext(c)
+            if file_extension.lower() == '.sql':
+                stdin, stdout, stderr = execute_command_in_pod_sut(loadData.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace, database=db), pod_sut, context)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stdout) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stdout)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}-{database}{extension}.error'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stderr) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stderr)
+            elif file_extension.lower() == '.sh':
+                stdin, stdout, stderr = execute_command_in_pod_sut(shellcommand.format(scriptname=scriptfolder+c, service_name=service_name, namespace=namespace, database=db), pod_sut, context)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}{database}{extension}.log'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stdout) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stdout)
+                filename_log = path+'/{app}-loading-{configuration}-{filename}{database}{extension}.error'.format(app=app, configuration=configuration, filename=filename, database=db, extension=file_extension.lower()).lower()
+                #print(filename_log)
+                if len(stderr) > 0:
+                    with open(filename_log,'w') as file:
+                        file.write(stderr)
+            #time_now = str(datetime.now())
+            #time_scrip_end = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            time_scrip_end = default_timer()
+            sep = filename.find("-")
+            if sep > 0:
+                subscript_type = filename[:sep].lower()
+                times_script[subscript_type] = time_scrip_end - time_scrip_start
+                logger.debug("#### script="+str(subscript_type)+" time="+str(times_script[subscript_type]))
     # mark pod
+    # get labels
+    num_tenants_ready = 0
+    if num_tenants > 0:
+        while True:
+            # kubectl get pod bexhoma-sut-postgresql-bht-2-1750309362-8657bf4ff5-njg5d -o jsonpath="{.metadata.labels}"
+            fullcommand = 'get pod {pod_sut} -o jsonpath="{{.metadata.labels}}"'.format(pod_sut=pod_sut)
+            labels = kubectl(fullcommand, context)
+            #print(labels)
+            labels = json.loads(labels)
+            logger.debug(f"#### Found labels {id_tenant}: {labels}")
+            if 'timeLoadingStart' in labels:
+                timeLoadingStart = int(labels['timeLoadingStart'])
+            if 'timeLoadingEnd' in labels:
+                timeLoadingEnd = int(labels['timeLoadingEnd'])
+            if 'timeLoading' in labels:
+                timeLoading = int(labels['timeLoading'])
+            if 'num_tenants_ready' in labels:
+                num_tenants_ready = int(labels['num_tenants_ready'])
+            logger.debug(f"num_tenants_ready, id_tenant: {num_tenants_ready}, {id_tenant}")
+            if num_tenants_ready == id_tenant:
+                break
+            time.sleep(1)
+        #num_tenants_ready = num_tenants_ready + 1
+    # set time end and number of tenants ready
     time_scriptgroup_end = default_timer()
     time_now = str(datetime.now())
     timeLoadingEnd = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
-    timeLoading = ceil(time_scriptgroup_end - time_scriptgroup_start + time_offset)
+    timeLoading = timeLoadingEnd - timeLoadingStart + time_offset # ceil(time_scriptgroup_end - time_scriptgroup_start + time_offset)
     logger.debug("#### time_scriptgroup_end: "+str(time_scriptgroup_end))
     logger.debug("#### timeLoadingEnd: "+str(timeLoadingEnd))
     logger.debug("#### timeLoading after scrips: "+str(timeLoading))
@@ -4026,13 +4285,20 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #time_now_int = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
     # store infos in labels of sut pod and it's pvc
     labels = dict()
-    labels[script_type] = 'True'
-    labels['time_{script_type}'.format(script_type=script_type)] = ceil(time_scriptgroup_end - time_scriptgroup_start)
+    labels['num_tenants_ready'] = id_tenant + 1
+    labels['time_{script_type}'.format(script_type=script_type)] = timeLoadingEnd - timeLoadingStart # ceil(time_scriptgroup_end - time_scriptgroup_start)
     #labels['timeLoadingEnd'] = time_now_int # is float, so needs ""
-    labels['timeLoading'] = timeLoading
+    labels['timeLoadingEnd'] = timeLoadingEnd
+    if (num_tenants > 0 and id_tenant == num_tenants-1) or num_tenants == 0:
+        # only the last tenant writes "finished"
+        logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")
+        labels[script_type] = 'True'
+        labels['timeLoading'] = timeLoading
+    #labels['timeLoading'] = timeLoading
     for subscript_type, time_subscript_type in times_script.items():
         labels['time_{script_type}'.format(script_type=subscript_type)] = ceil(time_subscript_type)
-    fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
+    #fullcommand = 'label pods {pod_sut} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(pod_sut=pod_sut, timeLoadingEnd=timeLoadingEnd)
+    fullcommand = 'label pods {pod_sut} --overwrite '.format(pod_sut=pod_sut)
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
     #fullcommand = 'label pods '+pod_sut+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))
@@ -4042,7 +4308,8 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #stdout, stderr = proc.communicate()
     if len(volume) > 0:
         # mark volume
-        fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=timeLoadingEnd)
+        #fullcommand = 'label pvc {volume} --overwrite timeLoadingEnd="{timeLoadingEnd}" '.format(volume=volume, timeLoadingEnd=timeLoadingEnd)
+        fullcommand = 'label pvc {volume} --overwrite '.format(volume=volume)
         for key, value in labels.items():
             fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
         #fullcommand = 'label pvc '+volume+' --overwrite {script_type}=True time_{script_type}={timing_current} timeLoadingEnd="{timing}" timeLoading={timespan}'.format(script_type=script_type, timing=time_now_int, timespan=timeLoading, timing_current=(timeLoadingEnd - timeLoadingStart))

@@ -28,5 +28,7 @@ The container expects some environment variables:
 * `DBMSBENCHMARKER_DEV`: switch to dev channel and show debug output
 * `DBMSBENCHMARKER_SHUFFLE_QUERIES`: shuffle the queries, i.e., do not follow natural ordering
 * `DBMSBENCHMARKER_TESTRUN`: deprecated
+* `DBMSBENCHMARKER_DATABASE`: tbd
+* `DBMSBENCHMARKER_SCHEMA`: tbd
 
 See [docs](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) of DBMSBenchmarker for details.

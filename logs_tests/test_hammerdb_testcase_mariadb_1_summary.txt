@@ -3,14 +3,14 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 994s 
-    Code: 1748955374
+    Duration: 953s 
+    Code: 1750102784
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment uses bexhoma version 0.8.8.
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -27,16 +27,16 @@ MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:333865940
-    datadisk:1657
+    disk:394837604
+    datadisk:1651
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748955374
+        code:1750102784
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  efficiency    NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1         0.0  7651.0  17791.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  11404.0  26579.0         5       0
 
 Warehouses: 16
 
@@ -50,7 +50,7 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      230.0        1.0   1.0                 250.434783
+MariaDB-BHT-8-1-1      185.0        1.0   1.0                 311.351351
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

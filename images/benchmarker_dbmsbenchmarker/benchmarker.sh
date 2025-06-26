@@ -68,6 +68,36 @@ else
     echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
+BEXHOMA_CHILD_TMP=$BEXHOMA_CHILD
+if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
+    echo "BEXHOMA_TENANT_BY is schema"
+    #BEXHOMA_NUM_PODS=1
+	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
+    echo "BEXHOMA_TENANT_BY is database"
+    #BEXHOMA_NUM_PODS=1
+	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+else
+    echo "BEXHOMA_TENANT_BY is not set"
+fi
+
+######################## Multi-Tenant parameters ########################
+BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
+
 ######################## Wait until all pods of job are ready ########################
 echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 # add this pod to counter
@@ -97,10 +127,46 @@ while : ; do
     fi
 done
 
+######################## Wait until all pods of experiment are ready ########################
+if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+	echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+	# add this pod to counter
+	redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+	# wait for number of pods to be as expected
+	while : ; do
+		PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
+		echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+		if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+		then
+			echo "PODS_RUNNING contains a number."
+		else
+			echo "PODS_RUNNING does not contain a number."
+			exit 0
+		fi
+		if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+		then
+			echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+			break
+		elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+		then
+			echo "Too many pods! Restart occured?"
+			exit 0
+		else
+			echo "We have to wait"
+			sleep 1
+		fi
+	done
+fi
+
 ######################## Show more parameters ########################
+BEXHOMA_CHILD=$BEXHOMA_CHILD_TMP
+BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
+
+#BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+#echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS
@@ -112,7 +178,7 @@ echo "Start at $bexhoma_start_epoch epoch seconds"
 if test $DBMSBENCHMARKER_DEV -gt 0
 then
     # dev environment
-    git checkout dev
+    git checkout --track origin/dev
     git pull
     git status
 fi
@@ -162,6 +228,8 @@ then
         -ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         -mps \
+        -fixdb $BEXHOMA_DATABASE \
+        -fixs $BEXHOMA_SCHEMA \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
         #-st "$BEXHOMA_TIME_START" \
@@ -179,6 +247,8 @@ else
         -ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         -mps \
+        -fixdb $BEXHOMA_DATABASE \
+        -fixs $BEXHOMA_SCHEMA \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
         #-st "$BEXHOMA_TIME_START" \
