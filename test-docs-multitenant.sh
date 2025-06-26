@@ -123,9 +123,9 @@ nohup python tpch.py \
 ################ TPC-H Multi-Tenant ################
 ####################################################
 
-BEXHOMA_SF=10
+BEXHOMA_SF=1
 
-for i in {1..1}; do
+for i in {1..10}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
@@ -133,7 +133,7 @@ for i in {1..1}; do
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
-    nohup python tpch.py \
+    nohup python tpch.py run -rc 2 -m -mc \
       -mtn $BEXHOMA_TENANTS -mtb schema \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
@@ -147,7 +147,7 @@ for i in {1..1}; do
     bexperiments stop
 
     # Run database mode
-    nohup python tpch.py \
+    nohup python tpch.py run -rc 2 -m -mc \
       -mtn $BEXHOMA_TENANTS -mtb database \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
@@ -161,7 +161,7 @@ for i in {1..1}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    nohup python tpch.py \
+    nohup python tpch.py run -rc 2 -m -mc \
       -mtn $BEXHOMA_TENANTS -mtb container \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \

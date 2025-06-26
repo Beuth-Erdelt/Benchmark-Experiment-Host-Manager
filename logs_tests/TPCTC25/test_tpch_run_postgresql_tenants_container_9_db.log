@@ -1,0 +1,1218 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1750885773
+Experiment                    : starts at 2025-06-25 23:09:33.227567 (15077936.698118212)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 600.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.8.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Database is persisted to disk of type shared and size 20Gi.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 1] times the number of benchmarking pods.
+Number of tenants is 9, one container per tenant.
+Experiment is run once.
+Cluster monitoring            : is running
+PostgreSQL-BHT-1-0            : will start now
+PostgreSQL-BHT-1-0            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-0-1750885773
+PostgreSQL-BHT-1-0            : Name of SUT service = bexhoma-sut-postgresql-bht-1-0-1750885773
+PostgreSQL-BHT-1-0            : Name of SUT PVC name = bexhoma-storage-postgresql-0-9-tpch-1
+PostgreSQL-BHT-1-1            : will start now
+PostgreSQL-BHT-1-1            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-1-1750885773
+PostgreSQL-BHT-1-1            : Name of SUT service = bexhoma-sut-postgresql-bht-1-1-1750885773
+PostgreSQL-BHT-1-1            : Name of SUT PVC name = bexhoma-storage-postgresql-1-9-tpch-1
+PostgreSQL-BHT-1-2            : will start now
+PostgreSQL-BHT-1-2            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-2-1750885773
+PostgreSQL-BHT-1-2            : Name of SUT service = bexhoma-sut-postgresql-bht-1-2-1750885773
+PostgreSQL-BHT-1-2            : Name of SUT PVC name = bexhoma-storage-postgresql-2-9-tpch-1
+PostgreSQL-BHT-1-3            : will start now
+PostgreSQL-BHT-1-3            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-3-1750885773
+PostgreSQL-BHT-1-3            : Name of SUT service = bexhoma-sut-postgresql-bht-1-3-1750885773
+PostgreSQL-BHT-1-3            : Name of SUT PVC name = bexhoma-storage-postgresql-3-9-tpch-1
+PostgreSQL-BHT-1-4            : will start now
+PostgreSQL-BHT-1-4            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-4-1750885773
+PostgreSQL-BHT-1-4            : Name of SUT service = bexhoma-sut-postgresql-bht-1-4-1750885773
+PostgreSQL-BHT-1-4            : Name of SUT PVC name = bexhoma-storage-postgresql-4-9-tpch-1
+PostgreSQL-BHT-1-5            : will start now
+PostgreSQL-BHT-1-5            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-5-1750885773
+PostgreSQL-BHT-1-5            : Name of SUT service = bexhoma-sut-postgresql-bht-1-5-1750885773
+PostgreSQL-BHT-1-5            : Name of SUT PVC name = bexhoma-storage-postgresql-5-9-tpch-1
+PostgreSQL-BHT-1-6            : will start now
+PostgreSQL-BHT-1-6            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-6-1750885773
+PostgreSQL-BHT-1-6            : Name of SUT service = bexhoma-sut-postgresql-bht-1-6-1750885773
+PostgreSQL-BHT-1-6            : Name of SUT PVC name = bexhoma-storage-postgresql-6-9-tpch-1
+PostgreSQL-BHT-1-7            : will start now
+PostgreSQL-BHT-1-7            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-7-1750885773
+PostgreSQL-BHT-1-7            : Name of SUT service = bexhoma-sut-postgresql-bht-1-7-1750885773
+PostgreSQL-BHT-1-7            : Name of SUT PVC name = bexhoma-storage-postgresql-7-9-tpch-1
+PostgreSQL-BHT-1-8            : will start now
+PostgreSQL-BHT-1-8            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-8-1750885773
+PostgreSQL-BHT-1-8            : Name of SUT service = bexhoma-sut-postgresql-bht-1-8-1750885773
+PostgreSQL-BHT-1-8            : Name of SUT PVC name = bexhoma-storage-postgresql-8-9-tpch-1
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : waits for health check to succeed
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+PostgreSQL-BHT-1-2            : is pending
+PostgreSQL-BHT-1-3            : is pending
+PostgreSQL-BHT-1-4            : is pending
+PostgreSQL-BHT-1-5            : is pending
+PostgreSQL-BHT-1-6            : is pending
+PostgreSQL-BHT-1-7            : is pending
+PostgreSQL-BHT-1-8            : is pending
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : waits for health check to succeed
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+PostgreSQL-BHT-1-2            : waits for health check to succeed
+PostgreSQL-BHT-1-3            : waits for health check to succeed
+PostgreSQL-BHT-1-4            : waits for health check to succeed
+PostgreSQL-BHT-1-5            : waits for health check to succeed
+PostgreSQL-BHT-1-6            : waits for health check to succeed
+PostgreSQL-BHT-1-7            : waits for health check to succeed
+PostgreSQL-BHT-1-8            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : waits for health check to succeed
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+PostgreSQL-BHT-1-2            : waits for health check to succeed
+PostgreSQL-BHT-1-3            : waits for health check to succeed
+PostgreSQL-BHT-1-4            : waits for health check to succeed
+PostgreSQL-BHT-1-5            : waits for health check to succeed
+PostgreSQL-BHT-1-6            : waits for health check to succeed
+PostgreSQL-BHT-1-7            : waits for health check to succeed
+PostgreSQL-BHT-1-8            : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : waits for health check to succeed
+PostgreSQL-BHT-1-1            : waits for health check to succeed
+PostgreSQL-BHT-1-2            : waits for health check to succeed
+PostgreSQL-BHT-1-3            : waits for health check to succeed
+PostgreSQL-BHT-1-4            : waits for health check to succeed
+PostgreSQL-BHT-1-5            : waits for health check to succeed
+PostgreSQL-BHT-1-6            : waits for health check to succeed
+PostgreSQL-BHT-1-7            : waits for health check to succeed
+PostgreSQL-BHT-1-8            : waits for health check to succeed
+done
+PostgreSQL-BHT-1-0            : is not loaded yet
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : is not loaded yet
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : is not loaded yet
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : is not loaded yet
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : is not loaded yet
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : is not loaded yet
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : is not loaded yet
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : is not loaded yet
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : is not loaded yet
+#### Starting to load
+PostgreSQL-BHT-1-0            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-0            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-1            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-1            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-2            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-2            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-3            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-3            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-4            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-4            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-5            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-5            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-6            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-6            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-7            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-7            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-8            : start asynch loading scripts of type loaded
+PostgreSQL-BHT-1-8            : runs scripts ['initschema-tpch.sql']
+PostgreSQL-BHT-1-8            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : is loading
+done
+PostgreSQL-BHT-1-0            : showing loader times
+PostgreSQL-BHT-1-0            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-0            : loader timespan (first to last [s]) = 94
+PostgreSQL-BHT-1-0            : total timespan (first to last [s]) = 120
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : showing loader times
+PostgreSQL-BHT-1-1            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-1            : loader timespan (first to last [s]) = 92
+PostgreSQL-BHT-1-1            : total timespan (first to last [s]) = 117
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : showing loader times
+PostgreSQL-BHT-1-2            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-2            : loader timespan (first to last [s]) = 96
+PostgreSQL-BHT-1-2            : total timespan (first to last [s]) = 105
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : showing loader times
+PostgreSQL-BHT-1-3            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-3            : loader timespan (first to last [s]) = 94
+PostgreSQL-BHT-1-3            : total timespan (first to last [s]) = 113
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : showing loader times
+PostgreSQL-BHT-1-4            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-4            : loader timespan (first to last [s]) = 97
+PostgreSQL-BHT-1-4            : total timespan (first to last [s]) = 111
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : showing loader times
+PostgreSQL-BHT-1-5            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-5            : loader timespan (first to last [s]) = 92
+PostgreSQL-BHT-1-5            : total timespan (first to last [s]) = 96
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : showing loader times
+PostgreSQL-BHT-1-6            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-6            : loader timespan (first to last [s]) = 92
+PostgreSQL-BHT-1-6            : total timespan (first to last [s]) = 114
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : showing loader times
+PostgreSQL-BHT-1-7            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-7            : loader timespan (first to last [s]) = 93
+PostgreSQL-BHT-1-7            : total timespan (first to last [s]) = 100
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : showing loader times
+PostgreSQL-BHT-1-8            : generator timespan (first to last [s]) = 0
+PostgreSQL-BHT-1-8            : loader timespan (first to last [s]) = 94
+PostgreSQL-BHT-1-8            : total timespan (first to last [s]) = 118
+#### Starting to index
+PostgreSQL-BHT-1-0            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-0            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-1            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-1            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-2            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-2            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-3            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-3            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-4            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-4            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-5            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-5            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-6            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-6            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-7            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-7            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-8            : start asynch loading scripts of type indexed
+PostgreSQL-BHT-1-8            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-8            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+PostgreSQL-BHT-1-1            : is loading
+PostgreSQL-BHT-1-2            : is loading
+PostgreSQL-BHT-1-3            : is loading
+PostgreSQL-BHT-1-4            : is loading
+PostgreSQL-BHT-1-5            : is loading
+PostgreSQL-BHT-1-6            : is loading
+PostgreSQL-BHT-1-7            : is loading
+PostgreSQL-BHT-1-8            : is loading
+done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+PostgreSQL-BHT-1-0            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-0-1          : start benchmarking
+PostgreSQL-BHT-1-0            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-0-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-0-1
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-0-1
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-0-1
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-1-1          : start benchmarking
+PostgreSQL-BHT-1-1            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-1-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-2-1          : start benchmarking
+PostgreSQL-BHT-1-2            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-2-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-2-1
+PostgreSQL-BHT-1-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-2-1
+PostgreSQL-BHT-1-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-2-1
+PostgreSQL-BHT-1-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-3-1          : start benchmarking
+PostgreSQL-BHT-1-3            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-3-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-3-1
+PostgreSQL-BHT-1-3-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-3-1
+PostgreSQL-BHT-1-3-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-3-1
+PostgreSQL-BHT-1-3-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-4-1          : start benchmarking
+PostgreSQL-BHT-1-4            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-4-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-4-1
+PostgreSQL-BHT-1-4-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-4-1
+PostgreSQL-BHT-1-4-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-4-1
+PostgreSQL-BHT-1-4-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-5-1          : start benchmarking
+PostgreSQL-BHT-1-5            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-5-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-5-1
+PostgreSQL-BHT-1-5-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-5-1
+PostgreSQL-BHT-1-5-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-5-1
+PostgreSQL-BHT-1-5-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-6-1          : start benchmarking
+PostgreSQL-BHT-1-6            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-6-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-6-1
+PostgreSQL-BHT-1-6-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-6-1
+PostgreSQL-BHT-1-6-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-6-1
+PostgreSQL-BHT-1-6-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-7-1          : start benchmarking
+PostgreSQL-BHT-1-7            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-7-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-7-1
+PostgreSQL-BHT-1-7-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-7-1
+PostgreSQL-BHT-1-7-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-7-1
+PostgreSQL-BHT-1-7-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8            : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-BHT-1-8-1          : start benchmarking
+PostgreSQL-BHT-1-8            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-8-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-8-1
+PostgreSQL-BHT-1-8-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-8-1
+PostgreSQL-BHT-1-8-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-8-1
+PostgreSQL-BHT-1-8-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-BHT-1-0            : has running benchmarks
+PostgreSQL-BHT-1-1            : has running benchmarks
+PostgreSQL-BHT-1-2            : has running benchmarks
+PostgreSQL-BHT-1-3            : has running benchmarks
+PostgreSQL-BHT-1-4            : has running benchmarks
+PostgreSQL-BHT-1-5            : has running benchmarks
+PostgreSQL-BHT-1-6            : has running benchmarks
+PostgreSQL-BHT-1-7            : has running benchmarks
+PostgreSQL-BHT-1-8            : has running benchmarks
+PostgreSQL-BHT-1-0-1          : showing benchmarker times
+PostgreSQL-BHT-1-0-1          : benchmarker timespan (start to end single container [s]) = 293
+PostgreSQL-BHT-1-0-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886460)]
+PostgreSQL-BHT-1-0-1          : found and updated times {'benchmarker': [(1750886424, 1750886460)]}
+PostgreSQL-BHT-1-0-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-0-1
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-0-1
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-1          : showing benchmarker times
+PostgreSQL-BHT-1-1-1          : benchmarker timespan (start to end single container [s]) = 276
+PostgreSQL-BHT-1-1-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886461)]
+PostgreSQL-BHT-1-1-1          : found and updated times {'benchmarker': [(1750886424, 1750886461)]}
+PostgreSQL-BHT-1-1-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-1-1
+PostgreSQL-BHT-1-1-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-1          : showing benchmarker times
+PostgreSQL-BHT-1-2-1          : benchmarker timespan (start to end single container [s]) = 258
+PostgreSQL-BHT-1-2-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886461)]
+PostgreSQL-BHT-1-2-1          : found and updated times {'benchmarker': [(1750886424, 1750886461)]}
+PostgreSQL-BHT-1-2-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-2-1
+PostgreSQL-BHT-1-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-2-1
+PostgreSQL-BHT-1-2-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-1          : showing benchmarker times
+PostgreSQL-BHT-1-3-1          : benchmarker timespan (start to end single container [s]) = 239
+PostgreSQL-BHT-1-3-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886460)]
+PostgreSQL-BHT-1-3-1          : found and updated times {'benchmarker': [(1750886424, 1750886460)]}
+PostgreSQL-BHT-1-3-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-3-1
+PostgreSQL-BHT-1-3-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-3-1
+PostgreSQL-BHT-1-3-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-1          : showing benchmarker times
+PostgreSQL-BHT-1-4-1          : benchmarker timespan (start to end single container [s]) = 221
+PostgreSQL-BHT-1-4-1          : benchmarker times (start/end per pod and container) = [(1750886425, 1750886462)]
+PostgreSQL-BHT-1-4-1          : found and updated times {'benchmarker': [(1750886425, 1750886462)]}
+PostgreSQL-BHT-1-4-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-4-1
+PostgreSQL-BHT-1-4-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-4-1
+PostgreSQL-BHT-1-4-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-1          : showing benchmarker times
+PostgreSQL-BHT-1-5-1          : benchmarker timespan (start to end single container [s]) = 203
+PostgreSQL-BHT-1-5-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886460)]
+PostgreSQL-BHT-1-5-1          : found and updated times {'benchmarker': [(1750886424, 1750886460)]}
+PostgreSQL-BHT-1-5-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-5-1
+PostgreSQL-BHT-1-5-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-5-1
+PostgreSQL-BHT-1-5-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-1          : showing benchmarker times
+PostgreSQL-BHT-1-6-1          : benchmarker timespan (start to end single container [s]) = 184
+PostgreSQL-BHT-1-6-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886462)]
+PostgreSQL-BHT-1-6-1          : found and updated times {'benchmarker': [(1750886424, 1750886462)]}
+PostgreSQL-BHT-1-6-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-6-1
+PostgreSQL-BHT-1-6-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-6-1
+PostgreSQL-BHT-1-6-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-1          : showing benchmarker times
+PostgreSQL-BHT-1-7-1          : benchmarker timespan (start to end single container [s]) = 166
+PostgreSQL-BHT-1-7-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886460)]
+PostgreSQL-BHT-1-7-1          : found and updated times {'benchmarker': [(1750886424, 1750886460)]}
+PostgreSQL-BHT-1-7-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-7-1
+PostgreSQL-BHT-1-7-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-7-1
+PostgreSQL-BHT-1-7-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-1          : showing benchmarker times
+PostgreSQL-BHT-1-8-1          : benchmarker timespan (start to end single container [s]) = 148
+PostgreSQL-BHT-1-8-1          : benchmarker times (start/end per pod and container) = [(1750886424, 1750886460)]
+PostgreSQL-BHT-1-8-1          : found and updated times {'benchmarker': [(1750886424, 1750886460)]}
+PostgreSQL-BHT-1-8-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-8-1
+PostgreSQL-BHT-1-8-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-8-1
+PostgreSQL-BHT-1-8-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+PostgreSQL-BHT-1-0            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-0-2          : start benchmarking
+PostgreSQL-BHT-1-0            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-0-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-0-2
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-0-2
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-0-2
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-1-2          : start benchmarking
+PostgreSQL-BHT-1-1            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-1-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-1-2
+PostgreSQL-BHT-1-1-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-1-2
+PostgreSQL-BHT-1-1-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-1-2
+PostgreSQL-BHT-1-1-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-2-2          : start benchmarking
+PostgreSQL-BHT-1-2            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-2-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-2-2
+PostgreSQL-BHT-1-2-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-2-2
+PostgreSQL-BHT-1-2-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-2-2
+PostgreSQL-BHT-1-2-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-3-2          : start benchmarking
+PostgreSQL-BHT-1-3            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-3-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-3-2
+PostgreSQL-BHT-1-3-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-3-2
+PostgreSQL-BHT-1-3-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-3-2
+PostgreSQL-BHT-1-3-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-4-2          : start benchmarking
+PostgreSQL-BHT-1-4            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-4-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-4-2
+PostgreSQL-BHT-1-4-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-4-2
+PostgreSQL-BHT-1-4-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-4-2
+PostgreSQL-BHT-1-4-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-5-2          : start benchmarking
+PostgreSQL-BHT-1-5            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-5-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-5-2
+PostgreSQL-BHT-1-5-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-5-2
+PostgreSQL-BHT-1-5-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-5-2
+PostgreSQL-BHT-1-5-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-6-2          : start benchmarking
+PostgreSQL-BHT-1-6            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-6-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-6-2
+PostgreSQL-BHT-1-6-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-6-2
+PostgreSQL-BHT-1-6-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-6-2
+PostgreSQL-BHT-1-6-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-7-2          : start benchmarking
+PostgreSQL-BHT-1-7            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-7-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-7-2
+PostgreSQL-BHT-1-7-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-7-2
+PostgreSQL-BHT-1-7-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-7-2
+PostgreSQL-BHT-1-7-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8            : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-1-8-2          : start benchmarking
+PostgreSQL-BHT-1-8            : benchmarking results in folder /home/perdelt/benchmarks/1750885773
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-1-8-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-8-2
+PostgreSQL-BHT-1-8-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-8-2
+PostgreSQL-BHT-1-8-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-8-2
+PostgreSQL-BHT-1-8-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-BHT-1-0            : has running benchmarks
+PostgreSQL-BHT-1-1            : has running benchmarks
+PostgreSQL-BHT-1-2            : has running benchmarks
+PostgreSQL-BHT-1-3            : has running benchmarks
+PostgreSQL-BHT-1-4            : has running benchmarks
+PostgreSQL-BHT-1-5            : has running benchmarks
+PostgreSQL-BHT-1-6            : has running benchmarks
+PostgreSQL-BHT-1-7            : has running benchmarks
+PostgreSQL-BHT-1-8            : has running benchmarks
+PostgreSQL-BHT-1-0-2          : showing benchmarker times
+PostgreSQL-BHT-1-0-2          : benchmarker timespan (start to end single container [s]) = 296
+PostgreSQL-BHT-1-0-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886891)]
+PostgreSQL-BHT-1-0-2          : found and updated times {'benchmarker': [(1750886854, 1750886891)]}
+PostgreSQL-BHT-1-0-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-0-2
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-0-2
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-2          : showing benchmarker times
+PostgreSQL-BHT-1-1-2          : benchmarker timespan (start to end single container [s]) = 278
+PostgreSQL-BHT-1-1-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886892)]
+PostgreSQL-BHT-1-1-2          : found and updated times {'benchmarker': [(1750886854, 1750886892)]}
+PostgreSQL-BHT-1-1-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-1-2
+PostgreSQL-BHT-1-1-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-1-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-1-2
+PostgreSQL-BHT-1-1-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-1-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-2          : showing benchmarker times
+PostgreSQL-BHT-1-2-2          : benchmarker timespan (start to end single container [s]) = 260
+PostgreSQL-BHT-1-2-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886891)]
+PostgreSQL-BHT-1-2-2          : found and updated times {'benchmarker': [(1750886854, 1750886891)]}
+PostgreSQL-BHT-1-2-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-2-2
+PostgreSQL-BHT-1-2-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-2-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-2-2
+PostgreSQL-BHT-1-2-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-2-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-2          : showing benchmarker times
+PostgreSQL-BHT-1-3-2          : benchmarker timespan (start to end single container [s]) = 241
+PostgreSQL-BHT-1-3-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886890)]
+PostgreSQL-BHT-1-3-2          : found and updated times {'benchmarker': [(1750886854, 1750886890)]}
+PostgreSQL-BHT-1-3-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-3-2
+PostgreSQL-BHT-1-3-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-3-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-3-2
+PostgreSQL-BHT-1-3-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-3-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-2          : showing benchmarker times
+PostgreSQL-BHT-1-4-2          : benchmarker timespan (start to end single container [s]) = 223
+PostgreSQL-BHT-1-4-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886892)]
+PostgreSQL-BHT-1-4-2          : found and updated times {'benchmarker': [(1750886854, 1750886892)]}
+PostgreSQL-BHT-1-4-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-4-2
+PostgreSQL-BHT-1-4-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-4-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-4-2
+PostgreSQL-BHT-1-4-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-4-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-2          : showing benchmarker times
+PostgreSQL-BHT-1-5-2          : benchmarker timespan (start to end single container [s]) = 205
+PostgreSQL-BHT-1-5-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886893)]
+PostgreSQL-BHT-1-5-2          : found and updated times {'benchmarker': [(1750886854, 1750886893)]}
+PostgreSQL-BHT-1-5-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-5-2
+PostgreSQL-BHT-1-5-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-5-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-5-2
+PostgreSQL-BHT-1-5-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-5-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-2          : showing benchmarker times
+PostgreSQL-BHT-1-6-2          : benchmarker timespan (start to end single container [s]) = 186
+PostgreSQL-BHT-1-6-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886892)]
+PostgreSQL-BHT-1-6-2          : found and updated times {'benchmarker': [(1750886854, 1750886892)]}
+PostgreSQL-BHT-1-6-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-6-2
+PostgreSQL-BHT-1-6-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-6-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-6-2
+PostgreSQL-BHT-1-6-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-6-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-2          : showing benchmarker times
+PostgreSQL-BHT-1-7-2          : benchmarker timespan (start to end single container [s]) = 168
+PostgreSQL-BHT-1-7-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886892)]
+PostgreSQL-BHT-1-7-2          : found and updated times {'benchmarker': [(1750886854, 1750886892)]}
+PostgreSQL-BHT-1-7-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-7-2
+PostgreSQL-BHT-1-7-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-7-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-7-2
+PostgreSQL-BHT-1-7-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-7-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-2          : showing benchmarker times
+PostgreSQL-BHT-1-8-2          : benchmarker timespan (start to end single container [s]) = 149
+PostgreSQL-BHT-1-8-2          : benchmarker times (start/end per pod and container) = [(1750886854, 1750886891)]
+PostgreSQL-BHT-1-8-2          : found and updated times {'benchmarker': [(1750886854, 1750886891)]}
+PostgreSQL-BHT-1-8-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-8-2
+PostgreSQL-BHT-1-8-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-8-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-8-2
+PostgreSQL-BHT-1-8-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-8-1750885773(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+PostgreSQL-BHT-1-0            : can be stopped
+PostgreSQL-BHT-1-0            : had 0 restarts
+PostgreSQL-BHT-1-1            : can be stopped
+PostgreSQL-BHT-1-1            : had 0 restarts
+PostgreSQL-BHT-1-2            : can be stopped
+PostgreSQL-BHT-1-2            : had 0 restarts
+PostgreSQL-BHT-1-3            : can be stopped
+PostgreSQL-BHT-1-3            : had 0 restarts
+PostgreSQL-BHT-1-4            : can be stopped
+PostgreSQL-BHT-1-4            : had 0 restarts
+PostgreSQL-BHT-1-5            : can be stopped
+PostgreSQL-BHT-1-5            : had 0 restarts
+PostgreSQL-BHT-1-6            : can be stopped
+PostgreSQL-BHT-1-6            : had 0 restarts
+PostgreSQL-BHT-1-7            : can be stopped
+PostgreSQL-BHT-1-7            : had 0 restarts
+PostgreSQL-BHT-1-8            : can be stopped
+PostgreSQL-BHT-1-8            : had 0 restarts
+Experiment                    : ends at 2025-06-25 23:30:48.687045 (15079212.157599272) - 1275.46s total
+Join results done!
+done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+    Type: tpch
+    Duration: 1276s 
+    Code: 1750885773
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 600.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.8.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 20Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 1] times the number of benchmarking pods.
+    Number of tenants is 9, one container per tenant.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-1-0-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118328
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+PostgreSQL-BHT-1-0-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118352
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+PostgreSQL-BHT-1-1-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118336
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:1
+PostgreSQL-BHT-1-1-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118360
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:1
+PostgreSQL-BHT-1-2-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118344
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:2
+PostgreSQL-BHT-1-2-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118372
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:2
+PostgreSQL-BHT-1-3-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118296
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:3
+PostgreSQL-BHT-1-3-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118380
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:3
+PostgreSQL-BHT-1-4-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118256
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:4
+PostgreSQL-BHT-1-4-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118392
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:4
+PostgreSQL-BHT-1-5-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118264
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:5
+PostgreSQL-BHT-1-5-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118400
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:5
+PostgreSQL-BHT-1-6-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118268
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:6
+PostgreSQL-BHT-1-6-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118412
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:6
+PostgreSQL-BHT-1-7-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118276
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:7
+PostgreSQL-BHT-1-7-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118420
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:7
+PostgreSQL-BHT-1-8-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118284
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:8
+PostgreSQL-BHT-1-8-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:425118432
+    datadisk:2757
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    eval_parameters
+        code:1750885773
+        TENANT_BY:container
+        TENANT_NUM:9
+        TENANT:8
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-1-0-1-1  PostgreSQL-BHT-1-0-2-1  PostgreSQL-BHT-1-1-1-1  PostgreSQL-BHT-1-1-2-1  PostgreSQL-BHT-1-2-1-1  PostgreSQL-BHT-1-2-2-1  PostgreSQL-BHT-1-3-1-1  PostgreSQL-BHT-1-3-2-1  PostgreSQL-BHT-1-4-1-1  PostgreSQL-BHT-1-4-2-1  PostgreSQL-BHT-1-5-1-1  PostgreSQL-BHT-1-5-2-1  PostgreSQL-BHT-1-6-1-1  PostgreSQL-BHT-1-6-2-1  PostgreSQL-BHT-1-7-1-1  PostgreSQL-BHT-1-7-2-1  PostgreSQL-BHT-1-8-1-1  PostgreSQL-BHT-1-8-2-1
+Pricing Summary Report (TPC-H Q1)                                   4684.45                 4458.77                 4374.13                 4725.17                 4343.46                 4331.76                 4430.02                 4193.48                 4328.56                 4983.30                 4105.58                 4349.66                 4623.97                 4169.15                 4396.06                 4549.38                 3787.88                 4592.92
+Minimum Cost Supplier Query (TPC-H Q2)                               499.46                  470.69                  493.94                  512.25                  513.86                  485.55                  462.77                  500.79                  492.78                  485.44                  531.65                  488.02                  462.75                  485.31                  492.59                  468.42                  527.11                  470.19
+Shipping Priority (TPC-H Q3)                                         887.55                  934.64                  944.08                  855.75                  984.53                  938.85                  936.04                  881.41                  962.07                  871.54                  865.35                  878.88                  959.28                  903.81                  882.46                  923.31                  876.48                  935.18
+Order Priority Checking Query (TPC-H Q4)                            1515.16                 1447.79                 1451.22                 1525.92                 1500.22                 1513.78                 1489.59                 1404.49                 1558.98                 1607.98                 1435.12                 1489.25                 1471.99                 1511.02                 1448.72                 1448.81                 1466.52                 1452.92
+Local Supplier Volume (TPC-H Q5)                                     810.53                  902.18                  752.43                  847.24                  852.84                  951.03                  838.29                  794.97                  915.24                  824.93                  770.74                  951.42                  876.96                  932.57                  784.46                  834.52                  752.52                  953.45
+Forecasting Revenue Change (TPC-H Q6)                                652.83                  616.08                  606.40                  582.98                  641.65                  629.84                  643.78                  654.16                  657.91                  675.83                  641.78                  653.87                  671.92                  668.16                  671.65                  661.95                  559.99                  629.23
+Forecasting Revenue Change (TPC-H Q7)                               1021.62                 1022.70                  940.04                  873.80                  977.57                  975.35                  966.57                  957.24                 1009.95                  919.18                 1034.35                 1008.57                  973.62                  986.99                 1018.56                  995.92                 1001.25                  977.67
+National Market Share (TPC-H Q8)                                     797.41                  797.42                  758.76                  671.27                  734.94                  833.28                  718.68                  867.89                  756.14                  652.74                  780.21                  800.27                  733.66                  854.50                  776.99                  856.13                  790.91                  797.74
+Product Type Profit Measure (TPC-H Q9)                              1224.23                 1221.08                 1281.41                 1170.89                 1169.77                 1177.05                 1162.77                 1197.83                 1220.66                 1192.68                 1276.22                 1166.14                 1223.22                 1205.42                 1280.54                 1217.17                 1458.99                 1152.11
+Forecasting Revenue Change (TPC-H Q10)                              1350.73                 1344.58                 1465.00                 1369.35                 1397.87                 1382.18                 1309.46                 1394.06                 1389.98                 1338.49                 1387.77                 1396.34                 1407.56                 1337.45                 1330.54                 1355.75                 1367.84                 1401.74
+Important Stock Identification (TPC-H Q11)                           291.54                  315.44                  278.66                  317.57                  314.89                  304.39                  285.02                  270.14                  297.55                  294.57                  267.73                  294.54                  314.17                  305.31                  303.10                  299.95                  294.53                  308.38
+Shipping Modes and Order Priority (TPC-H Q12)                       1072.85                 1224.61                 1185.20                 1066.41                 1169.24                 1176.62                 1122.29                 1124.04                 1071.90                 1128.80                 1095.21                 1215.49                 1135.97                 1154.05                 1123.54                 1143.82                 1142.15                 1141.21
+Customer Distribution (TPC-H Q13)                                   2403.57                 2043.42                 2163.67                 2071.42                 2232.47                 2199.46                 2212.00                 2438.43                 2085.37                 2228.28                 2126.22                 2413.87                 2143.24                 2114.35                 2033.62                 2126.55                 2276.06                 2142.79
+Forecasting Revenue Change (TPC-H Q14)                               678.40                  652.79                  635.64                  746.89                  688.03                  675.51                  612.05                  622.57                  686.82                  704.83                  566.74                  685.19                  707.60                  695.69                  560.78                  605.95                  557.01                  637.05
+Top Supplier Query (TPC-H Q15)                                       679.09                  736.57                  648.59                  615.18                  662.97                  724.48                  670.20                  741.23                  688.54                  655.35                  641.88                  693.91                  647.19                  766.05                  664.36                  788.22                  644.44                  722.67
+Parts/Supplier Relationship (TPC-H Q16)                              566.30                  631.75                  629.37                  577.47                  573.32                  622.10                  628.49                  687.67                  561.73                  579.33                  692.34                  613.02                  569.24                  678.67                  718.83                  635.96                  702.90                  645.90
+Small-Quantity-Order Revenue (TPC-H Q17)                            1960.70                 2014.46                 2107.94                 1997.86                 2059.81                 2014.86                 2080.36                 1900.35                 2034.67                 1990.29                 2142.67                 2066.91                 2081.88                 1975.39                 2034.31                 1994.93                 2242.49                 2080.25
+Large Volume Customer (TPC-H Q18)                                  10719.07                10596.94                11290.76                11681.98                10694.07                11085.26                11177.24                10372.31                11817.31                11557.97                11593.87                11740.71                11775.59                11652.51                10737.83                12139.95                10988.51                10416.67
+Discounted Revenue (TPC-H Q19)                                       756.88                  743.86                  792.82                  908.47                  747.65                  757.99                  807.07                  750.56                  802.53                  960.18                  790.46                  988.46                  749.06                  841.60                  774.94                  875.94                  804.89                  769.03
+Potential Part Promotion (TPC-H Q20)                                 748.54                  750.93                  864.18                  669.66                  722.42                  735.89                  762.13                  665.18                  821.75                  675.61                  800.71                  686.83                  733.40                  741.56                  828.00                  709.27                  814.27                  708.28
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                 1043.04                 1051.32                  947.08                  891.60                 1014.22                  954.57                 1027.98                 1000.36                  940.06                  928.44                 1000.26                  937.85                  940.41                  908.55                  966.77                  910.88                  972.03                  966.99
+Global Sales Opportunity Query (TPC-H Q22)                           266.23                  234.76                  246.66                  226.13                  259.39                  230.41                  257.65                  293.10                  256.33                  235.42                  251.54                  223.99                  247.24                  224.13                  272.71                  228.56                  265.30                  272.06
+
+### Loading [s]
+                        timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-1-0-1-1           0.0           94.0         1.0      239.0     360.0
+PostgreSQL-BHT-1-0-2-1           0.0           94.0         1.0      239.0     360.0
+PostgreSQL-BHT-1-1-1-1           0.0           92.0         0.0      238.0     355.0
+PostgreSQL-BHT-1-1-2-1           0.0           92.0         0.0      238.0     355.0
+PostgreSQL-BHT-1-2-1-1           0.0           96.0         0.0      237.0     342.0
+PostgreSQL-BHT-1-2-2-1           0.0           96.0         0.0      237.0     342.0
+PostgreSQL-BHT-1-3-1-1           0.0           94.0         0.0      236.0     349.0
+PostgreSQL-BHT-1-3-2-1           0.0           94.0         0.0      236.0     349.0
+PostgreSQL-BHT-1-4-1-1           0.0           97.0         0.0      236.0     347.0
+PostgreSQL-BHT-1-4-2-1           0.0           97.0         0.0      236.0     347.0
+PostgreSQL-BHT-1-5-1-1           0.0           92.0         1.0      238.0     335.0
+PostgreSQL-BHT-1-5-2-1           0.0           92.0         1.0      238.0     335.0
+PostgreSQL-BHT-1-6-1-1           0.0           92.0         1.0      238.0     353.0
+PostgreSQL-BHT-1-6-2-1           0.0           92.0         1.0      238.0     353.0
+PostgreSQL-BHT-1-7-1-1           0.0           93.0         1.0      241.0     342.0
+PostgreSQL-BHT-1-7-2-1           0.0           93.0         1.0      241.0     342.0
+PostgreSQL-BHT-1-8-1-1           0.0           94.0         1.0      235.0     354.0
+PostgreSQL-BHT-1-8-2-1           0.0           94.0         1.0      235.0     354.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                        Geo Times [s]
+DBMS                                 
+PostgreSQL-BHT-1-0-1-1           1.02
+PostgreSQL-BHT-1-0-2-1           1.02
+PostgreSQL-BHT-1-1-1-1           1.01
+PostgreSQL-BHT-1-1-2-1           0.99
+PostgreSQL-BHT-1-2-1-1           1.02
+PostgreSQL-BHT-1-2-2-1           1.02
+PostgreSQL-BHT-1-3-1-1           1.01
+PostgreSQL-BHT-1-3-2-1           1.01
+PostgreSQL-BHT-1-4-1-1           1.02
+PostgreSQL-BHT-1-4-2-1           1.01
+PostgreSQL-BHT-1-5-1-1           1.01
+PostgreSQL-BHT-1-5-2-1           1.03
+PostgreSQL-BHT-1-6-1-1           1.01
+PostgreSQL-BHT-1-6-2-1           1.03
+PostgreSQL-BHT-1-7-1-1           1.01
+PostgreSQL-BHT-1-7-2-1           1.02
+PostgreSQL-BHT-1-8-1-1           1.01
+PostgreSQL-BHT-1-8-2-1           1.02
+
+### Power@Size ((3600*SF)/(geo times))
+                        Power@Size [~Q/h]
+DBMS                                     
+PostgreSQL-BHT-1-0-1-1            3539.22
+PostgreSQL-BHT-1-0-2-1            3535.18
+PostgreSQL-BHT-1-1-1-1            3560.17
+PostgreSQL-BHT-1-1-2-1            3640.40
+PostgreSQL-BHT-1-2-1-1            3542.41
+PostgreSQL-BHT-1-2-2-1            3528.39
+PostgreSQL-BHT-1-3-1-1            3580.42
+PostgreSQL-BHT-1-3-2-1            3560.90
+PostgreSQL-BHT-1-4-1-1            3515.62
+PostgreSQL-BHT-1-4-2-1            3574.30
+PostgreSQL-BHT-1-5-1-1            3571.58
+PostgreSQL-BHT-1-5-2-1            3489.92
+PostgreSQL-BHT-1-6-1-1            3549.19
+PostgreSQL-BHT-1-6-2-1            3501.14
+PostgreSQL-BHT-1-7-1-1            3551.46
+PostgreSQL-BHT-1-7-2-1            3530.23
+PostgreSQL-BHT-1-8-1-1            3548.24
+PostgreSQL-BHT-1-8-2-1            3529.62
+
+### Throughput@Size ((queries*streams*3600*SF)/(span of time))
+                                                    time [s]  count   SF  Throughput@Size
+DBMS                 SF  num_experiment num_client                                       
+PostgreSQL-BHT-1-0-1 1.0 1              1                 36      1  1.0          2200.00
+PostgreSQL-BHT-1-0-2 1.0 1              2                 37      1  1.0          2140.54
+PostgreSQL-BHT-1-1-1 1.0 1              1                 37      1  1.0          2140.54
+PostgreSQL-BHT-1-1-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-2-1 1.0 1              1                 37      1  1.0          2140.54
+PostgreSQL-BHT-1-2-2 1.0 1              2                 37      1  1.0          2140.54
+PostgreSQL-BHT-1-3-1 1.0 1              1                 36      1  1.0          2200.00
+PostgreSQL-BHT-1-3-2 1.0 1              2                 36      1  1.0          2200.00
+PostgreSQL-BHT-1-4-1 1.0 1              1                 37      1  1.0          2140.54
+PostgreSQL-BHT-1-4-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-5-1 1.0 1              1                 36      1  1.0          2200.00
+PostgreSQL-BHT-1-5-2 1.0 1              2                 39      1  1.0          2030.77
+PostgreSQL-BHT-1-6-1 1.0 1              1                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-6-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-7-1 1.0 1              1                 36      1  1.0          2200.00
+PostgreSQL-BHT-1-7-2 1.0 1              2                 38      1  1.0          2084.21
+PostgreSQL-BHT-1-8-1 1.0 1              1                 36      1  1.0          2200.00
+PostgreSQL-BHT-1-8-2 1.0 1              2                 37      1  1.0          2140.54
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-2 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-3 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-4 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-5 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-6 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-7 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-8 - Pods [[1, 1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-1 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-2 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-3 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-4 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-5 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-6 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-7 - Pods [[1, 1]]
+DBMS PostgreSQL-BHT-1-8 - Pods [[1, 1]]
+
+### Ingestion - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1       97.05     0.63          3.69                 5.76
+PostgreSQL-BHT-1-0-2       97.05     0.63          3.69                 5.76
+PostgreSQL-BHT-1-1-1      153.22     0.83          3.70                 5.74
+PostgreSQL-BHT-1-1-2      153.22     0.83          3.70                 5.74
+PostgreSQL-BHT-1-2-1      149.13     0.91          3.74                 5.72
+PostgreSQL-BHT-1-2-2      149.13     0.91          3.74                 5.72
+PostgreSQL-BHT-1-3-1      143.27     1.00          3.73                 5.79
+PostgreSQL-BHT-1-3-2      143.27     1.00          3.73                 5.79
+PostgreSQL-BHT-1-4-1      150.94     0.82          3.72                 5.79
+PostgreSQL-BHT-1-4-2      150.94     0.82          3.72                 5.79
+PostgreSQL-BHT-1-5-1      147.55     0.72          3.92                 5.74
+PostgreSQL-BHT-1-5-2      147.55     0.72          3.92                 5.74
+PostgreSQL-BHT-1-6-1      149.66     0.79          3.70                 5.77
+PostgreSQL-BHT-1-6-2      149.66     0.79          3.70                 5.77
+PostgreSQL-BHT-1-7-1      152.43     0.07          3.74                 5.63
+PostgreSQL-BHT-1-7-2      152.43     0.07          3.74                 5.63
+PostgreSQL-BHT-1-8-1      147.84     1.00          3.74                 5.75
+PostgreSQL-BHT-1-8-2      147.84     1.00          3.74                 5.75
+
+### Ingestion - Loader
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1       11.19     0.00           0.0                 0.07
+PostgreSQL-BHT-1-0-2       11.19     0.00           0.0                 0.07
+PostgreSQL-BHT-1-1-1       10.15     0.20           0.0                 0.01
+PostgreSQL-BHT-1-1-2       10.15     0.20           0.0                 0.01
+PostgreSQL-BHT-1-2-1       10.21     0.00           0.0                 0.07
+PostgreSQL-BHT-1-2-2       10.21     0.00           0.0                 0.07
+PostgreSQL-BHT-1-3-1       10.82     0.00           0.0                 0.02
+PostgreSQL-BHT-1-3-2       10.82     0.00           0.0                 0.02
+PostgreSQL-BHT-1-4-1       10.84     0.00           0.0                 0.14
+PostgreSQL-BHT-1-4-2       10.84     0.00           0.0                 0.14
+PostgreSQL-BHT-1-5-1       10.20     0.00           0.0                 0.08
+PostgreSQL-BHT-1-5-2       10.20     0.00           0.0                 0.08
+PostgreSQL-BHT-1-6-1        9.23     0.00           0.0                 0.33
+PostgreSQL-BHT-1-6-2        9.23     0.00           0.0                 0.33
+PostgreSQL-BHT-1-7-1       10.45     0.00           0.0                 0.03
+PostgreSQL-BHT-1-7-2       10.45     0.00           0.0                 0.03
+PostgreSQL-BHT-1-8-1       10.49     0.19           0.0                 0.00
+PostgreSQL-BHT-1-8-2       10.49     0.19           0.0                 0.00
+
+### Execution - SUT
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1      148.24     2.79          3.87                 5.49
+PostgreSQL-BHT-1-0-2      109.56     1.90          5.98                 7.60
+PostgreSQL-BHT-1-1-1      160.31     0.00          3.81                 5.43
+PostgreSQL-BHT-1-1-2      132.04     2.38          7.29                 8.91
+PostgreSQL-BHT-1-2-1      148.55     0.00          3.81                 5.43
+PostgreSQL-BHT-1-2-2      148.71     0.00          3.93                 5.56
+PostgreSQL-BHT-1-3-1      154.32     2.78          3.81                 5.43
+PostgreSQL-BHT-1-3-2       90.37     1.72          4.70                 6.33
+PostgreSQL-BHT-1-4-1      155.23     0.00          3.81                 5.43
+PostgreSQL-BHT-1-4-2      159.46     2.18          5.44                 7.06
+PostgreSQL-BHT-1-5-1      152.39     0.00          3.81                 5.43
+PostgreSQL-BHT-1-5-2      152.46     0.01          5.67                 7.29
+PostgreSQL-BHT-1-6-1      155.99     0.01          3.81                 5.43
+PostgreSQL-BHT-1-6-2      152.95     0.16          3.94                 5.56
+PostgreSQL-BHT-1-7-1      148.55     0.01          3.81                 5.43
+PostgreSQL-BHT-1-7-2      154.19     1.81          5.31                 6.93
+PostgreSQL-BHT-1-8-1      147.82     0.00          3.81                 5.43
+PostgreSQL-BHT-1-8-2      151.01     1.86          5.03                 6.66
+
+### Execution - Benchmarker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-1-0-1        1.42     0.01          0.00                 0.00
+PostgreSQL-BHT-1-0-2        1.42     0.01          0.00                 0.00
+PostgreSQL-BHT-1-1-1        1.31     0.01          0.00                 0.00
+PostgreSQL-BHT-1-1-2        1.31     0.01          0.00                 0.00
+PostgreSQL-BHT-1-2-1        1.13     0.01          0.00                 0.00
+PostgreSQL-BHT-1-2-2        1.13     0.01          0.00                 0.00
+PostgreSQL-BHT-1-3-1        0.91     0.01          0.00                 0.00
+PostgreSQL-BHT-1-3-2        0.91     0.01          0.00                 0.00
+PostgreSQL-BHT-1-4-1        0.72     0.01          0.00                 0.00
+PostgreSQL-BHT-1-4-2        0.73     0.00          0.00                 0.00
+PostgreSQL-BHT-1-5-1        0.58     0.01          0.00                 0.00
+PostgreSQL-BHT-1-5-2        0.56     0.01          0.00                 0.00
+PostgreSQL-BHT-1-6-1        4.22     0.07          0.04                 0.04
+PostgreSQL-BHT-1-6-2        0.40     0.00          0.00                 0.00
+PostgreSQL-BHT-1-7-1       12.16     0.00          0.25                 0.26
+PostgreSQL-BHT-1-7-2        0.19     0.00          0.00                 0.00
+PostgreSQL-BHT-1-8-1        0.02     0.00          0.00                 0.00
+PostgreSQL-BHT-1-8-2        0.00     0.00          0.00                 0.00
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST failed: Workflow not as planned
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
