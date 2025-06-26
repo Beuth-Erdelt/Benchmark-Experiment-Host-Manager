@@ -38,6 +38,50 @@ wait_process "ycsb"
 
 
 
+####################################################
+######### Benchbase TPC-C Multi-Tenant PVC #########
+####################################################
+
+
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+
+nohup python tpch.py -ms 5 -tr -db \
+  --dbms PostgreSQL \
+  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb schema \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 10Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+
+nohup python tpch.py -ms 5 -tr -db \
+  --dbms PostgreSQL \
+  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb schema -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+
+nohup python tpch.py -ms 5 -tr -db \
+  --dbms PostgreSQL \
+  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb database \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 10Gi \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
+
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+
+nohup python tpch.py -ms 5 -tr -db \
+  --dbms PostgreSQL \
+  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb database \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
+
+
+
+
+
+
 
 
 
@@ -186,14 +230,14 @@ nohup python tpch.py run -rcp -shq -nr 5 \
 ################ TPC-H Multi-Tenant ################
 ####################################################
 
-BEXHOMA_SF=1
-BEXHOMA_NUM_RUN=1
+BEXHOMA_SF=10
+BEXHOMA_NUM_RUN=10
 
-for i in {1..10}; do
+for i in {1..2}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
-    sizeInGi=$((tenants * 20))
+    sizeInGi=$((tenants * 50))
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
@@ -233,7 +277,7 @@ for i in {1..10}; do
       -nlp 1 -nbp 1 \
       -ne 1,1 \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-      -rst shared -rss 20Gi \
+      -rst shared -rss 50Gi \
       </dev/null &> "$LOG_DIR/test_tpch_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_db.log"
 
     bexperiments stop
