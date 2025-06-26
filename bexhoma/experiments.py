@@ -351,7 +351,7 @@ class default():
             numRun = int(args.num_run)
         else:
             numRun = 0
-        self.workload['num_run'] = self.numRun
+        self.workload['num_run'] = numRun
         if 'datatransfer' in parameter:
             datatransfer = args.datatransfer
         else:
@@ -471,6 +471,8 @@ class default():
                     'kubernetes.io/hostname': request_node_name
                 })        
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        if numRun > 1:
+            self.workload['info'] = self.workload['info']+"\nEach query is repeated {} times.".format(numRun)
         if skip_loading:
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
@@ -1984,6 +1986,7 @@ class default():
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
         num_run = workload_properties['num_run'] if 'num_run' in workload_properties else 1
+        #print("num_run", num_run)
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
@@ -2100,14 +2103,16 @@ class default():
             print("\n### Power@Size ((3600*SF)/(geo times))")
             df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
             df = (df/1000.0).sort_index().astype('float')
-            df = float(parameter.defaultParameters['SF'])*3600./df
+            #print(workload_properties['defaultParameters'])
+            #print(workload_properties['defaultParameters']['SF'])
+            df = float(workload_properties['defaultParameters']['SF'])*3600./df
             df.columns = ['Power@Size [~Q/h]']
             df_power = df.copy()
             print(df.round(2))
         #####################
         if self.benchmarking_is_active():
             # aggregate time and throughput for parallel pods
-            print("\n### Throughput@Size ((queries*streams*3600*SF)/(span of time))")
+            print("\n### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))")
             df_merged_time = pd.DataFrame()
             for connection_nr, connection in evaluate.benchmarks.dbms.items():
                 df_time = pd.DataFrame()
@@ -2137,7 +2142,7 @@ class default():
             benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
             df_benchmark['count'] = benchmark_count['benchmark_end']
             df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-            df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
+            df_benchmark['Throughput@Size'] = (num_run*num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
             #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
             index_names = list(df_benchmark.index.names)
             index_names[0] = "DBMS"
