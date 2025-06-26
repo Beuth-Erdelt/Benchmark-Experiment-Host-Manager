@@ -351,6 +351,7 @@ class default():
             numRun = int(args.num_run)
         else:
             numRun = 0
+        self.workload['num_run'] = self.numRun
         if 'datatransfer' in parameter:
             datatransfer = args.datatransfer
         else:
@@ -1982,6 +1983,7 @@ class default():
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
+        num_run = workload_properties['num_run'] if 'num_run' in workload_properties else 1
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
