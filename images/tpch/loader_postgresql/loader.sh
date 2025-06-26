@@ -45,6 +45,12 @@ elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+elif [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+    echo "BEXHOMA_TENANT_BY is container"
+    echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+    echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+    echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+    echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 else
     echo "BEXHOMA_TENANT_BY is not set"
 fi
@@ -61,7 +67,14 @@ then
     fi
 else
     # only store locally
-    destination_raw=/tmp/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
+    if test $BEXHOMA_NUM_PODS -gt 1
+    then
+        #destination_raw=/data/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
+        destination_raw=/tmp/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
+    else
+        #destination_raw=/data/tpch/SF$SF
+        destination_raw=/tmp/tpch/SF$SF
+    fi
 fi
 echo "destination_raw $destination_raw"
 cd $destination_raw
