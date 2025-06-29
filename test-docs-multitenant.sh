@@ -241,7 +241,7 @@ for i in {1..10}; do
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
-    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb schema \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
@@ -255,7 +255,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb database \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
@@ -269,7 +269,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb container \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
