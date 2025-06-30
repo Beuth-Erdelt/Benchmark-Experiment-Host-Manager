@@ -1968,7 +1968,10 @@ class default():
             self.workload = workload_properties
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
-        print("    Duration: {}s ".format(workload_properties['duration']))
+        if 'duration' in workload_properties:
+            print("    Duration: {}s ".format(workload_properties['duration']))
+        else:
+            print("    Duration: {}s ".format('missing'))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
