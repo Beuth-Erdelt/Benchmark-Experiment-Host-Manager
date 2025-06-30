@@ -233,15 +233,21 @@ nohup python tpch.py run -rcp -shq -nr 5 \
 BEXHOMA_SF=10
 BEXHOMA_NUM_RUN=10
 
-for i in {1..10}; do
+for i in {8..10}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
     sizeInGi=$((tenants * 50))
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
+    # Calculate limit RAM per tenant
+    ramPerTenant=$((480 / tenants))
+    export BEXHOMA_LIMIT_RAM="${ramPerTenant}Gi"
+
+    # For debugging/verification
+    echo "TENANTS=$BEXHOMA_TENANTS SIZE=$BEXHOMA_SIZE_ALL LIMIT_RAM=$BEXHOMA_LIMIT_RAM"
 
     # Run schema mode
-    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb schema \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
@@ -255,7 +261,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb database \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
@@ -268,8 +274,8 @@ for i in {1..10}; do
 
     bexperiments stop
 
-    # Run container mode (fixed 5Gi size)
-    nohup python tpch.py run -rc 2 -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    # Run container mode (fixed 50Gi size)
+    nohup python tpch.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb container \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
