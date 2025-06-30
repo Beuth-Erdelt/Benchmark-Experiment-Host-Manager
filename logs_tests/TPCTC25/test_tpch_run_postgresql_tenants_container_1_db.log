@@ -2,22 +2,23 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1750860691
-Experiment                    : starts at 2025-06-25 16:11:31.845351 (15052855.315901428)
+Experiment                    : has code 1751030495
+Experiment                    : starts at 2025-06-27 15:21:34.874705 (15222658.345258256)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-TPC-H (SF=1) data is loaded and benchmark is executed.
-Query ordering is Q1 - Q22.
-All instances use the same query parameters.
+TPC-H (SF=10) data is loaded and benchmark is executed.
+Query ordering is as required by the TPC.
+All instances use different query parameters.
 Timeout per query is 600.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.8.
+Experiment uses bexhoma version 0.8.9.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 20Gi.
+Each query is repeated 10 times.
+Database is persisted to disk of type shared and size 50Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 1] times the number of benchmarking pods.
@@ -25,9 +26,9 @@ Number of tenants is 1, one container per tenant.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-BHT-1-0            : will start now
-PostgreSQL-BHT-1-0            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-0-1750860691
-PostgreSQL-BHT-1-0            : Name of SUT service = bexhoma-sut-postgresql-bht-1-0-1750860691
-PostgreSQL-BHT-1-0            : Name of SUT PVC name = bexhoma-storage-postgresql-0-1-tpch-1
+PostgreSQL-BHT-1-0            : Name of SUT pods = bexhoma-sut-postgresql-bht-1-0-1751030495
+PostgreSQL-BHT-1-0            : Name of SUT service = bexhoma-sut-postgresql-bht-1-0-1751030495
+PostgreSQL-BHT-1-0            : Name of SUT PVC name = bexhoma-storage-postgresql-0-1-tpch-10
 - waiting 30s -               : done
 PostgreSQL-BHT-1-0            : waits for health check to succeed
 - waiting 30s -               : done
@@ -48,14 +49,102 @@ PostgreSQL-BHT-1-0            : is loading
 PostgreSQL-BHT-1-0            : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
 done
 PostgreSQL-BHT-1-0            : showing loader times
 PostgreSQL-BHT-1-0            : generator timespan (first to last [s]) = 0
-PostgreSQL-BHT-1-0            : loader timespan (first to last [s]) = 104
-PostgreSQL-BHT-1-0            : total timespan (first to last [s]) = 106
+PostgreSQL-BHT-1-0            : loader timespan (first to last [s]) = 847
+PostgreSQL-BHT-1-0            : total timespan (first to last [s]) = 848
 #### Starting to index
 PostgreSQL-BHT-1-0            : start asynch loading scripts of type indexed
 PostgreSQL-BHT-1-0            : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql']
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : is loading
+- waiting 30s -               : done
 PostgreSQL-BHT-1-0            : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-1-0            : is loading
@@ -65,52 +154,302 @@ done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
 PostgreSQL-BHT-1-0            : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-1-0-1          : start benchmarking
-PostgreSQL-BHT-1-0            : benchmarking results in folder /home/perdelt/benchmarks/1750860691
+PostgreSQL-BHT-1-0            : benchmarking results in folder /home/perdelt/benchmarks/1751030495
 - waiting 10s -               : done
 found
 PostgreSQL-BHT-1-0-1          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-0-1
-PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-0-1          : collecting metrics of data generator at connection PostgreSQL-BHT-1-0-1
-PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-0-1          : collecting metrics of data injector at connection PostgreSQL-BHT-1-0-1
-PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
 done
 PostgreSQL-BHT-1-0            : has running benchmarks
 PostgreSQL-BHT-1-0-1          : showing benchmarker times
-PostgreSQL-BHT-1-0-1          : benchmarker timespan (start to end single container [s]) = 56
-PostgreSQL-BHT-1-0-1          : benchmarker times (start/end per pod and container) = [(1750861064, 1750861091)]
-PostgreSQL-BHT-1-0-1          : found and updated times {'benchmarker': [(1750861064, 1750861091)]}
+PostgreSQL-BHT-1-0-1          : benchmarker timespan (start to end single container [s]) = 1931
+PostgreSQL-BHT-1-0-1          : benchmarker times (start/end per pod and container) = [(1751032204, 1751034104)]
+PostgreSQL-BHT-1-0-1          : found and updated times {'benchmarker': [(1751032204, 1751034104)]}
 PostgreSQL-BHT-1-0-1          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-0-1
-PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-0-1          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-0-1
-PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-1          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
 PostgreSQL-BHT-1-0            : benchmarks done 0 of 1. This will be client 2
 PostgreSQL-BHT-1-0-2          : start benchmarking
-PostgreSQL-BHT-1-0            : benchmarking results in folder /home/perdelt/benchmarks/1750860691
+PostgreSQL-BHT-1-0            : benchmarking results in folder /home/perdelt/benchmarks/1751030495
 - waiting 10s -               : done
 found
 PostgreSQL-BHT-1-0-2          : collecting loading metrics of SUT at connection PostgreSQL-BHT-1-0-2
-PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-0-2          : collecting metrics of data generator at connection PostgreSQL-BHT-1-0-2
-PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-0-2          : collecting metrics of data injector at connection PostgreSQL-BHT-1-0-2
-PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-1-0            : has running benchmarks
 done
 PostgreSQL-BHT-1-0            : has running benchmarks
 PostgreSQL-BHT-1-0-2          : showing benchmarker times
-PostgreSQL-BHT-1-0-2          : benchmarker timespan (start to end single container [s]) = 55
-PostgreSQL-BHT-1-0-2          : benchmarker times (start/end per pod and container) = [(1750861167, 1750861195)]
-PostgreSQL-BHT-1-0-2          : found and updated times {'benchmarker': [(1750861167, 1750861195)]}
+PostgreSQL-BHT-1-0-2          : benchmarker timespan (start to end single container [s]) = 1961
+PostgreSQL-BHT-1-0-2          : benchmarker times (start/end per pod and container) = [(1751034176, 1751036097)]
+PostgreSQL-BHT-1-0-2          : found and updated times {'benchmarker': [(1751034176, 1751036097)]}
 PostgreSQL-BHT-1-0-2          : collecting execution metrics of SUT at connection PostgreSQL-BHT-1-0-2
-PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-1-0-2          : collecting metrics of benchmarker at connection PostgreSQL-BHT-1-0-2
-PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1750860691(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-1-0-2          : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-1-0-1751030495(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 PostgreSQL-BHT-1-0            : can be stopped
 PostgreSQL-BHT-1-0            : had 0 restarts
-Experiment                    : ends at 2025-06-25 16:20:58.356691 (15053421.827245211) - 566.51s total
+Experiment                    : ends at 2025-06-27 16:56:15.251182 (15228338.721735617) - 5680.38s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -120,25 +459,26 @@ Experiment                    : uploading workload file
 ## Show Summary
 
 ### Workload
-TPC-H Queries SF=1
+TPC-H Queries SF=10
     Type: tpch
-    Duration: 567s 
-    Code: 1750860691
+    Duration: 5681s 
+    Code: 1751030495
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is as required by the TPC.
+    All instances use different query parameters.
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.8.
+    Experiment uses bexhoma version 0.8.9.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 20Gi.
+    Each query is repeated 10 times.
+    Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1, 1] times the number of benchmarking pods.
@@ -152,14 +492,14 @@ PostgreSQL-BHT-1-0-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425020008
-    datadisk:2757
-    volume_size:20G
-    volume_used:2.7G
+    disk:425200648
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
     requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750860691
+        code:1751030495
         TENANT_BY:container
         TENANT_NUM:1
 PostgreSQL-BHT-1-0-2-1 uses docker image postgres:16.1
@@ -168,14 +508,14 @@ PostgreSQL-BHT-1-0-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425020048
-    datadisk:2757
-    volume_size:20G
-    volume_used:2.7G
+    disk:425203344
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
     requests_cpu:2
     requests_memory:16Gi
     eval_parameters
-        code:1750860691
+        code:1751030495
         TENANT_BY:container
         TENANT_NUM:1
 
@@ -187,51 +527,51 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-1-0-1-1  PostgreSQL-BHT-1-0-2-1
-Pricing Summary Report (TPC-H Q1)                                   2636.69                 2644.51
-Minimum Cost Supplier Query (TPC-H Q2)                               354.10                  339.07
-Shipping Priority (TPC-H Q3)                                         803.63                  798.15
-Order Priority Checking Query (TPC-H Q4)                            1337.07                 1308.10
-Local Supplier Volume (TPC-H Q5)                                     696.59                  684.43
-Forecasting Revenue Change (TPC-H Q6)                                535.55                  524.80
-Forecasting Revenue Change (TPC-H Q7)                                828.23                  768.75
-National Market Share (TPC-H Q8)                                     657.65                  658.65
-Product Type Profit Measure (TPC-H Q9)                              1149.50                 1119.67
-Forecasting Revenue Change (TPC-H Q10)                              1287.36                 1249.99
-Important Stock Identification (TPC-H Q11)                           266.04                  265.39
-Shipping Modes and Order Priority (TPC-H Q12)                       1065.54                 1059.65
-Customer Distribution (TPC-H Q13)                                   1920.56                 1926.80
-Forecasting Revenue Change (TPC-H Q14)                               582.17                  565.89
-Top Supplier Query (TPC-H Q15)                                       601.26                  573.10
-Parts/Supplier Relationship (TPC-H Q16)                              576.94                  567.53
-Small-Quantity-Order Revenue (TPC-H Q17)                            1941.18                 1908.51
-Large Volume Customer (TPC-H Q18)                                   6696.28                 7517.36
-Discounted Revenue (TPC-H Q19)                                       742.49                  734.65
-Potential Part Promotion (TPC-H Q20)                                 694.28                  628.31
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  953.51                  906.54
-Global Sales Opportunity Query (TPC-H Q22)                           250.98                  229.02
+Pricing Summary Report (TPC-H Q1)                                  16816.73                16866.01
+Minimum Cost Supplier Query (TPC-H Q2)                              3610.29                 3826.12
+Shipping Priority (TPC-H Q3)                                        5643.45                 5681.06
+Order Priority Checking Query (TPC-H Q4)                            2394.13                 2381.09
+Local Supplier Volume (TPC-H Q5)                                    5440.73                 5487.46
+Forecasting Revenue Change (TPC-H Q6)                               3211.10                 3230.01
+Forecasting Revenue Change (TPC-H Q7)                               4833.67                 4877.43
+National Market Share (TPC-H Q8)                                    4919.25                 4916.16
+Product Type Profit Measure (TPC-H Q9)                              7545.14                 7536.04
+Forecasting Revenue Change (TPC-H Q10)                              6751.59                 6768.81
+Important Stock Identification (TPC-H Q11)                          2231.27                 2244.73
+Shipping Modes and Order Priority (TPC-H Q12)                       5936.02                 5970.69
+Customer Distribution (TPC-H Q13)                                  19886.52                19953.63
+Forecasting Revenue Change (TPC-H Q14)                              4693.37                 4728.18
+Top Supplier Query (TPC-H Q15)                                      4145.80                 4166.80
+Parts/Supplier Relationship (TPC-H Q16)                             3594.16                 3577.75
+Small-Quantity-Order Revenue (TPC-H Q17)                           17932.03                19491.85
+Large Volume Customer (TPC-H Q18)                                  55551.82                55521.09
+Discounted Revenue (TPC-H Q19)                                      4664.03                 4665.96
+Potential Part Promotion (TPC-H Q20)                                2713.37                 2727.14
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                 6150.97                 6156.16
+Global Sales Opportunity Query (TPC-H Q22)                          1084.13                 1077.41
 
 ### Loading [s]
                         timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-0-1-1           0.0          104.0         0.0      209.0     315.0
-PostgreSQL-BHT-1-0-2-1           0.0          104.0         0.0      209.0     315.0
+PostgreSQL-BHT-1-0-1-1           0.0          847.0         0.0     1535.0    2383.0
+PostgreSQL-BHT-1-0-2-1           0.0          847.0         0.0     1535.0    2383.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                         Geo Times [s]
 DBMS                                 
-PostgreSQL-BHT-1-0-1-1           0.88
-PostgreSQL-BHT-1-0-2-1           0.86
+PostgreSQL-BHT-1-0-1-1           5.58
+PostgreSQL-BHT-1-0-2-1           5.63
 
 ### Power@Size ((3600*SF)/(geo times))
                         Power@Size [~Q/h]
 DBMS                                     
-PostgreSQL-BHT-1-0-1-1            4113.59
-PostgreSQL-BHT-1-0-2-1            4205.69
+PostgreSQL-BHT-1-0-1-1            6453.28
+PostgreSQL-BHT-1-0-2-1            6399.07
 
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                    time [s]  count   SF  Throughput@Size
-DBMS                 SF  num_experiment num_client                                       
-PostgreSQL-BHT-1-0-1 1.0 1              1                 27      1  1.0          2933.33
-PostgreSQL-BHT-1-0-2 1.0 1              2                 28      1  1.0          2828.57
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                                     time [s]  count    SF  Throughput@Size
+DBMS                 SF   num_experiment num_client                                        
+PostgreSQL-BHT-1-0-1 10.0 1              1               1900      1  10.0          4168.42
+PostgreSQL-BHT-1-0-2 10.0 1              2               1921      1  10.0          4122.85
 
 ### Workflow
 
@@ -243,23 +583,23 @@ DBMS PostgreSQL-BHT-1-0 - Pods [[1, 1]]
 
 ### Ingestion - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-0-1      133.22      0.4          3.71                 5.33
-PostgreSQL-BHT-1-0-2      133.22      0.4          3.71                 5.33
+PostgreSQL-BHT-1-0-1     1348.45     2.73         16.15                31.88
+PostgreSQL-BHT-1-0-2     1348.45     2.73         16.15                31.88
 
 ### Ingestion - Loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-0-1       12.15        0           0.0                 0.89
-PostgreSQL-BHT-1-0-2       12.15        0           0.0                 0.89
+PostgreSQL-BHT-1-0-1      139.26     0.12          0.03                10.41
+PostgreSQL-BHT-1-0-2      139.26     0.12          0.03                10.41
 
 ### Execution - SUT
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-0-1       88.96     1.60          3.75                 5.38
-PostgreSQL-BHT-1-0-2      112.27     2.57          3.81                 5.43
+PostgreSQL-BHT-1-0-1    10249.41     7.95         57.44                73.35
+PostgreSQL-BHT-1-0-2    10563.69     7.96         58.33                74.24
 
 ### Execution - Benchmarker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-0-1        0.00      0.0           0.0                  0.0
-PostgreSQL-BHT-1-0-2        0.02      0.0           0.0                  0.0
+PostgreSQL-BHT-1-0-1       15.41      0.0          0.26                 0.26
+PostgreSQL-BHT-1-0-2       15.41      0.0          0.49                 0.50
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -271,4 +611,4 @@ TEST passed: Workflow as planned
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
