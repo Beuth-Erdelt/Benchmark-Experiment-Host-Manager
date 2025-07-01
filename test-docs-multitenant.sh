@@ -233,7 +233,7 @@ nohup python tpch.py run -rcp -shq -nr 5 \
 BEXHOMA_SF=10
 BEXHOMA_NUM_RUN=10
 
-for i in {8..10}; do
+for i in {1..10}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
