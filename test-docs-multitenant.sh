@@ -97,7 +97,7 @@ BEXHOMA_TARGET=65536
 BEXHOMA_SF=10
 BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
 
-for i in {1..0}; do
+for i in {1..10}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
