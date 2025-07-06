@@ -1,0 +1,199 @@
+## Show Summary
+
+### Workload
+TPC-H Data Loading SF=10
+    Type: tpch
+    Duration: 2490s 
+    Code: 1751789786
+    This includes the reading queries of TPC-H.
+    This imports TPC-H data sets.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.9.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Each query is repeated 10 times.
+    Database is persisted to disk of type shared and size 50Gi.
+    Loading is tested with [1] threads, split into [1] pods.
+    Number of tenants is 8, one container per tenant.
+    Experiment is run once.
+
+### Services
+PostgreSQL-BHT-1-0
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-0-1751789786 9091:9091
+PostgreSQL-BHT-1-1
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-1-1751789786 9091:9091
+PostgreSQL-BHT-1-2
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-2-1751789786 9091:9091
+PostgreSQL-BHT-1-3
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-3-1751789786 9091:9091
+PostgreSQL-BHT-1-4
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-4-1751789786 9091:9091
+PostgreSQL-BHT-1-5
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-5-1751789786 9091:9091
+PostgreSQL-BHT-1-6
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-6-1751789786 9091:9091
+PostgreSQL-BHT-1-7
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-1-7-1751789786 9091:9091
+
+### Connections
+PostgreSQL-BHT-1-0-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359328
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359288
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:1
+PostgreSQL-BHT-1-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359292
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:2
+PostgreSQL-BHT-1-3-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359300
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:3
+PostgreSQL-BHT-1-4-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359304
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:4
+PostgreSQL-BHT-1-5-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359308
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:5
+PostgreSQL-BHT-1-6-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359312
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:6
+PostgreSQL-BHT-1-7-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422359320
+    datadisk:27211
+    volume_size:50G
+    volume_used:27G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:60Gi
+    eval_parameters
+        code:1751789786
+        TENANT_BY:container
+        TENANT_NUM:8
+        TENANT:7
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-1-0-1           0.0         1104.0         1.0     1946.0    3087.0
+PostgreSQL-BHT-1-1-1           0.0         1103.0         2.0     1909.0    3047.0
+PostgreSQL-BHT-1-2-1           0.0         1099.0         2.0     1960.0    3087.0
+PostgreSQL-BHT-1-3-1           0.0         1102.0         1.0     1915.0    3041.0
+PostgreSQL-BHT-1-4-1           0.0         1111.0         2.0     1911.0    3041.0
+PostgreSQL-BHT-1-5-1           0.0         1115.0         2.0     1905.0    3034.0
+PostgreSQL-BHT-1-6-1           0.0         1099.0         1.0     1925.0    3032.0
+PostgreSQL-BHT-1-7-1           0.0         1101.0         2.0     1929.0    3033.0
+
+### Tests
