@@ -1,0 +1,181 @@
+## Show Summary
+
+### Workload
+Benchbase Data tpcc Loading SF=10
+    Type: benchbase
+    Duration: 958s 
+    Code: 1751837472
+    Intro: Benchbase runs a TPC-C experiment.
+    This imports a Benchbase data set.
+    Benchbase data is generated and loaded using several threads. Scaling factor is 10. Target is based on multiples of '65536'.
+    Experiment uses bexhoma version 0.8.9.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 20Gi.
+    Loading is tested with [100] threads, split into [1] pods.
+    Number of tenants is 6, one container per tenant.
+    Experiment is run once.
+
+### Services
+PostgreSQL-1-1-65536-0
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1-65536-0-1751837472 9091:9091
+PostgreSQL-1-1-65536-1
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1-65536-1-1751837472 9091:9091
+PostgreSQL-1-1-65536-2
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1-65536-2-1751837472 9091:9091
+PostgreSQL-1-1-65536-3
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1-65536-3-1751837472 9091:9091
+PostgreSQL-1-1-65536-4
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1-65536-4-1751837472 9091:9091
+PostgreSQL-1-1-65536-5
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1-65536-5-1751837472 9091:9091
+
+### Connections
+PostgreSQL-1-1-65536-0-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422431024
+    datadisk:2720
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1751837472
+                TENANT_BY:container
+                TENANT_NUM:6
+PostgreSQL-1-1-65536-1-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422431072
+    datadisk:2720
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1751837472
+                TENANT_BY:container
+                TENANT_NUM:6
+                TENANT:1
+PostgreSQL-1-1-65536-2-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422431132
+    datadisk:2720
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1751837472
+                TENANT_BY:container
+                TENANT_NUM:6
+                TENANT:2
+PostgreSQL-1-1-65536-3-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422431188
+    datadisk:2720
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1751837472
+                TENANT_BY:container
+                TENANT_NUM:6
+                TENANT:3
+PostgreSQL-1-1-65536-4-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422431240
+    datadisk:2720
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1751837472
+                TENANT_BY:container
+                TENANT_NUM:6
+                TENANT:4
+PostgreSQL-1-1-65536-5-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422431292
+    datadisk:2720
+    volume_size:20G
+    volume_used:2.7G
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1751837472
+                TENANT_BY:container
+                TENANT_NUM:6
+                TENANT:5
+
+### Loading
+                          time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-65536-0-1      121.0        1.0   1.0                0.0
+PostgreSQL-1-1-65536-1-1      113.0        1.0   1.0                0.0
+PostgreSQL-1-1-65536-2-1      102.0        1.0   1.0                0.0
+PostgreSQL-1-1-65536-3-1      111.0        1.0   1.0                0.0
+PostgreSQL-1-1-65536-4-1      111.0        1.0   1.0                0.0
+PostgreSQL-1-1-65536-5-1      116.0        1.0   1.0                0.0
+
+### Ingestion - SUT
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-65536-0-1      506.24     5.66          3.68                 4.71
+PostgreSQL-1-1-65536-1-1      461.94     1.86          3.42                 4.46
+PostgreSQL-1-1-65536-2-1      469.57     0.10          3.67                 4.71
+PostgreSQL-1-1-65536-3-1      468.95     0.00          3.67                 4.71
+PostgreSQL-1-1-65536-4-1      489.99     2.78          3.67                 4.71
+PostgreSQL-1-1-65536-5-1      500.83     5.52          3.67                 4.70
+
+### Ingestion - Loader
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-65536-0-1      340.78     4.48          1.01                 1.01
+PostgreSQL-1-1-65536-1-1      405.49     6.69          0.84                 0.84
+PostgreSQL-1-1-65536-2-1      230.06     3.05          0.99                 0.99
+PostgreSQL-1-1-65536-3-1      305.75     4.40          0.86                 0.86
+PostgreSQL-1-1-65536-4-1      320.49     4.06          1.01                 1.01
+PostgreSQL-1-1-65536-5-1      287.43     3.57          0.98                 0.98
+
+### Tests
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
