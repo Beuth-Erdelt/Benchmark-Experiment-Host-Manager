@@ -3274,8 +3274,8 @@ scrape_configs:
                     'script_type':script_type,
                     'time_start_int':time_start_int,
                     'namespace':self.experiment.cluster.namespace,
-                    'num_tenants':self.num_tenants,
-                    'id_tenant':id_tenant,
+                    'num_tenants':0,
+                    'id_tenant':0,
                     'database':databases,
                 }
                 self.logger.debug("load_data_asynch - run scripts {}".format(thread_args))
