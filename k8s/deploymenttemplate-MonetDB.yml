@@ -44,7 +44,7 @@ spec:
         effect: "NoSchedule"
       containers:
       - name: dbms
-        image: monetdb/monetdb:Aug2024
+        image: monetdb/monetdb:Mar2025
         env:
           - {name: MDB_DB_ADMIN_PASS, value: 'monetdb'}
           - {name: MDB_CREATE_DBS, value: 'demo'}
