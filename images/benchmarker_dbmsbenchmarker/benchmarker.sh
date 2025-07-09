@@ -228,8 +228,8 @@ then
         -ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         -mps \
-        -fixdb $BEXHOMA_DATABASE \
-        -fixs $BEXHOMA_SCHEMA \
+        -fixdb "${BEXHOMA_DATABASE:-""}" \
+        -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
         #-st "$BEXHOMA_TIME_START" \
@@ -247,8 +247,8 @@ else
         -ssh $DBMSBENCHMARKER_SHUFFLE_QUERIES \
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         -mps \
-        -fixdb $BEXHOMA_DATABASE \
-        -fixs $BEXHOMA_SCHEMA \
+        -fixdb "${BEXHOMA_DATABASE:-""}" \
+        -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
         #-sl $DBMSBENCHMARKER_SLEEP \
         #-st "$BEXHOMA_TIME_START" \
