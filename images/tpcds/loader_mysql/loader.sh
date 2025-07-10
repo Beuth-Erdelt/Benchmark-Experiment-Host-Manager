@@ -69,6 +69,8 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
 ######################## Execute loading ###################
+mysqlsh --version
+mysql --version
 # shuffled
 #for i in `ls *.dat | shuf`; do
 # ordered

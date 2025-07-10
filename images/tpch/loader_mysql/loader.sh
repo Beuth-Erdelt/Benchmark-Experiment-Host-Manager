@@ -72,6 +72,8 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
 ######################## Execute loading ###################
+mysqlsh --version
+mysql --version
 # shuffled
 #for i in `ls *tbl* | shuf`; do
 # ordered
@@ -159,7 +161,8 @@ for i in *tbl*; do
         FAILED=2
         SECONDS_START=$SECONDS
         echo "=========="
-        time mysqlsh --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
+        time mysql --local-infile=1 --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
+        #time mysqlsh --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS
         echo "End $SECONDS_END seconds"
