@@ -67,7 +67,7 @@ nohup python benchbase.py -ms 1 -tr \
   -sd 5 \
   -dbms PostgreSQL \
   -nbp 1,2 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -84,7 +84,7 @@ nohup python benchbase.py -ms 1 -tr \
   -sd 5 \
   -dbms PostgreSQL \
   -nbp 1,2 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 16 \
   -tb 1024 \
   -m -mc \
@@ -106,7 +106,7 @@ nohup python benchbase.py -ms 1 -tr \
   -sd 5 \
   -dbms PostgreSQL \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 16 \
   -tb 1024 \
   -nc 2 \
