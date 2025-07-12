@@ -901,7 +901,12 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+      - targets: ['{master}:9400']
+  - job_name: 'monitor-app'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    static_configs:
+      - targets: ['{master}:9500']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
@@ -2160,7 +2165,7 @@ scrape_configs:
         server['hugepages_free'] = self.get_host_hugepages_free()
         server['cuda'] = self.get_host_cuda()
         return server
-    def set_metric_of_config_default(self, metric, host, gpuid, experiment=None):
+    def set_metric_of_config_default(self, metric, host, gpuid, schema, database, experiment=None):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -2176,8 +2181,8 @@ scrape_configs:
         """
         if experiment is None:
             experiment = self.code
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment)
-    def set_metric_of_config(self, metric, host, gpuid):
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment, schema=schema, database=database)
+    def set_metric_of_config(self, metric, host, gpuid, schema, database):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -2198,9 +2203,9 @@ scrape_configs:
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
             name_worker = self.get_worker_name()
-            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="")
+            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
-            return self.set_metric_of_config_default(metric, host, gpuid, self.experiment_name)
+            return self.set_metric_of_config_default(metric, host, gpuid, experiment=self.experiment_name, schema=schema, database=database)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
@@ -2292,15 +2297,25 @@ scrape_configs:
                 else:
                     gpuid = ""
                 node = c['hostsystem']['node']
+                database = ""
+                schema = ""
+                if 'JDBC' in c:
+                    database = c['JDBC']['database'] if 'database' in c['JDBC'] else 'default'
+                    schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+                    print(self.eval_parameters)
+                    if self.tenant_per == 'schema' and 'TENANT' in self.eval_parameters:
+                        schema = 'tenant_'+self.eval_parameters['TENANT']
+                    elif self.tenant_per == 'database' and 'TENANT' in self.eval_parameters:
+                        database = 'tenant_'+self.eval_parameters['TENANT']
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                     # other components (not managed by bexhoma)
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''

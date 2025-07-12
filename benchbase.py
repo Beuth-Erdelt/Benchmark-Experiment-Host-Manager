@@ -315,6 +315,7 @@ if __name__ == '__main__':
                         config.set_eval_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
+                            #TENANT = tenant, # not defined here
                             )
                         executor_list = []
                         for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):

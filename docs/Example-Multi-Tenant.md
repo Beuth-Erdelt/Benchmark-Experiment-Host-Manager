@@ -569,7 +569,7 @@ TEST failed: Workflow not as planned
 
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated schema in the same database:
 ```bash
-nohup python tpch.py \
+nohup python benchbase.py \
   -mtn 2 -mtb schema \
   -sf 1 -sd 5 -xkey \
   --dbms PostgreSQL \
@@ -676,7 +676,7 @@ TEST passed: Workflow as planned
 
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated database in the same DBMS:
 ```bash
-nohup python tpch.py \
+nohup python benchbase.py \
   -mtn 2 -mtb database \
   -sf 1 -sd 5 -xkey \
   --dbms PostgreSQL \
@@ -783,7 +783,7 @@ TEST passed: Workflow as planned
 
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS:
 ```bash
-nohup python tpch.py \
+nohup python benchbase.py \
   -mtn 2 -mtb database \
   -sf 1 -sd 5 -xkey \
   --dbms PostgreSQL \
