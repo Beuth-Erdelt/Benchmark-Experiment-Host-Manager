@@ -2286,6 +2286,8 @@ scrape_configs:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['prometheus_url']
             if 'service_monitoring' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
+            if 'service_monitoring_application' in config_K8s['monitor']:
+                c['monitoring']['prometheus_url_application'] = config_K8s['monitor']['service_monitoring_application'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}             # default components (managed by bexhoma)
             c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
