@@ -150,6 +150,7 @@ class default():
         self.tenant_ready_to_index = False
         self.tenant_started_to_index = False
         # are there other components?
+        self.monitor_app_active = experiment.monitor_app_active
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
         self.prometheus_timeout = experiment.prometheus_timeout
@@ -645,7 +646,7 @@ class default():
 
         :return: True, if monitoring is running
         """
-        if self.experiment.cluster.monitor_cluster_exists:
+        if self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active:
             return True
         app = self.appname
         component = 'monitoring'
@@ -842,7 +843,7 @@ class default():
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
-        if not self.experiment.monitoring_active or (self.experiment.cluster.monitor_cluster_active and self.experiment.cluster.monitor_cluster_exists):
+        if not self.experiment.monitoring_active or (self.experiment.cluster.monitor_cluster_active and self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
             return
         if len(app) == 0:
             app = self.appname
@@ -858,7 +859,7 @@ class default():
             print("{:30s}: wants to monitor all components in cluster".format(configuration))
         if not self.experiment.cluster.monitor_cluster_exists:
             print("{:30s}: cannot rely on preinstalled monitoring".format(configuration))
-        print("{:30s}: start monitoring with prometheus pod".format(configuration))
+        print("{:30s}: starts monitoring with prometheus pod".format(configuration))
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
             try:
@@ -1430,7 +1431,7 @@ scrape_configs:
                     dep['spec']['selector']['experiment'] = experiment
                     dep['spec']['selector']['dbms'] = self.docker
                     dep['spec']['selector']['volume'] = self.volume
-                    if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
+                    if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
                             if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
@@ -1467,7 +1468,7 @@ scrape_configs:
                 dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
-                if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
+                if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
                         if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':

@@ -131,6 +131,7 @@ class default():
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
+        self.monitor_app_active = True
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
@@ -346,6 +347,7 @@ class default():
             list_clients = []
         monitoring = args.monitoring
         monitoring_cluster = args.monitoring_cluster
+        monitoring_app = args.monitoring_app
         # only for dbmsbenchmarker
         if 'num_run' in parameter:
             numRun = int(args.num_run)
@@ -404,6 +406,9 @@ class default():
         else:
             # we want to just run the queries
             self.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
+        self.monitor_app_active = monitoring_app
+        if monitoring_app:
+            self.workload['info'] = self.workload['info']+"\nApplication metrics are monitored by sidecar containers."
         # set resources for dbms
         self.set_resources(
             requests = {
