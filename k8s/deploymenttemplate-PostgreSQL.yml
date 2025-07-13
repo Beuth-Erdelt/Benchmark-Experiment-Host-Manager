@@ -46,9 +46,9 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        #image: postgres:17.5
+        image: postgres:17.5
         #image: postgres:18beta1-alpine
-        image: postgres:16.9
+        #image: postgres:16.9
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
@@ -80,7 +80,7 @@ spec:
               - /bin/sh
               - "-c"
               - >
-                if pg_isready -h localhost -p 5432 > /dev/null; then
+                if pg_isready -h localhost -p 5432 -U postgres > /dev/null; then
                   recovery_status=$(psql -h localhost -p 5432 -U postgres -t -c "SELECT pg_is_in_recovery();" | xargs);
                   [ "$recovery_status" = "f" ] && exit 0 || exit 1;
                 else
@@ -201,7 +201,7 @@ spec:
           - "-c"
           - "huge_pages=try"                          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-HUGE-PAGES
       - name: monitor-application
-        image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+        image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
         command: ["postgres_exporter"]
         env:
           - name: DATA_SOURCE_URI
