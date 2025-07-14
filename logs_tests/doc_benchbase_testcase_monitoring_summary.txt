@@ -1,60 +1,69 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1204s 
-    Code: 1747667305
-    Benchbase runs the TPC-C benchmark.
+    Duration: 1202s 
+    Code: 1752245831
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.5.
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.9.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is tested with [160] threads, split into [1, 2] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
 PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:243308400
-    datadisk:4323
+    disk:427529448
+    datadisk:3748
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1747667305
+                code:1752245831
 PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008592896
+    RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-140-generic
     node:cl-worker11
-    disk:246715432
-    datadisk:7651
+    disk:429232076
+    datadisk:5216
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1747667305
+                code:1752245831
 
 ### Execution
+
+#### Per Pod
+                         experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                     
+PostgreSQL-1-1-1024-1-1               1        160   16384       1      1  300.0          47                   4685.744987                4601.795017         0.0                                                      69080.0                                              34135.0
+PostgreSQL-1-1-1024-2-1               1         80    8192       2      1  300.0          15                   2788.018949                2743.498966         0.0                                                      71700.0                                              28677.0
+PostgreSQL-1-1-1024-2-2               1         80    8192       2      2  300.0          20                   2804.526101                2759.306110         0.0                                                      71163.0                                              28513.0
+
+#### Aggregated Parallel
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         16   16384          1  300.0           0                       2745.09                    2732.70         0.0                                                      12657.0                                               5823.0
-PostgreSQL-1-1-1024-2               1         16   16384          2  300.0           2                       2484.93                    2461.83         0.0                                                      14150.0                                               6431.0
+PostgreSQL-1-1-1024-1               1        160   16384          1  300.0          47                       4685.74                    4601.80         0.0                                                      69080.0                                              34135.0
+PostgreSQL-1-1-1024-2               1        160   16384          2  300.0          35                       5592.55                    5502.81         0.0                                                      71700.0                                              28595.0
 
 ### Workflow
 
@@ -66,28 +75,28 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1      152.0        1.0   1.0         378.947368
-PostgreSQL-1-1-1024-2      152.0        1.0   2.0         378.947368
+PostgreSQL-1-1-1024-1      201.0        1.0   1.0         286.567164
+PostgreSQL-1-1-1024-2      201.0        1.0   2.0         286.567164
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      697.56     1.88          4.07                 5.69
-PostgreSQL-1-1-1024-2      697.56     1.88          4.07                 5.69
+PostgreSQL-1-1-1024-1      758.37     5.94           4.4                  9.1
+PostgreSQL-1-1-1024-2      758.37     5.94           4.4                  9.1
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1519.89    13.95          1.17                 1.17
-PostgreSQL-1-1-1024-2     1519.89    13.95          1.17                 1.17
+PostgreSQL-1-1-1024-1     1554.83     5.61          1.29                 1.29
+PostgreSQL-1-1-1024-2     1554.83     5.61          1.29                 1.29
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     2259.68     7.46          4.85                 7.12
-PostgreSQL-1-1-1024-2     2214.89     7.42          5.48                 8.36
+PostgreSQL-1-1-1024-1     6009.50    18.27          7.43                15.18
+PostgreSQL-1-1-1024-2     7112.55    26.46          9.44                21.25
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1418.53     4.97          1.40                 1.40
-PostgreSQL-1-1-1024-2     1418.53     4.43          3.42                 3.42
+PostgreSQL-1-1-1024-1     1775.92     7.77          4.08                 4.08
+PostgreSQL-1-1-1024-2     1775.92     6.79          7.15                 7.15
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
