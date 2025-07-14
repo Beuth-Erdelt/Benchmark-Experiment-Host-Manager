@@ -1339,6 +1339,13 @@ class default():
                 config.check_load_data()
                 # start loading
                 if not config.loading_started:
+                    # check if monitoring has started
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{:30s}: waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
                     # check if SUT is healthy
                     if config.sut_is_running():
                         if not config.sut_is_healthy():
@@ -1350,12 +1357,6 @@ class default():
                             print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
-                    if len(config.benchmark_list) > 0:
-                        if config.monitoring_active and not config.monitoring_is_running():
-                            print("{:30s}: waits for monitoring".format(config.configuration))
-                            if not config.monitoring_is_pending():
-                                config.start_monitoring()
-                            continue
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
