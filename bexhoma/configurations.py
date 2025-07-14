@@ -903,17 +903,31 @@ scrape_configs:
     scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{master}:9400']
-  - job_name: 'monitor-app'
+  - job_name: 'monitor-app-0'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     metrics_path: /probe
-    params:
-      target: ['localhost:5432']  # or your actual local DB connection string
     static_configs:
       - targets:
-          - postgres
-          - tenant_0
-          - tenant_1
+          - localhost:5432  # target DB server
+    params:
+      dbname: [tenant_0]    # database to connect to
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_dbname  # passes the database name as a query param
+      - source_labels: [__param_dbname]
+        target_label: instance        # sets the instance label in Prometheus
+      - target_label: __address__
+        replacement: {master}:9500    # this is where the exporter is actually running
+  - job_name: 'monitor-app-1'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    metrics_path: /probe
+    static_configs:
+      - targets:
+          - localhost:5432  # target DB server
+    params:
+      dbname: [tenant_0]    # database to connect to
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_dbname  # passes the database name as a query param
