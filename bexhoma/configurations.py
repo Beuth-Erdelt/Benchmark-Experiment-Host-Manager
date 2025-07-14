@@ -906,8 +906,21 @@ scrape_configs:
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
+    metrics_path: /probe
+    params:
+      target: ['localhost:5432']  # or your actual local DB connection string
     static_configs:
-      - targets: ['{master}:9500']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+      - targets:
+          - postgres
+          - tenant_0
+          - tenant_1
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_dbname  # passes the database name as a query param
+      - source_labels: [__param_dbname]
+        target_label: instance        # sets the instance label in Prometheus
+      - target_label: __address__
+        replacement: {master}:9500    # this is where the exporter is actually running""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
