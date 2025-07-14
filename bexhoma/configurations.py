@@ -903,38 +903,22 @@ scrape_configs:
     scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{master}:9400']
-  - job_name: 'monitor-app-0'
+  - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     metrics_path: /probe
     static_configs:
       - targets:
-          - localhost:5432  # target DB server
-    params:
-      dbname: [tenant_0]    # database to connect to
+          - postgres@localhost:5432/postgres?sslmode=disable
+          - postgres@localhost:5432/tenant_0?sslmode=disable
+          - postgres@localhost:5432/tenant_1?sslmode=disable
     relabel_configs:
       - source_labels: [__address__]
-        target_label: __param_dbname  # passes the database name as a query param
-      - source_labels: [__param_dbname]
-        target_label: instance        # sets the instance label in Prometheus
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
       - target_label: __address__
-        replacement: {master}:9500    # this is where the exporter is actually running
-  - job_name: 'monitor-app-1'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
-    metrics_path: /probe
-    static_configs:
-      - targets:
-          - localhost:5432  # target DB server
-    params:
-      dbname: [tenant_0]    # database to connect to
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_dbname  # passes the database name as a query param
-      - source_labels: [__param_dbname]
-        target_label: instance        # sets the instance label in Prometheus
-      - target_label: __address__
-        replacement: {master}:9500    # this is where the exporter is actually running""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+        replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
