@@ -924,6 +924,8 @@ scrape_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
+        regex: .*@([^:/]+:\\d+)/.*
+        replacement: ${{1}}
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
