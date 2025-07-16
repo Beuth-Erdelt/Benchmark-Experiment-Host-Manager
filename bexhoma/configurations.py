@@ -150,6 +150,7 @@ class default():
         self.tenant_ready_to_index = False
         self.tenant_started_to_index = False
         # are there other components?
+        self.monitor_app_active = experiment.monitor_app_active
         self.monitoring_active = experiment.monitoring_active
         self.prometheus_interval = experiment.prometheus_interval
         self.prometheus_timeout = experiment.prometheus_timeout
@@ -645,7 +646,7 @@ class default():
 
         :return: True, if monitoring is running
         """
-        if self.experiment.cluster.monitor_cluster_exists:
+        if self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active:
             return True
         app = self.appname
         component = 'monitoring'
@@ -842,7 +843,7 @@ class default():
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         """
-        if not self.experiment.monitoring_active or (self.experiment.cluster.monitor_cluster_active and self.experiment.cluster.monitor_cluster_exists):
+        if not self.experiment.monitoring_active or (self.experiment.cluster.monitor_cluster_active and self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
             return
         if len(app) == 0:
             app = self.appname
@@ -858,7 +859,7 @@ class default():
             print("{:30s}: wants to monitor all components in cluster".format(configuration))
         if not self.experiment.cluster.monitor_cluster_exists:
             print("{:30s}: cannot rely on preinstalled monitoring".format(configuration))
-        print("{:30s}: start monitoring with prometheus pod".format(configuration))
+        print("{:30s}: starts monitoring with prometheus pod".format(configuration))
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         with open(self.experiment.cluster.yamlfolder+deployment) as stream:
             try:
@@ -902,6 +903,32 @@ scrape_configs:
     scrape_timeout: {prometheus_timeout}
     static_configs:
       - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                        # application monitor
+                        # TODO: test for dbms other than PostgreSQL
+                        if self.monitor_app_active:
+                            app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
+                            if self.tenant_per == 'database' and self.num_tenants > 0:
+                                connections = [
+                                    f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
+                                    for i in range(self.num_tenants)
+                                ]
+                                app_monitor_targets += "\n".join(connections)
+                            prometheus_config += """
+  - job_name: 'monitor-app'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    metrics_path: /probe
+    static_configs:
+      - targets: {app_monitor_targets}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        regex: .*@([^:/]+:\\d+)/.*
+        replacement: ${{1}}
+        target_label: instance
+      - target_label: __address__
+        replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
@@ -1425,7 +1452,7 @@ scrape_configs:
                     dep['spec']['selector']['experiment'] = experiment
                     dep['spec']['selector']['dbms'] = self.docker
                     dep['spec']['selector']['volume'] = self.volume
-                    if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
+                    if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
                             if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
@@ -1462,7 +1489,7 @@ scrape_configs:
                 dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
-                if not self.monitoring_active or self.experiment.cluster.monitor_cluster_exists:
+                if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
                         if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
@@ -2160,7 +2187,7 @@ scrape_configs:
         server['hugepages_free'] = self.get_host_hugepages_free()
         server['cuda'] = self.get_host_cuda()
         return server
-    def set_metric_of_config_default(self, metric, host, gpuid, experiment=None):
+    def set_metric_of_config_default(self, metric, host, gpuid, schema, database, experiment=None):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -2176,8 +2203,8 @@ scrape_configs:
         """
         if experiment is None:
             experiment = self.code
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment)
-    def set_metric_of_config(self, metric, host, gpuid):
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment, schema=schema, database=database)
+    def set_metric_of_config(self, metric, host, gpuid, schema, database):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -2198,9 +2225,9 @@ scrape_configs:
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
             name_worker = self.get_worker_name()
-            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="")
+            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
-            return self.set_metric_of_config_default(metric, host, gpuid, self.experiment_name)
+            return self.set_metric_of_config_default(metric, host, gpuid, experiment=self.experiment_name, schema=schema, database=database)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
@@ -2281,6 +2308,8 @@ scrape_configs:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['prometheus_url']
             if 'service_monitoring' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['service_monitoring'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
+            if 'service_monitoring_application' in config_K8s['monitor']:
+                c['monitoring']['prometheus_url_application'] = config_K8s['monitor']['service_monitoring_application'].format(service=monitoring_host, namespace=self.experiment.cluster.contextdata['namespace'])
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}             # default components (managed by bexhoma)
             c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
@@ -2292,15 +2321,25 @@ scrape_configs:
                 else:
                     gpuid = ""
                 node = c['hostsystem']['node']
+                database = ""
+                schema = ""
+                if 'JDBC' in c:
+                    database = c['JDBC']['database'] if 'database' in c['JDBC'] else 'default'
+                    schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+                    print(self.eval_parameters)
+                    if self.tenant_per == 'schema' and 'TENANT' in self.eval_parameters:
+                        schema = 'tenant_'+self.eval_parameters['TENANT']
+                    elif self.tenant_per == 'database' and 'TENANT' in self.eval_parameters:
+                        database = 'tenant_'+self.eval_parameters['TENANT']
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                     # other components (not managed by bexhoma)
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid)
+                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''

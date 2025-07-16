@@ -109,6 +109,7 @@ class testbed():
         self.querymanagement = {}
         self.workload = {}
         self.monitoring_active = True
+        self.monitor_app_active = True
         self.monitor_cluster_active = False
         self.monitor_cluster_exists = False                                                     # True, if there are cAdvisors and a Prometheus server independent from bexhoma
         # experiment:

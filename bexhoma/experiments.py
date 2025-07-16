@@ -131,6 +131,7 @@ class default():
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
+        self.monitor_app_active = True
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
@@ -346,6 +347,7 @@ class default():
             list_clients = []
         monitoring = args.monitoring
         monitoring_cluster = args.monitoring_cluster
+        monitoring_app = args.monitoring_app
         # only for dbmsbenchmarker
         if 'num_run' in parameter:
             numRun = int(args.num_run)
@@ -404,6 +406,9 @@ class default():
         else:
             # we want to just run the queries
             self.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
+        self.monitor_app_active = monitoring_app
+        if monitoring_app:
+            self.workload['info'] = self.workload['info']+"\nApplication metrics are monitored by sidecar containers."
         # set resources for dbms
         self.set_resources(
             requests = {
@@ -1334,6 +1339,13 @@ class default():
                 config.check_load_data()
                 # start loading
                 if not config.loading_started:
+                    # check if monitoring has started
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{:30s}: waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
                     # check if SUT is healthy
                     if config.sut_is_running():
                         if not config.sut_is_healthy():
@@ -1345,12 +1357,6 @@ class default():
                             print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
-                    if len(config.benchmark_list) > 0:
-                        if config.monitoring_active and not config.monitoring_is_running():
-                            print("{:30s}: waits for monitoring".format(config.configuration))
-                            if not config.monitoring_is_pending():
-                                config.start_monitoring()
-                            continue
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:

@@ -41,6 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
     parser.add_argument('-m',   '--monitoring', help='activates monitoring', action='store_true')
+    parser.add_argument('-ma',  '--monitoring-app', help='activates application monitoring', action='store_true', default=False)
     parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
     parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
     parser.add_argument('-dt',  '--datatransfer', help='activates transfer of data per query (not only execution)', action='store_true', default=False)
