@@ -34,13 +34,13 @@ RUN apt install default-jre -y
 # RUN apt install build-essential -y
 
 RUN pip uninstall dbmsbenchmarker -y
-RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@{version}
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.10
 
 # we only need packages required by dbmsbenchmarker
 #COPY requirements.txt ./
 #RUN pip install --no-cache-dir -r requirements.txt
 
-RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version}
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.10
 
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
@@ -61,7 +61,7 @@ RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN apt install git
-RUN pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@{version}
+RUN pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.10
 
 RUN pip install jupyter
 RUN pip install jupyter_contrib_nbextensions
@@ -69,7 +69,7 @@ RUN pip install jupyter_contrib_nbextensions
 #RUN jupyter nbextensions_configurator enable --user
 #RUN jupyter nbextension enable toc2/main
 
-RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version}
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.10
 
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
