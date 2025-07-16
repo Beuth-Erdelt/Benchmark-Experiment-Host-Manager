@@ -1,0 +1,156 @@
+######################################################################################
+# Dockerfile for Bexhoma - Benchmarker DBMSBenchmarker
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "benchmarker".
+#
+# Base Image: python:3.12.8
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a driver for a benchmark.
+# The configuration is given by environment variables.
+# A redis queue is consulted for further details.
+# Java is installed.
+# Redis client is installed.
+# Some JDBC driver are installed.
+######################################################################################
+FROM python:3.12.8
+
+# does not compile numpy correctly
+# FROM python:3.13-rc-slim
+
+WORKDIR /usr/src/app
+
+ENV SF=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
+ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_HOST="www.example.com"
+ENV BEXHOMA_PORT 3306
+ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_CONNECTION="mysql"
+ENV BEXHOMA_EXPERIMENT="12345"
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_USER root
+ENV BEXHOMA_PASSWORD root
+ENV BEXHOMA_DATABASE demo
+ENV BEXHOMA_TIME_START 0
+ENV BEXHOMA_TIME_NOW 0
+ENV DBMSBENCHMARKER_SLEEP 30
+ENV DBMSBENCHMARKER_RECREATE_PARAMETER 0
+ENV DBMSBENCHMARKER_VERBOSE 0
+ENV DBMSBENCHMARKER_DEV 0
+ENV DBMSBENCHMARKER_SHUFFLE_QUERIES False
+ENV DBMSBENCHMARKER_TESTRUN 0
+
+RUN apt update
+RUN apt install default-jre -y
+
+# only needed in slim releases
+# RUN apt install git -y
+# RUN apt install build-essential -y
+
+RUN pip uninstall dbmsbenchmarker -y
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.11
+
+# we only need packages required by dbmsbenchmarker
+#COPY requirements.txt ./
+#RUN pip install --no-cache-dir -r requirements.txt
+
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.11
+
+WORKDIR /usr/src/app/DBMS-Benchmarker
+
+# RUN git pull
+
+#COPY . .
+
+RUN apt install nano -y
+
+RUN mkdir -p /results
+RUN mkdir -p /results/$DBMSBENCHMARKER_CODE
+
+
+RUN mkdir -p jars/
+
+######### Specific version of PostgreSQL JDBC #########
+RUN wget https://jdbc.postgresql.org/download/postgresql-42.5.0.jar --no-check-certificate
+RUN cp postgresql-42.5.0.jar jars/postgresql-42.5.0.jar
+
+######### Specific version of MySQL JDBC #########
+RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.0.31.tar.gz
+RUN tar -zxvf mysql-connector-j-8.0.31.tar.gz
+RUN cp mysql-connector-j-8.0.31/mysql-connector-j-8.0.31.jar jars/mysql-connector-j-8.0.31.jar
+
+######### Specific version of MariaDB JDBC #########
+RUN wget https://dlm.mariadb.com/2678616/Connectors/java/connector-java-3.1.0/mariadb-java-client-3.1.0.jar
+RUN cp mariadb-java-client-3.1.0.jar jars/mariadb-java-client-3.1.0.jar
+
+######### Specific version of MonetDB JDBC #########
+#RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.2.jre8.jar --no-check-certificate
+#RUN cp monetdb-jdbc-3.2.jre8.jar jars/monetdb-jdbc-3.2.jre8.jar
+#RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
+#RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
+#RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
+#RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
+RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-12.0.jre8.jar --no-check-certificate
+RUN cp monetdb-jdbc-12.0.jre8.jar jars/monetdb-jdbc-12.0.jre8.jar
+
+######### Specific version of SingleStore JDBC #########
+RUN wget https://github.com/memsql/S2-JDBC-Connector/releases/download/v1.1.4/singlestore-jdbc-client-1.1.4.jar
+RUN cp singlestore-jdbc-client-1.1.4.jar jars/singlestore-jdbc-client-1.1.4.jar
+
+######### Specific version of Kinetica JDBC #########
+RUN wget https://github.com/kineticadb/kinetica-client-jdbc/archive/refs/tags/v7.1.8.7.tar.gz
+RUN tar -zxvf v7.1.8.7.tar.gz
+RUN cp kinetica-client-jdbc-7.1.8.7/kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar jars/kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar
+
+######### Specific version of YugabyteDB JDBC #########
+RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
+RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
+
+
+
+######### Redis Client - Download and compile #########
+RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
+
+
+RUN mkdir -p tpc-ds
+
+COPY ./connections.config ./tpc-ds/connections.config
+COPY ./queries.config ./tpc-ds/queries.config
+RUN ["chmod", "+x", "./tpc-ds/connections.config"]
+RUN ["chmod", "+x", "./tpc-ds/queries.config"]
+
+COPY ./benchmarker.sh ./benchmarker.sh
+RUN ["chmod", "+x", "./benchmarker.sh"]
+
+CMD ["/bin/bash", "-c", "./benchmarker.sh"]
+
+#CMD git pull; python ./benchmark.py run -b -d -w connection \
+#	-f /results/$DBMSBENCHMARKER_CODE \
+#	-r /results/$DBMSBENCHMARKER_CODE \
+#	-mps \
+#	-cs -sf $DBMSBENCHMARKER_CONNECTION \
+#	-ms $DBMSBENCHMARKER_CLIENT \
+#	-sl $DBMSBENCHMARKER_SLEEP \
+#	-st "$BEXHOMA_TIME_START" \
+#	-c "$DBMSBENCHMARKER_CONNECTION" \
+#	-ca "$DBMSBENCHMARKER_ALIAS" \
+#	-cf ${DBMSBENCHMARKER_CONNECTION}.config \
+
+# -f   config folder
+# -r   result folder
+# -mps monitor per stream (not per query)
+# -cs -sf subfolder per dbms (connection)
+# -ms  max number of subfolders
+# -sl  sleep seconds before start benchmarking
+# -st  start time for operating
+# -c   name of dbms (connection) to benchmark
+# -ca  alias for dbms (connection) to benchmark
+# -cf  config of dbms (connection)
