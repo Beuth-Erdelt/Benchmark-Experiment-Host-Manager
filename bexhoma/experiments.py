@@ -1824,10 +1824,18 @@ class default():
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
             # get pairs (start,end) of benchmarking pods
             timing_benchmarker = self.get_job_timing_benchmarking(jobname)
+            print("timing_benchmarker", timing_benchmarker)
+            # Unzip the pairs into two separate lists: firsts and seconds
+            firsts, seconds = zip(*timing_benchmarker)
+            # Find the minimum of the first entries and the maximum of the second entries
+            start_time = min(firsts)
+            end_time = max(seconds)
+            #print(f"Min of first entries: {start_time}")
+            #print(f"Max of second entries: {end_time}")
             if config is not None:
                 config.benchmarking_timespans = {}
                 config.benchmarking_timespans['benchmarker'] = timing_benchmarker
-            start_time = int(job_labels[jobname]['start_time'])
+            start_time_job = int(job_labels[jobname]['start_time'])
             connection = job_labels[jobname]['connection']
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
@@ -1839,8 +1847,10 @@ class default():
             now = datetime.utcnow()
             now_string = now.strftime('%Y-%m-%d %H:%M:%S')
             time_now = str(datetime.now())
-            end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            end_time_job = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
             print("{:30s}: showing benchmarker times".format(connection))
+            print("{:30s}: benchmarker timespan job from {} to {}".format(connection, start_time_job, end_time_job))
+            print("{:30s}: benchmarker timespan pods from {} to {}".format(connection, start_time, end_time))
             print("{:30s}: benchmarker timespan (start to end single container [s]) = {}".format(connection, end_time-start_time))
             print("{:30s}: benchmarker times (start/end per pod and container) = {}".format(connection, timing_benchmarker))
             self.cluster.logger.debug("BENCHMARKING LABELS")
