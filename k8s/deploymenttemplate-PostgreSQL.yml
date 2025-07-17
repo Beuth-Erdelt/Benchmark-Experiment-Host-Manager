@@ -217,8 +217,8 @@ spec:
         ports:
           - containerPort: 9187
         resources:
-          requests: {cpu: 1000m, memory: 1Gi}
-          limits: {cpu: 1000m, memory: 1Gi}
+          requests: {cpu: 1000m, memory: 4Gi}
+          limits: {cpu: 1000m, memory: 4Gi}
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
