@@ -632,7 +632,8 @@ if __name__ == '__main__':
                                             BEXHOMA_TENANT_NUM = config.num_tenants,
                                             )
                         #print(executor_list)
-                        config.add_benchmark_list(executor_list)                if ("MariaDB" in args.dbms or len(args.dbms) == 0):
+                        config.add_benchmark_list(executor_list)
+                if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')

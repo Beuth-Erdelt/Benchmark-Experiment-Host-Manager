@@ -2326,7 +2326,7 @@ scrape_configs:
                 if 'JDBC' in c:
                     database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
                     schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
-                    print(self.eval_parameters)
+                    #print(self.eval_parameters)
                     if self.tenant_per == 'schema' and 'TENANT' in self.eval_parameters:
                         schema = 'tenant_'+self.eval_parameters['TENANT']
                     elif self.tenant_per == 'database' and 'TENANT' in self.eval_parameters:
