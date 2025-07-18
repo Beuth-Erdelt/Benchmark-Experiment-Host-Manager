@@ -2324,7 +2324,7 @@ scrape_configs:
                 database = ""
                 schema = ""
                 if 'JDBC' in c:
-                    database = c['JDBC']['database'] if 'database' in c['JDBC'] else 'default'
+                    database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
                     schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
                     print(self.eval_parameters)
                     if self.tenant_per == 'schema' and 'TENANT' in self.eval_parameters:
@@ -2341,7 +2341,7 @@ scrape_configs:
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
         if 'JDBC' in c:
-            database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
+            database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
             if self.tenant_per == 'schema':
                 schema = 'DBMSBENCHMARKER_SCHEMA'
@@ -3148,7 +3148,7 @@ scrape_configs:
         scriptfolder = '/tmp/'
         commands = scripts.copy()
         c = self.dockertemplate['template']
-        database = c['JDBC']['database'] if 'database' in c['JDBC'] else 'default'
+        database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
         schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
         databases = [database]
         use_storage = self.use_storage()
@@ -3433,7 +3433,7 @@ scrape_configs:
         env_default['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
         env_default['BEXHOMA_SUT_NAME'] = name
         if 'JDBC' in c:
-            database = c['JDBC']['database'] if 'database' in c['JDBC'] else ''
+            database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
             if self.tenant_per == 'schema':
                 schema = 'DBMSBENCHMARKER_SCHEMA'
