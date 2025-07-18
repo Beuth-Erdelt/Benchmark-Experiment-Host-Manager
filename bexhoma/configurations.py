@@ -2296,6 +2296,21 @@ scrape_configs:
         c['monitoring'] = {}
         config_K8s = self.experiment.cluster.config['credentials']['k8s']
         if self.experiment.monitoring_active and 'monitor' in config_K8s:
+            if len(c['hostsystem']['GPUIDs']) > 0:
+                gpuid = '|'.join(c['hostsystem']['GPUIDs'])
+            else:
+                gpuid = ""
+            node = c['hostsystem']['node']
+            database = ""
+            schema = ""
+            if 'JDBC' in c:
+                database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
+                schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+                #print(self.eval_parameters)
+                if self.tenant_per == 'schema' and 'TENANT' in self.eval_parameters:
+                    schema = 'tenant_'+self.eval_parameters['TENANT']
+                elif self.tenant_per == 'database' and 'TENANT' in self.eval_parameters:
+                    database = 'tenant_'+self.eval_parameters['TENANT']
             if 'grafanatoken' in config_K8s['monitor']:
                 c['monitoring']['grafanatoken'] = config_K8s['monitor']['grafanatoken']
             if 'grafanaurl' in config_K8s['monitor']:
@@ -2313,26 +2328,20 @@ scrape_configs:
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}             # default components (managed by bexhoma)
             c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
+            # cluster metrics
             if 'metrics' in config_K8s['monitor']:
-                # instance="bexhoma-sut-mysql-1615839517:9300"
-                # instance=~"bexhoma-sut-mysql-1615839517.*"
-                if len(c['hostsystem']['GPUIDs']) > 0:
-                    gpuid = '|'.join(c['hostsystem']['GPUIDs'])
-                else:
-                    gpuid = ""
-                node = c['hostsystem']['node']
-                database = ""
-                schema = ""
-                if 'JDBC' in c:
-                    database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
-                    schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
-                    #print(self.eval_parameters)
-                    if self.tenant_per == 'schema' and 'TENANT' in self.eval_parameters:
-                        schema = 'tenant_'+self.eval_parameters['TENANT']
-                    elif self.tenant_per == 'database' and 'TENANT' in self.eval_parameters:
-                        database = 'tenant_'+self.eval_parameters['TENANT']
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                    # default components (managed by bexhoma)
+                    c['monitoring']['metrics'][metricname] = metricdata.copy()
+                    #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                    # other components (not managed by bexhoma)
+                    c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+            # application metrics
+            if self.monitor_app_active and 'monitor' in c and 'metrics' in c['monitor']:
+                for metricname, metricdata in c['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
