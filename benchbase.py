@@ -500,6 +500,9 @@ if __name__ == '__main__':
                             config.set_storage(
                                 storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
                                 )
+                            config.set_sut_parameters(
+                                MYSQL_DATABASE = 'benchbase',
+                                )
                             config.set_loading_parameters(
                                 #PARALLEL = str(loading_pods), # =1
                                 SF = SF,
@@ -569,6 +572,9 @@ if __name__ == '__main__':
                             config.set_storage(
                                 storageConfiguration = 'mysql'
                                 )
+                        config.set_sut_parameters(
+                            MYSQL_DATABASE = 'benchbase',
+                            )
                         config.set_loading_parameters(
                             #PARALLEL = str(loading_pods), # =1
                             SF = SF,

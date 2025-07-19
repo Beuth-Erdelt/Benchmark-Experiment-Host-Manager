@@ -1,3 +1,5 @@
+-- USE benchbase;
+
 -- ANALYZE: Update table statistics for the optimizer
 ANALYZE TABLE customer;
 ANALYZE TABLE district;
@@ -41,8 +43,8 @@ LIMIT 10;
 
 -- Show current database and user
 SELECT 
-  DATABASE() AS current_database,
-  USER() AS current_user;
+  DATABASE() AS `current_database`,
+  USER() AS `current_user`;
 
 -- Optional: show table status for deeper insights (includes size info)
 SHOW TABLE STATUS -- FROM BEXHOMA_SCHEMA
