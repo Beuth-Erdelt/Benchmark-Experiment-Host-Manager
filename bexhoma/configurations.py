@@ -2340,8 +2340,8 @@ scrape_configs:
                     c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
             # application metrics
-            if self.monitor_app_active and 'monitor' in c and 'metrics' in c['monitor']:
-                for metricname, metricdata in c['monitor']['metrics'].items():
+            if self.monitor_app_active and 'monitor' in self.dockertemplate and 'metrics' in self.dockertemplate['monitor']:
+                for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
                     c['monitoring']['metrics'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
