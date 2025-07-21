@@ -326,6 +326,31 @@ as default settings.
             'logfile': '/usr/local/data/logfile',
             'datadir': '/var/lib/postgresql/data/',
             'priceperhourdollar': 0.0,
+            'monitor': {
+                'metrics': {
+                    'pg_stat_database_blks_read': {
+                        'type': 'application',
+                        'active': True,
+                        'metric': 'counter',
+                        'query': 'sum(pg_stat_database_blks_read{{datname!~"template.*"}})',
+                        'title': 'Number of disk blocks read in this database'
+                    },
+                    'pg_stat_database_blks_hit': {
+                        'type': 'application',
+                        'active': True,
+                        'metric': 'counter',
+                        'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})',
+                        'title': 'Number of times disk blocks were found already in the buffer cache'
+                    },
+                    'cache_hit_ratio': {
+                        'type': 'application',
+                        'active': True,
+                        'metric': 'gauge',
+                        'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})/(sum(pg_stat_database_blks_hit{{datname!~"template.*"}}) + sum(pg_stat_database_blks_read{{datname!~"template.*"}}))',
+                        'title': 'Cache hit ratio'
+                    },
+                }
+            },
         },
 ```
 
@@ -334,6 +359,7 @@ This has additional options:
 * `schema`: the default schema
 * `loadData` knowns the database via `{database}`. This will be replaced by the default database name or, in case of multi-tenancy, by the database of the tenant.
 * `url` knowns the database via `{database}` and the schema via `{schema}`. This will be replaced by the default database name and schema name or, in case of multi-tenancy, by the database or schema of the tenant.
+* `monitor`: some application metrics to be collected if `-ma` is activated
 
 ### DDL Scripts
 
