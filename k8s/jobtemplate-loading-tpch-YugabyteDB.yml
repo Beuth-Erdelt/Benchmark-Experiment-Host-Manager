@@ -15,8 +15,8 @@ spec:
       imagePullSecrets:
       - name: dockerhub
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       tolerations:
       initContainers:
       - name: datagenerator

@@ -37,8 +37,8 @@ spec:
       labels: {app: bexhoma, component: pool, configuration: default, experiment: default, pool: bexhoma-pool}
     spec:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       nodeSelector:
       #  kubernetes.io/hostname: cl-worker19
       containers:
@@ -133,8 +133,8 @@ spec:
       nodeSelector:
       #  kubernetes.io/hostname: cl-worker11
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms

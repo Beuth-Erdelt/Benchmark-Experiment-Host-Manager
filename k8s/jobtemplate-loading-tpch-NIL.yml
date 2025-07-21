@@ -16,8 +16,8 @@ spec:
       - name: dockerhub
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: datagenerator
         image: bexhoma/generator_tpch:latest

@@ -36,8 +36,8 @@ spec:
       imagePullSecrets:
       - {name: dockerhub}
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0

@@ -41,8 +41,8 @@ spec:
       - {name: dockerhub}
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: dbms
         #image: yugabytedb/yugabyte:2.17.1.0-b439

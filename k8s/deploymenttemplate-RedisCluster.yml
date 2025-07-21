@@ -41,8 +41,8 @@ spec:
       - {name: dockerhub}
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
@@ -173,8 +173,8 @@ spec:
     spec:
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 60
       containers:
       - name: dbms
