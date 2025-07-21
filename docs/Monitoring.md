@@ -9,6 +9,8 @@ Bexhoma basically offers two variants
 Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
 However bexhoma can optionally install these components if missing.
 
+There is a third option in alpha status: `-ma` for collection of application metrics, for example, pgexporter
+
 ## Configuration and Options
 
 Monitoring can be configured.
@@ -31,88 +33,148 @@ Bexhoma will also make sure all components know of eachother.
 Configuration takes place in `cluster.config`:
 * `service_monitoring`: a DNS name of the Prometheus server  
   the placeholders `service` and `namespace` are replaced by the service of the monitoring component of the experiment and the namespace inside the cluster config resp.
+* `service_monitoring_application`: optional setting. This should not be changed. It is a template how to find sidecar containers for collecting application metrics, for example, pgexporter
 * `extend`: number of seconds each interval of observations should be extended  
   i.g., an interval [t,t'] will be extended to [t-e, t'+e]
 * `shift`: number of seconds each interval of observations should be shifted  
   i.g., an interval [t,t'] will be shifted to [t+s, t'+s]
 * `metrics`: a dict of informations about metrics to be collected, see below
+  * `type`: is cluster or application
+  * `active`: if set to False, the metric will be ignored
+  * `metric`: is gauge or counter; this does not affect bexhoma, it only affects how results will be presented (for counter: max - min, for gauge: max)
+  * `query`: promql query
+  * `title`: for presentation in summary
 
 
 Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
 
 ```
 'monitor': {
-    'service_monitoring': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',
+    'service_monitoring': 'https://prometheus.mycluster.com/api/v1/',                                      # preinstalled external address
+    'service_monitoring_application': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',       # self installed
     'extend': 20,
     'shift': 0,
     'metrics': {
-'total_cpu_memory': {
-    'query': '(sum(max(container_memory_working_set_bytes{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}) by (instance)))/1024/1024',
-    'title': 'CPU Memory [MiB]'
-},
-'total_cpu_memory_cached': {
-    'query': '(sum(max(container_memory_usage_bytes{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}) by (instance)))/1024/1024',
-    'title': 'CPU Memory Cached [MiB]'
-},
-'total_cpu_util': {
-    'query': 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))',
-    'title': 'CPU Util [%]'
-},
-'total_cpu_throttled': {
-    'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))',
-    'title': 'CPU Throttle [%]'
-},
-'total_cpu_util_others': {
-    'query': 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name!="dbms",id!="/"}}[1m]))',
-    'title': 'CPU Util Others [%]'
-},
-'total_cpu_util_s': {
-    'query': 'sum(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})',
-    'title': 'CPU Util [s]'
-},
-'total_cpu_util_user_s': {
-    'query': 'sum(container_cpu_user_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})',
-    'title': 'CPU Util User [s]'
-},
-'total_cpu_util_sys_s': {
-    'query': 'sum(container_cpu_system_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})',
-    'title': 'CPU Util Sys [s]'
-},
-'total_cpu_throttled_s': {
-    'query': 'sum(container_cpu_cfs_throttled_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})',
-    'title': 'CPU Throttle [s]'
-},
-'total_cpu_util_others_s': {
-    'query': 'sum(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name!="dbms",id!="/"}})',
-    'title': 'CPU Util Others [s]'
-},
-'total_network_rx': {
-    'query': 'sum(container_network_receive_bytes_total{{container_label_app="bexhoma", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)"}})/1024/1024',
-    'title': 'Net Rx [MiB]'
-},
-'total_network_tx': {
-    'query': 'sum(container_network_transmit_bytes_total{{container_label_app="bexhoma", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)"}})/1024/1024',
-    'title': 'Net Tx [MiB]'
-},
-'total_fs_read': {
-    'query': 'sum(container_fs_reads_bytes_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
-    'title': 'FS Read [MiB]'
-},
-'total_fs_write': {
-    'query': 'sum(container_fs_writes_bytes_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
-    'title': 'FS Write [MiB]'
-},
-'total_gpu_util': {
-    'query': 'sum(DCGM_FI_DEV_GPU_UTIL{{UUID=~"{gpuid}"}})',
-    'title': 'GPU Util [%]'
-},
-'total_gpu_power': {
-    'query': 'sum(DCGM_FI_DEV_POWER_USAGE{{UUID=~"{gpuid}"}})',
-    'title': 'GPU Power Usage [W]'
-},
-'total_gpu_memory': {
-    'query': 'sum(DCGM_FI_DEV_FB_USED{{UUID=~"{gpuid}"}})',
-    'title': 'GPU Memory [MiB]'
+        'total_cpu_memory': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'gauge',
+            'query': '(sum(max(container_memory_working_set_bytes{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}) by (instance)))/1024/1024',
+            'title': 'CPU Memory [MiB]'
+        },
+        'total_cpu_memory_cached': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'gauge',
+            'query': '(sum(max(container_memory_usage_bytes{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}) by (instance)))/1024/1024',
+            'title': 'CPU Memory Cached [MiB]'
+        },
+        'total_cpu_util': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(irate(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}[1m]))',
+            'title': 'CPU Util [%]'
+        },
+        'total_cpu_throttled': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}[1m]))',
+            'title': 'CPU Throttle [%]'
+        },
+        'total_cpu_util_others': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(irate(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container!="dbms",id!="/"}}[1m]))',
+            'title': 'CPU Util Others [%]'
+        },
+        'total_cpu_util_s': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
+            'title': 'CPU Util [s]'
+        },
+        'total_cpu_util_user_s': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(container_cpu_user_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
+            'title': 'CPU Util User [s]'
+        },
+        'total_cpu_util_sys_s': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(container_cpu_system_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
+            'title': 'CPU Util Sys [s]'
+        },
+        'total_cpu_throttled_s': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(container_cpu_cfs_throttled_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
+            'title': 'CPU Throttle [s]'
+        },
+        'total_cpu_util_others_s': {
+            'type': 'cluster',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container!="dbms",id!="/"}})',
+            'title': 'CPU Util Others [s]'
+        },
+        'total_network_rx': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'counter',
+            'query': 'sum(container_network_receive_bytes_total{{container_label_app="bexhoma", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)"}})/1024/1024',
+            'title': 'Net Rx [MiB]'
+        },
+        'total_network_tx': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'counter',
+            'query': 'sum(container_network_transmit_bytes_total{{container_label_app="bexhoma", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)"}})/1024/1024',
+            'title': 'Net Tx [MiB]'
+        },
+        'total_fs_read': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'counter',
+            'query': 'sum(container_fs_reads_bytes_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
+            'title': 'FS Read [MiB]'
+        },
+        'total_fs_write': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'counter',
+            'query': 'sum(container_fs_writes_bytes_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
+            'title': 'FS Write [MiB]'
+        },
+        'total_gpu_util': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'gauge',
+            'query': 'sum(DCGM_FI_DEV_GPU_UTIL{{UUID=~"{gpuid}"}})',
+            'title': 'GPU Util [%]'
+        },
+        'total_gpu_power': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'gauge',
+            'query': 'sum(DCGM_FI_DEV_POWER_USAGE{{UUID=~"{gpuid}"}})',
+            'title': 'GPU Power Usage [W]'
+        },
+        'total_gpu_memory': {
+            'type': 'cluster',
+            'active': False,
+            'metric': 'gauge',
+            'query': 'sum(DCGM_FI_DEV_FB_USED{{UUID=~"{gpuid}"}})',
+            'title': 'GPU Memory [MiB]'
+        },
+    }
 },
 ```
 
