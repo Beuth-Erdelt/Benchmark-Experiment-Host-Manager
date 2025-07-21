@@ -43,48 +43,87 @@ wait_process "ycsb"
 ####################################################
 
 
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
 
-nohup python tpch.py -ms 5 -tr -db \
+nohup python tpch.py -ms 5 -tr \
   --dbms PostgreSQL \
   -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb schema \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
 
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+wait_process "tpch"
 
-nohup python tpch.py -ms 5 -tr -db \
-  --dbms PostgreSQL \
-  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb schema -ss \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
 
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-
-nohup python tpch.py -ms 5 -tr -db \
+nohup python tpch.py -ms 5 -tr \
   --dbms PostgreSQL \
   -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb database \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
 
+
 kubectl delete pvc bexhoma-storage-postgresql-tpch-1
 
-nohup python tpch.py -ms 5 -tr -db \
+nohup python tpch.py \
+  -mtn 2 -mtb container \
+  -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ne 2 -mtn 2 -mtb database \
+  -ii -ic -is \
+  -nlp 1 -nbp 1 \
+  -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
+
+wait_process "tpch"
 
 
 
 
+####################################################
+######### Benchbase TPC-C Multi-Tenant PVC #########
+####################################################
 
 
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
 
+nohup python benchbase.py \
+  -mtn 2 -mtb schema \
+  -sf 1 -sd 5 -xkey \
+  --dbms PostgreSQL \
+  -nlp 1 -nbp 1 -nbt 10 \
+  -ne 2,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log &
 
+wait_process "benchbase"
 
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
+
+nohup python benchbase.py \
+  -mtn 2 -mtb database \
+  -sf 1 -sd 5 -xkey \
+  --dbms PostgreSQL \
+  -nlp 1 -nbp 1 -nbt 10 \
+  -ne 2,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log &
+
+wait_process "benchbase"
+
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
+
+nohup python benchbase.py \
+  -mtn 2 -mtb container \
+  -sf 1 -sd 5 -xkey \
+  --dbms PostgreSQL \
+  -nlp 1 -nbp 1 -nbt 10 \
+  -ne 1,1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log &
+
+wait_process "benchbase"
 
 
 
@@ -96,6 +135,8 @@ BEXHOMA_DURATION=10
 BEXHOMA_TARGET=65536
 BEXHOMA_SF=10
 BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
+BEXHOMA_CPU=40
+BEXHOMA_RAM=200
 
 for i in {1..10}; do
     # Set environment variables
@@ -103,9 +144,22 @@ for i in {1..10}; do
     tenants=$BEXHOMA_TENANTS
     sizeInGi=$((tenants * 20))
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
+    # Calculate RAM and CPU per tenant (integers)
+    ramPerTenant=$(( $BEXHOMA_RAM / tenants ))
+    cpuPerTenant=$(( $BEXHOMA_CPU / tenants ))
+
+    # Export environment variable
+    export BEXHOMA_LIMIT_RAM="${ramPerTenant}Gi"
+    export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
+
+    # Optional: print results
+    echo "RAM per total: $BEXHOMA_LIMIT_RAM_TOTAL"
+    echo "CPU per total: $BEXHOMA_CPU"
+    echo "RAM per tenant: $BEXHOMA_LIMIT_RAM"
+    echo "CPU per tenant: ${cpuPerTenant}"
 
     # Run schema mode
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc $BEXHOMA_CPU -lc $BEXHOMA_CPU -rr $BEXHOMA_LIMIT_RAM_TOTAL -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -119,7 +173,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc $BEXHOMA_CPU -lc $BEXHOMA_CPU -rr $BEXHOMA_LIMIT_RAM_TOTAL -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -133,7 +187,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc $cpuPerTenant -lc $cpuPerTenant -rr $ramPerTenant -lr $ramPerTenant -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
