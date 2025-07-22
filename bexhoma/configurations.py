@@ -1875,6 +1875,22 @@ scrape_configs:
         except Exception as e:
             logging.error(e)
             return 0
+    def get_host_cpulist(self):
+        """
+        Returns information about the sut's host RAM.
+        Basically this calls `grep MemTotal /proc/meminfo` on the host.
+
+        :return: RAM of the host
+        """
+        self.logger.debug('configuration.get_host_cpulist()')
+        try:
+            command = "grep ^Cpus_allowed_list /proc/self/status | awk '{print $2}'"
+            stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
+            result = stdout#os.popen(fullcommand).read()
+            return result
+        except Exception as e:
+            logging.error(e)
+            return ""
     def get_host_memory(self):
         """
         Returns information about the sut's host RAM.
@@ -2185,6 +2201,7 @@ scrape_configs:
         server['cuda'] = self.get_host_cuda()
         server['hugepages_total'] = self.get_host_hugepages_total()
         server['hugepages_free'] = self.get_host_hugepages_free()
+        server['cpu_list'] = self.get_host_cpulist()
         server['cuda'] = self.get_host_cuda()
         return server
     def set_metric_of_config_default(self, metric, host, gpuid, schema, database, experiment=None):
