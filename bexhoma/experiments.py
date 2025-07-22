@@ -131,6 +131,7 @@ class default():
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
+        self.monitor_app_active = True
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
@@ -346,6 +347,7 @@ class default():
             list_clients = []
         monitoring = args.monitoring
         monitoring_cluster = args.monitoring_cluster
+        monitoring_app = args.monitoring_app
         # only for dbmsbenchmarker
         if 'num_run' in parameter:
             numRun = int(args.num_run)
@@ -404,6 +406,9 @@ class default():
         else:
             # we want to just run the queries
             self.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
+        self.monitor_app_active = monitoring_app
+        if monitoring_app:
+            self.workload['info'] = self.workload['info']+"\nApplication metrics are monitored by sidecar containers."
         # set resources for dbms
         self.set_resources(
             requests = {
@@ -1334,6 +1339,13 @@ class default():
                 config.check_load_data()
                 # start loading
                 if not config.loading_started:
+                    # check if monitoring has started
+                    if len(config.benchmark_list) > 0:
+                        if config.monitoring_active and not config.monitoring_is_running():
+                            print("{:30s}: waits for monitoring".format(config.configuration))
+                            if not config.monitoring_is_pending():
+                                config.start_monitoring()
+                            continue
                     # check if SUT is healthy
                     if config.sut_is_running():
                         if not config.sut_is_healthy():
@@ -1345,12 +1357,6 @@ class default():
                             print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
-                    if len(config.benchmark_list) > 0:
-                        if config.monitoring_active and not config.monitoring_is_running():
-                            print("{:30s}: waits for monitoring".format(config.configuration))
-                            if not config.monitoring_is_pending():
-                                config.start_monitoring()
-                            continue
                     now = datetime.utcnow()
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
@@ -1818,10 +1824,18 @@ class default():
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
             # get pairs (start,end) of benchmarking pods
             timing_benchmarker = self.get_job_timing_benchmarking(jobname)
+            print("timing_benchmarker", timing_benchmarker)
+            # Unzip the pairs into two separate lists: firsts and seconds
+            firsts, seconds = zip(*timing_benchmarker)
+            # Find the minimum of the first entries and the maximum of the second entries
+            start_time = min(firsts)
+            end_time = max(seconds)
+            #print(f"Min of first entries: {start_time}")
+            #print(f"Max of second entries: {end_time}")
             if config is not None:
                 config.benchmarking_timespans = {}
                 config.benchmarking_timespans['benchmarker'] = timing_benchmarker
-            start_time = int(job_labels[jobname]['start_time'])
+            start_time_job = int(job_labels[jobname]['start_time'])
             connection = job_labels[jobname]['connection']
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
@@ -1833,8 +1847,10 @@ class default():
             now = datetime.utcnow()
             now_string = now.strftime('%Y-%m-%d %H:%M:%S')
             time_now = str(datetime.now())
-            end_time = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
+            end_time_job = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
             print("{:30s}: showing benchmarker times".format(connection))
+            print("{:30s}: benchmarker timespan job from {} to {}".format(connection, start_time_job, end_time_job))
+            print("{:30s}: benchmarker timespan pods from {} to {}".format(connection, start_time, end_time))
             print("{:30s}: benchmarker timespan (start to end single container [s]) = {}".format(connection, end_time-start_time))
             print("{:30s}: benchmarker times (start/end per pod and container) = {}".format(connection, timing_benchmarker))
             self.cluster.logger.debug("BENCHMARKING LABELS")
@@ -1968,7 +1984,10 @@ class default():
             self.workload = workload_properties
         print("\n### Workload\n"+workload_properties['name'])
         print("    Type: "+workload_properties['type'])
-        print("    Duration: {}s ".format(workload_properties['duration']))
+        if 'duration' in workload_properties:
+            print("    Duration: {}s ".format(workload_properties['duration']))
+        else:
+            print("    Duration: {}s ".format('missing'))
         print("    Code: "+code)
         print("    "+workload_properties['intro'])
         print("    "+workload_properties['info'].replace('\n', '\n    '))
@@ -2167,6 +2186,7 @@ class default():
         if self.benchmarking_is_active():
             self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
             self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
+            self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
             #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
             self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
             if num_errors == 0:
@@ -3752,10 +3772,34 @@ class benchbase(default):
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
+        list_monitoring_app = list()
+        df_monitoring_app = pd.DataFrame()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            #print(c['monitoring']['metrics'])
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
+                num_metrics_included = 0
+                for metricname, metric in c['monitoring']['metrics'].items():
+                    #print(metric['type'])
+                    if num_metrics_included >= 5:
+                        continue
+                    if metric['type'] == 'application' and metric['active'] == True:
+                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
+                        if metric['metric'] == 'counter':
+                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                        else:
+                            df = df.max().sort_index()
+                        df_cleaned = pd.DataFrame(df)
+                        df_cleaned.columns = [metric['title']]
+                        if not df_cleaned.empty:
+                            list_monitoring_app.append(df_cleaned.copy())
+                            num_metrics_included = num_metrics_included + 1
+                df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'
             if key in c['parameter']:
@@ -3883,6 +3927,9 @@ class benchbase(default):
             #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         test_results_monitoring = self.show_summary_monitoring()
+        if not df_monitoring_app.empty:
+            print("\n### Application Metrics")
+            print(df_monitoring_app)
         print("\n### Tests")
         self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:

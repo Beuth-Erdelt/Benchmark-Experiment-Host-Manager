@@ -3848,7 +3848,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms PostgreSQL \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
@@ -3936,7 +3936,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms PostgreSQL \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 2 \
@@ -4141,7 +4141,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms PostgreSQL \
   -tb 1024 \
   -nbp 1,2 \
-  -nbt 8 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1,2 \
   -nc 2 \
@@ -4389,7 +4389,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MySQL \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
@@ -4476,7 +4476,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MySQL \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 2 \
@@ -4577,7 +4577,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MySQL \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
@@ -4918,7 +4918,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MariaDB \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
@@ -5006,7 +5006,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MariaDB \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 2 \
@@ -5109,7 +5109,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MariaDB \
   -tb 1024 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
@@ -5211,7 +5211,7 @@ nohup python benchbase.py -ms 1 -tr \
   -dbms MariaDB \
   -tb 1024 \
   -nbp 1,2 \
-  -nbt 8 \
+  -nbt 160 \
   -nbf 8 \
   -ne 1,2 \
   -nc 2 \

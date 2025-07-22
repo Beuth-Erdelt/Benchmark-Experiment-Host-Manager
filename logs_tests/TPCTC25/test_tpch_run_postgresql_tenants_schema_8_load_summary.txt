@@ -1,0 +1,52 @@
+## Show Summary
+
+### Workload
+TPC-H Data Loading SF=10
+    Type: tpch
+    Duration: 4133s 
+    Code: 1751583285
+    This includes the reading queries of TPC-H.
+    This imports TPC-H data sets.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.9.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Each query is repeated 10 times.
+    Database is persisted to disk of type shared and size 400Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Number of tenants is 8, one schema per tenant.
+    Experiment is run once.
+
+### Services
+PostgreSQL-BHT-8
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-bht-8-1751583285 9091:9091
+
+### Connections
+PostgreSQL-BHT-8-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:422221812
+    datadisk:162999
+    volume_size:400G
+    volume_used:160G
+    requests_cpu:2
+    requests_memory:16Gi
+    limits_memory:480Gi
+    eval_parameters
+        code:1751583285
+        TENANT_BY:schema
+        TENANT_NUM:8
+
+### Loading [s]
+                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-8-1          19.0         2177.0        82.0     3726.0    6009.0
+
+### Tests

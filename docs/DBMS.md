@@ -211,45 +211,96 @@ Example for
 
 https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
 
-As of bexhoma version `v0.7.0` this contains
+As of bexhoma version `v0.8.9` this contains
 ```
-        args: [
-          "-c", "max_worker_processes=64",
-          "-c", "max_parallel_workers=64",
-          "-c", "max_parallel_workers_per_gather=64",
-          "-c", "max_parallel_maintenance_workers=64", # only for PostgreSQL > 10 (?)
-          "-c", "max_wal_size=32GB",
-          "-c", "shared_buffers=64GB",
-          #"-c", "shared_memory_size=32GB", # read-only
-          "-c", "max_connections=1024",
-          "-c", "autovacuum_max_workers=10",
-          "-c", "autovacuum_vacuum_cost_limit=3000",
-          "-c", "vacuum_cost_limit=1000",
-          "-c", "checkpoint_completion_target=0.9",
-          "-c", "cpu_tuple_cost=0.03",
-          "-c", "effective_cache_size=64GB",
-          "-c", "maintenance_work_mem=2GB",
-          #"-c", "max_connections=1700",
-          #"-c", "random_page_cost=1.1",
-          "-c", "wal_buffers=1GB",
-          "-c", "work_mem=32GB",
-          #"-c", "huge_pages=on",
-          "-c", "temp_buffers=4GB",
-          "-c", "autovacuum_work_mem=-1",
-          "-c", "max_stack_depth=7MB",
-          "-c", "max_files_per_process=4000",
-          "-c", "effective_io_concurrency=32",
-          "-c", "wal_level=minimal",
-          "-c", "max_wal_senders=0",
-          "-c", "synchronous_commit=off",
-          "-c", "checkpoint_timeout=1h",
-          "-c", "checkpoint_warning=0",
-          "-c", "autovacuum=off",
-          "-c", "max_locks_per_transaction=64",
-          "-c", "max_pred_locks_per_transaction=64",
-          "-c", "default_statistics_target=1000",
-          "-c", "random_page_cost=60"
-        ]
+        args:
+          # --- Connection & Worker Processes ---
+          - "-c"
+          - "max_connections=1500"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
+          - "-c"
+          - "max_worker_processes=128"   # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-WORKER-PROCESSES
+          - "-c"
+          - "max_parallel_workers=64"    # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS
+          - "-c"
+          - "max_parallel_workers_per_gather=8"  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS-PER-GATHER
+          - "-c"
+          - "max_parallel_maintenance_workers=8" # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-MAINTENANCE-WORKERS
+
+          # --- Memory Settings ---
+          - "-c"
+          - "shared_buffers=256GB"       # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS
+          - "-c"
+          - "effective_cache_size=350GB" # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE
+          - "-c"
+          - "work_mem=128MB"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM
+          - "-c"
+          - "maintenance_work_mem=4GB"   # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAINTENANCE-WORK-MEM
+          - "-c"
+          - "temp_buffers=64MB"          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-TEMP-BUFFERS
+          - "-c"
+          - "wal_buffers=16MB"           # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-BUFFERS
+          - "-c"
+          - "autovacuum_work_mem=1GB"    # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-WORK-MEM
+
+          # --- Autovacuum ---
+          - "-c"
+          - "autovacuum=on"                           # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM
+          - "-c"
+          - "autovacuum_max_workers=10"               # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-MAX-WORKERS
+          - "-c"
+          - "autovacuum_vacuum_cost_limit=1000"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-LIMIT
+          - "-c"
+          - "vacuum_cost_limit=1000"                  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-VACUUM-COST-LIMIT
+          - "-c"
+          - "autovacuum_naptime=15s"                  # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-NAPTIME
+          - "-c"
+          - "autovacuum_vacuum_cost_delay=20ms"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-DELAY
+
+          # --- WAL & Checkpoints (Ceph-optimized) ---
+          - "-c"
+          - "wal_level=replica"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
+          - "-c"
+          - "wal_compression=on"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-COMPRESSION
+          - "-c"
+          - "wal_writer_delay=500ms"                  # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-WRITER-DELAY
+          - "-c"
+          - "commit_delay=10000"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-COMMIT-DELAY
+          - "-c"
+          - "synchronous_commit=off"                  # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT
+          - "-c"
+          - "max_wal_size=2GB"                        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE
+          - "-c"
+          - "min_wal_size=1GB"                        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MIN-WAL-SIZE
+          - "-c"
+          - "checkpoint_timeout=5min"                 # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-TIMEOUT
+          - "-c"
+          - "checkpoint_completion_target=0.9"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
+
+          # --- Planner Cost Tweaks (CephFS) ---
+          - "-c"
+          - "random_page_cost=4.0"                    # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
+          - "-c"
+          - "seq_page_cost=1.5"                       # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
+          - "-c"
+          - "cpu_tuple_cost=0.01"                     # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-CPU-TUPLE-COST
+          - "-c"
+          - "effective_io_concurrency=2"              # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
+          - "-c"
+          - "default_statistics_target=500"           # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-DEFAULT-STATISTICS-TARGET
+
+          # --- Locks and Limits ---
+          - "-c"
+          - "max_locks_per_transaction=128"           # https://www.postgresql.org/docs/current/runtime-config-locks.html#GUC-MAX-LOCKS-PER-TRANSACTION
+          - "-c"
+          - "max_pred_locks_per_transaction=128"      # https://www.postgresql.org/docs/current/runtime-config-locks.html#GUC-MAX-PRED-LOCKS-PER-TRANSACTION
+          - "-c"
+          - "max_stack_depth=7MB"                     # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-STACK-DEPTH
+          - "-c"
+          - "max_files_per_process=4000"              # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-FILES-PER-PROCESS
+
+          # --- Miscellaneous ---
+          - "-c"
+          - "huge_pages=try"                          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-HUGE-PAGES
 ```
 as default settings.
 
@@ -257,7 +308,8 @@ as default settings.
 
 ```
         'PostgreSQL': {
-            'loadData': 'psql -U postgres < {scriptname}',
+            'loadData': 'psql -U postgres -d {database} < {scriptname}',
+            'delay_prepare': 0,
             'template': {
                 'version': 'v11.4',
                 'alias': 'General-B',
@@ -265,15 +317,49 @@ as default settings.
                  'JDBC': {
                     'driver': "org.postgresql.Driver",
                     'auth': ["postgres", ""],
-                    'url': 'jdbc:postgresql://{serverip}:9091/postgres?reWriteBatchedInserts=true',
-                    'jar': 'postgresql-42.5.0.jar'
+                    'url': 'jdbc:postgresql://{serverip}:9091/{database}?reWriteBatchedInserts=true&currentSchema={schema}',
+                    'jar': 'postgresql-42.5.0.jar',
+                    'database': 'postgres',
+                    'schema': 'public',
                 }
             },
             'logfile': '/usr/local/data/logfile',
             'datadir': '/var/lib/postgresql/data/',
             'priceperhourdollar': 0.0,
+            'monitor': {
+                'metrics': {
+                    'pg_stat_database_blks_read': {
+                        'type': 'application',
+                        'active': True,
+                        'metric': 'counter',
+                        'query': 'sum(pg_stat_database_blks_read{{datname!~"template.*"}})',
+                        'title': 'Number of disk blocks read in this database'
+                    },
+                    'pg_stat_database_blks_hit': {
+                        'type': 'application',
+                        'active': True,
+                        'metric': 'counter',
+                        'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})',
+                        'title': 'Number of times disk blocks were found already in the buffer cache'
+                    },
+                    'cache_hit_ratio': {
+                        'type': 'application',
+                        'active': True,
+                        'metric': 'gauge',
+                        'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})/(sum(pg_stat_database_blks_hit{{datname!~"template.*"}}) + sum(pg_stat_database_blks_read{{datname!~"template.*"}}))',
+                        'title': 'Cache hit ratio'
+                    },
+                }
+            },
         },
 ```
+
+This has additional options:
+* `database`: the default database
+* `schema`: the default schema
+* `loadData` knowns the database via `{database}`. This will be replaced by the default database name or, in case of multi-tenancy, by the database of the tenant.
+* `url` knowns the database via `{database}` and the schema via `{schema}`. This will be replaced by the default database name and schema name or, in case of multi-tenancy, by the database or schema of the tenant.
+* `monitor`: some application metrics to be collected if `-ma` is activated
 
 ### DDL Scripts
 

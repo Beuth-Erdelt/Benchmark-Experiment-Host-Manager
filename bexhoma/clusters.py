@@ -109,6 +109,7 @@ class testbed():
         self.querymanagement = {}
         self.workload = {}
         self.monitoring_active = True
+        self.monitor_app_active = True
         self.monitor_cluster_active = False
         self.monitor_cluster_exists = False                                                     # True, if there are cAdvisors and a Prometheus server independent from bexhoma
         # experiment:
@@ -1432,6 +1433,13 @@ class testbed():
         self.monitor_cluster_exists = self.test_if_monitoring_healthy()
         if self.monitor_cluster_exists:
             return
+        if not self.monitor_cluster_exists:
+            # give it 5 tries, one every 10 seconds
+            for tries in range(5):
+                self.wait(10, silent=True)
+                self.monitor_cluster_exists = self.test_if_monitoring_healthy()
+                if self.monitor_cluster_exists:
+                    return
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
             # monitoring exists

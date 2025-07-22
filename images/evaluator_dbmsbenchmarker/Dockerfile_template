@@ -15,8 +15,8 @@
 # Java is installed.
 # Git is installed.
 ######################################################################################
-#FROM python:3.12.5
-FROM alpine:3.15
+FROM python:3.12.8
+#FROM alpine:3.15
 
 # does not compile numpy correctly
 # FROM python:3.13-rc-slim
@@ -25,54 +25,30 @@ FROM alpine:3.15
 ENV PYTHON_VERSION=3.12.8
 ENV PYTHON_SRC=https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
 
-# Install necessary packages
-RUN apk add --no-cache \
-    build-base \
-    linux-headers \
-    libffi-dev \
-    openssl-dev \
-    zlib-dev \
-    bzip2-dev \
-    xz-dev \
-    readline-dev \
-    sqlite-dev \
-    ncurses-dev \
-    util-linux-dev \
-    libressl-dev \
-    tar \
-    curl
 
-# Download, extract, and compile Python
-RUN curl -fSL $PYTHON_SRC -o /tmp/Python.tgz && \
-    tar -xzf /tmp/Python.tgz -C /tmp && \
-    cd /tmp/Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations && \
-    make && \
-    make install && \
-    rm -rf /tmp/Python.tgz /tmp/Python-$PYTHON_VERSION
-
-# Verify Python installation
-RUN python3.12 --version && pip3 --version
-
-# Set default python and pip to Python 3.12
-RUN ln -sf /usr/local/bin/python3.12 /usr/local/bin/python && \
-    ln -sf /usr/local/bin/pip3 /usr/local/bin/pip
-
-WORKDIR /usr/src/app
-
-# Update package index and install necessary packages
-RUN apk update && apk add --no-cache \
-    openjdk17-jre \
-    zip \
-    nano 
+RUN apt update
+RUN apt install default-jre -y
 
 # only needed in slim releases
 # RUN apt install git -y
 # RUN apt install build-essential -y
 
-RUN mkdir /results
+RUN pip uninstall dbmsbenchmarker -y
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@{version}
 
-RUN apk add --no-cache bash
+# we only need packages required by dbmsbenchmarker
+#COPY requirements.txt ./
+#RUN pip install --no-cache-dir -r requirements.txt
+
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch {version}
+
+WORKDIR /usr/src/app/DBMS-Benchmarker
+
+# RUN git pull
+
+#COPY . .
+
+RUN apt install nano -y
 
 SHELL ["/bin/bash", "-c"]
 
@@ -84,8 +60,8 @@ RUN python -m pip install virtualenv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN apk add --no-cache git
-RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@{version}
+RUN apt install git
+RUN pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@{version}
 
 RUN pip install jupyter
 RUN pip install jupyter_contrib_nbextensions

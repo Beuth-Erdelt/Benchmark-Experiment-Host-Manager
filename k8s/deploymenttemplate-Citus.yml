@@ -41,8 +41,8 @@ spec:
       - {name: dockerhub}
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: dbms
         #image: citusdata/citus:pg12
@@ -206,8 +206,8 @@ spec:
       - {name: dockerhub}
       nodeSelector:
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: dbms
         #image: citusdata/citus:pg12

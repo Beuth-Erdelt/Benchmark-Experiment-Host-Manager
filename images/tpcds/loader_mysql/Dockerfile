@@ -40,31 +40,24 @@ RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debi
 RUN dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb
 RUN apt-get install mysql-shell -y
 
-#RUN wget https://cdn.mysql.com//Downloads/MySQL-Shell/mysql-shell_8.0.36-1debian12_amd64.deb
-#RUN dpkg -i mysql-shell_8.0.36-1debian12_amd64.deb
-#RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.3.0-1debian12_amd64.deb
-#RUN dpkg -i mysql-shell_8.3.0-1debian12_amd64.deb
-
-### install mysql
-RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.33-1_all.deb
-RUN dpkg -i mysql-apt-config_0.8.33-1_all.deb || (echo "dpkg failed, checking logs..." && tail -n 10 /var/log/dpkg.log && apt-get install -y -f)
-RUN DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.33-1_all.deb  || apt-get install -y -f
-RUN apt-get update
-RUN apt-get install mysql-client -y
-RUN apt-get update
+# Set locale properly
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends locales && \
+    rm -rf /var/lib/apt/lists/* && \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 RUN apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
 	&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
 
-#RUN apt-get install -y locales
-#RUN dpkg-reconfigure locales
-#RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-#RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-#RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
-#RUN locale-gen
-ENV LC_ALL="en_US.UTF-8"
-#ENV LANG="en_US.utf8"
+### install mysql
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        locales \
+        default-mysql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
 
 ENV SF=1
 ENV BEXHOMA_NUM_PODS=4

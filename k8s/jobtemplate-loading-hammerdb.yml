@@ -17,8 +17,8 @@ spec:
       #- name: private-registry-auth
       nodeSelector: 
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: sensor
         #image: bexhoma/generator_hammerdb:4.12

@@ -25,8 +25,8 @@ spec:
       imagePullSecrets:
       - name: private-registry-auth
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: data-init
         image: perdelt/bexhoma:data-tpch-1
@@ -62,8 +62,8 @@ spec:
       imagePullSecrets:
       - name: private-registry-auth
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - env:
         image: perdelt/bexhoma:dashboard

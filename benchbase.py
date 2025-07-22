@@ -36,7 +36,8 @@ if __name__ == '__main__':
     parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
     parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
     #parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
-    parser.add_argument('-m', '--monitoring', help='activates monitoring for sut', action='store_true')
+    parser.add_argument('-m',  '--monitoring', help='activates monitoring for sut', action='store_true')
+    parser.add_argument('-ma', '--monitoring-app', help='activates application monitoring', action='store_true', default=False)
     parser.add_argument('-mc', '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
     parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
     #parser.add_argument('-dt', '--datatransfer', help='activates datatransfer', action='store_true', default=False)
@@ -315,6 +316,7 @@ if __name__ == '__main__':
                         config.set_eval_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
+                            #TENANT = tenant, # not defined here
                             )
                         executor_list = []
                         for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
@@ -491,60 +493,152 @@ if __name__ == '__main__':
                                 config.add_benchmark_list(executor_list)
                 if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
-                    name_format = 'MySQL-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
-                    config.set_storage(
-                        storageConfiguration = 'mysql'
-                        )
-                    config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                        BENCHBASE_PROFILE = 'mysql',
-                        BEXHOMA_DATABASE = 'benchbase',
-                        #BENCHBASE_TARGET = int(target),
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BEXHOMA_USER = "root",
-                        BEXHOMA_PASSWORD = "root",
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                        BENCHBASE_PROFILE = 'mysql',
-                                        BEXHOMA_DATABASE = 'benchbase',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
+                    if experiment.tenant_per == 'container':
+                        for tenant in range(experiment.num_tenants):
+                            name_format = 'MySQL-{threads}-{pods}-{target}-{tenant}'
+                            config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant), alias='DBMS A')
+                            config.set_storage(
+                                storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
+                                )
+                            config.set_sut_parameters(
+                                MYSQL_DATABASE = 'benchbase',
+                                )
+                            config.set_loading_parameters(
+                                #PARALLEL = str(loading_pods), # =1
+                                SF = SF,
+                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                BENCHBASE_PROFILE = 'mysql',
+                                BEXHOMA_DATABASE = 'benchbase',
+                                #BENCHBASE_TARGET = int(target),
+                                BENCHBASE_TERMINALS = loading_threads_per_pod,
+                                BENCHBASE_TIME = SD,
+                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                BEXHOMA_USER = "root",
+                                BEXHOMA_PASSWORD = "root",
+                                BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                BEXHOMA_TENANT_BY = config.tenant_per,
+                                BEXHOMA_TENANT_NUM = config.num_tenants,
+                                )
+                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                            config.set_eval_parameters(
+                                TENANT_BY = config.tenant_per,
+                                TENANT_NUM = config.num_tenants,
+                                TENANT = tenant,
+                                )
+                            executor_list = []
+                            for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                                benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                                for benchmarking_threads in num_benchmarking_threads:
+                                    for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                        for num_executor in list_clients:
+                                            benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                            benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                            benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                            """
+                                            print("benchmarking_target", benchmarking_target)
+                                            print("benchmarking_pods", benchmarking_pods)
+                                            print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                            print("benchmarking_threads", benchmarking_threads)
+                                            print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                            print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                            """
+                                            executor_list.append(benchmarking_pods_scaled)
+                                            config.add_benchmarking_parameters(
+                                                #PARALLEL = str(benchmarking_pods_scaled),
+                                                SF = SF,
+                                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                                BENCHBASE_PROFILE = 'mysql',
+                                                BEXHOMA_DATABASE = 'benchbase',
+                                                BENCHBASE_TARGET = benchmarking_target_per_pod,
+                                                BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
+                                                BENCHBASE_TIME = SD,
+                                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                                BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                                BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                                BEXHOMA_TENANT_BY = config.tenant_per,
+                                                BEXHOMA_TENANT_NUM = config.num_tenants,
+                                                )
+                            #print(executor_list)
+                            config.add_benchmark_list(executor_list)
+                    else:
+                        name_format = 'MySQL-{threads}-{pods}-{target}'
+                        config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                        if config.tenant_per:
+                            config.set_storage(
+                                storageConfiguration = 'mysql-'+config.tenant_per+"-"+str(config.num_tenants)
+                                )
+                        else:
+                            config.set_storage(
+                                storageConfiguration = 'mysql'
+                                )
+                        config.set_sut_parameters(
+                            MYSQL_DATABASE = 'benchbase',
+                            )
+                        config.set_loading_parameters(
+                            #PARALLEL = str(loading_pods), # =1
+                            SF = SF,
+                            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                            BENCHBASE_PROFILE = 'mysql',
+                            BEXHOMA_DATABASE = 'benchbase',
+                            #BENCHBASE_TARGET = int(target),
+                            BENCHBASE_TERMINALS = loading_threads_per_pod,
+                            BENCHBASE_TIME = SD,
+                            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                            BEXHOMA_USER = "root",
+                            BEXHOMA_PASSWORD = "root",
+                            BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                            BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                            BEXHOMA_TENANT_BY = config.tenant_per,
+                            BEXHOMA_TENANT_NUM = config.num_tenants,
+                            )
+                        if config.num_tenants > 0:
+                            config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
+                        else:
+                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                        if config.tenant_per == 'schema':
+                            config.set_experiment(script='Schema_tenant')
+                            config.set_experiment(indexing='Checks_tenant')
+                        config.set_eval_parameters(
+                            TENANT_BY = config.tenant_per,
+                            TENANT_NUM = config.num_tenants,
+                            #TENANT = tenant, # not defined here
+                            )
+                        executor_list = []
+                        for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                            benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                            for benchmarking_threads in num_benchmarking_threads:
+                                for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                    for num_executor in list_clients:
+                                        benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                        benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                        benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                        """
+                                        print("benchmarking_target", benchmarking_target)
+                                        print("benchmarking_pods", benchmarking_pods)
+                                        print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                        print("benchmarking_threads", benchmarking_threads)
+                                        print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                        print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                        """
+                                        executor_list.append(benchmarking_pods_scaled)
+                                        config.add_benchmarking_parameters(
+                                            #PARALLEL = str(benchmarking_pods_scaled),
+                                            SF = SF,
+                                            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
+                                            BENCHBASE_PROFILE = 'mysql',
+                                            BEXHOMA_DATABASE = 'benchbase',
+                                            BENCHBASE_TARGET = benchmarking_target_per_pod,
+                                            BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
+                                            BENCHBASE_TIME = SD,
+                                            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                            BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
+                                            BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                                            BEXHOMA_TENANT_BY = config.tenant_per,
+                                            BEXHOMA_TENANT_NUM = config.num_tenants,
+                                            )
+                        #print(executor_list)
+                        config.add_benchmark_list(executor_list)
                 if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'

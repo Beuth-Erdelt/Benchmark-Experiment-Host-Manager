@@ -16,11 +16,11 @@ spec:
       - name: dockerhub
       nodeSelector: 
       tolerations:
-      - key: "nvidia.com/gpu"
-        effect: "NoSchedule"
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
       containers:
       - name: dbmsbenchmarker
-        image: bexhoma/benchmarker_dbmsbenchmarker:v0.14.9
+        image: bexhoma/benchmarker_dbmsbenchmarker:v0.14.11
         #image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.7
         #image: bexhoma/benchmarker_dbmsbenchmarker:dev
         imagePullPolicy: Always

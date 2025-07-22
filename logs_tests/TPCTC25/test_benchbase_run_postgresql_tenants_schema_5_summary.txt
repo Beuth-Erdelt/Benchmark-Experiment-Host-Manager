@@ -1,0 +1,119 @@
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=10
+    Type: benchbase
+    Duration: 1950s 
+    Code: 1750977897
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 10. Target is based on multiples of '65536'. Factors for benchmarking are [1]. Benchmarking runs for 10 minutes.
+    Experiment uses bexhoma version 0.8.9.
+    System metrics are monitored by a cluster-wide installation.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [100] threads, split into [1] pods.
+    Benchmarking is tested with [100] threads, split into [1] pods.
+    Benchmarking is run as [5, 5] times the number of benchmarking pods.
+    Number of tenants is 5, one schema per tenant.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-1-1-65536-1 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:438960048
+    datadisk:13477
+    requests_cpu:2
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1750977897
+                TENANT_BY:schema
+                TENANT_NUM:5
+PostgreSQL-1-1-65536-2 uses docker image postgres:16.1
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:445740460
+    datadisk:20099
+    requests_cpu:2
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1750977897
+                TENANT_BY:schema
+                TENANT_NUM:5
+
+### Execution
+
+#### Per Pod
+                          experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                      
+PostgreSQL-1-1-65536-1-3               1        100   65536       1      1  600.0           4                    509.794938                 506.198272         0.0                                                     600151.0                                             196103.0
+PostgreSQL-1-1-65536-1-4               1        100   65536       1      2  600.0           3                    525.689999                 521.899999         0.0                                                     558547.0                                             190181.0
+PostgreSQL-1-1-65536-1-5               1        100   65536       1      3  600.0           3                    523.816655                 520.163322         0.0                                                     578636.0                                             190814.0
+PostgreSQL-1-1-65536-1-2               1        100   65536       1      4  600.0           1                    521.613326                 517.888326         0.0                                                     592128.0                                             191524.0
+PostgreSQL-1-1-65536-1-1               1        100   65536       1      5  600.0           1                    496.028307                 492.539974         0.0                                                     627797.0                                             201403.0
+PostgreSQL-1-1-65536-2-4               1        100   65536       2      1  600.0           1                    705.658273                 699.009940         0.0                                                     385216.0                                             141691.0
+PostgreSQL-1-1-65536-2-5               1        100   65536       2      2  600.0           3                    754.934944                 747.668277         0.0                                                     356831.0                                             132426.0
+PostgreSQL-1-1-65536-2-1               1        100   65536       2      3  600.0           8                    820.806593                 812.926594         0.0                                                     329403.0                                             121767.0
+PostgreSQL-1-1-65536-2-3               1        100   65536       2      4  600.0          10                    764.806616                 757.311617         0.0                                                     369711.0                                             130704.0
+PostgreSQL-1-1-65536-2-2               1        100   65536       2      5  600.0           6                    747.229986                 739.923319         0.0                                                     381252.0                                             133785.0
+
+#### Aggregated Parallel
+                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+PostgreSQL-1-1-65536-1               1        500  327680          5  600.0          12                       2576.94                    2558.69         0.0                                                     627797.0                                             194005.0
+PostgreSQL-1-1-65536-2               1        500  327680          5  600.0          28                       3793.44                    3756.84         0.0                                                     385216.0                                             132074.6
+
+### Workflow
+
+#### Actual
+DBMS PostgreSQL-1-1-65536 - Pods [[5, 5]]
+
+#### Planned
+DBMS PostgreSQL-1-1-65536 - Pods [[5, 5]]
+
+### Loading
+                        time_load  terminals  pods  Throughput [SF/h]
+PostgreSQL-1-1-65536-1      308.0        1.0   5.0         116.883117
+PostgreSQL-1-1-65536-2      308.0        1.0   5.0         116.883117
+
+### Ingestion - SUT
+                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-65536-1     2409.87    10.56          8.43                13.49
+PostgreSQL-1-1-65536-2     2409.87    10.56          8.43                13.49
+
+### Ingestion - Loader
+                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-65536-1     1629.35     9.17          5.32                 5.32
+PostgreSQL-1-1-65536-2     1629.35     9.17          5.32                 5.32
+
+### Execution - SUT
+                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-65536-1    15512.74    37.91         16.84                23.61
+PostgreSQL-1-1-65536-2    19862.66    43.37         20.14                29.02
+
+### Execution - Benchmarker
+                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-1-1-65536-1     2939.14     5.22          6.97                 6.97
+PostgreSQL-1-1-65536-2     2501.93     4.15         12.19                12.19
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

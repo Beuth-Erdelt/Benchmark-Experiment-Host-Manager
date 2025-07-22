@@ -2,22 +2,23 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1750875370
-Experiment                    : starts at 2025-06-25 20:16:09.785379 (15067533.255929912)
+Experiment                    : has code 1751270408
+Experiment                    : starts at 2025-06-30 10:00:08.158636 (15462571.629188888)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-TPC-H (SF=1) data is loaded and benchmark is executed.
-Query ordering is Q1 - Q22.
-All instances use the same query parameters.
-Timeout per query is 600.
+TPC-H (SF=10) data is loaded and benchmark is executed.
+Query ordering is as required by the TPC.
+All instances use different query parameters.
+Timeout per query is 3600.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.8.
+Experiment uses bexhoma version 0.8.9.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 7 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 140Gi.
+Each query is repeated 10 times.
+Database is persisted to disk of type shared and size 350Gi.
 Loading is tested with [1] threads, split into [7] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [7, 7] times the number of benchmarking pods.
@@ -25,9 +26,9 @@ Number of tenants is 7, one schema per tenant.
 Experiment is run once.
 Cluster monitoring            : is running
 PostgreSQL-BHT-7              : will start now
-PostgreSQL-BHT-7              : Name of SUT pods = bexhoma-sut-postgresql-bht-7-1750875370
-PostgreSQL-BHT-7              : Name of SUT service = bexhoma-sut-postgresql-bht-7-1750875370
-PostgreSQL-BHT-7              : Name of SUT PVC name = bexhoma-storage-postgresql-schema-7-tpch-1
+PostgreSQL-BHT-7              : Name of SUT pods = bexhoma-sut-postgresql-bht-7-1751270408
+PostgreSQL-BHT-7              : Name of SUT service = bexhoma-sut-postgresql-bht-7-1751270408
+PostgreSQL-BHT-7              : Name of SUT PVC name = bexhoma-storage-postgresql-schema-7-tpch-10
 - waiting 30s -               : done
 PostgreSQL-BHT-7              : waits for health check to succeed
 - waiting 30s -               : done
@@ -68,11 +69,171 @@ PostgreSQL-BHT-7              : is loading
 PostgreSQL-BHT-7              : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
 done
 PostgreSQL-BHT-7              : showing loader times
-PostgreSQL-BHT-7              : generator timespan (first to last [s]) = 16
-PostgreSQL-BHT-7              : loader timespan (first to last [s]) = 284
-PostgreSQL-BHT-7              : total timespan (first to last [s]) = 305
+PostgreSQL-BHT-7              : generator timespan (first to last [s]) = 11
+PostgreSQL-BHT-7              : loader timespan (first to last [s]) = 2749
+PostgreSQL-BHT-7              : total timespan (first to last [s]) = 2764
 PostgreSQL-BHT-7              : scripts for tenant #0
 PostgreSQL-BHT-7              : scripts for tenant #1
 PostgreSQL-BHT-7              : scripts for tenant #2
@@ -89,58 +250,454 @@ PostgreSQL-BHT-7              : is loading
 PostgreSQL-BHT-7              : is loading
 - waiting 30s -               : done
 PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : is loading
 done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
 PostgreSQL-BHT-7              : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-BHT-7-1            : start benchmarking
-PostgreSQL-BHT-7              : benchmarking results in folder /home/perdelt/benchmarks/1750875370
+PostgreSQL-BHT-7              : benchmarking results in folder /home/perdelt/benchmarks/1751270408
 - waiting 10s -               : done
 found
 PostgreSQL-BHT-7-1            : collecting loading metrics of SUT at connection PostgreSQL-BHT-7-1
-PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-7-1            : collecting metrics of data generator at connection PostgreSQL-BHT-7-1
-PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-7-1            : collecting metrics of data injector at connection PostgreSQL-BHT-7-1
-PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
+PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
 PostgreSQL-BHT-7              : has running benchmarks
-PostgreSQL-BHT-7-1            : showing benchmarker times
-PostgreSQL-BHT-7-1            : benchmarker timespan (start to end single container [s]) = 69
-PostgreSQL-BHT-7-1            : benchmarker times (start/end per pod and container) = [(1750876033, 1750876064), (1750876033, 1750876066), (1750876034, 1750876067), (1750876034, 1750876066), (1750876033, 1750876066), (1750876033, 1750876065), (1750876033, 1750876065)]
-PostgreSQL-BHT-7-1            : found and updated times {'benchmarker': [(1750876033, 1750876064), (1750876033, 1750876066), (1750876034, 1750876067), (1750876034, 1750876066), (1750876033, 1750876066), (1750876033, 1750876065), (1750876033, 1750876065)]}
-PostgreSQL-BHT-7-1            : collecting execution metrics of SUT at connection PostgreSQL-BHT-7-1
-PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-PostgreSQL-BHT-7-1            : collecting metrics of benchmarker at connection PostgreSQL-BHT-7-1
-PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-Experiment                    : Reset experiment counter. This is first run of client number 2.
-PostgreSQL-BHT-7              : benchmarks done 0 of 1. This will be client 2
-PostgreSQL-BHT-7-2            : start benchmarking
-PostgreSQL-BHT-7              : benchmarking results in folder /home/perdelt/benchmarks/1750875370
-- waiting 10s -               : done
-found
-PostgreSQL-BHT-7-2            : collecting loading metrics of SUT at connection PostgreSQL-BHT-7-2
-PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-PostgreSQL-BHT-7-2            : collecting metrics of data generator at connection PostgreSQL-BHT-7-2
-PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-PostgreSQL-BHT-7-2            : collecting metrics of data injector at connection PostgreSQL-BHT-7-2
-PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-BHT-7              : has running benchmarks
 done
 PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+PostgreSQL-BHT-7-1            : showing benchmarker times
+PostgreSQL-BHT-7-1            : benchmarker timespan (start to end single container [s]) = 2718
+PostgreSQL-BHT-7-1            : benchmarker times (start/end per pod and container) = [(1751274354, 1751276901), (1751274354, 1751276941), (1751274355, 1751276906), (1751274355, 1751277030), (1751274355, 1751276872), (1751274354, 1751276871), (1751274354, 1751276919)]
+PostgreSQL-BHT-7-1            : found and updated times {'benchmarker': [(1751274354, 1751276901), (1751274354, 1751276941), (1751274355, 1751276906), (1751274355, 1751277030), (1751274355, 1751276872), (1751274354, 1751276871), (1751274354, 1751276919)]}
+PostgreSQL-BHT-7-1            : collecting execution metrics of SUT at connection PostgreSQL-BHT-7-1
+PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-1            : collecting metrics of benchmarker at connection PostgreSQL-BHT-7-1
+PostgreSQL-BHT-7-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+PostgreSQL-BHT-7              : benchmarks done 0 of 1. This will be client 2
+PostgreSQL-BHT-7-2            : start benchmarking
+PostgreSQL-BHT-7              : benchmarking results in folder /home/perdelt/benchmarks/1751270408
+- waiting 10s -               : done
+found
+PostgreSQL-BHT-7-2            : collecting loading metrics of SUT at connection PostgreSQL-BHT-7-2
+PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-2            : collecting metrics of data generator at connection PostgreSQL-BHT-7-2
+PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-2            : collecting metrics of data injector at connection PostgreSQL-BHT-7-2
+PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
+done
+PostgreSQL-BHT-7              : has running benchmarks
 PostgreSQL-BHT-7-2            : showing benchmarker times
-PostgreSQL-BHT-7-2            : benchmarker timespan (start to end single container [s]) = 91
-PostgreSQL-BHT-7-2            : benchmarker times (start/end per pod and container) = [(1750876148, 1750876183), (1750876148, 1750876182), (1750876147, 1750876185), (1750876147, 1750876184), (1750876147, 1750876181), (1750876147, 1750876185), (1750876147, 1750876184)]
-PostgreSQL-BHT-7-2            : found and updated times {'benchmarker': [(1750876148, 1750876183), (1750876148, 1750876182), (1750876147, 1750876185), (1750876147, 1750876184), (1750876147, 1750876181), (1750876147, 1750876185), (1750876147, 1750876184)]}
+PostgreSQL-BHT-7-2            : benchmarker timespan (start to end single container [s]) = 2635
+PostgreSQL-BHT-7-2            : benchmarker times (start/end per pod and container) = [(1751277121, 1751279705), (1751277120, 1751279694), (1751277121, 1751279654), (1751277120, 1751279658), (1751277120, 1751279680), (1751277121, 1751279651), (1751277121, 1751279663)]
+PostgreSQL-BHT-7-2            : found and updated times {'benchmarker': [(1751277121, 1751279705), (1751277120, 1751279694), (1751277121, 1751279654), (1751277120, 1751279658), (1751277120, 1751279680), (1751277121, 1751279651), (1751277121, 1751279663)]}
 PostgreSQL-BHT-7-2            : collecting execution metrics of SUT at connection PostgreSQL-BHT-7-2
-PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 PostgreSQL-BHT-7-2            : collecting metrics of benchmarker at connection PostgreSQL-BHT-7-2
-PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1750875370(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-BHT-7-2            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-7-1751270408(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
 done
 PostgreSQL-BHT-7              : can be stopped
 PostgreSQL-BHT-7              : had 0 restarts
-Experiment                    : ends at 2025-06-25 20:30:59.608239 (15068423.078792691) - 889.82s total
+Experiment                    : ends at 2025-06-30 12:36:15.440064 (15471938.910618817) - 9367.28s total
 Join results done!
 done!
 Experiment                    : downloading partial results
@@ -150,25 +707,26 @@ Experiment                    : uploading workload file
 ## Show Summary
 
 ### Workload
-TPC-H Queries SF=1
+TPC-H Queries SF=10
     Type: tpch
-    Duration: 890s 
-    Code: 1750875370
+    Duration: 9368s 
+    Code: 1751270408
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 600.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is as required by the TPC.
+    All instances use different query parameters.
+    Timeout per query is 3600.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.8.
+    Experiment uses bexhoma version 0.8.9.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 7 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 140Gi.
+    Each query is repeated 10 times.
+    Database is persisted to disk of type shared and size 350Gi.
     Loading is tested with [1] threads, split into [7] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [7, 7] times the number of benchmarking pods.
@@ -182,14 +740,15 @@ PostgreSQL-BHT-7-1-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-1-2 uses docker image postgres:16.1
@@ -198,14 +757,15 @@ PostgreSQL-BHT-7-1-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-1-3 uses docker image postgres:16.1
@@ -214,14 +774,15 @@ PostgreSQL-BHT-7-1-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-1-4 uses docker image postgres:16.1
@@ -230,14 +791,15 @@ PostgreSQL-BHT-7-1-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-1-5 uses docker image postgres:16.1
@@ -246,14 +808,15 @@ PostgreSQL-BHT-7-1-5 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-1-6 uses docker image postgres:16.1
@@ -262,14 +825,15 @@ PostgreSQL-BHT-7-1-6 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-1-7 uses docker image postgres:16.1
@@ -278,14 +842,15 @@ PostgreSQL-BHT-7-1-7 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109104
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:425301524
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-1 uses docker image postgres:16.1
@@ -294,14 +859,15 @@ PostgreSQL-BHT-7-2-1 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-2 uses docker image postgres:16.1
@@ -310,14 +876,15 @@ PostgreSQL-BHT-7-2-2 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-3 uses docker image postgres:16.1
@@ -326,14 +893,15 @@ PostgreSQL-BHT-7-2-3 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-4 uses docker image postgres:16.1
@@ -342,14 +910,15 @@ PostgreSQL-BHT-7-2-4 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-5 uses docker image postgres:16.1
@@ -358,14 +927,15 @@ PostgreSQL-BHT-7-2-5 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-6 uses docker image postgres:16.1
@@ -374,14 +944,15 @@ PostgreSQL-BHT-7-2-6 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 PostgreSQL-BHT-7-2-7 uses docker image postgres:16.1
@@ -390,14 +961,15 @@ PostgreSQL-BHT-7-2-7 uses docker image postgres:16.1
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:425109204
-    datadisk:19083
-    volume_size:140G
-    volume_used:19G
+    disk:424202536
+    datadisk:146723
+    volume_size:350G
+    volume_used:144G
     requests_cpu:2
     requests_memory:16Gi
+    limits_memory:480Gi
     eval_parameters
-        code:1750875370
+        code:1751270408
         TENANT_BY:schema
         TENANT_NUM:7
 
@@ -409,87 +981,87 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-7-1-1  PostgreSQL-BHT-7-1-2  PostgreSQL-BHT-7-1-3  PostgreSQL-BHT-7-1-4  PostgreSQL-BHT-7-1-5  PostgreSQL-BHT-7-1-6  PostgreSQL-BHT-7-1-7  PostgreSQL-BHT-7-2-1  PostgreSQL-BHT-7-2-2  PostgreSQL-BHT-7-2-3  PostgreSQL-BHT-7-2-4  PostgreSQL-BHT-7-2-5  PostgreSQL-BHT-7-2-6  PostgreSQL-BHT-7-2-7
-Pricing Summary Report (TPC-H Q1)                                 3086.79               3039.88               3346.47               2896.21               2889.73               2992.52               2964.78               3017.62               2778.71               2757.55               2939.72               2897.89               3015.92               2832.51
-Minimum Cost Supplier Query (TPC-H Q2)                             369.63                418.55                390.15                411.41                403.57                415.92                461.28                416.73                359.73                396.64                371.56                376.62                435.92                387.31
-Shipping Priority (TPC-H Q3)                                       901.36                931.27                941.95                947.35                908.29                882.81                896.18                837.05                907.07                946.50                883.98                862.21                833.94                853.07
-Order Priority Checking Query (TPC-H Q4)                          1446.87               1445.56               1560.84               1582.98               1463.08               1433.45               1386.33               1389.45               1470.48               1488.68               1458.43               1389.73               1388.60               1379.39
-Local Supplier Volume (TPC-H Q5)                                   808.54                876.19                869.49                863.15                781.40                795.70                774.44                863.68                880.65                905.98                880.94                859.31                867.81                739.77
-Forecasting Revenue Change (TPC-H Q6)                              610.59                674.04                660.93                651.50                636.01                619.14                611.66                604.97                651.55                653.62                638.78                597.82                593.26                644.23
-Forecasting Revenue Change (TPC-H Q7)                              977.00               1015.75                979.79                982.05                971.55                945.36                959.03                936.24                939.46                931.37                948.38                955.96                889.55                912.14
-National Market Share (TPC-H Q8)                                   713.74                803.49                783.21                806.89                803.07                772.90                785.75                771.93                863.95                795.22                786.83                807.01                814.17                751.16
-Product Type Profit Measure (TPC-H Q9)                            1228.94               1317.07               1332.05               1366.81               1400.61               1284.52               1279.34               1193.88               1230.33               1358.53               1312.22               1241.81               1229.55               1212.09
-Forecasting Revenue Change (TPC-H Q10)                            1365.33               1413.32               1443.29               1421.02               1432.39               1347.03               1349.60               1391.84               1411.25               1460.63               1422.42               1355.57               1333.39               1373.44
-Important Stock Identification (TPC-H Q11)                         276.35                288.84                285.29                292.51                297.16                304.19                278.03                277.70                286.90                304.40                298.73                304.58                300.69                287.58
-Shipping Modes and Order Priority (TPC-H Q12)                     1139.14               1188.72               1181.42               1204.06               1186.27               1134.65               1113.96               1141.01               1180.21               1192.54               1200.72               1160.67               1143.33               1146.05
-Customer Distribution (TPC-H Q13)                                 1939.16               2162.58               2060.02               2049.34               2149.62               1963.30               1976.91               1951.41               1989.15               1982.78               2065.49               1917.77               2011.71               1957.15
-Forecasting Revenue Change (TPC-H Q14)                             628.22                660.08                640.31                647.64                621.80                600.22                600.50                649.06                678.02                719.34                701.78                641.06                634.26                629.48
-Top Supplier Query (TPC-H Q15)                                     653.37                656.53                634.14                665.72                641.57                623.45                633.61                673.62                695.41                682.99                667.86                705.44                677.55                679.90
-Parts/Supplier Relationship (TPC-H Q16)                            621.95                609.99                604.08                621.39                657.78                626.47                647.70                649.34                604.01                616.08                613.67                626.07                640.67                628.16
-Small-Quantity-Order Revenue (TPC-H Q17)                          2009.92               2049.22               2057.91               2109.23               2230.18               2107.88               2165.72               2021.66               2075.91               2123.89               2083.73               2071.28               2110.38               2157.36
-Large Volume Customer (TPC-H Q18)                                 9177.41               8253.56               9041.38               9186.41               8852.05               8100.45               9135.98               9199.34               9832.33               9617.36               9788.75               7491.69               8277.74               9387.60
-Discounted Revenue (TPC-H Q19)                                     772.44                816.04                807.73                781.77                763.24                802.06                790.45                761.59                818.19                851.50                789.33                766.96                718.31                798.80
-Potential Part Promotion (TPC-H Q20)                               713.80                710.01                742.93                757.13                747.21                784.55                752.46                690.83                765.22                706.42                760.27                715.44                742.99                724.70
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               1040.12               1098.94               1049.42               1076.19               1078.09               1012.09               1003.37                997.42               1009.88               1018.43                993.70               1021.69                998.82                973.54
-Global Sales Opportunity Query (TPC-H Q22)                         264.93                272.59                259.58                275.49                271.89                304.40                292.86                232.35                239.83                240.70                235.71                249.71                250.17                240.81
+Pricing Summary Report (TPC-H Q1)                                19505.64              19453.44              22404.02              20095.09              21667.37              19962.69              19889.10              19693.82              17651.97              22600.69              19938.57              20933.26              20353.34              20943.35
+Minimum Cost Supplier Query (TPC-H Q2)                            4434.85               5435.36               5075.85               4766.64               4801.85               4329.35               5104.79               5243.56               5422.22               4484.94               5367.75               4817.92               4947.37               5223.49
+Shipping Priority (TPC-H Q3)                                      7440.81               6857.60               6301.90               6862.79               8076.19               7521.56               7381.40               7561.90               6760.53               7099.81               6914.10               8103.97               7465.59               7218.70
+Order Priority Checking Query (TPC-H Q4)                          2863.03               2900.39               3218.19               3244.30               3226.19               3371.97               3486.93               3986.03               2620.03               3220.35               3349.47               3354.22               3419.56               3360.40
+Local Supplier Volume (TPC-H Q5)                                 17625.44               6986.34               7385.44               8808.35               7581.16               6835.61               7643.43               7850.87               7730.58               7428.41               8768.61               7832.27               6840.56               6948.39
+Forecasting Revenue Change (TPC-H Q6)                             3893.54               4544.61               4304.49               4460.52               4399.20               5032.35               3951.49               4285.67               5331.82               4457.97               4527.26               4444.69               4891.06               4026.39
+Forecasting Revenue Change (TPC-H Q7)                             5718.09               6466.35               6907.95               6373.88               6005.90               6734.64               6089.51               6750.30               6630.12               7078.32               6660.45               6027.81               6954.52               5656.03
+National Market Share (TPC-H Q8)                                  7051.29               7193.07               8737.45               6661.96               6847.36               7222.15               7638.73               6647.99               7305.79               7829.50               7297.08               6298.29               7277.93               7629.42
+Product Type Profit Measure (TPC-H Q9)                            9893.01              11513.17              10812.63              11952.18              10603.01              12228.31              11707.35               9360.86              11723.23              11208.48              11845.42              11817.26              12254.61              11538.93
+Forecasting Revenue Change (TPC-H Q10)                            8940.67               8911.29              10873.99               8998.18               8764.34              10685.67               8219.09               9357.05               9205.41              11270.15               9160.26               8608.94              11030.42               7859.31
+Important Stock Identification (TPC-H Q11)                        2712.36               2973.06               3022.29               2861.62               2666.70               3469.97               3137.34               2952.07               3012.79               3013.65               3074.64               2642.56               3428.76               2965.63
+Shipping Modes and Order Priority (TPC-H Q12)                     7998.38               7313.33               7119.81               8244.32               7789.34               7871.40               7548.39               7861.63               7857.16               8827.63               8332.39               7449.72               7602.61               7336.91
+Customer Distribution (TPC-H Q13)                                24724.00              22235.76              24592.81              23741.35              23265.65              22166.11              22994.76              25220.29              21507.09              23097.40              22960.16              23239.50              21808.53              24440.24
+Forecasting Revenue Change (TPC-H Q14)                            6043.56               5517.86               6705.28               6586.36               5546.42               7061.09               6073.31               6103.21               5520.73               6657.77               6461.44               5811.29               6794.75               6120.48
+Top Supplier Query (TPC-H Q15)                                    5880.81               5740.85               5336.50               5025.29               5589.66               5578.34               5292.02               5588.36               6316.75               5351.12               4884.13               5632.11               5524.98               5548.22
+Parts/Supplier Relationship (TPC-H Q16)                           4789.55               4188.67               4559.52               4584.77               4026.11               4965.44               3978.11               5160.37               4268.97               4546.14               5147.91               4151.75               4252.44               4048.26
+Small-Quantity-Order Revenue (TPC-H Q17)                         22683.52              30368.89              22886.65              26780.92              24483.87              25628.71              24169.17              22623.11              31901.17              22658.38              26565.38              22314.19              25898.14              26022.96
+Large Volume Customer (TPC-H Q18)                                75894.97              73854.96              88369.06              71567.50              80564.46              74834.86              80498.89              76325.27              72433.27              78131.63              70266.91              79869.54              75303.36              79572.47
+Discounted Revenue (TPC-H Q19)                                    5556.48               5669.50               5553.06               5487.35               5397.61               5757.66               5912.42               5551.14               5830.44               5662.04               5498.94               5375.10               5617.81               6194.57
+Potential Part Promotion (TPC-H Q20)                              3729.87               3970.68               3692.45               4607.05               3775.67               3914.62               4603.54               3918.37               4308.70               4205.83               6975.26               3678.08               3726.35               4482.70
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               9583.17               7723.24               7723.62               8259.16               9729.86               8016.27               7511.60               9333.61               8921.54               7643.51               8191.94               9306.84               8657.44               8466.04
+Global Sales Opportunity Query (TPC-H Q22)                        1360.41               1648.72               1681.02               1450.59               1397.28               1713.42               1649.75               1316.85               1652.72               1705.87               1449.75               1383.30               1733.59               1647.72
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-7-1-1          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-1-2          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-1-3          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-1-4          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-1-5          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-1-6          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-1-7          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-1          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-2          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-3          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-4          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-5          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-6          16.0          284.0         6.0      458.0     769.0
-PostgreSQL-BHT-7-2-7          16.0          284.0         6.0      458.0     769.0
+PostgreSQL-BHT-7-1-1          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-1-2          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-1-3          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-1-4          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-1-5          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-1-6          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-1-7          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-1          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-2          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-3          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-4          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-5          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-6          11.0         2749.0         7.0     3749.0    6520.0
+PostgreSQL-BHT-7-2-7          11.0         2749.0         7.0     3749.0    6520.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-7-1-1           0.96
-PostgreSQL-BHT-7-1-2           0.99
-PostgreSQL-BHT-7-1-3           0.99
-PostgreSQL-BHT-7-1-4           1.00
-PostgreSQL-BHT-7-1-5           0.99
-PostgreSQL-BHT-7-1-6           0.97
-PostgreSQL-BHT-7-1-7           0.97
-PostgreSQL-BHT-7-2-1           0.96
-PostgreSQL-BHT-7-2-2           0.98
-PostgreSQL-BHT-7-2-3           0.99
-PostgreSQL-BHT-7-2-4           0.98
-PostgreSQL-BHT-7-2-5           0.96
-PostgreSQL-BHT-7-2-6           0.96
-PostgreSQL-BHT-7-2-7           0.95
+PostgreSQL-BHT-7-1-1           7.13
+PostgreSQL-BHT-7-1-2           7.33
+PostgreSQL-BHT-7-1-3           7.49
+PostgreSQL-BHT-7-1-4           7.39
+PostgreSQL-BHT-7-1-5           7.23
+PostgreSQL-BHT-7-1-6           7.54
+PostgreSQL-BHT-7-1-7           7.35
+PostgreSQL-BHT-7-2-1           7.46
+PostgreSQL-BHT-7-2-2           7.46
+PostgreSQL-BHT-7-2-3           7.55
+PostgreSQL-BHT-7-2-4           7.63
+PostgreSQL-BHT-7-2-5           7.22
+PostgreSQL-BHT-7-2-6           7.58
+PostgreSQL-BHT-7-2-7           7.37
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-7-1-1            3763.96
-PostgreSQL-BHT-7-1-2            3619.95
-PostgreSQL-BHT-7-1-3            3628.04
-PostgreSQL-BHT-7-1-4            3597.27
-PostgreSQL-BHT-7-1-5            3638.54
-PostgreSQL-BHT-7-1-6            3709.96
-PostgreSQL-BHT-7-1-7            3700.27
-PostgreSQL-BHT-7-2-1            3768.60
-PostgreSQL-BHT-7-2-2            3673.76
-PostgreSQL-BHT-7-2-3            3620.96
-PostgreSQL-BHT-7-2-4            3665.07
-PostgreSQL-BHT-7-2-5            3769.32
-PostgreSQL-BHT-7-2-6            3747.72
-PostgreSQL-BHT-7-2-7            3783.75
+PostgreSQL-BHT-7-1-1            5046.52
+PostgreSQL-BHT-7-1-2            4910.25
+PostgreSQL-BHT-7-1-3            4807.71
+PostgreSQL-BHT-7-1-4            4872.68
+PostgreSQL-BHT-7-1-5            4976.67
+PostgreSQL-BHT-7-1-6            4775.27
+PostgreSQL-BHT-7-1-7            4899.06
+PostgreSQL-BHT-7-2-1            4828.13
+PostgreSQL-BHT-7-2-2            4824.45
+PostgreSQL-BHT-7-2-3            4766.51
+PostgreSQL-BHT-7-2-4            4718.65
+PostgreSQL-BHT-7-2-5            4986.68
+PostgreSQL-BHT-7-2-6            4750.83
+PostgreSQL-BHT-7-2-7            4884.57
 
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                  time [s]  count   SF  Throughput@Size
-DBMS               SF  num_experiment num_client                                       
-PostgreSQL-BHT-7-1 1.0 1              1                 34      7  1.0         16305.88
-PostgreSQL-BHT-7-2 1.0 1              2                 38      7  1.0         14589.47
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                                   time [s]  count    SF  Throughput@Size
+DBMS               SF   num_experiment num_client                                        
+PostgreSQL-BHT-7-1 10.0 1              1               2675      7  10.0         20725.23
+PostgreSQL-BHT-7-2 10.0 1              2               2584      7  10.0         21455.11
 
 ### Workflow
 
@@ -501,23 +1073,23 @@ DBMS PostgreSQL-BHT-7 - Pods [[7, 7]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-7-1     1089.83     7.01          12.0                25.98
-PostgreSQL-BHT-7-2     1089.83     7.01          12.0                25.98
+PostgreSQL-BHT-7-1    12491.86    24.36         113.3               183.19
+PostgreSQL-BHT-7-2    12491.86    24.36         113.3               183.19
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-7-1      102.98     0.29          0.02                 0.91
-PostgreSQL-BHT-7-2      102.98     0.29          0.02                 0.91
+PostgreSQL-BHT-7-1     1269.34     1.35          0.04                10.42
+PostgreSQL-BHT-7-2     1269.34     1.35          0.04                10.42
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-7-1       44.79     0.00         12.00                23.17
-PostgreSQL-BHT-7-2      900.03     0.01         12.54                23.71
+PostgreSQL-BHT-7-1    97380.42    46.25        279.10               331.41
+PostgreSQL-BHT-7-2    98369.00    47.72        299.01               325.00
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-7-1       81.91      0.0          1.66                 1.68
-PostgreSQL-BHT-7-2       83.97      0.0          3.33                 3.37
+PostgreSQL-BHT-7-1      118.40     0.02          1.81                 1.82
+PostgreSQL-BHT-7-2       58.63     0.01          2.41                 2.44
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN

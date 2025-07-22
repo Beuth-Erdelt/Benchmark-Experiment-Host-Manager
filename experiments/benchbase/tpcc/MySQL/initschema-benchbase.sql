@@ -1,3 +1,9 @@
+-- Show current database and user
+SELECT 
+  DATABASE() AS `current_database`,
+  USER() AS `current_user`;
+
+
 DROP USER 'root'@'%';
 FLUSH PRIVILEGES;
 
