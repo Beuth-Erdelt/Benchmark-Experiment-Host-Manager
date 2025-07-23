@@ -1028,9 +1028,9 @@ class testbed():
     def pod_description(self, pod, container=''):
         container = ''  # never sensitive to container
         if len(container) > 0:
-            fullcommand = 'logs '+pod+' --container='+container
+            fullcommand = 'describe pod '+pod+' --container='+container
         else:
-            fullcommand = 'logs '+pod
+            fullcommand = 'describe pod '+pod
         #print(fullcommand)
         output = self.kubectl(fullcommand)
         #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -1897,7 +1897,7 @@ class kubernetes(testbed):
             # max 10 tries to receive the describe (timeout might occure)
             tries = 1
             while tries<10:
-                stdout = self.pod_log(pod_name, container)
+                stdout = self.pod_description(pod_name, container)
                 if len(stdout) > 0:
                     f = open(filename_log, "w")
                     f.write(stdout)
