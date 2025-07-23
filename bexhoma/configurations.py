@@ -1891,7 +1891,7 @@ scrape_configs:
         try:
             command = "grep ^Cpus_allowed_list /proc/self/status | awk '{print $2}'"
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-            result = stdout#os.popen(fullcommand).read()
+            result = stdout.replace('Cpus_allowed_list:\t', '').replace('\n', '')
             return result
         except Exception as e:
             logging.error(e)
