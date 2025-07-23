@@ -1674,6 +1674,11 @@ scrape_configs:
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
                     if limit_mem == "0":
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
+                    # remove requests if = 0
+                    if req_cpu == "0":
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu']
+                    if req_mem == "0":
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory']
                     #print(dep['spec']['template']['spec']['containers'][i_container]['resources']['limits'])
                     # add resource gpu
                     #if len(specs) > 2:
