@@ -168,7 +168,7 @@ for i in {1..10}; do
     export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
 
     # Run schema mode
-    python ./benchbase.py run -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -182,7 +182,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -196,7 +196,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -242,22 +242,8 @@ for i in {1..10}; do
     export BEXHOMA_LIMIT_RAM="${ramPerTenant}Gi"
     export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
 
-    # Run schema mode
-    python ./benchbase.py run -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
-        --dbms MySQL \
-        -rnn "$BEXHOMA_NODE_SUT" \
-        -rnl "$BEXHOMA_NODE_LOAD" \
-        -rnb "$BEXHOMA_NODE_BENCHMARK" \
-        -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
-        -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
-        -mtn "$BEXHOMA_TENANTS" -mtb schema \
-        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
-        </dev/null &> "$LOG_DIR/test_benchbase_run_mysql_tenants_schema_${BEXHOMA_TENANTS}_nolimit.log"
-
-    bexperiments stop
-
     # Run database mode
-    python ./benchbase.py run -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms MySQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -271,7 +257,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms MySQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
