@@ -2926,6 +2926,9 @@ scrape_configs:
                                 if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
                                     self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
                                     self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not self.experiment.cluster.pod_description_exists(pod_name=pod):
+                            self.experiment.cluster.logger.debug("Store description of job {} pod {}".format(job, pod))
+                            self.experiment.cluster.store_pod_description(pod_name=pod)
                         #container = 'datagenerator'
                         #if container in containers:
                         #    if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
@@ -2966,6 +2969,9 @@ scrape_configs:
                         for container in containers:
                             if len(container) > 0:
                                 self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not self.experiment.cluster.pod_description_exists(pod_name=pod):
+                            self.experiment.cluster.logger.debug("Store description of job {} pod {}".format(job, pod))
+                            self.experiment.cluster.store_pod_description(pod_name=pod)
                         self.experiment.cluster.delete_pod(pod)
                         #container = 'datagenerator'
                         #if container in containers:

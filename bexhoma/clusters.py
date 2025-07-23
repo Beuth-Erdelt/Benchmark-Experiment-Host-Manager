@@ -1025,6 +1025,19 @@ class testbed():
             cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script, namespace=self.namespace)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
             stdin, stdout, stderr = self.execute_command_in_pod(cmd['copy_init_scripts'], container='dbms')
             i = i + 1
+    def pod_description(self, pod, container=''):
+        container = ''  # never sensitive to container
+        if len(container) > 0:
+            fullcommand = 'logs '+pod+' --container='+container
+        else:
+            fullcommand = 'logs '+pod
+        #print(fullcommand)
+        output = self.kubectl(fullcommand)
+        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #stdout, stderr = proc.communicate()
+        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
+        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        return output
     def pod_log(self, pod, container=''):
         if len(container) > 0:
             fullcommand = 'logs '+pod+' --container='+container
@@ -1857,6 +1870,57 @@ class kubernetes(testbed):
         :param experiment: Experiment object
         """
         self.experiments.append(experiment)
+    def store_pod_description(self, pod_name, container='', number=None):
+        """
+        Store the describe result of a pod in a local file in the experiment result folder.
+        Optionally the name of a container can be given (mandatory, if pod has multiple containers).
+        If file containing pod log is already present, we do nothing (no update).
+
+        :param pod_name: Name of the pod
+        :param container: Name of the container
+        """
+        container = ''  # never sensitive to container
+        # write pod log
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+        if not number is None:
+            if len(container) > 0:
+                filename_log = "{path}/{code}/{pod}.{container}.{number}.describe".format(path=resultfolder, code=self.code, pod=pod_name, container=container, number=number)
+            else:
+                filename_log = "{path}/{code}/{pod}.{number}.describe".format(path=resultfolder, code=self.code, pod=pod_name, number=number)
+        else:
+            if len(container) > 0:
+                filename_log = "{path}/{code}/{pod}.{container}.describe".format(path=resultfolder, code=self.code, pod=pod_name, container=container)
+            else:
+                filename_log = "{path}/{code}/{pod}.describe".format(path=resultfolder, code=self.code, pod=pod_name)
+        # do not overwrite
+        if not os.path.isfile(filename_log):
+            # max 10 tries to receive the describe (timeout might occure)
+            tries = 1
+            while tries<10:
+                stdout = self.pod_log(pod_name, container)
+                if len(stdout) > 0:
+                    f = open(filename_log, "w")
+                    f.write(stdout)
+                    f.close()
+                    return
+                else:
+                    tries = tries + 1
+    def pod_description_exists(self, pod_name, container=''):
+        """
+        Returns, if describe result of pod already exists on local disk.
+
+        :param pod_name: Name of the pod
+        :param container: Name of the container
+        :return: stdout of the eksctl command
+        :return: does log of pod exist?
+        """
+        container = ''  # never sensitive to container
+        # look for pod log
+        if len(container) > 0:
+            filename_log = "{path}/{code}/{pod}.{container}.describe".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+        else:
+            filename_log = "{path}/{code}/{pod}.describe".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+        return os.path.isfile(filename_log)
     def store_pod_log(self, pod_name, container='', number=None):
         """
         Store the log of a pod in a local file in the experiment result folder.
