@@ -553,6 +553,9 @@ class default():
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
             df = self.get_monitoring(evaluation, type)
+            if df is None:
+                print(code, df)
+                continue
             df['type'] = workload['tenant_per']
             df['num_tenants'] = workload['num_tenants']
             df_performance = pd.concat([df_performance, df])
@@ -637,7 +640,10 @@ class benchbase(default):
         :rtype: pandas.DataFrame
         """
         df = evaluation.get_df_benchmarking()
-        df = df.sort_values(['experiment_run', 'client'])
+        if not df.empty:
+            df = df.sort_values(['experiment_run', 'client'])
+        else:
+            print(evaluation.code, "is empty")
         return df
 
         
@@ -656,10 +662,19 @@ class benchbase(default):
         :rtype: pandas.DataFrame
         """
         df = self.get_performance_single(evaluation)
-        result = df.groupby('client').agg({
-            'Goodput (requests/second)': 'sum',
-            'num_errors': 'sum',
-            'Latency Distribution.Average Latency (microseconds)': 'mean',
-            'Latency Distribution.99th Percentile Latency (microseconds)': 'max',
-        }).reset_index()
+        #print(evaluation.code, df)
+        if not df.empty:
+            if not 'Goodput (requests/second)' in df.columns:
+                print(evaluation.code, "has missing performance")
+                #print(evaluation.code, df)
+                return pd.DataFrame()
+            result = df.groupby('client').agg({
+                'Goodput (requests/second)': 'sum',
+                'num_errors': 'sum',
+                'Latency Distribution.Average Latency (microseconds)': 'mean',
+                'Latency Distribution.99th Percentile Latency (microseconds)': 'max',
+            }).reset_index()
+        else:
+            print(evaluation.code, "has empty performance")
+            result = pd.DataFrame()
         return result
