@@ -234,6 +234,7 @@ class default():
             df['num_tenants']=workload['num_tenants']
             #print(df)
             df_performance = pd.concat([df_performance, df])
+        df_performance = df_performance.sort_values(['num_tenants', 'type'])
         return df_performance
 
 
@@ -260,6 +261,7 @@ class default():
             df['num_tenants']=workload['num_tenants']
             #print(df)
             df_performance = pd.concat([df_performance, df])
+        df_performance = df_performance.sort_values(['num_tenants', 'type'])
         return df_performance
 
 
@@ -373,6 +375,7 @@ class default():
             df['num_tenants']=workload['num_tenants']
             #print(df)
             df_performance = pd.concat([df_performance, df])
+        df_performance = df_performance.sort_values(['num_tenants', 'type'])
         return df_performance
 
 
@@ -553,6 +556,7 @@ class default():
             df['type'] = workload['tenant_per']
             df['num_tenants'] = workload['num_tenants']
             df_performance = pd.concat([df_performance, df])
+        df_performance = df_performance.sort_values(['num_tenants', 'type'])
         return df_performance
 
 
@@ -584,6 +588,7 @@ class default():
                 df['type'] = workload['tenant_per']
                 df['num_tenants'] = workload['num_tenants']
                 df_performance = pd.concat([df_performance, df])
+        df_performance = df_performance.sort_values(['num_tenants', 'type'])
         return df_performance
 
 
