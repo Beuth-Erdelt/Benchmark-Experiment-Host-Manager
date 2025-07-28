@@ -3818,8 +3818,9 @@ class benchbase(default):
                         if not df_cleaned.empty:
                             list_monitoring_app.append(df_cleaned.copy())
                             num_metrics_included = num_metrics_included + 1
-                df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                if len(list_monitoring_app) > 0:
+                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
                 #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'
