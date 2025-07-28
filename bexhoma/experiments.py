@@ -1417,6 +1417,9 @@ class default():
                     if status == "Succeeded":
                         self.cluster.logger.debug("Store logs of starter job pod {}".format(pod))
                         self.cluster.store_pod_log(pod_name=pod)
+                        if not self.cluster.pod_description_exists(pod_name=pod):
+                            self.cluster.logger.debug("Store description of pod {}".format(pod))
+                            self.cluster.store_pod_description(pod_name=pod)
                 if self.tenant_per == 'container' and not config.loading_finished:
                     # can we start loading (all tenants/containers are ready)?
                     if not config.tenant_started_to_load:
@@ -1523,6 +1526,9 @@ class default():
                                     pod_sut = pods[0]
                                     for container in config.sut_containers_deployed:
                                         self.cluster.store_pod_log(pod_sut, container)
+                                    if not self.cluster.pod_description_exists(pod_name=pod_sut):
+                                        self.cluster.logger.debug("Store description of pod {}".format(pod_sut))
+                                        self.cluster.store_pod_description(pod_name=pod_sut)
                                     restarts = config.get_host_restarts(pod_sut)
                                     print("{:30s}: had {} restarts".format(config.configuration, str(restarts)))
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
@@ -1532,6 +1538,9 @@ class default():
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
                                         self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done+1)
+                                    if not self.cluster.pod_description_exists(pod_name=pod_worker):
+                                        self.cluster.logger.debug("Store description of pod {}".format(pod_worker))
+                                        self.cluster.store_pod_description(pod_name=pod_worker)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
@@ -1607,6 +1616,9 @@ class default():
                                     if len(container) > 0:
                                         self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
                                         self.cluster.store_pod_log(p, container)
+                                if not self.cluster.pod_description_exists(pod_name=p):
+                                    self.cluster.logger.debug("Store description of job {} pod {}".format(job, p))
+                                    self.cluster.store_pod_description(pod_name=p)
                             #if status == 'Succeeded':
                             #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
                             #    #if status != 'Running':
@@ -1631,6 +1643,9 @@ class default():
                                     if len(container) > 0:
                                         self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
                                         self.cluster.store_pod_log(p, container)
+                                if not self.cluster.pod_description_exists(pod_name=p):
+                                    self.cluster.logger.debug("Store description of job {} pod {}".format(job, p))
+                                    self.cluster.store_pod_description(pod_name=p)
                                 self.cluster.delete_pod(p)
                             #print(p,status)
                             #if status == 'Succeeded':
@@ -1703,10 +1718,16 @@ class default():
                     if status == 'Succeeded':
                         #if status != 'Running':
                         self.cluster.store_pod_log(p)
+                        if not self.cluster.pod_description_exists(pod_name=p):
+                            self.cluster.logger.debug("Store description of pod {}".format(p))
+                            self.cluster.store_pod_description(pod_name=p)
                         self.cluster.delete_pod(p)
                     if status == 'Failed':
                         #if status != 'Running':
                         self.cluster.store_pod_log(p)
+                        if not self.cluster.pod_description_exists(pod_name=p):
+                            self.cluster.logger.debug("Store description of pod {}".format(p))
+                            self.cluster.store_pod_description(pod_name=p)
                         self.cluster.delete_pod(p)
                 # success of job
                 app = self.cluster.appname
@@ -3797,8 +3818,9 @@ class benchbase(default):
                         if not df_cleaned.empty:
                             list_monitoring_app.append(df_cleaned.copy())
                             num_metrics_included = num_metrics_included + 1
-                df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                if len(list_monitoring_app) > 0:
+                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
                 #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'

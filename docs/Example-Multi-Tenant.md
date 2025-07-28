@@ -30,6 +30,7 @@ mkdir -p $LOG_DIR
 
 ## TPC-H
 
+An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/dev/MT-Benchbase-Merger-collector.ipynb).
 
 ### Schema-Per-Tenant
 
@@ -517,6 +518,8 @@ TEST failed: Workflow not as planned
 
 
 ## TPC-C
+
+An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/dev/MT-TPC-H-Merger-collector.ipynb).
 
 
 ### Schema-Per-Tenant

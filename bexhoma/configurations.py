@@ -1674,6 +1674,11 @@ scrape_configs:
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
                     if limit_mem == "0":
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
+                    # remove requests if = 0
+                    if req_cpu == "0":
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu']
+                    if req_mem == "0":
+                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory']
                     #print(dep['spec']['template']['spec']['containers'][i_container]['resources']['limits'])
                     # add resource gpu
                     #if len(specs) > 2:
@@ -1886,7 +1891,7 @@ scrape_configs:
         try:
             command = "grep ^Cpus_allowed_list /proc/self/status | awk '{print $2}'"
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
-            result = stdout#os.popen(fullcommand).read()
+            result = stdout.replace('Cpus_allowed_list:\t', '').replace('\n', '')
             return result
         except Exception as e:
             logging.error(e)
@@ -2926,6 +2931,9 @@ scrape_configs:
                                 if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
                                     self.experiment.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
                                     self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not self.experiment.cluster.pod_description_exists(pod_name=pod):
+                            self.experiment.cluster.logger.debug("Store description of job {} pod {}".format(job, pod))
+                            self.experiment.cluster.store_pod_description(pod_name=pod)
                         #container = 'datagenerator'
                         #if container in containers:
                         #    if not self.experiment.cluster.pod_log_exists(pod_name=pod, container=container):
@@ -2966,6 +2974,9 @@ scrape_configs:
                         for container in containers:
                             if len(container) > 0:
                                 self.experiment.cluster.store_pod_log(pod_name=pod, container=container)
+                        if not self.experiment.cluster.pod_description_exists(pod_name=pod):
+                            self.experiment.cluster.logger.debug("Store description of job {} pod {}".format(job, pod))
+                            self.experiment.cluster.store_pod_description(pod_name=pod)
                         self.experiment.cluster.delete_pod(pod)
                         #container = 'datagenerator'
                         #if container in containers:

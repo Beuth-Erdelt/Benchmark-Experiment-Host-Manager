@@ -127,6 +127,154 @@ wait_process "benchbase"
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################
+#### Benchbase TPC-C Multi-Tenant PVC No Limits ####
+####################################################
+
+BEXHOMA_DURATION=10
+BEXHOMA_TARGET=65536
+BEXHOMA_SF=10
+BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
+BEXHOMA_CPU=40
+BEXHOMA_RAM=200
+
+for i in {1..10}; do
+    # Set environment variables
+    export BEXHOMA_TENANTS=$i
+    tenants=$BEXHOMA_TENANTS
+    sizeInGi=$((tenants * 20))
+    export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
+    # Calculate RAM and CPU per tenant (integers)
+    ramPerTenant=$(( $BEXHOMA_RAM / tenants ))
+    cpuPerTenant=$(( $BEXHOMA_CPU / tenants ))
+
+    # Export environment variable
+    export BEXHOMA_LIMIT_RAM="${ramPerTenant}Gi"
+    export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
+
+    # Run schema mode
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+        --dbms PostgreSQL \
+        -rnn "$BEXHOMA_NODE_SUT" \
+        -rnl "$BEXHOMA_NODE_LOAD" \
+        -rnb "$BEXHOMA_NODE_BENCHMARK" \
+        -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
+        -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
+        -mtn "$BEXHOMA_TENANTS" -mtb schema \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_schema_${BEXHOMA_TENANTS}_nolimit.log"
+
+    bexperiments stop
+
+    # Run database mode
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+        --dbms PostgreSQL \
+        -rnn "$BEXHOMA_NODE_SUT" \
+        -rnl "$BEXHOMA_NODE_LOAD" \
+        -rnb "$BEXHOMA_NODE_BENCHMARK" \
+        -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
+        -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
+        -mtn "$BEXHOMA_TENANTS" -mtb database \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_database_${BEXHOMA_TENANTS}_nolimit.log"
+
+    bexperiments stop
+
+    # Run container mode (fixed 5Gi size)
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+        --dbms PostgreSQL \
+        -rnn "$BEXHOMA_NODE_SUT" \
+        -rnl "$BEXHOMA_NODE_LOAD" \
+        -rnb "$BEXHOMA_NODE_BENCHMARK" \
+        -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
+        -ne 1,1 \
+        -mtn "$BEXHOMA_TENANTS" -mtb container \
+        -rst shared -rss 20Gi \
+        </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_nolimit.log"
+
+    bexperiments stop
+
+    clean_logs
+done
+
+
+
+
+
+
+####################################################
+###### MySQL TPC-C Multi-Tenant PVC No Limits ######
+####################################################
+
+BEXHOMA_DURATION=10
+BEXHOMA_TARGET=65536
+BEXHOMA_SF=10
+BEXHOMA_THREADS=$((BEXHOMA_SF * 10))
+BEXHOMA_CPU=40
+BEXHOMA_RAM=200
+
+for i in {1..10}; do
+    # Set environment variables
+    export BEXHOMA_TENANTS=$i
+    tenants=$BEXHOMA_TENANTS
+    sizeInGi=$((tenants * 20))
+    export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
+    # Calculate RAM and CPU per tenant (integers)
+    ramPerTenant=$(( $BEXHOMA_RAM / tenants ))
+    cpuPerTenant=$(( $BEXHOMA_CPU / tenants ))
+
+    # Export environment variable
+    export BEXHOMA_LIMIT_RAM="${ramPerTenant}Gi"
+    export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
+
+    # Run database mode
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+        --dbms MySQL \
+        -rnn "$BEXHOMA_NODE_SUT" \
+        -rnl "$BEXHOMA_NODE_LOAD" \
+        -rnb "$BEXHOMA_NODE_BENCHMARK" \
+        -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
+        -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
+        -mtn "$BEXHOMA_TENANTS" -mtb database \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        </dev/null &> "$LOG_DIR/test_benchbase_run_mysql_tenants_database_${BEXHOMA_TENANTS}_nolimit.log"
+
+    bexperiments stop
+
+    # Run container mode (fixed 5Gi size)
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+        --dbms MySQL \
+        -rnn "$BEXHOMA_NODE_SUT" \
+        -rnl "$BEXHOMA_NODE_LOAD" \
+        -rnb "$BEXHOMA_NODE_BENCHMARK" \
+        -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
+        -ne 1,1 \
+        -mtn "$BEXHOMA_TENANTS" -mtb container \
+        -rst shared -rss 20Gi \
+        </dev/null &> "$LOG_DIR/test_benchbase_run_mysql_tenants_container_${BEXHOMA_TENANTS}_nolimit.log"
+
+    bexperiments stop
+
+    clean_logs
+done
+
+
+
 ####################################################
 ######### Benchbase TPC-C Multi-Tenant PVC #########
 ####################################################
