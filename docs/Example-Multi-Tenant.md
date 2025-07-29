@@ -26,6 +26,10 @@ LOG_DIR="./logs_tests"
 mkdir -p $LOG_DIR
 ```
 
+We set the number of tenants to 2 in the following:
+```
+BEXHOMA_NUM_TENANTS=2
+```
 
 
 ## TPC-H
@@ -34,16 +38,18 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 ### Schema-Per-Tenant
 
+At first we remove old storage
+```
+kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
+```
+
 Example for power test with 2 tenants, each having a dedicated schema in the same database:
 ```bash
-nohup python tpch.py \
-  -mtn 2 -mtb schema \
-  -sf 1 \
+nohup python tpch.py -tr \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp 2 -nbp 1 \
-  -ne 2,2 \
+  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp $BEXHOMA_NUM_TENANTS -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
 ```
 
@@ -183,16 +189,18 @@ TEST passed: Workflow as planned
 
 ### Database-Per-Tenant
 
+At first we remove old storage
+```
+kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
+```
+
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
-nohup python tpch.py \
-  -mtn 2 -mtb database \
-  -sf 1 \
+nohup python tpch.py -tr \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp 2 -nbp 1 \
-  -ne 2,2 \
+  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp $BEXHOMA_NUM_TENANTS -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
 ```
 
@@ -333,10 +341,16 @@ TEST passed: Workflow as planned
 
 ### Container-Per-Tenant
 
+At first we remove old storage
+```
+kubectl delete pvc bexhoma-storage-postgresql-0-2-tpch-1
+kubectl delete pvc bexhoma-storage-postgresql-1-2-tpch-1
+```
+
 Example for power test with 2 tenants, each having a dedicated DBMS:
 ```bash
 nohup python tpch.py \
-  -mtn 2 -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
   -ii -ic -is \
@@ -524,14 +538,19 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 ### Schema-Per-Tenant
 
+At first we remove old storage
+```
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
+```
+
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated schema in the same database:
 ```bash
 nohup python benchbase.py \
-  -mtn 2 -mtb schema \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 -sd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
-  -ne 2,2 \
+  -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log &
 ```
@@ -631,14 +650,19 @@ TEST passed: Workflow as planned
 
 ### Database-Per-Tenant
 
+At first we remove old storage
+```
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
+```
+
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated database in the same DBMS:
 ```bash
 nohup python benchbase.py \
-  -mtn 2 -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
-  -ne 2,2 \
+  -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log &
 ```
@@ -738,10 +762,16 @@ TEST passed: Workflow as planned
 
 ### Container-Per-Tenant
 
+At first we remove old storage
+```
+kubectl delete pvc bexhoma-storage-postgresql-0-2-benchbase-tpcc-1
+kubectl delete pvc bexhoma-storage-postgresql-1-2-benchbase-tpcc-1
+```
+
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS:
 ```bash
 nohup python benchbase.py \
-  -mtn 2 -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
