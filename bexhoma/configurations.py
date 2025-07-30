@@ -906,14 +906,15 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
-                            if self.tenant_per == 'database' and self.num_tenants > 0:
-                                connections = [
-                                    f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
-                                    for i in range(self.num_tenants)
-                                ]
-                                app_monitor_targets += "\n".join(connections)
-                            prometheus_config += """
+                            if self.dockertemplate['monitor']['blackbox']:
+                                app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
+                                if self.tenant_per == 'database' and self.num_tenants > 0:
+                                    connections = [
+                                        f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
+                                        for i in range(self.num_tenants)
+                                    ]
+                                    app_monitor_targets += "\n".join(connections)
+                                prometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
@@ -929,6 +930,17 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
+                            else:
+                                # no blackbox mode, normal scraping target directly
+                                prometheus_config += """
+  - job_name: 'monitor-app'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    static_configs:
+      - targets:
+          - {master}:9500
+        labels:
+          app: mysql-app""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
