@@ -525,7 +525,7 @@ class default():
                 'Number Autoanalyze': 'sum',
                 'Number Autovacuum': 'sum',
                 'Cache Hit Ratio [%]': 'mean',
-                'Variance of Core Util [%]': 'sum',
+                'Variance of Core Util [%]': 'max',
             }
             # Filter aggregation dictionary to only include columns present in df
             filtered_agg_dict = {col: func for col, func in agg_dict.items() if col in df.columns}
