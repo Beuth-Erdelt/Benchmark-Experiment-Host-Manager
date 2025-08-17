@@ -44,6 +44,34 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
+      initContainers:
+        - name: write-queries
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              cat <<'EOF' > /queries/queries.sql
+              # TYPE pg_stat_checkpointer_checkpoints_timed_total counter
+              # HELP pg_stat_checkpointer_checkpoints_timed_total Total number of timed checkpoints
+              SELECT checkpoints_timed AS pg_stat_checkpointer_checkpoints_timed_total
+              FROM pg_stat_checkpointer;
+
+              # TYPE pg_stat_checkpointer_checkpoints_req_total counter
+              # HELP pg_stat_checkpointer_checkpoints_req_total Total number of requested checkpoints
+              SELECT checkpoints_req AS pg_stat_checkpointer_checkpoints_req_total
+              FROM pg_stat_checkpointer;
+
+              # TYPE pg_stat_io_backend_fsyncs_total counter
+              # HELP pg_stat_io_backend_fsyncs_total Number of backend fsync calls (I/O contention indicator)
+              SELECT sum(calls) AS pg_stat_io_backend_fsyncs_total
+              FROM pg_stat_io
+              WHERE backend_type = 'backend'
+                AND operation = 'fsync';
+              EOF
+          volumeMounts:
+            - name: queries-volume
+              mountPath: /queries
       containers:
       - name: dbms
         image: postgres:17.5
@@ -203,6 +231,8 @@ spec:
       - name: monitor-application
         image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
+        args:
+          - "--queries.file=/etc/postgres_exporter/queries.sql"
         env:
           - name: DATA_SOURCE_URI
             value: "localhost:5432/?sslmode=disable"
@@ -219,6 +249,10 @@ spec:
         resources:
           requests: {cpu: 1000m, memory: 4Gi}
           limits: {cpu: 1000m, memory: 4Gi}
+        volumeMounts:
+          - mountPath: /etc/postgres_exporter/queries.sql
+            name: queries-volume
+            subPath: queries.sql
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
@@ -242,3 +276,5 @@ spec:
       - name: dshm
         emptyDir:
           medium: Memory
+      - name: queries-volume
+        emptyDir: {}
