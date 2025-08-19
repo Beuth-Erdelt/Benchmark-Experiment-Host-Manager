@@ -35,8 +35,8 @@ spec:
       - name: dashboard
         image: bexhoma/evaluator_dbmsbenchmarker:v0.14.11
         #image: bexhoma/evaluator_dbmsbenchmarker:dev
-        imagePullPolicy: IfNotPresent
-        #imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
         ports:
