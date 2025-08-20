@@ -1296,7 +1296,9 @@ scrape_configs:
                     #print(pvcs)
                     if len(pvcs) > 0:
                         print("{:30s}: storage exists {}".format(configuration, name_pvc))
-                        #print("Storage {} exists".format(name_pvc))
+                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove']:
+                            # we have not loaded yet, so this is the first run in this experiment
+                            print("{:30s}: storage should be removed".format(configuration))
                         yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                         pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                         self.logger.debug(pvcs_labels)
