@@ -180,7 +180,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
         -mtn "$BEXHOMA_TENANTS" -mtb schema \
-        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_schema_${BEXHOMA_TENANTS}_nolimit.log"
 
     bexperiments stop
@@ -194,7 +194,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
         -mtn "$BEXHOMA_TENANTS" -mtb database \
-        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_database_${BEXHOMA_TENANTS}_nolimit.log"
 
     bexperiments stop
@@ -208,7 +208,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne 1,1 \
         -mtn "$BEXHOMA_TENANTS" -mtb container \
-        -rst shared -rss 50Gi \
+        -rst shared -rss 50Gi -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_nolimit.log"
 
     bexperiments stop
@@ -255,7 +255,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
         -mtn "$BEXHOMA_TENANTS" -mtb database \
-        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_mysql_tenants_database_${BEXHOMA_TENANTS}_nolimit.log"
 
     bexperiments stop
@@ -269,7 +269,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne 1,1 \
         -mtn "$BEXHOMA_TENANTS" -mtb container \
-        -rst shared -rss 20Gi \
+        -rst shared -rss 20Gi -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_mysql_tenants_container_${BEXHOMA_TENANTS}_nolimit.log"
 
     bexperiments stop
@@ -294,7 +294,7 @@ for i in {1..10}; do
     # Set environment variables
     export BEXHOMA_TENANTS=$i
     tenants=$BEXHOMA_TENANTS
-    sizeInGi=$((tenants * 20))
+    sizeInGi=$((tenants * 50))
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
     # Calculate RAM and CPU per tenant (integers)
     ramPerTenant=$(( $BEXHOMA_RAM / tenants ))
@@ -319,7 +319,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
         -mtn "$BEXHOMA_TENANTS" -mtb schema \
-        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_schema_${BEXHOMA_TENANTS}_db.log"
 
     bexperiments stop
@@ -333,12 +333,12 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
         -mtn "$BEXHOMA_TENANTS" -mtb database \
-        -rst shared -rss "$BEXHOMA_SIZE_ALL" \
+        -rst shared -rss "$BEXHOMA_SIZE_ALL" -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_database_${BEXHOMA_TENANTS}_db.log"
 
     bexperiments stop
 
-    # Run container mode (fixed 5Gi size)
+    # Run container mode (fixed 5=Gi size)
     python ./benchbase.py run -rc $cpuPerTenant -lc $cpuPerTenant -rr $ramPerTenant -lr $ramPerTenant -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
@@ -347,7 +347,7 @@ for i in {1..10}; do
         -nlp 1 -nlt $BEXHOMA_THREADS -nbp 1 -nbt $BEXHOMA_THREADS \
         -ne 1,1 \
         -mtn "$BEXHOMA_TENANTS" -mtb container \
-        -rst shared -rss 20Gi \
+        -rst shared -rss 50Gi -rsr \
         </dev/null &> "$LOG_DIR/test_benchbase_run_postgresql_tenants_container_${BEXHOMA_TENANTS}_db.log"
 
     bexperiments stop
