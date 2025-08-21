@@ -1295,34 +1295,43 @@ scrape_configs:
                     pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                     #print(pvcs)
                     if len(pvcs) > 0:
-                        print("{:30s}: storage exists {}".format(configuration, name_pvc))
+                        print("{:30s}: storage {} exists".format(configuration, name_pvc))
                         if not self.loading_finished and self.experiment.args_dict['request_storage_remove']:
                             # we have not loaded yet, so this is the first run in this experiment
-                            print("{:30s}: storage should be removed".format(configuration))
-                        yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
-                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
-                        self.logger.debug(pvcs_labels)
-                        if len(pvcs_labels) > 0:
-                            pvc_labels = pvcs_labels[0]
-                            copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
-                            for label in copy_labels:
-                                if label in pvc_labels:
-                                    print("{:30s}: label {} copied value {}".format(configuration, label, pvc_labels[label]))
-                                    yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
-                            #if 'loaded' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
-                            #if 'timeLoading' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
-                            #if 'timeLoadingStart' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
-                            #if 'timeLoadingEnd' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
-                        del result[key]
-                        # we do not need loading pods
-                        #print("Loading is set to finished")
-                        print("{:30s}: loading is set to finished".format(configuration))
-                        self.loading_active = False
-                        self.monitor_loading = False
+                            print("{:30s}: storage {} should be removed".format(configuration, name_pvc))
+                            self.experiment.cluster.delete_pvc(name_pvc)
+                            self.wait(10)
+                            pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                            while len(pvcs) > 0:
+                                print("{:30s}: storage {} still exists".format(configuration, name_pvc))
+                                self.wait(10)
+                                pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                            print("{:30s}: storage {} is gone".format(configuration, name_pvc))
+                        else:
+                            yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
+                            pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                            self.logger.debug(pvcs_labels)
+                            if len(pvcs_labels) > 0:
+                                pvc_labels = pvcs_labels[0]
+                                copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
+                                for label in copy_labels:
+                                    if label in pvc_labels:
+                                        print("{:30s}: label {} copied value {}".format(configuration, label, pvc_labels[label]))
+                                        yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
+                                #if 'loaded' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
+                                #if 'timeLoading' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
+                                #if 'timeLoadingStart' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
+                                #if 'timeLoadingEnd' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
+                            del result[key]
+                            # we do not need loading pods
+                            #print("Loading is set to finished")
+                            print("{:30s}: loading is set to finished".format(configuration))
+                            self.loading_active = False
+                            self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
                     del result[key]
