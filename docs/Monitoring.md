@@ -41,7 +41,7 @@ Configuration takes place in `cluster.config`:
 * `metrics`: a dict of informations about metrics to be collected, see below
   * `type`: is cluster or application
   * `active`: if set to False, the metric will be ignored
-  * `metric`: is gauge or counter; this does not affect bexhoma, it only affects how results will be presented (for counter: max - min, for gauge: max)
+  * `metric`: is gauge or counter or ratio; this does not affect bexhoma, it only affects how results will be presented (for counter: max - min, for gauge: mean, for ratio: max)
   * `query`: promql query
   * `title`: for presentation in summary
 
@@ -199,3 +199,75 @@ cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 930
 
 Prometheus runs as a container with a service with `port-prometheus` 9090
 * `k8s/deploymenttemplate-bexhoma-prometheus.yml`
+
+## Application Metrics
+
+Metrics collectors for DBMS can be run as sidecar containers.
+A list of metrics is defined in the DBMS part of the configuration file.
+Bexhoma has two methods implemented: Balackbox and non-blackbox.
+
+
+## Blackbox: PostgreSQL
+
+A blackbox method in metric exporters means "collect metrics by probing the system from the outside, without relying on internal statistics.
+Here, we collect metrics from an instance of an exporter.
+We send requests to a /probe API and give a list of targets, one for each database.
+
+* Example per SUT (sidecar container): `k8s/deploymenttemplate-PostgreSQL.yml`
+* Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
+
+```
+'monitor': {
+    'blackbox': True,
+    'metrics': {
+        'pg_stat_database_blks_read': {
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(pg_stat_database_blks_read{{datname!~"template.*"}})',
+            'query2': 'sum(pg_stat_database_blks_read{{schemaname="{schema}", datname="{database}"}})',
+            'query3': 'sum(sum by(datname) (pg_stat_database_blks_read{{datname!~"template.*"}})) / count(sum by(datname) (pg_stat_database_blks_read{{datname!~"template.*"}}))',
+            'title': 'Disk Blocks Read Count'
+        },
+        'pg_stat_database_blks_hit': {
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})',
+            'query2': 'sum(pg_stat_database_blks_hit{{schemaname="{schema}", datname="{database}"}})',
+            'query3': 'sum(sum by(datname) (pg_stat_database_blks_hit{{datname!~"template.*"}})) / count(sum by(datname) (pg_stat_database_blks_hit{{datname!~"template.*"}}))',
+            'title': 'Buffer Cache Hit Count'
+        },
+    },
+},
+```
+
+## No Blackbox: MySQL
+
+Here, we collect metrics from an instance of an exporter.
+It automatically contains data about all databases in the system.
+
+* Example per SUT (sidecar container): `k8s/deploymenttemplate-MySQL.yml`
+* Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
+
+```
+'monitor': {
+    'blackbox': False,
+    'metrics': {
+        'mysql_buffer_pool_hit_ratio': {
+            'type': 'application',
+            'active': True,
+            'metric': 'gauge',
+            'query': '(rate(mysql_global_status_innodb_buffer_pool_reads[5m]) == 0) or (1 - (rate(mysql_global_status_innodb_buffer_pool_reads[5m]) / rate(mysql_global_status_innodb_buffer_pool_read_requests[5m])))',
+            'title': 'InnoDB Buffer Pool Hit Ratio'
+        },
+        'mysql_queries_per_second': {
+            'type': 'application',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'rate(mysql_global_status_queries[5m])',
+            'title': 'Queries Per Second (QPS)'
+        },
+    },
+},
+```
