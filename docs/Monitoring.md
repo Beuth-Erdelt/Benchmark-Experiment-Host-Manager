@@ -191,6 +191,9 @@ Moreover the is an automatical substituion of `container_label_io_kubernetes_con
 
 Note that the metrics make a summation over all matching components (containers, CPU cores etc).
 
+Also note that we use Python's format replacement.
+This means the common promql `{}` has to be substituted by `{{}}`.
+
 ### Installation Templates
 
 cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 9300
@@ -207,7 +210,7 @@ A list of metrics is defined in the DBMS part of the configuration file.
 Bexhoma has two methods implemented: Balackbox and non-blackbox.
 
 
-## Blackbox: PostgreSQL
+### Blackbox: PostgreSQL
 
 A blackbox method in metric exporters means "collect metrics by probing the system from the outside, without relying on internal statistics.
 Here, we collect metrics from an instance of an exporter.
@@ -225,8 +228,6 @@ We send requests to a /probe API and give a list of targets, one for each databa
             'active': True,
             'metric': 'counter',
             'query': 'sum(pg_stat_database_blks_read{{datname!~"template.*"}})',
-            'query2': 'sum(pg_stat_database_blks_read{{schemaname="{schema}", datname="{database}"}})',
-            'query3': 'sum(sum by(datname) (pg_stat_database_blks_read{{datname!~"template.*"}})) / count(sum by(datname) (pg_stat_database_blks_read{{datname!~"template.*"}}))',
             'title': 'Disk Blocks Read Count'
         },
         'pg_stat_database_blks_hit': {
@@ -234,15 +235,13 @@ We send requests to a /probe API and give a list of targets, one for each databa
             'active': True,
             'metric': 'counter',
             'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})',
-            'query2': 'sum(pg_stat_database_blks_hit{{schemaname="{schema}", datname="{database}"}})',
-            'query3': 'sum(sum by(datname) (pg_stat_database_blks_hit{{datname!~"template.*"}})) / count(sum by(datname) (pg_stat_database_blks_hit{{datname!~"template.*"}}))',
             'title': 'Buffer Cache Hit Count'
         },
     },
 },
 ```
 
-## No Blackbox: MySQL
+### No Blackbox: MySQL
 
 Here, we collect metrics from an instance of an exporter.
 It automatically contains data about all databases in the system.
