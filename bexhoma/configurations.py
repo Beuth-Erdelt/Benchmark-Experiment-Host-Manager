@@ -906,14 +906,15 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
-                            if self.tenant_per == 'database' and self.num_tenants > 0:
-                                connections = [
-                                    f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
-                                    for i in range(self.num_tenants)
-                                ]
-                                app_monitor_targets += "\n".join(connections)
-                            prometheus_config += """
+                            if self.dockertemplate['monitor']['blackbox']:
+                                app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
+                                if self.tenant_per == 'database' and self.num_tenants > 0:
+                                    connections = [
+                                        f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
+                                        for i in range(self.num_tenants)
+                                    ]
+                                    app_monitor_targets += "\n".join(connections)
+                                prometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
@@ -929,6 +930,17 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
+                            else:
+                                # no blackbox mode, normal scraping target directly
+                                prometheus_config += """
+  - job_name: 'monitor-app'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    static_configs:
+      - targets:
+          - {master}:9500
+        labels:
+          app: mysql-app""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
@@ -1283,32 +1295,43 @@ scrape_configs:
                     pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                     #print(pvcs)
                     if len(pvcs) > 0:
-                        print("{:30s}: storage exists {}".format(configuration, name_pvc))
-                        #print("Storage {} exists".format(name_pvc))
-                        yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
-                        pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
-                        self.logger.debug(pvcs_labels)
-                        if len(pvcs_labels) > 0:
-                            pvc_labels = pvcs_labels[0]
-                            copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
-                            for label in copy_labels:
-                                if label in pvc_labels:
-                                    print("{:30s}: label {} copied value {}".format(configuration, label, pvc_labels[label]))
-                                    yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
-                            #if 'loaded' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
-                            #if 'timeLoading' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
-                            #if 'timeLoadingStart' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
-                            #if 'timeLoadingEnd' in pvc_labels:
-                            #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
-                        del result[key]
-                        # we do not need loading pods
-                        #print("Loading is set to finished")
-                        print("{:30s}: loading is set to finished".format(configuration))
-                        self.loading_active = False
-                        self.monitor_loading = False
+                        print("{:30s}: storage {} exists".format(configuration, name_pvc))
+                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove']:
+                            # we have not loaded yet, so this is the first run in this experiment
+                            print("{:30s}: storage {} should be removed".format(configuration, name_pvc))
+                            self.experiment.cluster.delete_pvc(name_pvc)
+                            self.wait(10)
+                            pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                            while len(pvcs) > 0:
+                                print("{:30s}: storage {} still exists".format(configuration, name_pvc))
+                                self.wait(10)
+                                pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                            print("{:30s}: storage {} is gone".format(configuration, name_pvc))
+                        else:
+                            yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
+                            pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                            self.logger.debug(pvcs_labels)
+                            if len(pvcs_labels) > 0:
+                                pvc_labels = pvcs_labels[0]
+                                copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
+                                for label in copy_labels:
+                                    if label in pvc_labels:
+                                        print("{:30s}: label {} copied value {}".format(configuration, label, pvc_labels[label]))
+                                        yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
+                                #if 'loaded' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['loaded'] = pvc_labels['loaded']
+                                #if 'timeLoading' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoading'] = pvc_labels['timeLoading']
+                                #if 'timeLoadingStart' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingStart'] = pvc_labels['timeLoadingStart']
+                                #if 'timeLoadingEnd' in pvc_labels:
+                                #    yaml_deployment['spec']['template']['metadata']['labels']['timeLoadingEnd'] = pvc_labels['timeLoadingEnd']
+                            del result[key]
+                            # we do not need loading pods
+                            #print("Loading is set to finished")
+                            print("{:30s}: loading is set to finished".format(configuration))
+                            self.loading_active = False
+                            self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
                 if self.num_worker == 0:
                     del result[key]
@@ -2249,6 +2272,7 @@ scrape_configs:
             name_worker = self.get_worker_name()
             return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
+            self.logger.debug(f"set_metric_of_config_default({metric}, {host}, {gpuid}, experiment={self.experiment_name}, schema={schema}, database={database})")
             return self.set_metric_of_config_default(metric, host, gpuid, experiment=self.experiment_name, schema=schema, database=database)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """

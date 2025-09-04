@@ -20,6 +20,7 @@ spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 3306}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 9104}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -50,6 +51,40 @@ spec:
         #image: mysql:8.1.0                           # no docs
         #image: mysql:8.2.0                           # no docs
         #image: mysql:8.3.0                           # current, but slow import (?)
+        args:
+          - "--max_connections=1500"
+          - "--local-infile=1"
+          # --- Authentication ---
+          - "--mysql-native-password=ON"          # Backward-compatible password auth
+          # --- I/O Threading ---
+          - "--innodb-read-io-threads=64"         # Max threads to handle read I/O (use all CPU cores)
+          - "--innodb-write-io-threads=64"        # Max threads for write I/O (parallelism on CephFS)
+          # --- Async I/O (for CephFS) ---
+          - "--innodb-use-native-aio=0"           # Disable native AIO (improves CephFS compatibility)
+          # --- Buffer Pool (Main memory cache) ---
+          - "--innodb-buffer-pool-size=32G"      # Increased to 256G (out of 500G total RAM)
+          - "--innodb-buffer-pool-instances=64"   # One per core for high concurrency
+          - "--innodb-buffer-pool-chunk-size=2G"  # Aligns pool size with chunks
+          # --- I/O Capacity (for background flushing) ---
+          - "--innodb-io-capacity=200"            # Lowered for CephFS latency
+          - "--innodb-io-capacity-max=1000"       # Burst capacity still reasonably high
+          # --- Redo Log ---
+          - "--innodb-log-buffer-size=1G"         # Buffer before flushing to disk
+          - "--innodb-redo-log-capacity=4G"       # Redo log capacity for large write bursts
+          # --- Transaction Commit Behavior ---
+          - "--innodb-flush-log-at-trx-commit=2"  # Flush every second (safe compromise)
+          - "--sync-binlog=0"                     # No fsync per transaction (OLAP-friendly)
+          # --- Temporary Tables ---
+          - "--tmp-table-size=1G"                 # Prevent temp table disk usage
+          - "--max-heap-table-size=1G"            # For user-created MEMORY tables
+          # --- Change Buffer ---
+          - "--innodb-change-buffer-max-size=50"  # % of buffer pool for insert/update/delete buffering
+          # --- DDL and Read Parallelism ---
+          - "--innodb-parallel-read-threads=64"   # For multi-threaded table scans (OLAP)
+          - "--innodb-ddl-threads=32"             # Parallel DDL ops (index creation, etc.)
+          - "--innodb-ddl-buffer-size=256M"       # DDL metadata operations memory
+          # --- Doublewrite Buffer ---
+          - "--innodb-doublewrite=0"              # Disable for CephFS redundancy and speed
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
           - {name: MYSQL_ROOT_HOST, value: '%'}
@@ -89,34 +124,22 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /var/lib/mysql, name: benchmark-storage-volume}
-      - name: cadvisor
-        image: gcr.io/cadvisor/cadvisor:v0.47.0
-        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+      - name: monitor-application
+        image: prom/mysqld-exporter:v0.17.2
+        args:
+          - "--mysqld.address=localhost:3306"
+          - "--mysqld.username=root"
+        env:
+          - {name: MYSQLD_EXPORTER_PASSWORD, value: 'root'}
         ports:
-        - containerPort: 9300
-          #hostPort: 9300
-          name: http
-          protocol: TCP
+          - containerPort: 9104
         resources:
           requests:
-            cpu: 150m
-            memory: 200Mi
-        volumeMounts:
-        - name: rootfs
-          mountPath: /rootfs
-          readOnly: true
-        - name: var-run
-          mountPath: /var/run
-          readOnly: true
-        - name: sys
-          mountPath: /sys
-          readOnly: true
-        - name: docker
-          mountPath: /var/lib/docker
-          readOnly: true
-        - name: disk
-          mountPath: /dev/disk
-          readOnly: true
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}

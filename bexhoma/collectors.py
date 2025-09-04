@@ -88,6 +88,9 @@ class default():
     def __init__(self, path, codes):
         self.path = path
         self.codes = codes
+        code = codes[0]
+        evaluate = self.get_evaluator(code)
+        self.df_metrics = self.get_metrics(evaluate)
     def get_workload(self, code):
         """
         Returns the workload data of an experiment given by its code.
@@ -382,13 +385,15 @@ class default():
         return df_performance
 
 
-    def show_summary_monitoring_table(self, evaluate, component):
+    def OLD_show_summary_monitoring_table(self, evaluate, component):
         """
         Collects hardware and application monitoring metrics for a specified component without aggregation.
 
         This function retrieves multiple monitoring metrics from the evaluation object related to
         CPU usage, memory, PostgreSQL activity, cache statistics, and background writer performance.
         Each metric is processed (e.g., max-min differences, means, or max values) and combined into a single DataFrame.
+
+        Aggregation is defined here manually per metric.
 
         :param evaluate: The evaluation object containing monitoring data and methods to retrieve metrics.
         :type evaluate: object
@@ -456,6 +461,53 @@ class default():
         summary_df = summary_df.reindex(index=evaluators.natural_sort(summary_df.index))
         return summary_df
 
+    def show_summary_monitoring_table(self, evaluation, type='stream'):
+        """
+        Collects hardware and application monitoring metrics for a specified component without aggregation.
+
+        This function retrieves multiple monitoring metrics from the evaluation object related to
+        CPU usage, memory, PostgreSQL activity, cache statistics, and background writer performance.
+        Each metric is processed (e.g., max-min differences, means, or max values) and combined into a single DataFrame.
+
+        :param evaluate: The evaluation object containing monitoring data and methods to retrieve metrics.
+        :type evaluate: object
+        :param component: The component name for which to retrieve metrics (e.g., 'database', 'worker').
+        :type component: str
+        :return: A DataFrame combining all monitored metrics indexed by monitored entities.
+        :rtype: pandas.DataFrame
+        """
+        #scale = 1
+        results = []
+        for idx, row in self.df_metrics.iterrows():
+            if row["active"] == False:
+                continue
+            metric_name = idx
+            method = 'diff' if row["metric"] == 'counter' else 'mean'
+            #method = 'diff' if row["metric"] == 'counter' else 'max' if row["metric"] == 'ratio' else 'mean'
+            col_name = row["title"]
+            #print(idx, row["title"], method)
+            #scale = metric[3] if len(metric) > 3 else 1
+            df = evaluation.get_monitoring_metric(metric=metric_name, component=type)
+            # Apply scaling if needed
+            #if scale != 1:
+            #    df = df * scale
+            # Process dataframe according to method
+            if method == 'diff':
+                processed = df.max().sort_index() - df.min().sort_index()
+            elif method == 'max':
+                processed = df.max().sort_index()
+            elif method == 'mean':
+                processed = df.mean().sort_index()
+            else:
+                raise ValueError(f"Unknown processing method: {method}")
+            df_cleaned = pd.DataFrame(processed)
+            df_cleaned.columns = [col_name]
+            results.append(df_cleaned)
+        # Combine all dataframes horizontally (join on index)
+        summary_df = pd.concat(results, axis=1).round(2)
+        #summary_df = summary_df.reindex(index=evaluators.natural_sort(summary_df.index))
+        return summary_df
+
     def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="stream"):
         """
         Retrieves a single monitoring metric as a time series DataFrame for a given experiment code and component.
@@ -484,6 +536,72 @@ class default():
         This function obtains detailed monitoring data using `show_summary_monitoring_table` for the
         specified component type (default "stream"). It adds a 'client' column extracted from the DataFrame index,
         then aggregates various hardware and application metrics by client using sum or mean as appropriate.
+
+        Aggregation is by summation except for type "ratio", which aggregates via max.
+
+        :param evaluation: The evaluation object containing monitoring data.
+        :type evaluation: object
+        :param type: The component type to filter monitoring metrics (default is "stream").
+        :type type: str, optional
+        :return: A DataFrame with aggregated monitoring metrics grouped by client. If no data is available, returns None.
+        :rtype: pandas.DataFrame or None
+        """
+        df_monitoring = self.show_summary_monitoring_table(evaluation, type)
+        if len(df_monitoring) > 0:
+            df = df_monitoring.copy()  # avoid modifying original
+            df['client'] = df.index.str.rsplit('-', n=1).str[-1]
+            #print(df)
+            """agg_dict = {
+                'CPU [CPUs]': 'sum',
+                'Max RAM [Gb]': 'sum',
+                'Max RAM Cached [Gb]': 'sum',
+                'Max CPU': 'sum',
+                'CPU Throttled': 'sum',
+                'Locks': 'sum',
+                'Access Exclusive': 'sum',
+                'Access Share': 'sum',
+                'Exclusive': 'sum',
+                'Row Exclusive': 'sum',
+                'Row Share': 'sum',
+                'Share': 'sum',
+                'Share Row Exclusive': 'sum',
+                'Share Update Exclusive': 'sum',
+                'SI Read': 'sum',
+                'Active': 'sum',
+                'Idle': 'sum',
+                'Transactions Idle': 'sum',
+                'Transactions Aborted': 'sum',
+                'Block Hits': 'sum',
+                'Block Reads': 'sum',
+                'Heap Reads': 'sum',
+                'Heap Hits': 'sum',
+                'Sync Time': 'sum',
+                'Write Time': 'sum',
+                'Number Autoanalyze': 'sum',
+                'Number Autovacuum': 'sum',
+                'Cache Hit Ratio [%]': 'mean',
+                'Variance of Core Util [%]': 'max',
+            }"""
+            agg_dict = df_monitoring.columns
+            # Filter aggregation dictionary to only include columns present in df
+            #filtered_agg_dict = {col: func for col, func in agg_dict.items() if col in df.columns}
+            filtered_agg_dict = {col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum' for col in agg_dict if col in df.columns}
+            #print(filtered_agg_dict)
+            # Apply groupby with filtered aggregation
+            result = df.groupby('client').agg(filtered_agg_dict).reset_index()
+            return result
+
+
+
+    def OLD_get_monitoring(self, evaluation, type="stream"):
+        """
+        Retrieves and aggregates monitoring metrics for a specified component type, grouped by client.
+
+        This function obtains detailed monitoring data using `show_summary_monitoring_table` for the
+        specified component type (default "stream"). It adds a 'client' column extracted from the DataFrame index,
+        then aggregates various hardware and application metrics by client using sum or mean as appropriate.
+
+        Aggregation is defined here manually per metric.
 
         :param evaluation: The evaluation object containing monitoring data.
         :type evaluation: object
@@ -525,7 +643,7 @@ class default():
                 'Number Autoanalyze': 'sum',
                 'Number Autovacuum': 'sum',
                 'Cache Hit Ratio [%]': 'mean',
-                'Variance of Core Util [%]': 'sum',
+                'Variance of Core Util [%]': 'max',
             }
             # Filter aggregation dictionary to only include columns present in df
             filtered_agg_dict = {col: func for col, func in agg_dict.items() if col in df.columns}
@@ -598,6 +716,45 @@ class default():
                 df_performance = pd.concat([df_performance, df])
         df_performance = df_performance.sort_values(['num_tenants', 'type'])
         return df_performance
+
+
+    def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            workload = self.get_workload(code)
+            df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
+            df_monitoring.index.name="timestamp"
+            df_long = df_monitoring.reset_index().melt(
+                id_vars="timestamp",     # keep timestamp
+                var_name="series",       # column name for former column headers
+                value_name="value"       # column name for the numbers
+            )
+            #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
+            if workload['tenant_per'] == 'container':
+                # 1 time series per tenant
+                df_long[["tenant", "client"]] = df_long["series"].str.rsplit("-", n=2, expand=True).iloc[:, 1:]
+            else:
+                # 1 time series for all tenants (it is 1 DBMS)
+                df_long['tenant'] = "0"
+                df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
+            df_long['type'] = workload['tenant_per']
+            df_long['num_tenants'] = workload['num_tenants']
+            df_long.drop(columns=['series'], inplace=True)
+            #df_monitoring.plot(title=metric)
+            #ax = df_monitoring.plot()
+            #ax.set_title(metric)
+            #plt.show()
+            df_performance = pd.concat([df_performance, df_long])
+            #df_long
+            #df_2 = df_long.copy()
+        df_sum = (
+            df_performance
+            .groupby(["timestamp", "client", "type", "num_tenants"], as_index=False)["value"]
+            .sum()
+        )
+        #df_sum.drop(columns=['timestamp'], inplace=True)
+        return df_sum
 
 
     def get_evaluator(self, code):
