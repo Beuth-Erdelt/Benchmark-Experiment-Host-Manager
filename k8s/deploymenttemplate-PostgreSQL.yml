@@ -167,7 +167,7 @@ spec:
           - "-c"
           - "max_wal_senders=0"                       # https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-WAL-SENDERS
           - "-c"
-          - "fsync=off"                                # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-FSYNC
+          - "fsync=on"                                # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-FSYNC
           - "-c"
           - "wal_compression=on"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-COMPRESSION
           #- "-c"
