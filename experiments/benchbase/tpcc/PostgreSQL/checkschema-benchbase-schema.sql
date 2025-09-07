@@ -1,3 +1,7 @@
+CHECKPOINT;
+
+SELECT * FROM pg_stat_bgwriter;
+
 
 VACUUM ANALYZE {BEXHOMA_SCHEMA}.customer;
 VACUUM ANALYZE {BEXHOMA_SCHEMA}.district;
