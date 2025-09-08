@@ -588,6 +588,8 @@ class default():
             filtered_agg_dict = {col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum' for col in agg_dict if col in df.columns}
             if 'Core Utilization Variance [%]' in filtered_agg_dict:
                 filtered_agg_dict['Core Utilization Variance [%]'] = 'max'
+            if 'Max Core Utilization [%]' in filtered_agg_dict:
+                filtered_agg_dict['Max Core Utilization [%]'] = 'max'
             #print(filtered_agg_dict)
             # Apply groupby with filtered aggregation
             result = df.groupby('client').agg(filtered_agg_dict).reset_index()
