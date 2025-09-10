@@ -23,7 +23,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -m -mc -ma -tr \
+nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -32,7 +32,7 @@ nohup python benchbase.py -ms 1 -m -mc -ma -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/docs_benchbase_run_postgresql_appmetrics.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log &
 ```
 
 This
@@ -56,15 +56,15 @@ This
 ### Evaluate Results
 
 
-docs_benchbase_run_postgresql_appmetrics.log
+doc_benchbase_run_postgresql_appmetrics.log
 ```markdown
 ## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1238s 
-    Code: 1757483836
+    Duration: 1239s 
+    Code: 1757501591
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -89,7 +89,7 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:17.5
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:439782900
+    disk:439784048
     datadisk:4307
     cpu_list:0-63
     requests_cpu:4
@@ -97,36 +97,36 @@ PostgreSQL-1-1-1024-1 uses docker image postgres:17.5
     client:1
     numExperiment:1
     eval_parameters
-                code:1757483836
+                code:1757501591
 PostgreSQL-1-1-1024-2 uses docker image postgres:17.5
     RAM:541008568320
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:446346292
-    datadisk:10716
+    disk:446262900
+    datadisk:10634
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1757483836
+                code:1757501591
 
 ### Execution
 
 #### Per Pod
                          experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                                     
-PostgreSQL-1-1-1024-1-1               1        160   16384       1      1  300.0          71                   7651.516331                7522.279670         0.0                                                      53231.0                                              20901.0
-PostgreSQL-1-1-1024-2-1               1         80    8192       2      1  300.0          26                   2891.512549                2847.185895         0.0                                                      73014.0                                              27650.0
-PostgreSQL-1-1-1024-2-2               1         80    8192       2      2  300.0          21                   2902.656450                2858.403120         0.0                                                      73082.0                                              27545.0
+PostgreSQL-1-1-1024-1-1               1        160   16384       1      1  300.0          86                   7560.096908                7432.890294         0.0                                                      52764.0                                              21155.0
+PostgreSQL-1-1-1024-2-1               1         80    8192       2      1  300.0          25                   2853.992614                2811.432624         0.0                                                      73475.0                                              28017.0
+PostgreSQL-1-1-1024-2-2               1         80    8192       2      2  300.0          19                   2836.815742                2793.412423         0.0                                                      73630.0                                              28191.0
 
 #### Aggregated Parallel
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1        160   16384          1  300.0          71                       7651.52                    7522.28         0.0                                                      53231.0                                              20901.0
-PostgreSQL-1-1-1024-2               1        160   16384          2  300.0          47                       5794.17                    5705.59         0.0                                                      73082.0                                              27597.5
+PostgreSQL-1-1-1024-1               1        160   16384          1  300.0          86                       7560.10                    7432.89         0.0                                                      52764.0                                              21155.0
+PostgreSQL-1-1-1024-2               1        160   16384          2  300.0          44                       5690.81                    5604.85         0.0                                                      73630.0                                              28104.0
 
 ### Workflow
 
@@ -138,33 +138,33 @@ DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1      186.0        1.0   1.0         309.677419
-PostgreSQL-1-1-1024-2      186.0        1.0   2.0         309.677419
+PostgreSQL-1-1-1024-1      179.0        1.0   1.0         321.787709
+PostgreSQL-1-1-1024-2      179.0        1.0   2.0         321.787709
 
 ### Ingestion - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      389.99     4.77           7.9                10.93
-PostgreSQL-1-1-1024-2      389.99     4.77           7.9                10.93
+PostgreSQL-1-1-1024-1      596.62     6.81          8.18                12.11
+PostgreSQL-1-1-1024-2      596.62     6.81          8.18                12.11
 
 ### Ingestion - Loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     1841.59    14.16          0.26                 0.26
-PostgreSQL-1-1-1024-2     1841.59    14.16          0.26                 0.26
+PostgreSQL-1-1-1024-1      1748.2    14.54          0.25                 0.25
+PostgreSQL-1-1-1024-2      1748.2    14.54          0.25                 0.25
 
 ### Execution - SUT
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     7941.28    30.53         11.84                 16.0
-PostgreSQL-1-1-1024-2     6718.23    25.57         13.82                 16.0
+PostgreSQL-1-1-1024-1     7770.33    29.77         11.88                 16.0
+PostgreSQL-1-1-1024-2     7194.99    26.53         13.84                 16.0
 
 ### Execution - Benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1     3364.59    11.98          1.46                 1.46
-PostgreSQL-1-1-1024-2     3364.59    23.02          1.46                 1.46
+PostgreSQL-1-1-1024-1     3527.55    12.05          0.91                 0.91
+PostgreSQL-1-1-1024-2     3527.55    22.99          0.91                 0.91
 
 ### Application Metrics
                        Active Backends Waiting on I/O  Active Backends Waiting on WAL  Active Backends Waiting on Locks  Max Transaction Duration (I/O Wait)  Max Transaction Duration (WAL Wait)
-PostgreSQL-1-1-1024-1                             1.0                            97.0                              87.0                                 0.07                                 0.09
-PostgreSQL-1-1-1024-2                             2.0                            74.0                             104.0                                 0.05                                 0.16
+PostgreSQL-1-1-1024-1                             2.0                            77.0                              87.0                                 0.05                                 0.11
+PostgreSQL-1-1-1024-2                             2.0                            82.0                             103.0                                 0.07                                 0.15
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -183,7 +183,7 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -m -mc -ma -tr \
+nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms MySQL \
@@ -192,7 +192,7 @@ nohup python benchbase.py -ms 1 -m -mc -ma -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/docs_benchbase_run_mysql_appmetrics.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log &
 ```
 
 This
@@ -216,19 +216,18 @@ This
 
 ### Evaluate Results
 
-docs_benchbase_run_mysql_appmetrics.log
+doc_benchbase_run_mysql_appmetrics.log
 ```markdown
 ## Show Summary
 
 ### Workload
-Benchbase Workload tpcc SF=16
+Benchbase Data tpcc Loading SF=16
     Type: benchbase
-    Duration: 1786s 
-    Code: 1757496209
+    Duration: 679s 
+    Code: 1757502855
     Intro: Benchbase runs a TPC-C experiment.
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-    Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    This imports a Benchbase data set.
+    Benchbase data is generated and loaded using several threads. Scaling factor is 16. Target is based on multiples of '1024'.
     Experiment uses bexhoma version 0.8.11.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
@@ -238,9 +237,11 @@ Benchbase Workload tpcc SF=16
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [160] threads, split into [1, 2] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
+
+### Services
+MySQL-1-1-1024
+    kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-mysql-1-1-1024-1757502855 9091:9091
 
 ### Connections
 MySQL-1-1-1024-1 uses docker image mysql:8.4.0
@@ -248,89 +249,31 @@ MySQL-1-1-1024-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:442579620
-    datadisk:7037
+    disk:442562580
+    datadisk:7020
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1757496209
-MySQL-1-1-1024-2 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:444850932
-    datadisk:9255
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:16Gi
-    client:2
-    numExperiment:1
-    eval_parameters
-                code:1757496209
-
-### Execution
-
-#### Per Pod
-                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-connection_pod                                                                                                                                                                                                                                                                
-MySQL-1-1-1024-1-1               1        160   16384       1      1  300.0           0                   1218.959738                1193.569743         0.0                                                     680241.0                                             131204.0
-MySQL-1-1-1024-2-1               1         80    8192       2      1  300.0           0                    699.193243                 685.386578         0.0                                                     551498.0                                             113891.0
-MySQL-1-1-1024-2-2               1         80    8192       2      2  300.0           0                    699.453294                 685.843295         0.0                                                     553315.0                                             114001.0
-
-#### Aggregated Parallel
-                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MySQL-1-1-1024-1               1        160   16384          1  300.0           0                       1218.96                    1193.57         0.0                                                     680241.0                                             131204.0
-MySQL-1-1-1024-2               1        160   16384          2  300.0           0                       1398.65                    1371.23         0.0                                                     553315.0                                             113946.0
-
-### Workflow
-
-#### Actual
-DBMS MySQL-1-1-1024 - Pods [[1, 2]]
-
-#### Planned
-DBMS MySQL-1-1-1024 - Pods [[1, 2]]
+                code:1757502855
 
 ### Loading
                   time_load  terminals  pods  Throughput [SF/h]
-MySQL-1-1-1024-1      509.0        1.0   1.0         113.163065
-MySQL-1-1-1024-2      509.0        1.0   2.0         113.163065
+MySQL-1-1-1024-1      392.0        1.0   1.0                0.0
 
 ### Ingestion - SUT
                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-1-1-1024-1     1433.26     3.93          5.86                 9.33
-MySQL-1-1-1024-2     1433.26     3.93          5.86                 9.33
+MySQL-1-1-1024-1     1212.53     4.94          5.77                 9.08
 
 ### Ingestion - Loader
                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-1-1-1024-1     1643.98     7.63          0.48                 0.48
-MySQL-1-1-1024-2     1643.98     7.63          0.48                 0.48
-
-### Execution - SUT
-                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-1-1-1024-1     2832.33    11.72          6.47                12.74
-MySQL-1-1-1024-2     3015.87    12.50          6.85                15.51
-
-### Execution - Benchmarker
-                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-1-1-1024-1     1196.86     5.91          0.93                 0.93
-MySQL-1-1-1024-2     1028.20     9.87          0.93                 0.93
-
-### Application Metrics
-                  InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
-MySQL-1-1-1024-1                           1.0                  29440.35                    0.11               0.06                    0.0
-MySQL-1-1-1024-2                           0.0                  33994.07                    0.11               0.00                    0.0
+MySQL-1-1-1024-1     1444.86     6.93          0.48                 0.48
 
 ### Tests
-TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
 ```
 
 The summary shows the first 5 application metrics aggregated per execution run.

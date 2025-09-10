@@ -43,6 +43,39 @@ wait_process "ycsb"
 ####################################################
 
 
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1,2 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms MySQL \
+  -nbp 1,2 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
 
 
 ###########################################
