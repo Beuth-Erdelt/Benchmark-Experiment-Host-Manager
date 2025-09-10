@@ -1,3 +1,7 @@
+CHECKPOINT;
+
+SELECT * FROM pg_stat_bgwriter;
+
 
 VACUUM ANALYZE customer;
 VACUUM ANALYZE district;

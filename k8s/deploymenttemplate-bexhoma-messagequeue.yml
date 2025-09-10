@@ -21,6 +21,7 @@ spec:
     metadata:
       labels: {app: bexhoma, component: messagequeue}
     spec:
+      nodeName: cl-worker28
       containers:
         - name: master
           image: redis

@@ -40,7 +40,7 @@ RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --fo
 #COPY requirements.txt ./
 #RUN pip install --no-cache-dir -r requirements.txt
 
-RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.11
+RUN git clone --branch v0.14.11 https://github.com/Beuth-Erdelt/DBMS-Benchmarker /usr/src/app/DBMS-Benchmarker
 
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
@@ -79,4 +79,4 @@ COPY ./notebooks /usr/src/app/DBMS-Benchmarker/notebooks
 
 # RUN git pull
 
-CMD git pull; python ./dashboard.py -r /results
+CMD ls /usr/src/app/DBMS-Benchmarker -lh; ls /usr/src/app/DBMS-Benchmarker/DBMS-Benchmarker -lh; python ./dashboard.py -r /results

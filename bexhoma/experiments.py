@@ -374,6 +374,7 @@ class default():
         gpus = str(args.request_gpu)
         request_storage_type = args.request_storage_type
         request_storage_size = args.request_storage_size
+        request_storage_remove = args.request_storage_remove
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
@@ -482,6 +483,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
         if request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
+            if request_storage_remove:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
         if self.loading_is_active():
             self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
         if self.benchmarking_is_active():
