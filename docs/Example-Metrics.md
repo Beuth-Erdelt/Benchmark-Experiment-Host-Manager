@@ -19,7 +19,7 @@ mkdir -p $LOG_DIR
 
 For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
-### PostgreSQL
+## PostgreSQL
 
 Example:
 ```bash
@@ -53,7 +53,7 @@ This
 * tests if results match workflow (`-tr`)
 * shows a summary
 
-#### Evaluate Results
+### Evaluate Results
 
 
 docs_benchbase_run_postgresql_appmetrics.log
@@ -179,7 +179,7 @@ The summary shows the first 5 application metrics aggregated per execution run.
 An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
 
 
-### MySQL
+## MySQL
 
 Example:
 ```bash
@@ -214,7 +214,7 @@ This
 * shows a summary
 
 
-#### Evaluate Results
+### Evaluate Results
 
 docs_benchbase_run_mysql_appmetrics.log
 ```markdown
