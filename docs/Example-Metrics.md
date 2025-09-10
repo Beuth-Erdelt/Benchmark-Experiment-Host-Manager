@@ -7,8 +7,6 @@ In the following we demonstrate how to collect application metrics, that is, met
 
 ## Perform Benchmark
 
-An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
-
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
 BEXHOMA_NODE_SUT="cl-worker11"
@@ -177,6 +175,9 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+The summary shows the first 5 application metrics aggregated per execution run.
+An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
+
 
 ### MySQL
 
@@ -331,3 +332,7 @@ TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
+
+The summary shows the first 5 application metrics aggregated per execution run.
+An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
+
