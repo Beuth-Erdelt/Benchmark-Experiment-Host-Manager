@@ -28,6 +28,7 @@ import kubernetes.config as kubernetes_config
 from kubernetes.client.rest import ApiException
 #from kubernetes import client, config
 import subprocess
+import traceback
 import os
 import time
 import psutil
@@ -877,15 +878,54 @@ class testbed():
         :param command: An eksctl command
         :return: stdout of the kubectl command
         """
+        def run_with_fallback(fullcommand):
+            encodings = ["utf-8", "latin1", "cp1252"]
+            try:
+                # Run once, capture raw bytes
+                raw = subprocess.check_output(fullcommand, shell=True, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as e:
+                # Command ran but failed (non-zero exit code)
+                print("Command failed!")
+                print(f"Return code: {e.returncode}")
+                print(f"Command: {e.cmd}")
+                if e.output:
+                    print("Raw output (bytes):", e.output)
+                    # Try to decode output even on error
+                    for enc in encodings:
+                        try:
+                            print(f"Decoded with {enc}:")
+                            print(e.output.decode(enc))
+                            break
+                        except UnicodeDecodeError:
+                            continue
+                return None
+            except Exception as e:
+                # Any other unexpected error (e.g. command not found)
+                print("Unexpected error while running subprocess!")
+                print("Exception type:", type(e).__name__)
+                print("Exception message:", str(e))
+                print("Traceback:")
+                traceback.print_exc()
+                return None
+            # Try decoding with fallback encodings
+            for enc in encodings:
+                try:
+                    return raw.decode(enc)
+                except UnicodeDecodeError:
+                    continue
+            # If nothing worked
+            print("Failed to decode output with any known encoding")
+            return None
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
         self.logger.debug('testbed.kubectl({})'.format(fullcommand))
         #print(fullcommand)
         # Try reading the output with fallback encodings
-        try:
-            result = subprocess.check_output(fullcommand, shell=True, encoding='utf-8')
-        except UnicodeDecodeError:
-            # Fallback to Latin-1 or Windows-1252
-            result = subprocess.check_output(fullcommand, shell=True, encoding='latin1')
+        result = run_with_fallback(fullcommand)
+        #try:
+        #    result = subprocess.check_output(fullcommand, shell=True, encoding='utf-8')
+        #except UnicodeDecodeError:
+        #    # Fallback to Latin-1 or Windows-1252
+        #    result = subprocess.check_output(fullcommand, shell=True, encoding='latin1')
         #print(result)
         return result
         #return os.popen(fullcommand).read()# os.system(fullcommand)
