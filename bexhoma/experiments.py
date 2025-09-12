@@ -1830,7 +1830,7 @@ class default():
                 #(timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
                 self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
-                    print("Error in "+filename)
+                    print(f"Error in {filename}: no start and end times")
                 else:
                     timing.append((timing_start, timing_end))
             # when log does not contain container name (when is it true?)
