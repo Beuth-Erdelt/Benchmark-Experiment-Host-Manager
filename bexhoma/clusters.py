@@ -898,6 +898,11 @@ class testbed():
                             break
                         except UnicodeDecodeError:
                             continue
+                    if b'Unauthorized' in e.output:
+                        print("Create new access token")
+                        self.cluster_access()
+                        self.wait(2)
+                        return run_with_fallback(fullcommand)
                 return None
             except Exception as e:
                 # Any other unexpected error (e.g. command not found)
