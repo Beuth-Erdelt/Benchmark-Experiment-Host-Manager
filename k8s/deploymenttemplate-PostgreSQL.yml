@@ -162,12 +162,12 @@ spec:
 
           # --- WAL & Checkpoints (Ceph-optimized) ---
           - "-c"
-          - "wal_level=replica"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
-          #- "wal_level=minimal"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
+          #- "wal_level=replica"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
+          - "wal_level=minimal"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
           - "-c"
           - "max_wal_senders=0"                       # https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-WAL-SENDERS
           - "-c"
-          - "fsync=off"                                # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-FSYNC
+          - "fsync=on"                                # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-FSYNC
           - "-c"
           - "wal_compression=on"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-COMPRESSION
           #- "-c"
@@ -186,8 +186,8 @@ spec:
           - "checkpoint_completion_target=0.9"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
 
           # --- Planner Cost Tweaks (CephFS) ---
-          #- "-c"
-          #- "random_page_cost=4.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
+          - "-c"
+          - "random_page_cost=1.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
           #- "-c"
           #- "seq_page_cost=1.0"                      # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
           #- "-c"
