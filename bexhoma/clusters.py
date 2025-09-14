@@ -495,7 +495,7 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.is_pod_ready(pod=pod, app=app)
+            return self.is_pod_ready(pod=pod)
             #print(f"Error fetching pod status: {e}")
             #return False
     def get_pods_labels(self, app='', component='', experiment='', configuration=''):
