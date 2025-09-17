@@ -3951,6 +3951,10 @@ class benchbase(default):
                     df_plot_filtered[col] = df_plot.loc[:,col]
             print(df_plot_filtered.sort_values(['experiment_run', 'client', 'child']))
             print("\n#### Aggregated Parallel")
+            if self.workload['tenant_per'] == "container":
+                # we want to aggregate containers of DBMS running in parallel
+                #print(type(df_plot))
+                df_plot['connection'] = df_plot['experiment_run'].astype(str)+"-"+df_plot['client'].astype(str)
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             #print(df_aggregated)
             #print(df_aggregated.T)
