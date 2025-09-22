@@ -112,7 +112,8 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /dev/shm, name: dshm}
-        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume-ramdisk}
+        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
+        #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume-ramdisk}
         args:
           #- "-c"
           #- "track_io_timing=1"
@@ -187,7 +188,7 @@ spec:
 
           # --- Planner Cost Tweaks (CephFS) ---
           - "-c"
-          - "random_page_cost=60.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
+          - "random_page_cost=1.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
           #- "-c"
           #- "seq_page_cost=1.0"                      # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
           #- "-c"
@@ -227,14 +228,14 @@ spec:
         ports:
           - containerPort: 9187
         resources:
-          requests: {cpu: 1000m, memory: 50Gi}
-          limits: {cpu: 1000m, memory: 50Gi}
+          requests: {cpu: 1000m, memory: 4Gi}
+          limits: {cpu: 1000m, memory: 4Gi}
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
-      #- name: benchmark-storage-volume
-      #  persistentVolumeClaim: {claimName: bexhoma-storage}
-      - { name: benchmark-storage-volume-ramdisk, emptyDir: { sizeLimit: 50Gi, medium: Memory } }
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      #- { name: benchmark-storage-volume-ramdisk, emptyDir: { sizeLimit: 50Gi, medium: Memory } }
       - name: rootfs
         hostPath:
           path: /
