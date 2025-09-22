@@ -333,8 +333,10 @@ class logger(base):
                 df = self.log_to_df(path+"/"+filename)
                 #print(df)
                 if df.empty:
-                    print("Error in "+filename)
-                    print(self.workflow_errors)
+                    # dbmsbenchmarker never returns a non-empty dataframe
+                    #print("Error in "+filename)
+                    #print(self.workflow_errors)
+                    pass
                 else:
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")

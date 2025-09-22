@@ -26,6 +26,7 @@
     ./Example-CloudDatabase.md
     ./Example-custom.md
     ./Example-Multi-Tenant.md
+    ./Example-Metrics.md
     ./Tool.md
     ./Concept.md
     ./Config.md

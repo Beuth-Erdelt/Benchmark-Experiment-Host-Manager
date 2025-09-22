@@ -1,0 +1,113 @@
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=16
+    Type: benchbase
+    Duration: 1469s 
+    Code: 1757505015
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.11.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [160] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-1-1-1024-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:442566700
+    datadisk:7024
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1757505015
+MySQL-1-1-1024-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:444598032
+    datadisk:9008
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1757505015
+
+### Execution
+
+#### Per Pod
+                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                
+MySQL-1-1-1024-1-1               1        160   16384       1      1  300.0           0                   1079.973290                1057.856624         0.0                                                     951155.0                                             147537.0
+MySQL-1-1-1024-2-1               1         80    8192       2      1  300.0           0                    146.366664                 143.833331         0.0                                                    1879916.0                                             542651.0
+MySQL-1-1-1024-2-2               1         80    8192       2      2  300.0           0                    148.376649                 145.699982         0.0                                                    1832265.0                                             536515.0
+
+#### Aggregated Parallel
+                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MySQL-1-1-1024-1               1        160   16384          1  300.0           0                       1079.97                    1057.86         0.0                                                     951155.0                                             147537.0
+MySQL-1-1-1024-2               1        160   16384          2  300.0           0                        294.74                     289.53         0.0                                                    1879916.0                                             539583.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-1-1-1024 - Pods [[1, 2]]
+
+#### Planned
+DBMS MySQL-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                  time_load  terminals  pods  Throughput [SF/h]
+MySQL-1-1-1024-1      376.0        1.0   1.0         153.191489
+MySQL-1-1-1024-2      376.0        1.0   2.0         153.191489
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     1171.15     5.08          5.85                  9.3
+MySQL-1-1-1024-2     1171.15     5.08          5.85                  9.3
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     1535.89     8.43          0.57                 0.57
+MySQL-1-1-1024-2     1535.89     8.43          0.57                 0.57
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1     2683.28    10.63          6.43                12.49
+MySQL-1-1-1024-2      749.80     4.53          6.56                13.33
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-1-1-1024-1      1142.6      4.3          1.08                 1.08
+MySQL-1-1-1024-2      1142.6      4.2          1.08                 1.08
+
+### Application Metrics
+                  InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-1-1-1024-1                           1.0                  26013.33                    0.11               0.02                    0.0
+MySQL-1-1-1024-2                           0.0                  16972.07                    0.11               3.35                    0.0
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned

@@ -8,7 +8,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 50Gi
   storageClassName: shared
 ---
 apiVersion: v1
@@ -106,13 +106,14 @@ spec:
           #    - ALL
           #readOnlyRootFilesystem: true #could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": Read-only file system
         resources:
-          limits: {cpu: 16000m, memory: 128Gi}
-          requests: {cpu: 1000m, memory: 1Gi}
-          #, ephemeral-storage: "1536Gi"}
+          limits: {cpu: 16000m, memory: 50Gi}
+          requests: {cpu: 1000m, memory: 50Gi}
+          #, ephemeral-storage: "50Gi"}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /dev/shm, name: dshm}
         - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
+        #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume-ramdisk}
         args:
           #- "-c"
           #- "track_io_timing=1"
@@ -134,7 +135,7 @@ spec:
           - "-c"
           - "shared_buffers=256GB"       # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS
           - "-c"
-          - "effective_cache_size=350GB" # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE
+          - "effective_cache_size=256GB" # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE
           - "-c"
           - "work_mem=32GB"              # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM
           - "-c"
@@ -143,31 +144,31 @@ spec:
           - "temp_buffers=4GB"           # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-TEMP-BUFFERS
           - "-c"
           - "wal_buffers=1GB"            # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-BUFFERS
-          - "-c"
-          - "autovacuum_work_mem=1GB"    # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-WORK-MEM
+          #- "-c"
+          #- "autovacuum_work_mem=1GB"    # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-WORK-MEM
 
           # --- Autovacuum ---
           - "-c"
           - "autovacuum=off"                          # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM
-          - "-c"
-          - "autovacuum_max_workers=10"               # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-MAX-WORKERS
-          - "-c"
-          - "autovacuum_vacuum_cost_limit=1000"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-LIMIT
-          - "-c"
-          - "vacuum_cost_limit=1000"                  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-VACUUM-COST-LIMIT
-          - "-c"
-          - "autovacuum_naptime=15s"                  # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-NAPTIME
-          - "-c"
-          - "autovacuum_vacuum_cost_delay=20ms"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-DELAY
+          #- "-c"
+          #- "autovacuum_max_workers=10"               # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-MAX-WORKERS
+          #- "-c"
+          #- "autovacuum_vacuum_cost_limit=1000"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-LIMIT
+          #- "-c"
+          #- "vacuum_cost_limit=1000"                  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-VACUUM-COST-LIMIT
+          #- "-c"
+          #- "autovacuum_naptime=15s"                  # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-NAPTIME
+          #- "-c"
+          #- "autovacuum_vacuum_cost_delay=20ms"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-DELAY
 
           # --- WAL & Checkpoints (Ceph-optimized) ---
           - "-c"
-          - "wal_level=replica"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
-          #- "wal_level=minimal"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
+          #- "wal_level=replica"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
+          - "wal_level=minimal"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
           - "-c"
           - "max_wal_senders=0"                       # https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-WAL-SENDERS
           - "-c"
-          - "fsync=off"                                # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-FSYNC
+          - "fsync=on"                                # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-FSYNC
           - "-c"
           - "wal_compression=on"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-COMPRESSION
           #- "-c"
@@ -183,17 +184,17 @@ spec:
           - "-c"
           - "checkpoint_timeout=12h"                   # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-TIMEOUT
           - "-c"
-          - "checkpoint_completion_target=0.9"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
+          - "checkpoint_completion_target=1.0"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
 
           # --- Planner Cost Tweaks (CephFS) ---
-          #- "-c"
-          #- "random_page_cost=4.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
+          - "-c"
+          - "random_page_cost=1.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
           #- "-c"
           #- "seq_page_cost=1.0"                      # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
           #- "-c"
           #- "cpu_tuple_cost=0.01"                    # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-CPU-TUPLE-COST
           - "-c"
-          - "effective_io_concurrency=32"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
+          - "effective_io_concurrency=64"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
           #- "-c"
           #- "default_statistics_target=500"          # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-DEFAULT-STATISTICS-TARGET
 
@@ -234,6 +235,7 @@ spec:
         persistentVolumeClaim: {claimName: bexhoma-data}
       - name: benchmark-storage-volume
         persistentVolumeClaim: {claimName: bexhoma-storage}
+      #- { name: benchmark-storage-volume-ramdisk, emptyDir: { sizeLimit: 50Gi, medium: Memory } }
       - name: rootfs
         hostPath:
           path: /

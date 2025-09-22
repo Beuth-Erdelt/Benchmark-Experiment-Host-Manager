@@ -19,3 +19,4 @@ dev/*/.ipynb_checkpoints/*
 experiments/*/*/filled_*
 experiments/*/*/*/filled_*
 **/initdatabases.sql
+local/*
