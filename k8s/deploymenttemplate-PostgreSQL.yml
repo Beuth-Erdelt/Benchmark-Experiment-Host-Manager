@@ -44,7 +44,7 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
-      priorityClassName: important
+      #priorityClassName: important
       containers:
       - name: dbms
         image: postgres:17.5
@@ -187,8 +187,8 @@ spec:
           - "checkpoint_completion_target=1.0"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
 
           # --- Planner Cost Tweaks (CephFS) ---
-          - "-c"
-          - "random_page_cost=1.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
+          #- "-c"
+          #- "random_page_cost=1.0"                   # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
           #- "-c"
           #- "seq_page_cost=1.0"                      # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
           #- "-c"
