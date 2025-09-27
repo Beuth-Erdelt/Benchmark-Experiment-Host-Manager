@@ -3442,10 +3442,35 @@ class ycsb(default):
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
+        list_monitoring_app = list()
+        df_monitoring_app = pd.DataFrame()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            #print(c['monitoring']['metrics'])
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
+                num_metrics_included = 0
+                for metricname, metric in c['monitoring']['metrics'].items():
+                    #print(metric['type'])
+                    if num_metrics_included >= 5:
+                        continue
+                    if metric['type'] == 'application' and metric['active'] == True:
+                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
+                        if metric['metric'] == 'counter':
+                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                        else:
+                            df = df.max().sort_index()
+                        df_cleaned = pd.DataFrame(df)
+                        df_cleaned.columns = [metric['title']]
+                        if not df_cleaned.empty:
+                            list_monitoring_app.append(df_cleaned.copy())
+                            num_metrics_included = num_metrics_included + 1
+                if len(list_monitoring_app) > 0:
+                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'
             if key in c['parameter']:
@@ -3552,6 +3577,9 @@ class ycsb(default):
                     print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
+        if not df_monitoring_app.empty:
+            print("\n### Application Metrics")
+            print(df_monitoring_app)
         print("\n### Tests")
         if test_loading:
             self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
