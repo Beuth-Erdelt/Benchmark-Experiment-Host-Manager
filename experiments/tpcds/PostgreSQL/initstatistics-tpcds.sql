@@ -25,3 +25,7 @@ ANALYZE VERBOSE public.web_page;
 ANALYZE VERBOSE public.web_returns;
 ANALYZE VERBOSE public.web_sales;
 ANALYZE VERBOSE public.web_site;
+
+ALTER SYSTEM SET synchronous_commit = on;
+-- ALTER SYSTEM SET fsync = on;
+SELECT pg_reload_conf();
