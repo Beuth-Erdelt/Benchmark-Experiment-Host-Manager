@@ -925,6 +925,136 @@ results in
 doc_tpch_testcase_fractional.log
 ```markdown
 ## Show Summary
+
+### Workload
+TPC-H Queries SF=0.1
+    Type: tpch
+    Duration: 721s 
+    Code: 1758983403
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=0.1) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 600.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.12.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 5Gi. Persistent storage is removed at experiment start.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+PostgreSQL-BHT-8-1-1-1 uses docker image postgres:17.5
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:435699540
+    datadisk:315
+    volume_size:5.0G
+    volume_used:312M
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1758983403
+PostgreSQL-BHT-8-2-1-1 uses docker image postgres:17.5
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:435699524
+    datadisk:315
+    volume_size:5.0G
+    volume_used:312M
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    eval_parameters
+        code:1758983403
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-2-1-1
+Pricing Summary Report (TPC-H Q1)                                    423.05                 2222.45
+Minimum Cost Supplier Query (TPC-H Q2)                                60.02                  867.05
+Shipping Priority (TPC-H Q3)                                         155.79                 1071.84
+Order Priority Checking Query (TPC-H Q4)                             229.91                  252.84
+Local Supplier Volume (TPC-H Q5)                                      82.82                   86.60
+Forecasting Revenue Change (TPC-H Q6)                                 82.63                   87.00
+Forecasting Revenue Change (TPC-H Q7)                                111.71                  114.82
+National Market Share (TPC-H Q8)                                     108.20                  251.04
+Product Type Profit Measure (TPC-H Q9)                               201.88                  206.66
+Forecasting Revenue Change (TPC-H Q10)                               135.69                  138.47
+Important Stock Identification (TPC-H Q11)                            17.97                   17.49
+Shipping Modes and Order Priority (TPC-H Q12)                        125.53                  133.54
+Customer Distribution (TPC-H Q13)                                    172.56                  174.95
+Forecasting Revenue Change (TPC-H Q14)                                94.36                   97.05
+Top Supplier Query (TPC-H Q15)                                        86.00                   87.65
+Parts/Supplier Relationship (TPC-H Q16)                              117.53                  115.89
+Small-Quantity-Order Revenue (TPC-H Q17)                             181.35                  186.41
+Large Volume Customer (TPC-H Q18)                                    484.26                  476.84
+Discounted Revenue (TPC-H Q19)                                        16.20                   17.56
+Potential Part Promotion (TPC-H Q20)                                  25.14                   26.49
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  133.31                  136.72
+Global Sales Opportunity Query (TPC-H Q22)                            33.22                   35.22
+
+### Loading [s]
+                        timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-8-1-1-1          19.0            6.0         1.0      128.0     156.0
+PostgreSQL-BHT-8-2-1-1          19.0            6.0         1.0      128.0     156.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                        Geo Times [s]
+DBMS                                 
+PostgreSQL-BHT-8-1-1-1           0.11
+PostgreSQL-BHT-8-2-1-1           0.15
+
+### Power@Size ((3600*SF)/(geo times))
+                        Power@Size [~Q/h]
+DBMS                                     
+PostgreSQL-BHT-8-1-1-1            3568.75
+PostgreSQL-BHT-8-2-1-1            2518.00
+
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                                    time [s]  count   SF  Throughput@Size
+DBMS                 SF  num_experiment num_client                                       
+PostgreSQL-BHT-8-1-1 0.1 1              1                  5      1  0.1           1584.0
+PostgreSQL-BHT-8-2-1 0.1 2              1                  8      1  0.1            990.0
+
+### Workflow
+                                   orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-1  0.1     8               1           1       1758983759     1758983764
+PostgreSQL-BHT-8-2-1-1  PostgreSQL-BHT-8-2-1  0.1     8               2           1       1758984040     1758984048
+
+#### Actual
+DBMS PostgreSQL-BHT-8 - Pods [[1], [1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1], [1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
 ```
 
 
