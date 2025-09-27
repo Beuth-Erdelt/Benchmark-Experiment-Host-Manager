@@ -1296,7 +1296,7 @@ scrape_configs:
                     #print(pvcs)
                     if len(pvcs) > 0:
                         print("{:30s}: storage {} exists".format(configuration, name_pvc))
-                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove']:
+                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0:
                             # we have not loaded yet, so this is the first run in this experiment
                             print("{:30s}: storage {} should be removed".format(configuration, name_pvc))
                             self.experiment.cluster.delete_pvc(name_pvc)
