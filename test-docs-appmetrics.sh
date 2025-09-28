@@ -78,6 +78,79 @@ wait_process "benchbase"
 
 
 
+
+#### YCSB Monitoring Application Metrics (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 3 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log &
+
+wait_process "ycsb"
+
+
+
+
+#### TCP-H Monitoring Application Metrics (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_appmetrics.log &
+
+wait_process "tpch"
+
+
+
+#### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log &
+
+wait_process "tpcds"
+
+
+#### HammerDB Monitoring Application Metrics (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -xlat \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log &
+
+wait_process "hammerdb"
+
+
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
