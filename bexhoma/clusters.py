@@ -1994,7 +1994,7 @@ class kubernetes(testbed):
             while tries<10:
                 stdout = self.pod_log(pod_name, container)
                 if len(stdout) > 0:
-                    f = open(filename_log, "w")
+                    f = open(filename_log, "w", encoding='utf-8')
                     f.write(stdout)
                     f.close()
                     return
