@@ -850,6 +850,8 @@ TEST passed: Result contains no FAILED column
 
 ## MySQL
 
+### Benchbase's TPC-C
+
 Example:
 ```bash
 nohup python benchbase.py -m -mc -ma -ms 1 -tr \
@@ -1004,4 +1006,114 @@ TEST passed: Workflow as planned
 
 The summary shows the first 5 application metrics aggregated per execution run.
 An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
+
+
+
+### HammerDB's TPC-C
+
+Example:
+```bash
+nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
+  -sf 16 \
+  -xlat \
+  -sd 5 \
+  -dbms MySQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log &
+```
+
+doc_hammerdb_run_mysql_appmetrics.log
+```markdown
+## Show Summary
+```
+
+
+### TPC-H
+
+Example:
+```bash
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms MySQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log &
+```
+
+doc_tpch_run_mysql_appmetrics.log
+```markdown
+## Show Summary
+```
+
+
+### TPC-DS
+
+Example:
+```bash
+nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms MySQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log &
+```
+
+doc_tpcds_run_mysql_appmetrics.log
+```markdown
+## Show Summary
+```
+
+
+
+### YCSB
+
+Example:
+```bash
+nohup python ycsb.py -ms 1 -tr -lr 64Gi \
+  -sf 3 \
+  --workload a \
+  -dbms MySQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2,3 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log &
+```
+
+doc_ycsb_run_mysql_appmetrics.log
+```markdown
+## Show Summary
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
