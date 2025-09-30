@@ -184,6 +184,7 @@ class default():
         self.sut_service_name = ""                                              #: Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_pod_name = ""                                                  #: Name of pod of SUT, if it is not managed by bexhoma
         self.sut_container_name = "dbms"                                        #: Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.sut_startup_args = []                                              #: List of args that are set for the SUT container in YAML manifest at startup
         self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
@@ -1565,6 +1566,9 @@ scrape_configs:
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
+                        if 'args' in container:
+                            self.sut_startup_args = container['args']
+                            print("{:30s}: Args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in reversed(list(enumerate(container['volumeMounts']))):
@@ -2231,6 +2235,7 @@ scrape_configs:
         server['hugepages_free'] = self.get_host_hugepages_free()
         server['cpu_list'] = self.get_host_cpulist()
         server['cuda'] = self.get_host_cuda()
+        server['args'] = self.sut_startup_args
         return server
     def set_metric_of_config_default(self, metric, host, gpuid, schema, database, experiment=None):
         """
