@@ -331,8 +331,8 @@ doc_tpch_testcase_appmetrics.log
 ### Workload
 TPC-H Queries SF=3
     Type: tpch
-    Duration: 770s 
-    Code: 1759006482
+    Duration: 778s 
+    Code: 1759052328
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -361,79 +361,70 @@ PostgreSQL-BHT-8-1-1 uses docker image postgres:17.5
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:435700844
-    datadisk:8187
+    disk:435703624
+    datadisk:8186
     volume_size:30G
     volume_used:8.0G
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
+    limits_memory:64Gi
     eval_parameters
-        code:1759006482
+        code:1759052328
 
 ### Errors (failed queries)
-                                                     PostgreSQL-BHT-8-1-1
-Large Volume Customer (TPC-H Q18)                                    True
-Discounted Revenue (TPC-H Q19)                                       True
-Potential Part Promotion (TPC-H Q20)                                 True
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  True
-Global Sales Opportunity Query (TPC-H Q22)                           True
-Large Volume Customer (TPC-H Q18)
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: An I/O error occurred while sending to the backend.
-Discounted Revenue (TPC-H Q19)
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: This connection has been closed.
-Potential Part Promotion (TPC-H Q20)
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: This connection has been closed.
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: This connection has been closed.
-Global Sales Opportunity Query (TPC-H Q22)
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: This connection has been closed.
+No errors
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS                                           PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                           5615.14
-Minimum Cost Supplier Query (TPC-H Q2)                      1471.77
-Shipping Priority (TPC-H Q3)                                1583.19
-Order Priority Checking Query (TPC-H Q4)                     787.22
-Local Supplier Volume (TPC-H Q5)                            1498.18
-Forecasting Revenue Change (TPC-H Q6)                       1022.72
-Forecasting Revenue Change (TPC-H Q7)                       1827.85
-National Market Share (TPC-H Q8)                            1083.13
-Product Type Profit Measure (TPC-H Q9)                      2614.69
-Forecasting Revenue Change (TPC-H Q10)                      3530.70
-Important Stock Identification (TPC-H Q11)                   558.20
-Shipping Modes and Order Priority (TPC-H Q12)               1600.00
-Customer Distribution (TPC-H Q13)                           6666.07
-Forecasting Revenue Change (TPC-H Q14)                      1686.40
-Top Supplier Query (TPC-H Q15)                              1260.23
-Parts/Supplier Relationship (TPC-H Q16)                     1325.20
-Small-Quantity-Order Revenue (TPC-H Q17)                    6065.02
+DBMS                                                 PostgreSQL-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                                 5967.70
+Minimum Cost Supplier Query (TPC-H Q2)                            1454.78
+Shipping Priority (TPC-H Q3)                                      1585.57
+Order Priority Checking Query (TPC-H Q4)                           785.76
+Local Supplier Volume (TPC-H Q5)                                  1530.92
+Forecasting Revenue Change (TPC-H Q6)                             1032.65
+Forecasting Revenue Change (TPC-H Q7)                             1833.38
+National Market Share (TPC-H Q8)                                  1046.70
+Product Type Profit Measure (TPC-H Q9)                            2624.27
+Forecasting Revenue Change (TPC-H Q10)                            3623.58
+Important Stock Identification (TPC-H Q11)                         560.87
+Shipping Modes and Order Priority (TPC-H Q12)                     1781.32
+Customer Distribution (TPC-H Q13)                                 6646.51
+Forecasting Revenue Change (TPC-H Q14)                            1710.70
+Top Supplier Query (TPC-H Q15)                                    1265.26
+Parts/Supplier Relationship (TPC-H Q16)                           1312.32
+Small-Quantity-Order Revenue (TPC-H Q17)                          5702.20
+Large Volume Customer (TPC-H Q18)                                15935.12
+Discounted Revenue (TPC-H Q19)                                     267.17
+Potential Part Promotion (TPC-H Q20)                               875.76
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               1728.79
+Global Sales Opportunity Query (TPC-H Q22)                         441.84
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1          20.0          135.0         2.0      407.0     568.0
+PostgreSQL-BHT-8-1-1          19.0          117.0         2.0      413.0     554.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-8-1-1           1.91
+PostgreSQL-BHT-8-1-1           1.73
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-8-1-1            5897.09
+PostgreSQL-BHT-8-1-1            6412.73
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
                                                   time [s]  count   SF  Throughput@Size
 DBMS               SF  num_experiment num_client                                       
-PostgreSQL-BHT-8-1 3.0 1              1                 56      1  3.0          3278.57
+PostgreSQL-BHT-8-1 3.0 1              1                 66      1  3.0           3600.0
 
 ### Workflow
                                orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  3.0     8               1           1       1759007103     1759007159
+PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  3.0     8               1           1       1759052956     1759053022
 
 #### Actual
 DBMS PostgreSQL-BHT-8 - Pods [[1]]
@@ -443,35 +434,35 @@ DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
 ### Ingestion - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1      372.21     1.28         10.49                15.66
+PostgreSQL-BHT-8-1      364.92     1.57         10.82                15.73
 
 ### Ingestion - Loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       47.16     0.34           0.0                  0.0
+PostgreSQL-BHT-8-1       28.16     0.49           0.0                  0.0
 
 ### Execution - SUT
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1         0.0     0.77         10.18                14.59
+PostgreSQL-BHT-8-1      146.82     2.21         10.78                15.58
 
 ### Execution - Benchmarker
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       11.88        0          0.23                 0.23
+PostgreSQL-BHT-8-1       12.43        0          0.24                 0.24
 
 ### Application Metrics
                     Number of Idle Sessions  Number of Idle-in-transaction Sessions  Number of Idle-in-transaction Aborted Sessions  Number of Active Sessions  Number of Active Application Sessions
-PostgreSQL-BHT-8-1                     0.09                                     0.0                                             0.0                        7.0                                    6.0
+PostgreSQL-BHT-8-1                      0.0                                     0.0                                             0.0                        5.0                                    5.0
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Throughput@Size contains no 0 or NaN
-TEST failed: SQL errors
+TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 ```
 
@@ -739,20 +730,20 @@ doc_ycsb_testcase_appmetrics.log
 ## Show Summary
 
 ### Workload
-YCSB SF=1
+YCSB SF=3
     Type: ycsb
-    Duration: 2221s 
-    Code: 1759011827
+    Duration: 8579s 
+    Code: 1759053161
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
-    Number of rows to insert is 1000000.
+    Number of rows to insert is 3000000.
     Ordering of inserts is hashed.
-    Number of operations is 1000000.
+    Number of operations is 3000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
     Factors for loading are [4].
-    Factors for benchmarking are [2].
+    Factors for benchmarking are [2, 3].
     Experiment uses bexhoma version 0.8.12.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
@@ -762,7 +753,7 @@ YCSB SF=1
     Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [64] threads, split into [8] pods.
-    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
@@ -773,51 +764,114 @@ PostgreSQL-64-8-65536-1 uses docker image postgres:17.5
     Cores:64
     host:5.15.0-140-generic
     node:cl-worker11
-    disk:438148272
-    datadisk:2390
+    disk:442966724
+    datadisk:7093
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1759011827
+        code:1759053161
+PostgreSQL-64-8-65536-2 uses docker image postgres:17.5
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:444795004
+    datadisk:8879
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1759053161
+PostgreSQL-64-8-65536-3 uses docker image postgres:17.5
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:445820828
+    datadisk:9880
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:3
+    numExperiment:1
+    eval_parameters
+        code:1759053161
+PostgreSQL-64-8-65536-4 uses docker image postgres:17.5
+    RAM:541008568320
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:446703628
+    datadisk:10742
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:4
+    numExperiment:1
+    eval_parameters
+        code:1759053161
 
 ### Loading
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-65536               1       64   65536          8           0                    1118.062358               894537.0             1000000                            110559.0
+PostgreSQL-64-8-65536               1       64   65536          8           0                    3390.547889               884853.0             3000000                             45703.0
 
 ### Execution
                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-PostgreSQL-64-8-65536-1               1       64   32768          1           0                        1091.89               915839.0            501111                             991.0              498889                           2330623.0
+PostgreSQL-64-8-65536-1               1       64   32768          1           0                        2310.03              1298685.0           1500284                             832.0             1499716                            990207.0
+PostgreSQL-64-8-65536-2               1       64   32768          8           0                        1319.17              2282672.0           1500726                             843.0             1499274                           1897471.0
+PostgreSQL-64-8-65536-3               1       64   49152          1           0                        1923.59              1559582.0           1498778                             783.0             1501222                           1180671.0
+PostgreSQL-64-8-65536-4               1       64   49152          8           0                        1597.60              1882872.0           1498843                             823.0             1501157                           1514495.0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-65536 - Pods [[1]]
+DBMS PostgreSQL-64-8-65536 - Pods [[1, 8, 1, 8]]
 
 #### Planned
-DBMS PostgreSQL-64-8-65536 - Pods [[1]]
+DBMS PostgreSQL-64-8-65536 - Pods [[1, 8, 1, 8]]
 
 ### Ingestion - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1      376.28     0.42          7.91                 8.48
+PostgreSQL-64-8-65536-1     1007.43      1.4         10.41                12.08
+PostgreSQL-64-8-65536-2     1007.43      1.4         10.41                12.08
+PostgreSQL-64-8-65536-3     1007.43      1.4         10.41                12.08
+PostgreSQL-64-8-65536-4     1007.43      1.4         10.41                12.08
 
 ### Ingestion - Loader
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1      253.91     0.86          0.11                 0.11
+PostgreSQL-64-8-65536-1      632.78     0.73          0.11                 0.11
+PostgreSQL-64-8-65536-2      632.78     0.73          0.11                 0.11
+PostgreSQL-64-8-65536-3      632.78     0.73          0.11                 0.11
+PostgreSQL-64-8-65536-4      632.78     0.73          0.11                 0.11
 
 ### Execution - SUT
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1      304.55     0.67          8.19                 9.05
+PostgreSQL-64-8-65536-1      941.31     0.96         11.46                13.99
+PostgreSQL-64-8-65536-2      896.63     0.86         11.90                14.84
+PostgreSQL-64-8-65536-3      903.22     0.89         12.32                15.63
+PostgreSQL-64-8-65536-4      908.05     0.90         12.69                16.00
 
 ### Execution - Benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-65536-1       153.2     0.39          0.13                 0.13
+PostgreSQL-64-8-65536-1      442.01     0.57          0.13                 0.13
+PostgreSQL-64-8-65536-2      466.62     0.45          0.12                 0.12
+PostgreSQL-64-8-65536-3      475.49     0.99          0.13                 0.13
+PostgreSQL-64-8-65536-4      446.18     0.51          0.12                 0.13
 
 ### Application Metrics
                          Number of Idle Sessions  Number of Idle-in-transaction Sessions  Number of Idle-in-transaction Aborted Sessions  Number of Active Sessions  Number of Active Application Sessions
-PostgreSQL-64-8-65536-1                      5.0                                     0.0                                             0.0                       64.0                                   64.0
+PostgreSQL-64-8-65536-1                     29.0                                     0.0                                             0.0                       64.0                                   64.0
+PostgreSQL-64-8-65536-2                      6.0                                     0.0                                             0.0                       64.0                                   64.0
+PostgreSQL-64-8-65536-3                     18.0                                     0.0                                             0.0                       65.0                                   64.0
+PostgreSQL-64-8-65536-4                     24.0                                     0.0                                             0.0                       64.0                                   64.0
 
 ### Tests
 TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -1029,6 +1083,109 @@ nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
 doc_hammerdb_run_mysql_appmetrics.log
 ```markdown
 ## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 1912s 
+    Code: 1759143651
+    HammerDB runs the benchmark.
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [16] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-BHT-16-1-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:442655544
+    datadisk:6784
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759143651
+MySQL-BHT-16-1-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:444625516
+    datadisk:8708
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759143651
+
+### Execution
+                  experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+MySQL-BHT-16-1-1               1      16       1          1     63.68    609.91         0.0  13537.0  31397.0         5       0
+MySQL-BHT-16-1-2               1      16       2          2     71.10    677.15         0.0  12875.5  29962.5         5       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MySQL-BHT-16-1 - Pods [[1, 2]]
+
+#### Planned
+DBMS MySQL-BHT-16-1 - Pods [[1, 2]]
+
+### Loading
+                  time_load  terminals  pods  Imported warehouses [1/h]
+MySQL-BHT-16-1-1      204.0        1.0   1.0                 282.352941
+MySQL-BHT-16-1-2      204.0        1.0   2.0                 282.352941
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1      451.94     3.58         35.43                38.44
+MySQL-BHT-16-1-2      489.43     3.58         35.45                38.54
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1       88.56     3.33          0.17                 0.17
+MySQL-BHT-16-1-2       88.56     3.33          0.17                 0.17
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1     1343.39     6.36         35.64                41.32
+MySQL-BHT-16-1-2     1297.46     6.45         35.85                44.17
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1      152.61     0.50          0.16                 0.16
+MySQL-BHT-16-1-2      152.61     0.64          0.16                 0.16
+
+### Application Metrics
+                  InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-BHT-16-1-1                           1.0                 106701.09                    0.01                0.0                    0.0
+MySQL-BHT-16-1-2                           0.0                 103927.65                    0.01                0.0                    0.0
+
+### Tests
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Workflow as planned
 ```
 
 
@@ -1048,10 +1205,6 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log &
 ```
 
-doc_tpch_run_mysql_appmetrics.log
-```markdown
-## Show Summary
-```
 
 
 ### TPC-DS
@@ -1070,10 +1223,6 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log &
 ```
 
-doc_tpcds_run_mysql_appmetrics.log
-```markdown
-## Show Summary
-```
 
 
 
@@ -1102,6 +1251,160 @@ nohup python ycsb.py -ms 1 -tr -lr 64Gi \
 doc_ycsb_run_mysql_appmetrics.log
 ```markdown
 ## Show Summary
+
+### Workload
+YCSB SF=3
+    Type: ycsb
+    Duration: 4278s 
+    Code: 1759124495
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 3000000.
+    Ordering of inserts is hashed.
+    Number of operations is 3000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [2, 3].
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-64-8-65536-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:449561384
+    datadisk:13529
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+MySQL-64-8-65536-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:453121332
+    datadisk:17006
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+MySQL-64-8-65536-3 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:456641904
+    datadisk:20444
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:3
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+MySQL-64-8-65536-4 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:460165756
+    datadisk:23885
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:4
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+
+### Loading
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MySQL-64-8-65536               1       64   65536          8           0                    1830.754943              1640487.0             3000000                           1085951.0
+
+### Execution
+                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)  [UPDATE-FAILED].Operations  [UPDATE-FAILED].99thPercentileLatency(us)
+MySQL-64-8-65536-1               1       64   32768          1           0                       16941.21               177083.0           1498692                            2697.0             1501308                              7915.0                           0                                        0.0
+MySQL-64-8-65536-2               1       64   32768          8           0                       14196.95               218650.0           1501509                            2297.0             1498491                              5823.0                           0                                        0.0
+MySQL-64-8-65536-3               1       64   49152          1           0                        2701.77              1110382.0           1500096                            2409.0             1499814                              7443.0                          90                                 51019775.0
+MySQL-64-8-65536-4               1       64   49152          8           0                       17554.62               174751.0           1498713                            2299.0             1501287                              5995.0                           0                                        0.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+
+#### Planned
+DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1     5255.23     5.61         23.98                31.75
+MySQL-64-8-65536-2     5348.50     5.61         24.00                32.01
+MySQL-64-8-65536-3     5348.50     5.61         24.00                32.01
+MySQL-64-8-65536-4     5348.50     5.61         24.00                32.01
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1       719.7     2.12          0.13                 0.13
+MySQL-64-8-65536-2       719.7     2.12          0.13                 0.13
+MySQL-64-8-65536-3       719.7     2.12          0.13                 0.13
+MySQL-64-8-65536-4       719.7     2.12          0.13                 0.13
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1     1328.37    10.16         24.10                35.10
+MySQL-64-8-65536-2     1324.44     8.81         24.22                38.66
+MySQL-64-8-65536-3     3921.37     9.95         24.38                41.77
+MySQL-64-8-65536-4     1266.91     9.43         24.50                45.51
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1      817.12     3.79          0.16                 0.16
+MySQL-64-8-65536-2      817.12     7.95          0.15                 0.16
+MySQL-64-8-65536-3      686.07     2.81          0.17                 0.17
+MySQL-64-8-65536-4      555.70     7.29          0.16                 0.17
+
+### Application Metrics
+                    InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-64-8-65536-1                           1.0                  10771.57                    0.04               0.49                    0.0
+MySQL-64-8-65536-2                           1.0                  11113.40                    0.04               0.24                    0.0
+MySQL-64-8-65536-3                           0.0                   6928.91                    0.04               1.33                    0.0
+MySQL-64-8-65536-4                           0.0                  10471.19                    0.04               0.70                    0.0
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST failed: Result contains FAILED column
 ```
 
 

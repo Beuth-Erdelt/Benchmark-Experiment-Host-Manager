@@ -1,0 +1,155 @@
+## Show Summary
+
+### Workload
+YCSB SF=3
+    Type: ycsb
+    Duration: 4278s 
+    Code: 1759124495
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 3000000.
+    Ordering of inserts is hashed.
+    Number of operations is 3000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [2, 3].
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-64-8-65536-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:449561384
+    datadisk:13529
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+MySQL-64-8-65536-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:453121332
+    datadisk:17006
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+MySQL-64-8-65536-3 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:456641904
+    datadisk:20444
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:3
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+MySQL-64-8-65536-4 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:460165756
+    datadisk:23885
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:4
+    numExperiment:1
+    eval_parameters
+        code:1759124495
+
+### Loading
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MySQL-64-8-65536               1       64   65536          8           0                    1830.754943              1640487.0             3000000                           1085951.0
+
+### Execution
+                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)  [UPDATE-FAILED].Operations  [UPDATE-FAILED].99thPercentileLatency(us)
+MySQL-64-8-65536-1               1       64   32768          1           0                       16941.21               177083.0           1498692                            2697.0             1501308                              7915.0                           0                                        0.0
+MySQL-64-8-65536-2               1       64   32768          8           0                       14196.95               218650.0           1501509                            2297.0             1498491                              5823.0                           0                                        0.0
+MySQL-64-8-65536-3               1       64   49152          1           0                        2701.77              1110382.0           1500096                            2409.0             1499814                              7443.0                          90                                 51019775.0
+MySQL-64-8-65536-4               1       64   49152          8           0                       17554.62               174751.0           1498713                            2299.0             1501287                              5995.0                           0                                        0.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+
+#### Planned
+DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1     5255.23     5.61         23.98                31.75
+MySQL-64-8-65536-2     5348.50     5.61         24.00                32.01
+MySQL-64-8-65536-3     5348.50     5.61         24.00                32.01
+MySQL-64-8-65536-4     5348.50     5.61         24.00                32.01
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1       719.7     2.12          0.13                 0.13
+MySQL-64-8-65536-2       719.7     2.12          0.13                 0.13
+MySQL-64-8-65536-3       719.7     2.12          0.13                 0.13
+MySQL-64-8-65536-4       719.7     2.12          0.13                 0.13
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1     1328.37    10.16         24.10                35.10
+MySQL-64-8-65536-2     1324.44     8.81         24.22                38.66
+MySQL-64-8-65536-3     3921.37     9.95         24.38                41.77
+MySQL-64-8-65536-4     1266.91     9.43         24.50                45.51
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1      817.12     3.79          0.16                 0.16
+MySQL-64-8-65536-2      817.12     7.95          0.15                 0.16
+MySQL-64-8-65536-3      686.07     2.81          0.17                 0.17
+MySQL-64-8-65536-4      555.70     7.29          0.16                 0.17
+
+### Application Metrics
+                    InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-64-8-65536-1                           1.0                  10771.57                    0.04               0.49                    0.0
+MySQL-64-8-65536-2                           1.0                  11113.40                    0.04               0.24                    0.0
+MySQL-64-8-65536-3                           0.0                   6928.91                    0.04               1.33                    0.0
+MySQL-64-8-65536-4                           0.0                  10471.19                    0.04               0.70                    0.0
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST failed: Result contains FAILED column
