@@ -1220,13 +1220,13 @@ scrape_configs:
         # Deployment manifest template - a configured copy will be stored in result folder
         template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
-        print("{:30s}: Name of SUT pods = {}".format(configuration, name))
-        print("{:30s}: Name of SUT service = {}".format(configuration, name))
+        print("{:30s}: name of SUT pods = {}".format(configuration, name))
+        print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
-            print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
+            print("{:30s}: name of SUT PVC name = {}".format(configuration, name_pvc))
         if self.num_worker > 0:
-            print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
-            print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
+            print("{:30s}: name of worker pods = {}".format(configuration, name_worker))
+            print("{:30s}: name of worker service headless = {}".format(configuration, name_worker))
         # ENV
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()
@@ -1595,7 +1595,7 @@ scrape_configs:
                     if container['name'] == 'dbms':
                         if 'args' in container:
                             self.sut_startup_args = container['args']
-                            print("{:30s}: Args = {}".format(configuration, container['args']))
+                            print("{:30s}: server args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in reversed(list(enumerate(container['volumeMounts']))):
@@ -3839,9 +3839,9 @@ scrape_configs:
         pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
-            print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
+            print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
             pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
-            print("{:30s}: Worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
+            print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
@@ -3861,7 +3861,7 @@ scrape_configs:
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
             endpoints.append(endpoint)
-            print("{:30s}: Worker endpoint : {}".format(self.configuration, endpoint))
+            print("{:30s}: worker endpoint : {}".format(self.configuration, endpoint))
             #print('Worker endpoint: {endpoint}'.format(endpoint = endpoint))
         return endpoints
 
