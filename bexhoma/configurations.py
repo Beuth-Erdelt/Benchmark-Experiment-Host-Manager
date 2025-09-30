@@ -39,6 +39,7 @@ from io import StringIO
 import hiyapyco
 from math import ceil
 import time
+import re
 
 from dbmsbenchmarker import *
 
@@ -1415,27 +1416,27 @@ scrape_configs:
                             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
                             worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker)
                             list_of_workers_pvcs.append(worker_full_name)
-                        print(list_of_workers_pvcs)
+                        #print(list_of_workers_pvcs)
                         remove_old_pvcs = not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0
                         old_pvc_exist = False
-                        for name_pvc in list_of_workers_pvcs:
-                            pvc_exists = self.experiment.cluster.does_pvc_exist(name_pvc)
+                        for statefulset_name_pvc in list_of_workers_pvcs:
+                            pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
                             if pvc_exists > 0:
-                                print("{:30s}: storage {} exists".format(configuration, name_pvc))
+                                print("{:30s}: storage {} exists".format(configuration, statefulset_name_pvc))
                                 old_pvc_exist = True
                                 if remove_old_pvcs:
                                     # we have not loaded yet, so this is the first run in this experiment
-                                    print("{:30s}: storage {} should be removed".format(configuration, name_pvc))
-                                    self.experiment.cluster.delete_pvc(name_pvc)
+                                    print("{:30s}: storage {} should be removed".format(configuration, statefulset_name_pvc))
+                                    self.experiment.cluster.delete_pvc(statefulset_name_pvc)
                         if old_pvc_exist and remove_old_pvcs:
                             self.wait(10)
-                            for name_pvc in list_of_workers_pvcs:
-                                pvc_exists = self.experiment.cluster.does_pvc_exist(name_pvc)
+                            for statefulset_name_pvc in list_of_workers_pvcs:
+                                pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
                                 while pvc_exists:
-                                    print("{:30s}: storage {} still exists".format(configuration, name_pvc))
+                                    print("{:30s}: storage {} still exists".format(configuration, statefulset_name_pvc))
                                     self.wait(10)
-                                    pvc_exists = self.experiment.cluster.does_pvc_exist(name_pvc)
-                                print("{:30s}: storage {} is gone".format(configuration, name_pvc))
+                                    pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                                print("{:30s}: storage {} is gone".format(configuration, statefulset_name_pvc))
                         #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
                         #self.service = dep['metadata']['name']
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['app'] = app
@@ -3839,6 +3840,8 @@ scrape_configs:
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
             print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
+            pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
+            print("{:30s}: Worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
