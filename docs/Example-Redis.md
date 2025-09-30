@@ -687,6 +687,7 @@ TEST passed: Result contains no FAILED column
 ### Redis as a Cluster
 
 Similarly we can make a Redis cluster to store the database in persistent storage.
+Here, we remove existing storage via `-rsr` to start with a clean copy.
 
 ```bash
 nohup python ycsb.py -ms 1 -tr \
@@ -706,7 +707,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/doc_ycsb_redis_5.log &
 ```
 
