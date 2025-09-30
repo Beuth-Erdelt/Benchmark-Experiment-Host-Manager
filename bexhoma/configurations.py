@@ -1419,7 +1419,7 @@ scrape_configs:
                         remove_old_pvcs = not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0
                         old_pvc_exist = False
                         for name_pvc in list_of_workers_pvcs:
-                            pvc_exists = self.experiment.cluster.does_pvc_exists(name_pvc)
+                            pvc_exists = self.experiment.cluster.does_pvc_exist(name_pvc)
                             if pvc_exists > 0:
                                 print("{:30s}: storage {} exists".format(configuration, name_pvc))
                                 old_pvc_exist = True
@@ -1430,11 +1430,11 @@ scrape_configs:
                         if old_pvc_exist and remove_old_pvcs:
                             self.wait(10)
                             for name_pvc in list_of_workers_pvcs:
-                                pvc_exists = self.experiment.cluster.does_pvc_exists(name_pvc)
+                                pvc_exists = self.experiment.cluster.does_pvc_exist(name_pvc)
                                 while pvc_exists:
                                     print("{:30s}: storage {} still exists".format(configuration, name_pvc))
                                     self.wait(10)
-                                    pvc_exists = self.experiment.cluster.does_pvc_exists(name_pvc)
+                                    pvc_exists = self.experiment.cluster.does_pvc_exist(name_pvc)
                                 print("{:30s}: storage {} is gone".format(configuration, name_pvc))
                         #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
                         #self.service = dep['metadata']['name']

@@ -631,17 +631,19 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_pvc(app=app, component=component, experiment=experiment, configuration=configuration)
-    def does_pvc_exists(self, name):
+    def does_pvc_exist(self, name):
         """
         Tests if a PVC with a given name exists.
 
         :param name: name of the PVC to test
         """
-        self.logger.debug('testbed.does_pvc_exists()')
+        self.logger.debug('testbed.does_pvc_exist()')
         try: 
             api_response = self.v1core.read_namespaced_persistent_volume_claim(namespace=self.namespace, name=name)
+            #print("does_pvc_exist", api_response)
             return True
         except ApiException as e:
+            #print(e)
             if e.status == 404:
                 # not found
                 return False
