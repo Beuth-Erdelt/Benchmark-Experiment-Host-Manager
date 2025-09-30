@@ -111,13 +111,13 @@ WORKDIR /tmp
 
 RUN mkdir -p /tmp/tpch
 
-COPY ./loader-parallel.sh /tmp/loader-parallel.sh
-RUN ["chmod", "+x", "/tmp/loader-parallel.sh"]
-CMD ["/bin/bash", "-c", "/tmp/loader-parallel.sh"]
+#COPY ./loader-parallel.sh /tmp/loader-parallel.sh
+#RUN ["chmod", "+x", "/tmp/loader-parallel.sh"]
+#CMD ["/bin/bash", "-c", "/tmp/loader-parallel.sh"]
 
-#COPY ./loader.sh /tmp/loader.sh
-#RUN ["chmod", "+x", "/tmp/loader.sh"]
-#CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
+COPY ./loader.sh /tmp/loader.sh
+RUN ["chmod", "+x", "/tmp/loader.sh"]
+CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
 
 #CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
 
