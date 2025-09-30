@@ -1410,6 +1410,32 @@ scrape_configs:
                     if not use_storage:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
+                        list_of_workers_pvcs = []
+                        for worker in range(self.num_worker):
+                            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+                            worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker)
+                            list_of_workers_pvcs.append(worker_full_name)
+                        print(list_of_workers_pvcs)
+                        remove_old_pvcs = not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0
+                        old_pvc_exist = False
+                        for name_pvc in list_of_workers_pvcs:
+                            pvc_exists = self.experiment.cluster.does_pvc_exists(name_pvc)
+                            if pvc_exists > 0:
+                                print("{:30s}: storage {} exists".format(configuration, name_pvc))
+                                old_pvc_exist = True
+                                if remove_old_pvcs:
+                                    # we have not loaded yet, so this is the first run in this experiment
+                                    print("{:30s}: storage {} should be removed".format(configuration, name_pvc))
+                                    self.experiment.cluster.delete_pvc(name_pvc)
+                        if old_pvc_exist and remove_old_pvcs:
+                            self.wait(10)
+                            for name_pvc in list_of_workers_pvcs:
+                                pvc_exists = self.experiment.cluster.does_pvc_exists(name_pvc)
+                                while pvc_exists:
+                                    print("{:30s}: storage {} still exists".format(configuration, name_pvc))
+                                    self.wait(10)
+                                    pvc_exists = self.experiment.cluster.does_pvc_exists(name_pvc)
+                                print("{:30s}: storage {} is gone".format(configuration, name_pvc))
                         #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
                         #self.service = dep['metadata']['name']
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['app'] = app
@@ -3214,8 +3240,8 @@ scrape_configs:
         scriptfolder = '/tmp/'
         commands = scripts.copy()
         c = self.dockertemplate['template']
-        database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
-        schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+        database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else self.experiment.volume
+        schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
         databases = [database]
         use_storage = self.use_storage()
         if use_storage:
