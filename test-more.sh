@@ -138,7 +138,21 @@ nohup python tpch.py -ms 1 -tr \
 #sleep 1200
 wait_process "tpch"
 
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn "$BEXHOMA_NODE_SUT" \
+  -rnl "$BEXHOMA_NODE_LOAD" \
+  -rnb "$BEXHOMA_NODE_BENCHMARK" \
+  -rst ramdisk -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_ramdisk.log &
 
+wait_process "tpch"
 
 
 ###########################################

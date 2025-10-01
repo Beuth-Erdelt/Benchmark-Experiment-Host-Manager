@@ -1427,9 +1427,12 @@ scrape_configs:
                         #print(vol['mountPath'])
                         if not use_storage:
                             del result[key]['spec']['template']['spec']['volumes'][j]
+                        elif use_ramdisk:
+                            del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
+                            result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                 # remove storage template if not used
                 if 'volumeClaimTemplates' in result[key]['spec']:
-                    if not use_storage:
+                    if not use_storage or use_ramdisk:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
                         list_of_workers_pvcs = []
