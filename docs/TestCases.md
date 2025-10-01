@@ -19,7 +19,7 @@ mkdir -p $LOG_DIR
 See also [more test cases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test-more.sh) for more and longer running test cases and other DBMS.
 
 See the [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) for some demo test logs.
-The folder also contains `*_summary.txt` files containing only the result summary.
+The folder also contains \*_summary.txt` files containing only the result summary.
 
 
 ## TPC-H
@@ -560,6 +560,172 @@ TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
+
+
+#### TPC-H RAM Disk Test
+
+This loads TPC-H data (SF=10) into a database that is stored on a RAM disk.
+The disk has size 100GB.
+Make sure you have enough RAM.
+
+```bash
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn "$BEXHOMA_NODE_SUT" \
+  -rnl "$BEXHOMA_NODE_LOAD" \
+  -rnb "$BEXHOMA_NODE_BENCHMARK" \
+  -rst ramdisk -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_ramdisk.log &
+```
+
+yields (after ca. 15 minutes) something like
+
+doc_tpch_testcase_ramdisk.log
+```markdown
+## Show Summary
+
+### Workload
+TPC-H Queries SF=10
+    Type: tpch
+    Duration: 1309s 
+    Code: 1759344731
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['PostgreSQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker34.
+    Database is persisted to disk of type ramdisk and size 100Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+PostgreSQL-BHT-8-1-1 uses docker image postgres:17.5
+    RAM:1081649909760
+    CPU:AMD EPYC 7453 28-Core Processor
+    Cores:56
+    host:6.8.0-60-generic
+    node:cl-worker34
+    disk:317133412
+    datadisk:27208
+    cpu_list:0-55
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759344731
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 PostgreSQL-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                                 6148.25
+Minimum Cost Supplier Query (TPC-H Q2)                            3146.65
+Shipping Priority (TPC-H Q3)                                      2546.04
+Order Priority Checking Query (TPC-H Q4)                           956.03
+Local Supplier Volume (TPC-H Q5)                                  2698.65
+Forecasting Revenue Change (TPC-H Q6)                             1121.65
+Forecasting Revenue Change (TPC-H Q7)                             2262.46
+National Market Share (TPC-H Q8)                                  1744.38
+Product Type Profit Measure (TPC-H Q9)                            6166.41
+Forecasting Revenue Change (TPC-H Q10)                            2821.54
+Important Stock Identification (TPC-H Q11)                        1132.19
+Shipping Modes and Order Priority (TPC-H Q12)                     1747.68
+Customer Distribution (TPC-H Q13)                                13653.85
+Forecasting Revenue Change (TPC-H Q14)                            1845.77
+Top Supplier Query (TPC-H Q15)                                    1617.52
+Parts/Supplier Relationship (TPC-H Q16)                           1528.02
+Small-Quantity-Order Revenue (TPC-H Q17)                         12417.92
+Large Volume Customer (TPC-H Q18)                                20112.36
+Discounted Revenue (TPC-H Q19)                                     338.49
+Potential Part Promotion (TPC-H Q20)                              5414.02
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               2528.57
+Global Sales Opportunity Query (TPC-H Q22)                         536.64
+
+### Loading [s]
+                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+PostgreSQL-BHT-8-1-1          20.0           48.0         5.0      657.0     733.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                      Geo Times [s]
+DBMS                               
+PostgreSQL-BHT-8-1-1           2.61
+
+### Power@Size ((3600*SF)/(geo times))
+                      Power@Size [~Q/h]
+DBMS                                   
+PostgreSQL-BHT-8-1-1           14220.37
+
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                                   time [s]  count    SF  Throughput@Size
+DBMS               SF   num_experiment num_client                                        
+PostgreSQL-BHT-8-1 10.0 1              1                100      1  10.0           7920.0
+
+### Workflow
+                               orig_name    SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  10.0     8               1           1       1759345623     1759345723
+
+#### Actual
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-8-1      575.27     2.46         47.05                47.05
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-8-1       93.47        0          0.01                 0.93
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-8-1      261.77     2.94         54.03                54.03
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-8-1       16.79     0.08          0.29                  0.3
+
+### Application Metrics
+                    Number of Idle Sessions  Number of Idle-in-transaction Sessions  Number of Idle-in-transaction Aborted Sessions  Number of Active Sessions  Number of Active Application Sessions
+PostgreSQL-BHT-8-1                      0.0                                     0.0                                             0.0                        5.0                                    5.0
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+```
+
 
 
 

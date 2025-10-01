@@ -1146,6 +1146,15 @@ scrape_configs:
         gpu_type = resources.nodeSelector.gpu
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
+    def use_ramdisk(self):
+        """
+        Return True, iff storage for the database should be used in a ram disk.
+        """
+        if self.storage['storageClassName'] is not None and self.storage['storageClassName'] == 'ramdisk':
+            use_ramdisk = True
+        else:
+            use_ramdisk = False
+        return use_ramdisk
     def use_storage(self):
         """
         Return True, iff storage for the database should be used.
@@ -1199,10 +1208,7 @@ scrape_configs:
         else:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
-        if self.storage['storageClassName'] is not None and self.storage['storageClassName'] == 'ramdisk':
-            use_ramdisk = True
-        else:
-            use_ramdisk = False
+        use_ramdisk = self.use_ramdisk()
         # configure names
         if self.num_worker > 0:
             # we assume here, a stateful set is used
@@ -2220,7 +2226,8 @@ scrape_configs:
         # add volume labels to PV
         app = self.appname
         use_storage = self.use_storage()
-        if use_storage:
+        use_ramdisk = self.use_ramdisk()
+        if use_storage and not use_ramdisk:
             if self.storage['storageConfiguration']:
                 volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
                 volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
@@ -3161,19 +3168,18 @@ scrape_configs:
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         use_storage = self.use_storage()
-                        if use_storage:
+                        use_ramdisk = self.use_ramdisk()
+                        if use_storage and not use_ramdisk:
                             if self.storage['storageConfiguration']:
                                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
                             else:
                                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
                             volume = name_pvc
-                        else:
-                            volume = ''
-                        if volume:
-                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
-                            #fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(loader_time, int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
-                            #print(fullcommand)
-                            self.experiment.cluster.kubectl(fullcommand)
+                            if volume:
+                                fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
+                                #fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(loader_time, int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
+                                #print(fullcommand)
+                                self.experiment.cluster.kubectl(fullcommand)
                     # get metrics of loader components
                     #endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     # get monitoring for loading
@@ -3286,7 +3292,8 @@ scrape_configs:
         schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
         databases = [database]
         use_storage = self.use_storage()
-        if use_storage:
+        use_ramdisk = self.use_ramdisk()
+        if use_storage and not use_ramdisk:
             #storage_label = 'tpc-ds-1'
             if self.storage['storageConfiguration']:
                 storageConfiguration = self.storage['storageConfiguration']
