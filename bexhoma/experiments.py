@@ -2273,7 +2273,7 @@ class default():
         if self.benchmarking_is_active():
             self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
             self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
-            self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+            #self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
             #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
             self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
             if num_errors == 0:
