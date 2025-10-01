@@ -69,7 +69,7 @@ if __name__ == '__main__':
     parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')
     parser.add_argument('-rg',  '--request-gpu', help='request number of gpus for sut', default=1)
     parser.add_argument('-rgt', '--request-gpu-type', help='request node for sut to have node label gpu=', default='')
-    parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
+    parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared', 'ramdisk'])
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
     parser.add_argument('-rsr', '--request-storage-remove', help='remove existing persistent storage at experiment start', action='store_true', default=False)
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node for sut', default=None)

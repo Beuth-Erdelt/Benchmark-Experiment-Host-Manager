@@ -1199,6 +1199,10 @@ scrape_configs:
         else:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        if self.storage['storageClassName'] is not None and self.storage['storageClassName'] == 'ramdisk':
+            use_ramdisk = True
+        else:
+            use_ramdisk = False
         # configure names
         if self.num_worker > 0:
             # we assume here, a stateful set is used
@@ -1273,6 +1277,9 @@ scrape_configs:
                 pvc = dep['metadata']['name']
                 #print("PVC", pvc, name_pvc)
                 if not use_storage:
+                    del result[key]
+                elif use_ramdisk:
+                    # ramdisk does not need pvc
                     del result[key]
                 else:
                     self.logger.debug('configuration.start_sut(PVC={},{})'.format(pvc, name_pvc))
@@ -1629,6 +1636,9 @@ scrape_configs:
                         if vol['name'] == 'benchmark-storage-volume':
                             if not use_storage:
                                 del result[key]['spec']['template']['spec']['volumes'][i]
+                            elif use_ramdisk:
+                                del result[key]['spec']['template']['spec']['volumes'][i]['persistentVolumeClaim']
+                                result[key]['spec']['template']['spec']['volumes'][i]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                             else:
                                 vol['persistentVolumeClaim']['claimName'] = name_pvc
                         if vol['name'] == 'benchmark-data-volume':
