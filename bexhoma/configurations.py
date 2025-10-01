@@ -40,6 +40,7 @@ import hiyapyco
 from math import ceil
 import time
 import re
+import shutil
 
 from dbmsbenchmarker import *
 
@@ -2853,34 +2854,49 @@ scrape_configs:
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
+        c = self.dockertemplate['template']
+        database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else self.experiment.volume
+        schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
+        databases = [database]
         if self.num_tenants > 0 and self.tenant_per == 'schema':
             for tenant in range(self.num_tenants):
                 print("{:30s}: scripts for tenant #{}".format(self.configuration, tenant))
                 #print(f"Tenant #{tenant}")
                 for script in scripts:
                     filename_template = self.path_experiment_docker+'/'+script
-                    if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
-                        with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
+                    filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_template
+                    #filename_in_container = scriptfolder+script
+                    filename_base, file_extension = os.path.splitext(script)
+                    #filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+                    if os.path.isfile(filename_source):
+                        with open(filename_source, "r") as initscript_template:
                             data = initscript_template.read()
                             #data = data.format(**self.ddl_parameters)
                             #print(data)
                             data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
                             #print(data)
-                            filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
-                            filename_target = f'/filled_{tenant}_{script}'
-                            with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
+                            filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}-{tenant}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, tenant=tenant, extension=file_extension.lower()).lower()
+                            #filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
+                            #filename_filled_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
+                            filename_target = f'/{tenant}_{script}'
+                            #filename_target = f'/filled_{tenant}_{script}'
+                            filename_in_container = scriptfolder+filename_target
+                            with open(filename_in_resultfolder, "w") as initscript_filled:
                                 initscript_filled.write(data)
-                            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+filename_target))
+                            self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
             return
         if self.num_tenants > 0 and self.tenant_per == 'database':
             script = 'initdatabases.sql'
-            filename_template = self.experiment.cluster.experiments_configfolder+'/'+self.path_experiment_docker+'/'+script
+            filename_base, file_extension = os.path.splitext(script)
+            #filename_template = self.experiment.cluster.experiments_configfolder+'/'+self.path_experiment_docker+'/'+script
+            filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+            filename_in_container = scriptfolder+script
             script_create_database = ''
             for tenant in range(self.num_tenants):
                 script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
-            with open(filename_template, "w") as initscript_filled:
+            with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
-            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=filename_template, to_name=self.pod_sut+':'+scriptfolder+script))
+            self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
         if len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
@@ -2897,10 +2913,16 @@ scrape_configs:
             #for script in self.initscript:
             for script in scripts:
                 filename = self.path_experiment_docker+'/'+script
-                if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
-                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
-                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script))
-                    #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+                filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename
+                filename_in_container = scriptfolder+script
+                filename_base, file_extension = os.path.splitext(script)
+                #filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}.{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, extension=file_extension.lower()).lower()
+                #filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(app=self.app, configuration=self.configuration, filename=script, database=db, extension=file_extension.lower()).lower()
+                filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+                if os.path.isfile(filename_source):
+                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_source, pod_name=self.pod_sut, to_name=filename_in_container))
+                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+                    shutil.copy(filename_source, filename_in_resultfolder)
     def attach_worker(self):
         """
         Attaches worker nodes to the master of the sut.
@@ -3280,7 +3302,8 @@ scrape_configs:
                     for tenant in range(self.num_tenants):
                         commands_tenants = []
                         for c in commands:
-                            filename_filled = f'filled_{tenant}_{c}'
+                            filename_filled = f'{tenant}_{c}'
+                            #filename_filled = f'filled_{tenant}_{c}'
                             commands_tenants.append(filename_filled)
                         thread_args = {
                             'app':self.appname,
