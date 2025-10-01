@@ -2885,10 +2885,10 @@ scrape_configs:
                             #print(data)
                             data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
                             #print(data)
-                            filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}-{tenant}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, tenant=tenant, extension=file_extension.lower()).lower()
+                            filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{tenant}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, tenant=tenant, extension=file_extension.lower()).lower()
                             #filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
                             #filename_filled_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
-                            filename_target = f'/{tenant}_{script}'
+                            filename_target = f'/{tenant}-{script}'
                             #filename_target = f'/filled_{tenant}_{script}'
                             filename_in_container = scriptfolder+filename_target
                             with open(filename_in_resultfolder, "w") as initscript_filled:
@@ -3312,7 +3312,7 @@ scrape_configs:
                     for tenant in range(self.num_tenants):
                         commands_tenants = []
                         for c in commands:
-                            filename_filled = f'{tenant}_{c}'
+                            filename_filled = f'{tenant}-{c}'
                             #filename_filled = f'filled_{tenant}_{c}'
                             commands_tenants.append(filename_filled)
                         thread_args = {
