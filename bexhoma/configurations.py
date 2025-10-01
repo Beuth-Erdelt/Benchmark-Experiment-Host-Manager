@@ -186,6 +186,7 @@ class default():
         self.sut_pod_name = ""                                                  #: Name of pod of SUT, if it is not managed by bexhoma
         self.sut_container_name = "dbms"                                        #: Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
         self.sut_startup_args = []                                              #: List of args that are set for the SUT container in YAML manifest at startup
+        self.worker_startup_args = []                                           #: List of args that are set for the worker containers in YAML manifest at startup
         self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
@@ -1386,6 +1387,9 @@ scrape_configs:
                     #for i_env,e in env.items():
                     #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     if container['name'] == 'dbms':
+                        if 'args' in container:
+                            self.worker_startup_args = container['args']
+                            print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
                             if vol['name'] == 'bxw':
@@ -2347,8 +2351,10 @@ scrape_configs:
         pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
-            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))            
-            c['worker'].append(self.get_host_all())
+            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))
+            worker_infos = self.get_host_all()
+            worker_infos['args'] = self.worker_startup_args
+            c['worker'].append(worker_infos)
         self.pod_sut = pod_sut
         # take latest resources
         # TODO: read from yaml file
