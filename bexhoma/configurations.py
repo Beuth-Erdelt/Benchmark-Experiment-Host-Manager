@@ -1229,7 +1229,10 @@ scrape_configs:
         print("{:30s}: name of SUT pods = {}".format(configuration, name))
         print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
-            print("{:30s}: name of SUT PVC name = {}".format(configuration, name_pvc))
+            if use_ramdisk:
+                print("{:30s}: uses RAM disk".format(configuration))
+            else:
+                print("{:30s}: name of SUT PVC name = {}".format(configuration, name_pvc))
         if self.num_worker > 0:
             print("{:30s}: name of worker pods = {}".format(configuration, name_worker))
             print("{:30s}: name of worker service headless = {}".format(configuration, name_worker))
