@@ -48,7 +48,7 @@ kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
 
 nohup python tpch.py -tr \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp $BEXHOMA_NUM_TENANTS -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
+  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
@@ -59,7 +59,7 @@ kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
 
 nohup python tpch.py -tr \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp $BEXHOMA_NUM_TENANTS -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
@@ -74,7 +74,7 @@ nohup python tpch.py \
   --dbms PostgreSQL \
   -ii -ic -is \
   -nlp 1 -nbp 1 \
-  -ne 1,1 \
+  -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
 
@@ -126,6 +126,43 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log &
+
+wait_process "benchbase"
+
+
+
+
+
+####################################################
+######## Benchbase TPC-C Multi-Tenant MySQL ########
+####################################################
+
+BEXHOMA_NUM_TENANTS=2
+
+kubectl delete pvc bexhoma-storage-mysql-benchbase-tpcc-1
+
+nohup python benchbase.py \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+  -sf 1 -sd 5 -xkey \
+  --dbms MySQL \
+  -nlp 1 -nbp 1 -nbt 10 \
+  -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log &
+
+wait_process "benchbase"
+
+kubectl delete pvc bexhoma-storage-mysql-0-2-benchbase-tpcc-1
+kubectl delete pvc bexhoma-storage-mysql-1-2-benchbase-tpcc-1
+
+nohup python benchbase.py \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
+  -sf 1 -sd 5 -xkey \
+  --dbms MySQL \
+  -nlp 1 -nbp 1 -nbt 10 \
+  -ne 1,1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log &
 
 wait_process "benchbase"
 
