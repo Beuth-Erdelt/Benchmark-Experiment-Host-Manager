@@ -333,8 +333,10 @@ class logger(base):
                 df = self.log_to_df(path+"/"+filename)
                 #print(df)
                 if df.empty:
-                    print("Error in "+filename)
-                    print(self.workflow_errors)
+                    # dbmsbenchmarker never returns a non-empty dataframe
+                    #print("Error in "+filename)
+                    #print(self.workflow_errors)
+                    pass
                 else:
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")
@@ -355,12 +357,15 @@ class logger(base):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".sensor.log"):
                 #print(filename)
-                df = self.log_to_df(path+"/"+filename)
+                path_and_filename = path+"/"+filename
+                df = self.log_to_df(path_and_filename)
                 #print(df)
-                if df.empty:
+                if df.empty and path_and_filename in self.workflow_errors:
+                    # there has been an error
                     print("Error in "+filename)
                     print(self.workflow_errors)
-                else:
+                elif not df.empty:
+                    # there is no resulting df in log file
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")
                     pickle.dump(df, f)

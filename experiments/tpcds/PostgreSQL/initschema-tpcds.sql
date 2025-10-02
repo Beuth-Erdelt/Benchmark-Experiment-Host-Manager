@@ -12,6 +12,10 @@ SHOW enable_nestloop;
 SHOW parallel_tuple_cost;
 SHOW parallel_setup_cost;
 
+ALTER SYSTEM SET synchronous_commit = off;
+-- ALTER SYSTEM SET fsync = off;
+SELECT pg_reload_conf();
+
 
 create table public.dbgen_version
 (

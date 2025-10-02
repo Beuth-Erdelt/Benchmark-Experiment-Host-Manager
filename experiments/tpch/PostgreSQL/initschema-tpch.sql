@@ -68,3 +68,7 @@ create table public.lineitem ( l_orderkey    integer not null,
                              l_shipmode     char(10) not null,
                              l_comment      varchar(44) not null);
 
+
+ALTER SYSTEM SET synchronous_commit = off;
+-- ALTER SYSTEM SET fsync = off;
+SELECT pg_reload_conf();

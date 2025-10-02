@@ -1,0 +1,348 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1759184964
+Experiment                    : starts at 2025-09-30 00:29:28.801900 (227721.5919691)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'.
+Number of rows to insert is 3000000.
+Ordering of inserts is hashed.
+Number of operations is 3000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [4].
+Factors for benchmarking are [2, 3].
+Experiment uses bexhoma version 0.8.12.
+System metrics are monitored by a cluster-wide installation.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker34.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1, 8] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+MySQL-64-8-65536              : will start now
+MySQL-64-8-65536              : Name of SUT pods = bexhoma-sut-mysql-64-8-65536-1759184964
+MySQL-64-8-65536              : Name of SUT service = bexhoma-sut-mysql-64-8-65536-1759184964
+- waiting 30s -               : done
+MySQL-64-8-65536              : waits for monitoring
+MySQL-64-8-65536              : wants to monitor all components in cluster
+MySQL-64-8-65536              : starts monitoring with prometheus pod
+- waiting 30s -               : done
+MySQL-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-64-8-65536              : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-64-8-65536              : is not loaded yet
+MySQL-64-8-65536              : start asynch loading scripts of type loaded
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+MySQL-64-8-65536              : showing loader times
+MySQL-64-8-65536              : loader timespan (first to last [s]) = 224
+MySQL-64-8-65536              : start asynch loading scripts of type indexed
+MySQL-64-8-65536              : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+MySQL-64-8-65536              : benchmarks done 0 of 1. This will be client 1
+MySQL-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '3', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 3000000, 'YCSB_OPERATIONS': 3000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
+MySQL-64-8-65536-1            : start benchmarking
+MySQL-64-8-65536              : benchmarking results in folder C:\data\benchmarks/1759184964
+- waiting 10s -               : done
+MySQL-64-8-65536              : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-65536-1759184964-1-1-8mjtq: found
+MySQL-64-8-65536-1            : collecting loading metrics of SUT at connection MySQL-64-8-65536-1
+MySQL-64-8-65536-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-1            : collecting metrics of data generator at connection MySQL-64-8-65536-1
+MySQL-64-8-65536-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-1            : collecting metrics of data injector at connection MySQL-64-8-65536-1
+MySQL-64-8-65536-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+timing_benchmarker [(1759185513, 1759185627)]
+MySQL-64-8-65536-1            : showing benchmarker times
+MySQL-64-8-65536-1            : benchmarker timespan job from 1759185622 to 1759185778
+MySQL-64-8-65536-1            : benchmarker timespan pods from 1759185513 to 1759185627
+MySQL-64-8-65536-1            : benchmarker timespan (start to end single container [s]) = 114
+MySQL-64-8-65536-1            : benchmarker times (start/end per pod and container) = [(1759185513, 1759185627)]
+MySQL-64-8-65536-1            : found and updated times {'benchmarker': [(1759185513, 1759185627)]}
+MySQL-64-8-65536-1            : collecting execution metrics of SUT at connection MySQL-64-8-65536-1
+MySQL-64-8-65536-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-1            : collecting metrics of benchmarker at connection MySQL-64-8-65536-1
+MySQL-64-8-65536-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+MySQL-64-8-65536              : benchmarks done 0 of 1. This will be client 2
+MySQL-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '3', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 4096, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 3000000, 'YCSB_OPERATIONS': 375000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
+MySQL-64-8-65536-2            : start benchmarking
+MySQL-64-8-65536              : benchmarking results in folder C:\data\benchmarks/1759184964
+- waiting 10s -               : done
+MySQL-64-8-65536              : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-65536-1759184964-1-2-8gd9p: found
+MySQL-64-8-65536-2            : collecting loading metrics of SUT at connection MySQL-64-8-65536-2
+MySQL-64-8-65536-2            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-2            : collecting metrics of data generator at connection MySQL-64-8-65536-2
+MySQL-64-8-65536-2            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-2            : collecting metrics of data injector at connection MySQL-64-8-65536-2
+MySQL-64-8-65536-2            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+timing_benchmarker [(1759185768, 1759185874), (1759185768, 1759185875), (1759185768, 1759185875), (1759185768, 1759185875), (1759185769, 1759185876), (1759185768, 1759185875), (1759185768, 1759185875), (1759185768, 1759185876)]
+MySQL-64-8-65536-2            : showing benchmarker times
+MySQL-64-8-65536-2            : benchmarker timespan job from 1759185871 to 1759186039
+MySQL-64-8-65536-2            : benchmarker timespan pods from 1759185768 to 1759185876
+MySQL-64-8-65536-2            : benchmarker timespan (start to end single container [s]) = 108
+MySQL-64-8-65536-2            : benchmarker times (start/end per pod and container) = [(1759185768, 1759185874), (1759185768, 1759185875), (1759185768, 1759185875), (1759185768, 1759185875), (1759185769, 1759185876), (1759185768, 1759185875), (1759185768, 1759185875), (1759185768, 1759185876)]
+MySQL-64-8-65536-2            : found and updated times {'benchmarker': [(1759185768, 1759185874), (1759185768, 1759185875), (1759185768, 1759185875), (1759185768, 1759185875), (1759185769, 1759185876), (1759185768, 1759185875), (1759185768, 1759185875), (1759185768, 1759185876)]}
+MySQL-64-8-65536-2            : collecting execution metrics of SUT at connection MySQL-64-8-65536-2
+MySQL-64-8-65536-2            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-2            : collecting metrics of benchmarker at connection MySQL-64-8-65536-2
+MySQL-64-8-65536-2            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+MySQL-64-8-65536              : benchmarks done 0 of 1. This will be client 3
+MySQL-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '3', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 49152, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 3000000, 'YCSB_OPERATIONS': 3000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
+MySQL-64-8-65536-3            : start benchmarking
+MySQL-64-8-65536              : benchmarking results in folder C:\data\benchmarks/1759184964
+- waiting 10s -               : done
+MySQL-64-8-65536              : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-65536-1759184964-1-3-jzvk9: found
+MySQL-64-8-65536-3            : collecting loading metrics of SUT at connection MySQL-64-8-65536-3
+MySQL-64-8-65536-3            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-3            : collecting metrics of data generator at connection MySQL-64-8-65536-3
+MySQL-64-8-65536-3            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-3            : collecting metrics of data injector at connection MySQL-64-8-65536-3
+MySQL-64-8-65536-3            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+timing_benchmarker [(1759186011, 1759186121)]
+MySQL-64-8-65536-3            : showing benchmarker times
+MySQL-64-8-65536-3            : benchmarker timespan job from 1759186120 to 1759186277
+MySQL-64-8-65536-3            : benchmarker timespan pods from 1759186011 to 1759186121
+MySQL-64-8-65536-3            : benchmarker timespan (start to end single container [s]) = 110
+MySQL-64-8-65536-3            : benchmarker times (start/end per pod and container) = [(1759186011, 1759186121)]
+MySQL-64-8-65536-3            : found and updated times {'benchmarker': [(1759186011, 1759186121)]}
+MySQL-64-8-65536-3            : collecting execution metrics of SUT at connection MySQL-64-8-65536-3
+MySQL-64-8-65536-3            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-3            : collecting metrics of benchmarker at connection MySQL-64-8-65536-3
+MySQL-64-8-65536-3            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+MySQL-64-8-65536              : benchmarks done 0 of 1. This will be client 4
+MySQL-64-8-65536              : we will change parameters of benchmark as {'PARALLEL': '8', 'SF': '3', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 6144, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 3000000, 'YCSB_OPERATIONS': 375000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
+MySQL-64-8-65536-4            : start benchmarking
+MySQL-64-8-65536              : benchmarking results in folder C:\data\benchmarks/1759184964
+- waiting 10s -               : done
+MySQL-64-8-65536              : benchmarking is waiting for job bexhoma-benchmarker-mysql-64-8-65536-1759184964-1-4-4pwbz: .found
+MySQL-64-8-65536-4            : collecting loading metrics of SUT at connection MySQL-64-8-65536-4
+MySQL-64-8-65536-4            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-4            : collecting metrics of data generator at connection MySQL-64-8-65536-4
+MySQL-64-8-65536-4            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-4            : collecting metrics of data injector at connection MySQL-64-8-65536-4
+MySQL-64-8-65536-4            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+- waiting 30s -               : done
+MySQL-64-8-65536              : has running benchmarks
+timing_benchmarker [(1759186265, 1759186375), (1759186265, 1759186376), (1759186266, 1759186375), (1759186266, 1759186375), (1759186265, 1759186375), (1759186265, 1759186376), (1759186266, 1759186375), (1759186265, 1759186375)]
+MySQL-64-8-65536-4            : showing benchmarker times
+MySQL-64-8-65536-4            : benchmarker timespan job from 1759186368 to 1759186548
+MySQL-64-8-65536-4            : benchmarker timespan pods from 1759186265 to 1759186376
+MySQL-64-8-65536-4            : benchmarker timespan (start to end single container [s]) = 111
+MySQL-64-8-65536-4            : benchmarker times (start/end per pod and container) = [(1759186265, 1759186375), (1759186265, 1759186376), (1759186266, 1759186375), (1759186266, 1759186375), (1759186265, 1759186375), (1759186265, 1759186376), (1759186266, 1759186375), (1759186265, 1759186375)]
+MySQL-64-8-65536-4            : found and updated times {'benchmarker': [(1759186265, 1759186375), (1759186265, 1759186376), (1759186266, 1759186375), (1759186266, 1759186375), (1759186265, 1759186375), (1759186265, 1759186376), (1759186266, 1759186375), (1759186265, 1759186375)]}
+MySQL-64-8-65536-4            : collecting execution metrics of SUT at connection MySQL-64-8-65536-4
+MySQL-64-8-65536-4            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-64-8-65536-4            : collecting metrics of benchmarker at connection MySQL-64-8-65536-4
+MySQL-64-8-65536-4            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-64-8-65536-1759184964(.*)", pod=~"(.*)mysql-64-8-65536-1759184964(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-64-8-65536              : can be stopped
+MySQL-64-8-65536              : had 0 0 restarts
+Experiment                    : ends at 2025-09-30 00:56:59.867173 (229372.6305332) - 1651.04s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=3
+    Type: ycsb
+    Duration: 1652s 
+    Code: 1759184964
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 3000000.
+    Ordering of inserts is hashed.
+    Number of operations is 3000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [2, 3].
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker34.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1, 8] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-64-8-65536-1 uses docker image mysql:8.4.0
+    RAM:1081649909760
+    Cores:56
+    host:6.8.0-60-generic
+    node:cl-worker34
+    disk:330132120
+    datadisk:13797
+    cpu_list:0-55
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1759184964
+MySQL-64-8-65536-2 uses docker image mysql:8.4.0
+    RAM:1081649909760
+    Cores:56
+    host:6.8.0-60-generic
+    node:cl-worker34
+    disk:333691036
+    datadisk:17272
+    cpu_list:0-55
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+        code:1759184964
+MySQL-64-8-65536-3 uses docker image mysql:8.4.0
+    RAM:1081649909760
+    Cores:56
+    host:6.8.0-60-generic
+    node:cl-worker34
+    disk:337214248
+    datadisk:20712
+    cpu_list:0-55
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:3
+    numExperiment:1
+    eval_parameters
+        code:1759184964
+MySQL-64-8-65536-4 uses docker image mysql:8.4.0
+    RAM:1081649909760
+    Cores:56
+    host:6.8.0-60-generic
+    node:cl-worker34
+    disk:340740564
+    datadisk:24155
+    cpu_list:0-55
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    client:4
+    numExperiment:1
+    eval_parameters
+        code:1759184964
+
+### Loading
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+MySQL-64-8-65536               1       64   65536          8           0                   13541.835304               223043.0             3000000                             48147.0
+
+### Execution
+                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+MySQL-64-8-65536-1               1       64   32768          1           0                       26399.39               113639.0           1499422                            1113.0             1500578                             34143.0
+MySQL-64-8-65536-2               1       64   32768          8           0                       28140.27               107557.0           1500696                            1037.0             1499304                             37279.0
+MySQL-64-8-65536-3               1       64   49152          1           0                       27472.78               109199.0           1499345                            1087.0             1500655                             34623.0
+MySQL-64-8-65536-4               1       64   49152          8           0                       27370.86               110089.0           1498488                            1035.0             1501512                             38367.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+
+#### Planned
+DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+
+### Ingestion - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1     1570.44     9.53         39.48                47.26
+MySQL-64-8-65536-2     1570.44     9.53         39.48                47.26
+MySQL-64-8-65536-3     1570.44     9.53         39.48                47.26
+MySQL-64-8-65536-4     1570.44     9.53         39.48                47.26
+
+### Ingestion - Loader
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1      486.66     4.16          0.13                 0.13
+MySQL-64-8-65536-2      486.66     4.16          0.13                 0.13
+MySQL-64-8-65536-3      486.66     4.16          0.13                 0.13
+MySQL-64-8-65536-4      486.66     4.16          0.13                 0.13
+
+### Execution - SUT
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1     1002.30    10.11         39.60                50.53
+MySQL-64-8-65536-2      899.03     9.24         39.72                53.90
+MySQL-64-8-65536-3      902.48     9.80         39.84                57.32
+MySQL-64-8-65536-4      605.43     9.57         39.97                59.87
+
+### Execution - Benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1      381.88     0.00          0.16                 0.16
+MySQL-64-8-65536-2      566.99     6.97          0.16                 0.16
+MySQL-64-8-65536-3      680.65     9.54          0.16                 0.17
+MySQL-64-8-65536-4      635.01    10.38          0.16                 0.17
+
+### Application Metrics
+                    InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-64-8-65536-1                           1.0                  11009.87                    0.04                0.0                    0.0
+MySQL-64-8-65536-2                           1.0                  13654.49                    0.04                0.0                    0.0
+MySQL-64-8-65536-3                           0.0                  13937.51                    0.04                0.0                    0.0
+MySQL-64-8-65536-4                           0.0                  13042.39                    0.04                0.0                    0.0
+
+### Tests
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Result contains no FAILED column

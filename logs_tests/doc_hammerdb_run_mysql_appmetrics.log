@@ -1,0 +1,285 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1759143651
+Experiment                    : starts at 2025-09-29 13:00:54.625942 (186408.0897172)
+Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+TPC-C data is generated and loaded using several threads.
+Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+Experiment uses bexhoma version 0.8.12.
+System metrics are monitored by a cluster-wide installation.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['MySQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [16] threads, split into [1] pods.
+Benchmarking is tested with [16] threads, split into [1, 2] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+MySQL-BHT-16-1                : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+MySQL-BHT-16-1                : will start now
+MySQL-BHT-16-1                : Name of SUT pods = bexhoma-sut-mysql-bht-16-1-1759143651
+MySQL-BHT-16-1                : Name of SUT service = bexhoma-sut-mysql-bht-16-1-1759143651
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for monitoring
+MySQL-BHT-16-1                : wants to monitor all components in cluster
+MySQL-BHT-16-1                : starts monitoring with prometheus pod
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-BHT-16-1                : is not loaded yet
+MySQL-BHT-16-1                : start asynch loading scripts of type loaded
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+MySQL-BHT-16-1                : showing loader times
+MySQL-BHT-16-1                : loader timespan (first to last [s]) = 204
+MySQL-BHT-16-1                : start asynch loading scripts of type indexed
+MySQL-BHT-16-1                : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+MySQL-BHT-16-1                : benchmarks done 0 of 1. This will be client 1
+MySQL-BHT-16-1                : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mysql', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'true'}
+MySQL-BHT-16-1-1              : start benchmarking
+MySQL-BHT-16-1                : benchmarking results in folder C:\data\benchmarks/1759143651
+- waiting 10s -               : done
+MySQL-BHT-16-1                : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-16-1-1759143651-1-1-z7wl2: found
+MySQL-BHT-16-1-1              : collecting loading metrics of SUT at connection MySQL-BHT-16-1-1
+MySQL-BHT-16-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-BHT-16-1-1              : collecting metrics of data generator at connection MySQL-BHT-16-1-1
+MySQL-BHT-16-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-BHT-16-1-1              : collecting metrics of data injector at connection MySQL-BHT-16-1-1
+MySQL-BHT-16-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+timing_benchmarker [(1759144368, 1759144812)]
+MySQL-BHT-16-1-1              : showing benchmarker times
+MySQL-BHT-16-1-1              : benchmarker timespan job from 1759144478 to 1759144954
+MySQL-BHT-16-1-1              : benchmarker timespan pods from 1759144368 to 1759144812
+MySQL-BHT-16-1-1              : benchmarker timespan (start to end single container [s]) = 444
+MySQL-BHT-16-1-1              : benchmarker times (start/end per pod and container) = [(1759144368, 1759144812)]
+MySQL-BHT-16-1-1              : found and updated times {'benchmarker': [(1759144368, 1759144812)]}
+MySQL-BHT-16-1-1              : collecting execution metrics of SUT at connection MySQL-BHT-16-1-1
+MySQL-BHT-16-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-BHT-16-1-1              : collecting metrics of benchmarker at connection MySQL-BHT-16-1-1
+MySQL-BHT-16-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+MySQL-BHT-16-1                : benchmarks done 0 of 1. This will be client 2
+MySQL-BHT-16-1                : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mysql', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 8, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'true'}
+MySQL-BHT-16-1-2              : start benchmarking
+MySQL-BHT-16-1                : benchmarking results in folder C:\data\benchmarks/1759143651
+- waiting 10s -               : done
+MySQL-BHT-16-1                : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-16-1-1759143651-1-2-jsfgj: found
+MySQL-BHT-16-1-2              : collecting loading metrics of SUT at connection MySQL-BHT-16-1-2
+MySQL-BHT-16-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-BHT-16-1-2              : collecting metrics of data generator at connection MySQL-BHT-16-1-2
+MySQL-BHT-16-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-BHT-16-1-2              : collecting metrics of data injector at connection MySQL-BHT-16-1-2
+MySQL-BHT-16-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+- waiting 30s -               : done
+MySQL-BHT-16-1                : has running benchmarks
+timing_benchmarker [(1759144920, 1759145367), (1759144920, 1759145372)]
+MySQL-BHT-16-1-2              : showing benchmarker times
+MySQL-BHT-16-1-2              : benchmarker timespan job from 1759145029 to 1759145500
+MySQL-BHT-16-1-2              : benchmarker timespan pods from 1759144920 to 1759145372
+MySQL-BHT-16-1-2              : benchmarker timespan (start to end single container [s]) = 452
+MySQL-BHT-16-1-2              : benchmarker times (start/end per pod and container) = [(1759144920, 1759145367), (1759144920, 1759145372)]
+MySQL-BHT-16-1-2              : found and updated times {'benchmarker': [(1759144920, 1759145367), (1759144920, 1759145372)]}
+MySQL-BHT-16-1-2              : collecting execution metrics of SUT at connection MySQL-BHT-16-1-2
+MySQL-BHT-16-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-BHT-16-1-2              : collecting metrics of benchmarker at connection MySQL-BHT-16-1-2
+MySQL-BHT-16-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-16-1-1759143651(.*)", pod=~"(.*)mysql-bht-16-1-1759143651(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MySQL-BHT-16-1                : can be stopped
+MySQL-BHT-16-1                : had 0 0 restarts
+Experiment                    : ends at 2025-09-29 13:32:46.208123 (188319.6399367) - 1911.55s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 1912s 
+    Code: 1759143651
+    HammerDB runs the benchmark.
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [16] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-BHT-16-1-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:442655544
+    datadisk:6784
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759143651
+MySQL-BHT-16-1-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:444625516
+    datadisk:8708
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759143651
+
+### Execution
+                  experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+MySQL-BHT-16-1-1               1      16       1          1     63.68    609.91         0.0  13537.0  31397.0         5       0
+MySQL-BHT-16-1-2               1      16       2          2     71.10    677.15         0.0  12875.5  29962.5         5       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MySQL-BHT-16-1 - Pods [[1, 2]]
+
+#### Planned
+DBMS MySQL-BHT-16-1 - Pods [[1, 2]]
+
+### Loading
+                  time_load  terminals  pods  Imported warehouses [1/h]
+MySQL-BHT-16-1-1      204.0        1.0   1.0                 282.352941
+MySQL-BHT-16-1-2      204.0        1.0   2.0                 282.352941
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1      451.94     3.58         35.43                38.44
+MySQL-BHT-16-1-2      489.43     3.58         35.45                38.54
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1       88.56     3.33          0.17                 0.17
+MySQL-BHT-16-1-2       88.56     3.33          0.17                 0.17
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1     1343.39     6.36         35.64                41.32
+MySQL-BHT-16-1-2     1297.46     6.45         35.85                44.17
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1      152.61     0.50          0.16                 0.16
+MySQL-BHT-16-1-2      152.61     0.64          0.16                 0.16
+
+### Application Metrics
+                  InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-BHT-16-1-1                           1.0                 106701.09                    0.01                0.0                    0.0
+MySQL-BHT-16-1-2                           0.0                 103927.65                    0.01                0.0                    0.0
+
+### Tests
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Workflow as planned

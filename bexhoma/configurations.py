@@ -39,6 +39,8 @@ from io import StringIO
 import hiyapyco
 from math import ceil
 import time
+import re
+import shutil
 
 from dbmsbenchmarker import *
 
@@ -184,6 +186,8 @@ class default():
         self.sut_service_name = ""                                              #: Name of the DBMS service name, if it is fixed and not installed per configuration
         self.sut_pod_name = ""                                                  #: Name of pod of SUT, if it is not managed by bexhoma
         self.sut_container_name = "dbms"                                        #: Name of the container in the SUT pod, that should be monitored, and for reading infos via ssh
+        self.sut_startup_args = []                                              #: List of args that are set for the SUT container in YAML manifest at startup
+        self.worker_startup_args = []                                           #: List of args that are set for the worker containers in YAML manifest at startup
         self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
@@ -1142,6 +1146,15 @@ scrape_configs:
         gpu_type = resources.nodeSelector.gpu
         instance = "{}-{}-{}-{}".format(cpu, memory, gpu, gpu_type)
         return instance
+    def use_ramdisk(self):
+        """
+        Return True, iff storage for the database should be used in a ram disk.
+        """
+        if self.storage['storageClassName'] is not None and self.storage['storageClassName'] == 'ramdisk':
+            use_ramdisk = True
+        else:
+            use_ramdisk = False
+        return use_ramdisk
     def use_storage(self):
         """
         Return True, iff storage for the database should be used.
@@ -1195,6 +1208,7 @@ scrape_configs:
         else:
             storageConfiguration = configuration
             #name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=configuration)
+        use_ramdisk = self.use_ramdisk()
         # configure names
         if self.num_worker > 0:
             # we assume here, a stateful set is used
@@ -1218,13 +1232,16 @@ scrape_configs:
         # Deployment manifest template - a configured copy will be stored in result folder
         template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
-        print("{:30s}: Name of SUT pods = {}".format(configuration, name))
-        print("{:30s}: Name of SUT service = {}".format(configuration, name))
+        print("{:30s}: name of SUT pods = {}".format(configuration, name))
+        print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
-            print("{:30s}: Name of SUT PVC name = {}".format(configuration, name_pvc))
+            if use_ramdisk:
+                print("{:30s}: uses RAM disk".format(configuration))
+            else:
+                print("{:30s}: name of SUT PVC name = {}".format(configuration, name_pvc))
         if self.num_worker > 0:
-            print("{:30s}: Name of Worker pods = {}".format(configuration, name_worker))
-            print("{:30s}: Name of Worker service headless = {}".format(configuration, name_worker))
+            print("{:30s}: name of worker pods = {}".format(configuration, name_worker))
+            print("{:30s}: name of worker service headless = {}".format(configuration, name_worker))
         # ENV
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()
@@ -1270,6 +1287,9 @@ scrape_configs:
                 #print("PVC", pvc, name_pvc)
                 if not use_storage:
                     del result[key]
+                elif use_ramdisk:
+                    # ramdisk does not need pvc
+                    del result[key]
                 else:
                     self.logger.debug('configuration.start_sut(PVC={},{})'.format(pvc, name_pvc))
                     dep['metadata']['name'] = name_pvc
@@ -1296,7 +1316,7 @@ scrape_configs:
                     #print(pvcs)
                     if len(pvcs) > 0:
                         print("{:30s}: storage {} exists".format(configuration, name_pvc))
-                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove']:
+                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0:
                             # we have not loaded yet, so this is the first run in this experiment
                             print("{:30s}: storage {} should be removed".format(configuration, name_pvc))
                             self.experiment.cluster.delete_pvc(name_pvc)
@@ -1384,6 +1404,9 @@ scrape_configs:
                     #for i_env,e in env.items():
                     #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     if container['name'] == 'dbms':
+                        if 'args' in container:
+                            self.worker_startup_args = container['args']
+                            print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         for j, vol in enumerate(container['volumeMounts']):
                             if vol['name'] == 'bxw':
@@ -1404,11 +1427,40 @@ scrape_configs:
                         #print(vol['mountPath'])
                         if not use_storage:
                             del result[key]['spec']['template']['spec']['volumes'][j]
+                        elif use_ramdisk:
+                            del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
+                            result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                 # remove storage template if not used
                 if 'volumeClaimTemplates' in result[key]['spec']:
-                    if not use_storage:
+                    if not use_storage or use_ramdisk:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
+                        list_of_workers_pvcs = []
+                        for worker in range(self.num_worker):
+                            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+                            worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker)
+                            list_of_workers_pvcs.append(worker_full_name)
+                        #print(list_of_workers_pvcs)
+                        remove_old_pvcs = not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0
+                        old_pvc_exist = False
+                        for statefulset_name_pvc in list_of_workers_pvcs:
+                            pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                            if pvc_exists > 0:
+                                print("{:30s}: storage {} exists".format(configuration, statefulset_name_pvc))
+                                old_pvc_exist = True
+                                if remove_old_pvcs:
+                                    # we have not loaded yet, so this is the first run in this experiment
+                                    print("{:30s}: storage {} should be removed".format(configuration, statefulset_name_pvc))
+                                    self.experiment.cluster.delete_pvc(statefulset_name_pvc)
+                        if old_pvc_exist and remove_old_pvcs:
+                            self.wait(10)
+                            for statefulset_name_pvc in list_of_workers_pvcs:
+                                pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                                while pvc_exists:
+                                    print("{:30s}: storage {} still exists".format(configuration, statefulset_name_pvc))
+                                    self.wait(10)
+                                    pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                                print("{:30s}: storage {} is gone".format(configuration, statefulset_name_pvc))
                         #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
                         #self.service = dep['metadata']['name']
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['app'] = app
@@ -1565,6 +1617,9 @@ scrape_configs:
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
+                        if 'args' in container:
+                            self.sut_startup_args = container['args']
+                            print("{:30s}: server args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in reversed(list(enumerate(container['volumeMounts']))):
@@ -1593,6 +1648,9 @@ scrape_configs:
                         if vol['name'] == 'benchmark-storage-volume':
                             if not use_storage:
                                 del result[key]['spec']['template']['spec']['volumes'][i]
+                            elif use_ramdisk:
+                                del result[key]['spec']['template']['spec']['volumes'][i]['persistentVolumeClaim']
+                                result[key]['spec']['template']['spec']['volumes'][i]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                             else:
                                 vol['persistentVolumeClaim']['claimName'] = name_pvc
                         if vol['name'] == 'benchmark-data-volume':
@@ -2171,7 +2229,8 @@ scrape_configs:
         # add volume labels to PV
         app = self.appname
         use_storage = self.use_storage()
-        if use_storage:
+        use_ramdisk = self.use_ramdisk()
+        if use_storage and not use_ramdisk:
             if self.storage['storageConfiguration']:
                 volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
                 volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
@@ -2231,6 +2290,7 @@ scrape_configs:
         server['hugepages_free'] = self.get_host_hugepages_free()
         server['cpu_list'] = self.get_host_cpulist()
         server['cuda'] = self.get_host_cuda()
+        server['args'] = self.sut_startup_args
         return server
     def set_metric_of_config_default(self, metric, host, gpuid, schema, database, experiment=None):
         """
@@ -2315,8 +2375,10 @@ scrape_configs:
         pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         for pod in pods:
             self.pod_sut = pod
-            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))            
-            c['worker'].append(self.get_host_all())
+            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))
+            worker_infos = self.get_host_all()
+            worker_infos['args'] = self.worker_startup_args
+            c['worker'].append(worker_infos)
         self.pod_sut = pod_sut
         # take latest resources
         # TODO: read from yaml file
@@ -2815,34 +2877,49 @@ scrape_configs:
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
         scriptfolder = '/tmp/'
+        c = self.dockertemplate['template']
+        database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else self.experiment.volume
+        schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
+        databases = [database]
         if self.num_tenants > 0 and self.tenant_per == 'schema':
             for tenant in range(self.num_tenants):
                 print("{:30s}: scripts for tenant #{}".format(self.configuration, tenant))
                 #print(f"Tenant #{tenant}")
                 for script in scripts:
                     filename_template = self.path_experiment_docker+'/'+script
-                    if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename_template):
-                        with open(self.experiment.cluster.experiments_configfolder+'/'+filename_template, "r") as initscript_template:
+                    filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_template
+                    #filename_in_container = scriptfolder+script
+                    filename_base, file_extension = os.path.splitext(script)
+                    #filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+                    if os.path.isfile(filename_source):
+                        with open(filename_source, "r") as initscript_template:
                             data = initscript_template.read()
                             #data = data.format(**self.ddl_parameters)
                             #print(data)
                             data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
                             #print(data)
-                            filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
-                            filename_target = f'/filled_{tenant}_{script}'
-                            with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
+                            filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{tenant}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, tenant=tenant, extension=file_extension.lower()).lower()
+                            #filename_filled = self.path_experiment_docker+f'/filled_{tenant}_{script}'
+                            #filename_filled_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
+                            filename_target = f'/{tenant}-{script}'
+                            #filename_target = f'/filled_{tenant}_{script}'
+                            filename_in_container = scriptfolder+filename_target
+                            with open(filename_in_resultfolder, "w") as initscript_filled:
                                 initscript_filled.write(data)
-                            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+filename_target))
+                            self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
             return
         if self.num_tenants > 0 and self.tenant_per == 'database':
             script = 'initdatabases.sql'
-            filename_template = self.experiment.cluster.experiments_configfolder+'/'+self.path_experiment_docker+'/'+script
+            filename_base, file_extension = os.path.splitext(script)
+            #filename_template = self.experiment.cluster.experiments_configfolder+'/'+self.path_experiment_docker+'/'+script
+            filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+            filename_in_container = scriptfolder+script
             script_create_database = ''
             for tenant in range(self.num_tenants):
                 script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
-            with open(filename_template, "w") as initscript_filled:
+            with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
-            self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=filename_template, to_name=self.pod_sut+':'+scriptfolder+script))
+            self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
         if len(self.ddl_parameters):
             #for script in self.initscript:
             for script in scripts:
@@ -2859,10 +2936,16 @@ scrape_configs:
             #for script in self.initscript:
             for script in scripts:
                 filename = self.path_experiment_docker+'/'+script
-                if os.path.isfile(self.experiment.cluster.experiments_configfolder+'/'+filename):
-                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
-                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=scriptfolder+script))
-                    #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename, to_name=self.pod_sut+':'+scriptfolder+script))
+                filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename
+                filename_in_container = scriptfolder+script
+                filename_base, file_extension = os.path.splitext(script)
+                #filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}.{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, extension=file_extension.lower()).lower()
+                #filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(app=self.app, configuration=self.configuration, filename=script, database=db, extension=file_extension.lower()).lower()
+                filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+                if os.path.isfile(filename_source):
+                    self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_source, pod_name=self.pod_sut, to_name=filename_in_container))
+                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+                    shutil.copy(filename_source, filename_in_resultfolder)
     def attach_worker(self):
         """
         Attaches worker nodes to the master of the sut.
@@ -3088,19 +3171,18 @@ scrape_configs:
                         #print(fullcommand)
                         self.experiment.cluster.kubectl(fullcommand)
                         use_storage = self.use_storage()
-                        if use_storage:
+                        use_ramdisk = self.use_ramdisk()
+                        if use_storage and not use_ramdisk:
                             if self.storage['storageConfiguration']:
                                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
                             else:
                                 name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
                             volume = name_pvc
-                        else:
-                            volume = ''
-                        if volume:
-                            fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
-                            #fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(loader_time, int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
-                            #print(fullcommand)
-                            self.experiment.cluster.kubectl(fullcommand)
+                            if volume:
+                                fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
+                                #fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(loader_time, int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
+                                #print(fullcommand)
+                                self.experiment.cluster.kubectl(fullcommand)
                     # get metrics of loader components
                     #endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     # get monitoring for loading
@@ -3209,11 +3291,12 @@ scrape_configs:
         scriptfolder = '/tmp/'
         commands = scripts.copy()
         c = self.dockertemplate['template']
-        database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
-        schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else 'default'
+        database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else self.experiment.volume
+        schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
         databases = [database]
         use_storage = self.use_storage()
-        if use_storage:
+        use_ramdisk = self.use_ramdisk()
+        if use_storage and not use_ramdisk:
             #storage_label = 'tpc-ds-1'
             if self.storage['storageConfiguration']:
                 storageConfiguration = self.storage['storageConfiguration']
@@ -3242,7 +3325,8 @@ scrape_configs:
                     for tenant in range(self.num_tenants):
                         commands_tenants = []
                         for c in commands:
-                            filename_filled = f'filled_{tenant}_{c}'
+                            filename_filled = f'{tenant}-{c}'
+                            #filename_filled = f'filled_{tenant}_{c}'
                             commands_tenants.append(filename_filled)
                         thread_args = {
                             'app':self.appname,
@@ -3807,7 +3891,9 @@ scrape_configs:
         pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
-            print("{:30s}: Worker pods found: {}".format(self.configuration, pods_worker))
+            print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
+            pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
+            print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
     def get_worker_endpoints(self):
@@ -3827,7 +3913,7 @@ scrape_configs:
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
             endpoints.append(endpoint)
-            print("{:30s}: Worker endpoint : {}".format(self.configuration, endpoint))
+            print("{:30s}: worker endpoint : {}".format(self.configuration, endpoint))
             #print('Worker endpoint: {endpoint}'.format(endpoint = endpoint))
         return endpoints
 

@@ -28,6 +28,7 @@ import kubernetes.config as kubernetes_config
 from kubernetes.client.rest import ApiException
 #from kubernetes import client, config
 import subprocess
+import traceback
 import os
 import time
 import psutil
@@ -494,7 +495,7 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.is_pod_ready(pod=pod, app=app)
+            return self.is_pod_ready(pod=pod)
             #print(f"Error fetching pod status: {e}")
             #return False
     def get_pods_labels(self, app='', component='', experiment='', configuration=''):
@@ -630,6 +631,27 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_pvc(app=app, component=component, experiment=experiment, configuration=configuration)
+    def does_pvc_exist(self, name):
+        """
+        Tests if a PVC with a given name exists.
+
+        :param name: name of the PVC to test
+        """
+        self.logger.debug('testbed.does_pvc_exist()')
+        try: 
+            api_response = self.v1core.read_namespaced_persistent_volume_claim(namespace=self.namespace, name=name)
+            #print("does_pvc_exist", api_response)
+            return True
+        except ApiException as e:
+            #print(e)
+            if e.status == 404:
+                # not found
+                return False
+            else:
+                print("Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: %s\n" % e)
+                self.cluster_access()
+                self.wait(2)
+                return self.does_pvc_exists(name=name)
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
         Return all labels of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
@@ -877,15 +899,59 @@ class testbed():
         :param command: An eksctl command
         :return: stdout of the kubectl command
         """
+        def run_with_fallback(fullcommand):
+            encodings = ["utf-8", "latin1", "cp1252"]
+            try:
+                # Run once, capture raw bytes
+                raw = subprocess.check_output(fullcommand, shell=True, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as e:
+                # Command ran but failed (non-zero exit code)
+                print("Command failed!")
+                print(f"Return code: {e.returncode}")
+                print(f"Command: {e.cmd}")
+                if e.output:
+                    print("Raw output (bytes):", e.output)
+                    # Try to decode output even on error
+                    for enc in encodings:
+                        try:
+                            print(f"Decoded with {enc}:")
+                            print(e.output.decode(enc))
+                            break
+                        except UnicodeDecodeError:
+                            continue
+                    if b'Unauthorized' in e.output:
+                        print("Create new access token")
+                        self.cluster_access()
+                        self.wait(2)
+                        return run_with_fallback(fullcommand)
+                return None
+            except Exception as e:
+                # Any other unexpected error (e.g. command not found)
+                print("Unexpected error while running subprocess!")
+                print("Exception type:", type(e).__name__)
+                print("Exception message:", str(e))
+                print("Traceback:")
+                traceback.print_exc()
+                return None
+            # Try decoding with fallback encodings
+            for enc in encodings:
+                try:
+                    return raw.decode(enc)
+                except UnicodeDecodeError:
+                    continue
+            # If nothing worked
+            print("Failed to decode output with any known encoding")
+            return None
         fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
         self.logger.debug('testbed.kubectl({})'.format(fullcommand))
         #print(fullcommand)
         # Try reading the output with fallback encodings
-        try:
-            result = subprocess.check_output(fullcommand, shell=True, encoding='utf-8')
-        except UnicodeDecodeError:
-            # Fallback to Latin-1 or Windows-1252
-            result = subprocess.check_output(fullcommand, shell=True, encoding='latin1')
+        result = run_with_fallback(fullcommand)
+        #try:
+        #    result = subprocess.check_output(fullcommand, shell=True, encoding='utf-8')
+        #except UnicodeDecodeError:
+        #    # Fallback to Latin-1 or Windows-1252
+        #    result = subprocess.check_output(fullcommand, shell=True, encoding='latin1')
         #print(result)
         return result
         #return os.popen(fullcommand).read()# os.system(fullcommand)
@@ -1949,7 +2015,7 @@ class kubernetes(testbed):
             while tries<10:
                 stdout = self.pod_log(pod_name, container)
                 if len(stdout) > 0:
-                    f = open(filename_log, "w")
+                    f = open(filename_log, "w", encoding='utf-8')
                     f.write(stdout)
                     f.close()
                     return

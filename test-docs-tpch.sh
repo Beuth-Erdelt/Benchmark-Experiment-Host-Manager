@@ -132,7 +132,18 @@ nohup python tpch.py -ms 1 -dt -tr \
 #sleep 600
 wait_process "tpch"
 
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 0.1 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 5Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_fractional.log &
 
+wait_process "tpch"
 
 
 ###########################################

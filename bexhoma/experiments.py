@@ -154,7 +154,7 @@ class default():
         self.configurations = []                                        # list of configurations (i.e., dbms to test)
         self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
-        self.evaluator = evaluators.base(                               # set evaluator for experiment - default uses base
+        self.evaluator = evaluators.logger(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.set_eval_parameters(code = self.code)
     def process(self):
@@ -995,6 +995,20 @@ class default():
                     status = self.cluster.get_pod_status(pod_dashboard)
                     self.cluster.logger.debug(pod_dashboard+status)
             """
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
         # copy logs and yamls to result folder
         """
         print("Copy configuration and logs", end="", flush=True)
@@ -1816,7 +1830,7 @@ class default():
                 #(timing_start, timing_end) = get_job_timing(self.path+"/"+filename)
                 self.cluster.logger.debug("Found times {times}".format(times=(timing_start, timing_end)))
                 if (timing_start, timing_end) == (0,0):
-                    print("Error in "+filename)
+                    print(f"Error in {filename}: no start and end times")
                 else:
                     timing.append((timing_start, timing_end))
             # when log does not contain container name (when is it true?)
@@ -2001,6 +2015,25 @@ class default():
         pd.set_option('display.max_rows', 500)
         pd.set_option('display.max_columns', 500)
         pd.set_option('display.width', 1000)
+        """
+        pod_dashboard = self.get_dashboard_pod()
+        cmd = {}
+        cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+        self.cluster.logger.debug(stdout)
+        cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+        self.cluster.logger.debug(stdout)
+        cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+        self.cluster.logger.debug(stdout)
+        cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+        self.cluster.logger.debug(stdout)
+        print("{:30s}: downloading partial results".format("Experiment"))
+        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        self.cluster.kubectl(cmd['download_results'])
+        """
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
@@ -2033,10 +2066,35 @@ class default():
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
+        list_monitoring_app = list()
+        df_monitoring_app = pd.DataFrame()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
+                num_metrics_included = 0
+                for metricname, metric in c['monitoring']['metrics'].items():
+                    #print(metric['type'])
+                    if num_metrics_included >= 5:
+                        continue
+                    if metric['type'] == 'application' and metric['active'] == True:
+                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
+                        #print(df)
+                        if metric['metric'] == 'counter':
+                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                        else:
+                            df = df.mean().sort_index()
+                        df_cleaned = pd.DataFrame(df)
+                        df_cleaned.columns = [metric['title']]
+                        if not df_cleaned.empty:
+                            list_monitoring_app.append(df_cleaned.copy())
+                            num_metrics_included = num_metrics_included + 1
+                if len(list_monitoring_app) > 0:
+                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
@@ -2194,7 +2252,9 @@ class default():
         #####################
         if self.benchmarking_is_active():
             print("\n### Workflow")
-            workflow_actual = self.evaluator.reconstruct_workflow(df_time)
+            print(df_time)
+            workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df_time)
+            #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
             workflow_planned = workload_properties['workflow_planned']
             if len(workflow_actual) > 0:
                 print("\n#### Actual")
@@ -2206,11 +2266,14 @@ class default():
                     print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
+        if not df_monitoring_app.empty:
+            print("\n### Application Metrics")
+            print(df_monitoring_app)
         print("\n### Tests")
         if self.benchmarking_is_active():
             self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
             self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
-            self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+            #self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
             #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
             self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
             if num_errors == 0:
@@ -2845,10 +2908,34 @@ class tpcc(default):
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
+        list_monitoring_app = list()
+        df_monitoring_app = pd.DataFrame()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
+                num_metrics_included = 0
+                for metricname, metric in c['monitoring']['metrics'].items():
+                    #print(metric['type'])
+                    if num_metrics_included >= 5:
+                        continue
+                    if metric['type'] == 'application' and metric['active'] == True:
+                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
+                        if metric['metric'] == 'counter':
+                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                        else:
+                            df = df.max().sort_index()
+                        df_cleaned = pd.DataFrame(df)
+                        df_cleaned.columns = [metric['title']]
+                        if not df_cleaned.empty:
+                            list_monitoring_app.append(df_cleaned.copy())
+                            num_metrics_included = num_metrics_included + 1
+                if len(list_monitoring_app) > 0:
+                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
@@ -2958,6 +3045,9 @@ class tpcc(default):
             print(df_connections)
         #####################
         test_results_monitoring = self.show_summary_monitoring()
+        if not df_monitoring_app.empty:
+            print("\n### Application Metrics")
+            print(df_monitoring_app)
         print("\n### Tests")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
@@ -3352,10 +3442,35 @@ class ycsb(default):
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
+        list_monitoring_app = list()
+        df_monitoring_app = pd.DataFrame()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            #print(c['monitoring']['metrics'])
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
+                num_metrics_included = 0
+                for metricname, metric in c['monitoring']['metrics'].items():
+                    #print(metric['type'])
+                    if num_metrics_included >= 5:
+                        continue
+                    if metric['type'] == 'application' and metric['active'] == True:
+                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
+                        if metric['metric'] == 'counter':
+                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                        else:
+                            df = df.max().sort_index()
+                        df_cleaned = pd.DataFrame(df)
+                        df_cleaned.columns = [metric['title']]
+                        if not df_cleaned.empty:
+                            list_monitoring_app.append(df_cleaned.copy())
+                            num_metrics_included = num_metrics_included + 1
+                if len(list_monitoring_app) > 0:
+                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                #print(df_monitoring_app)
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'
             if key in c['parameter']:
@@ -3462,6 +3577,9 @@ class ycsb(default):
                     print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
+        if not df_monitoring_app.empty:
+            print("\n### Application Metrics")
+            print(df_monitoring_app)
         print("\n### Tests")
         if test_loading:
             self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
@@ -3888,6 +4006,10 @@ class benchbase(default):
                     df_plot_filtered[col] = df_plot.loc[:,col]
             print(df_plot_filtered.sort_values(['experiment_run', 'client', 'child']))
             print("\n#### Aggregated Parallel")
+            if self.workload['tenant_per'] == "container":
+                # we want to aggregate containers of DBMS running in parallel
+                #print(type(df_plot))
+                df_plot['connection'] = df_plot['experiment_run'].astype(str)+"-"+df_plot['client'].astype(str)
             df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
             #print(df_aggregated)
             #print(df_aggregated.T)

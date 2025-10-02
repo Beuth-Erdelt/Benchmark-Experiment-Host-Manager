@@ -1,0 +1,221 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1758718431
+Experiment                    : starts at 2025-09-24 14:53:51.534311 (22910595.00486453)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads.
+Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
+Experiment uses bexhoma version 0.8.12.
+Experiment is limited to DBMS ['MySQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker11.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [10] threads, split into [1] pods.
+Benchmarking is run as [2, 2] times the number of benchmarking pods.
+Number of tenants is 2, one database per tenant.
+Experiment is run once.
+Cluster monitoring            : is running
+MySQL-1-1-1024                : will start now
+MySQL-1-1-1024                : Name of SUT pods = bexhoma-sut-mysql-1-1-1024-1758718431
+MySQL-1-1-1024                : Name of SUT service = bexhoma-sut-mysql-1-1-1024-1758718431
+- waiting 30s -               : done
+MySQL-1-1-1024                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1-1-1024                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1-1-1024                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1-1-1024                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1-1-1024                : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1-1-1024                : is not loaded yet
+MySQL-1-1-1024                : start asynch loading scripts of type loaded
+MySQL-1-1-1024                : runs scripts ['initschema-benchbase.sql']
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : is loading
+- waiting 30s -               : done
+MySQL-1-1-1024                : showing loader times
+MySQL-1-1-1024                : loader timespan (first to last [s]) = 96
+MySQL-1-1-1024                : start asynch loading scripts of type indexed
+MySQL-1-1-1024                : runs scripts ['checkschema-benchbase.sql']
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+MySQL-1-1-1024                : benchmarks done 0 of 1. This will be client 1
+MySQL-1-1-1024                : we will change parameters of benchmark as {'SF': '1', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mysql', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 1024, 'BENCHBASE_TERMINALS': 10, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'true', 'BEXHOMA_TENANT_BY': 'database', 'BEXHOMA_TENANT_NUM': 2}
+MySQL-1-1-1024-1              : start benchmarking
+MySQL-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1758718431
+- waiting 10s -               : done
+MySQL-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1-1024-1758718431-1-1-6xzrb: found
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+timing_benchmarker [(1758718759, 1758719115), (1758718759, 1758719089)]
+MySQL-1-1-1024-1              : showing benchmarker times
+MySQL-1-1-1024-1              : benchmarker timespan job from 1758718756 to 1758719143
+MySQL-1-1-1024-1              : benchmarker timespan pods from 1758718759 to 1758719115
+MySQL-1-1-1024-1              : benchmarker timespan (start to end single container [s]) = 356
+MySQL-1-1-1024-1              : benchmarker times (start/end per pod and container) = [(1758718759, 1758719115), (1758718759, 1758719089)]
+MySQL-1-1-1024-1              : found and updated times {'benchmarker': [(1758718759, 1758719115), (1758718759, 1758719089)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+MySQL-1-1-1024                : benchmarks done 0 of 1. This will be client 2
+MySQL-1-1-1024                : we will change parameters of benchmark as {'SF': '1', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mysql', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 1024, 'BENCHBASE_TERMINALS': 10, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'true', 'BEXHOMA_TENANT_BY': 'database', 'BEXHOMA_TENANT_NUM': 2}
+MySQL-1-1-1024-2              : start benchmarking
+MySQL-1-1-1024                : benchmarking results in folder /home/perdelt/benchmarks/1758718431
+- waiting 10s -               : done
+MySQL-1-1-1024                : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1-1024-1758718431-1-2-rpgtx: found
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+- waiting 30s -               : done
+MySQL-1-1-1024                : has running benchmarks
+timing_benchmarker [(1758719182, 1758719529), (1758719182, 1758719508)]
+MySQL-1-1-1024-2              : showing benchmarker times
+MySQL-1-1-1024-2              : benchmarker timespan job from 1758719179 to 1758719533
+MySQL-1-1-1024-2              : benchmarker timespan pods from 1758719182 to 1758719529
+MySQL-1-1-1024-2              : benchmarker timespan (start to end single container [s]) = 347
+MySQL-1-1-1024-2              : benchmarker times (start/end per pod and container) = [(1758719182, 1758719529), (1758719182, 1758719508)]
+MySQL-1-1-1024-2              : found and updated times {'benchmarker': [(1758719182, 1758719529), (1758719182, 1758719508)]}
+- waiting 30s -               : done
+MySQL-1-1-1024                : can be stopped
+MySQL-1-1-1024                : had 0 0 restarts
+Experiment                    : ends at 2025-09-24 15:12:46.699687 (22911730.17024119) - 1135.17s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=1
+    Type: benchbase
+    Duration: 1136s 
+    Code: 1758718431
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.12.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [10] threads, split into [1] pods.
+    Benchmarking is run as [2, 2] times the number of benchmarking pods.
+    Number of tenants is 2, one database per tenant.
+    Experiment is run once.
+
+### Connections
+MySQL-1-1-1024-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:440464384
+    datadisk:4669
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1758718431
+                TENANT_BY:database
+                TENANT_NUM:2
+MySQL-1-1-1024-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:440474724
+    datadisk:4679
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1758718431
+                TENANT_BY:database
+                TENANT_NUM:2
+
+### Execution
+
+#### Per Pod
+                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                
+MySQL-1-1-1024-1-2               1         10    1024       1      1  300.0           0                      0.459999                   0.453332   95.178548                                                      76084.0                                              26409.0
+MySQL-1-1-1024-1-1               1         10    1024       1      2  300.0           0                      0.539998                   0.543332  114.074327                                                      84308.0                                              28447.0
+MySQL-1-1-1024-2-1               1         10    1024       2      1  300.0           0                      0.489999                   0.486665  102.177033                                                      52566.0                                              22908.0
+MySQL-1-1-1024-2-2               1         10    1024       2      2  300.0           0                      0.486665                   0.486665  102.176958                                                      74052.0                                              28352.0
+
+#### Aggregated Parallel
+                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MySQL-1-1-1024-1               1         20    2048          2  300.0           0                          1.00                       1.00         0.0                                                      84308.0                                              27428.0
+MySQL-1-1-1024-2               1         20    2048          2  300.0           0                          0.98                       0.97         0.0                                                      74052.0                                              25630.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-1-1-1024 - Pods [[2, 2]]
+
+#### Planned
+DBMS MySQL-1-1-1024 - Pods [[2, 2]]
+
+### Loading
+                  time_load  terminals  pods  Throughput [SF/h]
+MySQL-1-1-1024-1       96.0        1.0   2.0               37.5
+MySQL-1-1-1024-2       96.0        1.0   2.0               37.5
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

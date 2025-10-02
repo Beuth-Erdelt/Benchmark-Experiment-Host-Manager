@@ -1,0 +1,88 @@
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=1
+    Type: benchbase
+    Duration: 1136s 
+    Code: 1758718431
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.12.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [10] threads, split into [1] pods.
+    Benchmarking is run as [2, 2] times the number of benchmarking pods.
+    Number of tenants is 2, one database per tenant.
+    Experiment is run once.
+
+### Connections
+MySQL-1-1-1024-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:440464384
+    datadisk:4669
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1758718431
+                TENANT_BY:database
+                TENANT_NUM:2
+MySQL-1-1-1024-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:440474724
+    datadisk:4679
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1758718431
+                TENANT_BY:database
+                TENANT_NUM:2
+
+### Execution
+
+#### Per Pod
+                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                
+MySQL-1-1-1024-1-2               1         10    1024       1      1  300.0           0                      0.459999                   0.453332   95.178548                                                      76084.0                                              26409.0
+MySQL-1-1-1024-1-1               1         10    1024       1      2  300.0           0                      0.539998                   0.543332  114.074327                                                      84308.0                                              28447.0
+MySQL-1-1-1024-2-1               1         10    1024       2      1  300.0           0                      0.489999                   0.486665  102.177033                                                      52566.0                                              22908.0
+MySQL-1-1-1024-2-2               1         10    1024       2      2  300.0           0                      0.486665                   0.486665  102.176958                                                      74052.0                                              28352.0
+
+#### Aggregated Parallel
+                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+MySQL-1-1-1024-1               1         20    2048          2  300.0           0                          1.00                       1.00         0.0                                                      84308.0                                              27428.0
+MySQL-1-1-1024-2               1         20    2048          2  300.0           0                          0.98                       0.97         0.0                                                      74052.0                                              25630.0
+
+### Workflow
+
+#### Actual
+DBMS MySQL-1-1-1024 - Pods [[2, 2]]
+
+#### Planned
+DBMS MySQL-1-1-1024 - Pods [[2, 2]]
+
+### Loading
+                  time_load  terminals  pods  Throughput [SF/h]
+MySQL-1-1-1024-1       96.0        1.0   2.0               37.5
+MySQL-1-1-1024-2       96.0        1.0   2.0               37.5
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned

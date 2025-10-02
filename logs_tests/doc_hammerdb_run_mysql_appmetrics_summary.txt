@@ -1,0 +1,104 @@
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+    Type: tpcc
+    Duration: 1912s 
+    Code: 1759143651
+    HammerDB runs the benchmark.
+    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+    TPC-C data is generated and loaded using several threads.
+    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
+    Experiment uses bexhoma version 0.8.12.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MySQL'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [16] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MySQL-BHT-16-1-1 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:442655544
+    datadisk:6784
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759143651
+MySQL-BHT-16-1-2 uses docker image mysql:8.4.0
+    RAM:541008568320
+    Cores:64
+    host:5.15.0-140-generic
+    node:cl-worker11
+    disk:444625516
+    datadisk:8708
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    limits_memory:64Gi
+    eval_parameters
+        code:1759143651
+
+### Execution
+                  experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+MySQL-BHT-16-1-1               1      16       1          1     63.68    609.91         0.0  13537.0  31397.0         5       0
+MySQL-BHT-16-1-2               1      16       2          2     71.10    677.15         0.0  12875.5  29962.5         5       0
+
+Warehouses: 16
+
+### Workflow
+
+#### Actual
+DBMS MySQL-BHT-16-1 - Pods [[1, 2]]
+
+#### Planned
+DBMS MySQL-BHT-16-1 - Pods [[1, 2]]
+
+### Loading
+                  time_load  terminals  pods  Imported warehouses [1/h]
+MySQL-BHT-16-1-1      204.0        1.0   1.0                 282.352941
+MySQL-BHT-16-1-2      204.0        1.0   2.0                 282.352941
+
+### Ingestion - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1      451.94     3.58         35.43                38.44
+MySQL-BHT-16-1-2      489.43     3.58         35.45                38.54
+
+### Ingestion - Loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1       88.56     3.33          0.17                 0.17
+MySQL-BHT-16-1-2       88.56     3.33          0.17                 0.17
+
+### Execution - SUT
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1     1343.39     6.36         35.64                41.32
+MySQL-BHT-16-1-2     1297.46     6.45         35.85                44.17
+
+### Execution - Benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-BHT-16-1-1      152.61     0.50          0.16                 0.16
+MySQL-BHT-16-1-2      152.61     0.64          0.16                 0.16
+
+### Application Metrics
+                  InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-BHT-16-1-1                           1.0                 106701.09                    0.01                0.0                    0.0
+MySQL-BHT-16-1-2                           0.0                 103927.65                    0.01                0.0                    0.0
+
+### Tests
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: NOPM contains no 0 or NaN
+TEST passed: Workflow as planned
