@@ -162,6 +162,7 @@ for i in *tbl*; do
         SECONDS_START=$SECONDS
         echo "=========="
         time mysql --local-infile=1 --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
+		# no LOAD DATA LOCAL INFILE:
         #time mysqlsh --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
         echo "Start $SECONDS_START seconds"
         SECONDS_END=$SECONDS

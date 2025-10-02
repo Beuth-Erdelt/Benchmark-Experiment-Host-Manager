@@ -631,6 +631,27 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_pvc(app=app, component=component, experiment=experiment, configuration=configuration)
+    def does_pvc_exist(self, name):
+        """
+        Tests if a PVC with a given name exists.
+
+        :param name: name of the PVC to test
+        """
+        self.logger.debug('testbed.does_pvc_exist()')
+        try: 
+            api_response = self.v1core.read_namespaced_persistent_volume_claim(namespace=self.namespace, name=name)
+            #print("does_pvc_exist", api_response)
+            return True
+        except ApiException as e:
+            #print(e)
+            if e.status == 404:
+                # not found
+                return False
+            else:
+                print("Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: %s\n" % e)
+                self.cluster_access()
+                self.wait(2)
+                return self.does_pvc_exists(name=name)
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
         Return all labels of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
@@ -1994,7 +2015,7 @@ class kubernetes(testbed):
             while tries<10:
                 stdout = self.pod_log(pod_name, container)
                 if len(stdout) > 0:
-                    f = open(filename_log, "w")
+                    f = open(filename_log, "w", encoding='utf-8')
                     f.write(stdout)
                     f.close()
                     return

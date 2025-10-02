@@ -1,2 +1,0 @@
-CREATE DATABASE tenant_0;
-CREATE DATABASE tenant_1;

@@ -77,11 +77,6 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-kubectl delete pvc bexhoma-storage-cockroachdb-ycsb-1
-kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-0
-kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-1
-kubectl delete pvc bxw-bexhoma-worker-cockroachdb-ycsb-1-2
-
 #### YCSB PVC (Example-CockroachDB.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -101,7 +96,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
 
 

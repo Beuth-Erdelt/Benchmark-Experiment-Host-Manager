@@ -27,18 +27,45 @@ RUN apt-get install -y build-essential
 RUN apt-get install -y wget
 RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make && cp src/redis-cli /usr/local/bin/ && chmod 755 /usr/local/bin/redis-cli
 
+
+
+# Install prerequisites
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    lsb-release \
+    ca-certificates \
+    apt-transport-https \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download MySQL APT config package
+RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.30-1_all.deb
+
+# Install the package (non-interactive)
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.30-1_all.deb
+
+# Change the distribution from trixie to bookworm to match supported repo
+RUN sed -i 's/trixie/bookworm/g' /etc/apt/sources.list.d/mysql.list
+
+# Update package lists and install MySQL Shell
+RUN apt-get update && apt-get install -y mysql-shell
+
+# Cleanup
+RUN rm -f mysql-apt-config_0.8.30-1_all.deb \
+    && rm -rf /var/lib/apt/lists/*
+
 #&& apt-get install -y mysql-apt-config && apt-get install -y mysql-shell
 
-RUN apt --fix-missing --fix-broken -y install
-RUN apt-get install --fix-missing -y libcurl4
-RUN apt-get install -y libssh-4
+#RUN apt --fix-missing --fix-broken -y install
+#RUN apt-get install --fix-missing -y libcurl4
+#RUN apt-get install -y libssh-4
 
-RUN apt-get install -y lsb-release gnupg apt-transport-https
+#RUN apt-get install -y lsb-release gnupg apt-transport-https
 
 ### install mysqlsh
-RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debian12_amd64.deb
-RUN dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb
-RUN apt-get install mysql-shell -y
+#RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debian12_amd64.deb
+#RUN dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb
+#RUN apt-get install mysql-shell -y
 
 # Set locale properly
 RUN apt-get update && \
@@ -86,10 +113,14 @@ RUN mkdir -p /tmp/tpcds
 
 #COPY ./*.dat /tmp/
 
-COPY ./loader-parallel.sh /tmp/loader-parallel.sh
+#COPY ./loader-parallel.sh /tmp/loader-parallel.sh
+#RUN ["chmod", "+x", "/tmp/loader-parallel.sh"]
+#CMD ["/bin/bash", "-c", "/tmp/loader-parallel.sh"]
+
 COPY ./loader.sh /tmp/loader.sh
 RUN ["chmod", "+x", "/tmp/loader.sh"]
-
-
 CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
+
 #CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
+
+

@@ -44,29 +44,21 @@ wait_process "ycsb"
 
 BEXHOMA_NUM_TENANTS=2
 
-kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
-
 nohup python tpch.py -tr \
   --dbms PostgreSQL \
   -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi \
+  -rst shared -rss 10Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
 
 wait_process "tpch"
-
-kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
 
 nohup python tpch.py -tr \
   --dbms PostgreSQL \
   -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi \
+  -rst shared -rss 10Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
-
-
-kubectl delete pvc bexhoma-storage-postgresql-0-2-tpch-1
-kubectl delete pvc bexhoma-storage-postgresql-1-2-tpch-1
 
 nohup python tpch.py \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
@@ -76,6 +68,7 @@ nohup python tpch.py \
   -nlp 1 -nbp 1 \
   -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 5Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
 
 wait_process "tpch"
