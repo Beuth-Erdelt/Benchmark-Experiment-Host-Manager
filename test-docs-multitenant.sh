@@ -45,8 +45,12 @@ wait_process "ycsb"
 BEXHOMA_NUM_TENANTS=2
 
 nohup python tpch.py -tr \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
+  -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
+  -ii -ic -is \
+  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
+  -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
@@ -54,19 +58,25 @@ nohup python tpch.py -tr \
 wait_process "tpch"
 
 nohup python tpch.py -tr \
+  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+  -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 -ne $BEXHOMA_NUM_TENANTS -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+  -ii -ic -is \
+  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
+  -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
 
-nohup python tpch.py \
+wait_process "tpch"
+
+nohup python tpch.py -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
   -ii -ic -is \
-  -nlp 1 -nbp 1 \
-  -ne 1 \
+  -nlp 1 -nlt 1 -nbp 1  -nlt 64 \
+  -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 5Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
@@ -82,8 +92,6 @@ wait_process "tpch"
 
 BEXHOMA_NUM_TENANTS=2
 
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
-
 nohup python benchbase.py \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 -sd 5 -xkey \
@@ -91,11 +99,10 @@ nohup python benchbase.py \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 10Gi -rsr \
   run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log &
 
 wait_process "benchbase"
-
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
 
 nohup python benchbase.py \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
@@ -104,12 +111,10 @@ nohup python benchbase.py \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 10Gi -rsr \
   run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log &
 
 wait_process "benchbase"
-
-kubectl delete pvc bexhoma-storage-postgresql-0-2-benchbase-tpcc-1
-kubectl delete pvc bexhoma-storage-postgresql-1-2-benchbase-tpcc-1
 
 nohup python benchbase.py \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
@@ -118,6 +123,7 @@ nohup python benchbase.py \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 5Gi -rsr \
   run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log &
 
 wait_process "benchbase"
@@ -132,8 +138,6 @@ wait_process "benchbase"
 
 BEXHOMA_NUM_TENANTS=2
 
-kubectl delete pvc bexhoma-storage-mysql-benchbase-tpcc-1
-
 nohup python benchbase.py \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -141,12 +145,10 @@ nohup python benchbase.py \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log &
 
 wait_process "benchbase"
-
-kubectl delete pvc bexhoma-storage-mysql-0-2-benchbase-tpcc-1
-kubectl delete pvc bexhoma-storage-mysql-1-2-benchbase-tpcc-1
 
 nohup python benchbase.py \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
@@ -155,6 +157,7 @@ nohup python benchbase.py \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 25Gi -rsr \
   run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log &
 
 wait_process "benchbase"

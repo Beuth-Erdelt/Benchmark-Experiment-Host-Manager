@@ -71,7 +71,7 @@ spec:
           #- "--innodb-io-capacity-max=1000"      # Burst capacity still reasonably high
           # --- Redo Log ---
           - "--innodb-log-buffer-size=16G"        # Buffer before flushing to disk
-          - "--innodb-redo-log-capacity=4G"       # Redo log capacity for large write bursts
+          - "--innodb-redo-log-capacity=32G"       # Redo log capacity for large write bursts
           # --- Transaction Commit Behavior ---
           #- "--innodb-flush-log-at-trx-commit=2"  # Flush every second (safe compromise)
           #- "--sync-binlog=0"                     # No fsync per transaction (OLAP-friendly)
