@@ -9,6 +9,7 @@ spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 26257}
   - {port: 8080, protocol: TCP, name: port-web, targetPort: 8080}
+  - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 8080}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
 #metadata:
