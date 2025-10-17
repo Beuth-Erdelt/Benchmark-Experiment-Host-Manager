@@ -1238,6 +1238,7 @@ scrape_configs:
         name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
+        name_store = self.generate_component_name(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         # test, if SUT is already running
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
@@ -1371,11 +1372,21 @@ scrape_configs:
                 if self.num_worker == 0:
                     del result[key]
                     continue
-                # set meta data
-                dep['metadata']['name'] = name_worker
-                #self.service = dep['metadata']['name']
-                dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = 'worker'
+                if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
+                    # set meta data
+                    dep['metadata']['name'] = name_worker
+                    #self.service = dep['metadata']['name']
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'worker'
+                elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
+                    # set meta data
+                    dep['metadata']['name'] = name_store
+                    #self.service = dep['metadata']['name']
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'store'
+                else:
+                    print("Unknown stateful set: {}".format(dep['metadata']['name']))
+                    continue
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
@@ -1437,14 +1448,15 @@ scrape_configs:
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.worker_containers_deployed.pop()
                 # remove volumes
-                for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
-                    if vol['name'] == 'bxw':
-                        #print(vol['mountPath'])
-                        if not use_storage:
-                            del result[key]['spec']['template']['spec']['volumes'][j]
-                        elif use_ramdisk:
-                            del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
-                            result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
+                if 'volumes' in dep['spec']['template']['spec']:
+                    for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                        if vol['name'] == 'bxw':
+                            #print(vol['mountPath'])
+                            if not use_storage:
+                                del result[key]['spec']['template']['spec']['volumes'][j]
+                            elif use_ramdisk:
+                                del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
+                                result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                 # remove storage template if not used
                 if 'volumeClaimTemplates' in result[key]['spec']:
                     if not use_storage or use_ramdisk:
@@ -1550,6 +1562,22 @@ scrape_configs:
                     continue
                 if dep['metadata']['name'] == 'bexhoma-pool': #!= 'bexhoma-service':
                     dep['metadata']['name'] = name_pool
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'pool'
+                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['experiment'] = experiment
+                    dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['volume'] = self.volume
+                    for label_key, label_value in self.additional_labels.items():
+                        dep['metadata']['labels'][label_key] = str(label_value)
+                    #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
+                    continue
+                if dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
+                    dep['metadata']['name'] = name_store
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'pool'
                     dep['metadata']['labels']['configuration'] = configuration
