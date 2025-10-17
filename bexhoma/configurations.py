@@ -859,6 +859,9 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        name_service = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration) # self.experiment_name
+        name_worker = self.get_worker_name()
+        name_service_headless = name_worker# must be the same
         if self.experiment.cluster.monitor_cluster_active:
             print("{:30s}: wants to monitor all components in cluster".format(configuration))
         if not self.experiment.cluster.monitor_cluster_exists:
@@ -910,7 +913,7 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            if self.dockertemplate['monitor']['blackbox']:
+                            if 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
                                 app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
                                 if self.tenant_per == 'database' and self.num_tenants > 0:
                                     connections = [
@@ -934,6 +937,18 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
+                            elif 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
+                                # no blackbox mode, normal scraping target directly
+                                prometheus_config += """
+  - job_name: 'monitor-app'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    metrics_path: /_status/vars
+    static_configs:
+      - targets:
+          - {master}:9500
+        labels:
+          app: cockroachdb-app""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             else:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """
@@ -1530,7 +1545,7 @@ scrape_configs:
                     if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
-                            if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
+                            if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus' and ports['name'] != 'port-web':
                                 del result[key]['spec']['ports'][i]
                     continue
                 if dep['metadata']['name'] == 'bexhoma-pool': #!= 'bexhoma-service':
@@ -1567,7 +1582,7 @@ scrape_configs:
                 if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
-                        if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
+                        if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus' and ports['name'] != 'port-web':
                             del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
@@ -3892,7 +3907,7 @@ scrape_configs:
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
             print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
-            pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
+            #pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
             print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
