@@ -190,7 +190,8 @@ class default():
         self.worker_startup_args = []                                           #: List of args that are set for the worker containers in YAML manifest at startup
         self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
-        self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
+        self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset for worker
+        self.store_containers_deployed = []                                     #: Name of the containers of the SUT statefulset for storage
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
         #self.sut_envs = {}                                                      #: parameters sent to container via ENV
         self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
@@ -1415,8 +1416,12 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 self.worker_containers_deployed = []
+                self.store_containers_deployed = []
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
-                    self.worker_containers_deployed.append(container['name'])
+                    if dep['metadata']['name'] == name_worker:
+                        self.worker_containers_deployed.append(container['name'])
+                    if dep['metadata']['name'] == name_store:
+                        self.store_containers_deployed.append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     # get and set ENV
@@ -1450,19 +1455,26 @@ scrape_configs:
                             self.worker_startup_args = container['args']
                             print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
-                        for j, vol in enumerate(container['volumeMounts']):
-                            if vol['name'] == 'bxw':
-                                #print(vol['mountPath'])
-                                if not use_storage:
-                                    del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                        if 'volumeMounts' in container:
+                            for j, vol in enumerate(container['volumeMounts']):
+                                if vol['name'] == 'bxw':
+                                    #print(vol['mountPath'])
+                                    if not use_storage:
+                                        del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                     elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
-                            self.worker_containers_deployed.pop()
+                            if dep['metadata']['name'] == name_worker:
+                                self.worker_containers_deployed.pop()
+                            else:
+                                self.store_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
-                            self.worker_containers_deployed.pop()
+                            if dep['metadata']['name'] == name_worker:
+                                self.worker_containers_deployed.pop()
+                            else:
+                                self.store_containers_deployed.pop()
                 # remove volumes
                 if 'volumes' in dep['spec']['template']['spec']:
                     for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):

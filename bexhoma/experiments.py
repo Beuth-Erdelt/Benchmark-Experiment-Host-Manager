@@ -1561,6 +1561,18 @@ class default():
                                     restarts = config.get_host_restarts(pod_worker)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod_worker))
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
+                                component = 'store'
+                                #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
+                                pods = config.get_worker_pods()
+                                for pod_store in pods:
+                                    for container in config.store_containers_deployed:
+                                        self.cluster.store_pod_log(pod_store, container, number=config.num_experiment_to_apply_done+1)
+                                    if not self.cluster.pod_description_exists(pod_name=pod_store):
+                                        self.cluster.logger.debug("Store description of pod {}".format(pod_store))
+                                        self.cluster.store_pod_description(pod_name=pod_store)
+                                    restarts = config.get_host_restarts(pod_store)
+                                    print("{:30s}: had {} restarts at store {}".format(config.configuration, str(restarts), pod_store))
+                                    #self.cluster.store_pod_log(pod_store, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_pool in pods:
