@@ -1265,18 +1265,33 @@ scrape_configs:
         list_of_workers = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}:2379".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
         list_of_workers_as_string_space = " ".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
+        env['BEXHOMA_WORKER_NAME'] = "{name_worker}".format(name_worker=name_worker)
+        env['BEXHOMA_WORKER_SERVICE'] = "{worker_service}".format(worker_service=name_service_headless)
         env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
         env['STATEFULSET_NAME'] = name_worker
+        env['BEXHOMA_STORE_NAME'] = "{name_store}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+        env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+        list_of_stores = []
+        for worker in range(self.num_worker):
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            store_full_name = "{name_store}-{worker_number}.{worker_service}:2379".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+            list_of_stores.append(store_full_name)
+        list_of_stores_as_string = ",".join(list_of_stores)
+        if self.num_worker > 0:
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=0, worker_service=name_store)
+            env['BEXHOMA_STORE_FIRST'] = store_full_name
+        env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
         # resources
         #specs = instance.split("-")
         #print(specs)
@@ -1378,12 +1393,14 @@ scrape_configs:
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'worker'
+                    dep['spec']['serviceName'] = name_worker
                 elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
                     # set meta data
                     dep['metadata']['name'] = name_store
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'store'
+                    dep['spec']['serviceName'] = name_store
                 else:
                     print("Unknown stateful set: {}".format(dep['metadata']['name']))
                     continue
@@ -1394,7 +1411,6 @@ scrape_configs:
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
                 dep['spec']['replicas'] = self.num_worker
-                dep['spec']['serviceName'] = name_worker
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
@@ -1907,6 +1923,8 @@ scrape_configs:
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
             self.stop_sut(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+            self.stop_sut(app=app, component='store', experiment=experiment, configuration=configuration)
+            self.stop_sut(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
             self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
