@@ -39,7 +39,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
@@ -748,6 +748,90 @@ if __name__ == '__main__':
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
                     cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
+                    # CockroachDB
+                    name_format = 'TiDB-{threads}-{pods}-{target}'
+                    config = configurations.ycsb(experiment=experiment, docker='TiDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    config.set_storage(
+                        storageConfiguration = 'tidb'
+                        )
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        BEXHOMA_DATABASE = 'test',
+                        BEXHOMA_USER = "root",
+                        BEXHOMA_PASSWORD = "",
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = scaling_logging,
+                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        YCSB_INSERTORDER = extra_insert_order,
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(num_executor*benchmarking_pods),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        BEXHOMA_DATABASE = 'test',
+                                        BEXHOMA_USER = "root",
+                                        BEXHOMA_PASSWORD = "",
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = scaling_logging,
+                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
+                                        YCSB_INSERTORDER = extra_insert_order,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # DatabaseService
                     name_format = 'DatabaseService-{threads}-{pods}-{target}'

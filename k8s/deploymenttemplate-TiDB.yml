@@ -9,7 +9,7 @@ spec:
   - {port: 10080, protocol: TCP, name: port-web, targetPort: 10080}
   #- {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 8080}
   #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: v1
 kind: Service
@@ -74,9 +74,9 @@ spec:
           - --data-dir=/var/lib/pd
           - --client-urls=http://0.0.0.0:2379
           - --peer-urls=http://0.0.0.0:2380
-          - --advertise-client-urls=http://$(POD_NAME).pd:2379
-          - --advertise-peer-urls=http://$(POD_NAME).pd:2380
-          - --initial-cluster=pd-0=http://pd-0.pd:2380,pd-1=http://pd-1.pd:2380,pd-2=http://pd-2.pd:2380
+          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
+          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
+          - --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
           - name: POD_NAME
             valueFrom:
@@ -129,8 +129,8 @@ spec:
         image: pingcap/tikv:v7.1.0
         args:
           - --addr=0.0.0.0:20160
-          - --advertise-addr=$(POD_NAME).tikv:20160
-          - --pd=pd-0.pd:2379,pd-1.pd:2379,pd-2.pd:2379
+          - --advertise-addr=$(POD_NAME).$(BEXHOMA_STORE_SERVICE):20160
+          - --pd=$(BEXHOMA_WORKER_LIST)
           - --data-dir=/var/lib/tikv
         env:
           - name: POD_NAME
@@ -172,7 +172,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-deployment-cockroachdb
+  name: bexhoma-deployment-tidb
 spec:
   replicas: 1
   selector:
@@ -190,11 +190,19 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        image: pingcap/tidb:v7.1.0
+        command: ["/bin/sh", "-c"]
         args:
-          - /tidb-server
-          - --store=tikv
-          - --path=pd-0.pd:2379,pd-1.pd:2379,pd-2.pd:2379
+          - |
+            set -ex;
+            yum update -y;
+            yum install -y mysql;
+            echo "Starting TiDB..." && \
+            /tidb-server --store=tikv --path=bexhoma-worker-tidb-ycsb-1-0.bexhoma-worker-tidb-ycsb-1:2379,bexhoma-worker-tidb-ycsb-1-1.bexhoma-worker-tidb-ycsb-1:2379,bexhoma-worker-tidb-ycsb-1-2.bexhoma-worker-tidb-ycsb-1:2379
+        image: pingcap/tidb:v7.1.0
+        #args:
+        #  - /tidb-server
+        #  - --store=tikv
+        #  - --path=$(BEXHOMA_WORKER_LIST)
         ports:
           - containerPort: 4000
             name: mysql
@@ -203,8 +211,8 @@ spec:
         resources:
           limits: {cpu: 100m, memory: 1Gi}
           requests: {cpu: 100m, memory: 16Gi}
-        command: ["/bin/sh"]
-        args: ["-c", "while true; do echo hello; sleep 10;done"]
+        #command: ["/bin/bash"]
+        #args: ["yum update -y && yum install -y mysql && /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)"]
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}

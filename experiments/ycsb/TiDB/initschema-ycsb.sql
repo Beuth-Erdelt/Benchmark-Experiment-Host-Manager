@@ -1,9 +1,19 @@
+SELECT tidb_version();
+
+SELECT * FROM information_schema.cluster_info;
+
+SELECT * FROM INFORMATION_SCHEMA.TIKV_STORE_STATUS;
+
+SELECT * FROM INFORMATION_SCHEMA.TIKV_REGION_STATUS LIMIT 20;
+SELECT * FROM INFORMATION_SCHEMA.TIKV_REGION_PEERS LIMIT 20;
+
+
 -- Switch to or create a database
--- CREATE DATABASE ycsb;
+CREATE DATABASE ycsb;
 -- USE ycsb;
 
 -- Create table with hash sharding for better distribution
-CREATE TABLE usertable (
+CREATE TABLE ycsb.usertable (
   YCSB_KEY VARCHAR(255) PRIMARY KEY,
   FIELD0 TEXT,
   FIELD1 TEXT,
@@ -15,4 +25,4 @@ CREATE TABLE usertable (
   FIELD7 TEXT,
   FIELD8 TEXT,
   FIELD9 TEXT
-) SHARD_ROW_ID_BITS = 4;
+);
