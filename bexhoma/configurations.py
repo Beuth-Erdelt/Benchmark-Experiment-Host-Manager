@@ -3940,7 +3940,7 @@ scrape_configs:
         #this works, but is long for Redis:
         name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
-    def get_worker_pods(self):
+    def get_worker_pods(self, component='worker'):
         """
         Returns a list of all pod names of workers for the current SUT.
         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -3961,7 +3961,7 @@ scrape_configs:
         else:
             self.experiment_name = self.code
         #pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
-        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.code, configuration=self.configuration)
+        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component=component, experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
             print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
