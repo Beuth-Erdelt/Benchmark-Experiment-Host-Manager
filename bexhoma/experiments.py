@@ -1558,6 +1558,8 @@ class default():
                                     if not self.cluster.pod_description_exists(pod_name=pod_worker):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod_worker))
                                         self.cluster.store_pod_description(pod_name=pod_worker)
+                                    restarts = config.get_host_restarts(pod_worker)
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod_worker))
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
                                 component = 'pool'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
