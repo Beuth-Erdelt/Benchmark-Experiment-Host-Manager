@@ -1266,7 +1266,9 @@ scrape_configs:
         list_of_workers = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}:2379".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+            # ports for TiDB
+            #worker_full_name = "{name_worker}-{worker_number}.{worker_service}:2379".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
@@ -1285,7 +1287,9 @@ scrape_configs:
         list_of_stores = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-            store_full_name = "{name_store}-{worker_number}.{worker_service}:2379".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+            store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+            # ports for TiDB
+            #store_full_name = "{name_store}-{worker_number}.{worker_service}:2379".format(name_store=name_store, worker_number=worker, worker_service=name_store)
             list_of_stores.append(store_full_name)
         list_of_stores_as_string = ",".join(list_of_stores)
         if self.num_worker > 0:
