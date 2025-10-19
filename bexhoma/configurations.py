@@ -1385,23 +1385,28 @@ scrape_configs:
                             self.loading_active = False
                             self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
+                statefulset_type = ""
                 if self.num_worker == 0:
                     del result[key]
                     continue
                 if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
+                    statefulset_type = "worker"
                     # set meta data
                     dep['metadata']['name'] = name_worker
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'worker'
                     dep['spec']['serviceName'] = name_worker
+                    self.worker_containers_deployed = []
                 elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
+                    statefulset_type = "store"
                     # set meta data
                     dep['metadata']['name'] = name_store
                     #self.service = dep['metadata']['name']
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'store'
                     dep['spec']['serviceName'] = name_store
+                    self.store_containers_deployed = []
                 else:
                     print("Unknown stateful set: {}".format(dep['metadata']['name']))
                     continue
@@ -1415,12 +1420,10 @@ scrape_configs:
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                self.worker_containers_deployed = []
-                self.store_containers_deployed = []
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
-                    if dep['metadata']['name'] == name_worker:
+                    if statefulset_type == "worker":
                         self.worker_containers_deployed.append(container['name'])
-                    if dep['metadata']['name'] == name_store:
+                    if statefulset_type == "store":
                         self.store_containers_deployed.append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
@@ -1465,15 +1468,15 @@ scrape_configs:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
-                            if dep['metadata']['name'] == name_worker:
+                            if statefulset_type == "worker":
                                 self.worker_containers_deployed.pop()
-                            else:
+                            elif statefulset_type == "store":
                                 self.store_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
-                            if dep['metadata']['name'] == name_worker:
+                            if statefulset_type == "worker":
                                 self.worker_containers_deployed.pop()
-                            else:
+                            elif statefulset_type == "store":
                                 self.store_containers_deployed.pop()
                 # remove volumes
                 if 'volumes' in dep['spec']['template']['spec']:
