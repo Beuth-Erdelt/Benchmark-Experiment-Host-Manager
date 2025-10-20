@@ -190,7 +190,8 @@ class default():
         self.worker_startup_args = []                                           #: List of args that are set for the worker containers in YAML manifest at startup
         self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
         self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
-        self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset
+        self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset for worker
+        self.store_containers_deployed = []                                     #: Name of the containers of the SUT statefulset for storage
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
         #self.sut_envs = {}                                                      #: parameters sent to container via ENV
         self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
@@ -859,6 +860,9 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        name_service = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration) # self.experiment_name
+        name_worker = self.get_worker_name()
+        name_service_headless = name_worker# must be the same
         if self.experiment.cluster.monitor_cluster_active:
             print("{:30s}: wants to monitor all components in cluster".format(configuration))
         if not self.experiment.cluster.monitor_cluster_exists:
@@ -910,7 +914,7 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            if self.dockertemplate['monitor']['blackbox']:
+                            if 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
                                 app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
                                 if self.tenant_per == 'database' and self.num_tenants > 0:
                                     connections = [
@@ -934,6 +938,18 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
+                            elif 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
+                                # no blackbox mode, normal scraping target directly
+                                prometheus_config += """
+  - job_name: 'monitor-app'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    metrics_path: /_status/vars
+    static_configs:
+      - targets:
+          - {master}:9500
+        labels:
+          app: cockroachdb-app""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             else:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """
@@ -1223,6 +1239,7 @@ scrape_configs:
         name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
+        name_store = self.generate_component_name(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         # test, if SUT is already running
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
@@ -1246,21 +1263,41 @@ scrape_configs:
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()
         # generate list of worker names
+        worker_port = ":"+str(self.dockertemplate['worker_port']) if 'worker_port' in self.dockertemplate else ""
         list_of_workers = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+            worker_full_name = "{name_worker}-{worker_number}.{worker_service}{worker_port}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless, worker_port=worker_port)
+            # ports for TiDB
+            #worker_full_name = "{name_worker}-{worker_number}.{worker_service}:2379".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
         list_of_workers_as_string_space = " ".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
+        env['BEXHOMA_WORKER_NAME'] = "{name_worker}".format(name_worker=name_worker)
+        env['BEXHOMA_WORKER_SERVICE'] = "{worker_service}".format(worker_service=name_service_headless)
         env['BEXHOMA_SUT_NAME'] = name
         if self.num_worker > 0:
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
         env['STATEFULSET_NAME'] = name_worker
+        env['BEXHOMA_STORE_NAME'] = "{name_store}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+        env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+        list_of_stores = []
+        for worker in range(self.num_worker):
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+            store_full_name = "{name_store}-{worker_number}.{worker_service}{worker_port}".format(name_store=name_store, worker_number=worker, worker_service=name_store, worker_port=worker_port)
+            # ports for TiDB
+            #store_full_name = "{name_store}-{worker_number}.{worker_service}:2379".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+            list_of_stores.append(store_full_name)
+        list_of_stores_as_string = ",".join(list_of_stores)
+        if self.num_worker > 0:
+            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+            store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=0, worker_service=name_store)
+            env['BEXHOMA_STORE_FIRST'] = store_full_name
+        env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
         # resources
         #specs = instance.split("-")
         #print(specs)
@@ -1353,14 +1390,31 @@ scrape_configs:
                             self.loading_active = False
                             self.monitor_loading = False
             if dep['kind'] == 'StatefulSet':
+                statefulset_type = ""
                 if self.num_worker == 0:
                     del result[key]
                     continue
-                # set meta data
-                dep['metadata']['name'] = name_worker
-                #self.service = dep['metadata']['name']
-                dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = 'worker'
+                if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
+                    statefulset_type = "worker"
+                    # set meta data
+                    dep['metadata']['name'] = name_worker
+                    #self.service = dep['metadata']['name']
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'worker'
+                    dep['spec']['serviceName'] = name_worker
+                    self.worker_containers_deployed = []
+                elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
+                    statefulset_type = "store"
+                    # set meta data
+                    dep['metadata']['name'] = name_store
+                    #self.service = dep['metadata']['name']
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'store'
+                    dep['spec']['serviceName'] = name_store
+                    self.store_containers_deployed = []
+                else:
+                    print("Unknown stateful set: {}".format(dep['metadata']['name']))
+                    continue
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
@@ -1368,13 +1422,14 @@ scrape_configs:
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
                 dep['spec']['replicas'] = self.num_worker
-                dep['spec']['serviceName'] = name_worker
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                self.worker_containers_deployed = []
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
-                    self.worker_containers_deployed.append(container['name'])
+                    if statefulset_type == "worker":
+                        self.worker_containers_deployed.append(container['name'])
+                    if statefulset_type == "store":
+                        self.store_containers_deployed.append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     # get and set ENV
@@ -1408,28 +1463,36 @@ scrape_configs:
                             self.worker_startup_args = container['args']
                             print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
-                        for j, vol in enumerate(container['volumeMounts']):
-                            if vol['name'] == 'bxw':
-                                #print(vol['mountPath'])
-                                if not use_storage:
-                                    del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                        if 'volumeMounts' in container:
+                            for j, vol in enumerate(container['volumeMounts']):
+                                if vol['name'] == 'bxw':
+                                    #print(vol['mountPath'])
+                                    if not use_storage:
+                                        del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                     elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
-                            self.worker_containers_deployed.pop()
+                            if statefulset_type == "worker":
+                                self.worker_containers_deployed.pop()
+                            elif statefulset_type == "store":
+                                self.store_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
-                            self.worker_containers_deployed.pop()
+                            if statefulset_type == "worker":
+                                self.worker_containers_deployed.pop()
+                            elif statefulset_type == "store":
+                                self.store_containers_deployed.pop()
                 # remove volumes
-                for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
-                    if vol['name'] == 'bxw':
-                        #print(vol['mountPath'])
-                        if not use_storage:
-                            del result[key]['spec']['template']['spec']['volumes'][j]
-                        elif use_ramdisk:
-                            del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
-                            result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
+                if 'volumes' in dep['spec']['template']['spec']:
+                    for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
+                        if vol['name'] == 'bxw':
+                            #print(vol['mountPath'])
+                            if not use_storage:
+                                del result[key]['spec']['template']['spec']['volumes'][j]
+                            elif use_ramdisk:
+                                del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
+                                result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                 # remove storage template if not used
                 if 'volumeClaimTemplates' in result[key]['spec']:
                     if not use_storage or use_ramdisk:
@@ -1530,11 +1593,27 @@ scrape_configs:
                     if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                         for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                             # remove monitoring ports
-                            if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
+                            if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus' and ports['name'] != 'port-web':
                                 del result[key]['spec']['ports'][i]
                     continue
                 if dep['metadata']['name'] == 'bexhoma-pool': #!= 'bexhoma-service':
                     dep['metadata']['name'] = name_pool
+                    dep['metadata']['labels']['app'] = app
+                    dep['metadata']['labels']['component'] = 'pool'
+                    dep['metadata']['labels']['configuration'] = configuration
+                    dep['metadata']['labels']['experiment'] = experiment
+                    dep['metadata']['labels']['dbms'] = self.docker
+                    dep['metadata']['labels']['volume'] = self.volume
+                    for label_key, label_value in self.additional_labels.items():
+                        dep['metadata']['labels'][label_key] = str(label_value)
+                    #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
+                    continue
+                if dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
+                    dep['metadata']['name'] = name_store
                     dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'pool'
                     dep['metadata']['labels']['configuration'] = configuration
@@ -1567,7 +1646,7 @@ scrape_configs:
                 if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
-                        if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus':
+                        if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus' and ports['name'] != 'port-web':
                             del result[key]['spec']['ports'][i]
                 #print(pvc)
             if dep['kind'] == 'Deployment':
@@ -1864,6 +1943,8 @@ scrape_configs:
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
             self.stop_sut(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+            self.stop_sut(app=app, component='store', experiment=experiment, configuration=configuration)
+            self.stop_sut(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
             self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
@@ -3867,7 +3948,7 @@ scrape_configs:
         #this works, but is long for Redis:
         name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
-    def get_worker_pods(self):
+    def get_worker_pods(self, component='worker'):
         """
         Returns a list of all pod names of workers for the current SUT.
         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -3888,11 +3969,11 @@ scrape_configs:
         else:
             self.experiment_name = self.code
         #pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
-        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.code, configuration=self.configuration)
+        pods_worker = self.experiment.cluster.get_pods(app=self.appname, component=component, experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
             print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
-            pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
+            #pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
             print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
         #print("Worker pods found: ", pods_worker)
         return pods_worker
