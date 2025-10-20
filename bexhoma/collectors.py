@@ -136,6 +136,8 @@ class default():
             num_of_queries = len(df.index)
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
         df = (df/1000.0).sort_index().astype('float')
+        if df.empty:
+            return pd.DataFrame()
         df['Power@Size [~Q/h]'] = float(parameter.defaultParameters['SF'])*3600./df
         df_power = df.copy()
         df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
@@ -158,6 +160,8 @@ class default():
             df_time['num_experiment'] = int(c['parameter']['numExperiment'])
             df_time['num_client'] = int(c['parameter']['client'])
             df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
+            if not 'time_end' in eva['times']['total'][c['name']]:
+                return pd.DataFrame()
             df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
             df_merged_time = pd.concat([df_merged_time, df_time])
         df_time = df_merged_time.sort_index()
@@ -200,6 +204,8 @@ class default():
         :rtype: pandas.DataFrame
         """
         df = self.get_performance_single(evaluation)
+        if df.empty:
+            return pd.DataFrame()
         result = df.groupby('client').agg({
             'Throughput@Size': 'sum',
             'time [s]': 'max',
@@ -233,6 +239,9 @@ class default():
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
             df = self.get_performance(evaluation)
+            if df.empty:
+                continue
+            #print(df)
             df['type']=workload['tenant_per']
             df['num_tenants']=workload['num_tenants']
             df['code']=code
