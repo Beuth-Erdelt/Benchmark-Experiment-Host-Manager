@@ -137,6 +137,9 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+        resources:
+          limits: {cpu: 16, memory: 64Gi}
+          requests: {cpu: 16, memory: 64Gi}
         ports:
           - containerPort: 20160
             name: tikv
