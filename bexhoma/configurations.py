@@ -1282,22 +1282,22 @@ scrape_configs:
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
             worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(name_worker=name_worker, worker_number=0, worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
-        env['STATEFULSET_NAME'] = name_worker
-        env['BEXHOMA_STORE_NAME'] = "{name_store}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
-        env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(name_store=name_store, worker_number=worker, worker_service=name_store)
-        list_of_stores = []
-        for worker in range(self.num_worker):
-            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-            store_full_name = "{name_store}-{worker_number}.{worker_service}{worker_port}".format(name_store=name_store, worker_number=worker, worker_service=name_store, worker_port=worker_port)
-            # ports for TiDB
-            #store_full_name = "{name_store}-{worker_number}.{worker_service}:2379".format(name_store=name_store, worker_number=worker, worker_service=name_store)
-            list_of_stores.append(store_full_name)
-        list_of_stores_as_string = ",".join(list_of_stores)
-        if self.num_worker > 0:
-            #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
-            store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=0, worker_service=name_store)
-            env['BEXHOMA_STORE_FIRST'] = store_full_name
-        env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
+            env['STATEFULSET_NAME'] = name_worker
+            env['BEXHOMA_STORE_NAME'] = "{name_store}".format(name_store=name_store, worker_service=name_store)
+            env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(name_store=name_store, worker_service=name_store)
+            list_of_stores = []
+            for worker in range(self.num_worker):
+                #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+                store_full_name = "{name_store}-{worker_number}.{worker_service}{worker_port}".format(name_store=name_store, worker_number=worker, worker_service=name_store, worker_port=worker_port)
+                # ports for TiDB
+                #store_full_name = "{name_store}-{worker_number}.{worker_service}:2379".format(name_store=name_store, worker_number=worker, worker_service=name_store)
+                list_of_stores.append(store_full_name)
+            list_of_stores_as_string = ",".join(list_of_stores)
+            if self.num_worker > 0:
+                #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=0, worker_service=name_worker)
+                store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=0, worker_service=name_store)
+                env['BEXHOMA_STORE_FIRST'] = store_full_name
+            env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
         # resources
         #specs = instance.split("-")
         #print(specs)
