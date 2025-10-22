@@ -1,0 +1,167 @@
+# Headless Service für PD (für StatefulSet DNS)
+apiVersion: v1
+kind: Service
+metadata:
+  name: pd
+spec:
+  clusterIP: None
+  selector:
+    app: pd
+  ports:
+    - name: client
+      port: 2379
+    - name: peer
+      port: 2380
+---
+# Headless Service für TiKV
+apiVersion: v1
+kind: Service
+metadata:
+  name: tikv
+spec:
+  clusterIP: None
+  selector:
+    app: tikv
+  ports:
+    - name: tikv
+      port: 20160
+---
+# ClusterIP Service für TiDB (SQL)
+apiVersion: v1
+kind: Service
+metadata:
+  name: tidb
+spec:
+  selector:
+    app: tidb
+  ports:
+    - port: 4000
+      targetPort: 4000
+      name: mysql
+    - port: 10080
+      targetPort: 10080
+      name: status
+---
+# PD StatefulSet (3 replicas)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pd
+spec:
+  serviceName: "pd"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pd
+  template:
+    metadata:
+      labels:
+        app: pd
+    spec:
+      containers:
+      - name: pd
+        image: pingcap/pd:v7.1.0
+        args:
+          # Use HOSTNAME to derive pod identity. Initial cluster must list all peers.
+          - --name=$(POD_NAME)
+          - --data-dir=/var/lib/pd
+          - --client-urls=http://0.0.0.0:2379
+          - --peer-urls=http://0.0.0.0:2380
+          - --advertise-client-urls=http://$(POD_NAME).pd:2379
+          - --advertise-peer-urls=http://$(POD_NAME).pd:2380
+          - --initial-cluster=pd-0=http://pd-0.pd:2380,pd-1=http://pd-1.pd:2380,pd-2=http://pd-2.pd:2380
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        ports:
+          - containerPort: 2379
+            name: client
+          - containerPort: 2380
+            name: peer
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/pd
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+        # storageClassName: standard  # optional: anpassen falls nötig
+---
+# TiKV StatefulSet (3 replicas)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tikv
+spec:
+  serviceName: "tikv"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tikv
+  template:
+    metadata:
+      labels:
+        app: tikv
+    spec:
+      containers:
+      - name: tikv
+        image: pingcap/tikv:v7.1.0
+        args:
+          - --addr=0.0.0.0:20160
+          - --advertise-addr=$(POD_NAME).tikv:20160
+          - --pd=pd-0.pd:2379,pd-1.pd:2379,pd-2.pd:2379
+          - --data-dir=/var/lib/tikv
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        ports:
+          - containerPort: 20160
+            name: tikv
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/tikv
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi
+        # storageClassName: standard  # optional: anpassen
+---
+# TiDB Deployment (stateless SQL frontend) - scale this to add compute
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tidb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tidb
+  template:
+    metadata:
+      labels:
+        app: tidb
+    spec:
+      containers:
+      - name: tidb
+        image: pingcap/tidb:v7.1.0
+        args:
+          - /tidb-server
+          - --store=tikv
+          - --path=pd-0.pd:2379,pd-1.pd:2379,pd-2.pd:2379
+        ports:
+          - containerPort: 4000
+            name: mysql
+          - containerPort: 10080
+            name: status
