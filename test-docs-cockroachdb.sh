@@ -103,6 +103,31 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+#### YCSB PVC (Example-CockroachDB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_3.log &
+
+
+wait_process "ycsb"
+
+
 #### Benchbase Simple (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
