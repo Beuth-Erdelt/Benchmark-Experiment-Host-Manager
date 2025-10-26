@@ -65,6 +65,7 @@ if __name__ == '__main__':
     parser.add_argument('-slg', '--scaling-logging', help='logging status every x seconds', default=0)
     parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
     parser.add_argument('-xconn', '--extra-new-connection', help='new connection for every transaction', action='store_true', default=False)
+    parser.add_argument('-xbatch', '--extra-batchsize', help='size of batch for inserts', default=128)
     parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
     parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
     parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
@@ -136,6 +137,7 @@ if __name__ == '__main__':
     type_of_benchmark = args.benchmark                    # twitter, tpccc, ycsb etc
     scaling_logging = int(args.scaling_logging)*1000      # adjust unit to miliseconds
     extra_keying = int(args.extra_keying)                 # activate key and think time (tpc-c)
+    extra_batchsize = int(args.extra_batchsize)           # size of batch for inserts
     if extra_keying:
         BENCHBASE_KEY_AND_THINK = "true"
     else:
@@ -229,6 +231,7 @@ if __name__ == '__main__':
                                 BENCHBASE_TERMINALS = loading_threads_per_pod,
                                 BENCHBASE_TIME = SD,
                                 BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                BENCHBASE_BATCHSIZE = extra_batchsize,
                                 BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                 BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                 BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -270,6 +273,7 @@ if __name__ == '__main__':
                                                 BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                                 BENCHBASE_TIME = SD,
                                                 BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                                BENCHBASE_BATCHSIZE = extra_batchsize,
                                                 BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                                 BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                                 BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -300,6 +304,7 @@ if __name__ == '__main__':
                             BENCHBASE_TERMINALS = loading_threads_per_pod,
                             BENCHBASE_TIME = SD,
                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                            BENCHBASE_BATCHSIZE = extra_batchsize,
                             BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                             BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                             BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -347,6 +352,7 @@ if __name__ == '__main__':
                                             BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                             BENCHBASE_TIME = SD,
                                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                            BENCHBASE_BATCHSIZE = extra_batchsize,
                                             BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                             BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                             BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -373,6 +379,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_BATCHSIZE = extra_batchsize,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -407,6 +414,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_BATCHSIZE = extra_batchsize,
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -453,6 +461,7 @@ if __name__ == '__main__':
                                     BENCHBASE_TERMINALS = loading_threads_per_pod,
                                     BENCHBASE_TIME = SD,
                                     BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                    BENCHBASE_BATCHSIZE = extra_batchsize,
                                     BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                     BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                     BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -486,6 +495,7 @@ if __name__ == '__main__':
                                                     BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                                     BENCHBASE_TIME = SD,
                                                     BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                                    BENCHBASE_BATCHSIZE = extra_batchsize,
                                                     BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                                     BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                                     BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
@@ -514,6 +524,7 @@ if __name__ == '__main__':
                                 BENCHBASE_TERMINALS = loading_threads_per_pod,
                                 BENCHBASE_TIME = SD,
                                 BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                BENCHBASE_BATCHSIZE = extra_batchsize,
                                 BEXHOMA_USER = "root",
                                 BEXHOMA_PASSWORD = "root",
                                 BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
@@ -555,6 +566,7 @@ if __name__ == '__main__':
                                                 BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                                 BENCHBASE_TIME = SD,
                                                 BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                                BENCHBASE_BATCHSIZE = extra_batchsize,
                                                 BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                                 BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                                 BEXHOMA_TENANT_BY = config.tenant_per,
@@ -586,6 +598,7 @@ if __name__ == '__main__':
                             BENCHBASE_TERMINALS = loading_threads_per_pod,
                             BENCHBASE_TIME = SD,
                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                            BENCHBASE_BATCHSIZE = extra_batchsize,
                             BEXHOMA_USER = "root",
                             BEXHOMA_PASSWORD = "root",
                             BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
@@ -633,6 +646,7 @@ if __name__ == '__main__':
                                             BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                             BENCHBASE_TIME = SD,
                                             BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                            BENCHBASE_BATCHSIZE = extra_batchsize,
                                             BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                             BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                             BEXHOMA_TENANT_BY = config.tenant_per,
@@ -657,6 +671,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_BATCHSIZE = extra_batchsize,
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "root",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
@@ -691,6 +706,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_BATCHSIZE = extra_batchsize,
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
@@ -791,6 +807,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_BATCHSIZE = extra_batchsize,
                         BEXHOMA_USER = "yugabyte",
                         BEXHOMA_PASSWORD = "",
                         BEXHOMA_PORT = 5433,
@@ -827,6 +844,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_BATCHSIZE = extra_batchsize,
                                         BEXHOMA_USER = "yugabyte",
                                         BEXHOMA_PASSWORD = "",
                                         BEXHOMA_PORT = 5433,
@@ -868,6 +886,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_BATCHSIZE = extra_batchsize,
                         BEXHOMA_USER = "root",
                         BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
@@ -903,6 +922,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_BATCHSIZE = extra_batchsize,
                                         BEXHOMA_USER = "root",
                                         BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
@@ -930,6 +950,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_BATCHSIZE = extra_batchsize,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
@@ -963,6 +984,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_BATCHSIZE = extra_batchsize,
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
@@ -1004,6 +1026,7 @@ if __name__ == '__main__':
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                        BENCHBASE_BATCHSIZE = extra_batchsize,
                         #BEXHOMA_USER = "root",
                         #BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
@@ -1040,6 +1063,7 @@ if __name__ == '__main__':
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+                                        BENCHBASE_BATCHSIZE = extra_batchsize,
                                         #BEXHOMA_USER = "root",
                                         #BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
