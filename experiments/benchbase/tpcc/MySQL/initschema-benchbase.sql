@@ -34,4 +34,4 @@ SET GLOBAL sql_mode='';
 -- do not cache host names
 -- SET GLOBAL host_cache_size=0;
 
-CREATE DATABASE benchbase;
+CREATE DATABASE IF NOT EXISTS benchbase;

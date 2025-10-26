@@ -1,4 +1,4 @@
--- USE benchbase;
+USE benchbase;
 
 -- ANALYZE: Update table statistics for the optimizer
 ANALYZE TABLE customer;
@@ -49,3 +49,31 @@ SELECT
 -- Optional: show table status for deeper insights (includes size info)
 SHOW TABLE STATUS -- FROM BEXHOMA_SCHEMA
 ;
+
+-- Redo log capacity
+SHOW VARIABLES LIKE 'innodb_redo_log_capacity';
+
+-- I/O capacities
+SHOW VARIABLES LIKE 'innodb_io_capacity';
+SHOW VARIABLES LIKE 'innodb_io_capacity_max';
+
+-- Number of I/O threads
+SHOW VARIABLES LIKE 'innodb_read_io_threads';
+SHOW VARIABLES LIKE 'innodb_write_io_threads';
+
+-- Native AIO
+SHOW VARIABLES LIKE 'innodb_use_native_aio';
+
+-- Buffer pool configuration
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
+SHOW VARIABLES LIKE 'innodb_buffer_pool_instances';
+SHOW VARIABLES LIKE 'innodb_buffer_pool_chunk_size';
+
+-- Flush method and behavior
+SHOW VARIABLES LIKE 'innodb_flush_method';
+SHOW VARIABLES LIKE 'innodb_flush_neighbors';
+SHOW VARIABLES LIKE 'innodb_flush_log_at_trx_commit';
+
+-- Change buffer and doublewrite
+SHOW VARIABLES LIKE 'innodb_change_buffer_max_size';
+SHOW VARIABLES LIKE 'innodb_doublewrite';
