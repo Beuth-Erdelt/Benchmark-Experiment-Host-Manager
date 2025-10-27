@@ -2242,10 +2242,10 @@ scrape_configs:
         return int(timestamp_remote)-int(timestamp_local)
     def get_host_diskspace_used_data(self):
         """
-        Returns information about the sut's host disk space used for the data (the database) in kilobyte.
+        Returns information about the sut's host disk space used for the data (the database) in megabyte.
         Basically this calls `du` on the host directory that is mentioned in cluster.config as to store the database.
 
-        :return: Size of disk used for database in Kilobytes
+        :return: Size of disk used for database in megabytes
         """
         self.logger.debug('configuration.get_host_diskspace_used_data()')
         cmd = {}
@@ -2274,15 +2274,15 @@ scrape_configs:
     def get_host_diskspace_used(self):
         """
         Returns information about the sut's host disk space.
-        Basically this calls `df /` on the host.
+        Basically this calls `df -m /` on the host.
 
-        :return: Size of disk in Kilobytes
+        :return: Size of disk in megabytes
         """
         self.logger.debug('configuration.get_host_diskspace_used()')
         disk = ''
         cmd = {}
         try:
-            command = "df / | awk 'NR == 2{print \\$3}'"
+            command = "df -m / | awk 'NR == 2{print \\$3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
             stdin, stdout, stderr = self.execute_command_in_pod_sut(command=command)
@@ -2290,7 +2290,7 @@ scrape_configs:
             return int(disk.replace('\n',''))
         except Exception as e:
             # Windows
-            command = "df / | awk 'NR == 2{print $3}'"
+            command = "df -m / | awk 'NR == 2{print $3}'"
             #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
             #disk = os.popen(fullcommand).read()
             try:
