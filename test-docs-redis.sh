@@ -125,8 +125,6 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-kubectl delete pvc bexhoma-storage-redis-ycsb-1
-
 # Single host Redis with PVC
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -144,7 +142,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst shared -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
 
 

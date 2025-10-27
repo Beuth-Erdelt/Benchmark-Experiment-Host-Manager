@@ -103,6 +103,31 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+#### YCSB PVC (Example-CockroachDB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_3.log &
+
+
+wait_process "ycsb"
+
+
 #### Benchbase Simple (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
@@ -124,16 +149,37 @@ wait_process "benchbase"
 #### Benchbase Complex (Example-CockroachDB.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 128 \
-  -sd 20 \
+  -sd 10 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
-  -nbt 64 \
+  -nbt 1280 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc -ma \
   run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
+
+
+wait_process "benchbase"
+
+
+#### Benchbase Complex with PVC (Example-CockroachDB.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 128 \
+  -sd 10 \
+  -nw 3 \
+  -nwr 3 \
+  -dbms CockroachDB \
+  -nbp 1,2,4,8 \
+  -nbt 1280 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc -ma \
+  -rst shared -rss 100Gi -rsr \
+  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_3.log &
 
 
 wait_process "benchbase"
