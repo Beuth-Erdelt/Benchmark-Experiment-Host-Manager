@@ -200,7 +200,7 @@ spec:
             yum update -y;
             yum install -y mysql;
             echo "Starting TiDB..." && \
-            /tidb-server --store=tikv --path=bexhoma-worker-tidb-ycsb-1-0.bexhoma-worker-tidb-ycsb-1:2379,bexhoma-worker-tidb-ycsb-1-1.bexhoma-worker-tidb-ycsb-1:2379,bexhoma-worker-tidb-ycsb-1-2.bexhoma-worker-tidb-ycsb-1:2379
+            /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)
         image: pingcap/tidb:v7.1.0
         #args:
         #  - /tidb-server
