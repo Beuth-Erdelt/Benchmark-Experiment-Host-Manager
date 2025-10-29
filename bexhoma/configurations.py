@@ -1429,7 +1429,7 @@ scrape_configs:
                 if not 'statefulset' in self.deployment_infos:
                     self.deployment_infos['statefulset'] = {}
                 self.deployment_infos[statefulset_type] = {}
-                self.deployment_infos[statefulset_type]['pods'] = [dep['metadata']['name']+"-"+i for i in range(self.num_worker)]
+                self.deployment_infos[statefulset_type]['pods'] = [f"{dep['metadata']['name']}-{i}" for i in range(self.num_worker)]
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
