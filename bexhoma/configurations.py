@@ -1772,6 +1772,9 @@ scrape_configs:
                             #self.resources['nodeSelector'][nodeSelector] = value """
                 # we only want to manipulate resources for dbms container in SUT
                 if dep['metadata']['name'] == name:
+                    if 'replicas_sut' in self.resources:
+                        num_replicas_sut = self.resources['replicas_sut']
+                        result[key]['spec']['replicas'] = num_replicas_sut
                     for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
                         if container['name'] == 'dbms':
                             break
@@ -2830,8 +2833,9 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    stdout = self.experimentfile_upload(filename)
+                    #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                 # get metrics of loader components
                 # only if general monitoring is on
@@ -2888,8 +2892,9 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    stdout = self.experimentfile_upload(filename)
+                    #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # pooling container "pool"
                     if self.sut_has_pool:
@@ -2914,8 +2919,9 @@ scrape_configs:
                         self.logger.debug(stderr)
                         # upload connections infos again, metrics has overwritten it
                         filename = 'connections.config'
-                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                        stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                        stdout = self.experimentfile_upload(filename)
+                        #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                         self.logger.debug(stdout)
     def execute_command_in_pod_sut(self, command, pod='', container='', params=''):
         """
