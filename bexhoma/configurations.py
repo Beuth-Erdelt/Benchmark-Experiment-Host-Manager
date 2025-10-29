@@ -193,7 +193,8 @@ class default():
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset for worker
         self.store_containers_deployed = []                                     #: Name of the containers of the SUT statefulset for storage
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
-        #self.sut_envs = {}                                                      #: parameters sent to container via ENV
+        self.deployment_infos = {}                                              #: Dict containing infos about deployed deployments, stateful sets, pvc, pods and containers
+        #self.sut_envs = {}                                                     #: parameters sent to container via ENV
         self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
         self.reset_sut()
         self.benchmark = None                                                   #: Optional subobject for benchmarking (dbmsbenchmarker instance)
@@ -1425,6 +1426,10 @@ scrape_configs:
                 else:
                     print("Unknown stateful set: {}".format(dep['metadata']['name']))
                     continue
+                if not 'statefulset' in self.deployment_infos:
+                    self.deployment_infos['statefulset'] = {}
+                self.deployment_infos[statefulset_type] = {}
+                self.deployment_infos[statefulset_type]['pods'] = [dep['metadata']['name']+"-"+i for i in range(self.num_worker)]
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
@@ -1902,6 +1907,7 @@ scrape_configs:
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
+        print(self.deployment_infos)
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         """
