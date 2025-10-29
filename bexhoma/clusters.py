@@ -2019,7 +2019,7 @@ class kubernetes(testbed):
             # max 10 tries to receive the log (timeout might occure)
             tries = 1
             while tries<10:
-                print("{:30s}: (try #{}) stores pod log into {}".format("Bexhoma", tries, filename_log))
+                self.logger.debug("{:30s}: (try #{}) stores pod log into {}".format("Bexhoma", tries, filename_log))
                 stdout = self.pod_log(pod_name, container)
                 if stdout is None:
                     print("{:30s}: no data error for log {}".format("Bexhoma", filename_log))
