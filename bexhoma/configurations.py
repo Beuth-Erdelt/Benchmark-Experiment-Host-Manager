@@ -3062,7 +3062,7 @@ scrape_configs:
                         with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
                         self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
-                        filename_source = filename_filled
+                        filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
                         filename_base, file_extension = os.path.splitext(script)
                         filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
                         shutil.copy(filename_source, filename_in_resultfolder)
