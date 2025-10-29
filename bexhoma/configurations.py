@@ -520,7 +520,7 @@ class default():
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             for pod_sut in pods:
-                print(f"Testing {pod_sut} for pending")
+                self.logger.debug(f"Testing {pod_sut} for pending")
                 status = self.experiment.cluster.get_pod_status(pod_sut)
                 if status == "Pending":
                     #return True
@@ -540,7 +540,7 @@ class default():
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             for pod_sut in pods:
-                print(f"Testing {pod_sut} for running")
+                self.logger.debug(f"Testing {pod_sut} for running")
                 status = self.experiment.cluster.get_pod_status(pod_sut)
                 if status != "Running":
                     status_running = False
@@ -561,7 +561,7 @@ class default():
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
             for pod_sut in pods:
-                print(f"Testing {pod_sut} for healthy")
+                self.logger.debug(f"Testing {pod_sut} for healthy")
                 status = self.experiment.cluster.get_pod_status(pod_sut)
                 if status == "Running":
                     ready = self.experiment.cluster.is_pod_ready(pod_sut)
