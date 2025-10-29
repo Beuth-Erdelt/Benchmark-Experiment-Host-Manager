@@ -589,22 +589,24 @@ class default():
             if self.are_worker_ready:
                 return True
             app = self.appname
-            component = 'worker'
-            configuration = self.configuration
-            #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
-            num_ready = 0
-            pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-            for pod in pods_worker:
-                #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
-                status = self.experiment.cluster.get_pod_status(pod)
-                if status == "Running":
-                    ready = self.experiment.cluster.is_pod_ready(pod)
-                    if ready:
-                        num_ready = num_ready + 1
-            print("{:30s}: found {} / {} running workers".format(self.configuration, num_ready, self.num_worker))
-            self.are_worker_ready = (num_ready == self.num_worker)
-            if self.are_worker_ready:
-                self.attach_worker()
+            components = list(self.deployment_infos['statefulset'].keys())
+            #component = 'worker'
+            for component in components:
+                configuration = self.configuration
+                #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
+                num_ready = 0
+                pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                for pod in pods_worker:
+                    #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+                    status = self.experiment.cluster.get_pod_status(pod)
+                    if status == "Running":
+                        ready = self.experiment.cluster.is_pod_ready(pod)
+                        if ready:
+                            num_ready = num_ready + 1
+                print("{:30s}: found {} / {} running workers (component {})".format(self.configuration, num_ready, self.num_worker, component))
+                self.are_worker_ready = self.are_worker_ready and (num_ready == self.num_worker)
+                if self.are_worker_ready:
+                    self.attach_worker()
             return self.are_worker_ready
         else:
             return True

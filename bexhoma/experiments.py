@@ -1571,7 +1571,7 @@ class default():
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                pods = config.get_worker_pods()
+                                pods = config.get_worker_pods(component=component)
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
                                         self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done+1)
