@@ -589,6 +589,7 @@ class default():
             if self.are_worker_ready:
                 return True
             app = self.appname
+            self.are_worker_ready = True
             components = list(self.deployment_infos['statefulset'].keys())
             #component = 'worker'
             for component in components:
