@@ -1248,11 +1248,11 @@ scrape_configs:
             self.experiment_name = experiment
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
-        name_worker = self.get_worker_name()
+        name_worker = self.get_worker_name(component='worker')
         name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
-        name_store = self.generate_component_name(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
+        name_store = self.get_worker_name(component='store') #self.generate_component_name(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         # test, if SUT is already running
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
@@ -3974,7 +3974,7 @@ scrape_configs:
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
-    def get_worker_name(self):
+    def get_worker_name(self, component='worker'):
         """
         Returns a template for the worker names.
         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -4000,7 +4000,7 @@ scrape_configs:
         # test shorter names
         #name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
         #this works, but is long for Redis:
-        name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
+        name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self, component='worker'):
         """
