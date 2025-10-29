@@ -1539,15 +1539,14 @@ class default():
                                 app = self.cluster.appname
                                 component = 'sut'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                if len(pods) > 0:
-                                    pod_sut = pods[0]
+                                for pod_sut in pods:
                                     for container in config.sut_containers_deployed:
                                         self.cluster.store_pod_log(pod_sut, container)
                                     if not self.cluster.pod_description_exists(pod_name=pod_sut):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod_sut))
                                         self.cluster.store_pod_description(pod_name=pod_sut)
                                     restarts = config.get_host_restarts(pod_sut)
-                                    print("{:30s}: had {} restarts".format(config.configuration, str(restarts)))
+                                    print("{:30s}: had {} restarts at sut {}".format(config.configuration, str(restarts), pod_sut))
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
