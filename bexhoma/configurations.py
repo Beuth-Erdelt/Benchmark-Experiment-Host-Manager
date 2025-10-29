@@ -2352,6 +2352,9 @@ scrape_configs:
             else:
                 volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
                 volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
+            if 'statefulset' in self.deployment_infos:
+                list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
+                print(f"###### list_of_worker_components = {list_of_worker_components}")
             pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
             # for worker pods: bexhoma-workers-
             #volume = name_pvc
@@ -3564,7 +3567,6 @@ scrape_configs:
                     self.logger.debug("load_data_asynch - run container-wise scripts {}".format(thread_args))
                     thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                     thread.start()
-                #print("####################", commands)
                 print("{:30s}: runs scripts {}".format(self.configuration, commands))
             else:
                 thread_args = {
