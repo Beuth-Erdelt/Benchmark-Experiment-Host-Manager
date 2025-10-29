@@ -2473,6 +2473,16 @@ scrape_configs:
             worker_infos = self.get_host_all()
             worker_infos['args'] = self.worker_startup_args
             c['worker'].append(worker_infos)
+        c['sut'] = []
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
+        if len(pods) > 1:
+            # only if there are several sut pods
+            for pod in pods:
+                self.pod_sut = pod
+                print("{:30s}: distributed system - get host info for sut {}".format(self.configuration, pod))
+                sut_infos = self.get_host_all()
+                sut_infos['args'] = self.sut_startup_args
+                c['sut'].append(sut_infos)
         self.pod_sut = pod_sut
         # take latest resources
         # TODO: read from yaml file

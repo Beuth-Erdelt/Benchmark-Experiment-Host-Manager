@@ -3516,6 +3516,12 @@ class ycsb(default):
                 infos.append("    {}:{}".format(key,info))
             for info in infos:
                 print(info)
+            if 'sut' in c and len(c['sut']) > 0:
+                for i, sut in enumerate(c['sut']):
+                    print("    sut {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)
             if 'worker' in c and len(c['worker']) > 0:
                 for i, worker in enumerate(c['worker']):
                     print("    worker {}".format(i))
