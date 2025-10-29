@@ -2948,21 +2948,9 @@ scrape_configs:
             self.check_sut()
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
     def experimentfile_upload(self, filename):
-        pods = self.experiment.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-            filename_local = self.path+'/'+filename
-            filename_remote = '/results/'+str(self.code)+'/'+filename
-            return self.experiment.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
-        return ""
+        return self.experiment.experimentfile_upload(filename)
     def experimentfile_download(self, filename):
-        pods = self.experiment.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-            filename_local = self.path+'/'+filename
-            filename_remote = '/results/'+str(self.code)+'/'+filename
-            return self.experiment.cluster.file_download(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
-        return ""
+        return self.experiment.experimentfile_download(filename)
     def copyLog(self):
         print("copyLog")
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)

@@ -106,6 +106,7 @@ class default():
             runsPerConnection = 0,
             timeout = timeout,
             singleConnection = True)
+        self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -296,6 +297,26 @@ class default():
             return path.as_posix()
         else:
             return str(path)
+    def experimentfile_upload(self, filename):
+        if not len(self.pod_dashboard):
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                self.pod_dashboard = pods[0]
+            else:
+                return ""
+        filename_local = self.path+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/'+filename
+        return self.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
+    def experimentfile_download(self, filename):
+        if not len(self.pod_dashboard):
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                self.pod_dashboard = pods[0]
+            else:
+                return ""
+        filename_local = self.path+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/'+filename
+        return self.cluster.file_download(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter):
         """
