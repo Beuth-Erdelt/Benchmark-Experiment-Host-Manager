@@ -1925,7 +1925,7 @@ scrape_configs:
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
-        print(self.deployment_infos)
+        #print(self.deployment_infos)
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         """
@@ -2451,8 +2451,15 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            name_worker = self.get_worker_name()
-            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
+            components = list(self.deployment_infos['statefulset'].keys())
+            configuration = "("
+            names_of_workers = []
+            for component in components:
+                name_worker = self.get_worker_name(component=component)
+                names_of_workers.append(name_worker.lower())
+            configuration = '(' + '|'.join(names_of_workers) + ')'
+            return metric.format(host=host, gpuid=gpuid, configuration=configuration, experiment="", schema=schema, database=database)
+            #return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
             self.logger.debug(f"set_metric_of_config_default({metric}, {host}, {gpuid}, experiment={self.experiment_name}, schema={schema}, database={database})")
             return self.set_metric_of_config_default(metric, host, gpuid, experiment=self.experiment_name, schema=schema, database=database)
