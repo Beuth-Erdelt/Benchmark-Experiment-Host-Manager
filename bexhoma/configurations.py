@@ -2737,17 +2737,22 @@ scrape_configs:
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
-            self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            # copy queries.config
+            filename = 'queries.config'
+            self.experimentfile_upload(filename)
+            # copy connection's config
+            filename = c['name']+'.config'
+            self.experimentfile_upload(filename)
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
-            self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
-            self.logger.debug('copy config protocol.json: {}'.format(stdout))
+            # copy connection's config
+            filename = c['name']+'.config'
+            self.experimentfile_upload(filename)
+            # copy connections.config
+            filename = 'connections.config'
+            self.experimentfile_upload(filename)
+            # copy protocol.json
+            filename = 'protocol.json'
+            self.experimentfile_upload(filename)
         # put list of clients to message queue
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
         for i in range(1, parallelism+1):
@@ -2798,21 +2803,6 @@ scrape_configs:
         if len(pods) > 0:
             pod_dashboard = pods[0]
             cmd = {}
-            """
-            cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
-            self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
-            self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
-            self.logger.debug('copy config protocol.json: {}'.format(stdout))
-            """
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
                 cmd = {}
@@ -2869,8 +2859,12 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    stdout = self.experimentfile_upload(filename)
+                    #filename_source = self.path+"/"+filename
+                    #filename_remote = '/results/'+str(self.code)+'/'+filename
+                    #self.experiment.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
+                    #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))
@@ -2947,6 +2941,22 @@ scrape_configs:
         if self.pod_sut == '':
             self.check_sut()
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+    def experimentfile_upload(self, filename):
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            filename_local = self.path+'/'+filename
+            filename_remote = '/results/'+str(self.code)+'/'+filename
+            return self.experiment.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
+        return ""
+    def experimentfile_download(self, filename):
+        pods = self.experiment.cluster.get_pods(component='dashboard')
+        if len(pods) > 0:
+            pod_dashboard = pods[0]
+            filename_local = self.path+'/'+filename
+            filename_remote = '/results/'+str(self.code)+'/'+filename
+            return self.experiment.cluster.file_download(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
+        return ""
     def copyLog(self):
         print("copyLog")
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)

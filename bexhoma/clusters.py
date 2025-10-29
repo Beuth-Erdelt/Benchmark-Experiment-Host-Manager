@@ -1001,10 +1001,10 @@ class testbed():
             else:
                 return "", stdout, stderr
         return "", "", ""
-    def file_upload(filename_remote, filename_local, pod, container="dashboard"):
+    def file_upload(self, filename_remote, filename_local, pod, container="dashboard"):
         cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
         return self.kubectl(cmd)
-    def file_download(filename_source, filename_destination, pod, container="dashboard"):
+    def file_download(self, filename_source, filename_destination, pod, container="dashboard"):
         cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
         return self.kubectl(cmd)
     def check_DBMS_connection(self, ip, port):
