@@ -1275,6 +1275,7 @@ scrape_configs:
         env = self.sut_parameters #self.sut_envs.copy()
         # generate list of worker names
         worker_port = ":"+str(self.dockertemplate['worker_port']) if 'worker_port' in self.dockertemplate else ""
+        store_args = self.dockertemplate['store_args'] if 'store_args' in self.dockertemplate else True
         list_of_workers = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
@@ -1474,7 +1475,7 @@ scrape_configs:
                     #for i_env,e in env.items():
                     #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     if container['name'] == 'dbms':
-                        if 'args' in container:
+                        if 'args' in container and store_args:
                             self.worker_startup_args = container['args']
                             print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
@@ -1711,7 +1712,7 @@ scrape_configs:
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
-                        if 'args' in container:
+                        if 'args' in container and store_args:
                             self.sut_startup_args = container['args']
                             print("{:30s}: server args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
