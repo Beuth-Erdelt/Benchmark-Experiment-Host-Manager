@@ -516,13 +516,17 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        status_pending = False
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.get_pod_status(pod_sut)
-            if status == "Pending":
-                return True
-        return False
+            for pod_sut in pods:
+                print(f"Testing {pod_sut} for pending")
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status == "Pending":
+                    #return True
+                    status_pending = True
+        #return False
+        return status_pending
     def sut_is_running(self):
         """
         Returns True, iff system-under-test (dbms) is running.
@@ -532,17 +536,15 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        status_running = True
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.get_pod_status(pod_sut)
-            if status == "Running":
-                return True
-                #ready = self.experiment.cluster.is_pod_ready(pod_sut)
-                #if ready:
-                #    return True
-                #else:
-                #     print("{:30s}: is not healthy yet".format(self.configuration))
+            for pod_sut in pods:
+                print(f"Testing {pod_sut} for running")
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status != "Running":
+                    status_running = False
+            return status_running
         return False
     def sut_is_healthy(self):
         """
@@ -555,18 +557,26 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        status_healthy = True
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.get_pod_status(pod_sut)
-            if status == "Running":
-                ready = self.experiment.cluster.is_pod_ready(pod_sut)
-                if ready:
-                    self.is_sut_ready = True
-                    return True
+            for pod_sut in pods:
+                print(f"Testing {pod_sut} for healthy")
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status == "Running":
+                    ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                    if not ready:
+                        status_healthy = False
+                    #if ready:
+                    #    self.is_sut_ready = True
+                    #    return True
+                    #else:
+                    #    #print("{:30s}: is not healthy yet".format(self.configuration))
+                    #    return False
                 else:
-                    #print("{:30s}: is not healthy yet".format(self.configuration))
-                    return False
+                    status_healthy = False
+            self.is_sut_ready = status_healthy
+            return status_healthy
         return False
     def workers_are_healthy(self):
         """
