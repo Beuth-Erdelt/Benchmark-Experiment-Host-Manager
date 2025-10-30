@@ -1967,6 +1967,18 @@ class default():
                 if self.monitoring_active:
                     if config.monitoring_sut:
                         print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
+                        config.fetch_metrics(
+                            connection=config.current_benchmark_connection,
+                            connection_file=connection+'.config',
+                            container="dbms",
+                            component_type="stream",
+                            experiment=self.code,
+                            time_start=start_time,
+                            time_end=end_time,
+                            metrics_type="metrics_special",
+                            pod_dashboard=pod_dashboard
+                            )
+                        """
                         #print(config.current_benchmark_connection)
                         #print(config.benchmark.dbms.keys())
                         metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory'].copy()
@@ -1981,9 +1993,22 @@ class default():
                         cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
+                        """
                         # Pooler
                         if config.sut_has_pool:
                             print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
+                            config.fetch_metrics(
+                                connection=config.current_benchmark_connection,
+                                connection_file=connection+'.config',
+                                container="pool",
+                                component_type="pool",
+                                experiment=self.code,
+                                time_start=start_time,
+                                time_end=end_time,
+                                metrics_type="metrics",
+                                pod_dashboard=pod_dashboard
+                                )
+                            """
                             #print(config.current_benchmark_connection)
                             #print(config.benchmark.dbms.keys())
                             metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
@@ -2004,11 +2029,24 @@ class default():
                             cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                             stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                             self.cluster.logger.debug(stdout)
+                            """
                     # get metrics of benchmarker components
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, config.current_benchmark_connection))
+                        config.fetch_metrics(
+                            connection=config.current_benchmark_connection,
+                            connection_file=connection+'.config',
+                            container="dbmsbenchmarker",
+                            component_type="benchmarker",
+                            experiment=self.code,
+                            time_start=start_time,
+                            time_end=end_time,
+                            metrics_type="metrics",
+                            pod_dashboard=pod_dashboard
+                            )
+                        """
                         metric_example = config.benchmark.dbms[config.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                         container = "dbmsbenchmarker"
                         if container is not None:
@@ -2027,6 +2065,7 @@ class default():
                         cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
+                        """
         self.evaluator.end_benchmarking(jobname)
     def end_loading(self,
                     jobname):

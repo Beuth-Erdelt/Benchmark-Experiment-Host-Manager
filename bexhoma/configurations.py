@@ -2625,6 +2625,24 @@ scrape_configs:
                 )
         #print(c)
         return c#.copy()
+    def fetch_metrics(self, connection, connection_file, container, component_type, experiment, time_start, time_end, metrics_type, pod_dashboard):
+        config_folder = '/results/'+self.code
+        cmd = {}
+        metric_example = self.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]['total_cpu_memory'].copy()
+        if container != 'dbms': #is not None:
+            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
+            metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
+            metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
+            metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
+        print("{:30s}: example metric {}".format(connection, metric_example))
+        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -ct {component_type} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
+        stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
+        self.logger.debug(stdout)
+        self.logger.debug(stderr)
+        # upload connections infos again, metrics has overwritten it
+        filename = 'connections.config'
+        stdout = self.experimentfile_upload(filename)
+        self.logger.debug(stdout)
     def run_benchmarker_pod(self,
         connection=None,
         alias='',
@@ -2867,12 +2885,24 @@ scrape_configs:
                 #self.monitoring_sut = True
                 if self.monitoring_sut:
                     print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
+                    self.fetch_metrics(
+                        connection=self.current_benchmark_connection,
+                        connection_file=c['name']+'.config',
+                        container="dbms",
+                        component_type="loading",
+                        experiment=self.code,
+                        time_start=self.timeLoadingStart,
+                        time_end=self.timeLoadingEnd,
+                        metrics_type="metrics_special",
+                        pod_dashboard=pod_dashboard
+                        )
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     # with container name? should better be part of the metric query
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
                     #metric_example = self.benchmark.dbms[self.configuration].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
                     #metric_example = c['name']['monitoring']['metrics_special']['total_cpu_memory']
                     #print("{:30s}: example mtric {}".format(connection, metric_example))
+                    """
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics_special']['total_cpu_memory']
                     print("{:30s}: example metric {}".format(connection, metric_example))
                     cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
@@ -2892,12 +2922,25 @@ scrape_configs:
                     #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
+                    """
                 # get metrics of loader components
                 # only if general monitoring is on
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator at connection {}".format(connection, self.current_benchmark_connection))
+                    self.fetch_metrics(
+                        connection=self.current_benchmark_connection,
+                        connection_file=c['name']+'.config',
+                        container="datagenerator",
+                        component_type="datagenerator",
+                        experiment=self.code,
+                        time_start=self.timeLoadingStart,
+                        time_end=self.timeLoadingEnd,
+                        metrics_type="metrics",
+                        pod_dashboard=pod_dashboard
+                        )
+                    """
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "datagenerator"
                     if container is not None:
@@ -2925,8 +2968,21 @@ scrape_configs:
                     #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
+                    """
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))
+                    self.fetch_metrics(
+                        connection=self.current_benchmark_connection,
+                        connection_file=c['name']+'.config',
+                        container="sensor",
+                        component_type="loader",
+                        experiment=self.code,
+                        time_start=self.timeLoadingStart,
+                        time_end=self.timeLoadingEnd,
+                        metrics_type="metrics",
+                        pod_dashboard=pod_dashboard
+                        )
+                    """
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "sensor"
                     if container is not None:
@@ -2951,9 +3007,22 @@ scrape_configs:
                     #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
+                    """
                     # pooling container "pool"
                     if self.sut_has_pool:
                         print("{:30s}: collecting loading metrics of pool at connection {}".format(connection, self.current_benchmark_connection))
+                        self.fetch_metrics(
+                            connection=self.current_benchmark_connection,
+                            connection_file=c['name']+'.config',
+                            container="pool",
+                            component_type="poolloading",
+                            experiment=self.code,
+                            time_start=self.timeLoadingStart,
+                            time_end=self.timeLoadingEnd,
+                            metrics_type="metrics",
+                            pod_dashboard=pod_dashboard
+                            )
+                        """
                         metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                         container = "pool"
                         if container is not None:
@@ -2978,6 +3047,7 @@ scrape_configs:
                         #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                         self.logger.debug(stdout)
+                        """
     def execute_command_in_pod_sut(self, command, pod='', container='', params=''):
         """
         Runs an shell command remotely inside a container of a pod.
