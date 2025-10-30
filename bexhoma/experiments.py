@@ -106,6 +106,7 @@ class default():
             runsPerConnection = 0,
             timeout = timeout,
             singleConnection = True)
+        self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -296,6 +297,26 @@ class default():
             return path.as_posix()
         else:
             return str(path)
+    def experimentfile_upload(self, filename):
+        if not len(self.pod_dashboard):
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                self.pod_dashboard = pods[0]
+            else:
+                return ""
+        filename_local = self.path+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/'+filename
+        return self.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
+    def experimentfile_download(self, filename):
+        if not len(self.pod_dashboard):
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                self.pod_dashboard = pods[0]
+            else:
+                return ""
+        filename_local = self.path+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/'+filename
+        return self.cluster.file_download(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter):
         """
@@ -1539,19 +1560,18 @@ class default():
                                 app = self.cluster.appname
                                 component = 'sut'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                if len(pods) > 0:
-                                    pod_sut = pods[0]
+                                for pod_sut in pods:
                                     for container in config.sut_containers_deployed:
                                         self.cluster.store_pod_log(pod_sut, container)
                                     if not self.cluster.pod_description_exists(pod_name=pod_sut):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod_sut))
                                         self.cluster.store_pod_description(pod_name=pod_sut)
                                     restarts = config.get_host_restarts(pod_sut)
-                                    print("{:30s}: had {} restarts".format(config.configuration, str(restarts)))
+                                    print("{:30s}: had {} restarts at sut {}".format(config.configuration, str(restarts), pod_sut))
                                     #self.cluster.store_pod_log(pod_sut, 'dbms')
                                 component = 'worker'
                                 #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                pods = config.get_worker_pods()
+                                pods = config.get_worker_pods(component=component)
                                 for pod_worker in pods:
                                     for container in config.worker_containers_deployed:
                                         self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done+1)
@@ -3496,6 +3516,12 @@ class ycsb(default):
                 infos.append("    {}:{}".format(key,info))
             for info in infos:
                 print(info)
+            if 'sut' in c and len(c['sut']) > 0:
+                for i, sut in enumerate(c['sut']):
+                    print("    sut {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    for info in infos:
+                        print(info)
             if 'worker' in c and len(c['worker']) > 0:
                 for i, worker in enumerate(c['worker']):
                     print("    worker {}".format(i))

@@ -58,6 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
     parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
     parser.add_argument('-nlf', '--num-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
+    parser.add_argument('-nsr', '--num-sut-replicas', help='number of sut pods per configuration', default=1)
     parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
     parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
@@ -130,6 +131,7 @@ if __name__ == '__main__':
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
+    num_sut_replicas = int(args.num_sut_replicas)
     num_worker_shards = int(args.num_worker_shards)
     ##############
     ### specific to: YCSB
@@ -755,6 +757,9 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'tidb'
                         )
+                    config.set_resources(
+                        replicas_sut = num_sut_replicas
+                    )
                     config.set_ddl_parameters(
                         num_worker_replicas = num_worker_replicas,
                         num_worker_shards = num_worker_shards,

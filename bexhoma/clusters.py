@@ -1001,6 +1001,12 @@ class testbed():
             else:
                 return "", stdout, stderr
         return "", "", ""
+    def file_upload(self, filename_remote, filename_local, pod, container="dashboard"):
+        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
+        return self.kubectl(cmd)
+    def file_download(self, filename_source, filename_destination, pod, container="dashboard"):
+        cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
+        return self.kubectl(cmd)
     def check_DBMS_connection(self, ip, port):
         """
         Check if DBMS is open for connections.
@@ -2013,7 +2019,7 @@ class kubernetes(testbed):
             # max 10 tries to receive the log (timeout might occure)
             tries = 1
             while tries<10:
-                print("{:30s}: (try #{}) stores pod log into {}".format("Bexhoma", tries, filename_log))
+                self.logger.debug("{:30s}: (try #{}) stores pod log into {}".format("Bexhoma", tries, filename_log))
                 stdout = self.pod_log(pod_name, container)
                 if stdout is None:
                     print("{:30s}: no data error for log {}".format("Bexhoma", filename_log))

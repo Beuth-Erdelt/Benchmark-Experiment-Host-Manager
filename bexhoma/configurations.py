@@ -193,7 +193,8 @@ class default():
         self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset for worker
         self.store_containers_deployed = []                                     #: Name of the containers of the SUT statefulset for storage
         self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
-        #self.sut_envs = {}                                                      #: parameters sent to container via ENV
+        self.deployment_infos = {}                                              #: Dict containing infos about deployed deployments, stateful sets, pvc, pods and containers
+        #self.sut_envs = {}                                                     #: parameters sent to container via ENV
         self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
         self.reset_sut()
         self.benchmark = None                                                   #: Optional subobject for benchmarking (dbmsbenchmarker instance)
@@ -516,13 +517,17 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        status_pending = False
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.get_pod_status(pod_sut)
-            if status == "Pending":
-                return True
-        return False
+            for pod_sut in pods:
+                self.logger.debug(f"Testing {pod_sut} for pending")
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status == "Pending":
+                    #return True
+                    status_pending = True
+        #return False
+        return status_pending
     def sut_is_running(self):
         """
         Returns True, iff system-under-test (dbms) is running.
@@ -532,17 +537,15 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        status_running = True
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.get_pod_status(pod_sut)
-            if status == "Running":
-                return True
-                #ready = self.experiment.cluster.is_pod_ready(pod_sut)
-                #if ready:
-                #    return True
-                #else:
-                #     print("{:30s}: is not healthy yet".format(self.configuration))
+            for pod_sut in pods:
+                self.logger.debug(f"Testing {pod_sut} for running")
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status != "Running":
+                    status_running = False
+            return status_running
         return False
     def sut_is_healthy(self):
         """
@@ -555,18 +558,26 @@ class default():
         app = self.appname
         component = 'sut'
         configuration = self.configuration
+        status_healthy = True
         pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
         if len(pods) > 0:
-            pod_sut = pods[0]
-            status = self.experiment.cluster.get_pod_status(pod_sut)
-            if status == "Running":
-                ready = self.experiment.cluster.is_pod_ready(pod_sut)
-                if ready:
-                    self.is_sut_ready = True
-                    return True
+            for pod_sut in pods:
+                self.logger.debug(f"Testing {pod_sut} for healthy")
+                status = self.experiment.cluster.get_pod_status(pod_sut)
+                if status == "Running":
+                    ready = self.experiment.cluster.is_pod_ready(pod_sut)
+                    if not ready:
+                        status_healthy = False
+                    #if ready:
+                    #    self.is_sut_ready = True
+                    #    return True
+                    #else:
+                    #    #print("{:30s}: is not healthy yet".format(self.configuration))
+                    #    return False
                 else:
-                    #print("{:30s}: is not healthy yet".format(self.configuration))
-                    return False
+                    status_healthy = False
+            self.is_sut_ready = status_healthy
+            return status_healthy
         return False
     def workers_are_healthy(self):
         """
@@ -578,22 +589,25 @@ class default():
             if self.are_worker_ready:
                 return True
             app = self.appname
-            component = 'worker'
-            configuration = self.configuration
-            #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
-            num_ready = 0
-            pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-            for pod in pods_worker:
-                #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
-                status = self.experiment.cluster.get_pod_status(pod)
-                if status == "Running":
-                    ready = self.experiment.cluster.is_pod_ready(pod)
-                    if ready:
-                        num_ready = num_ready + 1
-            print("{:30s}: found {} / {} running workers".format(self.configuration, num_ready, self.num_worker))
-            self.are_worker_ready = (num_ready == self.num_worker)
-            if self.are_worker_ready:
-                self.attach_worker()
+            self.are_worker_ready = True
+            components = list(self.deployment_infos['statefulset'].keys())
+            #component = 'worker'
+            for component in components:
+                configuration = self.configuration
+                #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
+                num_ready = 0
+                pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                for pod in pods_worker:
+                    #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
+                    status = self.experiment.cluster.get_pod_status(pod)
+                    if status == "Running":
+                        ready = self.experiment.cluster.is_pod_ready(pod)
+                        if ready:
+                            num_ready = num_ready + 1
+                print("{:30s}: found {} / {} running workers (component {})".format(self.configuration, num_ready, self.num_worker, component))
+                self.are_worker_ready = self.are_worker_ready and (num_ready == self.num_worker)
+                if self.are_worker_ready:
+                    self.attach_worker()
             return self.are_worker_ready
         else:
             return True
@@ -1235,11 +1249,11 @@ scrape_configs:
             self.experiment_name = experiment
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
-        name_worker = self.get_worker_name()
+        name_worker = self.get_worker_name(component='worker')
         name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
         name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
-        name_store = self.generate_component_name(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
+        name_store = self.get_worker_name(component='store') #self.generate_component_name(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         # test, if SUT is already running
         deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
@@ -1264,6 +1278,7 @@ scrape_configs:
         env = self.sut_parameters #self.sut_envs.copy()
         # generate list of worker names
         worker_port = ":"+str(self.dockertemplate['worker_port']) if 'worker_port' in self.dockertemplate else ""
+        store_args = self.dockertemplate['store_args'] if 'store_args' in self.dockertemplate else True
         list_of_workers = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
@@ -1298,6 +1313,16 @@ scrape_configs:
                 store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=0, worker_service=name_store)
                 env['BEXHOMA_STORE_FIRST'] = store_full_name
             env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
+            if self.docker == "TiDB":
+                # patch initial cluster for TiDB
+                # this is for 3 workers:
+                # --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+                list_initial_cluster = []
+                for worker in range(self.num_worker):
+                    clusternode_full_name = "{name_worker}-{worker_number}=http://{name_worker}-{worker_number}.{worker_service}:2380".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+                    list_initial_cluster.append(clusternode_full_name)
+                list_initial_cluster_as_string = ",".join(list_initial_cluster)
+                env['BEXHOMA_INITIAL_CLUSTER'] = list_initial_cluster_as_string
         # resources
         #specs = instance.split("-")
         #print(specs)
@@ -1395,7 +1420,7 @@ scrape_configs:
                     del result[key]
                     continue
                 if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
-                    statefulset_type = "worker"
+                    #statefulset_type = "worker"
                     # set meta data
                     dep['metadata']['name'] = name_worker
                     #self.service = dep['metadata']['name']
@@ -1404,7 +1429,7 @@ scrape_configs:
                     dep['spec']['serviceName'] = name_worker
                     self.worker_containers_deployed = []
                 elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
-                    statefulset_type = "store"
+                    #statefulset_type = "store"
                     # set meta data
                     dep['metadata']['name'] = name_store
                     #self.service = dep['metadata']['name']
@@ -1415,6 +1440,12 @@ scrape_configs:
                 else:
                     print("Unknown stateful set: {}".format(dep['metadata']['name']))
                     continue
+                statefulset_type = dep['metadata']['labels']['component']
+                if not 'statefulset' in self.deployment_infos:
+                    self.deployment_infos['statefulset'] = {}
+                self.deployment_infos['statefulset'][statefulset_type] = {}
+                self.deployment_infos['statefulset'][statefulset_type]['pods'] = [f"{dep['metadata']['name']}-{i}" for i in range(self.num_worker)]
+                self.deployment_infos['statefulset'][statefulset_type]['containers'] = []
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
@@ -1430,6 +1461,7 @@ scrape_configs:
                         self.worker_containers_deployed.append(container['name'])
                     if statefulset_type == "store":
                         self.store_containers_deployed.append(container['name'])
+                    self.deployment_infos['statefulset'][statefulset_type]['containers'].append(container['name'])
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     # get and set ENV
@@ -1459,7 +1491,7 @@ scrape_configs:
                     #for i_env,e in env.items():
                     #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                     if container['name'] == 'dbms':
-                        if 'args' in container:
+                        if 'args' in container and store_args:
                             self.worker_startup_args = container['args']
                             print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
@@ -1473,12 +1505,14 @@ scrape_configs:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.deployment_infos['statefulset'][statefulset_type]['containers'].pop()
                             if statefulset_type == "worker":
                                 self.worker_containers_deployed.pop()
                             elif statefulset_type == "store":
                                 self.store_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.deployment_infos['statefulset'][statefulset_type]['containers'].pop()
                             if statefulset_type == "worker":
                                 self.worker_containers_deployed.pop()
                             elif statefulset_type == "store":
@@ -1657,6 +1691,7 @@ scrape_configs:
                     yaml_deployment = result[key]       # this will be marked 'loaded' iff pvc exists
                     dep['metadata']['name'] = name
                     dep['metadata']['labels']['component'] = component
+                deployment_type = dep['metadata']['labels']['component']
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
@@ -1671,6 +1706,11 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #deployment = dep['metadata']['name']
                 #appname = dep['spec']['template']['metadata']['labels']['app']
+                if not 'deployment' in self.deployment_infos:
+                    self.deployment_infos['deployment'] = {}
+                self.deployment_infos['deployment'][deployment_type] = {}
+                self.deployment_infos['deployment'][deployment_type]['pods'] = []
+                self.deployment_infos['deployment'][deployment_type]['containers'] = []
                 if dep['metadata']['name'] != name_pool:
                     self.sut_containers_deployed = []
                 else:
@@ -1680,6 +1720,7 @@ scrape_configs:
                         self.sut_containers_deployed.append(container['name'])
                     else:
                         self.pool_containers_deployed.append(container['name'])
+                    self.deployment_infos['deployment'][deployment_type]['containers'].append(container['name'])
                     self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
                     #if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
@@ -1696,7 +1737,7 @@ scrape_configs:
                     #container = dep['spec']['template']['spec']['containers'][0]['name']
                     #print("Container", container)
                     if container['name'] == 'dbms':
-                        if 'args' in container:
+                        if 'args' in container and store_args:
                             self.sut_startup_args = container['args']
                             print("{:30s}: server args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
@@ -1718,9 +1759,11 @@ scrape_configs:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.deployment_infos['deployment'][deployment_type]['containers'].pop()
                             self.sut_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
+                            self.deployment_infos['deployment'][deployment_type]['containers'].pop()
                             self.sut_containers_deployed.pop()
                 if 'volumes' in dep['spec']['template']['spec']:
                     for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
@@ -1762,6 +1805,9 @@ scrape_configs:
                             #self.resources['nodeSelector'][nodeSelector] = value """
                 # we only want to manipulate resources for dbms container in SUT
                 if dep['metadata']['name'] == name:
+                    if 'replicas_sut' in self.resources:
+                        num_replicas_sut = self.resources['replicas_sut']
+                        result[key]['spec']['replicas'] = num_replicas_sut
                     for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
                         if container['name'] == 'dbms':
                             break
@@ -1889,6 +1935,7 @@ scrape_configs:
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
+        #print(self.deployment_infos)
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         """
@@ -2318,6 +2365,9 @@ scrape_configs:
             else:
                 volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
                 volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
+            if 'statefulset' in self.deployment_infos:
+                list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
+                print(f"###### list_of_worker_components = {list_of_worker_components}")
             pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
             # for worker pods: bexhoma-workers-
             #volume = name_pvc
@@ -2396,6 +2446,7 @@ scrape_configs:
         Parameters in this query are substituted, so that prometheus finds the correct metric.
         Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
         configuration and experiment are placeholders and will be replaced by concrete values.
+        If there are workers: configuration=name_worker.lower(), experiment=""
         For specific behaviour of other components not managed by bexhoma (e.g., a cloud dbms), overwrite this method.
         The method set_metric_of_config_default() contains the default behaviour for all components managed by bexhoma.
 
@@ -2410,8 +2461,15 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            name_worker = self.get_worker_name()
-            return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
+            components = list(self.deployment_infos['statefulset'].keys())
+            configuration = "("
+            names_of_workers = []
+            for component in components:
+                name_worker = self.get_worker_name(component=component)
+                names_of_workers.append(name_worker.lower())
+            configuration = '(' + '|'.join(names_of_workers) + ')'
+            return metric.format(host=host, gpuid=gpuid, configuration=configuration, experiment="", schema=schema, database=database)
+            #return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
             self.logger.debug(f"set_metric_of_config_default({metric}, {host}, {gpuid}, experiment={self.experiment_name}, schema={schema}, database={database})")
             return self.set_metric_of_config_default(metric, host, gpuid, experiment=self.experiment_name, schema=schema, database=database)
@@ -2460,6 +2518,16 @@ scrape_configs:
             worker_infos = self.get_host_all()
             worker_infos['args'] = self.worker_startup_args
             c['worker'].append(worker_infos)
+        c['sut'] = []
+        pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
+        if len(pods) > 1:
+            # only if there are several sut pods
+            for pod in pods:
+                self.pod_sut = pod
+                print("{:30s}: distributed system - get host info for sut {}".format(self.configuration, pod))
+                sut_infos = self.get_host_all()
+                sut_infos['args'] = self.sut_startup_args
+                c['sut'].append(sut_infos)
         self.pod_sut = pod_sut
         # take latest resources
         # TODO: read from yaml file
@@ -2727,17 +2795,22 @@ scrape_configs:
             cmd = {}
             cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
-            self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
+            # copy queries.config
+            filename = 'queries.config'
+            self.experimentfile_upload(filename)
+            # copy connection's config
+            filename = c['name']+'.config'
+            self.experimentfile_upload(filename)
             # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
-            self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
-            self.logger.debug('copy config protocol.json: {}'.format(stdout))
+            # copy connection's config
+            filename = c['name']+'.config'
+            self.experimentfile_upload(filename)
+            # copy connections.config
+            filename = 'connections.config'
+            self.experimentfile_upload(filename)
+            # copy protocol.json
+            filename = 'protocol.json'
+            self.experimentfile_upload(filename)
         # put list of clients to message queue
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
         for i in range(1, parallelism+1):
@@ -2788,21 +2861,6 @@ scrape_configs:
         if len(pods) > 0:
             pod_dashboard = pods[0]
             cmd = {}
-            """
-            cmd['prepare_log'] = 'mkdir -p /results/'+str(self.code)
-            stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/queries.config '+pod_dashboard+':/results/'+str(self.code)+'/queries.config')
-            self.logger.debug('copy config queries.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            # copy twice to be more sure it worked
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/'+c['name']+'.config '+pod_dashboard+':/results/'+str(self.code)+'/'+c['name']+'.config')
-            self.logger.debug('copy config {}: {}'.format(c['name']+'.config', stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
-            self.logger.debug('copy config connections.config: {}'.format(stdout))
-            stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/protocol.json '+pod_dashboard+':/results/'+str(self.code)+'/protocol.json')
-            self.logger.debug('copy config protocol.json: {}'.format(stdout))
-            """
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
                 cmd = {}
@@ -2830,8 +2888,9 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    stdout = self.experimentfile_upload(filename)
+                    #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                 # get metrics of loader components
                 # only if general monitoring is on
@@ -2859,8 +2918,12 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    stdout = self.experimentfile_upload(filename)
+                    #filename_source = self.path+"/"+filename
+                    #filename_remote = '/results/'+str(self.code)+'/'+filename
+                    #self.experiment.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
+                    #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))
@@ -2884,8 +2947,9 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                    stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                    stdout = self.experimentfile_upload(filename)
+                    #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                    #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
                     # pooling container "pool"
                     if self.sut_has_pool:
@@ -2910,8 +2974,9 @@ scrape_configs:
                         self.logger.debug(stderr)
                         # upload connections infos again, metrics has overwritten it
                         filename = 'connections.config'
-                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                        stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
+                        stdout = self.experimentfile_upload(filename)
+                        #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                         self.logger.debug(stdout)
     def execute_command_in_pod_sut(self, command, pod='', container='', params=''):
         """
@@ -2937,6 +3002,10 @@ scrape_configs:
         if self.pod_sut == '':
             self.check_sut()
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+    def experimentfile_upload(self, filename):
+        return self.experiment.experimentfile_upload(filename)
+    def experimentfile_download(self, filename):
+        return self.experiment.experimentfile_download(filename)
     def copyLog(self):
         print("copyLog")
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
@@ -3013,6 +3082,10 @@ scrape_configs:
                         with open(self.experiment.cluster.experiments_configfolder+'/'+filename_filled, "w") as initscript_filled:
                             initscript_filled.write(data)
                         self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
+                        filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
+                        filename_base, file_extension = os.path.splitext(script)
+                        filename_in_resultfolder = self.experiment.path+'/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(app=self.appname, configuration=self.configuration, filename=filename_base, database=database, extension=file_extension.lower()).lower()
+                        shutil.copy(filename_source, filename_in_resultfolder)
         else:
             #for script in self.initscript:
             for script in scripts:
@@ -3519,7 +3592,6 @@ scrape_configs:
                     self.logger.debug("load_data_asynch - run container-wise scripts {}".format(thread_args))
                     thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                     thread.start()
-                #print("####################", commands)
                 print("{:30s}: runs scripts {}".format(self.configuration, commands))
             else:
                 thread_args = {
@@ -3920,7 +3992,7 @@ scrape_configs:
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
-    def get_worker_name(self):
+    def get_worker_name(self, component='worker'):
         """
         Returns a template for the worker names.
         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -3946,7 +4018,7 @@ scrape_configs:
         # test shorter names
         #name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
         #this works, but is long for Redis:
-        name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
+        name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.experiment_name, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self, component='worker'):
         """

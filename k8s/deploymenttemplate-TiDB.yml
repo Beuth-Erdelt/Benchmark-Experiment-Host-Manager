@@ -47,22 +47,14 @@ kind: StatefulSet
 metadata:
   name: bexhoma-worker
   labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
-#metadata:
-#  name: cockroachdb
 spec:
   serviceName: bexhoma-workers
-  #serviceName: "cockroachdb"
   replicas: 3
   selector:
     matchLabels:
       {app: bexhoma, component: worker, configuration: default, experiment: default}
-  #selector:
-  #  matchLabels:
-  #    app: cockroachdb
   template:
     metadata:
-      #labels:
-      #  app: cockroachdb
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       containers:
@@ -76,7 +68,8 @@ spec:
           - --peer-urls=http://0.0.0.0:2380
           - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
           - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
-          - --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+          - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
+          #- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
           - name: POD_NAME
             valueFrom:
@@ -106,22 +99,14 @@ kind: StatefulSet
 metadata:
   name: bexhoma-store
   labels: {app: bexhoma, component: store, configuration: default, experiment: default}
-#metadata:
-#  name: cockroachdb
 spec:
   serviceName: bexhoma-store
-  #serviceName: "cockroachdb"
   replicas: 3
   selector:
     matchLabels:
       {app: bexhoma, component: store, configuration: default, experiment: default}
-  #selector:
-  #  matchLabels:
-  #    app: cockroachdb
   template:
     metadata:
-      #labels:
-      #  app: cockroachdb
       labels: {app: bexhoma, component: store, configuration: default, experiment: default}
     spec:
       containers:
@@ -200,7 +185,7 @@ spec:
             yum update -y;
             yum install -y mysql;
             echo "Starting TiDB..." && \
-            /tidb-server --store=tikv --path=bexhoma-worker-tidb-ycsb-1-0.bexhoma-worker-tidb-ycsb-1:2379,bexhoma-worker-tidb-ycsb-1-1.bexhoma-worker-tidb-ycsb-1:2379,bexhoma-worker-tidb-ycsb-1-2.bexhoma-worker-tidb-ycsb-1:2379
+            /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)
         image: pingcap/tidb:v7.1.0
         #args:
         #  - /tidb-server

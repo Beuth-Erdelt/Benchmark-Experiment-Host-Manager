@@ -41,8 +41,23 @@ We have to define some data per key, for example for the key `PostgreSQL` we use
     'logfile': '/usr/local/data/logfile',
     'datadir': '/var/lib/postgresql/data/',
     'priceperhourdollar': 0.0,
+    'store_args': True,
+    'monitor': {
+        'blackbox': True,
+        'metrics': {
+            'pg_stat_activity_count_idle': {
+                'type': 'application',
+                'active': True,
+                'metric': 'gauge',
+                'query': 'sum(pg_stat_activity_count{{datname!~"template.*", state="idle"}})',
+                'query2': 'sum(pg_stat_activity_count{{datname!~"template.*", state="idle", datname="{database}"}})',
+                'title': 'Number of Idle Sessions',
+            },
+        },
+    },
 },
 ```
+
 This has
 * a base name for the DBMS
 * a `delay_prepare` in seconds to wait before system is considered ready
@@ -56,6 +71,9 @@ This has
 * an optional `priceperhourdollar` (currently ignored)
 * an optional name of a `logfile` that is downloaded after the benchmark
 * name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
+* an optional `worker_port` (currently only for TiDB), containing the internal port of the headless service
+* `store_args`, iff the args of the DBMS containers should be stored for display in summary (default: True)
+* an optional `monitoring` section for [application metrics](https://bexhoma.readthedocs.io/en/latest/Example-Metrics.html)
 
 ### Collect Host Informations
 
