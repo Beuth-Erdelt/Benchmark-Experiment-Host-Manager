@@ -1313,6 +1313,16 @@ scrape_configs:
                 store_full_name = "{name_store}-{worker_number}.{worker_service}".format(name_store=name_store, worker_number=0, worker_service=name_store)
                 env['BEXHOMA_STORE_FIRST'] = store_full_name
             env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
+            if self.docker == "TiDB":
+                # patch initial cluster for TiDB
+                # this is for 3 workers:
+                # --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+                list_initial_cluster = []
+                for worker in range(self.num_worker):
+                    clusternode_full_name = "{name_worker}-{worker_number}=http://{name_worker}-{worker_number}.{worker_service}:2380".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+                    list_initial_cluster.append(clusternode_full_name)
+                list_initial_cluster_as_string = ",".join(list_initial_cluster)
+                env['BEXHOMA_INITIAL_CLUSTER'] = list_initial_cluster_as_string
         # resources
         #specs = instance.split("-")
         #print(specs)
