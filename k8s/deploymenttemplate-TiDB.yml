@@ -47,22 +47,14 @@ kind: StatefulSet
 metadata:
   name: bexhoma-worker
   labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
-#metadata:
-#  name: cockroachdb
 spec:
   serviceName: bexhoma-workers
-  #serviceName: "cockroachdb"
   replicas: 3
   selector:
     matchLabels:
       {app: bexhoma, component: worker, configuration: default, experiment: default}
-  #selector:
-  #  matchLabels:
-  #    app: cockroachdb
   template:
     metadata:
-      #labels:
-      #  app: cockroachdb
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       containers:
@@ -107,22 +99,14 @@ kind: StatefulSet
 metadata:
   name: bexhoma-store
   labels: {app: bexhoma, component: store, configuration: default, experiment: default}
-#metadata:
-#  name: cockroachdb
 spec:
   serviceName: bexhoma-store
-  #serviceName: "cockroachdb"
   replicas: 3
   selector:
     matchLabels:
       {app: bexhoma, component: store, configuration: default, experiment: default}
-  #selector:
-  #  matchLabels:
-  #    app: cockroachdb
   template:
     metadata:
-      #labels:
-      #  app: cockroachdb
       labels: {app: bexhoma, component: store, configuration: default, experiment: default}
     spec:
       containers:
