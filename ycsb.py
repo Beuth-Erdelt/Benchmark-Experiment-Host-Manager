@@ -131,8 +131,8 @@ if __name__ == '__main__':
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
-    num_sut_replicas = int(args.num_sut_replicas)
     num_worker_shards = int(args.num_worker_shards)
+    num_sut_replicas = int(args.num_sut_replicas)
     ##############
     ### specific to: YCSB
     ##############
