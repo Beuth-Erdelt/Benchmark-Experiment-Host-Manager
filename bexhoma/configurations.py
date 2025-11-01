@@ -1247,7 +1247,30 @@ scrape_configs:
             self.experiment_name = self.storage_label#storageConfiguration
         else:
             self.experiment_name = experiment
+        def extract_k8s_names(file_path):
+            deployments = []
+            statefulsets = []
+            with open(file_path, 'r') as f:
+                docs = yaml.safe_load_all(f)  # supports multiple YAML documents
+                for doc in docs:
+                    if not doc or 'kind' not in doc or 'metadata' not in doc:
+                        continue
+                    kind = doc['kind']
+                    name = doc['metadata'].get('name')
+                    if kind == 'Deployment' and name:
+                        deployments.append(name)
+                    elif kind == 'StatefulSet' and name:
+                        statefulsets.append(name)            
+            return deployments, statefulsets
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        # Deployment manifest template - a configured copy will be stored in result folder
+        template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
+        deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
+        sut_manifest_file = self.experiment.cluster.yamlfolder+template
+        #print(sut_manifest_file)
+        deploys, ssets = extract_k8s_names(sut_manifest_file)
+        print("Deployments:", deploys)
+        print("StatefulSets:", ssets)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_worker = self.get_worker_name(component='worker')
         name_service_headless = name_worker# must be the same
@@ -1260,9 +1283,6 @@ scrape_configs:
         if len(deployments) > 0:
             # sut is already running
             return False
-        # Deployment manifest template - a configured copy will be stored in result folder
-        template = self.sut_template #template = "deploymenttemplate-"+self.docker+".yml"
-        deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         print("{:30s}: name of SUT pods = {}".format(configuration, name))
         print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
@@ -1333,8 +1353,6 @@ scrape_configs:
         #if len(specs) > 2:
         #    gpu = specs[2]
         #    node= specs[3]
-        sut_manifest_file = self.experiment.cluster.yamlfolder+template
-        #print(sut_manifest_file)
         with open(sut_manifest_file) as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -1391,6 +1409,11 @@ scrape_configs:
                             print("{:30s}: storage {} is gone".format(configuration, name_pvc))
                         else:
                             yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
+                            # must be done later, after everything is read
+                            #list_of_pvc = self.get_list_of_pvc()
+                            #print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
+                            # put labels on the first pvc
+                            #volume = list_of_pvc[0]
                             pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                             self.logger.debug(pvcs_labels)
                             if len(pvcs_labels) > 0:
@@ -1529,13 +1552,14 @@ scrape_configs:
                                 result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                 # remove storage template if not used
                 if 'volumeClaimTemplates' in result[key]['spec']:
+                    name_worker_stateful_set = self.get_worker_name(component=statefulset_type)
                     if not use_storage or use_ramdisk:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
                         list_of_workers_pvcs = []
                         for worker in range(self.num_worker):
                             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
-                            worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker)
+                            worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=name_worker_stateful_set, worker_number=worker)
                             list_of_workers_pvcs.append(worker_full_name)
                         self.deployment_infos['statefulset'][statefulset_type]['pvc'] = list_of_workers_pvcs
                         #print(list_of_workers_pvcs)
@@ -3223,6 +3247,16 @@ scrape_configs:
             return True
         else:
             return False
+    def get_list_of_pvc(self):
+        list_of_pvc = []
+        for name, deployment in self.deployment_infos['deployment'].items():
+            if 'pvc' in deployment:
+                list_of_pvc.extend(deployment['pvc'])
+        for name, statefulset in self.deployment_infos['statefulset'].items():
+            if 'pvc' in statefulset:
+                list_of_pvc.extend(statefulset['pvc'])
+        print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
+        return list_of_pvc
     def check_load_data(self):
         """
         Check if loading of the sut has finished.
@@ -3530,17 +3564,16 @@ scrape_configs:
                 storageConfiguration = self.configuration
             name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
             volume = name_pvc
+            list_of_pvc = self.get_list_of_pvc()
+            print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
+            # put labels on the first pvc
+            if len(list_of_pvc) > 0:
+                volume = list_of_pvc[0]
+            else:
+                volume = ''
         else:
             volume = ''
         #commands = self.initscript.copy()
-        list_of_pvc = []
-        for deployment in self.deployment_infos['deployment']:
-            if 'pvc' in deployment:
-                list_of_pvc.append(deployment['pvc'])
-        for statefulset in self.deployment_infos['statefulset']:
-            if 'pvc' in statefulset:
-                list_of_pvc.append(statefulset['pvc'])
-        print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
         if not 'loadData' in self.dockertemplate:
             print("{:30s}: no load command found in config".format(self.configuration))
