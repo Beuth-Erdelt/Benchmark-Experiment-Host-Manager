@@ -84,14 +84,16 @@ spec:
         #  - name: bxw
         #    mountPath: /var/lib/pd
   volumeClaimTemplates:
-    - metadata:
-        name: bxw
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 10Gi
-        # storageClassName: standard  # optional: anpassen falls nötig
+  - metadata:
+      name: bxw
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: shared
 ---
 # TiKV StatefulSet (3 replicas)
 apiVersion: apps/v1
@@ -142,19 +144,6 @@ spec:
         requests:
           storage: 100Gi
       storageClassName: shared
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-storage
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  storageClassName: shared
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -207,5 +196,5 @@ spec:
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
-      - name: benchmark-storage-volume
-        persistentVolumeClaim: {claimName: bexhoma-storage}
+      #- name: benchmark-storage-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-storage}

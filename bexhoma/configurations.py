@@ -1537,6 +1537,7 @@ scrape_configs:
                             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
                             worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker)
                             list_of_workers_pvcs.append(worker_full_name)
+                        self.deployment_infos['statefulset'][statefulset_type]['pvc'] = list_of_workers_pvcs
                         #print(list_of_workers_pvcs)
                         remove_old_pvcs = not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0
                         old_pvc_exist = False
@@ -1775,6 +1776,7 @@ scrape_configs:
                                 result[key]['spec']['template']['spec']['volumes'][i]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                             else:
                                 vol['persistentVolumeClaim']['claimName'] = name_pvc
+                                self.deployment_infos['deployment'][deployment_type]['pvc'] = name_pvc
                         if vol['name'] == 'benchmark-data-volume':
                             if not use_data:
                                 del result[key]['spec']['template']['spec']['volumes'][i]
@@ -1935,7 +1937,7 @@ scrape_configs:
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
-        #print(self.deployment_infos)
+        print(self.deployment_infos)
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         """
@@ -3531,6 +3533,14 @@ scrape_configs:
         else:
             volume = ''
         #commands = self.initscript.copy()
+        list_of_pvc = []
+        for deployment in self.deployment_infos['deployment']:
+            if 'pvc' in deployment:
+                list_of_pvc.append(deployment['pvc'])
+        for statefulset in self.deployment_infos['statefulset']:
+            if 'pvc' in statefulset:
+                list_of_pvc.append(statefulset['pvc'])
+        print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
         print("{:30s}: start asynch loading scripts of type {}".format(self.configuration, script_type))
         if not 'loadData' in self.dockertemplate:
             print("{:30s}: no load command found in config".format(self.configuration))
