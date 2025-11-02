@@ -3574,6 +3574,7 @@ scrape_configs:
             # put labels on the first pvc
             if len(list_of_pvc) > 0:
                 volume = list_of_pvc[0]
+                print("{:30s}: will be labeling {}".format(self.configuration, volume))
             else:
                 volume = ''
         else:
