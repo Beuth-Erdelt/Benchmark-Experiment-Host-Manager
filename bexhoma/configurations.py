@@ -1247,20 +1247,23 @@ scrape_configs:
             self.experiment_name = self.storage_label#storageConfiguration
         else:
             self.experiment_name = experiment
-        def extract_k8s_names(file_path):
+        def extract_component_labels(file_path):
             deployments = []
             statefulsets = []
             with open(file_path, 'r') as f:
-                docs = yaml.safe_load_all(f)  # supports multiple YAML documents
+                docs = yaml.safe_load_all(f)
                 for doc in docs:
-                    if not doc or 'kind' not in doc or 'metadata' not in doc:
+                    if not isinstance(doc, dict):
                         continue
-                    kind = doc['kind']
-                    name = doc['metadata'].get('name')
-                    if kind == 'Deployment' and name:
-                        deployments.append(name)
-                    elif kind == 'StatefulSet' and name:
-                        statefulsets.append(name)            
+                    kind = doc.get('kind')
+                    metadata = doc.get('metadata', {})
+                    labels = metadata.get('labels', {})
+                    component = labels.get('component')
+                    if component:
+                        if kind == 'Deployment':
+                            deployments.append(component)
+                        elif kind == 'StatefulSet':
+                            statefulsets.append(component)            
             return deployments, statefulsets
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         # Deployment manifest template - a configured copy will be stored in result folder
@@ -1268,9 +1271,11 @@ scrape_configs:
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         sut_manifest_file = self.experiment.cluster.yamlfolder+template
         #print(sut_manifest_file)
-        deploys, ssets = extract_k8s_names(sut_manifest_file)
-        print("Deployments:", deploys)
-        print("StatefulSets:", ssets)
+        deploys, ssets = extract_component_labels(sut_manifest_file)
+        print("{:30s}: deployments {}".format(configuration, deploys))
+        print("{:30s}: stateful sets {}".format(configuration, ssets))
+        #print("Deployments:", deploys)
+        #print("StatefulSets:", ssets)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         name_worker = self.get_worker_name(component='worker')
         name_service_headless = name_worker# must be the same
