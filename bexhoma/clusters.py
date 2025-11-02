@@ -598,7 +598,7 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_ports_of_service(app=app, component=component, experiment=experiment, configuration=configuration)
-    def get_pvc(self, app='', component='', experiment='', configuration=''):
+    def get_pvc(self, app='', component='', experiment='', configuration='', pvc=''):
         """
         Return all persistent volume claims matching a set of labels (component/ experiment/ configuration)
 
@@ -606,6 +606,7 @@ class testbed():
         :param component: Component, for example sut or monitoring
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
+        :param pvc: Name of the pvc
         """
         self.logger.debug('testbed.get_pvc()')
         label = ''
@@ -622,10 +623,14 @@ class testbed():
         try: 
             api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
             #pprint(api_response)
-            if len(api_response.items) > 0:
-                return [p.metadata.name for p in api_response.items]
+            if len(pvc) > 0:
+                return [p.metadata.name for p in api_response.items if p.metadata.name == pvc]
             else:
-                return []
+                return [p.metadata.name for p in api_response.items]
+            #if len(api_response.items) > 0:
+            #    return [p.metadata.name for p in api_response.items]
+            #else:
+            #    return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
