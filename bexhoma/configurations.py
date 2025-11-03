@@ -1295,11 +1295,21 @@ scrape_configs:
                 pvcs_labels = self.experiment.cluster.get_pvc_labels(pvc=volume)
                 self.logger.debug(pvcs_labels)
                 if len(pvcs_labels) > 0:
+                    print("{:30s}: storage {} exists".format(configuration, volume))
                     pvc_labels = pvcs_labels[0]
                     #print(pvc_labels)
                     copy_labels = ['loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd', 'indexed', 'time_generated', 'time_indexed', 'time_ingested', 'time_initconstraints', 'time_initindexes', 'time_initschema', 'time_initstatistics', 'time_loaded']
                     return {label: value for label, value in pvc_labels.items() if label in copy_labels}
             return []
+        def set_labels_from_loaded_pvc():
+            if len(labels_on_existing_pvc) > 0:
+                for label in labels_on_existing_pvc:
+                    print("{:30s}: copied label {} = {}".format(configuration, label, labels_on_existing_pvc[label]))
+                    dep['spec']['template']['metadata']['labels'][label] = labels_on_existing_pvc[label]
+                # we do not need loading pods
+                print("{:30s}: loading is set to finished".format(configuration))
+                self.loading_active = False
+                self.monitor_loading = False
         name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         # Deployment manifest template - a configured copy will be stored in result folder
         template = self.sut_template
@@ -1309,9 +1319,9 @@ scrape_configs:
         deploys, ssets = extract_component_labels(sut_manifest_file)
         print("{:30s}: deployments {}".format(configuration, deploys))
         print("{:30s}: stateful sets {}".format(configuration, ssets))
+        if not 'deployment' in self.deployment_infos:
+            self.deployment_infos['deployment'] = {}
         for deployment in deploys:
-            if not 'deployment' in self.deployment_infos:
-                self.deployment_infos['deployment'] = {}
             self.deployment_infos['deployment'][deployment] = {}
             self.deployment_infos['deployment'][deployment]['name'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
             self.deployment_infos['deployment'][deployment]['name_service'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
@@ -1320,9 +1330,9 @@ scrape_configs:
             self.deployment_infos['deployment'][deployment]['containers'] = []
             if use_storage and not use_ramdisk:
                 self.deployment_infos['deployment'][deployment]['pvc'] = [self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)]
+        if not 'statefulset' in self.deployment_infos:
+            self.deployment_infos['statefulset'] = {}
         for stateful_set in ssets:
-            if not 'statefulset' in self.deployment_infos:
-                self.deployment_infos['statefulset'] = {}
             self.deployment_infos['statefulset'][stateful_set] = {}
             worker_name = self.get_worker_name(component=stateful_set)
             self.deployment_infos['statefulset'][stateful_set]['name'] = worker_name
@@ -1454,7 +1464,7 @@ scrape_configs:
                         dep['spec']['resources']['requests']['storage'] = self.storage['storageSize']
                     pvcs = self.experiment.cluster.get_pvc(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                     if len(pvcs) > 0:
-                        print("{:30s}: storage {} exists".format(configuration, name_pvc))
+                        #print("{:30s}: storage {} exists".format(configuration, name_pvc))
                         #reset_and_remove_pvc(name_pvc)
                         if not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0:
                             # we have not loaded yet, so this is the first run in this experiment
@@ -1481,15 +1491,15 @@ scrape_configs:
                             #        if label in pvc_labels:
                             #            print("{:30s}: label {} copied value {}".format(configuration, label, pvc_labels[label]))
                             #            yaml_deployment['spec']['template']['metadata']['labels'][label] = pvc_labels[label]
-                            for label in labels_on_existing_pvc:
-                                print("{:30s}: label {} copied value {}".format(configuration, label, labels_on_existing_pvc[label]))
-                                yaml_deployment['spec']['template']['metadata']['labels'][label] = labels_on_existing_pvc[label]
+                            #for label in labels_on_existing_pvc:
+                            #    print("{:30s}: label {} copied value {}".format(configuration, label, labels_on_existing_pvc[label]))
+                            #    yaml_deployment['spec']['template']['metadata']['labels'][label] = labels_on_existing_pvc[label]
                             # storage exists, we do not need to claim another
                             del result[key]
                             # we do not need loading pods
-                            print("{:30s}: loading is set to finished".format(configuration))
-                            self.loading_active = False
-                            self.monitor_loading = False
+                            #print("{:30s}: loading is set to finished".format(configuration))
+                            #self.loading_active = False
+                            #self.monitor_loading = False
             ################
             ################
             # Kind=StatefulSet
@@ -1577,7 +1587,7 @@ scrape_configs:
                         if 'args' in container and store_args:
                             self.deployment_infos['statefulset'][statefulset_type]['args'] = container['args']
                             self.worker_startup_args = container['args']
-                            print("{:30s}: worker args = {}".format(configuration, container['args']))
+                            self.logger.debug("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         if 'volumeMounts' in container:
                             for j, vol in enumerate(container['volumeMounts']):
@@ -1710,6 +1720,10 @@ scrape_configs:
                     statefulset = self.deployment_infos['statefulset'][dep['metadata']['labels']['component']]
                     print(f"Stateful set service found: {statefulset}")
                     data = statefulset
+                    if self.num_worker == 0:
+                        # no stateful set service without worker
+                        del result[key]
+                        continue
                 else:
                     if dep['metadata']['labels']['component'] in self.deployment_infos['deployment']:
                         deployment = self.deployment_infos['deployment'][dep['metadata']['labels']['component']]
@@ -1718,9 +1732,6 @@ scrape_configs:
                     else:
                         print(f"Service not found: {dep['metadata']['labels']['component']}")
                         continue
-                if self.num_worker == 0:
-                    del result[key]
-                    continue
                 dep['metadata']['name'] = data['name_service']
                 dep['metadata']['labels']['app'] = app
                 #dep['metadata']['labels']['component'] = 'worker'
@@ -1849,6 +1860,7 @@ scrape_configs:
                 dep['metadata']['labels']['experimentRun'] = str(self.num_experiment_to_apply_done+1)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
+                set_labels_from_loaded_pvc()
                 #deployment = dep['metadata']['name']
                 #appname = dep['spec']['template']['metadata']['labels']['app']
                 if not 'deployment' in self.deployment_infos:
@@ -1884,7 +1896,7 @@ scrape_configs:
                     if container['name'] == 'dbms':
                         if 'args' in container and store_args:
                             self.sut_startup_args = container['args']
-                            print("{:30s}: server args = {}".format(configuration, container['args']))
+                            self.logger.debug("{:30s}: server args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
                         if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in reversed(list(enumerate(container['volumeMounts']))):
