@@ -189,10 +189,10 @@ class default():
         self.sut_startup_args = []                                              #: List of args that are set for the SUT container in YAML manifest at startup
         self.worker_startup_args = []                                           #: List of args that are set for the worker containers in YAML manifest at startup
         self.statefulset_name = ""                                              #: Name of the stateful set managing the pods of a distributed dbms
-        self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
-        self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset for worker
-        self.store_containers_deployed = []                                     #: Name of the containers of the SUT statefulset for storage
-        self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
+        #self.sut_containers_deployed = []                                       #: Name of the containers of the SUT deployment
+        #self.worker_containers_deployed = []                                    #: Name of the containers of the SUT statefulset for worker
+        #self.store_containers_deployed = []                                     #: Name of the containers of the SUT statefulset for storage
+        #self.pool_containers_deployed = []                                      #: Name of the containers of the Pool deployment
         self.deployment_infos = {}                                              #: Dict containing infos about deployed deployments, stateful sets, pvc, pods and containers
         #self.sut_envs = {}                                                     #: parameters sent to container via ENV
         self.sut_has_pool = False                                               #: if there is a pool component - in particular for monitoring
@@ -596,7 +596,7 @@ class default():
                 configuration = self.configuration
                 #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
                 num_ready = 0
-                pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                pods_worker = self.get_worker_pods(component=component)#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                     status = self.experiment.cluster.get_pod_status(pod)
@@ -1502,11 +1502,11 @@ scrape_configs:
                 else:
                     print(f"Stateful set not found: {dep['metadata']['labels']['component']}")
                     continue
-                statefulset_type = ""
+                #statefulset_type = ""
                 if self.num_worker == 0:
                     del result[key]
                     continue
-                if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
+                #if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
                     ##statefulset_type = "worker"
                     # set meta data
                     #dep['metadata']['name'] = name_worker
@@ -1514,8 +1514,8 @@ scrape_configs:
                     #dep['metadata']['labels']['app'] = app
                     #dep['metadata']['labels']['component'] = 'worker'
                     #dep['spec']['serviceName'] = name_worker
-                    self.worker_containers_deployed = []
-                elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
+                    #self.worker_containers_deployed = []
+                #elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
                     ##statefulset_type = "store"
                     # set meta data
                     #dep['metadata']['name'] = name_store
@@ -1523,10 +1523,10 @@ scrape_configs:
                     #dep['metadata']['labels']['app'] = app
                     #dep['metadata']['labels']['component'] = 'store'
                     #dep['spec']['serviceName'] = name_store
-                    self.store_containers_deployed = []
-                else:
-                    print("Unknown stateful set: {}".format(dep['metadata']['name']))
-                    continue
+                    #self.store_containers_deployed = []
+                #else:
+                #    print("Unknown stateful set: {}".format(dep['metadata']['name']))
+                #    continue
                 statefulset_type = dep['metadata']['labels']['component']
                 ################
                 # set meta data
@@ -1551,10 +1551,10 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
-                    if statefulset_type == "worker":
-                        self.worker_containers_deployed.append(container['name'])
-                    if statefulset_type == "store":
-                        self.store_containers_deployed.append(container['name'])
+                    #if statefulset_type == "worker":
+                    #    self.worker_containers_deployed.append(container['name'])
+                    #if statefulset_type == "store":
+                    #    self.store_containers_deployed.append(container['name'])
                     self.deployment_infos['statefulset'][statefulset_type]['containers'].append(container['name'])
                     ################
                     # set env
@@ -1590,17 +1590,17 @@ scrape_configs:
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.deployment_infos['statefulset'][statefulset_type]['containers'].pop()
-                            if statefulset_type == "worker":
-                                self.worker_containers_deployed.pop()
-                            elif statefulset_type == "store":
-                                self.store_containers_deployed.pop()
+                            #if statefulset_type == "worker":
+                            #    self.worker_containers_deployed.pop()
+                            #elif statefulset_type == "store":
+                            #    self.store_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.deployment_infos['statefulset'][statefulset_type]['containers'].pop()
-                            if statefulset_type == "worker":
-                                self.worker_containers_deployed.pop()
-                            elif statefulset_type == "store":
-                                self.store_containers_deployed.pop()
+                            #if statefulset_type == "worker":
+                            #    self.worker_containers_deployed.pop()
+                            #elif statefulset_type == "store":
+                            #    self.store_containers_deployed.pop()
                 ################
                 # remove volumes if not used
                 ################
@@ -1856,15 +1856,15 @@ scrape_configs:
                     self.deployment_infos['deployment'][deployment_type] = {}
                 self.deployment_infos['deployment'][deployment_type]['pods'] = []
                 self.deployment_infos['deployment'][deployment_type]['containers'] = []
-                if dep['metadata']['name'] != name_pool:
-                    self.sut_containers_deployed = []
-                else:
-                    self.pool_containers_deployed = []
+                #if dep['metadata']['name'] != name_pool:
+                #    self.sut_containers_deployed = []
+                #else:
+                #    self.pool_containers_deployed = []
                 for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['containers']))):
-                    if dep['metadata']['name'] != name_pool:
-                        self.sut_containers_deployed.append(container['name'])
-                    else:
-                        self.pool_containers_deployed.append(container['name'])
+                    #if dep['metadata']['name'] != name_pool:
+                    #    self.sut_containers_deployed.append(container['name'])
+                    #else:
+                    #    self.pool_containers_deployed.append(container['name'])
                     self.deployment_infos['deployment'][deployment_type]['containers'].append(container['name'])
                     self.logger.debug('configuration.create_manifest_deployment({})'.format(env))
                     #if not 'env' in dep['spec']['template']['spec']['containers'][i_container]:
@@ -1905,11 +1905,11 @@ scrape_configs:
                         if container['name'] == 'cadvisor':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.deployment_infos['deployment'][deployment_type]['containers'].pop()
-                            self.sut_containers_deployed.pop()
+                            #self.sut_containers_deployed.pop()
                         if container['name'] == 'dcgm-exporter':
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.deployment_infos['deployment'][deployment_type]['containers'].pop()
-                            self.sut_containers_deployed.pop()
+                            #self.sut_containers_deployed.pop()
                 if 'volumes' in dep['spec']['template']['spec']:
                     for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
                         if vol['name'] == 'benchmark-storage-volume':

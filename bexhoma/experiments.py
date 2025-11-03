@@ -1558,6 +1558,36 @@ class default():
                             if not stop_after_benchmarking:
                                 print("{:30s}: can be stopped".format(config.configuration))
                                 app = self.cluster.appname
+                                deployments = list(config.deployment_infos['deployment'].keys())
+                                for deployment in deployments:
+                                    #print("{:30s}: deployment {}".format(config.configuration, deployment))
+                                    pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
+                                    for pod in pods:
+                                        #print("{:30s}: store log and description of pod {}".format(config.configuration, pod))
+                                        for container in config.deployment_infos['deployment'][deployment]['containers']:
+                                            #print("{:30s}: store log of container {}".format(config.configuration, container))
+                                            self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                        if not self.cluster.pod_description_exists(pod_name=pod):
+                                            self.cluster.logger.debug("Store description of pod {}".format(pod))
+                                            self.cluster.store_pod_description(pod_name=pod)
+                                        restarts = config.get_host_restarts(pod)
+                                        print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                                statefulsets = list(config.deployment_infos['statefulset'].keys())
+                                for statefulset in statefulsets:
+                                    #print("{:30s}: stateful set {}".format(config.configuration, statefulset))
+                                    pods = config.get_worker_pods(component=statefulset)
+                                    for pod in pods: #config.deployment_infos['statefulset'][statefulset]['pods']:
+                                        #print("{:30s}: store log and description of pod {}".format(config.configuration, pod))
+                                        for container in config.deployment_infos['statefulset'][statefulset]['containers']:
+                                            #print("{:30s}: store log of container {}".format(config.configuration, container))
+                                            self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                        if not self.cluster.pod_description_exists(pod_name=pod):
+                                            self.cluster.logger.debug("Store description of pod {}".format(pod))
+                                            self.cluster.store_pod_description(pod_name=pod)
+                                        restarts = config.get_host_restarts(pod)
+                                        print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                                # old, static way of storing logs1
+                                """
                                 component = 'sut'
                                 pods = self.cluster.get_pods(app, component, self.code, config.configuration)
                                 for pod_sut in pods:
@@ -1599,6 +1629,7 @@ class default():
                                     for container in config.pool_containers_deployed:
                                         self.cluster.store_pod_log(pod_pool, container)
                                     #self.cluster.store_pod_log(pod_worker, 'dbms')
+                                """
                                 config.stop_sut()
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                                 if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
