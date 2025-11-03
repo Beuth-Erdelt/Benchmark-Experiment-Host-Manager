@@ -1241,7 +1241,7 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = self.storage_label#storageConfiguration
+            self.experiment_name = self.storage_label
         else:
             self.experiment_name = experiment
         def extract_component_labels(file_path):
@@ -1272,8 +1272,10 @@ scrape_configs:
             for label_key, label_value in self.additional_labels.items():
                 dep['metadata']['labels'][label_key] = str(label_value)
             return dep
+        def should_we_remove_pvcs():
+            return (not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0)
         def reset_and_remove_pvc(pvc):
-            if not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0:
+            if should_we_remove_pvcs:
                 # we have not loaded yet, so this is the first run in this experiment
                 print("{:30s}: storage {} should be removed".format(configuration, pvc))
                 self.experiment.cluster.delete_pvc(pvc)
@@ -1284,8 +1286,6 @@ scrape_configs:
                     self.wait(10)
                     pvcs = self.experiment.cluster.get_pvc(pvc=pvc)
                 print("{:30s}: storage {} is gone".format(configuration, pvc))
-        def should_we_remove_pvcs():
-            return (not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0)
         def get_labels_from_loaded_pvc():
             if use_storage and not use_ramdisk and not should_we_remove_pvcs():
                 list_of_pvc = self.get_list_of_pvc()
@@ -1314,6 +1314,7 @@ scrape_configs:
                 self.deployment_infos['deployment'] = {}
             self.deployment_infos['deployment'][deployment] = {}
             self.deployment_infos['deployment'][deployment]['name'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
+            self.deployment_infos['deployment'][deployment]['name_service'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
             self.deployment_infos['deployment'][deployment]['name_pvc'] = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
             self.deployment_infos['deployment'][deployment]['pods'] = []
             self.deployment_infos['deployment'][deployment]['containers'] = []
@@ -1323,14 +1324,15 @@ scrape_configs:
             if not 'statefulset' in self.deployment_infos:
                 self.deployment_infos['statefulset'] = {}
             self.deployment_infos['statefulset'][stateful_set] = {}
-            self.deployment_infos['statefulset'][stateful_set]['name'] = self.get_worker_name(component=stateful_set)
-            self.deployment_infos['statefulset'][stateful_set]['name_service_headless'] = self.get_worker_name(component=stateful_set)
-            self.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(self.num_worker)]
+            worker_name = self.get_worker_name(component=stateful_set)
+            self.deployment_infos['statefulset'][stateful_set]['name'] = worker_name
+            self.deployment_infos['statefulset'][stateful_set]['name_service'] = self.get_worker_name(component=stateful_set)
+            self.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{worker_name}-{i}" for i in range(self.num_worker)]
             self.deployment_infos['statefulset'][stateful_set]['containers'] = []
             if use_storage and not use_ramdisk:
                 list_of_workers_pvcs = []
                 for worker in range(self.num_worker):
-                    worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=stateful_set, worker_number=worker)
+                    worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=worker_name, worker_number=worker)
                     list_of_workers_pvcs.append(worker_full_name)
                 self.deployment_infos['statefulset'][stateful_set]['pvc'] = list_of_workers_pvcs
         print(self.deployment_infos)
@@ -1338,6 +1340,7 @@ scrape_configs:
         labels_on_existing_pvc = get_labels_from_loaded_pvc()
         if use_storage and not use_ramdisk:
             print("{:30s}: found labels on pvc = {}".format(configuration, labels_on_existing_pvc))
+        self.service = name #dep['metadata']['name']
         # set names and labels the old way
         name_worker = self.get_worker_name(component='worker')
         name_service_headless = name_worker# must be the same
@@ -1487,6 +1490,11 @@ scrape_configs:
                             print("{:30s}: loading is set to finished".format(configuration))
                             self.loading_active = False
                             self.monitor_loading = False
+            ################
+            ################
+            # Kind=StatefulSet
+            ################
+            ################
             if dep['kind'] == 'StatefulSet':
                 if dep['metadata']['labels']['component'] in self.deployment_infos['statefulset']:
                     statefulset = self.deployment_infos['statefulset'][dep['metadata']['labels']['component']]
@@ -1499,27 +1507,34 @@ scrape_configs:
                     del result[key]
                     continue
                 if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
-                    #statefulset_type = "worker"
+                    ##statefulset_type = "worker"
                     # set meta data
-                    dep['metadata']['name'] = name_worker
-                    #self.service = dep['metadata']['name']
-                    dep['metadata']['labels']['app'] = app
-                    dep['metadata']['labels']['component'] = 'worker'
-                    dep['spec']['serviceName'] = name_worker
+                    #dep['metadata']['name'] = name_worker
+                    ##self.service = dep['metadata']['name']
+                    #dep['metadata']['labels']['app'] = app
+                    #dep['metadata']['labels']['component'] = 'worker'
+                    #dep['spec']['serviceName'] = name_worker
                     self.worker_containers_deployed = []
                 elif dep['metadata']['name'] == 'bexhoma-store': #!= 'bexhoma-service':
-                    #statefulset_type = "store"
+                    ##statefulset_type = "store"
                     # set meta data
-                    dep['metadata']['name'] = name_store
-                    #self.service = dep['metadata']['name']
-                    dep['metadata']['labels']['app'] = app
-                    dep['metadata']['labels']['component'] = 'store'
-                    dep['spec']['serviceName'] = name_store
+                    #dep['metadata']['name'] = name_store
+                    ##self.service = dep['metadata']['name']
+                    #dep['metadata']['labels']['app'] = app
+                    #dep['metadata']['labels']['component'] = 'store'
+                    #dep['spec']['serviceName'] = name_store
                     self.store_containers_deployed = []
                 else:
                     print("Unknown stateful set: {}".format(dep['metadata']['name']))
                     continue
                 statefulset_type = dep['metadata']['labels']['component']
+                ################
+                # set meta data
+                ################
+                dep['metadata']['name'] = statefulset['name']
+                #self.service = dep['metadata']['name']
+                dep['metadata']['labels']['app'] = app
+                dep['spec']['serviceName'] = statefulset['name']
                 #if not 'statefulset' in self.deployment_infos:
                 #    self.deployment_infos['statefulset'] = {}
                 #    self.deployment_infos['statefulset'][statefulset_type] = {}
@@ -1541,6 +1556,9 @@ scrape_configs:
                     if statefulset_type == "store":
                         self.store_containers_deployed.append(container['name'])
                     self.deployment_infos['statefulset'][statefulset_type]['containers'].append(container['name'])
+                    ################
+                    # set env
+                    ################
                     self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
@@ -1552,8 +1570,12 @@ scrape_configs:
                         else:
                             # append new env
                             dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                    ################
+                    # startup args and volumeMounts and monitoring containers
+                    ################
                     if container['name'] == 'dbms':
                         if 'args' in container and store_args:
+                            self.deployment_infos['statefulset'][statefulset_type]['args'] = container['args']
                             self.worker_startup_args = container['args']
                             print("{:30s}: worker args = {}".format(configuration, container['args']))
                         #print(container['volumeMounts'])
@@ -1579,7 +1601,9 @@ scrape_configs:
                                 self.worker_containers_deployed.pop()
                             elif statefulset_type == "store":
                                 self.store_containers_deployed.pop()
-                # remove volumes
+                ################
+                # remove volumes if not used
+                ################
                 if 'volumes' in dep['spec']['template']['spec']:
                     for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
                         if vol['name'] == 'bxw':
@@ -1589,7 +1613,9 @@ scrape_configs:
                             elif use_ramdisk:
                                 del result[key]['spec']['template']['spec']['volumes'][j]['persistentVolumeClaim']
                                 result[key]['spec']['template']['spec']['volumes'][j]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
+                ################
                 # remove storage template if not used
+                ################
                 if 'volumeClaimTemplates' in result[key]['spec']:
                     name_worker_stateful_set = self.get_worker_name(component=statefulset_type)
                     if not use_storage or use_ramdisk:
@@ -1625,7 +1651,7 @@ scrape_configs:
                         #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
                         #self.service = dep['metadata']['name']
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['app'] = app
-                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['component'] = 'worker'
+                        result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['component'] = statefulset_type
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['configuration'] = storageConfiguration
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['experiment'] = self.storage_label
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['dbms'] = self.docker
@@ -1640,9 +1666,15 @@ scrape_configs:
                             del result[key]['spec']['storageClassName']
                         if len(self.storage['storageSize']) > 0:
                             dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = self.storage['storageSize']
-                #print(pvc)
+            ################
+            ################
+            # Kind=Job
+            ################
+            ################
             if dep['kind'] == 'Job':
+                ################
                 # set meta data
+                ################
                 dep['metadata']['name'] = name_worker
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['component'] = 'worker'
@@ -1653,10 +1685,11 @@ scrape_configs:
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
+                ################
+                # set env
+                ################
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
-                    #container = dep['spec']['template']['spec']['containers'][0]['name']
                     self.logger.debug('configuration.add_env({})'.format(env))
-                    #dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     if not 'env' in dep['spec']['template']['spec']['containers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = list()
                     for i_env,e in env.items():
@@ -1667,9 +1700,47 @@ scrape_configs:
                         else:
                             # append new env
                             dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
-                    #for i_env,e in env.items():
-                    #    dep['spec']['template']['spec']['containers'][i_container]['env'].append({'name':i_env, 'value':str(e)})                #print(pvc)
+            ################
+            ################
+            # Kind=Service
+            ################
+            ################
             if dep['kind'] == 'Service':
+                if dep['metadata']['labels']['component'] in self.deployment_infos['statefulset']:
+                    statefulset = self.deployment_infos['statefulset'][dep['metadata']['labels']['component']]
+                    print(f"Stateful set service found: {statefulset}")
+                    data = statefulset
+                else:
+                    if dep['metadata']['labels']['component'] in self.deployment_infos['deployment']:
+                        deployment = self.deployment_infos['deployment'][dep['metadata']['labels']['component']]
+                        print(f"Deployment service found: {deployment}")
+                        data = deployment
+                    else:
+                        print(f"Service not found: {dep['metadata']['labels']['component']}")
+                        continue
+                if self.num_worker == 0:
+                    del result[key]
+                    continue
+                dep['metadata']['name'] = data['name_service']
+                dep['metadata']['labels']['app'] = app
+                #dep['metadata']['labels']['component'] = 'worker'
+                dep['metadata']['labels']['configuration'] = configuration
+                dep['metadata']['labels']['experiment'] = experiment
+                dep['metadata']['labels']['dbms'] = self.docker
+                dep['metadata']['labels']['volume'] = self.volume
+                for label_key, label_value in self.additional_labels.items():
+                    dep['metadata']['labels'][label_key] = str(label_value)
+                #dep['spec']['selector'] = dep['metadata']['labels'].copy()
+                dep['spec']['selector']['configuration'] = configuration
+                dep['spec']['selector']['experiment'] = experiment
+                dep['spec']['selector']['dbms'] = self.docker
+                dep['spec']['selector']['volume'] = self.volume
+                if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
+                    for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
+                        # remove monitoring ports
+                        if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus' and ports['name'] != 'port-web':
+                            del result[key]['spec']['ports'][i]
+                """
                 if dep['metadata']['name'] == 'bexhoma-worker': #!= 'bexhoma-service':
                     if self.num_worker == 0:
                         del result[key]
@@ -1741,6 +1812,10 @@ scrape_configs:
                 dep['spec']['selector']['volume'] = self.volume
                 dep['metadata']['name'] = name
                 self.service = dep['metadata']['name']
+                """
+                ################
+                # remove monitoring ports
+                ################
                 if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
