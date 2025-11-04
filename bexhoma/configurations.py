@@ -2519,19 +2519,13 @@ scrape_configs:
         use_storage = self.use_storage()
         use_ramdisk = self.use_ramdisk()
         if use_storage and not use_ramdisk:
+            # volume of deployment
             if self.storage['storageConfiguration']:
                 volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-                volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+                #volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
             else:
                 volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
-                volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
-            if 'statefulset' in self.deployment_infos:
-                list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
-                print(f"###### list_of_worker_components = {list_of_worker_components}")
-            pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-            # for worker pods: bexhoma-workers-
-            #volume = name_pvc
-            #volume_worker = "bexhoma-workers-{}".format(self.pod_sut)
+                #volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
             if volume:
                 size, used = self.get_host_volume(pod=self.pod_sut)
                 # write infos to SUT's PVC (if exists)
@@ -2543,18 +2537,30 @@ scrape_configs:
                 #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
                 ##print(fullcommand)
                 #self.experiment.cluster.kubectl(fullcommand)
-            if volume_worker and pods_worker:
-                for pod in pods_worker:
-                    size, used = self.get_host_volume(pod=pod)
-                    # write infos to SUT's PVC (if exists)
-                    fullcommand = 'label pvc bxw-{} --overwrite volume_size="{}" volume_used="{}"'.format(pod, size, used)
-                    #print(fullcommand)
-                    self.experiment.cluster.kubectl(fullcommand)
-                    ## write infos to worker's PVC (if exists)
-                    ## TODO: check if exists, test if it writes per worker size infos
-                    #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
-                    ##print(fullcommand)
-                    #self.experiment.cluster.kubectl(fullcommand)
+            # volumes of stateful sets
+            if 'statefulset' in self.deployment_infos:
+                list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
+                print(f"###### list_of_worker_components = {list_of_worker_components}")
+                for component in list_of_worker_components:
+                    for i, pod in enumerate(deployment_infos['statefulset'][component]['pods']):
+                        pvcs = deployment_infos['statefulset'][component]['pvc'][i]
+                        print(f"Get size via pod {pod} and write to pvc {pvc}")
+                        size, used = self.get_host_volume(pod=pod)
+                        # write infos to SUT's PVC (if exists)
+                        fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(pvc, size, used)
+                        #print(fullcommand)
+                        self.experiment.cluster.kubectl(fullcommand)
+                        ## write infos to worker's PVC (if exists)
+                        ## TODO: check if exists, test if it writes per worker size infos
+                        #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
+                        ##print(fullcommand)
+                        #self.experiment.cluster.kubectl(fullcommand)
+            #pods_worker = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+            # for worker pods: bexhoma-workers-
+            #volume = name_pvc
+            #volume_worker = "bexhoma-workers-{}".format(self.pod_sut)
+            #if volume_worker and pods_worker:
+            #    for pod in pods_worker:
     def get_host_all(self):
         """
         Calls all `get_host_x()` methods.
