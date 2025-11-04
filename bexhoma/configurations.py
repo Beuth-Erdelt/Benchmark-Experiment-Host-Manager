@@ -928,7 +928,7 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            if 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
+                            if 'monitor' in self.dockertemplate and 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
                                 app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
                                 if self.tenant_per == 'database' and self.num_tenants > 0:
                                     connections = [
@@ -952,7 +952,7 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
-                            elif 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
+                            elif 'monitor' in self.dockertemplate and 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """
   - job_name: 'monitor-app'
