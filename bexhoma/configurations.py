@@ -1908,6 +1908,10 @@ scrape_configs:
                                     #print(vol['mountPath'])
                                     if not use_data:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                        else:
+                            # there are no PVC for this pod, so we remove infos
+                            self.deployment_infos['deployment'][deployment_type]['pvc'] = []
+                            self.deployment_infos['deployment'][deployment_type]['name_pvc'] = ""
                         if self.dockerimage:
                             result[key]['spec']['template']['spec']['containers'][i_container]['image'] = self.dockerimage
                         else:
