@@ -1247,6 +1247,7 @@ scrape_configs:
         def extract_component_labels(file_path):
             deployments = []
             statefulsets = []
+            pvcs = []
             with open(file_path, 'r') as f:
                 docs = yaml.safe_load_all(f)
                 for doc in docs:
@@ -1261,7 +1262,9 @@ scrape_configs:
                             deployments.append(component)
                         elif kind == 'StatefulSet':
                             statefulsets.append(component)            
-            return deployments, statefulsets
+                        elif kind == 'PersistentVolumeClaim':
+                            pvcs.append(component)            
+            return deployments, statefulsets, pvcs
         def set_component_labels(dep):
             dep['metadata']['labels']['app'] = app
             dep['metadata']['labels']['component'] = 'storage'
@@ -1316,20 +1319,22 @@ scrape_configs:
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
         sut_manifest_file = self.experiment.cluster.yamlfolder+template
         #print(sut_manifest_file)
-        deploys, ssets = extract_component_labels(sut_manifest_file)
+        deploys, ssets, pvcs = extract_component_labels(sut_manifest_file)
         print("{:30s}: deployments {}".format(configuration, deploys))
         print("{:30s}: stateful sets {}".format(configuration, ssets))
+        print("{:30s}: pvcs {}".format(configuration, pvcs))
         if not 'deployment' in self.deployment_infos:
             self.deployment_infos['deployment'] = {}
         for deployment in deploys:
             self.deployment_infos['deployment'][deployment] = {}
             self.deployment_infos['deployment'][deployment]['name'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
             self.deployment_infos['deployment'][deployment]['name_service'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
-            self.deployment_infos['deployment'][deployment]['name_pvc'] = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
             self.deployment_infos['deployment'][deployment]['pods'] = []
             self.deployment_infos['deployment'][deployment]['containers'] = []
-            if use_storage and not use_ramdisk:
-                self.deployment_infos['deployment'][deployment]['pvc'] = [self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)]
+            if len(pvcs):
+                if use_storage and not use_ramdisk:
+                    self.deployment_infos['deployment'][deployment]['name_pvc'] = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+                    self.deployment_infos['deployment'][deployment]['pvc'] = [self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)]
         if not 'statefulset' in self.deployment_infos:
             self.deployment_infos['statefulset'] = {}
         for stateful_set in ssets:
@@ -1908,10 +1913,10 @@ scrape_configs:
                                     #print(vol['mountPath'])
                                     if not use_data:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
-                        else:
-                            # there are no PVC for this pod, so we remove infos
-                            self.deployment_infos['deployment'][deployment_type]['pvc'] = []
-                            self.deployment_infos['deployment'][deployment_type]['name_pvc'] = ""
+                        #else:
+                        #    # there are no PVC for this pod, so we remove infos
+                        #    self.deployment_infos['deployment'][deployment_type]['pvc'] = []
+                        #    self.deployment_infos['deployment'][deployment_type]['name_pvc'] = ""
                         if self.dockerimage:
                             result[key]['spec']['template']['spec']['containers'][i_container]['image'] = self.dockerimage
                         else:
@@ -2542,8 +2547,8 @@ scrape_configs:
                 list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
                 print(f"###### list_of_worker_components = {list_of_worker_components}")
                 for component in list_of_worker_components:
-                    for i, pod in enumerate(deployment_infos['statefulset'][component]['pods']):
-                        pvcs = deployment_infos['statefulset'][component]['pvc'][i]
+                    for i, pod in enumerate(self.deployment_infos['statefulset'][component]['pods']):
+                        pvcs = self.deployment_infos['statefulset'][component]['pvc'][i]
                         print(f"Get size via pod {pod} and write to pvc {pvc}")
                         size, used = self.get_host_volume(pod=pod)
                         # write infos to SUT's PVC (if exists)
