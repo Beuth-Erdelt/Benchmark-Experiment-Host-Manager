@@ -295,19 +295,6 @@ spec:
       restartPolicy: OnFailure
   ttlSecondsAfterFinished: 300  # Deletes the job and pods 30 seconds after completion
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-storage
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  storageClassName: shared
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -341,9 +328,7 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         #- {mountPath: /dev/shm, name: dshm}
-        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
+        #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
-      - name: benchmark-storage-volume
-        persistentVolumeClaim: {claimName: bexhoma-storage}
