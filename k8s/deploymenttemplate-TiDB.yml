@@ -175,6 +175,22 @@ spec:
     metadata:
       labels: {app: bexhoma, component: store, configuration: default, experiment: default}
     spec:
+      initContainers:
+      - name: wait-for-pd
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            until nc -z $(BEXHOMA_WORKER_FIRST) 2379; do
+              echo "waiting for PD..."
+              sleep 2
+            done
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
       containers:
       - name: dbms
         image: pingcap/tikv:v8.5.3
