@@ -217,6 +217,29 @@ wait_process "ycsb"
 
 
 
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  --workload a \
+  -dbms Redis \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi -rsr \
+  run </dev/null &>$LOG_DIR/refactor_redis_1.log &
+
+
+wait_process "ycsb"
+
+
 
 
 
