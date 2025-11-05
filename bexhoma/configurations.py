@@ -2808,7 +2808,7 @@ scrape_configs:
                             #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                             # other components (not managed by bexhoma)
                             c['monitoring']['metrics_custom'][name][metricname] = metricdata.copy()
-                            c['monitoring']['metrics_custom'][name][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_custom'][name]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            c['monitoring']['metrics_custom'][name][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_custom'][name][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
