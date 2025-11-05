@@ -2526,27 +2526,40 @@ scrape_configs:
         use_ramdisk = self.use_ramdisk()
         if use_storage and not use_ramdisk:
             # volume of deployment
-            if self.storage['storageConfiguration']:
-                volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-                #volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-            else:
-                volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
-                #volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
-            if volume:
-                size, used = self.get_host_volume(pod=self.pod_sut)
-                # write infos to SUT's PVC (if exists)
-                fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
-                #print(fullcommand)
-                self.experiment.cluster.kubectl(fullcommand)
-                ## write infos to worker's PVC (if exists)
-                ## TODO: check if exists, test if it writes per worker size infos
-                #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
-                ##print(fullcommand)
-                #self.experiment.cluster.kubectl(fullcommand)
+            #if self.storage['storageConfiguration']:
+            #    volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            #    #volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+            #else:
+            #    volume = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+            #    #volume_worker = self.generate_component_name(app=app, component='worker', experiment=self.storage_label, configuration=self.configuration)
+            #if volume:
+            #    size, used = self.get_host_volume(pod=self.pod_sut)
+            #    # write infos to SUT's PVC (if exists)
+            #    fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume, size, used)
+            #    #print(fullcommand)
+            #    self.experiment.cluster.kubectl(fullcommand)
+            #    ## write infos to worker's PVC (if exists)
+            #    ## TODO: check if exists, test if it writes per worker size infos
+            #    #fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(volume_worker, size, used)
+            #    ##print(fullcommand)
+            #    #self.experiment.cluster.kubectl(fullcommand)
+            # volumes of deployments
+            if 'deployment' in self.deployment_infos:
+                list_of_worker_components = list(self.deployment_infos['deployment'].keys())
+                print(f"###### list_of_worker_components (deployments) = {list_of_worker_components}")
+                for component in list_of_worker_components:
+                    for i, pod in enumerate(self.deployment_infos['statefulset'][component]['pods']):
+                        pvc = self.deployment_infos['deployment'][component]['pvc']
+                        print(f"Get size via pod {pod} and write to pvc {pvc}")
+                        size, used = self.get_host_volume(pod=pod)
+                        # write infos to SUT's PVC (if exists)
+                        fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(pvc, size, used)
+                        #print(fullcommand)
+                        self.experiment.cluster.kubectl(fullcommand)
             # volumes of stateful sets
             if 'statefulset' in self.deployment_infos:
                 list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
-                print(f"###### list_of_worker_components = {list_of_worker_components}")
+                print(f"###### list_of_worker_components (stateful sets) = {list_of_worker_components}")
                 for component in list_of_worker_components:
                     for i, pod in enumerate(self.deployment_infos['statefulset'][component]['pods']):
                         pvc = self.deployment_infos['statefulset'][component]['pvc'][i]
@@ -3593,11 +3606,12 @@ scrape_configs:
                         use_storage = self.use_storage()
                         use_ramdisk = self.use_ramdisk()
                         if use_storage and not use_ramdisk:
-                            if self.storage['storageConfiguration']:
-                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
-                            else:
-                                name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
-                            volume = name_pvc
+                            volume = self.get_volume_to_label()
+                            #if self.storage['storageConfiguration']:
+                            #    name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.storage['storageConfiguration'])
+                            #else:
+                            #    name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=self.configuration)
+                            #volume = name_pvc
                             if volume:
                                 fullcommand = 'label pvc '+volume+' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}" time_ingested={} timeLoading={} time_generated={}'.format(self.timeLoadingEnd, self.timeLoadingStart, loader_time, self.timeLoading, generator_time)
                                 #fullcommand = 'label pvc '+volume+' --overwrite loaded=True time_ingested={} timeLoadingStart="{}" timeLoadingEnd="{}" timeLoading={}'.format(loader_time, int(self.timeLoadingStart), int(self.timeLoadingEnd), self.timeLoading)
@@ -3696,6 +3710,23 @@ scrape_configs:
             #self.loading_started = False
             #self.loading_finished = False
             pass
+    def get_volume_to_label(self):
+        volume = ""
+        if self.storage['storageConfiguration']:
+            storageConfiguration = self.storage['storageConfiguration']
+        else:
+            storageConfiguration = self.configuration
+        name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+        # default for single pod of a deployment
+        volume = name_pvc
+        # double check: what is the first pvc of the configuration
+        list_of_pvc = self.get_list_of_pvc()
+        print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
+        # put labels on the first pvc
+        if len(list_of_pvc) > 0:
+            volume = list_of_pvc[0]
+            print("{:30s}: will be labeling {}".format(self.configuration, volume))
+        return volume
     def load_data(self, scripts, time_offset=0, time_start_int=0, script_type='loaded'):
         """
         Start loading data into the sut.
@@ -3717,19 +3748,20 @@ scrape_configs:
         use_storage = self.use_storage()
         use_ramdisk = self.use_ramdisk()
         if use_storage and not use_ramdisk:
+            volume = self.get_volume_to_label()
             #storage_label = 'tpc-ds-1'
-            if self.storage['storageConfiguration']:
-                storageConfiguration = self.storage['storageConfiguration']
-            else:
-                storageConfiguration = self.configuration
-            name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
-            volume = name_pvc
-            list_of_pvc = self.get_list_of_pvc()
-            print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
-            # put labels on the first pvc
-            if len(list_of_pvc) > 0:
-                volume = list_of_pvc[0]
-                print("{:30s}: will be labeling {}".format(self.configuration, volume))
+            #if self.storage['storageConfiguration']:
+            #    storageConfiguration = self.storage['storageConfiguration']
+            #else:
+            #    storageConfiguration = self.configuration
+            #name_pvc = self.generate_component_name(app=self.appname, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
+            #volume = name_pvc
+            #list_of_pvc = self.get_list_of_pvc()
+            #print("{:30s}: list of pvcs {}".format(self.configuration, list_of_pvc))
+            ## put labels on the first pvc
+            #if len(list_of_pvc) > 0:
+            #    volume = list_of_pvc[0]
+            #    print("{:30s}: will be labeling {}".format(self.configuration, volume))
             #else:
             #    volume = ''
         else:
