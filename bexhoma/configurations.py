@@ -2625,7 +2625,7 @@ scrape_configs:
         if experiment is None:
             experiment = self.code
         return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment, schema=schema, database=database)
-    def set_metric_of_config(self, metric, host, gpuid, schema, database):
+    def set_metric_of_config(self, metric, host, gpuid, schema, database, component=''):
         """
         Returns a promql query.
         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -2646,14 +2646,18 @@ scrape_configs:
             # we assume here, a stateful set is used
             # this means we do not want to have the experiment code as part of the names
             # this would imply there cannot be experiment independent pvcs
-            components = list(self.deployment_infos['statefulset'].keys())
-            configuration = "("
-            names_of_workers = []
-            for component in components:
+            if len(component) == 0:
+                components = list(self.deployment_infos['statefulset'].keys())
+                configuration = "("
+                names_of_workers = []
+                for component in components:
+                    name_worker = self.get_worker_name(component=component)
+                    names_of_workers.append(name_worker.lower())
+                configuration = '(' + '|'.join(names_of_workers) + ')'
+                return metric.format(host=host, gpuid=gpuid, configuration=configuration, experiment="", schema=schema, database=database)
+            else:
                 name_worker = self.get_worker_name(component=component)
-                names_of_workers.append(name_worker.lower())
-            configuration = '(' + '|'.join(names_of_workers) + ')'
-            return metric.format(host=host, gpuid=gpuid, configuration=configuration, experiment="", schema=schema, database=database)
+                return metric.format(host=host, gpuid=gpuid, configuration=name_worker, experiment="", schema=schema, database=database)
             #return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
             self.logger.debug(f"set_metric_of_config_default({metric}, {host}, {gpuid}, experiment={self.experiment_name}, schema={schema}, database={database})")
@@ -2770,6 +2774,7 @@ scrape_configs:
             #c['monitoring']['grafanaextend'] = 1
             c['monitoring']['metrics'] = {}             # default components (managed by bexhoma)
             c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
+            c['monitoring']['metrics_custom'] = {}      # other components (stateful sets, different naming)
             # cluster metrics
             if 'metrics' in config_K8s['monitor']:
                 if 'deployment' in self.deployment_infos:
@@ -2777,7 +2782,16 @@ scrape_configs:
                         print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                 if 'statefulset' in self.deployment_infos:
                     for name, statefulset in self.deployment_infos['statefulset'].items():
-                        print("{:30s}: needs monitoring (special metrics) for stateful set {}".format(connection, name))
+                        print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                        c['monitoring']['metrics_custom'][name] = {}
+                        for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                            # default components (managed by bexhoma)
+                            #c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                            #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            # other components (not managed by bexhoma)
+                            c['monitoring']['metrics_custom'][name][metricname] = metricdata.copy()
+                            c['monitoring']['metrics_custom'][name][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_custom'][name]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
@@ -3077,7 +3091,7 @@ scrape_configs:
                         print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                 if 'statefulset' in self.deployment_infos:
                     for name, statefulset in self.deployment_infos['statefulset'].items():
-                        print("{:30s}: needs monitoring (special metrics) for stateful set {}".format(connection, name))
+                        print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                 cmd = {}
                 #self.monitoring_sut = True
                 if self.monitoring_sut:

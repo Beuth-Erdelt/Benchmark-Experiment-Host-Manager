@@ -2001,7 +2001,7 @@ class default():
                             print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                     if 'statefulset' in config.deployment_infos:
                         for name, statefulset in config.deployment_infos['statefulset'].items():
-                            print("{:30s}: needs monitoring (special metrics) for stateful set {}".format(connection, name))
+                            print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                     if config.monitoring_sut:
                         print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
                         config.fetch_metrics(
