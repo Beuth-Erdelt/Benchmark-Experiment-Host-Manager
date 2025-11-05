@@ -2759,6 +2759,12 @@ scrape_configs:
             c['monitoring']['metrics_special'] = {}     # other components (not managed by bexhoma)
             # cluster metrics
             if 'metrics' in config_K8s['monitor']:
+                if 'deployment' in self.deployment_infos:
+                    for name, deployment in self.deployment_infos['deployment'].items():
+                        print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
+                if 'statefulset' in self.deployment_infos:
+                    for name, statefulset in self.deployment_infos['statefulset'].items():
+                        print("{:30s}: needs monitoring (special metrics) for stateful set {}".format(connection, name))
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
@@ -3053,6 +3059,12 @@ scrape_configs:
             cmd = {}
             # get monitoring for loading
             if self.monitoring_active and self.monitor_loading:
+                if 'deployment' in self.deployment_infos:
+                    for name, deployment in self.deployment_infos['deployment'].items():
+                        print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
+                if 'statefulset' in self.deployment_infos:
+                    for name, statefulset in self.deployment_infos['statefulset'].items():
+                        print("{:30s}: needs monitoring (special metrics) for stateful set {}".format(connection, name))
                 cmd = {}
                 #self.monitoring_sut = True
                 if self.monitoring_sut:
