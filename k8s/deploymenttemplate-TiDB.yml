@@ -65,16 +65,20 @@ spec:
             - -c
             - |
               mkdir -p /etc/pd
-              cat > /etc/pd/pd.toml <<EOF
-              name = "$(POD_NAME)"
-              data-dir = "/var/lib/pd"
-              initial-cluster-state = "existing"
-              client-urls = "http://0.0.0.0:2379"
-              peer-urls = "http://0.0.0.0:2380"
-              advertise-client-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379"
-              advertise-peer-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380"
-              EOF
+              if [ -f /var/lib/pd/member/snap/db ]; then
+              echo 'initial-cluster-state = "existing"' > /etc/pd/pd.toml
+              else
+              echo 'initial-cluster-state = "new"' > /etc/pd/pd.toml
+              fi
+          #    name = "$(POD_NAME)"
+          #    data-dir = "/var/lib/pd"
+          #    #client-urls = "http://0.0.0.0:2379"
+          #    #peer-urls = "http://0.0.0.0:2380"
+          #    #advertise-client-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379"
+          #    #advertise-peer-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380"
           volumeMounts:
+            - name: bxw
+              mountPath: /var/lib/pd
             - name: pd-config
               mountPath: /etc/pd
       containers:
@@ -110,13 +114,13 @@ spec:
         #    fi
         args:
           # Use HOSTNAME to derive pod identity. Initial cluster must list all peers.
+          - --name=$(POD_NAME)
+          - --data-dir=/var/lib/pd
+          - --client-urls=http://0.0.0.0:2379
+          - --peer-urls=http://0.0.0.0:2380
+          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
+          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
           - --config=/etc/pd/pd.toml
-          #- --name=$(POD_NAME)
-          #- --data-dir=/var/lib/pd
-          #- --client-urls=http://0.0.0.0:2379
-          #- --peer-urls=http://0.0.0.0:2380
-          #- --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
-          #- --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
           ##- --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
           ###- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
