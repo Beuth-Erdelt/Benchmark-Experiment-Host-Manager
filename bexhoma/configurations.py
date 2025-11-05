@@ -1565,22 +1565,23 @@ scrape_configs:
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                for i_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
-                    #self.deployment_infos['statefulset'][statefulset_type]['containers'].append(container['name'])
-                    ################
-                    # set env
-                    ################
-                    self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
-                    if not 'env' in dep['spec']['template']['spec']['initContainers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
-                        dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
-                    for i_env,e in env.items():
-                        index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['initContainers'][i_container]['env']) if d.get('name') == i_env), -1)
-                        if index_of_env >= 0:
-                            # update value of existing env
-                            dep['spec']['template']['spec']['initContainers'][i_container]['env'][index_of_env]['value'] = str(e)
-                        else:
-                            # append new env
-                            dep['spec']['template']['spec']['initContainers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
+                if 'initContainers' in dep['spec']['template']['spec']:
+                    for i_container, container in enumerate(dep['spec']['template']['spec']['initContainers']):
+                        #self.deployment_infos['statefulset'][statefulset_type]['containers'].append(container['name'])
+                        ################
+                        # set env
+                        ################
+                        self.logger.debug('configuration.create_manifest_statefulset({})'.format(env))
+                        if not 'env' in dep['spec']['template']['spec']['initContainers'][i_container] or dep['spec']['template']['spec']['containers'][i_container]['env'] is None:
+                            dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
+                        for i_env,e in env.items():
+                            index_of_env = next((i for i, d in enumerate(dep['spec']['template']['spec']['initContainers'][i_container]['env']) if d.get('name') == i_env), -1)
+                            if index_of_env >= 0:
+                                # update value of existing env
+                                dep['spec']['template']['spec']['initContainers'][i_container]['env'][index_of_env]['value'] = str(e)
+                            else:
+                                # append new env
+                                dep['spec']['template']['spec']['initContainers'][i_container]['env'].append({'name':i_env, 'value':str(e)})
                 for i_container, container in enumerate(dep['spec']['template']['spec']['containers']):
                     #if statefulset_type == "worker":
                     #    self.worker_containers_deployed.append(container['name'])
