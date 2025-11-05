@@ -2548,7 +2548,7 @@ scrape_configs:
                 list_of_worker_components = list(self.deployment_infos['deployment'].keys())
                 print(f"###### list_of_worker_components (deployments) = {list_of_worker_components}")
                 for component in list_of_worker_components:
-                    for i, pod in enumerate(self.deployment_infos['statefulset'][component]['pods']):
+                    for i, pod in enumerate(self.deployment_infos['deployment'][component]['pods']):
                         pvc = self.deployment_infos['deployment'][component]['pvc']
                         print(f"Get size via pod {pod} and write to pvc {pvc}")
                         size, used = self.get_host_volume(pod=pod)
