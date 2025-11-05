@@ -1306,6 +1306,7 @@ scrape_configs:
             return []
         def set_labels_from_loaded_pvc():
             if len(labels_on_existing_pvc) > 0:
+                dep['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                 for label in labels_on_existing_pvc:
                     print("{:30s}: copied label {} = {}".format(configuration, label, labels_on_existing_pvc[label]))
                     dep['spec']['template']['metadata']['labels'][label] = labels_on_existing_pvc[label]
@@ -1449,8 +1450,8 @@ scrape_configs:
                     self.logger.debug('configuration.start_sut(PVC={},{})'.format(pvc, name_pvc))
                     dep['metadata']['name'] = name_pvc
                     dep['metadata']['labels']['loaded'] = "False"
-                    dep = set_component_labels(dep)
-                    """dep['metadata']['labels']['app'] = app
+                    #dep = set_component_labels(dep)
+                    dep['metadata']['labels']['app'] = app
                     dep['metadata']['labels']['component'] = 'storage'
                     dep['metadata']['labels']['configuration'] = storageConfiguration
                     dep['metadata']['labels']['experiment'] = self.storage_label
@@ -1458,7 +1459,6 @@ scrape_configs:
                     dep['metadata']['labels']['volume'] = self.volume
                     for label_key, label_value in self.additional_labels.items():
                         dep['metadata']['labels'][label_key] = str(label_value)
-                    """
                     # set storage class
                     if self.storage['storageClassName'] is not None and len(self.storage['storageClassName']) > 0:
                         dep['spec']['storageClassName'] = self.storage['storageClassName']
@@ -1486,7 +1486,7 @@ scrape_configs:
                         else:
                             #labels_on_existing_pvc = get_labels_from_loaded_pvc()
                             #print("{:30s}: found labels on pvc = {}".format(configuration, labels_on_existing_pvc))
-                            yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
+                            #yaml_deployment['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                             #pvcs_labels = self.experiment.cluster.get_pvc_labels(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
                             #self.logger.debug(pvcs_labels)
                             #if len(pvcs_labels) > 0:
@@ -1845,14 +1845,15 @@ scrape_configs:
                 else:
                     print(f"Deployment not found: {dep['metadata']['labels']['component']}")
                     continue
-                if dep['metadata']['name'] == 'bexhoma-pool':
-                    dep['metadata']['name'] = name_pool
-                    dep['metadata']['labels']['component'] = 'pool'
-                else:
-                    yaml_deployment = result[key]       # this will be marked 'loaded' iff pvc exists
-                    dep['metadata']['name'] = name
-                    dep['metadata']['labels']['component'] = component
+                #if dep['metadata']['name'] == 'bexhoma-pool':
+                #    dep['metadata']['name'] = name_pool
+                #    dep['metadata']['labels']['component'] = 'pool'
+                #else:
+                #    yaml_deployment = result[key]       # this will be marked 'loaded' iff pvc exists
+                #    dep['metadata']['name'] = name
+                #    dep['metadata']['labels']['component'] = component
                 deployment_type = dep['metadata']['labels']['component']
+                dep['metadata']['name'] = deployment['name']
                 dep['metadata']['labels']['app'] = app
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
@@ -1868,11 +1869,11 @@ scrape_configs:
                 set_labels_from_loaded_pvc()
                 #deployment = dep['metadata']['name']
                 #appname = dep['spec']['template']['metadata']['labels']['app']
-                if not 'deployment' in self.deployment_infos:
-                    self.deployment_infos['deployment'] = {}
-                    self.deployment_infos['deployment'][deployment_type] = {}
-                self.deployment_infos['deployment'][deployment_type]['pods'] = []
-                self.deployment_infos['deployment'][deployment_type]['containers'] = []
+                #if not 'deployment' in self.deployment_infos:
+                #    self.deployment_infos['deployment'] = {}
+                #    self.deployment_infos['deployment'][deployment_type] = {}
+                #self.deployment_infos['deployment'][deployment_type]['pods'] = []
+                #self.deployment_infos['deployment'][deployment_type]['containers'] = []
                 #if dep['metadata']['name'] != name_pool:
                 #    self.sut_containers_deployed = []
                 #else:
@@ -1954,7 +1955,7 @@ scrape_configs:
                 # parameter from instance name
                 # request = limit
                 # we only want to manipulate nodeSelector for pool container in pooler
-                if dep['metadata']['name'] == name_pool:
+                if deployment_type == 'pool': #dep['metadata']['name'] == name_pool:
                     if 'replicas_pooling' in self.resources:
                         num_replicas_pooling = self.resources['replicas_pooling']
                         result[key]['spec']['replicas'] = num_replicas_pooling
@@ -1969,7 +1970,7 @@ scrape_configs:
                             dep['spec']['template']['spec']['nodeSelector'][nodeSelector] = value
                             #self.resources['nodeSelector'][nodeSelector] = value """
                 # we only want to manipulate resources for dbms container in SUT
-                if dep['metadata']['name'] == name:
+                if deployment_type == 'sut': # dep['metadata']['name'] == name:
                     if 'replicas_sut' in self.resources:
                         num_replicas_sut = self.resources['replicas_sut']
                         result[key]['spec']['replicas'] = num_replicas_sut
@@ -4327,7 +4328,7 @@ scrape_configs:
         for pod in pods_worker:
             endpoint = '{worker}.{service_sut}'.format(worker=pod, service_sut=name_worker)
             endpoints.append(endpoint)
-            print("{:30s}: worker endpoint : {}".format(self.configuration, endpoint))
+            print("{:30s}: worker endpoint: {}".format(self.configuration, endpoint))
             #print('Worker endpoint: {endpoint}'.format(endpoint = endpoint))
         return endpoints
 
