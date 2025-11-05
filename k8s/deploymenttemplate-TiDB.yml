@@ -120,8 +120,8 @@ spec:
           - --peer-urls=http://0.0.0.0:2380
           - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
           - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
+          - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
           - --config=/etc/pd/pd.toml
-          ##- --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
           ###- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
           - name: POD_NAME
@@ -133,6 +133,12 @@ spec:
             name: client
           - containerPort: 2380
             name: peer
+        readinessProbe:
+          httpGet:
+            path: /pd/health
+            port: 2379
+          initialDelaySeconds: 5
+          periodSeconds: 5
         volumeMounts:
           - name: bxw
             mountPath: /var/lib/pd
