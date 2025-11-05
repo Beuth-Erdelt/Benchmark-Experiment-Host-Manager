@@ -79,7 +79,7 @@ spec:
               mountPath: /etc/pd
       containers:
       - name: dbms
-        image: pingcap/pd:v7.1.0
+        image: pingcap/pd:v8.5.3
         #command:
         #  - /bin/sh
         #  - -c
@@ -110,14 +110,15 @@ spec:
         #    fi
         args:
           # Use HOSTNAME to derive pod identity. Initial cluster must list all peers.
-          - --name=$(POD_NAME)
-          - --data-dir=/var/lib/pd
-          - --client-urls=http://0.0.0.0:2379
-          - --peer-urls=http://0.0.0.0:2380
-          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
-          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
-          #- --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
-          #- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+          - --config=/etc/pd/pd.toml
+          #- --name=$(POD_NAME)
+          #- --data-dir=/var/lib/pd
+          #- --client-urls=http://0.0.0.0:2379
+          #- --peer-urls=http://0.0.0.0:2380
+          #- --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
+          #- --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
+          ##- --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
+          ###- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
           - name: POD_NAME
             valueFrom:
@@ -166,7 +167,7 @@ spec:
     spec:
       containers:
       - name: dbms
-        image: pingcap/tikv:v7.1.0
+        image: pingcap/tikv:v8.5.3
         args:
           - --addr=0.0.0.0:20160
           - --advertise-addr=$(POD_NAME).$(BEXHOMA_STORE_SERVICE):20160
@@ -228,7 +229,7 @@ spec:
             yum install -y mysql;
             echo "Starting TiDB..." && \
             /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)
-        image: pingcap/tidb:v7.1.0
+        image: pingcap/tidb:v8.5.3
         #args:
         #  - /tidb-server
         #  - --store=tikv
