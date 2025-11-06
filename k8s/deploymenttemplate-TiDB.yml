@@ -121,7 +121,7 @@ spec:
           - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
           - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
           - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
-          - --config=/etc/pd/pd.toml
+          #- --config=/etc/pd/pd.toml
           ###- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
           - name: POD_NAME
@@ -175,6 +175,7 @@ spec:
     metadata:
       labels: {app: bexhoma, component: store, configuration: default, experiment: default}
     spec:
+      terminationGracePeriodSeconds: 60
       initContainers:
       - name: wait-for-pd
         image: busybox
@@ -204,6 +205,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "pd-ctl -u http://127.0.0.1:2379 leader resign; sleep 10"]
         resources:
           limits: {cpu: 16, memory: 64Gi}
           requests: {cpu: 16, memory: 64Gi}
