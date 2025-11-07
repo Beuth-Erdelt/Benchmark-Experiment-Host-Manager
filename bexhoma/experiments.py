@@ -1999,22 +1999,52 @@ class default():
                     if 'deployment' in config.deployment_infos:
                         for name, deployment in config.deployment_infos['deployment'].items():
                             print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
+                            if name=='sut' and config.monitoring_sut:
+                                print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
+                                config.fetch_metrics(
+                                    connection=config.current_benchmark_connection,
+                                    connection_file=connection+'.config',
+                                    container="dbms",
+                                    component=name,
+                                    component_type="stream",
+                                    #component_type="stream",
+                                    experiment=self.code,
+                                    time_start=start_time,
+                                    time_end=end_time,
+                                    metrics_type="metrics_special",
+                                    pod_dashboard=pod_dashboard
+                                    )
+                            elif name!='sut':
+                                print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
+                                config.fetch_metrics(
+                                    connection=config.current_benchmark_connection,
+                                    connection_file=connection+'.config',
+                                    container="dbms",
+                                    component=name,
+                                    component_type=f"{name}streaming",
+                                    #component_type="stream",
+                                    experiment=self.code,
+                                    time_start=start_time,
+                                    time_end=end_time,
+                                    metrics_type="metrics",
+                                    pod_dashboard=pod_dashboard
+                                    )
                     if 'statefulset' in config.deployment_infos:
                         for name, statefulset in config.deployment_infos['statefulset'].items():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                     if config.monitoring_sut:
-                        print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
-                        config.fetch_metrics(
-                            connection=config.current_benchmark_connection,
-                            connection_file=connection+'.config',
-                            container="dbms",
-                            component_type="stream",
-                            experiment=self.code,
-                            time_start=start_time,
-                            time_end=end_time,
-                            metrics_type="metrics_special",
-                            pod_dashboard=pod_dashboard
-                            )
+                        #print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
+                        #config.fetch_metrics(
+                        #    connection=config.current_benchmark_connection,
+                        #    connection_file=connection+'.config',
+                        #    container="dbms",
+                        #    component_type="stream",
+                        #    experiment=self.code,
+                        #    time_start=start_time,
+                        #    time_end=end_time,
+                        #    metrics_type="metrics_special",
+                        #    pod_dashboard=pod_dashboard
+                        #    )
                         """
                         #print(config.current_benchmark_connection)
                         #print(config.benchmark.dbms.keys())
@@ -2033,18 +2063,19 @@ class default():
                         """
                         # Pooler
                         if config.sut_has_pool:
-                            print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
-                            config.fetch_metrics(
-                                connection=config.current_benchmark_connection,
-                                connection_file=connection+'.config',
-                                container="pool",
-                                component_type="pool",
-                                experiment=self.code,
-                                time_start=start_time,
-                                time_end=end_time,
-                                metrics_type="metrics",
-                                pod_dashboard=pod_dashboard
-                                )
+                            pass
+                            #print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
+                            #config.fetch_metrics(
+                            #    connection=config.current_benchmark_connection,
+                            #    connection_file=connection+'.config',
+                            #    container="pool",
+                            #    component_type="pool",
+                            #    experiment=self.code,
+                            #    time_start=start_time,
+                            #    time_end=end_time,
+                            #    metrics_type="metrics",
+                            #    pod_dashboard=pod_dashboard
+                            #    )
                             """
                             #print(config.current_benchmark_connection)
                             #print(config.benchmark.dbms.keys())
@@ -2076,6 +2107,7 @@ class default():
                             connection=config.current_benchmark_connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",
+                            component="benchmarker",
                             component_type="benchmarker",
                             experiment=self.code,
                             time_start=start_time,
@@ -2444,7 +2476,7 @@ class default():
         evaluate.load_experiment(code=code, silent=True)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluate, "loading")
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "sutloading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
@@ -3174,7 +3206,7 @@ class tpcc(default):
         #evaluation = evaluators.tpcc(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "sutloading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
@@ -3484,6 +3516,7 @@ class ycsb(default):
                     self.cluster.logger.debug(pod_dashboard+status)
             """
         if self.monitoring_active:
+            print(self.workload['monitoring_components'])
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
@@ -3497,12 +3530,41 @@ class ycsb(default):
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct pool -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-            self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct poolloading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-            self.cluster.logger.debug(stdout)
+            #cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct pool -e {}'.format(self.code)
+            #stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            #self.cluster.logger.debug(stdout)
+            #cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct poolloading -e {}'.format(self.code)
+            #stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            #self.cluster.logger.debug(stdout)
+            for component_type in self.workload['monitoring_components']:
+                cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                self.cluster.logger.debug(stdout)
+            #if 'deployment' in config.deployment_infos:
+            #    for name, deployment in config.deployment_infos['deployment'].items():
+            #        print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
+            #        if name=='sut' and config.monitoring_sut:
+            #            pass
+            #        elif name!='sut':
+            #            component_type=f"{name}loading",
+            #            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+            #            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            #            self.cluster.logger.debug(stdout)
+            #            component_type=f"{name}streaming",
+            #            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+            #            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            #            self.cluster.logger.debug(stdout)
+            #if 'statefulset' in config.deployment_infos:
+            #    for name, statefulset in config.deployment_infos['statefulset'].items():
+            #        print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+            #        component_type=f"{name}loading",
+            #        cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+            #        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            #        self.cluster.logger.debug(stdout)
+            #        component_type=f"{name}streaming",
+            #        cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+            #        stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            #        self.cluster.logger.debug(stdout)
         cmd = {}
         #stdout = self.experiment.cluster.kubectl('cp --container dashboard '+self.path+'/connections.config '+pod_dashboard+':/results/'+str(self.code)+'/connections.config')
         #self.logger.debug('copy config connections.config: {}'.format(stdout))
@@ -3559,6 +3621,8 @@ class ycsb(default):
                   "uses docker image",
                   c['parameter']['dockerimage'])
             #print(c['monitoring']['metrics'])
+            ##########
+            print("    deployment_infos: "+str(c['deployment_infos']))
             ##########
             if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
                 num_metrics_included = 0
@@ -3723,7 +3787,7 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "sutloading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
@@ -3771,7 +3835,7 @@ class ycsb(default):
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
             #####################
-            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "pool")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "poolstreaming")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Pooling")
@@ -4215,7 +4279,7 @@ class benchbase(default):
         #evaluation = evaluators.benchbase(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "loading")
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, "sutloading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")

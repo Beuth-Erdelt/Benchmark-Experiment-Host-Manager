@@ -1855,6 +1855,11 @@ scrape_configs:
                         if 'name' in ports and ports['name'] != 'port-dbms' and ports['name'] != 'port-bus' and ports['name'] != 'port-web':
                             del result[key]['spec']['ports'][i]
                 #print(pvc)
+            ################
+            ################
+            # Kind=Deployment
+            ################
+            ################
             if dep['kind'] == 'Deployment':
                 if dep['metadata']['labels']['component'] in self.deployment_infos['deployment']:
                     deployment = self.deployment_infos['deployment'][dep['metadata']['labels']['component']]
@@ -2756,6 +2761,7 @@ scrape_configs:
         c['connectionmanagement']['runsPerConnection'] = self.connectionmanagement['runsPerConnection']
         c['connectionmanagement']['timeout'] = self.connectionmanagement['timeout']
         c['connectionmanagement']['singleConnection'] = self.connectionmanagement['singleConnection'] if 'singleConnection' in self.connectionmanagement else True
+        c['deployment_infos'] = self.deployment_infos
         c['monitoring'] = {}
         config_K8s = self.experiment.cluster.config['credentials']['k8s']
         if self.experiment.monitoring_active and 'monitor' in config_K8s:
@@ -2800,15 +2806,17 @@ scrape_configs:
                 if 'statefulset' in self.deployment_infos:
                     for name, statefulset in self.deployment_infos['statefulset'].items():
                         print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
-                        c['monitoring']['metrics_custom'][name] = {}
+                        metrics_type = f"metrics_{name}"
+                        c['monitoring'][metrics_type] = {}
+                        #c['monitoring']['metrics_custom'][name] = {}
                         for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                             # default components (managed by bexhoma)
                             #c['monitoring']['metrics'][metricname] = metricdata.copy()
                             #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                             #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                             # other components (not managed by bexhoma)
-                            c['monitoring']['metrics_custom'][name][metricname] = metricdata.copy()
-                            c['monitoring']['metrics_custom'][name][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_custom'][name][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            c['monitoring'][metrics_type] = metricdata.copy()
+                            c['monitoring'][metrics_type]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
@@ -2847,17 +2855,23 @@ scrape_configs:
                 )
         #print(c)
         return c#.copy()
-    def fetch_metrics(self, connection, connection_file, container, component_type, experiment, time_start, time_end, metrics_type, pod_dashboard):
+    def fetch_metrics(self, connection, connection_file, container, component, component_type, experiment, time_start, time_end, metrics_type, pod_dashboard):
+        if not 'monitoring_components' in self.experiment.workload:
+            self.experiment.workload['monitoring_components'] = {}
+        self.experiment.workload['monitoring_components'][component_type] = True
         config_folder = '/results/'+self.code
         cmd = {}
-        metric_example = self.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]['total_cpu_memory'].copy()
+        metrics = self.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]
+        if metrics_type == 'metrics_custom':
+            metrics = metrics[component_type]
+        metric_example = metrics['total_cpu_memory'].copy()
         if container != 'dbms': #is not None:
             metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
             metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name!="dbms"', 'container_label_io_kubernetes_container_name!="{}"'.format(container))
             metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
             metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
         print("{:30s}: example metric {}".format(connection, metric_example))
-        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -ct {component_type} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
+        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -mt {metrics_type} -ct {component_type} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
         stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
         self.logger.debug(stdout)
         self.logger.debug(stderr)
@@ -3106,24 +3120,65 @@ scrape_configs:
                 if 'deployment' in self.deployment_infos:
                     for name, deployment in self.deployment_infos['deployment'].items():
                         print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
+                        if name=='sut' and self.monitoring_sut:
+                            print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
+                            self.fetch_metrics(
+                                connection=self.current_benchmark_connection,
+                                connection_file=c['name']+'.config',
+                                container="dbms",
+                                component=name,
+                                component_type="loading",
+                                experiment=self.code,
+                                time_start=self.timeLoadingStart,
+                                time_end=self.timeLoadingEnd,
+                                metrics_type="metrics_special",
+                                pod_dashboard=pod_dashboard
+                                )
+                        elif name!='sut':
+                            print("{:30s}: collecting loading metrics of {} at connection {}".format(connection, name, self.current_benchmark_connection))
+                            self.fetch_metrics(
+                                connection=self.current_benchmark_connection,
+                                connection_file=c['name']+'.config',
+                                container="dbms",
+                                component=name,
+                                component_type=f"{name}loading",
+                                experiment=self.code,
+                                time_start=self.timeLoadingStart,
+                                time_end=self.timeLoadingEnd,
+                                metrics_type="metrics",
+                                pod_dashboard=pod_dashboard
+                                )
                 if 'statefulset' in self.deployment_infos:
                     for name, statefulset in self.deployment_infos['statefulset'].items():
                         print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                        self.fetch_metrics(
+                            connection=self.current_benchmark_connection,
+                            connection_file=c['name']+'.config',
+                            container="dbms",
+                            component=name,
+                            component_type=f"{name}loading",
+                            experiment=self.code,
+                            time_start=self.timeLoadingStart,
+                            time_end=self.timeLoadingEnd,
+                            metrics_type="metrics_custom",
+                            pod_dashboard=pod_dashboard
+                            )
                 cmd = {}
                 #self.monitoring_sut = True
                 if self.monitoring_sut:
-                    print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
-                    self.fetch_metrics(
-                        connection=self.current_benchmark_connection,
-                        connection_file=c['name']+'.config',
-                        container="dbms",
-                        component_type="loading",
-                        experiment=self.code,
-                        time_start=self.timeLoadingStart,
-                        time_end=self.timeLoadingEnd,
-                        metrics_type="metrics_special",
-                        pod_dashboard=pod_dashboard
-                        )
+                    pass
+                    #print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
+                    #self.fetch_metrics(
+                    #    connection=self.current_benchmark_connection,
+                    #    connection_file=c['name']+'.config',
+                    #    container="dbms",
+                    #    component_type="loading",
+                    #    experiment=self.code,
+                    #    time_start=self.timeLoadingStart,
+                    #    time_end=self.timeLoadingEnd,
+                    #    metrics_type="metrics_special",
+                    #    pod_dashboard=pod_dashboard
+                    #    )
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(connection, c['name']+'.config', '/results/'+self.code, self.code, self.timeLoadingStart, self.timeLoadingEnd)
                     # with container name? should better be part of the metric query
                     #cmd['fetch_loading_metrics'] = 'python metrics.py -r /results/ -db -ct loading -cn {} -c {} -cf {} -f {} -e {} -ts {} -te {}'.format(
@@ -3161,6 +3216,7 @@ scrape_configs:
                         connection=self.current_benchmark_connection,
                         connection_file=c['name']+'.config',
                         container="datagenerator",
+                        component="datagenerator",
                         component_type="datagenerator",
                         experiment=self.code,
                         time_start=self.timeLoadingStart,
@@ -3203,6 +3259,7 @@ scrape_configs:
                         connection=self.current_benchmark_connection,
                         connection_file=c['name']+'.config',
                         container="sensor",
+                        component="loader",
                         component_type="loader",
                         experiment=self.code,
                         time_start=self.timeLoadingStart,
@@ -3238,18 +3295,19 @@ scrape_configs:
                     """
                     # pooling container "pool"
                     if self.sut_has_pool:
-                        print("{:30s}: collecting loading metrics of pool at connection {}".format(connection, self.current_benchmark_connection))
-                        self.fetch_metrics(
-                            connection=self.current_benchmark_connection,
-                            connection_file=c['name']+'.config',
-                            container="pool",
-                            component_type="poolloading",
-                            experiment=self.code,
-                            time_start=self.timeLoadingStart,
-                            time_end=self.timeLoadingEnd,
-                            metrics_type="metrics",
-                            pod_dashboard=pod_dashboard
-                            )
+                        pass
+                        #print("{:30s}: collecting loading metrics of pool at connection {}".format(connection, self.current_benchmark_connection))
+                        #self.fetch_metrics(
+                        #    connection=self.current_benchmark_connection,
+                        #    connection_file=c['name']+'.config',
+                        #    container="pool",
+                        #    component_type="poolloading",
+                        #    experiment=self.code,
+                        #    time_start=self.timeLoadingStart,
+                        #    time_end=self.timeLoadingEnd,
+                        #    metrics_type="metrics",
+                        #    pod_dashboard=pod_dashboard
+                        #    )
                         """
                         metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                         container = "pool"
