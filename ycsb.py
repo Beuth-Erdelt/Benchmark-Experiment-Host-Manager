@@ -934,7 +934,7 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_INSERTORDER = extra_insert_order,
                         )
-                    def get_worker_name(self):
+                    def get_worker_name(self, component='worker'):
                         """
                         Returns a template for the worker names.
                         Default is component name is 'worker' for a bexhoma managed DBMS.

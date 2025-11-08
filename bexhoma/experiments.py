@@ -2032,6 +2032,20 @@ class default():
                     if 'statefulset' in config.deployment_infos:
                         for name, statefulset in config.deployment_infos['statefulset'].items():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                            print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
+                            config.fetch_metrics(
+                                connection=config.current_benchmark_connection,
+                                connection_file=connection+'.config',
+                                container="dbms",
+                                component=name,
+                                component_type=f"{name}streaming",
+                                #component_type="stream",
+                                experiment=self.code,
+                                time_start=start_time,
+                                time_end=end_time,
+                                metrics_type=f"metrics_{name}",
+                                pod_dashboard=pod_dashboard
+                                )
                     if config.monitoring_sut:
                         #print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
                         #config.fetch_metrics(
@@ -3758,7 +3772,7 @@ class ycsb(default):
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         if not df_monitoring_app.empty:
-            print("\n### Application Metrics")
+            print("\n#### Application Metrics")
             print(df_monitoring_app)
         print("\n### Tests")
         if test_loading:
@@ -3786,6 +3800,22 @@ class ycsb(default):
         #code = self.code
         #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            print("\n### Monitoring")
+            print(self.workload['monitoring_components'])
+            #####################
+            for component in self.workload['monitoring_components']:
+                df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
+                ##########
+                if len(df_monitoring) > 0:
+                    print(f"\n### {component}")
+                    df = pd.concat(df_monitoring, axis=1).round(2)
+                    df = df.reindex(index=evaluators.natural_sort(df.index))
+                    print(df)
+                    if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                        test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                    else:
+                        test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
+            """
             #####################
             df_monitoring = self.show_summary_monitoring_table(self.evaluator, "sutloading")
             ##########
@@ -3858,6 +3888,7 @@ class ycsb(default):
                     test_results = test_results + "TEST failed: Ingestion Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+            """
         return test_results.rstrip('\n')
 
 

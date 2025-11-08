@@ -2815,8 +2815,8 @@ scrape_configs:
                             #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                             #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                             # other components (not managed by bexhoma)
-                            c['monitoring'][metrics_type] = metricdata.copy()
-                            c['monitoring'][metrics_type]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            c['monitoring'][metrics_type][metricname] = metricdata.copy()
+                            c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
@@ -2862,8 +2862,8 @@ scrape_configs:
         config_folder = '/results/'+self.code
         cmd = {}
         metrics = self.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]
-        if metrics_type == 'metrics_custom':
-            metrics = metrics[component_type]
+        #if metrics_type == 'metrics_custom':
+        #    metrics = metrics[component_type]
         metric_example = metrics['total_cpu_memory'].copy()
         if container != 'dbms': #is not None:
             metric_example['query'] = metric_example['query'].replace('container_label_io_kubernetes_container_name="dbms"', 'container_label_io_kubernetes_container_name="{}"'.format(container))
@@ -3160,7 +3160,7 @@ scrape_configs:
                             experiment=self.code,
                             time_start=self.timeLoadingStart,
                             time_end=self.timeLoadingEnd,
-                            metrics_type="metrics_custom",
+                            metrics_type=f"metrics_{name}",
                             pod_dashboard=pod_dashboard
                             )
                 cmd = {}
