@@ -2002,6 +2002,7 @@ class default():
                             if name=='sut' and config.monitoring_sut:
                                 print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
                                 config.fetch_metrics(
+                                    title=f"Execution phase: SUT deployment",
                                     connection=config.current_benchmark_connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
@@ -2017,6 +2018,7 @@ class default():
                             elif name!='sut':
                                 print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
                                 config.fetch_metrics(
+                                    title=f"Execution phase: component {name}",
                                     connection=config.current_benchmark_connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
@@ -2034,6 +2036,7 @@ class default():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                             print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
                             config.fetch_metrics(
+                                title=f"Execution phase: component {name}",
                                 connection=config.current_benchmark_connection,
                                 connection_file=connection+'.config',
                                 container="dbms",
@@ -2118,6 +2121,7 @@ class default():
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, config.current_benchmark_connection))
                         config.fetch_metrics(
+                            title=f"Execution phase: component benchmarker",
                             connection=config.current_benchmark_connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",

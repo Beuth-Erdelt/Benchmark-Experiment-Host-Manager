@@ -2855,10 +2855,10 @@ scrape_configs:
                 )
         #print(c)
         return c#.copy()
-    def fetch_metrics(self, connection, connection_file, container, component, component_type, experiment, time_start, time_end, metrics_type, pod_dashboard):
+    def fetch_metrics(self, connection, connection_file, container, component, component_type, title, experiment, time_start, time_end, metrics_type, pod_dashboard):
         if not 'monitoring_components' in self.experiment.workload:
             self.experiment.workload['monitoring_components'] = {}
-        self.experiment.workload['monitoring_components'][component_type] = True
+        self.experiment.workload['monitoring_components'][component_type] = title
         config_folder = '/results/'+self.code
         cmd = {}
         metrics = self.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]
@@ -3123,6 +3123,7 @@ scrape_configs:
                         if name=='sut' and self.monitoring_sut:
                             print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, self.current_benchmark_connection))
                             self.fetch_metrics(
+                                title="Loading phase: SUT deployment",
                                 connection=self.current_benchmark_connection,
                                 connection_file=c['name']+'.config',
                                 container="dbms",
@@ -3137,6 +3138,7 @@ scrape_configs:
                         elif name!='sut':
                             print("{:30s}: collecting loading metrics of {} at connection {}".format(connection, name, self.current_benchmark_connection))
                             self.fetch_metrics(
+                                title=f"Loading phase: component {name}",
                                 connection=self.current_benchmark_connection,
                                 connection_file=c['name']+'.config',
                                 container="dbms",
@@ -3152,6 +3154,7 @@ scrape_configs:
                     for name, statefulset in self.deployment_infos['statefulset'].items():
                         print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                         self.fetch_metrics(
+                            title=f"Loading phase: component {name}",
                             connection=self.current_benchmark_connection,
                             connection_file=c['name']+'.config',
                             container="dbms",
@@ -3213,6 +3216,7 @@ scrape_configs:
                     # data generator container
                     print("{:30s}: collecting metrics of data generator at connection {}".format(connection, self.current_benchmark_connection))
                     self.fetch_metrics(
+                        title="Loading phase: component data generator",
                         connection=self.current_benchmark_connection,
                         connection_file=c['name']+'.config',
                         container="datagenerator",
@@ -3256,6 +3260,7 @@ scrape_configs:
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))
                     self.fetch_metrics(
+                        title=f"Loading phase: component loader",
                         connection=self.current_benchmark_connection,
                         connection_file=c['name']+'.config',
                         container="sensor",
