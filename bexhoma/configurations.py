@@ -2824,8 +2824,8 @@ scrape_configs:
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                     c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                     # other components (not managed by bexhoma)
-                    c['monitoring']['metrics_special'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                    #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                    #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
             # application metrics
             if self.monitor_app_active and 'monitor' in self.dockertemplate and 'metrics' in self.dockertemplate['monitor']:
                 for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
@@ -2834,8 +2834,8 @@ scrape_configs:
                     #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
                     c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                     # other components (not managed by bexhoma)
-                    c['monitoring']['metrics_special'][metricname] = metricdata.copy()
-                    c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                    #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                    #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
@@ -3132,7 +3132,7 @@ scrape_configs:
                                 experiment=self.code,
                                 time_start=self.timeLoadingStart,
                                 time_end=self.timeLoadingEnd,
-                                metrics_type="metrics_special",
+                                metrics_type="metrics", # "metrics_special",
                                 pod_dashboard=pod_dashboard
                                 )
                         elif name!='sut':

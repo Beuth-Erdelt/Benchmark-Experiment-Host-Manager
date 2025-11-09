@@ -2012,7 +2012,7 @@ class default():
                                     experiment=self.code,
                                     time_start=start_time,
                                     time_end=end_time,
-                                    metrics_type="metrics_special",
+                                    metrics_type="metrics", # "metrics_special",
                                     pod_dashboard=pod_dashboard
                                     )
                             elif name!='sut':
@@ -3640,7 +3640,7 @@ class ycsb(default):
                   c['parameter']['dockerimage'])
             #print(c['monitoring']['metrics'])
             ##########
-            print("    deployment_infos: "+str(c['deployment_infos']))
+            #print("    deployment_infos: "+str(c['deployment_infos']))
             ##########
             if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
                 num_metrics_included = 0
@@ -3807,11 +3807,11 @@ class ycsb(default):
             print("\n### Monitoring")
             print(self.workload['monitoring_components'])
             #####################
-            for component in self.workload['monitoring_components']:
+            for component, title in self.workload['monitoring_components'].items():
                 df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
                 ##########
                 if len(df_monitoring) > 0:
-                    print(f"\n### {component}")
+                    print(f"\n### {title}")
                     df = pd.concat(df_monitoring, axis=1).round(2)
                     df = df.reindex(index=evaluators.natural_sort(df.index))
                     print(df)
