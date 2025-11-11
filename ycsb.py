@@ -538,6 +538,7 @@ if __name__ == '__main__':
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
                         )
