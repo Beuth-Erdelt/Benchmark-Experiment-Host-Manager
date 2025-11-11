@@ -547,7 +547,20 @@ if __name__ == '__main__':
                     config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
                     config.statefulset_name = 'yb-tserver'              # name of the stateful set of DBMS pods
                     config.sut_container_name = ''                      # fix container name of SUT
-                    def get_worker_pods(self):
+                    stateful_set = "yb-tserver"
+                    config.deployment_infos['statefulset'] = {}
+                    config.deployment_infos['statefulset'][stateful_set] = {}
+                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
+                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
+                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
+                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
+                    stateful_set = "yb-master"
+                    config.deployment_infos['statefulset'][stateful_set] = {}
+                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
+                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
+                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
+                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
+                    def get_worker_pods(self, component='worker'):
                         """
                         Returns a list of all pod names of workers for the current SUT.
                         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -601,7 +614,7 @@ if __name__ == '__main__':
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
                     config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
-                    def set_metric_of_config(self, metric, host, gpuid):
+                    def set_metric_of_config(self, metric, host, gpuid, schema, database, component=''):
                         """
                         Returns a promql query.
                         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -616,7 +629,10 @@ if __name__ == '__main__':
                         """
                         metric = metric.replace(', container="dbms"', '')
                         metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
-                        return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                        #name_worker = self.get_worker_name(component=component)
+                        #return metric.format(host=host, gpuid=gpuid, configuration=name_worker, experiment="", schema=schema, database=database)
+                        #return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                        return metric.format(host=host, gpuid=gpuid, configuration=component, experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
@@ -671,7 +687,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'

@@ -2584,6 +2584,8 @@ scrape_configs:
                 print(f"###### list_of_worker_components (stateful sets) = {list_of_worker_components}")
                 for component in list_of_worker_components:
                     for i, pod in enumerate(self.deployment_infos['statefulset'][component]['pods']):
+                        if not 'pvc' in self.deployment_infos['statefulset'][component]:
+                            continue
                         pvc = self.deployment_infos['statefulset'][component]['pvc'][i]
                         print(f"Get size via pod {pod} and write to pvc {pvc}")
                         size, used = self.get_host_volume(pod=pod)
@@ -2816,7 +2818,7 @@ scrape_configs:
                             #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                             # other components (not managed by bexhoma)
                             c['monitoring'][metrics_type][metricname] = metricdata.copy()
-                            c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database, component=name)
                 # set_metric_of_config_default
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     # default components (managed by bexhoma)
