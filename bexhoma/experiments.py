@@ -2908,6 +2908,14 @@ class tpcc(default):
         self.storage_label = 'hammerdb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
         self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.components = {
+            "loader": {
+                "sensor": True
+             },
+            "benchmarker": {
+                "dbmsbenchmarker": True
+            }
+        }
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
         self.args = args
@@ -3956,6 +3964,14 @@ class benchbase(default):
         self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
         self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
         self.benchmark = 'tpcc'                                                          # Benchbase knows several benchmarks. Here we store, which one to use, default tpcc
+        self.components = {
+            "loader": {
+                "sensor": True
+             },
+            "benchmarker": {
+                "dbmsbenchmarker": True
+            }
+        }
     def set_benchmark_type(self, benchmark='tpcc'):
         self.benchmark = benchmark
         self.storage_label = 'benchbase-{benchmark}-{SF}'.format(benchmark=self.benchmark, SF=self.SF)
