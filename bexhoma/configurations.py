@@ -3216,20 +3216,21 @@ scrape_configs:
                 endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                 if len(endpoints_cluster)>0 or self.experiment.cluster.monitor_cluster_exists:
                     # data generator container
-                    print("{:30s}: collecting metrics of data generator at connection {}".format(connection, self.current_benchmark_connection))
-                    self.fetch_metrics(
-                        title="Loading phase: component data generator",
-                        connection=self.current_benchmark_connection,
-                        connection_file=c['name']+'.config',
-                        container="datagenerator",
-                        component="datagenerator",
-                        component_type="datagenerator",
-                        experiment=self.code,
-                        time_start=self.timeLoadingStart,
-                        time_end=self.timeLoadingEnd,
-                        metrics_type="metrics",
-                        pod_dashboard=pod_dashboard
-                        )
+                    if "datagenerator" in self.experiment.components["loader"]:
+                        print("{:30s}: collecting metrics of data generator at connection {}".format(connection, self.current_benchmark_connection))
+                        self.fetch_metrics(
+                            title="Loading phase: component data generator",
+                            connection=self.current_benchmark_connection,
+                            connection_file=c['name']+'.config',
+                            container="datagenerator",
+                            component="datagenerator",
+                            component_type="datagenerator",
+                            experiment=self.code,
+                            time_start=self.timeLoadingStart,
+                            time_end=self.timeLoadingEnd,
+                            metrics_type="metrics",
+                            pod_dashboard=pod_dashboard
+                            )
                     """
                     metric_example = self.benchmark.dbms[self.current_benchmark_connection].connectiondata['monitoring']['metrics']['total_cpu_memory'].copy()
                     container = "datagenerator"
