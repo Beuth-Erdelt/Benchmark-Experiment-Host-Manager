@@ -21,7 +21,7 @@ source ./testfunctions.sh
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
+LOG_DIR="./logs_tests/local"
 
 if ! prepare_logs; then
     echo "Error: prepare_logs failed with code $?"
@@ -89,7 +89,7 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/local/refactor_postgresql_1.log &
+  run </dev/null &>$LOG_DIR/refactor_postgresql_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -119,7 +119,7 @@ nohup python ycsb.py -tr \
   -rst shared -rss 30Gi -rsr \
   -npi 32 \
   -npo 32 \
-  run </dev/null &>$LOG_DIR/local/refactor_pgbouncer_1.log &
+  run </dev/null &>$LOG_DIR/refactor_pgbouncer_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -146,10 +146,10 @@ nohup python ycsb.py -tr \
   -nbt 64 \
   -nbf 1 \
   -ne 1 \
-  -nc 2 \
+  -nc 1 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/local/refactor_tidb_1.log &
+  run </dev/null &>$LOG_DIR/refactor_tidb_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -177,7 +177,7 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/local/refactor_cockroachdb_1.log &
+  run </dev/null &>$LOG_DIR/refactor_cockroachdb_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -208,7 +208,7 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/local/refactor_citus_1.log &
+  run </dev/null &>$LOG_DIR/refactor_citus_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -275,7 +275,7 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/local/refactor_yugabytedb_1.log &
+  run </dev/null &>$LOG_DIR/refactor_yugabytedb_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
