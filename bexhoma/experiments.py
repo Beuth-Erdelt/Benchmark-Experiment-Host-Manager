@@ -106,6 +106,15 @@ class default():
             runsPerConnection = 0,
             timeout = timeout,
             singleConnection = True)
+        self.components = {
+            "loader": {
+                "datagenerator": True,
+                "sensor": True
+             },
+            "benchmarker": {
+                "dbmsbenchmarker": True
+            }
+        }
         self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
@@ -3432,6 +3441,14 @@ class ycsb(default):
         self.storage_label = 'ycsb-'+str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
         self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.components = {
+            "loader": {
+                "sensor": True
+             },
+            "benchmarker": {
+                "dbmsbenchmarker": True
+            }
+        }
     def prepare_testbed(self, parameter):
         args = SimpleNamespace(**parameter)
         self.args = args
