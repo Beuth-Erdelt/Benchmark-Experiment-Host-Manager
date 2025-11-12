@@ -1940,10 +1940,11 @@ scrape_configs:
                         #    # there are no PVC for this pod, so we remove infos
                         #    self.deployment_infos['deployment'][deployment_type]['pvc'] = []
                         #    self.deployment_infos['deployment'][deployment_type]['name_pvc'] = ""
-                        if self.dockerimage:
-                            result[key]['spec']['template']['spec']['containers'][i_container]['image'] = self.dockerimage
-                        else:
-                            self.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image']
+                        if deployment_type == 'sut':
+                            if self.dockerimage:
+                                result[key]['spec']['template']['spec']['containers'][i_container]['image'] = self.dockerimage
+                            else:
+                                self.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image']
                     elif not self.monitoring_active or self.experiment.cluster.monitor_cluster_active or self.experiment.cluster.monitor_cluster_exists:
                         # remove monitoring containers
                         if container['name'] == 'cadvisor':
@@ -3836,6 +3837,7 @@ scrape_configs:
         service_name = self.get_service_sut(configuration=self.configuration)#self.generate_component_name(component='sut', configuration=self.configuration, experiment=self.code)
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         self.pod_sut = pods[0]
+        print("{:30s}: connect to pod {} to load scripts".format(self.configuration, self.pod_sut))
         scriptfolder = '/tmp/'
         commands = scripts.copy()
         c = self.dockertemplate['template']
