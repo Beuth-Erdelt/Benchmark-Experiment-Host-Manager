@@ -357,12 +357,17 @@ if __name__ == '__main__':
                                 # this is too long
                                 #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
                                 config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
-                                config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
-                                config.sut_has_pool = True                                                # in particular monitor pool component
+                                config.path_experiment_docker = 'PostgreSQL'                   # take init scripts of PostgreSQL
+                                config.sut_has_pool = True                                     # in particular monitor pool component
                                 config.sut_parameters = {
-                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                       # max connections to PostgreSQL
-                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                           # min connections to PostgreSQL
-                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                          # max connections to PGBouncer
+                                    # do not split connections between pool pods:
+                                    'DEFAULT_POOL_SIZE': int(num_c_out),                       # max connections to PostgreSQL
+                                    'MIN_POOL_SIZE': int(num_c_out),                           # min connections to PostgreSQL
+                                    'MAX_CLIENT_CONN': int(num_c_in),                          # max connections to PGBouncer
+                                    # split connections between pool pods:
+                                    #'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),           # max connections to PostgreSQL
+                                    #'MIN_POOL_SIZE': int(num_c_out/num_c_pods),               # min connections to PostgreSQL
+                                    #'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),              # max connections to PGBouncer
                                 }
                                 config.set_resources(
                                     replicas_pooling = num_c_pods,
