@@ -874,6 +874,7 @@ class default():
         #if not os.path.isfile(self.yamlfolder+self.deployment):
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
+        name_pool = self.create_monitoring(app, 'pool', experiment, configuration)
         name_service = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration) # self.experiment_name
         name_worker = self.get_worker_name()
         name_service_headless = name_worker# must be the same
@@ -3129,7 +3130,7 @@ scrape_configs:
                                 title="Loading phase: SUT deployment",
                                 connection=self.current_benchmark_connection,
                                 connection_file=c['name']+'.config',
-                                container=deployment['containers'][0], #"dbms",
+                                container="dbms",
                                 component=name,
                                 component_type="loading",
                                 experiment=self.code,

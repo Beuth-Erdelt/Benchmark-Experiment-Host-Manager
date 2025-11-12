@@ -117,8 +117,9 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  -npi 32 \
-  -npo 32 \
+  -npi 64 \
+  -npo 64 \
+  -npp 2 \
   run </dev/null &>$LOG_DIR/refactor_pgbouncer_1.log &
 
 #### Wait so that next experiment receives a different code

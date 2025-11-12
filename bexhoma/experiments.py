@@ -2014,7 +2014,7 @@ class default():
                                     title=f"Execution phase: SUT deployment",
                                     connection=config.current_benchmark_connection,
                                     connection_file=connection+'.config',
-                                    container=deployment['containers'][0], #"dbms",
+                                    container="dbms",
                                     #container="dbms",
                                     component=name,
                                     component_type="stream",
