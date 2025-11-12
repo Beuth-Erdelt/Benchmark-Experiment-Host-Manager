@@ -853,6 +853,20 @@ class default():
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         self.logger.debug("configuration.create_monitoring({})".format(name))
         return name
+    def get_deployment_component(self, container):
+        """
+        Find the first deployment / stateful set that has a container with a given name.
+        For finding dbms and monitor-application in particular
+
+        """
+        print(f"Looking for {container} in {self.deployment_infos}")
+        for name, deployment in self.deployment_infos['deployment'].items():
+            if 'containers' in deployment and container in deployment['containers']:
+                return name
+        for name, statefulset in self.deployment_infos['statefulset'].items():
+            if 'containers' in statefulset and container in statefulset['containers']:
+                return name
+        return ""
     def start_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         """
         Starts a monitoring deployment.
@@ -875,6 +889,9 @@ class default():
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
         name_pool = self.create_monitoring(app, 'pool', experiment, configuration)
+        name_monitor_application_component = self.get_deployment_component("monitor-application")
+        print(f"Found {name_monitor_application_component}")
+        name_monitor_application = self.create_monitoring(app, name_monitor_application_component, experiment, configuration)
         name_service = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration) # self.experiment_name
         name_worker = self.get_worker_name()
         name_service_headless = name_worker# must be the same
@@ -952,7 +969,7 @@ scrape_configs:
         replacement: ${{1}}
         target_label: instance
       - target_label: __address__
-        replacement: {master}:9500""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
+        replacement: {master}:9500""".format(master=name_monitor_application, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
                             elif 'monitor' in self.dockertemplate and 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """

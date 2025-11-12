@@ -21,7 +21,6 @@ spec:
   #clusterIP: None
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
-  - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 9187}
   selector: {app: bexhoma, component: pool, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -115,8 +114,9 @@ metadata:
   name: bexhoma-pool
 spec:
   ports:
-  - {port: 9092, protocol: TCP, name: port-dbms, targetPort: 5433}
+  - {port: 9092, protocol: TCP, name: port-dbms, targetPort: 5432}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 9187}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -150,7 +150,7 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: PGPORT
-          value: "5433" # remove/comment this line for default ports
+          value: "5432" # remove/comment this line for default ports
         # pg_ctl: cannot be run as root
         lifecycle:
           #postStart:
@@ -178,11 +178,11 @@ spec:
             - -U
             - postgres
             - -p
-            - "5433"
+            - "5432"
           initialDelaySeconds: 15
           periodSeconds: 60
         ports:
-        - {containerPort: 5433}
+        - {containerPort: 5432}
         securityContext:
           allowPrivilegeEscalation: false
           #runAsNonRoot: true
@@ -244,7 +244,7 @@ spec:
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
         env:
           - name: DATA_SOURCE_URI
-            value: "localhost:5432/?sslmode=disable"
+            value: "localhost:5432/postgres?sslmode=disable"
           - name: DATA_SOURCE_USER
             value: "postgres"
           - name: DATA_SOURCE_PASS
