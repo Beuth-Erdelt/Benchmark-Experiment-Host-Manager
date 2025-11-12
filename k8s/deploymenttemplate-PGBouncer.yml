@@ -42,7 +42,7 @@ spec:
       nodeSelector:
       #  kubernetes.io/hostname: cl-worker19
       containers:
-      - name: dbms
+      - name: pool
         image: edoburu/pgbouncer
         # connect via 'psql -U postgres -p 5432 -h localhost pgbouncer'
         # SHOW STATS;
