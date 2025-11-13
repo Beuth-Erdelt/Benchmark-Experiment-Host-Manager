@@ -364,7 +364,6 @@ if __name__ == '__main__':
                 name_format = 'Citus-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 config = configurations.hammerdb(experiment=experiment, docker='Citus', configuration=config_name, dialect='Citus', alias='DBMS D', worker=num_worker)
-                config.monitoring_sut = False # should not be monitored since only dummy
                 config.set_storage(
                     storageConfiguration = 'citus'
                     )

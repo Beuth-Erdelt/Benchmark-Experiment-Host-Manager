@@ -443,9 +443,14 @@ if __name__ == '__main__':
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
                                 config.sut_has_pool = True                                                # in particular monitor pool component
                                 config.sut_parameters = {
-                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                       # max connections to PostgreSQL
-                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                           # min connections to PostgreSQL
-                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                          # max connections to PGBouncer
+                                    # do not split connections between pool pods:
+                                    'DEFAULT_POOL_SIZE': int(num_c_out),                       # max connections to PostgreSQL
+                                    'MIN_POOL_SIZE': int(num_c_out),                           # min connections to PostgreSQL
+                                    'MAX_CLIENT_CONN': int(num_c_in),                          # max connections to PGBouncer
+                                    # split connections between pool pods:
+                                    #'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),           # max connections to PostgreSQL
+                                    #'MIN_POOL_SIZE': int(num_c_out/num_c_pods),               # min connections to PostgreSQL
+                                    #'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),              # max connections to PGBouncer
                                 }
                                 config.set_resources(
                                     replicas_pooling = num_c_pods,
@@ -728,7 +733,20 @@ if __name__ == '__main__':
                     config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
                     config.statefulset_name = 'yb-tserver'              # name of the stateful set of DBMS pods
                     config.sut_container_name = ''                      # fix container name of SUT
-                    def get_worker_pods(self):
+                    stateful_set = "yb-tserver"
+                    config.deployment_infos['statefulset'] = {}
+                    config.deployment_infos['statefulset'][stateful_set] = {}
+                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
+                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
+                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
+                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
+                    stateful_set = "yb-master"
+                    config.deployment_infos['statefulset'][stateful_set] = {}
+                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
+                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
+                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
+                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
+                    def get_worker_pods(self, component='worker'):
                         """
                         Returns a list of all pod names of workers for the current SUT.
                         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -743,25 +761,24 @@ if __name__ == '__main__':
                         #print("****************", pods_worker)
                         return pods_worker
                     config.get_worker_pods = types.MethodType(get_worker_pods, config)
-                    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-                        """
-                        Generate a name for the monitoring component.
-                        This is used in a pattern for promql.
-                        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
-                        For YugabyteDB, the service of the SUT to be monitored is named like 'yb-tserver-'.
-
-                        :param app: app the component belongs to
-                        :param component: Component, for example sut or monitoring
-                        :param experiment: Unique identifier of the experiment
-                        :param configuration: Name of the dbms configuration
-                        """
-                        if component == 'sut':
-                            name = 'yb-tserver-'
-                        else:
-                            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-                        self.logger.debug("yugabytedb.create_monitoring({})".format(name))
-                        return name
-                    config.create_monitoring = types.MethodType(create_monitoring, config)
+                    #def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
+                    #    """
+                    #    Generate a name for the monitoring component.
+                    #    This is used in a pattern for promql.
+                    #    Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
+                    #    For YugabyteDB, the service of the SUT to be monitored is named like 'yb-tserver-'.
+                    #    :param app: app the component belongs to
+                    #    :param component: Component, for example sut or monitoring
+                    #    :param experiment: Unique identifier of the experiment
+                    #    :param configuration: Name of the dbms configuration
+                    #    """
+                    #    if component == 'sut':
+                    #        name = 'yb-tserver-'
+                    #    else:
+                    #        name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
+                    #    self.logger.debug("yugabytedb.create_monitoring({})".format(name))
+                    #    return name
+                    #config.create_monitoring = types.MethodType(create_monitoring, config)
                     def get_worker_endpoints(self):
                         """
                         Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
@@ -783,7 +800,7 @@ if __name__ == '__main__':
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
                     config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
-                    def set_metric_of_config(self, metric, host, gpuid):
+                    def set_metric_of_config(self, metric, host, gpuid, schema, database, component=''):
                         """
                         Returns a promql query.
                         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -798,7 +815,10 @@ if __name__ == '__main__':
                         """
                         metric = metric.replace(', container="dbms"', '')
                         metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
-                        return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                        #name_worker = self.get_worker_name(component=component)
+                        #return metric.format(host=host, gpuid=gpuid, configuration=name_worker, experiment="", schema=schema, database=database)
+                        #return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                        return metric.format(host=host, gpuid=gpuid, configuration=component, experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         #PARALLEL = str(loading_pods), # =1
@@ -935,7 +955,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
@@ -1024,6 +1044,9 @@ if __name__ == '__main__':
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
                     if skip_loading:
                         config.loading_deactivated = True
+                    config.set_storage(
+                        storageConfiguration = 'databaseservice'
+                        )
                     config.set_loading_parameters(
                         #PARALLEL = str(loading_pods), # =1
                         SF = SF,
@@ -1077,17 +1100,17 @@ if __name__ == '__main__':
                     config.add_benchmark_list(executor_list)
                     #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("Citus" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # CockroachDB
+                    # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'citus'
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_ddl_parameters(
                         num_worker_replicas = num_worker_replicas,
                         num_worker_shards = num_worker_shards,
@@ -1157,7 +1180,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

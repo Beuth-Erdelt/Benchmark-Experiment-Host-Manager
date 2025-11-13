@@ -578,7 +578,7 @@ if __name__ == '__main__':
                         #pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
                         pods_worker = cluster.get_statefulset_pods(self.statefulset_name)
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
-                        print("****************", pods_worker)
+                        #print("****************", pods_worker)
                         return pods_worker
                     config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     #def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
@@ -699,6 +699,8 @@ if __name__ == '__main__':
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'cockroachdb'
                         )
@@ -715,8 +717,6 @@ if __name__ == '__main__':
                         BEXHOMA_SHARDS = num_worker_shards,
                         BEXHOMA_WORKERS = num_worker
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -774,9 +774,11 @@ if __name__ == '__main__':
                     config.add_benchmark_list(executor_list)
                     cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # CockroachDB
+                    # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='TiDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'tidb'
                         )
@@ -796,8 +798,6 @@ if __name__ == '__main__':
                         BEXHOMA_SHARDS = num_worker_shards,
                         BEXHOMA_WORKERS = num_worker
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -863,11 +863,11 @@ if __name__ == '__main__':
                     name_format = 'DatabaseService-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'databaseservice'
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -1031,6 +1031,8 @@ if __name__ == '__main__':
                     # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'citus'
                         )
@@ -1047,8 +1049,6 @@ if __name__ == '__main__':
                         BEXHOMA_SHARDS = num_worker_shards,
                         BEXHOMA_WORKERS = num_worker
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
