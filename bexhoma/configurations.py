@@ -976,21 +976,39 @@ scrape_configs:
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_monitor_application, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
                             elif 'monitor' in self.dockertemplate and 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
+                                endpoints_cluster = [] # there cannot be a cluster-wide application monitoring
                                 # no blackbox mode, normal scraping target directly
-                                prometheus_config += """
+                                endpoints_worker = self.get_worker_endpoints()
+                                #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
+                                #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                                i = 0
+                                #for pod in pods_worker:
+                                for endpoint in endpoints_worker:
+                                    if endpoint in endpoints_cluster:
+                                        # we already monitor this endpoint
+                                        print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (already monitored by cluster)".format(configuration, endpoint))
+                                        continue
+                                    print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
+                                    #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                                    prometheus_config += """
+      - job_name: '{endpoint}'
+        scrape_interval: {prometheus_interval}
+        scrape_timeout: {prometheus_timeout}
+        static_configs:
+          - targets: ['{endpoint}:8080']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                                    i = i + 1
+                                not_used_discovery_does_not_workprometheus_config = ""
+                                not_used_discovery_does_not_workprometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     metrics_path: /_status/vars
     kubernetes_sd_configs:
-      - role: pod
+    - role: pod
     relabel_configs:
-      - source_labels: [__meta_kubernetes_pod_name]
-        action: keep
-        regex: bexhoma-worker-cockroachdb-ycsb-1-[0-9]+
-      - source_labels: [__meta_kubernetes_pod_container_port_number]
-        action: keep
-        regex: \"8080\"""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: keep
+      regex: bexhoma-worker-cockroachdb-ycsb-1-[0-9]+""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             else:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """
