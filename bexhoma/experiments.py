@@ -3846,7 +3846,7 @@ class ycsb(default):
         #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             print("\n### Monitoring")
-            print(self.workload['monitoring_components'])
+            #print(self.workload['monitoring_components'])
             #####################
             for component, title in self.workload['monitoring_components'].items():
                 df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
