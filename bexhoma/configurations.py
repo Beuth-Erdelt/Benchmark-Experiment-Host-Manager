@@ -2862,6 +2862,20 @@ scrape_configs:
                     # other components (not managed by bexhoma)
                     #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                if 'statefulset' in self.deployment_infos:
+                    for name, statefulset in self.deployment_infos['statefulset'].items():
+                        #print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                        metrics_type = f"metrics_{name}"
+                        #c['monitoring'][metrics_type] = {}
+                        #c['monitoring']['metrics_custom'][name] = {}
+                        for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                            # default components (managed by bexhoma)
+                            #c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                            #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            # other components (not managed by bexhoma)
+                            c['monitoring'][metrics_type][metricname] = metricdata.copy()
+                            c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database, component=name)
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
