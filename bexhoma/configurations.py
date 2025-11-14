@@ -2868,7 +2868,8 @@ scrape_configs:
                         metrics_type = f"metrics_{name}"
                         #c['monitoring'][metrics_type] = {}
                         #c['monitoring']['metrics_custom'][name] = {}
-                        for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                        #for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                        for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
                             # default components (managed by bexhoma)
                             #c['monitoring']['metrics'][metricname] = metricdata.copy()
                             #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
