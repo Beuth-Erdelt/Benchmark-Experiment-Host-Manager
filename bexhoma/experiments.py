@@ -3670,7 +3670,7 @@ class ycsb(default):
             ##########
             if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
                 for component, title in self.workload['monitoring_components'].items():
-                    print(component, title)
+                    #print(component, title)
                     list_monitoring_app = list()
                     df_monitoring_app = pd.DataFrame()
                     num_metrics_included = 0
@@ -3679,7 +3679,7 @@ class ycsb(default):
                         if num_metrics_included >= 5:
                             continue
                         if metric['type'] == 'application' and metric['active'] == True:
-                            df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')#component)
+                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
                             if not df.empty:
                                 list_monitoring_app
                                 if metric['metric'] == 'counter':
@@ -3699,7 +3699,7 @@ class ycsb(default):
                     #print(monitoring_applications)
                     # currently: only first component, only stream
                     # TODO: make dynamical
-                    break
+                    #break
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'
             if key in c['parameter']:
@@ -3812,9 +3812,13 @@ class ycsb(default):
                     print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
-        if not df_monitoring_app.empty:
-            print("\n#### Application Metrics")
-            print(df_monitoring_app)
+        #if not df_monitoring_app.empty:
+        if len(monitoring_applications) > 0:
+            print("\n### Application Metrics")
+            #print(monitoring_applications)#df_monitoring_app)
+            for title, metrics in monitoring_applications.items():
+                print("\n#### "+title)
+                print(metrics)
         print("\n### Tests")
         if test_loading:
             self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
