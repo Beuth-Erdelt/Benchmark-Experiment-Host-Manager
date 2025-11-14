@@ -859,7 +859,7 @@ class default():
         For finding dbms and monitor-application in particular
 
         """
-        print(f"Looking for {container} in {self.deployment_infos}")
+        #print(f"Looking for {container} in {self.deployment_infos}")
         for name, deployment in self.deployment_infos['deployment'].items():
             if 'containers' in deployment and container in deployment['containers']:
                 return name
@@ -889,8 +889,13 @@ class default():
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
         name_pool = self.create_monitoring(app, 'pool', experiment, configuration)
-        name_monitor_application_component = self.get_deployment_component("monitor-application")
-        print(f"Found {name_monitor_application_component}")
+        # find component with application monitoring
+        if 'monitor' in self.dockertemplate and 'component' in self.dockertemplate['monitor']:
+            name_monitor_application_component = self.dockertemplate['monitor']['component']
+        else:
+            name_monitor_application_component = 'sut'
+        #name_monitor_application_component = self.get_deployment_component("monitor-application")
+        #print(f"Found {name_monitor_application_component}")
         name_monitor_application = self.create_monitoring(app, name_monitor_application_component, experiment, configuration)
         name_service = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration) # self.experiment_name
         name_worker = self.get_worker_name()
