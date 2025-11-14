@@ -991,11 +991,12 @@ scrape_configs:
                                     print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
                                     #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                                     prometheus_config += """
-      - job_name: '{endpoint}'
-        scrape_interval: {prometheus_interval}
-        scrape_timeout: {prometheus_timeout}
-        static_configs:
-          - targets: ['{endpoint}:8080']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+  - job_name: 'monitor-app-{endpoint}'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_timeout}
+    metrics_path: /_status/vars
+    static_configs:
+      - targets: ['{endpoint}:8080']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                                     i = i + 1
                                 not_used_discovery_does_not_workprometheus_config = ""
                                 not_used_discovery_does_not_workprometheus_config += """
@@ -1027,7 +1028,7 @@ scrape_configs:
                             print("{:30s}: found monitoring endpoint (cAdvisor) for monitoring {} (added to Prometheus) of daemonset".format(configuration, endpoint))
                             #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                             prometheus_config += """
-  - job_name: '{endpoint}'
+  - job_name: 'monitor-gpu-{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
@@ -1048,7 +1049,7 @@ scrape_configs:
                                 print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
                                 #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                                 prometheus_config += """
-  - job_name: '{endpoint}'
+  - job_name: 'monitor-gpu-{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
