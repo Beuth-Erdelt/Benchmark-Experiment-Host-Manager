@@ -982,11 +982,15 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     metrics_path: /_status/vars
-    static_configs:
-      - targets:
-          - {master}:9500
-        labels:
-          app: cockroachdb-app""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: keep
+        regex: bexhoma-worker-cockroachdb-ycsb-1-[0-9]+
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: \"8080\"""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             else:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """
