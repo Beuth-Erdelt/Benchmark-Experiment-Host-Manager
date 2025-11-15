@@ -897,7 +897,7 @@ class default():
         #name_monitor_application_component = self.get_deployment_component("monitor-application")
         #print(f"Found {name_monitor_application_component}")
         name_monitor_application = self.create_monitoring(app, name_monitor_application_component, experiment, configuration)
-        name_service = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration) # self.experiment_name
+        name_service = self.generate_component_name(app=app, component='sut', experiment=self.get_experiment_name(), configuration=configuration) # self.experiment_name
         name_worker = self.get_worker_name()
         name_service_headless = name_worker# must be the same
         if self.experiment.cluster.monitor_cluster_active:
@@ -1195,7 +1195,7 @@ scrape_configs:
         context = self.experiment.cluster.context
         app = self.appname
         component = 'sut'
-        experiment = self.experiment_name # self.experiment.code
+        experiment = self.get_experiment_name() # self.experiment.code
         configuration = self.configuration
         name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
         ports = self.experiment.cluster.get_ports_of_service(app=app, component=component, experiment=experiment, configuration=configuration)
@@ -1283,13 +1283,13 @@ scrape_configs:
             storageConfiguration = configuration
         use_ramdisk = self.use_ramdisk()
         # configure names
-        if self.num_worker > 0:
-            # we assume here, a stateful set is used
-            # this means we do not want to have the experiment code as part of the names
-            # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = self.storage_label
-        else:
-            self.experiment_name = experiment
+        #if self.num_worker > 0:
+        #    # we assume here, a stateful set is used
+        #    # this means we do not want to have the experiment code as part of the names
+        #    # this would imply there cannot be experiment independent pvcs
+        #    self.experiment_name = self.storage_label
+        #else:
+        #    self.experiment_name = experiment
         def extract_component_labels(file_path):
             deployments = []
             statefulsets = []
@@ -1360,7 +1360,7 @@ scrape_configs:
                 print("{:30s}: loading is set to finished".format(configuration))
                 self.loading_active = False
                 self.monitor_loading = False
-        name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        name = self.generate_component_name(app=app, component=component, experiment=self.get_experiment_name(), configuration=configuration)
         # Deployment manifest template - a configured copy will be stored in result folder
         template = self.sut_template
         deployment_experiment = self.experiment.path+'/{name}.yml'.format(name=name)
@@ -1374,8 +1374,8 @@ scrape_configs:
             self.deployment_infos['deployment'] = {}
         for deployment in deploys:
             self.deployment_infos['deployment'][deployment] = {}
-            self.deployment_infos['deployment'][deployment]['name'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
-            self.deployment_infos['deployment'][deployment]['name_service'] = self.generate_component_name(app=app, component=deployment, experiment=self.experiment_name, configuration=configuration)
+            self.deployment_infos['deployment'][deployment]['name'] = self.generate_component_name(app=app, component=deployment, experiment=self.get_experiment_name(), configuration=configuration)
+            self.deployment_infos['deployment'][deployment]['name_service'] = self.generate_component_name(app=app, component=deployment, experiment=self.get_experiment_name(), configuration=configuration)
             self.deployment_infos['deployment'][deployment]['pods'] = []
             self.deployment_infos['deployment'][deployment]['containers'] = []
             if len(pvcs):
@@ -1407,11 +1407,11 @@ scrape_configs:
         name_worker = self.get_worker_name(component='worker')
         name_service_headless = name_worker# must be the same
         name_pvc = self.generate_component_name(app=app, component='storage', experiment=self.storage_label, configuration=storageConfiguration)
-        name_pool = self.generate_component_name(app=app, component='pool', experiment=self.experiment_name, configuration=configuration)
+        name_pool = self.generate_component_name(app=app, component='pool', experiment=self.get_experiment_name(), configuration=configuration)
         name_store = self.get_worker_name(component='store')
         self.logger.debug('configuration.start_sut(name={})'.format(name))
         # test, if SUT is already running
-        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+        deployments = self.experiment.cluster.get_deployments(app=app, component=component, experiment=self.get_experiment_name(), configuration=configuration)
         if len(deployments) > 0:
             # sut is already running
             return False
@@ -2224,9 +2224,9 @@ scrape_configs:
             self.stop_loading()
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
-            self.stop_sut(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+            self.stop_sut(app=app, component='worker', experiment=self.get_experiment_name(), configuration=configuration)
             self.stop_sut(app=app, component='store', experiment=experiment, configuration=configuration)
-            self.stop_sut(app=app, component='store', experiment=self.experiment_name, configuration=configuration)
+            self.stop_sut(app=app, component='store', experiment=self.get_experiment_name(), configuration=configuration)
             self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
@@ -2695,7 +2695,7 @@ scrape_configs:
         """
         if experiment is None:
             experiment = self.code
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.experiment_name, schema=schema, database=database)
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.get_experiment_name(), schema=schema, database=database)
         #return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment, schema=schema, database=database)
     def set_metric_of_config(self, metric, host, gpuid, schema, database, component=''):
         """
@@ -2732,8 +2732,9 @@ scrape_configs:
                 return metric.format(host=host, gpuid=gpuid, configuration=name_worker, experiment="", schema=schema, database=database)
             #return metric.format(host=host, gpuid=gpuid, configuration=name_worker.lower(), experiment="", schema=schema, database=database)
         else:
-            self.logger.debug(f"set_metric_of_config_default({metric}, {host}, {gpuid}, experiment={self.experiment_name}, schema={schema}, database={database})")
-            return self.set_metric_of_config_default(metric, host, gpuid, experiment=self.experiment_name, schema=schema, database=database)
+            experiment_name = self.get_experiment_name()
+            self.logger.debug(f"set_metric_of_config_default({metric}, {host}, {gpuid}, experiment={experiment_name}, schema={schema}, database={database})")
+            return self.set_metric_of_config_default(metric, host, gpuid, experiment=experiment_name, schema=schema, database=database)
     def get_connection_config(self, connection, alias='', dialect='', serverip='localhost', monitoring_host='localhost'):
         """
         Returns information about the sut's host disk space.
@@ -4110,6 +4111,20 @@ scrape_configs:
                 return result
                 #unpatched = yaml.safe_load(f)
                 #return unpatched
+    def get_experiment_name(self):
+        # test: experiment name is always the code
+        return self.code
+        # old approach: experiment name is code except for settings with stateful sets: storage label is name then
+        # configure names
+        if self.num_worker > 0:
+            # we assume here, a stateful set is used
+            # this means we do not want to have the experiment code as part of the names
+            # this would imply there cannot be experiment independent pvcs
+            #self.experiment_name = self.storage_label#storageConfiguration
+            return self.storage_label
+        else:
+            #self.experiment_name = self.code
+            return self.code
     def get_service_sut(self, configuration):
         """
         Returns the same of the service where to connect to the SUT.
@@ -4124,7 +4139,8 @@ scrape_configs:
         if len(self.sut_service_name) > 0:
             servicename = self.sut_service_name
         else:
-            servicename = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
+            servicename = self.generate_component_name(app=app, component='sut', experiment=self.get_experiment_name(), configuration=configuration)
+            #servicename = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
         return servicename
     def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
         """
@@ -4184,7 +4200,7 @@ scrape_configs:
             env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(num_pods)
         env_default['PARALLEL'] = str(parallelism)  # deprecated
         env_default['NUM_PODS'] = str(num_pods)     # deprecated
-        name = self.generate_component_name(app=app, component='sut', experiment=self.experiment_name, configuration=configuration)
+        name = self.generate_component_name(app=app, component='sut', experiment=self.get_experiment_name(), configuration=configuration)
         name_worker = self.get_worker_name()
         name_service_headless = name_worker# must be the same
         # generate list of worker names
@@ -4472,20 +4488,12 @@ scrape_configs:
             storageConfiguration = self.storage['storageConfiguration']
         else:
             storageConfiguration = self.configuration
-        # configure names
-        if self.num_worker > 0:
-            # we assume here, a stateful set is used
-            # this means we do not want to have the experiment code as part of the names
-            # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = self.storage_label#storageConfiguration
-        else:
-            self.experiment_name = self.code
         #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
         #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
         # test shorter names
         #name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
         #this works, but is long for Redis:
-        name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.experiment_name, configuration=storageConfiguration)
+        name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.get_experiment_name(), configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self, component='worker'):
         """
@@ -4495,18 +4503,10 @@ scrape_configs:
 
         :return: list of endpoints
         """
-        if self.storage['storageConfiguration']:
-            storageConfiguration = self.storage['storageConfiguration']
-        else:
-            storageConfiguration = self.configuration
-        # configure names
-        if self.num_worker > 0:
-            # we assume here, a stateful set is used
-            # this means we do not want to have the experiment code as part of the names
-            # this would imply there cannot be experiment independent pvcs
-            self.experiment_name = self.storage_label#storageConfiguration
-        else:
-            self.experiment_name = self.code
+        #if self.storage['storageConfiguration']:
+        #    storageConfiguration = self.storage['storageConfiguration']
+        #else:
+        #    storageConfiguration = self.configuration
         #pods_worker = self.experiment.cluster.get_pods(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
         pods_worker = self.experiment.cluster.get_pods(app=self.appname, component=component, experiment=self.code, configuration=self.configuration)
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)

@@ -196,6 +196,7 @@ nohup python ycsb.py -tr \
   -sfo 1 \
   -nw 3 \
   -nwr 3 \
+  -nws 48 \
   --workload a \
   -dbms Citus \
   -tb 16384 \
