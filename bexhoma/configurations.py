@@ -2695,7 +2695,8 @@ scrape_configs:
         """
         if experiment is None:
             experiment = self.code
-        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment, schema=schema, database=database)
+        return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.experiment_name, schema=schema, database=database)
+        #return metric.format(host=host, gpuid=gpuid, configuration=self.configuration.lower(), experiment=experiment, schema=schema, database=database)
     def set_metric_of_config(self, metric, host, gpuid, schema, database, component=''):
         """
         Returns a promql query.
