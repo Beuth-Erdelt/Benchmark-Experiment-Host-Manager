@@ -2539,7 +2539,10 @@ scrape_configs:
             command = "du --block-size=1M -Ls "+datadir+" | awk 'END{print \\$1}'"
             cmd['disk_space_used'] = command
             stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['disk_space_used'])
-            return int(stdout.replace('\n',''))
+            if len(stdout) > 0:
+                return int(stdout.replace('\n',''))
+            else:
+                return 0
         except Exception as e:
             # Windows
             command = "du --block-size=1M -Ls "+datadir+" | awk 'END{print $1}'"
