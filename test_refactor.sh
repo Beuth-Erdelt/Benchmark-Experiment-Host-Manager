@@ -89,7 +89,7 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/refactor_postgresql_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_postgresql_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -120,7 +120,7 @@ nohup python ycsb.py -tr \
   -npi 64 \
   -npo 64 \
   -npp 2 \
-  run </dev/null &>$LOG_DIR/refactor_pgbouncer_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_pgbouncer_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -150,7 +150,7 @@ nohup python ycsb.py -tr \
   -nc 1 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/refactor_tidb_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_tidb_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -178,7 +178,7 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/refactor_cockroachdb_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_cockroachdb_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -195,7 +195,7 @@ nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
-  -nwr 3 \
+  -nwr 1 \
   -nws 48 \
   --workload a \
   -dbms Citus \
@@ -208,9 +208,9 @@ nohup python ycsb.py -tr \
   -nbf 1 \
   -ne 1 \
   -nc 2 \
-  -m -mc -ma \
+  -m -mc \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/refactor_citus_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_citus_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -236,7 +236,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/refactor_redis_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_redis_1.log &
 
 
 wait_process "ycsb"
@@ -275,9 +275,9 @@ nohup python ycsb.py -tr \
   -nbf 1 \
   -ne 1 \
   -nc 2 \
-  -m -mc -ma \
+  -m -mc \
   -rst shared -rss 30Gi -rsr \
-  run </dev/null &>$LOG_DIR/refactor_yugabytedb_1.log &
+  run </dev/null &>$LOG_DIR/refactor_ycsb_yugabytedb_1.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 900
@@ -289,6 +289,106 @@ wait_process "ycsb"
 # remove YugabyteDB installation
 remove_yugabytedb
 sleep 30
+
+
+
+
+
+
+
+
+
+
+################################################
+################## Benchbase ###################
+################################################
+
+
+
+
+
+nohub python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_redis_1.log &
+
+
+wait_process "benchbase"
+
+
+nohub python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms CockroachDB \
+  -nw 3 \
+  -nwr 1 \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_cockroachdb_1.log &
+
+
+wait_process "benchbase"
+
+
+nohub python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms Citus \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_citus_1.log &
+
+
+wait_process "benchbase"
+
+
+nohub python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PGBouncer \
+  -npi 64 \
+  -npo 64 \
+  -npp 2 \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_pgbouncer_1.log &
+
+
+wait_process "benchbase"
+
+
+
+
+
+
+
+
 
 
 
