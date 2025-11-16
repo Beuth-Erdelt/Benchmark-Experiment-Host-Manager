@@ -4178,35 +4178,45 @@ class benchbase(default):
         pretty_connections = json.dumps(connections, indent=2)
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
-        list_monitoring_app = list()
-        df_monitoring_app = pd.DataFrame()
+        monitoring_applications = dict()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
             #print(c['monitoring']['metrics'])
             ##########
-            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
-                num_metrics_included = 0
-                for metricname, metric in c['monitoring']['metrics'].items():
-                    #print(metric['type'])
-                    if num_metrics_included >= 5:
-                        continue
-                    if metric['type'] == 'application' and metric['active'] == True:
-                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
-                        if metric['metric'] == 'counter':
-                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-                        else:
-                            df = df.max().sort_index()
-                        df_cleaned = pd.DataFrame(df)
-                        df_cleaned.columns = [metric['title']]
-                        if not df_cleaned.empty:
-                            list_monitoring_app.append(df_cleaned.copy())
-                            num_metrics_included = num_metrics_included + 1
-                if len(list_monitoring_app) > 0:
-                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
-                #print(df_monitoring_app)
+            if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
+                for component, title in self.workload['monitoring_components'].items():
+                    #print(component, title)
+                    list_monitoring_app = list()
+                    df_monitoring_app = pd.DataFrame()
+                    num_metrics_included = 0
+                    for metricname, metric in c['monitoring']['metrics'].items():
+                        #print(metric['type'])
+                        if num_metrics_included >= 5:
+                            continue
+                        if metric['type'] == 'application' and metric['active'] == True:
+                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
+                            if not df.empty:
+                                list_monitoring_app
+                                if metric['metric'] == 'counter':
+                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                                else:
+                                    df = df.max().sort_index()
+                                df_cleaned = pd.DataFrame(df)
+                                df_cleaned.columns = [metric['title']]
+                                if not df_cleaned.empty:
+                                    list_monitoring_app.append(df_cleaned.copy())
+                                    num_metrics_included = num_metrics_included + 1
+                    if len(list_monitoring_app) > 0:
+                        df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                        df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                        monitoring_applications[title] = df_monitoring_app
+                    #print(df_monitoring_app)
+                    #print(monitoring_applications)
+                    # currently: only first component, only stream
+                    # TODO: make dynamical
+                    #break
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             key = 'client'
             if key in c['parameter']:
@@ -4344,9 +4354,12 @@ class benchbase(default):
             #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         test_results_monitoring = self.show_summary_monitoring()
-        if not df_monitoring_app.empty:
+        if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            print(df_monitoring_app)
+            #print(monitoring_applications)#df_monitoring_app)
+            for title, metrics in monitoring_applications.items():
+                print("\n#### "+title)
+                print(metrics)
         print("\n### Tests")
         self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:
@@ -4357,6 +4370,28 @@ class benchbase(default):
             else:
                 print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
+        test_results = ""
+        #resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        #code = self.code
+        #evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            print("\n### Monitoring")
+            #print(self.workload['monitoring_components'])
+            #####################
+            for component, title in self.workload['monitoring_components'].items():
+                df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
+                ##########
+                if len(df_monitoring) > 0:
+                    print(f"\n### {title}")
+                    df = pd.concat(df_monitoring, axis=1).round(2)
+                    df = df.reindex(index=evaluators.natural_sort(df.index))
+                    print(df)
+                    if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                        test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                    else:
+                        test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
+        return test_results.rstrip('\n')
+    def __OLD_show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
