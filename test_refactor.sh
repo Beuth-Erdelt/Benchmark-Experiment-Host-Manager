@@ -307,7 +307,7 @@ sleep 30
 
 
 
-nohub python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -318,13 +318,13 @@ nohub python benchbase.py -ms 1 -tr \
   -nc 2 \
   -rst shared -rss 30Gi -rsr \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/refactor_ycsb_redis_1.log &
+  run </dev/null &>$LOG_DIR/refactor_benchbase_postgresql_1.log &
 
 
 wait_process "benchbase"
 
 
-nohub python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms CockroachDB \
@@ -343,7 +343,7 @@ nohub python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-nohub python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms Citus \
@@ -363,7 +363,7 @@ nohub python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-nohub python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PGBouncer \
@@ -381,6 +381,30 @@ nohub python benchbase.py -ms 1 -tr \
 
 
 wait_process "benchbase"
+
+
+# install YugabyteDB
+install_yugabytedb
+sleep 30
+
+
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms YugabyteDB \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_yugabytedb_1.log &
+
+
+# remove YugabyteDB installation
+remove_yugabytedb
+sleep 30
 
 
 
