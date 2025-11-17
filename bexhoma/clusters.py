@@ -656,7 +656,7 @@ class testbed():
                 print("Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: %s\n" % e)
                 self.cluster_access()
                 self.wait(2)
-                return self.does_pvc_exists(name=name)
+                return self.does_pvc_exist(name=name)
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
         Return all labels of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
