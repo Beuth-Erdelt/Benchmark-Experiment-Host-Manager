@@ -462,7 +462,7 @@ if __name__ == '__main__':
                                     #PARALLEL = str(loading_pods), # =1
                                     SF = SF,
                                     BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                    BENCHBASE_PROFILE = 'pgbouncer',
+                                    BENCHBASE_PROFILE = 'postgres',
                                     BEXHOMA_DATABASE = 'postgres',
                                     #BENCHBASE_TARGET = int(target),
                                     BENCHBASE_TERMINALS = loading_threads_per_pod,
@@ -496,7 +496,7 @@ if __name__ == '__main__':
                                                     #PARALLEL = str(benchmarking_pods_scaled),
                                                     SF = SF,
                                                     BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
-                                                    BENCHBASE_PROFILE = 'pgbouncer',
+                                                    BENCHBASE_PROFILE = 'postgres',
                                                     BEXHOMA_DATABASE = 'postgres',
                                                     BENCHBASE_TARGET = benchmarking_target_per_pod,
                                                     BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
