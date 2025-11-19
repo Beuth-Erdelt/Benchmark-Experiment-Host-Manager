@@ -255,15 +255,17 @@ spec:
         ]
         env:
         - name: PGPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: citus-secrets
-              key: password
+          value: postgres
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: citus-secrets
+          #    key: password
         - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: citus-secrets
-              key: password
+          value: postgres
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: citus-secrets
+          #    key: password
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         volumeMounts:
