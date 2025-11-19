@@ -4496,7 +4496,8 @@ scrape_configs:
         # test shorter names
         #name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
         #this works, but is long for Redis:
-        name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.get_experiment_name(), configuration=storageConfiguration)
+        #name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.get_experiment_name(), configuration=storageConfiguration)
+        name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.storage_label, configuration=storageConfiguration)
         return name_worker
     def get_worker_pods(self, component='worker'):
         """
