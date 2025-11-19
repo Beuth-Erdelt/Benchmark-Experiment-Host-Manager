@@ -272,6 +272,7 @@ spec:
     metadata:
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
+      restartPolicy: OnFailure
       containers:
       - name: cluster-init
         image: cockroachdb/cockroach:v24.2.4
@@ -284,16 +285,21 @@ spec:
           value: cockroachdb-0.cockroachdb
         command:
           - "/bin/bash"
-          - "-ecx"
-          # The use of qualified `hostname -f` is crucial:
-          # Other nodes aren't able to look up the unqualified hostname.
-          - exec
-            /cockroach/cockroach
-            init
-            --insecure
-            --host=$(expr $BEXHOMA_WORKER_FIRST)
-      restartPolicy: OnFailure
-  ttlSecondsAfterFinished: 300  # Deletes the job and pods 30 seconds after completion
+          - "-ec"
+          - |
+            echo "Starting CockroachDB safe init job..."
+
+            HOST="${BEXHOMA_WORKER_FIRST}"
+
+            echo "Checking cluster status on $HOST ..."
+            if cockroach node status --insecure --host="$HOST" >/dev/null 2>&1; then
+              echo "Cluster already initialized. Nothing to do."
+            else
+              echo "Cluster NOT initialized. Running init..."
+              cockroach init --insecure --host="$HOST"
+              echo "Cluster init completed."
+            fi
+  ttlSecondsAfterFinished: 300
 ---
 apiVersion: apps/v1
 kind: Deployment
