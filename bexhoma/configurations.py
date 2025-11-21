@@ -2622,7 +2622,8 @@ scrape_configs:
                 for component in list_of_worker_components:
                     for i, pod in enumerate(self.deployment_infos['deployment'][component]['pods']):
                         pvc = self.deployment_infos['deployment'][component]['pvc']
-                        print(f"Get size via pod {pod} and write to pvc {pvc}")
+                        #print(f"Get size via pod {pod} and write to pvc {pvc}")
+                        print("{:30s}: get size via pod {} and write to pvc {}".format(self.configuration, pod, pvc))
                         size, used = self.get_host_volume(pod=pod)
                         # write infos to SUT's PVC (if exists)
                         fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(pvc, size, used)
@@ -2637,7 +2638,8 @@ scrape_configs:
                         if not 'pvc' in self.deployment_infos['statefulset'][component]:
                             continue
                         pvc = self.deployment_infos['statefulset'][component]['pvc'][i]
-                        print(f"Get size via pod {pod} and write to pvc {pvc}")
+                        #print(f"Get size via pod {pod} and write to pvc {pvc}")
+                        print("{:30s}: get size via pod {} and write to pvc {}".format(self.configuration, pod, pvc))
                         size, used = self.get_host_volume(pod=pod)
                         # write infos to SUT's PVC (if exists)
                         fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(pvc, size, used)
@@ -3564,7 +3566,7 @@ scrape_configs:
                     print("{:30s}: worker {}.{} attached".format(self.configuration, pod, name_worker))
                     self.logger.debug('Worker attached: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                     stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
-                    print(stdin, stdout, stderr)
+                    #print(stdin, stdout, stderr)
                     resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
                     #name_worker_attach = self.generate_component_name(app=self.appname, component='worker', experiment='attach', configuration=self.configuration)
                     filename_log = "{path}/{code}/{pod}.attach.{number}.log".format(path=resultfolder, code=self.code, pod=pod, number=self.num_experiment_to_apply_done+1)

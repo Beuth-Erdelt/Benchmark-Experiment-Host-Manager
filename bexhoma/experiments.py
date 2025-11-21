@@ -3569,7 +3569,7 @@ class ycsb(default):
                     self.cluster.logger.debug(pod_dashboard+status)
             """
         if self.monitoring_active:
-            print(self.workload['monitoring_components'])
+            #print(self.workload['monitoring_components'])
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
             stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
