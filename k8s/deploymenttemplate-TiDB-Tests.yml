@@ -57,9 +57,63 @@ spec:
     metadata:
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
+      initContainers:
+        - name: init-pd-config
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /etc/pd
+              if [ -f /var/lib/pd/member/snap/db ]; then
+              echo 'initial-cluster-state = "existing"'
+              echo 'initial-cluster-state = "existing"' > /etc/pd/pd.toml
+              else
+              echo 'initial-cluster-state = "new"'
+              echo 'initial-cluster-state = "new"' > /etc/pd/pd.toml
+              fi
+          #    name = "$(POD_NAME)"
+          #    data-dir = "/var/lib/pd"
+          #    #client-urls = "http://0.0.0.0:2379"
+          #    #peer-urls = "http://0.0.0.0:2380"
+          #    #advertise-client-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379"
+          #    #advertise-peer-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380"
+          volumeMounts:
+            #- name: bxw
+            #  mountPath: /var/lib/pd
+            #- name: pd-config
+            #  mountPath: /etc/pd
       containers:
       - name: dbms
-        image: pingcap/pd:v7.1.0
+        image: pingcap/pd:v8.5.3
+        #command:
+        #  - /bin/sh
+        #  - -c
+        #  - |
+        #    set -ex
+        #    DATA_DIR="/var/lib/pd/member"
+        #    # If PD data already exists, we must rejoin the cluster
+        #    if [ -d "$DATA_DIR" ] && [ "$(ls -A $DATA_DIR)" ]; then
+        #      echo "Reusing existing PD data, joining cluster..."
+        #      exec /pd-server \
+        #        --name=pd-$(POD_NAME) \
+        #        --data-dir=/var/lib/pd \
+        #        --client-urls=http://0.0.0.0:2379 \
+        #        --peer-urls=http://0.0.0.0:2380 \
+        #        --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379 \
+        #        --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380 \
+        #        --join=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
+        #    else
+        #      echo "No existing PD data, bootstrapping new cluster..."
+        #      exec /pd-server \
+        #        --name=pd-$(POD_NAME) \
+        #        --data-dir=/var/lib/pd \
+        #        --client-urls=http://0.0.0.0:2379 \
+        #        --peer-urls=http://0.0.0.0:2380 \
+        #        --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379 \
+        #        --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380 \
+        #        --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
+        #    fi
         args:
           # Use HOSTNAME to derive pod identity. Initial cluster must list all peers.
           - --name=$(POD_NAME)
@@ -69,29 +123,48 @@ spec:
           - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
           - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
           - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
-          #- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+          #- --initial-cluster-state=$(CLUSTER_STATE)
+          #- --config=/etc/pd/pd.toml
+          ###- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
           - name: POD_NAME
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          #- name: CLUSTER_STATE
+          #  valueFrom:
+          #    fieldRef:
+          #      fieldPath: metadata.annotations['cluster-state']
         ports:
           - containerPort: 2379
             name: client
           - containerPort: 2380
             name: peer
-        #volumeMounts:
-        #  - name: bxw
-        #    mountPath: /var/lib/pd
+        #readinessProbe:
+        #  httpGet:
+        #    path: /pd/health
+        #    port: 2379
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 5
+        volumeMounts:
+          - name: bxw
+            mountPath: /var/lib/pd
+          #- name: pd-config
+          #  mountPath: /etc/pd
+      #volumes:
+      #- name: pd-config
+      #  emptyDir: {}
   volumeClaimTemplates:
-    - metadata:
-        name: bxw
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 10Gi
-        # storageClassName: standard  # optional: anpassen falls nötig
+  - metadata:
+      name: bxw
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: shared
 ---
 # TiKV StatefulSet (3 replicas)
 apiVersion: apps/v1
@@ -109,9 +182,26 @@ spec:
     metadata:
       labels: {app: bexhoma, component: store, configuration: default, experiment: default}
     spec:
+      terminationGracePeriodSeconds: 60
+      #initContainers:
+      #- name: wait-for-pd
+      #  image: busybox
+      #  command:
+      #    - sh
+      #    - -c
+      #    - |
+      #      until nc -z $(BEXHOMA_WORKER_FIRST) 2379; do
+      #        echo "waiting for PD..."
+      #        sleep 2
+      #      done
+      #  env:
+      #    - name: POD_NAME
+      #      valueFrom:
+      #        fieldRef:
+      #          fieldPath: metadata.name
       containers:
       - name: dbms
-        image: pingcap/tikv:v7.1.0
+        image: pingcap/tikv:v8.5.3
         args:
           - --addr=0.0.0.0:20160
           - --advertise-addr=$(POD_NAME).$(BEXHOMA_STORE_SERVICE):20160
@@ -122,6 +212,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "pd-ctl -u http://127.0.0.1:2379 leader resign; sleep 10"]
         resources:
           limits: {cpu: 16, memory: 64Gi}
           requests: {cpu: 16, memory: 64Gi}
@@ -142,19 +236,6 @@ spec:
         requests:
           storage: 100Gi
       storageClassName: shared
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-storage
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  storageClassName: shared
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -186,7 +267,7 @@ spec:
             yum install -y mysql;
             echo "Starting TiDB..." && \
             /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)
-        image: pingcap/tidb:v7.1.0
+        image: pingcap/tidb:v8.5.3
         #args:
         #  - /tidb-server
         #  - --store=tikv
@@ -207,5 +288,5 @@ spec:
       volumes:
       - name: benchmark-data-volume
         persistentVolumeClaim: {claimName: bexhoma-data}
-      - name: benchmark-storage-volume
-        persistentVolumeClaim: {claimName: bexhoma-storage}
+      #- name: benchmark-storage-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-storage}
