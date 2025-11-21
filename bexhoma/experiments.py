@@ -3726,11 +3726,24 @@ class ycsb(default):
                     for info in infos:
                         print(info)
             if 'worker' in c and len(c['worker']) > 0:
-                for i, worker in enumerate(c['worker']):
-                    print("    worker {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                    for info in infos:
-                        print(info)
+                for worker_type in c['worker'].keys():
+                    for i, worker in enumerate(c['worker'][worker_type]):
+                        print("    {} {}".format(worker_type, i))
+                        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
+            #if 'worker' in c and len(c['worker']) > 0:
+            #    for i, worker in enumerate(c['worker']):
+            #        print("    worker {}".format(i))
+            #        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            #        for info in infos:
+            #            print(info)
+            #if 'store' in c and len(c['store']) > 0:
+            #    for i, worker in enumerate(c['store']):
+            #        print("    store {}".format(i))
+            #        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            #        for info in infos:
+            #            print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
                 for i, parameters in c['parameter']['connection_parameter'].items():
                     if i == "eval_parameters":

@@ -2777,14 +2777,27 @@ scrape_configs:
         pod_sut = self.pod_sut
         c['hostsystem'] = self.get_host_all()
         # get worker information
-        c['worker'] = []
-        pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-        for pod in pods:
-            self.pod_sut = pod
-            print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))
-            worker_infos = self.get_host_all()
-            worker_infos['args'] = self.worker_startup_args
-            c['worker'].append(worker_infos)
+        c['worker'] = {}
+        components = list(self.deployment_infos['statefulset'].keys())
+        #component = 'worker'
+        for component in components:
+            c['worker'][component] = []
+            #configuration = self.configuration
+            #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
+            pods_worker = self.get_worker_pods(component=component)#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+            for pod in pods_worker:
+                self.pod_sut = pod
+                print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))
+                worker_infos = self.get_host_all()
+                worker_infos['args'] = self.worker_startup_args
+                c['worker'][component].append(worker_infos)
+        #pods = self.get_worker_pods()#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+        #for pod in pods:
+        #    self.pod_sut = pod
+        #    print("{:30s}: distributed system - get host info for worker {}".format(self.configuration, pod))
+        #    worker_infos = self.get_host_all()
+        #    worker_infos['args'] = self.worker_startup_args
+        #    c['worker'].append(worker_infos)
         c['sut'] = []
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
         if len(pods) > 1:
