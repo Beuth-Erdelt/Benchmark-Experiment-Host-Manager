@@ -123,6 +123,7 @@ spec:
           - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
           - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
           - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
+          #- --initial-cluster-state=$(CLUSTER_STATE)
           #- --config=/etc/pd/pd.toml
           ###- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
         env:
@@ -130,6 +131,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          #- name: CLUSTER_STATE
+          #  valueFrom:
+          #    fieldRef:
+          #      fieldPath: metadata.annotations['cluster-state']
         ports:
           - containerPort: 2379
             name: client
