@@ -66,8 +66,10 @@ spec:
             - |
               mkdir -p /etc/pd
               if [ -f /var/lib/pd/member/snap/db ]; then
+              echo 'initial-cluster-state = "existing"'
               echo 'initial-cluster-state = "existing"' > /etc/pd/pd.toml
               else
+              echo 'initial-cluster-state = "new"'
               echo 'initial-cluster-state = "new"' > /etc/pd/pd.toml
               fi
           #    name = "$(POD_NAME)"
@@ -77,10 +79,10 @@ spec:
           #    #advertise-client-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379"
           #    #advertise-peer-urls = "http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380"
           volumeMounts:
-            - name: bxw
-              mountPath: /var/lib/pd
-            - name: pd-config
-              mountPath: /etc/pd
+            #- name: bxw
+            #  mountPath: /var/lib/pd
+            #- name: pd-config
+            #  mountPath: /etc/pd
       containers:
       - name: dbms
         image: pingcap/pd:v8.5.3
@@ -133,20 +135,20 @@ spec:
             name: client
           - containerPort: 2380
             name: peer
-        readinessProbe:
-          httpGet:
-            path: /pd/health
-            port: 2379
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        #readinessProbe:
+        #  httpGet:
+        #    path: /pd/health
+        #    port: 2379
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 5
         volumeMounts:
           - name: bxw
             mountPath: /var/lib/pd
-          - name: pd-config
-            mountPath: /etc/pd
-      volumes:
-      - name: pd-config
-        emptyDir: {}
+          #- name: pd-config
+          #  mountPath: /etc/pd
+      #volumes:
+      #- name: pd-config
+      #  emptyDir: {}
   volumeClaimTemplates:
   - metadata:
       name: bxw
@@ -176,22 +178,22 @@ spec:
       labels: {app: bexhoma, component: store, configuration: default, experiment: default}
     spec:
       terminationGracePeriodSeconds: 60
-      initContainers:
-      - name: wait-for-pd
-        image: busybox
-        command:
-          - sh
-          - -c
-          - |
-            until nc -z $(BEXHOMA_WORKER_FIRST) 2379; do
-              echo "waiting for PD..."
-              sleep 2
-            done
-        env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
+      #initContainers:
+      #- name: wait-for-pd
+      #  image: busybox
+      #  command:
+      #    - sh
+      #    - -c
+      #    - |
+      #      until nc -z $(BEXHOMA_WORKER_FIRST) 2379; do
+      #        echo "waiting for PD..."
+      #        sleep 2
+      #      done
+      #  env:
+      #    - name: POD_NAME
+      #      valueFrom:
+      #        fieldRef:
+      #          fieldPath: metadata.name
       containers:
       - name: dbms
         image: pingcap/tikv:v8.5.3
