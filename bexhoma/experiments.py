@@ -140,6 +140,7 @@ class default():
         self.querymanagement = {}                                       # parameters for query.config
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
+        self.workload['monitoring_components'] = {}                     # dict for infos about which components are monitored
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
         self.monitor_app_active = True
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
