@@ -1397,7 +1397,7 @@ scrape_configs:
                     worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=worker_name, worker_number=worker)
                     list_of_workers_pvcs.append(worker_full_name)
                 self.deployment_infos['statefulset'][stateful_set]['pvc'] = list_of_workers_pvcs
-        print(self.deployment_infos)
+        #print(self.deployment_infos)
         # get labels from existing (i.e., loaded pvc)
         labels_on_existing_pvc = get_labels_from_loaded_pvc()
         if use_storage and not use_ramdisk:
@@ -1559,9 +1559,9 @@ scrape_configs:
             if dep['kind'] == 'StatefulSet':
                 if dep['metadata']['labels']['component'] in self.deployment_infos['statefulset']:
                     statefulset = self.deployment_infos['statefulset'][dep['metadata']['labels']['component']]
-                    print(f"Stateful set found: {statefulset}")
+                    #print(f"Stateful set found: {statefulset}")
                 else:
-                    print(f"Stateful set not found: {dep['metadata']['labels']['component']}")
+                    #print(f"Stateful set not found: {dep['metadata']['labels']['component']}")
                     continue
                 #statefulset_type = ""
                 if self.num_worker == 0:
@@ -1786,7 +1786,7 @@ scrape_configs:
             if dep['kind'] == 'Service':
                 if dep['metadata']['labels']['component'] in self.deployment_infos['statefulset']:
                     statefulset = self.deployment_infos['statefulset'][dep['metadata']['labels']['component']]
-                    print(f"Stateful set service found: {statefulset}")
+                    #print(f"Stateful set service found: {statefulset}")
                     data = statefulset
                     if self.num_worker == 0:
                         # no stateful set service without worker
@@ -1795,10 +1795,10 @@ scrape_configs:
                 else:
                     if dep['metadata']['labels']['component'] in self.deployment_infos['deployment']:
                         deployment = self.deployment_infos['deployment'][dep['metadata']['labels']['component']]
-                        print(f"Deployment service found: {deployment}")
+                        #print(f"Deployment service found: {deployment}")
                         data = deployment
                     else:
-                        print(f"Service not found: {dep['metadata']['labels']['component']}")
+                        #print(f"Service not found: {dep['metadata']['labels']['component']}")
                         continue
                 dep['metadata']['name'] = data['name_service']
                 dep['metadata']['labels']['app'] = app
@@ -1909,9 +1909,9 @@ scrape_configs:
             if dep['kind'] == 'Deployment':
                 if dep['metadata']['labels']['component'] in self.deployment_infos['deployment']:
                     deployment = self.deployment_infos['deployment'][dep['metadata']['labels']['component']]
-                    print(f"Deployment found: {deployment}")
+                    #print(f"Deployment found: {deployment}")
                 else:
-                    print(f"Deployment not found: {dep['metadata']['labels']['component']}")
+                    #print(f"Deployment not found: {dep['metadata']['labels']['component']}")
                     continue
                 #if dep['metadata']['name'] == 'bexhoma-pool':
                 #    dep['metadata']['name'] = name_pool
@@ -2170,7 +2170,7 @@ scrape_configs:
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
-        print(self.deployment_infos)
+        #print(self.deployment_infos)
         return True
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         """
