@@ -2273,12 +2273,19 @@ class default():
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
-            if 'worker' in c and len(c['worker']) > 0:
-                for i, worker in enumerate(c['worker']):
-                    print("    worker {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            if 'sut' in c and len(c['sut']) > 0:
+                for i, sut in enumerate(c['sut']):
+                    print("    sut {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
                         print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for worker_type in c['worker'].keys():
+                    for i, worker in enumerate(c['worker'][worker_type]):
+                        print("    {} {}".format(worker_type, i))
+                        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
                 for i, parameters in c['parameter']['connection_parameter'].items():
                     if i == "eval_parameters":
@@ -3126,12 +3133,19 @@ class tpcc(default):
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
-            if 'worker' in c and len(c['worker']) > 0:
-                for i, worker in enumerate(c['worker']):
-                    print("    worker {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            if 'sut' in c and len(c['sut']) > 0:
+                for i, sut in enumerate(c['sut']):
+                    print("    sut {}".format(i))
+                    infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
                         print(info)
+            if 'worker' in c and len(c['worker']) > 0:
+                for worker_type in c['worker'].keys():
+                    for i, worker in enumerate(c['worker'][worker_type]):
+                        print("    {} {}".format(worker_type, i))
+                        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
                 for i, parameters in c['parameter']['connection_parameter'].items():
                     if i == "eval_parameters":
@@ -3245,6 +3259,28 @@ class tpcc(default):
             else:
                 print("TEST failed: Workflow not as planned")
     def show_summary_monitoring(self):
+        test_results = ""
+        #resultfolder = self.cluster.config['benchmarker']['resultfolder']
+        #code = self.code
+        #evaluation = evaluators.ycsb(code=code, path=resultfolder)
+        if (self.monitoring_active or self.cluster.monitor_cluster_active):
+            print("\n### Monitoring")
+            #print(self.workload['monitoring_components'])
+            #####################
+            for component, title in self.workload['monitoring_components'].items():
+                df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
+                ##########
+                if len(df_monitoring) > 0:
+                    print(f"\n### {title}")
+                    df = pd.concat(df_monitoring, axis=1).round(2)
+                    df = df.reindex(index=evaluators.natural_sort(df.index))
+                    print(df)
+                    if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                        test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                    else:
+                        test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
+        return test_results.rstrip('\n')
+    def OLD_show_summary_monitoring(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
@@ -4260,11 +4296,12 @@ class benchbase(default):
                     for info in infos:
                         print(info)
             if 'worker' in c and len(c['worker']) > 0:
-                for i, worker in enumerate(c['worker']):
-                    print("    worker {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                    for info in infos:
-                        print(info)
+                for worker_type in c['worker'].keys():
+                    for i, worker in enumerate(c['worker'][worker_type]):
+                        print("    {} {}".format(worker_type, i))
+                        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        for info in infos:
+                            print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
                 for i, parameters in c['parameter']['connection_parameter'].items():
                     if i == "eval_parameters":
