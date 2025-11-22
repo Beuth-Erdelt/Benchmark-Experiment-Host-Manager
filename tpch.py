@@ -442,6 +442,8 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'Citus-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='Citus', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                if skip_loading:
+                    config.loading_deactivated = True
                 if init_columns:
                     config.set_experiment(script='Schema-Columnar')
                     config.set_experiment(indexing='Index_and_Statistics')
@@ -462,8 +464,6 @@ if __name__ == '__main__':
                     BEXHOMA_WORKERS = num_worker,
                     COLUMNAR = init_columns,
                     )
-                if skip_loading:
-                    config.loading_deactivated = True
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
                     SF = SF,
