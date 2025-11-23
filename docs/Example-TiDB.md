@@ -125,8 +125,8 @@ doc_ycsb_tidb_1.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1328s 
-    Code: 1763836378
+    Duration: 784s 
+    Code: 1763921414
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -153,7 +153,7 @@ TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
     Cores:32
     host:5.15.0-153-generic
     node:cl-worker17
-    disk:1655758
+    disk:1660947
     cpu_list:0-31
     requests_cpu:4
     requests_memory:16Gi
@@ -165,83 +165,84 @@ TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
         Cores:32
         host:5.15.0-153-generic
         node:cl-worker17
-        disk:1655758
+        disk:1660947
         cpu_list:0-31
     sut 1
-        RAM:1081649913856
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:330662
-        cpu_list:0-55
+        RAM:540590923776
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-85-generic
+        node:cl-worker25
+        disk:160796
+        cpu_list:0-95
     sut 2
-        RAM:811500781568
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-        Cores:40
-        host:6.8.0-1041-nvidia
-        node:cl-worker19
-        cpu_list:0-39
-    worker 0
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-153-generic
-        node:cl-worker17
-        disk:1655758
-        cpu_list:0-31
-    worker 1
-        RAM:810205974528
-        CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-        Cores:32
-        host:6.8.0-60-generic
-        node:cl-worker20
-        disk:586951
-        cpu_list:0-31
-    worker 2
-        RAM:811500781568
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-        Cores:40
-        host:6.8.0-1041-nvidia
-        node:cl-worker19
-        disk:1471831
-        cpu_list:0-39
-    store 0
-        RAM:540579323904
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
+        RAM:540590919680
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-85-generic
+        node:cl-worker23
+        disk:1393874
+        cpu_list:0-95
+    pd 0
+        RAM:608117178368
+        CPU:AMD EPYC 7542 32-Core Processor
+        Cores:64
         host:6.8.0-86-generic
-        node:cl-worker22
-        disk:424322
-        cpu_list:0-127
-    store 1
-        RAM:1081965486080
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1075-nvidia
-        node:cl-worker27
-        disk:1401797
-        cpu_list:0-255
-    store 2
-        RAM:540492984320
-        CPU:Intel(R) Xeon(R) Gold 6430
-        Cores:128
-        host:6.8.0-60-generic
-        node:cl-worker38
-        disk:577961
-        cpu_list:0-127
+        node:cl-worker21
+        disk:780788
+        cpu_list:0-63
+    pd 1
+        RAM:540590919680
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-85-generic
+        node:cl-worker23
+        disk:1393874
+        cpu_list:0-95
+    pd 2
+        RAM:540590923776
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-85-generic
+        node:cl-worker25
+        disk:160796
+        cpu_list:0-95
+    tikv 0
+        RAM:608117178368
+        CPU:AMD EPYC 7542 32-Core Processor
+        Cores:64
+        host:6.8.0-86-generic
+        node:cl-worker21
+        disk:780788
+        cpu_list:0-63
+    tikv 1
+        RAM:540590919680
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-85-generic
+        node:cl-worker23
+        disk:1393874
+        cpu_list:0-95
+    tikv 2
+        RAM:540590923776
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-85-generic
+        node:cl-worker25
+        disk:160796
+        cpu_list:0-95
     eval_parameters
-        code:1763836378
+        code:1763921414
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-TiDB-64-8-16384               1       64   16384          8           0                   16216.200547                61742.0             1000000                             11574.0
+TiDB-64-8-16384               1       64   16384          8           0                   16122.895045                62410.0             1000000                              7580.5
 
 ### Execution
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-TiDB-64-8-16384-1               1       64   16384          1           0                        1933.25               517265.0            499761                            2277.0              500239                            135551.0
+TiDB-64-8-16384-1               1       64   16384          1           0                       13187.74                75828.0            500160                            2605.0              499840                            146943.0
 
 ### Workflow
 
@@ -255,49 +256,49 @@ DBMS TiDB-64-8-16384 - Pods [[1]]
 
 ### Loading phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      823.14    10.81          2.24                 3.01
+TiDB-64-8-16384-1      935.45    12.27          4.68                 5.43
 
-### Loading phase: component worker
+### Loading phase: component pd
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      118.83     1.08          0.31                 0.31
+TiDB-64-8-16384-1       95.28     0.82          0.26                 0.26
 
-### Loading phase: component store
+### Loading phase: component tikv
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      481.37     6.81          5.64                14.86
+TiDB-64-8-16384-1      380.34     3.99          5.42                14.73
 
 ### Loading phase: component loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       99.53     0.63          0.25                 0.26
+TiDB-64-8-16384-1       64.63        0          0.22                 0.23
 
 ### Execution phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1     1044.64      5.4          1.84                 2.61
+TiDB-64-8-16384-1      641.79     9.97          1.14                  1.9
 
-### Execution phase: component worker
+### Execution phase: component pd
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      226.41     0.82          0.31                 0.31
+TiDB-64-8-16384-1       60.29     1.13          0.26                 0.26
 
-### Execution phase: component store
+### Execution phase: component tikv
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      811.38      2.8          8.79                22.63
+TiDB-64-8-16384-1       440.7     6.94          6.87                20.63
 
 ### Execution phase: component benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      136.06     0.31          0.14                 0.14
+TiDB-64-8-16384-1        61.0        0          0.14                 0.14
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase contains no FAILED column
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1761748555` with the experiment code.
