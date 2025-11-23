@@ -1478,10 +1478,10 @@ scrape_configs:
                 list_initial_cluster_as_string = ",".join(list_initial_cluster)
                 env['BEXHOMA_INITIAL_CLUSTER'] = list_initial_cluster_as_string
         for statefulset_name, statefulset in self.deployment_infos['statefulset'].items():
-            print(statefulset_name)
+            #print(statefulset_name)
             name_worker = statefulset['name']
             name_service_headless = name_worker
-            print(name_worker)
+            #print(name_worker)
             #[stateful_set]['name'] = worker_name
             list_of_workers = []
             for worker in range(self.num_worker):
@@ -1496,7 +1496,7 @@ scrape_configs:
             env['BEXHOMA_{}_LIST_SPACE'.format(statefulset_name.upper())] = list_of_workers_as_string_space
             env['BEXHOMA_{}_NAME'.format(statefulset_name.upper())] = "{name_worker}".format(name_worker=name_worker)
             env['BEXHOMA_{}_SERVICE'.format(statefulset_name.upper())] = "{worker_service}".format(worker_service=name_service_headless)
-        print(env)
+        #print(env)
         #exit()
         ###################
         ## loop over manifest template parts
@@ -2214,6 +2214,7 @@ scrape_configs:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
+        self.logger.debug(f"stop_sut component={component} experiment={experiment} configuration={configuration}")
         if len(self.storage) > 0 and 'keep' in self.storage and self.storage['keep']:
             # keep the storage
             pass
@@ -2253,11 +2254,13 @@ scrape_configs:
             if 'deployment' in self.deployment_infos:
                 list_of_worker_components = list(self.deployment_infos['deployment'].keys())
                 for component in list_of_worker_components:
-                    self.stop_sut(app=app, component=component, experiment=self.get_experiment_name(), configuration=configuration)
+                    if component != 'sut':
+                        self.stop_sut(app=app, component=component, experiment=self.get_experiment_name(), configuration=configuration)
             if 'statefulset' in self.deployment_infos:
                 list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
                 for component in list_of_worker_components:
-                    self.stop_sut(app=app, component=component, experiment=experiment, configuration=configuration)
+                    if component != 'sut':
+                        self.stop_sut(app=app, component=component, experiment=experiment, configuration=configuration)
             #self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
             #self.stop_sut(app=app, component='worker', experiment=self.get_experiment_name(), configuration=configuration)
             #self.stop_sut(app=app, component='store', experiment=experiment, configuration=configuration)

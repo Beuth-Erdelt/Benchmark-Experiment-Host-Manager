@@ -3277,9 +3277,9 @@ class tpcc(default):
                     df = df.reindex(index=evaluators.natural_sort(df.index))
                     print(df)
                     if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
-                        test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                        test_results = test_results + f"TEST failed: {title} contains 0 or NaN in CPU [CPUs]\n"
                     else:
-                        test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
+                        test_results = test_results + f"TEST passed: {title} contains no 0 or NaN in CPU [CPUs]\n"
         return test_results.rstrip('\n')
     def OLD_show_summary_monitoring(self):
         test_results = ""
@@ -3915,9 +3915,9 @@ class ycsb(default):
                     df = df.reindex(index=evaluators.natural_sort(df.index))
                     print(df)
                     if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
-                        test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                        test_results = test_results + f"TEST failed: {title} contains 0 or NaN in CPU [CPUs]\n"
                     else:
-                        test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
+                        test_results = test_results + f"TEST passed: {title} contains no 0 or NaN in CPU [CPUs]\n"
             """
             #####################
             df_monitoring = self.show_summary_monitoring_table(self.evaluator, "sutloading")
@@ -4450,9 +4450,9 @@ class benchbase(default):
                     df = df.reindex(index=evaluators.natural_sort(df.index))
                     print(df)
                     if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
-                        test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
+                        test_results = test_results + f"TEST failed: {title} contains 0 or NaN in CPU [CPUs]\n"
                     else:
-                        test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
+                        test_results = test_results + f"TEST passed: {title} contains no 0 or NaN in CPU [CPUs]\n"
         return test_results.rstrip('\n')
     def __OLD_show_summary_monitoring(self):
         test_results = ""
