@@ -1429,8 +1429,8 @@ scrape_configs:
         # default empty: env = {}
         env = self.sut_parameters #self.sut_envs.copy()
         # generate list of worker names
-        worker_port = ":"+str(self.dockertemplate['worker_port']) if 'worker_port' in self.dockertemplate else ""
         store_args = self.dockertemplate['store_args'] if 'store_args' in self.dockertemplate else True
+        worker_port = ":"+str(self.dockertemplate['worker_port']) if 'worker_port' in self.dockertemplate else ""
         list_of_workers = []
         for worker in range(self.num_worker):
             #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
@@ -1469,12 +1469,38 @@ scrape_configs:
                 # patch initial cluster for TiDB
                 # this is for 3 workers:
                 # --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+                name_worker = self.get_worker_name(component='pd')
+                name_service_headless = name_worker
                 list_initial_cluster = []
                 for worker in range(self.num_worker):
                     clusternode_full_name = "{name_worker}-{worker_number}=http://{name_worker}-{worker_number}.{worker_service}:2380".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
                     list_initial_cluster.append(clusternode_full_name)
                 list_initial_cluster_as_string = ",".join(list_initial_cluster)
                 env['BEXHOMA_INITIAL_CLUSTER'] = list_initial_cluster_as_string
+        for statefulset_name, statefulset in self.deployment_infos['statefulset'].items():
+            print(statefulset_name)
+            name_worker = statefulset['name']
+            name_service_headless = name_worker
+            print(name_worker)
+            #[stateful_set]['name'] = worker_name
+            list_of_workers = []
+            for worker in range(self.num_worker):
+                #worker_full_name = "{name_worker}-{worker_number}".format(name_worker=name_worker, worker_number=worker, worker_service=name_worker)
+                worker_full_name = "{name_worker}-{worker_number}.{worker_service}{worker_port}".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless, worker_port=worker_port)
+                # ports for TiDB
+                #worker_full_name = "{name_worker}-{worker_number}.{worker_service}:2379".format(name_worker=name_worker, worker_number=worker, worker_service=name_service_headless)
+                list_of_workers.append(worker_full_name)
+            list_of_workers_as_string = ",".join(list_of_workers)
+            env['BEXHOMA_{}_LIST'.format(statefulset_name.upper())] = list_of_workers_as_string
+            list_of_workers_as_string_space = " ".join(list_of_workers)
+            env['BEXHOMA_{}_LIST_SPACE'.format(statefulset_name.upper())] = list_of_workers_as_string_space
+            env['BEXHOMA_{}_NAME'.format(statefulset_name.upper())] = "{name_worker}".format(name_worker=name_worker)
+            env['BEXHOMA_{}_SERVICE'.format(statefulset_name.upper())] = "{worker_service}".format(worker_service=name_service_headless)
+        print(env)
+        #exit()
+        ###################
+        ## loop over manifest template parts
+        ###################
         with open(sut_manifest_file) as stream:
             try:
                 result=yaml.safe_load_all(stream)
@@ -2001,7 +2027,7 @@ scrape_configs:
                             del result[key]['spec']['template']['spec']['containers'][i_container]
                             self.deployment_infos['deployment'][deployment_type]['containers'].pop()
                             #self.sut_containers_deployed.pop()
-                if 'volumes' in dep['spec']['template']['spec']:
+                if 'volumes' in dep['spec']['template']['spec'] and dep['spec']['template']['spec']['volumes'] is not None:
                     for i, vol in reversed(list(enumerate(dep['spec']['template']['spec']['volumes']))):
                         if vol['name'] == 'benchmark-storage-volume':
                             if not use_storage:
@@ -2223,11 +2249,20 @@ scrape_configs:
         if self.experiment.loading_active:
             self.stop_loading()
         if component == 'sut':
-            self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
-            self.stop_sut(app=app, component='worker', experiment=self.get_experiment_name(), configuration=configuration)
-            self.stop_sut(app=app, component='store', experiment=experiment, configuration=configuration)
-            self.stop_sut(app=app, component='store', experiment=self.get_experiment_name(), configuration=configuration)
-            self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
+            # stop the other components
+            if 'deployment' in self.deployment_infos:
+                list_of_worker_components = list(self.deployment_infos['deployment'].keys())
+                for component in list_of_worker_components:
+                    self.stop_sut(app=app, component=component, experiment=self.get_experiment_name(), configuration=configuration)
+            if 'statefulset' in self.deployment_infos:
+                list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
+                for component in list_of_worker_components:
+                    self.stop_sut(app=app, component=component, experiment=experiment, configuration=configuration)
+            #self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
+            #self.stop_sut(app=app, component='worker', experiment=self.get_experiment_name(), configuration=configuration)
+            #self.stop_sut(app=app, component='store', experiment=experiment, configuration=configuration)
+            #self.stop_sut(app=app, component='store', experiment=self.get_experiment_name(), configuration=configuration)
+            #self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
     def get_host_gpus(self):
         """
         Returns information about the sut's host GPUs.
