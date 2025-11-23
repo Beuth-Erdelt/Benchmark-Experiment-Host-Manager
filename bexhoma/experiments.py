@@ -3879,8 +3879,8 @@ class ycsb(default):
                 print(metrics)
         print("\n### Tests")
         if test_loading:
-            self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)")
-        self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)")
+            self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
+        self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.benchmarking_is_active():
@@ -3891,11 +3891,11 @@ class ycsb(default):
         silent = False
         if contains_failed:
             if not silent:
-                print("TEST failed: {} contains FAILED column".format("Result"))
+                print("TEST failed: {} contains FAILED column".format("Execution Phase:"))
             return False
         else:
             if not silent:
-                print("TEST passed: {} contains no FAILED column".format("Result"))
+                print("TEST passed: {} contains no FAILED column".format("Execution Phase:"))
             return True
     def show_summary_monitoring(self):
         test_results = ""

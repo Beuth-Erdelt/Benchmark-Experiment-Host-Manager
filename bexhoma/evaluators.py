@@ -293,8 +293,12 @@ class base:
         :return: exit code of test script
         """
         return 0
-    def test_results_column(self, df, test_column, silent=False):
+    def test_results_column(self, df, test_column, silent=False, title=''):
             #test_column = 'x'
+            if len(title) > 0:
+                title = f"{title} {test_column}"
+            else:
+                title = test_column
             if not df is None and not df.empty:
                 # Check if test_column contains 0 or NaN
                 contains_zero_or_nan = df[test_column].isin([0]) | df[test_column].isna()
@@ -302,11 +306,11 @@ class base:
                 #print(contains_zero_or_nan)
                 if contains_zero_or_nan.any():
                     if not silent:
-                        print("TEST failed: {} contains 0 or NaN".format(test_column))
+                        print("TEST failed: {} contains 0 or NaN".format(title))
                     return False
                 else:
                     if not silent:
-                        print("TEST passed: {} contains no 0 or NaN".format(test_column))
+                        print("TEST passed: {} contains no 0 or NaN".format(title))
                     return True
             return False
 
