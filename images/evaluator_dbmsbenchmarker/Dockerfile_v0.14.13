@@ -1,0 +1,82 @@
+######################################################################################
+# Dockerfile for Bexhoma - Evaluator
+######################################################################################
+#
+# This Dockerfile builds an image for a Bexhoma component "evaluator".
+#
+# Base Image: alpine:3.15
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: This container runs a jupyter notebook server and the dbmsbenchmarker dashboard.
+# Python is installed.
+# Java is installed.
+# Git is installed.
+######################################################################################
+FROM python:3.12.8
+#FROM alpine:3.15
+
+# does not compile numpy correctly
+# FROM python:3.13-rc-slim
+
+# Set environment variables for Python installation
+ENV PYTHON_VERSION=3.12.8
+ENV PYTHON_SRC=https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
+
+
+RUN apt update
+RUN apt install default-jre -y
+
+# only needed in slim releases
+# RUN apt install git -y
+# RUN apt install build-essential -y
+
+RUN pip uninstall dbmsbenchmarker -y
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.13
+
+# we only need packages required by dbmsbenchmarker
+#COPY requirements.txt ./
+#RUN pip install --no-cache-dir -r requirements.txt
+
+RUN git clone --branch v0.14.13 https://github.com/Beuth-Erdelt/DBMS-Benchmarker /usr/src/app/DBMS-Benchmarker
+
+WORKDIR /usr/src/app/DBMS-Benchmarker
+
+# RUN git pull
+
+#COPY . .
+
+RUN apt install nano -y
+
+SHELL ["/bin/bash", "-c"]
+
+ENV VIRTUAL_ENV=/opt/venv
+
+# CMD sleep3600
+
+RUN python -m pip install virtualenv
+RUN python -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN apt install git
+RUN pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.13
+
+RUN pip install jupyter
+RUN pip install jupyter_contrib_nbextensions
+#RUN jupyter contrib nbextension install --user
+#RUN jupyter nbextensions_configurator enable --user
+#RUN jupyter nbextension enable toc2/main
+
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.13
+
+WORKDIR /usr/src/app/DBMS-Benchmarker
+
+RUN mkdir /usr/src/app/DBMS-Benchmarker/notebooks
+
+COPY ./notebooks /usr/src/app/DBMS-Benchmarker/notebooks
+
+# RUN git pull
+
+CMD ls /usr/src/app/DBMS-Benchmarker -lh; ls /usr/src/app/DBMS-Benchmarker/DBMS-Benchmarker -lh; python ./dashboard.py -r /results
