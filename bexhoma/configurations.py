@@ -3769,6 +3769,9 @@ scrape_configs:
                         #self.timeLoading = float(self.timeLoading) + float(timeLoading)
                         print("{:30s}: showing loader times".format(self.configuration))
                         timing_datagenerator, timing_sensor, timing_total = self.experiment.get_job_timing_loading(job)
+                        print("{:30s}: generator times (start/end per pod and container) {}".format(self.configuration, timing_datagenerator))
+                        print("{:30s}: loader times (start/end per pod and container) {}".format(self.configuration, timing_sensor))
+                        print("{:30s}: total times (start/end per pod and container) {}".format(self.configuration, timing_total))
                         generator_time = 0
                         loader_time = 0
                         total_time = 0
