@@ -219,7 +219,7 @@ wait_process "ycsb"
 
 
 
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -235,7 +235,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi -rsr \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/refactor_ycsb_redis_1.log &
 
 
@@ -293,7 +293,48 @@ sleep 30
 
 
 
+# delete database service placeholder
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
 
+sleep 30
+
+# start database service placeholder
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+sleep 10
+
+
+#### YCSB Ingestion (Example-CloudDatabase.md)
+nohup python ycsb.py -ms 2 -tr \
+  -sf 1 \
+  -sfo 1 \
+  --workload a \
+  -dbms DatabaseService \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_databaseservice_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "ycsb"
+
+
+
+
+# delete database service placeholder
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
 
 
 
@@ -307,7 +348,7 @@ sleep 30
 
 
 
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -324,7 +365,7 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -tr \
   -sf 16 \
   -sd 5 \
   -dbms CockroachDB \
@@ -343,7 +384,7 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -tr \
   -sf 16 \
   -sd 5 \
   -dbms Citus \
@@ -363,7 +404,7 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -tr \
   -sf 16 \
   -sd 5 \
   -dbms PGBouncer \
@@ -388,7 +429,7 @@ install_yugabytedb
 sleep 30
 
 
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
