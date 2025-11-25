@@ -306,7 +306,7 @@ sleep 10
 
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \

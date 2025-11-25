@@ -2656,7 +2656,7 @@ scrape_configs:
             # volumes of deployments
             if 'deployment' in self.deployment_infos:
                 list_of_worker_components = list(self.deployment_infos['deployment'].keys())
-                print(f"###### list_of_worker_components (deployments) = {list_of_worker_components}")
+                #print(f"###### list_of_worker_components (deployments) = {list_of_worker_components}")
                 for component in list_of_worker_components:
                     for i, pod in enumerate(self.deployment_infos['deployment'][component]['pods']):
                         pvc = self.deployment_infos['deployment'][component]['pvc']
@@ -2670,7 +2670,7 @@ scrape_configs:
             # volumes of stateful sets
             if 'statefulset' in self.deployment_infos:
                 list_of_worker_components = list(self.deployment_infos['statefulset'].keys())
-                print(f"###### list_of_worker_components (stateful sets) = {list_of_worker_components}")
+                #print(f"###### list_of_worker_components (stateful sets) = {list_of_worker_components}")
                 for component in list_of_worker_components:
                     for i, pod in enumerate(self.deployment_infos['statefulset'][component]['pods']):
                         if not 'pvc' in self.deployment_infos['statefulset'][component]:
