@@ -4282,6 +4282,7 @@ scrape_configs:
         env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
         env_default['BEXHOMA_PARALLEL'] = str(parallelism)
         env_default['BEXHOMA_NUM_PODS'] = str(num_pods)
+        env_default['BEXHOMA_DBMS'] = str(self.docker)
         if self.num_tenants > 0 and self.tenant_per == 'container':
             env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(int(num_pods)*self.num_tenants)
         else:

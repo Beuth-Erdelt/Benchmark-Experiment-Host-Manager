@@ -8,7 +8,7 @@ The following parameter (ENV) have been added:
 * `BEXHOMA_NUM_PODS`: Number of parallel pods
 * `BEXHOMA_CHILD`: Number of the current pod. This will be overwritten by entry in Redis queue.
 * `BEXHOMA_RNGSEED`: Random Seed. Currently ignored.
-* `BEXHOMA_DBMS`: Type of dbms to connect do (jdbc, redis)
+* `BEXHOMA_DBMS_TYPE`: Type of dbms to connect do (jdbc, redis)
 * `BEXHOMA_URL`: For db.url
 * `BEXHOMA_HOST`: Ignored for JDBC, host info for Redis.
 * `BEXHOMA_PORT`: Ignored for JDBC, port info for Redis.

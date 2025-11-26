@@ -72,7 +72,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [16] and `s` in [11]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (`-sfo`)
+      * 16.000.000 operations (`-sfo`)
       * workload C = 100% (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -472,11 +472,11 @@ We activate the new-connection-per-transaction feature with `-xconn`.
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -sd 10 \
   -xconn \
   -dbms PostgreSQL \
   -nbp 1,2 \
-  -nbt 16 \
+  -nbt 32 \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -572,11 +572,11 @@ This time there will be a connection pool of size 32, handled by 2 pods of PGBou
 ```bash
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -sd 10 \
   -xconn \
   -dbms PGBouncer \
   -nbp 1,2 \
-  -nbt 16 \
+  -nbt 32 \
   -nbf 16 \
   -tb 1024 \
   -npp 2 \

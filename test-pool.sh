@@ -44,7 +44,63 @@ wait_process "ycsb"
 
 
 
-#### Benchbase Scale (Example-Benchbase.md)
+
+####################################################
+################## YCSB PGBouncer ##################
+####################################################
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 16 \
+  -nlt 64 \
+  -nlf 11 \
+  -nbp 16 \
+  -nbt 128 \
+  -nbf 11 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  -npp 4 \
+  -npi 128 \
+  -npo 64 \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log &
+
+
+wait_process "ycsb"
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 16 \
+  -nlt 64 \
+  -nlf 11 \
+  -nbp 16 \
+  -nbt 128 \
+  -nbf 11 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -npp 4 \
+  -npi 128 \
+  -npo 64 \
+  -rst shared -rss 100Gi -rsr \
+  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log &
+
+
+wait_process "ycsb"
+
+
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
   -sd 10 \
@@ -57,8 +113,7 @@ nohup python benchbase.py -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn.log &
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
+
 wait_process "benchbase"
 
 
@@ -78,8 +133,7 @@ nohup python benchbase.py -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log &
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
+
 wait_process "benchbase"
 
 
