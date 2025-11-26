@@ -78,8 +78,22 @@ wait_process "ycsb"
 
 
 
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  -dbms TiDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_benchbase_tidb_1.log &
 
 
+wait_process "benchbase"
 
 
 
