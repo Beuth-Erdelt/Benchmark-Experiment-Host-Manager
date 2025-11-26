@@ -1,0 +1,459 @@
+#!/bin/bash
+######################################################################################
+# Bash Script for Bexhoma Test Runs - Generate Summaries for Doc Files
+######################################################################################
+#
+# This scripts starts a sequence of experiments with varying parameters.
+# Each experiment waits until previous tests have been completed.
+# Logs are written to a log folder.
+# At the end, logs are cleaned and the summaries are extracted and stored in separate files.
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2024-10-01
+# Version: 1.0
+######################################################################################
+
+
+# Import functions from testfunctions.sh
+source ./testfunctions.sh
+
+BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests/local"
+
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
+
+
+
+
+
+install_yugabytedb() {
+  helm install bexhoma yugabytedb/yugabyte \
+  --version 2.23.0 \
+  --set \
+gflags.tserver.ysql_enable_packed_row=true,\
+gflags.tserver.ysql_max_connections=1280,\
+resource.master.limits.cpu=2,\
+resource.master.limits.memory=8Gi,\
+resource.master.requests.cpu=2,\
+resource.master.requests.memory=8Gi,\
+resource.tserver.limits.cpu=8,\
+resource.tserver.limits.memory=8Gi,\
+resource.tserver.requests.cpu=8,\
+resource.tserver.requests.memory=8Gi,\
+storage.master.size=100Gi,\
+storage.tserver.size=100Gi,\
+storage.ephemeral=true,\
+tserver.tolerations[0].effect=NoSchedule,\
+tserver.tolerations[0].key=nvidia.com/gpu,\
+enableLoadBalancer=True
+  sleep 60
+}
+
+remove_yugabytedb() {
+  helm delete bexhoma
+  kubectl delete pvc -l app=yb-tserver
+  kubectl delete pvc -l app=yb-master
+  sleep 60
+}
+
+
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc -ma \
+  -rst shared -rss 30Gi -rsr \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_postgresql_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  --workload a \
+  -dbms PGBouncer \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc -ma \
+  -rst shared -rss 30Gi -rsr \
+  -npi 64 \
+  -npo 64 \
+  -npp 2 \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_pgbouncer_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  --workload a \
+  -dbms TiDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  -rst shared -rss 30Gi -rsr \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_tidb_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc -ma \
+  -rst shared -rss 30Gi -rsr \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_cockroachdb_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  --workload a \
+  -dbms Citus \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi -rsr \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_citus_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  --workload a \
+  -dbms Redis \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 50Gi \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_redis_1.log &
+
+
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+################################################
+################## YugaByteDB ##################
+################################################
+
+
+# install YugabyteDB
+install_yugabytedb
+sleep 30
+
+
+
+
+
+#### YCSB Persistent Storage (Example-YCSB.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  --workload a \
+  -dbms YugabyteDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rst shared -rss 30Gi -rsr \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_yugabytedb_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 900
+wait_process "ycsb"
+
+
+
+
+# remove YugabyteDB installation
+remove_yugabytedb
+sleep 30
+
+
+
+
+# delete database service placeholder
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
+
+# start database service placeholder
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+sleep 10
+
+
+#### YCSB Ingestion (Example-CloudDatabase.md)
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 1 \
+  --workload a \
+  -dbms DatabaseService \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  run </dev/null &>$LOG_DIR/refactor_ycsb_databaseservice_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "ycsb"
+
+
+
+
+# delete database service placeholder
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
+sleep 30
+
+
+
+
+
+################################################
+################## Benchbase ###################
+################################################
+
+
+
+
+
+nohup python benchbase.py -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_postgresql_1.log &
+
+
+wait_process "benchbase"
+
+
+nohup python benchbase.py -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms CockroachDB \
+  -nw 3 \
+  -nwr 1 \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_cockroachdb_1.log &
+
+
+wait_process "benchbase"
+
+
+nohup python benchbase.py -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms Citus \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_citus_1.log &
+
+
+wait_process "benchbase"
+
+
+nohup python benchbase.py -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PGBouncer \
+  -npi 64 \
+  -npo 64 \
+  -npp 2 \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_pgbouncer_1.log &
+
+
+wait_process "benchbase"
+
+
+# install YugabyteDB
+install_yugabytedb
+sleep 30
+
+
+nohup python benchbase.py -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms YugabyteDB \
+  -nbp 1 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -nc 2 \
+  -rst shared -rss 30Gi -rsr \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/refactor_benchbase_yugabytedb_1.log &
+
+
+# remove YugabyteDB installation
+remove_yugabytedb
+sleep 30
+
+
+
+
+
+
+
+
+
+
+

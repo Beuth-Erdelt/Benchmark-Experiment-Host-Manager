@@ -410,13 +410,13 @@ if __name__ == '__main__':
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                 # DatabaseService
-                name_format = 'DatabaseService-{cluster}-{pods}'
+                name_format = 'DBS-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='DatabaseService', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A1')
                 config.monitoring_sut = False # cannot be monitored since outside of K8s
                 if skip_loading:
                     config.loading_deactivated = True
                 config.set_storage(
-                    storageConfiguration = 'databaseservice'
+                    storageConfiguration = 'dbs'
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
@@ -442,6 +442,8 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'Citus-{cluster}-{pods}'
                 config = configurations.default(experiment=experiment, docker='Citus', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                if skip_loading:
+                    config.loading_deactivated = True
                 if init_columns:
                     config.set_experiment(script='Schema-Columnar')
                     config.set_experiment(indexing='Index_and_Statistics')
@@ -462,8 +464,6 @@ if __name__ == '__main__':
                     BEXHOMA_WORKERS = num_worker,
                     COLUMNAR = init_columns,
                     )
-                if skip_loading:
-                    config.loading_deactivated = True
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
                     SF = SF,

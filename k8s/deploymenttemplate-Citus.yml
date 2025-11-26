@@ -48,43 +48,44 @@ spec:
         #image: citusdata/citus:pg12
         #image: citusdata/citus:postgres_13
         #image: citusdata/citus:postgres_14
-        image: citusdata/citus:13.0.2-alpine
+        #image: citusdata/citus:13.0.2-alpine
+        image: citusdata/citus:13.2.0-alpine
         args: [
-          "-c", "max_worker_processes=64",
-          "-c", "max_parallel_workers=64",
-          "-c", "max_parallel_workers_per_gather=64",
-          "-c", "max_parallel_maintenance_workers=64", # only for PostgreSQL > 10 (?)
+          "-c", "max_worker_processes=16",
+          "-c", "max_parallel_workers=16",
+          "-c", "max_parallel_workers_per_gather=8",
+          "-c", "max_parallel_maintenance_workers=4", # only for PostgreSQL > 10 (?)
           "-c", "max_wal_size=32GB",
-          "-c", "shared_buffers=64GB",
+          "-c", "shared_buffers=16GB",
           #"-c", "shared_memory_size=32GB", # read-only
-          "-c", "max_connections=16384",
+          "-c", "max_connections=1024",
           "-c", "autovacuum_max_workers=10",
           "-c", "autovacuum_vacuum_cost_limit=3000",
           "-c", "vacuum_cost_limit=1000",
           "-c", "checkpoint_completion_target=0.9",
           "-c", "cpu_tuple_cost=0.03",
-          "-c", "effective_cache_size=64GB",
-          "-c", "maintenance_work_mem=2GB",
+          "-c", "effective_cache_size=32GB",
+          "-c", "maintenance_work_mem=512MB",
           #"-c", "max_connections=1700",
           #"-c", "random_page_cost=1.1",
-          "-c", "wal_buffers=1GB",
-          "-c", "work_mem=32GB",
+          "-c", "wal_buffers=64MB",
+          "-c", "work_mem=64MB",
           #"-c", "huge_pages=on",
-          "-c", "temp_buffers=4GB",
+          "-c", "temp_buffers=64MB",
           "-c", "autovacuum_work_mem=-1",
-          "-c", "max_stack_depth=7MB",
+          "-c", "max_stack_depth=4MB",
           "-c", "max_files_per_process=4000",
           "-c", "effective_io_concurrency=32",
-          "-c", "wal_level=minimal",
-          "-c", "max_wal_senders=0",
-          "-c", "synchronous_commit=off",
+          "-c", "wal_level=replica",
+          "-c", "max_wal_senders=8",
+          "-c", "synchronous_commit=local",
           "-c", "checkpoint_timeout=1h",
           "-c", "checkpoint_warning=0",
-          "-c", "autovacuum=off",
+          "-c", "autovacuum=on",
           "-c", "max_locks_per_transaction=64",
           "-c", "max_pred_locks_per_transaction=64",
-          "-c", "default_statistics_target=1000",
-          "-c", "random_page_cost=60"
+          "-c", "default_statistics_target=500",
+          "-c", "random_page_cost=1.1"
         ]
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
@@ -212,55 +213,59 @@ spec:
       - name: dbms
         #image: citusdata/citus:pg12
         #image: citusdata/citus:postgres_14
-        image: citusdata/citus:13.0.2-alpine
+        #image: citusdata/citus:13.0.2-alpine
+        #image: citusdata/citus:13.0.2-alpine
+        image: citusdata/citus:13.2.0-alpine
         args: [
-          "-c", "max_worker_processes=64",
-          "-c", "max_parallel_workers=64",
-          "-c", "max_parallel_workers_per_gather=64",
-          "-c", "max_parallel_maintenance_workers=64", # only for PostgreSQL > 10 (?)
+          "-c", "max_worker_processes=16",
+          "-c", "max_parallel_workers=16",
+          "-c", "max_parallel_workers_per_gather=8",
+          "-c", "max_parallel_maintenance_workers=4", # only for PostgreSQL > 10 (?)
           "-c", "max_wal_size=32GB",
-          "-c", "shared_buffers=64GB",
+          "-c", "shared_buffers=16GB",
           #"-c", "shared_memory_size=32GB", # read-only
-          "-c", "max_connections=16384",
+          "-c", "max_connections=1024",
           "-c", "autovacuum_max_workers=10",
           "-c", "autovacuum_vacuum_cost_limit=3000",
           "-c", "vacuum_cost_limit=1000",
           "-c", "checkpoint_completion_target=0.9",
           "-c", "cpu_tuple_cost=0.03",
-          "-c", "effective_cache_size=64GB",
-          "-c", "maintenance_work_mem=2GB",
+          "-c", "effective_cache_size=32GB",
+          "-c", "maintenance_work_mem=512MB",
           #"-c", "max_connections=1700",
           #"-c", "random_page_cost=1.1",
-          "-c", "wal_buffers=1GB",
-          "-c", "work_mem=32GB",
+          "-c", "wal_buffers=64MB",
+          "-c", "work_mem=64MB",
           #"-c", "huge_pages=on",
-          "-c", "temp_buffers=4GB",
+          "-c", "temp_buffers=64MB",
           "-c", "autovacuum_work_mem=-1",
-          "-c", "max_stack_depth=7MB",
+          "-c", "max_stack_depth=4MB",
           "-c", "max_files_per_process=4000",
           "-c", "effective_io_concurrency=32",
-          "-c", "wal_level=minimal",
-          "-c", "max_wal_senders=0",
-          "-c", "synchronous_commit=off",
+          "-c", "wal_level=replica",
+          "-c", "max_wal_senders=8",
+          "-c", "synchronous_commit=local",
           "-c", "checkpoint_timeout=1h",
           "-c", "checkpoint_warning=0",
-          "-c", "autovacuum=off",
+          "-c", "autovacuum=on",
           "-c", "max_locks_per_transaction=64",
           "-c", "max_pred_locks_per_transaction=64",
-          "-c", "default_statistics_target=1000",
-          "-c", "random_page_cost=60"
+          "-c", "default_statistics_target=500",
+          "-c", "random_page_cost=1.1"
         ]
         env:
         - name: PGPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: citus-secrets
-              key: password
+          value: postgres
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: citus-secrets
+          #    key: password
         - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: citus-secrets
-              key: password
+          value: postgres
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: citus-secrets
+          #    key: password
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         volumeMounts:

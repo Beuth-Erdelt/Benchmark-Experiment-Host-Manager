@@ -2,7 +2,7 @@ import subprocess
 
 #versions = ['v0.12.1','v0.12.2','v0.12.3','v0.12.4','v0.12.5']
 #versions = ['v0.14.2','v0.14.1','v0.14.0','dev']
-versions = ['v0.14.12']
+versions = ['v0.14.13']
 
 with open('Dockerfile_template', 'r') as file:
 	dockerfile = file.read()

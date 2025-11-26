@@ -14,8 +14,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: bexhoma-worker
-  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  name: bexhoma-pd
+  labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
   annotations:
 spec:
   ports:
@@ -24,13 +24,13 @@ spec:
   #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   #-- publishNotReadyAddresses: true
   clusterIP: None
-  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  selector: {app: bexhoma, component: pd, configuration: default, experiment: default}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: bexhoma-store
-  labels: {app: bexhoma, component: store, configuration: default, experiment: default}
+  name: bexhoma-tikv
+  labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
   annotations:
 spec:
   ports:
@@ -39,23 +39,23 @@ spec:
   #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   #-- publishNotReadyAddresses: true
   clusterIP: None
-  selector: {app: bexhoma, component: store, configuration: default, experiment: default}
+  selector: {app: bexhoma, component: tikv, configuration: default, experiment: default}
 ---
 # PD StatefulSet (3 replicas)
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: bexhoma-worker
-  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  name: bexhoma-pd
+  labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
 spec:
-  serviceName: bexhoma-workers
+  serviceName: bexhoma-pds
   replicas: 3
   selector:
     matchLabels:
-      {app: bexhoma, component: worker, configuration: default, experiment: default}
+      {app: bexhoma, component: pd, configuration: default, experiment: default}
   template:
     metadata:
-      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+      labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
     spec:
       containers:
       - name: dbms
@@ -66,10 +66,10 @@ spec:
           - --data-dir=/var/lib/pd
           - --client-urls=http://0.0.0.0:2379
           - --peer-urls=http://0.0.0.0:2380
-          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2379
-          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_WORKER_SERVICE):2380
+          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_PD_SERVICE):2379
+          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_PD_SERVICE):2380
           - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
-          #- --initial-cluster=$(BEXHOMA_WORKER_NAME)-0=http://$(BEXHOMA_WORKER_NAME)-0.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-1=http://$(BEXHOMA_WORKER_NAME)-1.$(BEXHOMA_WORKER_SERVICE):2380,$(BEXHOMA_WORKER_NAME)-2=http://$(BEXHOMA_WORKER_NAME)-2.$(BEXHOMA_WORKER_SERVICE):2380
+          #- --initial-cluster=$(BEXHOMA_pd_NAME)-0=http://$(BEXHOMA_pd_NAME)-0.$(BEXHOMA_pd_SERVICE):2380,$(BEXHOMA_pd_NAME)-1=http://$(BEXHOMA_pd_NAME)-1.$(BEXHOMA_pd_SERVICE):2380,$(BEXHOMA_pd_NAME)-2=http://$(BEXHOMA_pd_NAME)-2.$(BEXHOMA_pd_SERVICE):2380
         env:
           - name: POD_NAME
             valueFrom:
@@ -97,25 +97,27 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: bexhoma-store
-  labels: {app: bexhoma, component: store, configuration: default, experiment: default}
+  name: bexhoma-tikv
+  labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
 spec:
-  serviceName: bexhoma-store
+  serviceName: bexhoma-tikv
   replicas: 3
   selector:
     matchLabels:
-      {app: bexhoma, component: store, configuration: default, experiment: default}
+      {app: bexhoma, component: tikv, configuration: default, experiment: default}
   template:
     metadata:
-      labels: {app: bexhoma, component: store, configuration: default, experiment: default}
+      labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
     spec:
       containers:
       - name: dbms
         image: pingcap/tikv:v7.1.0
         args:
           - --addr=0.0.0.0:20160
-          - --advertise-addr=$(POD_NAME).$(BEXHOMA_STORE_SERVICE):20160
-          - --pd=$(BEXHOMA_WORKER_LIST)
+          - --advertise-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20160
+          #- --advertise-status-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20180
+          #- --status-addr=0.0.0.0:20180
+          - --pd=$(BEXHOMA_PD_LIST)
           - --data-dir=/var/lib/tikv
         env:
           - name: POD_NAME
@@ -134,7 +136,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: bxw
-      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+      labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
     spec:
       accessModes:
         - "ReadWriteOnce"
@@ -142,19 +144,19 @@ spec:
         requests:
           storage: 100Gi
       storageClassName: shared
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-storage
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  storageClassName: shared
+#---
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+#  name: bexhoma-storage
+#spec:
+#  accessModes:
+#    - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 20Gi
+#  storageClassName: shared
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -185,12 +187,12 @@ spec:
             yum update -y;
             yum install -y mysql;
             echo "Starting TiDB..." && \
-            /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)
+            /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
         image: pingcap/tidb:v7.1.0
         #args:
         #  - /tidb-server
-        #  - --store=tikv
-        #  - --path=$(BEXHOMA_WORKER_LIST)
+        #  - --tikv=tikv
+        #  - --path=$(BEXHOMA_pd_LIST)
         ports:
           - containerPort: 4000
             name: mysql
@@ -200,12 +202,12 @@ spec:
           limits: {cpu: 100m, memory: 1Gi}
           requests: {cpu: 100m, memory: 16Gi}
         #command: ["/bin/bash"]
-        #args: ["yum update -y && yum install -y mysql && /tidb-server --store=tikv --path=$(BEXHOMA_WORKER_LIST)"]
-        volumeMounts:
-        - {mountPath: /data, name: benchmark-data-volume}
+        #args: ["yum update -y && yum install -y mysql && /tidb-server --tikv=tikv --path=$(BEXHOMA_pd_LIST)"]
+        #volumeMounts:
+        #- {mountPath: /data, name: benchmark-data-volume}
         #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
-      volumes:
-      - name: benchmark-data-volume
-        persistentVolumeClaim: {claimName: bexhoma-data}
-      - name: benchmark-storage-volume
-        persistentVolumeClaim: {claimName: bexhoma-storage}
+      #volumes:
+      #- name: benchmark-data-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-data}
+      #- name: benchmark-storage-volume
+      #  persistentVolumeClaim: {claimName: bexhoma-storage}

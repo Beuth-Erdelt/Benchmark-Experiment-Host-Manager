@@ -18,9 +18,9 @@ It enables users to configure hardware / software setups for easily repeating te
 
 It serves as the **orchestrator** [2] for distributed parallel benchmarking experiments in a Kubernetes Cloud.
 This has been tested at Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and at Minikube installations,
-running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TimescaleDB, Vertica and YugabyteDB.
+running with Citus Data (Hyperscale), Clickhouse, CockroachDB, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TiDB, TimescaleDB, Vertica and YugabyteDB.
 
-Benchmarks included are YCSB, TPC-H and TPC-C (HammerDB and Benchbase version).
+Benchmarks included are YCSB, TPC-H, TPC-DS and TPC-C (HammerDB and Benchbase version).
 
 The basic workflow is [1,2]: start a containerized version of the DBMS, install monitoring software, import data, run benchmarks and shut down everything with a single command.
 A more advanced workflow is: Plan a sequence of such experiments, run plan as a batch and join results for comparison.

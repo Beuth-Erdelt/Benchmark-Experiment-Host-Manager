@@ -62,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
     parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
     parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
-    parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
+    parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="")
     parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
     parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
     parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='')
@@ -131,8 +131,8 @@ if __name__ == '__main__':
     # how many workers (for distributed dbms)
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
-    num_sut_replicas = int(args.num_sut_replicas)
     num_worker_shards = int(args.num_worker_shards)
+    num_sut_replicas = int(args.num_sut_replicas)
     ##############
     ### specific to: YCSB
     ##############
@@ -357,12 +357,17 @@ if __name__ == '__main__':
                                 # this is too long
                                 #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
                                 config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
-                                config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
-                                config.sut_has_pool = True                                                # in particular monitor pool component
-                                config.sut_envs = {
-                                    'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),                       # max connections to PostgreSQL
-                                    'MIN_POOL_SIZE': int(num_c_out/num_c_pods),                           # min connections to PostgreSQL
-                                    'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),                          # max connections to PGBouncer
+                                config.path_experiment_docker = 'PostgreSQL'                   # take init scripts of PostgreSQL
+                                config.sut_has_pool = True                                     # in particular monitor pool component
+                                config.sut_parameters = {
+                                    # do not split connections between pool pods:
+                                    'DEFAULT_POOL_SIZE': int(num_c_out),                       # max connections to PostgreSQL
+                                    'MIN_POOL_SIZE': int(num_c_out),                           # min connections to PostgreSQL
+                                    'MAX_CLIENT_CONN': int(num_c_in),                          # max connections to PGBouncer
+                                    # split connections between pool pods:
+                                    #'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),           # max connections to PostgreSQL
+                                    #'MIN_POOL_SIZE': int(num_c_out/num_c_pods),               # min connections to PostgreSQL
+                                    #'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),              # max connections to PGBouncer
                                 }
                                 config.set_resources(
                                     replicas_pooling = num_c_pods,
@@ -538,6 +543,7 @@ if __name__ == '__main__':
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
                         )
@@ -547,7 +553,20 @@ if __name__ == '__main__':
                     config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
                     config.statefulset_name = 'yb-tserver'              # name of the stateful set of DBMS pods
                     config.sut_container_name = ''                      # fix container name of SUT
-                    def get_worker_pods(self):
+                    stateful_set = "yb-tserver"
+                    config.deployment_infos['statefulset'] = {}
+                    config.deployment_infos['statefulset'][stateful_set] = {}
+                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
+                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
+                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
+                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
+                    stateful_set = "yb-master"
+                    config.deployment_infos['statefulset'][stateful_set] = {}
+                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
+                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
+                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
+                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
+                    def get_worker_pods(self, component='worker'):
                         """
                         Returns a list of all pod names of workers for the current SUT.
                         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -559,7 +578,7 @@ if __name__ == '__main__':
                         #pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
                         pods_worker = cluster.get_statefulset_pods(self.statefulset_name)
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
-                        print("****************", pods_worker)
+                        #print("****************", pods_worker)
                         return pods_worker
                     config.get_worker_pods = types.MethodType(get_worker_pods, config)
                     #def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
@@ -601,7 +620,7 @@ if __name__ == '__main__':
                         self.logger.debug("yugabytedb.get_worker_endpoints({})".format(endpoints))
                         return endpoints
                     config.get_worker_endpoints = types.MethodType(get_worker_endpoints, config)
-                    def set_metric_of_config(self, metric, host, gpuid):
+                    def set_metric_of_config(self, metric, host, gpuid, schema, database, component=''):
                         """
                         Returns a promql query.
                         Parameters in this query are substituted, so that prometheus finds the correct metric.
@@ -616,7 +635,10 @@ if __name__ == '__main__':
                         """
                         metric = metric.replace(', container="dbms"', '')
                         metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
-                        return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                        #name_worker = self.get_worker_name(component=component)
+                        #return metric.format(host=host, gpuid=gpuid, configuration=name_worker, experiment="", schema=schema, database=database)
+                        #return metric.format(host=host, gpuid=gpuid, configuration='yb-tserver', experiment='')
+                        return metric.format(host=host, gpuid=gpuid, configuration=component, experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
@@ -671,11 +693,14 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    config.monitoring_sut = False # should not be monitored since only dummy
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'cockroachdb'
                         )
@@ -692,8 +717,6 @@ if __name__ == '__main__':
                         BEXHOMA_SHARDS = num_worker_shards,
                         BEXHOMA_WORKERS = num_worker
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -751,9 +774,11 @@ if __name__ == '__main__':
                     config.add_benchmark_list(executor_list)
                     cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # CockroachDB
+                    # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='TiDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'tidb'
                         )
@@ -773,8 +798,6 @@ if __name__ == '__main__':
                         BEXHOMA_SHARDS = num_worker_shards,
                         BEXHOMA_WORKERS = num_worker
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -837,14 +860,14 @@ if __name__ == '__main__':
                     #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # DatabaseService
-                    name_format = 'DatabaseService-{threads}-{pods}-{target}'
+                    name_format = 'DBS-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
-                    config.set_storage(
-                        storageConfiguration = 'databaseservice'
-                        )
                     if skip_loading:
                         config.loading_deactivated = True
+                    config.set_storage(
+                        storageConfiguration = 'dbs'
+                        )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
@@ -895,6 +918,7 @@ if __name__ == '__main__':
                     name_format = 'Redis-{threads}-{pods}-{target}'
                     num_worker_inc_replicas = num_worker * (1+num_worker_replicas)
                     config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker_inc_replicas)
+                    config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
                         bexhoma_dbms = "redis-cluster"
@@ -934,7 +958,7 @@ if __name__ == '__main__':
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_INSERTORDER = extra_insert_order,
                         )
-                    def get_worker_name(self):
+                    def get_worker_name(self, component='worker'):
                         """
                         Returns a template for the worker names.
                         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -1007,6 +1031,8 @@ if __name__ == '__main__':
                     # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    if skip_loading:
+                        config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'citus'
                         )
@@ -1023,8 +1049,6 @@ if __name__ == '__main__':
                         BEXHOMA_SHARDS = num_worker_shards,
                         BEXHOMA_WORKERS = num_worker
                         )
-                    if skip_loading:
-                        config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
                         SF = SF,
