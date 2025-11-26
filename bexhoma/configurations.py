@@ -951,7 +951,36 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            if 'monitor' in self.dockertemplate and 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
+                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery']:
+                                prometheus_config += """
+  - job_name: 'tidb-pods'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      # Only select TiDB pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;sut;TiDB
+        action: keep
+
+      # Set the address to pod IP + metrics port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: ${{1}}:9500
+
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
+
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                            elif 'monitor' in self.dockertemplate and 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
                                 app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
                                 if self.tenant_per == 'database' and self.num_tenants > 0:
                                     connections = [
