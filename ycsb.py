@@ -860,13 +860,13 @@ if __name__ == '__main__':
                     #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
                 if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # DatabaseService
-                    name_format = 'DatabaseService-{threads}-{pods}-{target}'
+                    name_format = 'DBS-{threads}-{pods}-{target}'
                     config = configurations.ycsb(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
-                        storageConfiguration = 'databaseservice'
+                        storageConfiguration = 'dbs'
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
