@@ -6,7 +6,7 @@ metadata:
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 4000}
-  - {port: 10080, protocol: TCP, name: port-web, targetPort: 10080}
+  - {port: 9500, protocol: TCP, name: port-web, targetPort: 9500}
   #- {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 8080}
   #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
@@ -190,7 +190,7 @@ spec:
           yum update -y;
           yum install -y mysql;
           echo "Starting TiDB..." && \
-          exec /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
+          exec /tidb-server --store=tikv --status=9500 --path=$(BEXHOMA_PD_LIST)
         #command: ["/bin/sh", "-c"]
         #args:
         #  - |
@@ -207,7 +207,7 @@ spec:
         ports:
           - containerPort: 4000
             name: mysql
-          - containerPort: 10080
+          - containerPort: 9500
             name: status
         resources:
           limits: {cpu: 100m, memory: 1Gi}
