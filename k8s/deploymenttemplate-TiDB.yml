@@ -86,6 +86,7 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: bxw
+        labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
       spec:
         accessModes: ["ReadWriteOnce"]
         resources:
@@ -136,7 +137,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: bxw
-      labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+      labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
     spec:
       accessModes:
         - "ReadWriteOnce"
@@ -180,14 +181,24 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        command: ["/bin/sh", "-c"]
+        command:
+        - /bin/sh
+        - -c
         args:
-          - |
-            set -ex;
-            yum update -y;
-            yum install -y mysql;
-            echo "Starting TiDB..." && \
-            /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
+        - |
+          set -ex;
+          yum update -y;
+          yum install -y mysql;
+          echo "Starting TiDB..." && \
+          exec /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
+        #command: ["/bin/sh", "-c"]
+        #args:
+        #  - |
+        #    set -ex;
+        #    yum update -y;
+        #    yum install -y mysql;
+        #    echo "Starting TiDB..." && \
+        #    /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
         image: pingcap/tidb:v7.1.0
         #args:
         #  - /tidb-server

@@ -156,8 +156,8 @@ spec:
       #  emptyDir: {}
   volumeClaimTemplates:
   - metadata:
-      name: bxw
-      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+        name: bxw
+        labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       accessModes:
         - "ReadWriteOnce"
