@@ -56,6 +56,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rr 64Gi -lr 64Gi \
   -tb 16384 \
   -nlp 16 \
   -nlt 64 \
@@ -81,6 +82,7 @@ nohup python ycsb.py -ms 1 -tr \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rr 64Gi -lr 64Gi \
   -tb 16384 \
   -nlp 16 \
   -nlt 64 \

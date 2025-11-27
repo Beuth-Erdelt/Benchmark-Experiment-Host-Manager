@@ -118,23 +118,24 @@ test_ycsb_testcase_pgbouncer_1.log
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 1593s 
-    Code: 1745062608
-    YCSB tool runs the benchmark.
+    Duration: 1616s 
+    Code: 1764194552
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'C'.
     Number of rows to insert is 16000000.
+    Ordering of inserts is hashed.
     Number of operations is 16000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
     Factors for loading are [11].
     Factors for benchmarking are [11].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.16.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['PGBouncer'].
+    Experiment is limited to DBMS ['PGBouncer'].
     Import is handled by 16 processes (pods).
-    Loading is fixed to cl-worker13.
-    Benchmarking is fixed to cl-worker13.
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
     Loading is tested with [64] threads, split into [16] pods.
     Benchmarking is tested with [128] threads, split into [16] pods.
@@ -143,28 +144,30 @@ YCSB SF=16
     Experiment is run once.
 
 ### Connections
-pgb-64-4-128-64-1 uses docker image postgres:16.1
-    RAM:541008592896
+pgb-64-4-128-64-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:241554848
-    datadisk:38276
+    disk:459107
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1745062608
+        code:1764194552
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-pgb-64-4-128-64               1       64  180224         16           0                   28817.563319               568643.0            16000000                             5900.75
+pgb-64-4-128-64               1       64  180224         16           0                   32035.269965               511095.0            16000000                             5842.75
 
 ### Execution
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-pgb-64-4-128-64-1               1      128  180224         16          20                       76904.14               198420.0          14750000                            2497.0
+pgb-64-4-128-64-1               1      128  180224         16           0                       76925.47               211356.0          16000000                            2469.0
 
 ### Workflow
 
@@ -174,40 +177,43 @@ DBMS pgb-64-4-128-64 - Pods [[16]]
 #### Planned
 DBMS pgb-64-4-128-64 - Pods [[16]]
 
-### Ingestion - SUT
-                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     2788.21     5.49         23.38                32.23
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component pool
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     1988.22     1.28          0.58                 0.58
+pgb-64-4-128-64-1      842.07     2.09          0.01                 0.01
 
-### Execution - SUT
+### Loading phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     2082.37    14.23         25.64                35.87
+pgb-64-4-128-64-1     3643.88     9.72         24.69                42.95
 
-### Execution - Benchmarker
+### Loading phase: component loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     1404.68     2.76          0.57                 0.58
+pgb-64-4-128-64-1     1269.01     3.39          0.11                 0.11
 
-### Execution - Pooling
+### Execution phase: component pool
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1      596.15      1.0          0.01                 0.01
+pgb-64-4-128-64-1      655.36     3.83          0.01                 0.01
 
-### Ingestion - Pooling
+### Execution phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1      735.21     0.81          0.01                 0.01
+pgb-64-4-128-64-1     2622.58    17.25          26.7                44.95
+
+### Execution phase: component benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     1067.82     8.17           0.1                 0.11
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1745062608` with the experiment code.
@@ -288,25 +294,26 @@ test_ycsb_testcase_pgbouncer_2.log
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 2537s 
-    Code: 1745066294
-    YCSB tool runs the benchmark.
+    Duration: 2400s 
+    Code: 1764196255
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'C'.
     Number of rows to insert is 16000000.
+    Ordering of inserts is hashed.
     Number of operations is 16000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
     Factors for loading are [11].
     Factors for benchmarking are [11].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.16.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['PGBouncer'].
+    Experiment is limited to DBMS ['PGBouncer'].
     Import is handled by 16 processes (pods).
-    Loading is fixed to cl-worker13.
-    Benchmarking is fixed to cl-worker13.
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 100Gi. Persistent storage is removed at experiment start.
     Loading is tested with [64] threads, split into [16] pods.
     Benchmarking is tested with [128] threads, split into [16] pods.
     Pooling is done with [4] pods having [128] inbound and [64] outbound connections in total.
@@ -314,47 +321,51 @@ YCSB SF=16
     Experiment is run 2 times.
 
 ### Connections
-pgb-64-4-128-64-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+pgb-64-4-128-64-1-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:202361324
-    datadisk:38277
+    disk:420889
     volume_size:100G
     volume_used:38G
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1745066294
-pgb-64-4-128-64-2-1 uses docker image postgres:16.1
-    RAM:541008592896
+        code:1764196255
+pgb-64-4-128-64-2-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:202361316
-    datadisk:38216
+    disk:420889
     volume_size:100G
     volume_used:38G
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:2
     eval_parameters
-        code:1745066294
+        code:1764196255
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-pgb-64-4-128-64               1       64  180224         16           0                   22943.376844               725185.0            16000000                             6951.25
+pgb-64-4-128-64               1       64  180224         16           0                   31160.081009               526737.0            16000000                              5810.5
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-pgb-64-4-128-64-1-1               1      128  180224         16          16                       80318.76               189995.0          15000000                            2553.0
-pgb-64-4-128-64-2-1               2      128  180224         16          14                       72783.33               214992.0          15125000                            2955.0
+pgb-64-4-128-64-1-1               1      128  180224         16           0                       59303.13               281255.0          16000000                            3149.0
+pgb-64-4-128-64-2-1               2      128  180224         16           0                       72913.57               221960.0          16000000                            2471.0
 
 ### Workflow
 
@@ -364,43 +375,46 @@ DBMS pgb-64-4-128-64 - Pods [[16], [16]]
 #### Planned
 DBMS pgb-64-4-128-64 - Pods [[16], [16]]
 
-### Ingestion - SUT
-                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     2790.74     3.89         23.14                41.46
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component pool
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     1991.34     1.69          0.58                 0.58
+pgb-64-4-128-64-1-1      824.06     1.79          0.01                 0.01
 
-### Execution - SUT
+### Loading phase: SUT deployment
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     2160.26    10.41         25.45                43.77
-pgb-64-4-128-64-2-1     2155.42    13.67         24.13                42.65
+pgb-64-4-128-64-1-1     3587.65     7.79         24.14                42.39
 
-### Execution - Benchmarker
+### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     1365.00     2.21          0.57                 0.58
-pgb-64-4-128-64-2-1     1384.65     3.59          0.57                 0.57
+pgb-64-4-128-64-1-1     1236.36     4.54          0.11                 0.11
 
-### Execution - Pooling
+### Execution phase: component pool
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1      596.37      1.0          0.01                 0.01
-pgb-64-4-128-64-2-1      590.51      2.0          0.01                 0.01
+pgb-64-4-128-64-1-1      678.00     3.75          0.01                 0.01
+pgb-64-4-128-64-2-1     1535.04     3.82          0.02                 0.02
 
-### Ingestion - Pooling
+### Execution phase: SUT deployment
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1      747.22     0.64          0.01                 0.01
+pgb-64-4-128-64-1-1     2486.15    16.55         26.19                44.44
+pgb-64-4-128-64-2-1     5726.88    17.15         24.76                43.20
+
+### Execution phase: component benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1-1     1205.23     8.14          0.11                 0.11
+pgb-64-4-128-64-2-1     1002.16     8.03          0.11                 0.11
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
@@ -490,16 +504,16 @@ doc_benchbase_testcase_newconn.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1764s 
-    Code: 1745334281
-    Benchbase runs the TPC-C benchmark.
+    Duration: 1972s 
+    Code: 1764169580
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 10 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction.
-    Experiment uses bexhoma version 0.8.4.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
+    Experiment uses bexhoma version 0.8.16.
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -510,52 +524,63 @@ Benchbase Workload SF=16
     Experiment is run once.
 
 ### Connections
-PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008592896
+PostgreSQL-1-1-1024-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:206800764
-    datadisk:4323
+    disk:425194
+    cpu_list:0-63
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1745334281
-PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008592896
+                code:1764169580
+PostgreSQL-1-1-1024-2 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:208119280
-    datadisk:5611
+    disk:425587
+    cpu_list:0-63
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1745334281
+                code:1764169580
 
 ### Execution
+
+#### Per Pod
+                         experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                     
+PostgreSQL-1-1-1024-1-1               1         32   16384       1      1  600.0           0                    977.498155                 446.806585         0.0                                                      59911.0                                              32730.0
+PostgreSQL-1-1-1024-2-1               1         16    8192       2      1  600.0           0                    335.586604                 333.498271         0.0                                                      76077.0                                              47667.0
+PostgreSQL-1-1-1024-2-2               1         16    8192       2      2  600.0           1                    335.636615                 333.633282         0.0                                                      76080.0                                              47660.0
+
+#### Aggregated Parallel
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  600.0           0                       1376.07                     467.82         0.0                                                      39122.0                                              23250.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  600.0           1                       1069.23                     912.18         0.0                                                      45573.0                                              29926.5
+PostgreSQL-1-1-1024-1               1         32   16384          1  600.0           0                        977.50                     446.81         0.0                                                      59911.0                                              32730.0
+PostgreSQL-1-1-1024-2               1         32   16384          2  600.0           1                        671.22                     667.13         0.0                                                      76080.0                                              47663.5
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 #### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1      155.0        1.0   1.0         371.612903
-PostgreSQL-1-1-1024-2      155.0        1.0   2.0         371.612903
+PostgreSQL-1-1-1024-1      261.0        1.0   1.0         220.689655
+PostgreSQL-1-1-1024-2      261.0        1.0   2.0         220.689655
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
