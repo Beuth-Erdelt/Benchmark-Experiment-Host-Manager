@@ -244,10 +244,11 @@ class default():
             #print(df)
             df['type']=workload['tenant_per']
             df['num_tenants']=workload['num_tenants']
+            df['vol_tenants']=workload['multi_tenant_volume']
             df['code']=code
             #print(df)
             df_performance = pd.concat([df_performance, df])
-        df_performance = df_performance.sort_values(['num_tenants', 'type'])
+        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
 
@@ -272,10 +273,11 @@ class default():
             df = self.get_performance_single(evaluation)
             df['type']=workload['tenant_per']
             df['num_tenants']=workload['num_tenants']
+            df['vol_tenants']=workload['multi_tenant_volume']
             df['code']=code
             #print(df)
             df_performance = pd.concat([df_performance, df])
-        df_performance = df_performance.sort_values(['num_tenants', 'type'])
+        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
 
@@ -387,10 +389,11 @@ class default():
             df = self.get_loading_time_max(evaluation)
             df['type']=workload['tenant_per']
             df['num_tenants']=workload['num_tenants']
+            df['vol_tenants']=workload['multi_tenant_volume']
             df['code']=code
             #print(df)
             df_performance = pd.concat([df_performance, df])
-        df_performance = df_performance.sort_values(['num_tenants', 'type'])
+        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
 
@@ -694,9 +697,10 @@ class default():
                 continue
             df['type'] = workload['tenant_per']
             df['num_tenants'] = workload['num_tenants']
+            df['vol_tenants'] = workload['multi_tenant_volume']
             df['code']=code
             df_performance = pd.concat([df_performance, df])
-        df_performance = df_performance.sort_values(['num_tenants', 'type'])
+        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
 
@@ -727,9 +731,10 @@ class default():
                 df['client'] = df.index.str.rsplit('-', n=1).str[-1]
                 df['type'] = workload['tenant_per']
                 df['num_tenants'] = workload['num_tenants']
+                df['vol_tenants']=workload['multi_tenant_volume']
                 df['code']=code
                 df_performance = pd.concat([df_performance, df])
-        df_performance = df_performance.sort_values(['num_tenants', 'type'])
+        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
 
@@ -755,6 +760,7 @@ class default():
                 df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             df_long['type'] = workload['tenant_per']
             df_long['num_tenants'] = workload['num_tenants']
+            df_long['vol_tenants'] = workload['multi_tenant_volume']
             df_long.drop(columns=['series'], inplace=True)
             #df_monitoring.plot(title=metric)
             #ax = df_monitoring.plot()
@@ -765,7 +771,7 @@ class default():
             #df_2 = df_long.copy()
         df_sum = (
             df_performance
-            .groupby(["timestamp", "client", "type", "num_tenants"], as_index=False)["value"]
+            .groupby(["timestamp", "client", "type", 'vol_tenants', "num_tenants"], as_index=False)["value"]
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)

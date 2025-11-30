@@ -529,6 +529,8 @@ class default():
             self.workload['info'] = self.workload['info']+"\nBenchmarking is run as {} times the number of benchmarking pods.".format(list_clients)
         if multi_tenant_num > 0:
             self.workload['info'] = self.workload['info']+"\nNumber of tenants is {}, one {} per tenant.".format(multi_tenant_num, multi_tenant_by)
+            if self.multi_tenant_volume:
+                self.workload['info'] = self.workload['info']+" Each tenant has a dedicated volume."
         if num_experiment_to_apply > 1: 
             self.workload['info'] = self.workload['info']+"\nExperiment is run {} times.".format(num_experiment_to_apply)
         else:

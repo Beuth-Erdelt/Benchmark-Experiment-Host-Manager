@@ -1312,7 +1312,7 @@ scrape_configs:
         else:
             storageConfiguration = configuration
         use_ramdisk = self.use_ramdisk()
-        self.volume_per_tenant = experiment.multi_tenant_volume # True
+        self.volume_per_tenant = self.experiment.multi_tenant_volume # True
         # configure names
         #if self.num_worker > 0:
         #    # we assume here, a stateful set is used
