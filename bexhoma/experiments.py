@@ -412,10 +412,13 @@ class default():
         skip_loading = args.skip_loading
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
+        multi_tenant_volume = args.multi_tenant_volume
         self.num_tenants = multi_tenant_num
         self.tenant_per = multi_tenant_by
+        self.multi_tenant_volume = multi_tenant_volume
         self.workload['num_tenants'] = self.num_tenants
         self.workload['tenant_per'] = self.tenant_per
+        self.workload['multi_tenant_volume'] = self.multi_tenant_volume
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
