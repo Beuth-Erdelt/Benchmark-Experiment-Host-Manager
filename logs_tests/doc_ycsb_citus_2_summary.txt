@@ -3,9 +3,9 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1601s 
-    Code: 1748850965
-    YCSB tool runs the benchmark.
+    Duration: 18192s 
+    Code: 1764261126
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
@@ -15,9 +15,9 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.16.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['Citus'].
+    Experiment is limited to DBMS ['Citus'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -29,105 +29,121 @@ YCSB SF=1
     Experiment is run 2 times.
 
 ### Connections
-Citus-64-8-65536-1-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008568320
+Citus-64-8-65536-1-1 uses docker image citusdata/citus:13.2.0-alpine
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:316311664
+    disk:421719
     volume_size:50.0G
     volume_used:40.0M
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081854078976
-        CPU:Intel(R) Xeon(R) Gold 6438Y+
-        Cores:128
-        host:6.8.0-60-generic
-        node:cl-worker37
-        disk:223872664
+        RAM:337974857728
+        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
+        Cores:32
+        host:5.15.0-153-generic
+        node:cl-worker17
+        disk:1670985
         volume_size:50.0G
         volume_used:40.0M
+        cpu_list:0-31
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 1
-        RAM:1081649897472
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:325379820
+        RAM:811500781568
+        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+        Cores:40
+        host:6.8.0-1041-nvidia
+        node:cl-worker19
+        disk:1489625
         volume_size:50.0G
         volume_used:40.0M
+        cpu_list:0-39
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 2
-        RAM:541008568320
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-140-generic
-        node:cl-worker13
-        disk:361131272
+        RAM:810205974528
+        CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
+        Cores:32
+        host:6.8.0-60-generic
+        node:cl-worker20
+        disk:591106
         volume_size:50.0G
         volume_used:40.0M
+        cpu_list:0-31
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     eval_parameters
-        code:1748850965
+        code:1764261126
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
-Citus-64-8-65536-2-1 uses docker image citusdata/citus:13.0.2-alpine
-    RAM:541008568320
+Citus-64-8-65536-2-1 uses docker image citusdata/citus:13.2.0-alpine
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:316311660
+    disk:421720
     volume_size:50.0G
     volume_used:40.0M
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:2
     worker 0
-        RAM:1081854078976
-        CPU:Intel(R) Xeon(R) Gold 6438Y+
-        Cores:128
-        host:6.8.0-60-generic
-        node:cl-worker37
-        disk:223877000
+        RAM:337974857728
+        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
+        Cores:32
+        host:5.15.0-153-generic
+        node:cl-worker17
+        disk:1671815
         volume_size:50.0G
-        volume_used:1.4G
+        volume_used:2.3G
+        cpu_list:0-31
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 1
-        RAM:1081649897472
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:325381092
+        RAM:811500781568
+        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+        Cores:40
+        host:6.8.0-1041-nvidia
+        node:cl-worker19
+        disk:1489645
         volume_size:50.0G
-        volume_used:1.4G
+        volume_used:2.4G
+        cpu_list:0-39
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 2
-        RAM:541008568320
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-140-generic
-        node:cl-worker13
-        disk:361131272
+        RAM:540579323904
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-86-generic
+        node:cl-worker22
+        disk:407116
         volume_size:50.0G
-        volume_used:1.4G
+        volume_used:2.2G
+        cpu_list:0-127
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     eval_parameters
-        code:1748850965
+        code:1764261126
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:3
 
 ### Loading
                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Citus-64-8-65536               1       64   65536          8           0                   32304.397529                33417.0             1000000                              5271.5
+Citus-64-8-65536               1       64   65536          8           0                     931.877746              1075150.0             1000000                            506623.0
 
 ### Execution
                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Citus-64-8-65536-1-1               1       64   65536          1           0                       64620.36               154750.0           4996520                            3255.0             5003480                              3307.0
-Citus-64-8-65536-2-1               2       64   65536          1           0                       64634.14               154717.0           4999773                            2923.0             5000227                              2921.0
+Citus-64-8-65536-1-1               1       64   65536          1           0                        1327.30              7534098.0           4997776                            5903.0             5002224                            947199.0
+Citus-64-8-65536-2-1               2       64   65536          1           0                        1218.87              8204351.0           5003398                            3915.0             4996602                           1034751.0
 
 ### Workflow
 
@@ -137,30 +153,43 @@ DBMS Citus-64-8-65536 - Pods [[1], [1]]
 #### Planned
 DBMS Citus-64-8-65536 - Pods [[1], [1]]
 
-### Ingestion - SUT
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1      424.12     2.44         12.93                 14.2
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: SUT deployment
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1        0.01        0           0.0                  0.0
+Citus-64-8-65536-1-1       745.1     1.05          0.72                 0.75
 
-### Execution - SUT
+### Loading phase: component worker
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1     4476.36    14.18         17.37                18.88
-Citus-64-8-65536-2-1     3819.10    14.10         17.45                19.32
+Citus-64-8-65536-1-1      1034.7     1.43          3.43                 6.17
 
-### Execution - Benchmarker
+### Loading phase: component loader
                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-64-8-65536-1-1     1137.33     8.23          0.63                 0.63
-Citus-64-8-65536-2-1      964.66     8.67          0.63                 0.63
+Citus-64-8-65536-1-1      191.62     0.31          0.12                 0.13
+
+### Execution phase: SUT deployment
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1       18.83     0.01          0.53                 0.56
+Citus-64-8-65536-2-1       21.71     0.01          0.51                 0.83
+
+### Execution phase: component worker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1    12719.62     3.84          5.59                12.20
+Citus-64-8-65536-2-1    10545.33     2.83          5.54                12.78
+
+### Execution phase: component benchmarker
+                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Citus-64-8-65536-1-1      939.84     0.25          0.15                 0.15
+Citus-64-8-65536-2-1      941.50     1.01          0.15                 0.15
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
