@@ -41,6 +41,7 @@ from math import ceil
 import time
 import re
 import shutil
+import copy
 
 from dbmsbenchmarker import *
 
@@ -1311,6 +1312,7 @@ scrape_configs:
         else:
             storageConfiguration = configuration
         use_ramdisk = self.use_ramdisk()
+        self.volume_per_tenant = self.experiment.multi_tenant_volume # True
         # configure names
         #if self.num_worker > 0:
         #    # we assume here, a stateful set is used
@@ -1606,6 +1608,16 @@ scrape_configs:
                             #print("{:30s}: loading is set to finished".format(configuration))
                             #self.loading_active = False
                             #self.monitor_loading = False
+                if self.volume_per_tenant:
+                    print(f"I need {self.num_tenants} copies of PVC")
+                    for i in range(self.num_tenants):
+                        dep_tenant = copy.deepcopy(dep)
+                        dep_tenant['metadata']['name'] = dep_tenant['metadata']['name'] + "-" + str(i)
+                        result.append(dep_tenant)
+                        name_pvc = dep_tenant['metadata']['name']
+                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0:
+                            # we have not loaded yet, so this is the first run in this experiment
+                            reset_and_remove_pvc(name_pvc)
             ################
             ################
             # Kind=StatefulSet
@@ -2033,6 +2045,13 @@ scrape_configs:
                                     #print(vol['mountPath'])
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                                    elif self.volume_per_tenant:
+                                        print(f"I need {self.num_tenants} copies of volumeMounts")
+                                        for i in range(self.num_tenants):
+                                            vol_tenant = copy.deepcopy(vol)
+                                            vol_tenant['mountPath'] = f"/tenant_{i}"
+                                            vol_tenant['name'] = vol_tenant['name'] + "-" + str(i)
+                                            dep['spec']['template']['spec']['containers'][i_container]['volumeMounts'].append(vol_tenant)
                                 if vol['name'] == 'benchmark-data-volume':
                                     #print(vol['mountPath'])
                                     if not use_data:
@@ -2066,6 +2085,13 @@ scrape_configs:
                                 result[key]['spec']['template']['spec']['volumes'][i]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                             else:
                                 vol['persistentVolumeClaim']['claimName'] = name_pvc
+                                if self.volume_per_tenant:
+                                    print(f"I need {self.num_tenants} copies of volumes")
+                                    for i in range(self.num_tenants):
+                                        vol_tenant = copy.deepcopy(vol)
+                                        vol_tenant['name'] = vol_tenant['name'] + "-" + str(i)
+                                        vol_tenant['persistentVolumeClaim']['claimName'] = vol_tenant['persistentVolumeClaim']['claimName'] + "-" + str(i)
+                                        dep['spec']['template']['spec']['volumes'].append(vol_tenant)
                                 self.deployment_infos['deployment'][deployment_type]['pvc'] = [name_pvc]
                         if vol['name'] == 'benchmark-data-volume':
                             if not use_data:
@@ -2074,8 +2100,24 @@ scrape_configs:
                             # we only need hostPath for monitoring
                             del result[key]['spec']['template']['spec']['volumes'][i]
                 # init containers only for persistent volumes
-                if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
-                    del result[key]['spec']['template']['spec']['initContainers']
+                if 'initContainers' in result[key]['spec']['template']['spec']:
+                    if not use_storage:
+                        del result[key]['spec']['template']['spec']['initContainers']
+                    else:
+                        for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['initContainers']))):
+                            if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
+                                for j, vol in reversed(list(enumerate(container['volumeMounts']))):
+                                    if vol['name'] == 'benchmark-storage-volume':
+                                        #print(vol['mountPath'])
+                                        if not use_storage:
+                                            del result[key]['spec']['template']['spec']['initContainers'][i_container]['volumeMounts'][j]
+                                        elif self.volume_per_tenant:
+                                            print(f"I need {self.num_tenants} copies of volumeMounts")
+                                            for i in range(self.num_tenants):
+                                                vol_tenant = copy.deepcopy(vol)
+                                                vol_tenant['mountPath'] = f"/tenant_{i}"
+                                                vol_tenant['name'] = vol_tenant['name'] + "-" + str(i)
+                                                dep['spec']['template']['spec']['initContainers'][i_container]['volumeMounts'].append(vol_tenant)
                 # parameter from instance name
                 # request = limit
                 # we only want to manipulate nodeSelector for pool container in pooler
@@ -2222,6 +2264,9 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         self.logger.debug("Deploy "+deployment_experiment)
+        if self.volume_per_tenant:
+            print(yaml.dump_all(result))
+            #exit()
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
@@ -3579,7 +3624,11 @@ scrape_configs:
             filename_in_container = scriptfolder+script
             script_create_database = ''
             for tenant in range(self.num_tenants):
-                script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
+                if self.volume_per_tenant:
+                    script_create_database += f"CREATE TABLESPACE tenant_{tenant} LOCATION '/tenant_{tenant}';\n"
+                    script_create_database += f"CREATE DATABASE tenant_{tenant} TABLESPACE tenant_{tenant};\n"
+                else:
+                    script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
             with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
             self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
