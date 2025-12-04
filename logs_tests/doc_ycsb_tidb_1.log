@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1763921414
-Experiment                    : starts at 2025-11-23 19:10:18.264103 (394839.5656398)
+Experiment                    : has code 1764160713
+Experiment                    : starts at 2025-11-26 13:38:37.709948 (148282.4402183)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -13,7 +13,7 @@ Batch size is ''.
 Target is based on multiples of '16384'.
 Factors for loading are [1].
 Factors for benchmarking are [1].
-Experiment uses bexhoma version 0.8.15.
+Experiment uses bexhoma version 0.8.16.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['TiDB'].
 Import is handled by 8 processes (pods).
@@ -22,12 +22,14 @@ Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
+TiDB-64-8-16384               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 TiDB-64-8-16384               : will start now
 TiDB-64-8-16384               : deployments ['sut']
 TiDB-64-8-16384               : stateful sets ['pd', 'tikv']
 TiDB-64-8-16384               : pvcs []
-TiDB-64-8-16384               : name of SUT pods = bexhoma-sut-tidb-64-8-16384-1763921414
-TiDB-64-8-16384               : name of SUT service = bexhoma-sut-tidb-64-8-16384-1763921414
+TiDB-64-8-16384               : name of SUT pods = bexhoma-sut-tidb-64-8-16384-1764160713
+TiDB-64-8-16384               : name of SUT service = bexhoma-sut-tidb-64-8-16384-1764160713
 TiDB-64-8-16384               : name of worker pods = bexhoma-worker-tidb-ycsb-1
 TiDB-64-8-16384               : name of worker service headless = bexhoma-worker-tidb-ycsb-1
 - waiting 30s -               : done
@@ -38,21 +40,30 @@ TiDB-64-8-16384               : worker pods found: ['bexhoma-tikv-tidb-ycsb-1-0'
 TiDB-64-8-16384               : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
 TiDB-64-8-16384               : found 3 / 3 running workers (component tikv)
 TiDB-64-8-16384               : is not loaded yet
-TiDB-64-8-16384               : will start loading but not before 2025-11-23 18:12:18 (that is in 60 secs)
+TiDB-64-8-16384               : will start loading but not before 2025-11-26 12:41:11 (that is in 60 secs)
 - waiting 30s -               : done
 TiDB-64-8-16384               : is not loaded yet
-TiDB-64-8-16384               : will start loading but not before 2025-11-23 18:12:18
+TiDB-64-8-16384               : will start loading but not before 2025-11-26 12:41:11
 - waiting 30s -               : done
 TiDB-64-8-16384               : is not loaded yet
-TiDB-64-8-16384               : connect to pod bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-ds7kd to load scripts
+TiDB-64-8-16384               : connect to pod bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-h2jms to load scripts
 TiDB-64-8-16384               : start asynch loading scripts of type loaded
 TiDB-64-8-16384               : is loading
 - waiting 30s -               : done
 TiDB-64-8-16384               : is loading
 - waiting 30s -               : done
+TiDB-64-8-16384               : is loading
+- waiting 30s -               : done
+TiDB-64-8-16384               : is loading
+- waiting 30s -               : done
+TiDB-64-8-16384               : is loading
+- waiting 30s -               : done
 TiDB-64-8-16384               : showing loader times
-TiDB-64-8-16384               : loader timespan (first to last [s]) = 63
-TiDB-64-8-16384               : connect to pod bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-ds7kd to load scripts
+TiDB-64-8-16384               : generator times (start/end per pod and container) []
+TiDB-64-8-16384               : loader times (start/end per pod and container) [(1764160923, 1764161091), (1764160923, 1764161096), (1764160922, 1764161090), (1764160922, 1764161090), (1764160923, 1764161096), (1764160923, 1764161096), (1764160922, 1764161076), (1764160922, 1764161091)]
+TiDB-64-8-16384               : total times (start/end per pod and container) [(1764160923, 1764161091), (1764160923, 1764161096), (1764160922, 1764161090), (1764160922, 1764161090), (1764160923, 1764161096), (1764160923, 1764161096), (1764160922, 1764161076), (1764160922, 1764161091)]
+TiDB-64-8-16384               : loader timespan (first to last [s]) = 174
+TiDB-64-8-16384               : connect to pod bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-h2jms to load scripts
 TiDB-64-8-16384               : start asynch loading scripts of type indexed
 TiDB-64-8-16384               : is loading
 - waiting 30s -               : done
@@ -70,35 +81,42 @@ TiDB-64-8-16384               : worker pods found (only stateful set pods): ['be
 TiDB-64-8-16384               : distributed system - get host info for worker bexhoma-tikv-tidb-ycsb-1-0
 TiDB-64-8-16384               : distributed system - get host info for worker bexhoma-tikv-tidb-ycsb-1-1
 TiDB-64-8-16384               : distributed system - get host info for worker bexhoma-tikv-tidb-ycsb-1-2
-TiDB-64-8-16384               : distributed system - get host info for sut bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-ds7kd
-TiDB-64-8-16384               : distributed system - get host info for sut bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-dwjdm
-TiDB-64-8-16384               : distributed system - get host info for sut bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-lc4cs
+TiDB-64-8-16384               : distributed system - get host info for sut bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-h2jms
+TiDB-64-8-16384               : distributed system - get host info for sut bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-n2tpn
+TiDB-64-8-16384               : distributed system - get host info for sut bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-n8sjb
 TiDB-64-8-16384-1             : needs monitoring (common metrics) for deployment sut
 TiDB-64-8-16384-1             : needs monitoring (custom metrics) for stateful set pd
 TiDB-64-8-16384-1             : needs monitoring (custom metrics) for stateful set tikv
-TiDB-64-8-16384               : benchmarking results in folder \Benchmarks/1763921414
+TiDB-64-8-16384               : benchmarking results in folder \Benchmarks/1764160713
 - waiting 10s -               : done
-TiDB-64-8-16384               : benchmarking is waiting for job bexhoma-benchmarker-tidb-64-8-16384-1763921414-1-1-b49hk: found
+TiDB-64-8-16384               : benchmarking is waiting for job bexhoma-benchmarker-tidb-64-8-16384-1764160713-1-1-q4jkw: found
 TiDB-64-8-16384-1             : needs monitoring (common metrics) for deployment sut
 TiDB-64-8-16384-1             : collecting loading metrics of SUT at connection TiDB-64-8-16384-1
-TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1763921414(.*)", pod=~"(.*)tidb-64-8-16384-1763921414(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1764160713(.*)", pod=~"(.*)tidb-64-8-16384-1764160713(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 TiDB-64-8-16384-1             : needs monitoring (custom metrics) for stateful set pd
 TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-ycsb-1-(.*)", pod=~"(.*)bexhoma-pd-tidb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 TiDB-64-8-16384-1             : needs monitoring (custom metrics) for stateful set tikv
 TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-ycsb-1-(.*)", pod=~"(.*)bexhoma-tikv-tidb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 TiDB-64-8-16384-1             : collecting metrics of data injector at connection TiDB-64-8-16384-1
-TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1763921414(.*)", pod=~"(.*)tidb-64-8-16384-1763921414(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1764160713(.*)", pod=~"(.*)tidb-64-8-16384-1764160713(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 TiDB-64-8-16384               : has running benchmarks
+- waiting 30s -               : done
+TiDB-64-8-16384               : has running benchmarks
+- waiting 30s -               : done
+TiDB-64-8-16384               : has running benchmarks
+- waiting 30s -               : done
+TiDB-64-8-16384               : has running benchmarks
+timing_benchmarker [(1764161474, 1764161642)]
 TiDB-64-8-16384-1             : showing benchmarker times
-TiDB-64-8-16384-1             : benchmarker timespan job from 1763921984 to 1763922074
-TiDB-64-8-16384-1             : benchmarker timespan pods from 1763921988 to 1763922064
-TiDB-64-8-16384-1             : benchmarker timespan (start to end single container [s]) = 76
-TiDB-64-8-16384-1             : benchmarker times (start/end per pod and container) = [(1763921988, 1763922064)]
-TiDB-64-8-16384-1             : found and updated times {'benchmarker': [(1763921988, 1763922064)]}
+TiDB-64-8-16384-1             : benchmarker timespan job from 1764161470 to 1764161682
+TiDB-64-8-16384-1             : benchmarker timespan pods from 1764161474 to 1764161642
+TiDB-64-8-16384-1             : benchmarker timespan (start to end single container [s]) = 168
+TiDB-64-8-16384-1             : benchmarker times (start/end per pod and container) = [(1764161474, 1764161642)]
+TiDB-64-8-16384-1             : found and updated times {'benchmarker': [(1764161474, 1764161642)]}
 TiDB-64-8-16384-1             : needs monitoring (common metrics) for deployment sut
 TiDB-64-8-16384-1             : collecting execution metrics of SUT at connection TiDB-64-8-16384-1
-TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1763921414(.*)", pod=~"(.*)tidb-64-8-16384-1763921414(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1764160713(.*)", pod=~"(.*)tidb-64-8-16384-1764160713(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 TiDB-64-8-16384-1             : needs monitoring (custom metrics) for stateful set pd
 TiDB-64-8-16384-1             : collecting execution metrics of pd at connection TiDB-64-8-16384-1
 TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-ycsb-1-(.*)", pod=~"(.*)bexhoma-pd-tidb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
@@ -106,12 +124,12 @@ TiDB-64-8-16384-1             : needs monitoring (custom metrics) for stateful s
 TiDB-64-8-16384-1             : collecting execution metrics of tikv at connection TiDB-64-8-16384-1
 TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-ycsb-1-(.*)", pod=~"(.*)bexhoma-tikv-tidb-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 TiDB-64-8-16384-1             : collecting metrics of benchmarker at connection TiDB-64-8-16384-1
-TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1763921414(.*)", pod=~"(.*)tidb-64-8-16384-1763921414(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-64-8-16384-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-64-8-16384-1764160713(.*)", pod=~"(.*)tidb-64-8-16384-1764160713(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 TiDB-64-8-16384               : can be stopped
-TiDB-64-8-16384               : had 0 restarts at worker bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-ds7kd
-TiDB-64-8-16384               : had 0 restarts at worker bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-dwjdm
-TiDB-64-8-16384               : had 0 restarts at worker bexhoma-sut-tidb-64-8-16384-1763921414-fbd9b6dfc-lc4cs
+TiDB-64-8-16384               : had 0 restarts at worker bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-h2jms
+TiDB-64-8-16384               : had 0 restarts at worker bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-n2tpn
+TiDB-64-8-16384               : had 0 restarts at worker bexhoma-sut-tidb-64-8-16384-1764160713-86d8d6b948-n8sjb
 TiDB-64-8-16384               : worker pods found: ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
 TiDB-64-8-16384               : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
 TiDB-64-8-16384               : had 0 restarts at worker bexhoma-pd-tidb-ycsb-1-0
@@ -122,7 +140,7 @@ TiDB-64-8-16384               : worker pods found (only stateful set pods): ['be
 TiDB-64-8-16384               : had 0 restarts at worker bexhoma-tikv-tidb-ycsb-1-0
 TiDB-64-8-16384               : had 0 restarts at worker bexhoma-tikv-tidb-ycsb-1-1
 TiDB-64-8-16384               : had 0 restarts at worker bexhoma-tikv-tidb-ycsb-1-2
-Experiment                    : ends at 2025-11-23 19:23:21.756404 (395623.0585334) - 783.49s total
+Experiment                    : ends at 2025-11-26 13:56:49.967713 (149374.6975347) - 1092.26s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -133,8 +151,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 784s 
-    Code: 1763921414
+    Duration: 1093s 
+    Code: 1764160713
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -145,7 +163,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [1].
     Factors for benchmarking are [1].
-    Experiment uses bexhoma version 0.8.15.
+    Experiment uses bexhoma version 0.8.16.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['TiDB'].
     Import is handled by 8 processes (pods).
@@ -156,101 +174,101 @@ YCSB SF=1
 
 ### Connections
 TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
-    RAM:337974857728
-    CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-    Cores:32
-    host:5.15.0-153-generic
-    node:cl-worker17
-    disk:1660947
-    cpu_list:0-31
+    RAM:540579323904
+    CPU:AMD EPYC 7502 32-Core Processor
+    Cores:128
+    host:6.8.0-86-generic
+    node:cl-worker22
+    disk:406027
+    cpu_list:0-127
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     sut 0
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-153-generic
-        node:cl-worker17
-        disk:1660947
-        cpu_list:0-31
+        RAM:540579323904
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-86-generic
+        node:cl-worker22
+        disk:406027
+        cpu_list:0-127
     sut 1
-        RAM:540590923776
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-85-generic
-        node:cl-worker25
-        disk:160796
-        cpu_list:0-95
+        RAM:2164173279232
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-79-generic
+        node:cl-worker36
+        disk:636776
+        cpu_list:0-223
     sut 2
-        RAM:540590919680
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-85-generic
-        node:cl-worker23
-        disk:1393874
-        cpu_list:0-95
+        RAM:1081742749696
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-86-generic
+        node:cl-worker29
+        disk:1395819
+        cpu_list:0-127
     pd 0
-        RAM:608117178368
-        CPU:AMD EPYC 7542 32-Core Processor
-        Cores:64
-        host:6.8.0-86-generic
-        node:cl-worker21
-        disk:780788
-        cpu_list:0-63
+        RAM:2164173279232
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-79-generic
+        node:cl-worker36
+        disk:636776
+        cpu_list:0-223
     pd 1
-        RAM:540590919680
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-85-generic
-        node:cl-worker23
-        disk:1393874
-        cpu_list:0-95
-    pd 2
-        RAM:540590923776
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-85-generic
-        node:cl-worker25
-        disk:160796
-        cpu_list:0-95
-    tikv 0
-        RAM:608117178368
-        CPU:AMD EPYC 7542 32-Core Processor
-        Cores:64
+        RAM:1081742749696
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
         host:6.8.0-86-generic
-        node:cl-worker21
-        disk:780788
-        cpu_list:0-63
+        node:cl-worker29
+        disk:1395819
+        cpu_list:0-127
+    pd 2
+        RAM:1081965486080
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:5.15.0-1075-nvidia
+        node:cl-worker27
+        disk:1364527
+        cpu_list:0-255
+    tikv 0
+        RAM:2164173279232
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-79-generic
+        node:cl-worker36
+        disk:636776
+        cpu_list:0-223
     tikv 1
-        RAM:540590919680
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-85-generic
-        node:cl-worker23
-        disk:1393874
-        cpu_list:0-95
+        RAM:1077382864896
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1025-nvidia
+        node:cl-worker28
+        disk:1383303
+        cpu_list:0-255
     tikv 2
-        RAM:540590923776
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-85-generic
-        node:cl-worker25
-        disk:160796
-        cpu_list:0-95
+        RAM:1081742749696
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-86-generic
+        node:cl-worker29
+        disk:1395819
+        cpu_list:0-127
     eval_parameters
-        code:1763921414
+        code:1764160713
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-TiDB-64-8-16384               1       64   16384          8           0                   16122.895045                62410.0             1000000                              7580.5
+TiDB-64-8-16384               1       64   16384          8           0                    5962.066718               172852.0             1000000                             68887.0
 
 ### Execution
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-TiDB-64-8-16384-1               1       64   16384          1           0                       13187.74                75828.0            500160                            2605.0              499840                            146943.0
+TiDB-64-8-16384-1               1       64   16384          1           0                        5963.81               167678.0            500309                            4679.0              499691                            419583.0
 
 ### Workflow
 
@@ -264,35 +282,35 @@ DBMS TiDB-64-8-16384 - Pods [[1]]
 
 ### Loading phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      935.45    12.27          4.68                 5.43
+TiDB-64-8-16384-1      906.69     5.02          1.15                 1.92
 
 ### Loading phase: component pd
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       95.28     0.82          0.26                 0.26
+TiDB-64-8-16384-1       69.18     0.35          0.26                 0.26
 
 ### Loading phase: component tikv
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      380.34     3.99          5.42                14.73
+TiDB-64-8-16384-1      670.99     3.77          5.44                15.54
 
 ### Loading phase: component loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       64.63        0          0.22                 0.23
+TiDB-64-8-16384-1       83.13     0.46          0.23                 0.23
 
 ### Execution phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      641.79     9.97          1.14                  1.9
+TiDB-64-8-16384-1      843.71     5.93          1.12                 1.92
 
 ### Execution phase: component pd
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       60.29     1.13          0.26                 0.26
+TiDB-64-8-16384-1       56.87     0.41          0.26                 0.26
 
 ### Execution phase: component tikv
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       440.7     6.94          6.87                20.63
+TiDB-64-8-16384-1      809.25     5.78          7.24                21.34
 
 ### Execution phase: component benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1        61.0        0          0.14                 0.14
+TiDB-64-8-16384-1       77.05     0.46          0.14                 0.14
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -306,4 +324,4 @@ TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Execution Phase contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column

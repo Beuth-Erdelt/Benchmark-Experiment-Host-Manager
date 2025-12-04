@@ -41,6 +41,7 @@ from math import ceil
 import time
 import re
 import shutil
+import copy
 
 from dbmsbenchmarker import *
 
@@ -951,7 +952,36 @@ scrape_configs:
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
                         if self.monitor_app_active:
-                            if 'monitor' in self.dockertemplate and 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
+                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery']:
+                                prometheus_config += """
+  - job_name: 'tidb-pods'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      # Only select TiDB pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;sut;TiDB
+        action: keep
+
+      # Set the address to pod IP + metrics port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: ${{1}}:9500
+
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
+
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                            elif 'monitor' in self.dockertemplate and 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
                                 app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
                                 if self.tenant_per == 'database' and self.num_tenants > 0:
                                     connections = [
@@ -1282,6 +1312,7 @@ scrape_configs:
         else:
             storageConfiguration = configuration
         use_ramdisk = self.use_ramdisk()
+        self.volume_per_tenant = self.experiment.multi_tenant_volume # True
         # configure names
         #if self.num_worker > 0:
         #    # we assume here, a stateful set is used
@@ -1577,6 +1608,16 @@ scrape_configs:
                             #print("{:30s}: loading is set to finished".format(configuration))
                             #self.loading_active = False
                             #self.monitor_loading = False
+                if self.volume_per_tenant:
+                    print(f"I need {self.num_tenants} copies of PVC")
+                    for i in range(self.num_tenants):
+                        dep_tenant = copy.deepcopy(dep)
+                        dep_tenant['metadata']['name'] = dep_tenant['metadata']['name'] + "-" + str(i)
+                        result.append(dep_tenant)
+                        name_pvc = dep_tenant['metadata']['name']
+                        if not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0:
+                            # we have not loaded yet, so this is the first run in this experiment
+                            reset_and_remove_pvc(name_pvc)
             ################
             ################
             # Kind=StatefulSet
@@ -2004,6 +2045,13 @@ scrape_configs:
                                     #print(vol['mountPath'])
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                                    elif self.volume_per_tenant:
+                                        print(f"I need {self.num_tenants} copies of volumeMounts")
+                                        for i in range(self.num_tenants):
+                                            vol_tenant = copy.deepcopy(vol)
+                                            vol_tenant['mountPath'] = f"/tenant_{i}"
+                                            vol_tenant['name'] = vol_tenant['name'] + "-" + str(i)
+                                            dep['spec']['template']['spec']['containers'][i_container]['volumeMounts'].append(vol_tenant)
                                 if vol['name'] == 'benchmark-data-volume':
                                     #print(vol['mountPath'])
                                     if not use_data:
@@ -2037,6 +2085,13 @@ scrape_configs:
                                 result[key]['spec']['template']['spec']['volumes'][i]['emptyDir'] = { 'sizeLimit': self.storage['storageSize'], 'medium': 'Memory' } 
                             else:
                                 vol['persistentVolumeClaim']['claimName'] = name_pvc
+                                if self.volume_per_tenant:
+                                    print(f"I need {self.num_tenants} copies of volumes")
+                                    for i in range(self.num_tenants):
+                                        vol_tenant = copy.deepcopy(vol)
+                                        vol_tenant['name'] = vol_tenant['name'] + "-" + str(i)
+                                        vol_tenant['persistentVolumeClaim']['claimName'] = vol_tenant['persistentVolumeClaim']['claimName'] + "-" + str(i)
+                                        dep['spec']['template']['spec']['volumes'].append(vol_tenant)
                                 self.deployment_infos['deployment'][deployment_type]['pvc'] = [name_pvc]
                         if vol['name'] == 'benchmark-data-volume':
                             if not use_data:
@@ -2045,8 +2100,24 @@ scrape_configs:
                             # we only need hostPath for monitoring
                             del result[key]['spec']['template']['spec']['volumes'][i]
                 # init containers only for persistent volumes
-                if 'initContainers' in result[key]['spec']['template']['spec'] and not use_storage:
-                    del result[key]['spec']['template']['spec']['initContainers']
+                if 'initContainers' in result[key]['spec']['template']['spec']:
+                    if not use_storage:
+                        del result[key]['spec']['template']['spec']['initContainers']
+                    else:
+                        for i_container, container in reversed(list(enumerate(dep['spec']['template']['spec']['initContainers']))):
+                            if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
+                                for j, vol in reversed(list(enumerate(container['volumeMounts']))):
+                                    if vol['name'] == 'benchmark-storage-volume':
+                                        #print(vol['mountPath'])
+                                        if not use_storage:
+                                            del result[key]['spec']['template']['spec']['initContainers'][i_container]['volumeMounts'][j]
+                                        elif self.volume_per_tenant:
+                                            print(f"I need {self.num_tenants} copies of volumeMounts")
+                                            for i in range(self.num_tenants):
+                                                vol_tenant = copy.deepcopy(vol)
+                                                vol_tenant['mountPath'] = f"/tenant_{i}"
+                                                vol_tenant['name'] = vol_tenant['name'] + "-" + str(i)
+                                                dep['spec']['template']['spec']['initContainers'][i_container]['volumeMounts'].append(vol_tenant)
                 # parameter from instance name
                 # request = limit
                 # we only want to manipulate nodeSelector for pool container in pooler
@@ -2193,6 +2264,9 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         self.logger.debug("Deploy "+deployment_experiment)
+        #if self.volume_per_tenant:
+        #    print(yaml.dump_all(result))
+        #    #exit()
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
@@ -3550,7 +3624,11 @@ scrape_configs:
             filename_in_container = scriptfolder+script
             script_create_database = ''
             for tenant in range(self.num_tenants):
-                script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
+                if self.volume_per_tenant:
+                    script_create_database += f"CREATE TABLESPACE tenant_{tenant} LOCATION '/tenant_{tenant}';\n"
+                    script_create_database += f"CREATE DATABASE tenant_{tenant} TABLESPACE tenant_{tenant};\n"
+                else:
+                    script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
             with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
             self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
@@ -4253,6 +4331,7 @@ scrape_configs:
         env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
         env_default['BEXHOMA_PARALLEL'] = str(parallelism)
         env_default['BEXHOMA_NUM_PODS'] = str(num_pods)
+        env_default['BEXHOMA_DBMS'] = str(self.docker)
         if self.num_tenants > 0 and self.tenant_per == 'container':
             env_default['BEXHOMA_NUM_PODS_TOTAL'] = str(int(num_pods)*self.num_tenants)
         else:

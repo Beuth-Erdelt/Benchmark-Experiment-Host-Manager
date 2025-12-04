@@ -12,6 +12,7 @@ echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 echo "BEXHOMA_DBMS:$BEXHOMA_DBMS"
+echo "BEXHOMA_DBMS_TYPE:$BEXHOMA_DBMS_TYPE"
 
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $BEXHOMA_TIME_NOW"
@@ -148,8 +149,8 @@ else
     URL=$BEXHOMA_URL
 fi
 
-if [[ "$BEXHOMA_DBMS" == "redis" || "$BEXHOMA_DBMS" == "redis-cluster" ]]; then
-    echo "BEXHOMA_DBMS is set to Redis"
+if [[ "$BEXHOMA_DBMS_TYPE" == "redis" || "$BEXHOMA_DBMS_TYPE" == "redis-cluster" ]]; then
+    echo "BEXHOMA_DBMS_TYPE is set to Redis"
     echo "redis.host=$BEXHOMA_HOST
 redis.port=$BEXHOMA_PORT
 redis.passwd=$BEXHOMA_PASSWORD
@@ -234,7 +235,7 @@ bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Execute workload ###################
 # to force "new" method of measurement: -p measurementtype=hdrhistogram
-if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
+if [[ "$BEXHOMA_DBMS_TYPE" == "redis" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
@@ -242,7 +243,7 @@ if [[ "$BEXHOMA_DBMS" == "redis" ]]; then
     else
         time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
     fi
-elif [[ "$BEXHOMA_DBMS" == "redis-cluster" ]]; then
+elif [[ "$BEXHOMA_DBMS_TYPE" == "redis-cluster" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status

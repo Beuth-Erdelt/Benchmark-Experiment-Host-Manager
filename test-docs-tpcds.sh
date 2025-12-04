@@ -83,6 +83,7 @@ wait_process "tpcds"
 #### TCP-DS Monitoring (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr \
   -dbms MonetDB \
+  -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
@@ -170,6 +171,7 @@ nohup python tpcds.py -ms 1 \
   -nc 1 -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
+  -rr 256Gi -lr 256Gi \
   -t 7200 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
@@ -189,6 +191,7 @@ nohup python tpcds.py -ms 1 \
   -nc 2 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
+  -rr 256Gi -lr 256Gi \
   -t 7200 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
@@ -208,6 +211,7 @@ nohup python tpcds.py -ms 1 \
   -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
+  -rr 256Gi -lr 256Gi \
   -t 7200 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
@@ -230,6 +234,7 @@ wait_process "tpcds"
 #### TCP-H Profiling (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr \
   -dbms MonetDB \
+  -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 10 \

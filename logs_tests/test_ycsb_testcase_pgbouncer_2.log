@@ -2,45 +2,63 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1745066294
-Experiment                    : starts at 2025-04-19 14:38:19.184796 (416384.0558821)
+Experiment                    : has code 1764242702
+Experiment                    : starts at 2025-11-27 12:25:03.015508 (28434866.48605828)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'C'.
 Number of rows to insert is 16000000.
+Ordering of inserts is hashed.
 Number of operations is 16000000.
 Batch size is ''.
 Target is based on multiples of '16384'.
 Factors for loading are [11].
 Factors for benchmarking are [11].
-Experiment uses bexhoma version 0.8.4.
+Experiment uses bexhoma version 0.8.16.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['PGBouncer'].
+Experiment is limited to DBMS ['PGBouncer'].
 Import is handled by 16 processes (pods).
-Loading is fixed to cl-worker13.
-Benchmarking is fixed to cl-worker13.
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 100Gi.
+Database is persisted to disk of type shared and size 100Gi. Persistent storage is removed at experiment start.
 Loading is tested with [64] threads, split into [16] pods.
 Benchmarking is tested with [128] threads, split into [16] pods.
 Pooling is done with [4] pods having [128] inbound and [64] outbound connections in total.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
+pgb-64-4-128-64               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+pgb-64-4-128-64               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+pgb-64-4-128-64               : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 pgb-64-4-128-64               : will start now
-pgb-64-4-128-64               : Name of SUT pods = bexhoma-sut-pgb-64-4-128-64-1745066294
-pgb-64-4-128-64               : Name of SUT service = bexhoma-sut-pgb-64-4-128-64-1745066294
-pgb-64-4-128-64               : Name of SUT PVC name = bexhoma-storage-postgresql-ycsb-16
+pgb-64-4-128-64               : deployments ['pool', 'sut']
+pgb-64-4-128-64               : stateful sets []
+pgb-64-4-128-64               : pvcs ['sut']
+pgb-64-4-128-64               : found labels on pvc = []
+pgb-64-4-128-64               : name of SUT pods = bexhoma-sut-pgb-64-4-128-64-1764242702
+pgb-64-4-128-64               : name of SUT service = bexhoma-sut-pgb-64-4-128-64-1764242702
+pgb-64-4-128-64               : name of SUT PVC name = bexhoma-storage-postgresql-ycsb-16
+pgb-64-4-128-64               : storage bexhoma-storage-postgresql-ycsb-16 should be removed
+- waiting 10s -               : done
+pgb-64-4-128-64               : storage bexhoma-storage-postgresql-ycsb-16 is gone
+- waiting 30s -               : done
+pgb-64-4-128-64               : waits for health check to succeed
 - waiting 30s -               : done
 pgb-64-4-128-64               : waits for health check to succeed
 - waiting 30s -               : done
 pgb-64-4-128-64               : is not loaded yet
-pgb-64-4-128-64               : will start loading but not before 2025-04-19 12:41:17 (that is in 60 secs)
+pgb-64-4-128-64               : will start loading but not before 2025-11-27 11:29:18 (that is in 60 secs)
 - waiting 30s -               : done
 pgb-64-4-128-64               : is not loaded yet
-pgb-64-4-128-64               : will start loading but not before 2025-04-19 12:41:17
+pgb-64-4-128-64               : will start loading but not before 2025-11-27 11:29:18
 - waiting 30s -               : done
 pgb-64-4-128-64               : is not loaded yet
+pgb-64-4-128-64               : connect to pod bexhoma-sut-pgb-64-4-128-64-1764242702-7b7cd89c5f-96cdt to load scripts
+pgb-64-4-128-64               : list of pvcs ['bexhoma-storage-postgresql-ycsb-16', 'bexhoma-storage-postgresql-ycsb-16']
+pgb-64-4-128-64               : will be labeling bexhoma-storage-postgresql-ycsb-16
 pgb-64-4-128-64               : start asynch loading scripts of type loaded
 pgb-64-4-128-64               : is loading
 - waiting 30s -               : done
@@ -74,25 +92,48 @@ pgb-64-4-128-64               : is loading
 - waiting 30s -               : done
 pgb-64-4-128-64               : is loading
 - waiting 30s -               : done
+pgb-64-4-128-64               : is loading
+- waiting 30s -               : done
+pgb-64-4-128-64               : is loading
+- waiting 30s -               : done
+pgb-64-4-128-64               : is loading
+- waiting 30s -               : done
+pgb-64-4-128-64               : is loading
+- waiting 30s -               : done
 pgb-64-4-128-64               : showing loader times
-pgb-64-4-128-64               : loader timespan (first to last [s]) = 726
+pgb-64-4-128-64               : generator times (start/end per pod and container) []
+pgb-64-4-128-64               : loader times (start/end per pod and container) [(1764242980, 1764243476), (1764242980, 1764243578), (1764242980, 1764243578), (1764242980, 1764243571), (1764242979, 1764243571), (1764242980, 1764243564), (1764242980, 1764243508), (1764242980, 1764243571), (1764242980, 1764243571), (1764242980, 1764243567), (1764242980, 1764243568), (1764242980, 1764243569), (1764242980, 1764243566), (1764242980, 1764243508), (1764242979, 1764243504), (1764242980, 1764243567)]
+pgb-64-4-128-64               : total times (start/end per pod and container) [(1764242980, 1764243476), (1764242980, 1764243578), (1764242980, 1764243578), (1764242980, 1764243571), (1764242979, 1764243571), (1764242980, 1764243564), (1764242980, 1764243508), (1764242980, 1764243571), (1764242980, 1764243571), (1764242980, 1764243567), (1764242980, 1764243568), (1764242980, 1764243569), (1764242980, 1764243566), (1764242980, 1764243508), (1764242979, 1764243504), (1764242980, 1764243567)]
+pgb-64-4-128-64               : loader timespan (first to last [s]) = 599
+pgb-64-4-128-64               : list of pvcs ['bexhoma-storage-postgresql-ycsb-16', 'bexhoma-storage-postgresql-ycsb-16']
+pgb-64-4-128-64               : will be labeling bexhoma-storage-postgresql-ycsb-16
+pgb-64-4-128-64               : connect to pod bexhoma-sut-pgb-64-4-128-64-1764242702-7b7cd89c5f-96cdt to load scripts
+pgb-64-4-128-64               : list of pvcs ['bexhoma-storage-postgresql-ycsb-16', 'bexhoma-storage-postgresql-ycsb-16']
+pgb-64-4-128-64               : will be labeling bexhoma-storage-postgresql-ycsb-16
 pgb-64-4-128-64               : start asynch loading scripts of type indexed
 pgb-64-4-128-64               : is loading
 - waiting 30s -               : done
+pgb-64-4-128-64               : is loading
+- waiting 30s -               : done
+pgb-64-4-128-64               : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
 pgb-64-4-128-64               : benchmarks done 0 of 2. This will be client 1
-pgb-64-4-128-64               : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 11264, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'c', 'YCSB_ROWS': 16000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc'}
+pgb-64-4-128-64               : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 11264, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'c', 'YCSB_ROWS': 16000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
 pgb-64-4-128-64-1-1           : start benchmarking
-pgb-64-4-128-64               : benchmarking results in folder C:\data\benchmarks/1745066294
+pgb-64-4-128-64-1-1           : needs monitoring (common metrics) for deployment pool
+pgb-64-4-128-64-1-1           : needs monitoring (common metrics) for deployment sut
+pgb-64-4-128-64               : benchmarking results in folder /home/perdelt/benchmarks/1764242702
 - waiting 10s -               : done
-pgb-64-4-128-64               : benchmarking is waiting for job bexhoma-benchmarker-pgb-64-4-128-64-1745066294-1-1-2mgzb: .found
-pgb-64-4-128-64-1-1           : collecting loading metrics of SUT at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-pgb-64-4-128-64-1-1           : collecting metrics of data generator at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-pgb-64-4-128-64-1-1           : collecting metrics of data injector at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+pgb-64-4-128-64               : benchmarking is waiting for job bexhoma-benchmarker-pgb-64-4-128-64-1764242702-1-1-52tb5: .found
+pgb-64-4-128-64-1-1           : needs monitoring (common metrics) for deployment pool
 pgb-64-4-128-64-1-1           : collecting loading metrics of pool at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="pool"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+pgb-64-4-128-64-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="pool"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+pgb-64-4-128-64-1-1           : needs monitoring (common metrics) for deployment sut
+pgb-64-4-128-64-1-1           : collecting loading metrics of SUT at connection pgb-64-4-128-64-1-1
+pgb-64-4-128-64-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+pgb-64-4-128-64-1-1           : collecting metrics of data injector at connection pgb-64-4-128-64-1-1
+pgb-64-4-128-64-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 pgb-64-4-128-64               : has running benchmarks
 - waiting 30s -               : done
@@ -101,18 +142,36 @@ pgb-64-4-128-64               : has running benchmarks
 pgb-64-4-128-64               : has running benchmarks
 - waiting 30s -               : done
 pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+timing_benchmarker [(1764243740, 1764243982), (1764243740, 1764243984), (1764243739, 1764243988), (1764243739, 1764243988), (1764243740, 1764243984), (1764243740, 1764243982), (1764243740, 1764243980), (1764243740, 1764243983), (1764243739, 1764243988), (1764243739, 1764243990), (1764243740, 1764243990), (1764243740, 1764243982), (1764243739, 1764243988), (1764243740, 1764243982), (1764243740, 1764243984), (1764243739, 1764243984)]
 pgb-64-4-128-64-1-1           : showing benchmarker times
-pgb-64-4-128-64-1-1           : benchmarker timespan (start to end single container [s]) = 376
-pgb-64-4-128-64-1-1           : benchmarker times (start/end per pod and container) = [(1745067598, 1745067785), (1745067598, 1745067787), (1745067598, 1745067788), (1745067598, 1745067787), (1745067598, 1745067786), (1745067598, 1745067753), (1745067598, 1745067788), (1745067598, 1745067788), (1745067598, 1745067777), (1745067598, 1745067787), (1745067598, 1745067788), (1745067598, 1745067785), (1745067598, 1745067787), (1745067598, 1745067787), (1745067598, 1745067787), (1745067598, 1745067786)]
-pgb-64-4-128-64-1-1           : found and updated times {'benchmarker': [(1745067598, 1745067785), (1745067598, 1745067787), (1745067598, 1745067788), (1745067598, 1745067787), (1745067598, 1745067786), (1745067598, 1745067753), (1745067598, 1745067788), (1745067598, 1745067788), (1745067598, 1745067777), (1745067598, 1745067787), (1745067598, 1745067788), (1745067598, 1745067785), (1745067598, 1745067787), (1745067598, 1745067787), (1745067598, 1745067787), (1745067598, 1745067786)]}
+pgb-64-4-128-64-1-1           : benchmarker timespan job from 1764243725 to 1764244030
+pgb-64-4-128-64-1-1           : benchmarker timespan pods from 1764243739 to 1764243990
+pgb-64-4-128-64-1-1           : benchmarker timespan (start to end single container [s]) = 251
+pgb-64-4-128-64-1-1           : benchmarker times (start/end per pod and container) = [(1764243740, 1764243982), (1764243740, 1764243984), (1764243739, 1764243988), (1764243739, 1764243988), (1764243740, 1764243984), (1764243740, 1764243982), (1764243740, 1764243980), (1764243740, 1764243983), (1764243739, 1764243988), (1764243739, 1764243990), (1764243740, 1764243990), (1764243740, 1764243982), (1764243739, 1764243988), (1764243740, 1764243982), (1764243740, 1764243984), (1764243739, 1764243984)]
+pgb-64-4-128-64-1-1           : found and updated times {'benchmarker': [(1764243740, 1764243982), (1764243740, 1764243984), (1764243739, 1764243988), (1764243739, 1764243988), (1764243740, 1764243984), (1764243740, 1764243982), (1764243740, 1764243980), (1764243740, 1764243983), (1764243739, 1764243988), (1764243739, 1764243990), (1764243740, 1764243990), (1764243740, 1764243982), (1764243739, 1764243988), (1764243740, 1764243982), (1764243740, 1764243984), (1764243739, 1764243984)]}
+pgb-64-4-128-64-1-1           : needs monitoring (common metrics) for deployment pool
+pgb-64-4-128-64-1-1           : collecting execution metrics of pool at connection pgb-64-4-128-64-1-1
+pgb-64-4-128-64-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="pool"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+pgb-64-4-128-64-1-1           : needs monitoring (common metrics) for deployment sut
 pgb-64-4-128-64-1-1           : collecting execution metrics of SUT at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-pgb-64-4-128-64-1-1           : collecting execution metrics of pooler at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="pool"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+pgb-64-4-128-64-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 pgb-64-4-128-64-1-1           : collecting metrics of benchmarker at connection pgb-64-4-128-64-1-1
-pgb-64-4-128-64-1-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+pgb-64-4-128-64-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 pgb-64-4-128-64               : can be stopped
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-6b84867d6b-5p5jk
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-6b84867d6b-jj25m
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-6b84867d6b-x2gxr
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-6b84867d6b-zgfm5
+pgb-64-4-128-64               : had 0 0 restarts at worker bexhoma-sut-pgb-64-4-128-64-1764242702-7b7cd89c5f-96cdt
 pgb-64-4-128-64               : still being removed
 - waiting 30s -               : done
 pgb-64-4-128-64               : still being removed
@@ -120,35 +179,55 @@ pgb-64-4-128-64               : still being removed
 pgb-64-4-128-64               : still being removed
 - waiting 30s -               : done
 pgb-64-4-128-64               : starts again
-pgb-64-4-128-64               : Name of SUT pods = bexhoma-sut-pgb-64-4-128-64-1745066294
-pgb-64-4-128-64               : Name of SUT service = bexhoma-sut-pgb-64-4-128-64-1745066294
-pgb-64-4-128-64               : Name of SUT PVC name = bexhoma-storage-postgresql-ycsb-16
-pgb-64-4-128-64               : storage exists bexhoma-storage-postgresql-ycsb-16
-pgb-64-4-128-64               : label loaded copied value True
-pgb-64-4-128-64               : label timeLoading copied value 734
-pgb-64-4-128-64               : label timeLoadingStart copied value 1745066499
-pgb-64-4-128-64               : label timeLoadingEnd copied value 1745067445
-pgb-64-4-128-64               : label indexed copied value True
-pgb-64-4-128-64               : label time_generated copied value 0
-pgb-64-4-128-64               : label time_indexed copied value 4
-pgb-64-4-128-64               : label time_ingested copied value 726
-pgb-64-4-128-64               : label time_initschema copied value 2
-pgb-64-4-128-64               : label time_loaded copied value 4
+pgb-64-4-128-64               : deployments ['pool', 'sut']
+pgb-64-4-128-64               : stateful sets []
+pgb-64-4-128-64               : pvcs ['sut']
+pgb-64-4-128-64               : list of pvcs ['bexhoma-storage-postgresql-ycsb-16', 'bexhoma-storage-postgresql-ycsb-16']
+pgb-64-4-128-64               : storage bexhoma-storage-postgresql-ycsb-16 exists
+pgb-64-4-128-64               : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '1342', 'timeLoadingEnd': '1764243704', 'timeLoadingStart': '1764242961', 'time_generated': '0', 'time_indexed': '743', 'time_ingested': '599', 'time_initschema': '1', 'time_loaded': '0'}
+pgb-64-4-128-64               : name of SUT pods = bexhoma-sut-pgb-64-4-128-64-1764242702
+pgb-64-4-128-64               : name of SUT service = bexhoma-sut-pgb-64-4-128-64-1764242702
+pgb-64-4-128-64               : name of SUT PVC name = bexhoma-storage-postgresql-ycsb-16
+pgb-64-4-128-64               : copied label indexed = True
+pgb-64-4-128-64               : copied label loaded = True
+pgb-64-4-128-64               : copied label timeLoading = 1342
+pgb-64-4-128-64               : copied label timeLoadingEnd = 1764243704
+pgb-64-4-128-64               : copied label timeLoadingStart = 1764242961
+pgb-64-4-128-64               : copied label time_generated = 0
+pgb-64-4-128-64               : copied label time_indexed = 743
+pgb-64-4-128-64               : copied label time_ingested = 599
+pgb-64-4-128-64               : copied label time_initschema = 1
+pgb-64-4-128-64               : copied label time_loaded = 0
+pgb-64-4-128-64               : loading is set to finished
+pgb-64-4-128-64               : copied label indexed = True
+pgb-64-4-128-64               : copied label loaded = True
+pgb-64-4-128-64               : copied label timeLoading = 1342
+pgb-64-4-128-64               : copied label timeLoadingEnd = 1764243704
+pgb-64-4-128-64               : copied label timeLoadingStart = 1764242961
+pgb-64-4-128-64               : copied label time_generated = 0
+pgb-64-4-128-64               : copied label time_indexed = 743
+pgb-64-4-128-64               : copied label time_ingested = 599
+pgb-64-4-128-64               : copied label time_initschema = 1
+pgb-64-4-128-64               : copied label time_loaded = 0
 pgb-64-4-128-64               : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
 pgb-64-4-128-64               : waits for health check to succeed
 - waiting 30s -               : done
-pgb-64-4-128-64               : will start benchmarking but not before 2025-04-19 13:10:59 (that is in 60 secs)
+pgb-64-4-128-64               : waits for health check to succeed
 - waiting 30s -               : done
-pgb-64-4-128-64               : will start benchmarking but not before 2025-04-19 13:10:59
+pgb-64-4-128-64               : will start benchmarking but not before 2025-11-27 11:52:16 (that is in 60 secs)
+- waiting 30s -               : done
+pgb-64-4-128-64               : will start benchmarking but not before 2025-11-27 11:52:16
 - waiting 30s -               : done
 pgb-64-4-128-64               : benchmarks done 1 of 2. This will be client 1
-pgb-64-4-128-64               : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 11264, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'c', 'YCSB_ROWS': 16000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS': 'jdbc'}
+pgb-64-4-128-64               : we will change parameters of benchmark as {'PARALLEL': '16', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 8, 'YCSB_TARGET': 11264, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'c', 'YCSB_ROWS': 16000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
 pgb-64-4-128-64-2-1           : start benchmarking
-pgb-64-4-128-64               : benchmarking results in folder C:\data\benchmarks/1745066294
+pgb-64-4-128-64-2-1           : needs monitoring (common metrics) for deployment pool
+pgb-64-4-128-64-2-1           : needs monitoring (common metrics) for deployment sut
+pgb-64-4-128-64               : benchmarking results in folder /home/perdelt/benchmarks/1764242702
 - waiting 10s -               : done
-pgb-64-4-128-64               : benchmarking is waiting for job bexhoma-benchmarker-pgb-64-4-128-64-1745066294-2-1-25bj2: ..found
+pgb-64-4-128-64               : benchmarking is waiting for job bexhoma-benchmarker-pgb-64-4-128-64-1764242702-2-1-2h4lv: .found
 - waiting 30s -               : done
 pgb-64-4-128-64               : has running benchmarks
 - waiting 30s -               : done
@@ -159,19 +238,35 @@ pgb-64-4-128-64               : has running benchmarks
 pgb-64-4-128-64               : has running benchmarks
 - waiting 30s -               : done
 pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+- waiting 30s -               : done
+pgb-64-4-128-64               : has running benchmarks
+timing_benchmarker [(1764244360, 1764244591), (1764244360, 1764244609), (1764244359, 1764244608), (1764244360, 1764244608), (1764244360, 1764244608), (1764244360, 1764244608), (1764244360, 1764244609), (1764244360, 1764244608), (1764244359, 1764244609), (1764244359, 1764244607), (1764244359, 1764244602), (1764244359, 1764244608), (1764244360, 1764244608), (1764244360, 1764244609), (1764244360, 1764244609), (1764244360, 1764244609)]
 pgb-64-4-128-64-2-1           : showing benchmarker times
-pgb-64-4-128-64-2-1           : benchmarker timespan (start to end single container [s]) = 398
-pgb-64-4-128-64-2-1           : benchmarker times (start/end per pod and container) = [(1745068394, 1745068607), (1745068394, 1745068571), (1745068394, 1745068607), (1745068394, 1745068607), (1745068394, 1745068603), (1745068394, 1745068602), (1745068394, 1745068609), (1745068394, 1745068608), (1745068394, 1745068609), (1745068394, 1745068609), (1745068394, 1745068608), (1745068394, 1745068609), (1745068394, 1745068609), (1745068394, 1745068609), (1745068394, 1745068578), (1745068394, 1745068608)]
-pgb-64-4-128-64-2-1           : found and updated times {'benchmarker': [(1745068394, 1745068607), (1745068394, 1745068571), (1745068394, 1745068607), (1745068394, 1745068607), (1745068394, 1745068603), (1745068394, 1745068602), (1745068394, 1745068609), (1745068394, 1745068608), (1745068394, 1745068609), (1745068394, 1745068609), (1745068394, 1745068608), (1745068394, 1745068609), (1745068394, 1745068609), (1745068394, 1745068609), (1745068394, 1745068578), (1745068394, 1745068608)]}
+pgb-64-4-128-64-2-1           : benchmarker timespan job from 1764244345 to 1764244635
+pgb-64-4-128-64-2-1           : benchmarker timespan pods from 1764244359 to 1764244609
+pgb-64-4-128-64-2-1           : benchmarker timespan (start to end single container [s]) = 250
+pgb-64-4-128-64-2-1           : benchmarker times (start/end per pod and container) = [(1764244360, 1764244591), (1764244360, 1764244609), (1764244359, 1764244608), (1764244360, 1764244608), (1764244360, 1764244608), (1764244360, 1764244608), (1764244360, 1764244609), (1764244360, 1764244608), (1764244359, 1764244609), (1764244359, 1764244607), (1764244359, 1764244602), (1764244359, 1764244608), (1764244360, 1764244608), (1764244360, 1764244609), (1764244360, 1764244609), (1764244360, 1764244609)]
+pgb-64-4-128-64-2-1           : found and updated times {'benchmarker': [(1764244360, 1764244591), (1764244360, 1764244609), (1764244359, 1764244608), (1764244360, 1764244608), (1764244360, 1764244608), (1764244360, 1764244608), (1764244360, 1764244609), (1764244360, 1764244608), (1764244359, 1764244609), (1764244359, 1764244607), (1764244359, 1764244602), (1764244359, 1764244608), (1764244360, 1764244608), (1764244360, 1764244609), (1764244360, 1764244609), (1764244360, 1764244609)]}
+pgb-64-4-128-64-2-1           : needs monitoring (common metrics) for deployment pool
+pgb-64-4-128-64-2-1           : collecting execution metrics of pool at connection pgb-64-4-128-64-2-1
+pgb-64-4-128-64-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="pool"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+pgb-64-4-128-64-2-1           : needs monitoring (common metrics) for deployment sut
 pgb-64-4-128-64-2-1           : collecting execution metrics of SUT at connection pgb-64-4-128-64-2-1
-pgb-64-4-128-64-2-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-pgb-64-4-128-64-2-1           : collecting execution metrics of pooler at connection pgb-64-4-128-64-2-1
-pgb-64-4-128-64-2-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="pool"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+pgb-64-4-128-64-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 pgb-64-4-128-64-2-1           : collecting metrics of benchmarker at connection pgb-64-4-128-64-2-1
-pgb-64-4-128-64-2-1           : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", pod=~"(.*)pgb-64-4-128-64-1745066294(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+pgb-64-4-128-64-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", pod=~"(.*)pgb-64-4-128-64-1764242702(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 pgb-64-4-128-64               : can be stopped
-Experiment                    : ends at 2025-04-19 15:20:35.504213 (418920.3760139) - 2536.32s total
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-958c9c874-8696m
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-958c9c874-8ftlh
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-958c9c874-gng27
+pgb-64-4-128-64               : had 0 restarts at worker bexhoma-pool-pgb-64-4-128-64-1764242702-958c9c874-w6sct
+pgb-64-4-128-64               : had 0 0 restarts at worker bexhoma-sut-pgb-64-4-128-64-1764242702-5f55b97487-f2jnp
+Experiment                    : ends at 2025-11-27 12:58:04.048859 (28436847.519413788) - 1981.03s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -182,25 +277,26 @@ Result workflow complete
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 2537s 
-    Code: 1745066294
-    YCSB tool runs the benchmark.
+    Duration: 1982s 
+    Code: 1764242702
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'C'.
     Number of rows to insert is 16000000.
+    Ordering of inserts is hashed.
     Number of operations is 16000000.
     Batch size is ''.
     Target is based on multiples of '16384'.
     Factors for loading are [11].
     Factors for benchmarking are [11].
-    Experiment uses bexhoma version 0.8.4.
+    Experiment uses bexhoma version 0.8.16.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['PGBouncer'].
+    Experiment is limited to DBMS ['PGBouncer'].
     Import is handled by 16 processes (pods).
-    Loading is fixed to cl-worker13.
-    Benchmarking is fixed to cl-worker13.
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
     SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 100Gi.
+    Database is persisted to disk of type shared and size 100Gi. Persistent storage is removed at experiment start.
     Loading is tested with [64] threads, split into [16] pods.
     Benchmarking is tested with [128] threads, split into [16] pods.
     Pooling is done with [4] pods having [128] inbound and [64] outbound connections in total.
@@ -208,47 +304,53 @@ YCSB SF=16
     Experiment is run 2 times.
 
 ### Connections
-pgb-64-4-128-64-1-1 uses docker image postgres:16.1
-    RAM:541008592896
+pgb-64-4-128-64-1-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:202361324
-    datadisk:38277
+    disk:420892
+    datadisk:38217
     volume_size:100G
     volume_used:38G
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1745066294
-pgb-64-4-128-64-2-1 uses docker image postgres:16.1
-    RAM:541008592896
+        code:1764242702
+pgb-64-4-128-64-2-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:202361316
-    datadisk:38216
+    disk:420892
+    datadisk:38217
     volume_size:100G
     volume_used:38G
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:2
     eval_parameters
-        code:1745066294
+        code:1764242702
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-pgb-64-4-128-64               1       64  180224         16           0                   22943.376844               725185.0            16000000                             6951.25
+pgb-64-4-128-64               1       64  180224         16           0                    28064.16434               597701.0            16000000                              6644.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-pgb-64-4-128-64-1-1               1      128  180224         16          16                       80318.76               189995.0          15000000                            2553.0
-pgb-64-4-128-64-2-1               2      128  180224         16          14                       72783.33               214992.0          15125000                            2955.0
+pgb-64-4-128-64-1-1               1      128  180224         16           0                       65305.88               249978.0          16000000                            3447.0
+pgb-64-4-128-64-2-1               2      128  180224         16           0                       64831.68               249537.0          16000000                            2623.0
 
 ### Workflow
 
@@ -258,40 +360,43 @@ DBMS pgb-64-4-128-64 - Pods [[16], [16]]
 #### Planned
 DBMS pgb-64-4-128-64 - Pods [[16], [16]]
 
-### Ingestion - SUT
-                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     2790.74     3.89         23.14                41.46
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component pool
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     1991.34     1.69          0.58                 0.58
+pgb-64-4-128-64-1-1      872.52     1.92          0.01                 0.01
 
-### Execution - SUT
+### Loading phase: SUT deployment
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     2160.26    10.41         25.45                43.77
-pgb-64-4-128-64-2-1     2155.42    13.67         24.13                42.65
+pgb-64-4-128-64-1-1     3589.67     8.14         23.52                41.85
 
-### Execution - Benchmarker
+### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     1365.00     2.21          0.57                 0.58
-pgb-64-4-128-64-2-1     1384.65     3.59          0.57                 0.57
+pgb-64-4-128-64-1-1     1247.24     2.39          0.11                 0.11
 
-### Execution - Pooling
+### Execution phase: component pool
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1      596.37      1.0          0.01                 0.01
-pgb-64-4-128-64-2-1      590.51      2.0          0.01                 0.01
+pgb-64-4-128-64-1-1      646.47     3.96          0.01                 0.01
+pgb-64-4-128-64-2-1     1568.80     3.83          0.01                 0.01
 
-### Ingestion - Pooling
+### Execution phase: SUT deployment
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1      747.22     0.64          0.01                 0.01
+pgb-64-4-128-64-1-1     2450.66    16.42         26.21                44.47
+pgb-64-4-128-64-2-1     7056.37    14.75         24.86                43.31
+
+### Execution phase: component benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1-1     1192.83     8.40          0.10                 0.11
+pgb-64-4-128-64-2-1     1088.02     7.81          0.11                 0.11
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column

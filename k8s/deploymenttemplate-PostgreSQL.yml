@@ -45,6 +45,18 @@ spec:
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
       #priorityClassName: important
+      initContainers:
+        - name: fix-permissions
+          image: busybox:stable
+          command:
+            - sh
+            - -c
+            - |
+                echo "Running chmod on tenants:"
+                ls -l /tenant_* 2>/dev/null || echo "No tenant directories found"
+                chown -v -R 999:999 /tenant_* && chmod -v 700 /tenant_* /tenant_* 2>&1 || true
+          volumeMounts:
+          - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       containers:
       - name: dbms
         image: postgres:17.5

@@ -90,6 +90,7 @@ if __name__ == '__main__':
     parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node for benchmarking pods', default=None)
     parser.add_argument('-mtn', '--multi-tenant-num', help='number of tenant', default=0)
     parser.add_argument('-mtb', '--multi-tenant-by', help='one tenant per (schema, database, container)', default='')
+    parser.add_argument('-mtv', '--multi-tenant-volume', help='one volume per tenant per (for per-database)', action='store_true', default=False)
     parser.add_argument('-tr',  '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
@@ -236,7 +237,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
@@ -273,7 +274,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
@@ -298,7 +299,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
@@ -335,7 +336,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
@@ -387,7 +388,7 @@ if __name__ == '__main__':
                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                     YCSB_BATCHSIZE = batchsize,
                                     YCSB_STATUS_INTERVAL = scaling_logging,
-                                    BEXHOMA_DBMS = "jdbc",
+                                    BEXHOMA_DBMS_TYPE = "jdbc",
                                     YCSB_INSERTORDER = extra_insert_order,
                                     )
                                 config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -414,7 +415,7 @@ if __name__ == '__main__':
                                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
                                                     YCSB_BATCHSIZE = batchsize,
                                                     YCSB_STATUS_INTERVAL = scaling_logging,
-                                                    BEXHOMA_DBMS = "jdbc",
+                                                    BEXHOMA_DBMS_TYPE = "jdbc",
                                                     YCSB_INSERTORDER = extra_insert_order,
                                                     )
                                 #print(executor_list)
@@ -438,7 +439,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -474,7 +475,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
@@ -498,7 +499,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -534,7 +535,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
@@ -652,7 +653,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -688,7 +689,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
@@ -729,7 +730,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_INSERTORDER = extra_insert_order,
                         )
@@ -766,7 +767,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
@@ -812,7 +813,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_INSERTORDER = extra_insert_order,
                         )
@@ -851,7 +852,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
@@ -880,7 +881,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -907,7 +908,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
@@ -921,9 +922,9 @@ if __name__ == '__main__':
                     config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
-                        bexhoma_dbms = "redis-cluster"
+                        BEXHOMA_DBMS_TYPE = "redis-cluster"
                     else:
-                        bexhoma_dbms = "redis"
+                        BEXHOMA_DBMS_TYPE = "redis"
                     config.set_storage(
                         storageConfiguration = 'redis'
                         )
@@ -954,7 +955,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = scaling_logging,
-                        BEXHOMA_DBMS = bexhoma_dbms,
+                        BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_INSERTORDER = extra_insert_order,
                         )
@@ -1021,7 +1022,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = bexhoma_dbms,
+                                        BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         YCSB_INSERTORDER = extra_insert_order,
                                         )
@@ -1061,7 +1062,7 @@ if __name__ == '__main__':
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                         YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
-                        BEXHOMA_DBMS = "jdbc",
+                        BEXHOMA_DBMS_TYPE = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_USE_HOSTLIST = "true",
                         YCSB_INSERTORDER = extra_insert_order,
@@ -1099,7 +1100,7 @@ if __name__ == '__main__':
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         YCSB_BATCHSIZE = batchsize,
                                         YCSB_STATUS_INTERVAL = scaling_logging,
-                                        BEXHOMA_DBMS = "jdbc",
+                                        BEXHOMA_DBMS_TYPE = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         YCSB_USE_HOSTLIST = "true",
                                         YCSB_INSERTORDER = extra_insert_order,

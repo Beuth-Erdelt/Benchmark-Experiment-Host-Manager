@@ -14,6 +14,7 @@ echo "BEXHOMA_VOLUME:$BEXHOMA_VOLUME"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_DBMS:$BEXHOMA_DBMS"
 echo "BEXHOMA_TENANT_NUM:$BEXHOMA_TENANT_NUM"
 echo "BEXHOMA_TENANT_BY:$BEXHOMA_TENANT_BY"
 
@@ -115,9 +116,16 @@ else
     exit 0
 fi
 
-######################## Replace parameters in workload file ###################
+######################## Show workload file ###################
 echo "FILENAME $FILENAME"
 
+######################## Remove schema parameter from PGBouncer URL ###################
+if [[ "$BEXHOMA_DBMS" == "PGBouncer" ]]; then
+	sed -i "s/&amp;currentSchema=BEXHOMA_SCHEMA/" $FILENAME
+fi
+
+
+######################## Replace parameters in workload file ###################
 if [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "a" ]]; then
     BENCHBASE_YCSB_WEIGHTS=50,0,0,50,0,0
 elif [[ "$BENCHBASE_BENCH" == "ycsb" && "$BENCHBASE_YCSB_WORKLOAD" == "b" ]]; then
