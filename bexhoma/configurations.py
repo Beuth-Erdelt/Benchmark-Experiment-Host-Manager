@@ -2264,9 +2264,9 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         self.logger.debug("Deploy "+deployment_experiment)
-        if self.volume_per_tenant:
-            print(yaml.dump_all(result))
-            #exit()
+        #if self.volume_per_tenant:
+        #    print(yaml.dump_all(result))
+        #    #exit()
         self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
