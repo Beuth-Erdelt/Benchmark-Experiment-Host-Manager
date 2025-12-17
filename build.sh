@@ -1,11 +1,15 @@
 #!/bin/bash
 
+
+$version = (pip show bexhoma | Select-String "Version" | ForEach-Object { ($_ -split " ")[1] })
+Write-Output $version
+
 cd images
 
 ###########
 
 cd evaluator_dbmsbenchmarker
-python create_Dockerfiles.py
+python create_Dockerfiles.py --version $version
 #docker build -f Dockerfile_v0.13.6 -t bexhoma/evaluator_dbmsbenchmarker:v0.13.6 --no-cache .
 docker push bexhoma/evaluator_dbmsbenchmarker:v0.14.16 &
 cd ..
