@@ -725,7 +725,8 @@ class default():
         # start job
         job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
-        self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
+        self.experiment.cluster.create_object_from_file(job)
+        #self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def start_loading(self, delay=0):
         """
         Starts data ingestion by calling scripts inside the sut (dbms) container.
@@ -834,7 +835,8 @@ class default():
             experiment = self.code
         job = self.create_manifest_maintaining(app=app, component='maintaining', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
-        self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
+        self.experiment.cluster.create_object_from_file(job)
+        #self.experiment.cluster.kubectl('create -f '+job)#self.yamlfolder+deployment)
     def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         """
         Generate a name for the monitoring component.
@@ -1109,7 +1111,8 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         self.logger.debug("Deploy "+deployment)
-        self.experiment.cluster.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
+        self.experiment.cluster.create_object_from_file(deployment_experiment)
+        #self.experiment.cluster.kubectl('create -f '+deployment_experiment)#self.yamlfolder+deployment)
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         """
         Stops a monitoring deployment and removes its service.
@@ -2267,7 +2270,8 @@ scrape_configs:
         #if self.volume_per_tenant:
         #    print(yaml.dump_all(result))
         #    #exit()
-        self.experiment.cluster.kubectl('create -f '+deployment_experiment)
+        self.experiment.cluster.create_object_from_file(deployment_experiment)
+        #self.experiment.cluster.kubectl('create -f '+deployment_experiment)
         #if self.experiment.monitoring_active:
         #    self.start_monitoring()
         #print(self.deployment_infos)
@@ -3270,7 +3274,8 @@ scrape_configs:
             # create pods
             yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
             # start pod
-            self.experiment.cluster.kubectl('create -f '+yamlfile)
+            self.experiment.cluster.create_object_from_file(yamlfile)
+            #self.experiment.cluster.kubectl('create -f '+yamlfile)
             pods = []
             while len(pods) == 0:
                 self.wait(10)

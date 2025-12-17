@@ -39,6 +39,7 @@ import urllib.request
 import urllib.parse
 from pprint import pprint
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from dbmsbenchmarker import *
 
@@ -897,6 +898,36 @@ class testbed():
                     child.terminate()
             except Exception as e:
                 print(e)
+    def create_object_from_file(self, filename_source):
+        """
+        Runs an kubectl command in the current context.
+
+        :param command: An eksctl command
+        :return: stdout of the kubectl command
+        """
+        #filename_replaced = filename
+        # Original filename and result folder from config
+        filename = Path(filename_source)
+        path = Path(self.config['benchmarker']['resultfolder']) / self.code
+        # Make resultfolder relative and normalize slashes
+        #if resultfolder.is_absolute():
+        #    # On Windows, remove drive letter; on Linux, remove root '/'
+        #    safe_resultfolder = Path(*resultfolder.parts[1:])
+        #else:
+        #    safe_resultfolder = resultfolder
+        # Use forward slashes when needed
+        safe_resultfolder_str = path.as_posix()
+        # Construct new path keeping filename
+        filename_replaced = safe_resultfolder / filename.name
+        if os.path.isfile(filename_source):
+            with open(filename_source, "r") as template:
+                data = template.read()
+                data = data.replace("BEXHOMA_PACKAGE_VERSION", bexhoma.__version__)
+                #print(data)
+                with open(filename_replaced, "w") as template_filled:
+                    template_filled.write(data)
+        #print(filename_replaced)
+        self.kubectl('create -f '+filename_replaced)
     def kubectl(self, command):
         """
         Runs an kubectl command in the current context.
@@ -1450,7 +1481,8 @@ class testbed():
             deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
             name = self.create_dashboard_name(app, component)
             self.logger.debug('testbed.start_dashboard({})'.format(deployment))
-            self.kubectl('create -f '+self.yamlfolder+deployment)
+            self.create_object_from_file(self.yamlfolder+deployment)
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not self.dashboard_is_running()):
                self.wait(10, silent=True)
             print("done")
@@ -1539,7 +1571,8 @@ class testbed():
         else:
             self.logger.debug('testbed.start_monitoring_cluster()=deploy')
             deployment = 'daemonsettemplate-monitoring.yml'
-            self.kubectl('create -f '+self.yamlfolder+deployment)
+            self.create_object_from_file(self.yamlfolder+deployment)
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
             print("{:30s}: starting...".format("Cluster monitoring"))
             while (not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default"))):
                self.wait(10, silent=True)
@@ -1582,7 +1615,8 @@ class testbed():
             deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
             name = self.create_messagequeue_name(app, component)
             self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
-            self.kubectl('create -f '+self.yamlfolder+deployment)
+            self.create_object_from_file(self.yamlfolder+deployment)
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not self.messagequeue_is_running()):
                self.wait(10, silent=True)
             print("done")
@@ -1602,7 +1636,8 @@ class testbed():
         else:
             print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
             deployment = 'pvc-bexhoma-data.yml'
-            self.kubectl('create -f '+self.yamlfolder+deployment)
+            self.create_object_from_file(self.yamlfolder+deployment)
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_pvc(app=app, component='data-source', experiment='', configuration=''))):
                self.wait(10, silent=True)
             print("done")
@@ -1623,7 +1658,8 @@ class testbed():
         else:
             print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
             deployment = 'pvc-bexhoma-results.yml'
-            self.kubectl('create -f '+self.yamlfolder+deployment)
+            self.create_object_from_file(self.yamlfolder+deployment)
+            #self.kubectl('create -f '+self.yamlfolder+deployment)
             while (not len(self.get_pvc(app=app, component='results', experiment='', configuration=''))):
                self.wait(10, silent=True)
             print("done")
