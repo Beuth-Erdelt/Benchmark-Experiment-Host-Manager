@@ -10,6 +10,7 @@ description = """Create Dockerfiles for DBMSBenchmarker images in bexhoma - eval
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('-v', '--version', help='which version of DBMSBenchmarker to use', default='v0.14.16')
 parser.add_argument('-i', '--image-tag', help='tag of the image to be created', default='v0.14.16')
+args = parser.parse_args()
 
 versions = [args.version]
 image_versions = [args.image_tag]

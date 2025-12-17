@@ -1,6 +1,5 @@
-#!/bin/bash
 
-$dbmsbenchmarker = "0.14.18"
+$dbmsbenchmarker = "v0.14.16"
 $version = (pip show bexhoma | Select-String "Version" | ForEach-Object { ($_ -split " ")[1] })
 $version="latest"
 
@@ -32,10 +31,10 @@ docker build -f Dockerfile -t bexhoma/loader_tpcds_postgresql:$version .
 docker push bexhoma/loader_tpcds_postgresql:$version
 cd ..
 
-cd loader_mysql
-docker build -f Dockerfile -t bexhoma/loader_tpcds_mysql:$version .
-docker push bexhoma/loader_tpcds_mysql:$version
-cd ..
+#cd loader_mysql
+#docker build -f Dockerfile -t bexhoma/loader_tpcds_mysql:$version .
+#docker push bexhoma/loader_tpcds_mysql:$version
+#cd ..
 
 cd loader_mariadb
 docker build -f Dockerfile -t bexhoma/loader_tpcds_mariadb:$version .
@@ -61,10 +60,10 @@ docker build -f Dockerfile -t bexhoma/loader_tpch_postgresql:$version .
 docker push bexhoma/loader_tpch_postgresql:$version
 cd ..
 
-cd loader_mysql
-docker build -f Dockerfile -t bexhoma/loader_tpch_mysql:$version .
-docker push bexhoma/loader_tpch_mysql:$version
-cd ..
+#cd loader_mysql
+#docker build -f Dockerfile -t bexhoma/loader_tpch_mysql:$version .
+#docker push bexhoma/loader_tpch_mysql:$version
+#cd ..
 
 cd loader_mariadb
 docker build -f Dockerfile -t bexhoma/loader_tpch_mariadb:$version .
@@ -109,9 +108,9 @@ cd ..
 
 ###########
 cd benchbase
-docker build -t bexhoma/generator_benchbase:$version -f Dockerfile_generator --no-cache  .
+docker build -t bexhoma/generator_benchbase:$version -f Dockerfile_generator  .
 docker push bexhoma/generator_benchbase:$version
-docker build -t bexhoma/benchmarker_benchbase:$version -f Dockerfile_benchmarker --no-cache  .
+docker build -t bexhoma/benchmarker_benchbase:$version -f Dockerfile_benchmarker  .
 docker push bexhoma/benchmarker_benchbase:$version
 cd ..
 
