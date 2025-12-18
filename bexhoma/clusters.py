@@ -42,6 +42,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from dbmsbenchmarker import *
+from .__version__ import __version__
 
 class testbed():
     """
@@ -918,16 +919,19 @@ class testbed():
         # Use forward slashes when needed
         safe_resultfolder_str = path.as_posix()
         # Construct new path keeping filename
-        filename_replaced = safe_resultfolder / filename.name
+        filename_replaced = path / filename.name
         if os.path.isfile(filename_source):
             with open(filename_source, "r") as template:
                 data = template.read()
-                data = data.replace("BEXHOMA_PACKAGE_VERSION", bexhoma.__version__)
+                data = data.replace("BEXHOMA_PACKAGE_VERSION", __version__)
                 #print(data)
                 with open(filename_replaced, "w") as template_filled:
                     template_filled.write(data)
-        #print(filename_replaced)
-        self.kubectl('create -f '+filename_replaced)
+                #print(filename_replaced)
+                self.kubectl('create -f '+filename_replaced.as_posix())
+                print(f"Copied manifest from {filename_source} to {filename_replaced.as_posix()} and run it")
+        else:
+            print(f"Manifest not found: {filename_source}")
     def kubectl(self, command):
         """
         Runs an kubectl command in the current context.
