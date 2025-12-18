@@ -45,14 +45,14 @@ RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.36-1_all.deb
 RUN DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.36-1_all.deb
 
 # (Optional) If you need to override distro codename
-RUN sed -i 's/trixie/bookworm/g' /etc/apt/sources.list.d/mysql.list
+#RUN sed -i 's/trixie/bookworm/g' /etc/apt/sources.list.d/mysql.list
 
 # Install MySQL Shell
-RUN apt-get update && apt-get install -y mysql-shell
+#RUN apt-get update && apt-get install -y mysql-shell
 
 # Clean up
-RUN rm -f mysql-apt-config_0.8.36-1_all.deb \
-    && rm -rf /var/lib/apt/lists/*
+#RUN rm -f mysql-apt-config_0.8.36-1_all.deb \
+#    && rm -rf /var/lib/apt/lists/*
 
 
 #&& apt-get install -y mysql-apt-config && apt-get install -y mysql-shell
@@ -75,14 +75,14 @@ RUN apt-get update && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 RUN apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
-	&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
 
 # Add MySQL GPG key to trusted keyring
 RUN wget https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 -O /usr/share/keyrings/mysql-archive-keyring.gpg
 
 # Update MySQL sources list to use the keyring
-RUN sed -i 's|deb http://repo.mysql.com/apt/debian bookworm|deb [signed-by=/usr/share/keyrings/mysql-archive-keyring.gpg] http://repo.mysql.com/apt/debian bookworm|g' /etc/apt/sources.list.d/mysql.list
+#RUN sed -i 's|deb http://repo.mysql.com/apt/debian bookworm|deb [signed-by=/usr/share/keyrings/mysql-archive-keyring.gpg] http://repo.mysql.com/apt/debian bookworm|g' /etc/apt/sources.list.d/mysql.list
 
 ### install mysql
 RUN apt-get update && \
