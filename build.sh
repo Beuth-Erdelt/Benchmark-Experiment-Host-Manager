@@ -1,7 +1,7 @@
 
 dbmsbenchmarker="v0.14.16"
 version=$(python -m pip show bexhoma | awk '/^Version:/ {print $2}')
-#$version="latest"
+version="latest"
 
 echo "$version"
 
