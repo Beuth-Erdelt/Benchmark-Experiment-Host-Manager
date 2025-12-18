@@ -25,6 +25,7 @@ spec:
       containers:
         - name: master
           image: redis
+          imagePullPolicy: Always
           env:
             - name: MASTER
               value: "true"

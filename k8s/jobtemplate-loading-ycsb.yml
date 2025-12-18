@@ -20,7 +20,7 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: sensor
-        image: bexhoma/generator_ycsb:0.17.0
+        image: bexhoma/generator_ycsb:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         env:
