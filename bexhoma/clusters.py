@@ -929,9 +929,10 @@ class testbed():
                     template_filled.write(data)
                 #print(filename_replaced)
                 self.kubectl('create -f '+filename_replaced.as_posix())
-                print(f"Copied manifest from {filename_source} to {filename_replaced.as_posix()} and run it")
+                self.logger.debug(f"Copied manifest from {filename_source} to {filename_replaced.as_posix()} and run it")
         else:
             print(f"Manifest not found: {filename_source}")
+            exit()
     def kubectl(self, command):
         """
         Runs an kubectl command in the current context.
