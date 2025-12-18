@@ -22,7 +22,7 @@ EXPOSE     9090
 VOLUME     [ "/prometheus" ]
 WORKDIR    /prometheus
 
-ENV BEXHOMA_WORKERS
+ENV BEXHOMA_WORKERS=""
 
 ENTRYPOINT [ "" ]
 CMD echo "$BEXHOMA_WORKERS" > /etc/prometheus/prometheus-bexhoma.yml ; echo "Test config" ; while [ ! -f /etc/prometheus/prometheus-bexhoma.yml ] ; do sleep 2 ; echo "Waiting for config" ; done ; /bin/prometheus \
