@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=0.1
     Type: tpch
-    Duration: 617s 
-    Code: 1765877919
+    Duration: 661s 
+    Code: 1765906293
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=0.1) data is loaded and benchmark is executed.
@@ -31,24 +31,24 @@ PostgreSQL-BHT-8-1-1-1 uses docker image postgres:17.5
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:431359
-    datadisk:316
+    disk:432045
+    datadisk:315
     volume_size:5.0G
-    volume_used:312M
+    volume_used:308M
     cpu_list:0-63
     args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64', '-c', 'random_page_cost=1']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1765877919
+        code:1765906293
 PostgreSQL-BHT-8-2-1-1 uses docker image postgres:17.5
     RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:431359
-    datadisk:316
+    disk:432045
+    datadisk:315
     volume_size:5.0G
     volume_used:312M
     cpu_list:0-63
@@ -56,7 +56,7 @@ PostgreSQL-BHT-8-2-1-1 uses docker image postgres:17.5
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1765877919
+        code:1765906293
 
 ### Errors (failed queries)
 No errors
@@ -66,56 +66,56 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-2-1-1
-Pricing Summary Report (TPC-H Q1)                                    426.34                 3222.69
-Minimum Cost Supplier Query (TPC-H Q2)                                57.60                  745.75
-Shipping Priority (TPC-H Q3)                                         159.31                 2117.58
-Order Priority Checking Query (TPC-H Q4)                              69.00                   85.31
-Local Supplier Volume (TPC-H Q5)                                      87.89                   98.67
-Forecasting Revenue Change (TPC-H Q6)                                 81.68                   89.17
-Forecasting Revenue Change (TPC-H Q7)                                113.72                  124.18
-National Market Share (TPC-H Q8)                                      52.70                  204.92
-Product Type Profit Measure (TPC-H Q9)                               252.04                  272.51
-Forecasting Revenue Change (TPC-H Q10)                               106.60                  116.42
-Important Stock Identification (TPC-H Q11)                            14.75                   15.46
-Shipping Modes and Order Priority (TPC-H Q12)                        117.62                  123.51
-Customer Distribution (TPC-H Q13)                                    178.55                  176.03
-Forecasting Revenue Change (TPC-H Q14)                                91.95                   97.25
-Top Supplier Query (TPC-H Q15)                                        85.22                   87.37
-Parts/Supplier Relationship (TPC-H Q16)                              117.68                  118.10
-Small-Quantity-Order Revenue (TPC-H Q17)                             171.26                  171.32
-Large Volume Customer (TPC-H Q18)                                    491.88                  477.71
-Discounted Revenue (TPC-H Q19)                                        17.67                   17.83
-Potential Part Promotion (TPC-H Q20)                                  25.56                   26.87
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  125.12                  130.80
-Global Sales Opportunity Query (TPC-H Q22)                            31.48                   32.26
+Pricing Summary Report (TPC-H Q1)                                    435.63                 2585.18
+Minimum Cost Supplier Query (TPC-H Q2)                                57.76                 1254.31
+Shipping Priority (TPC-H Q3)                                         159.35                 1255.31
+Order Priority Checking Query (TPC-H Q4)                              72.25                   81.82
+Local Supplier Volume (TPC-H Q5)                                      91.00                   92.71
+Forecasting Revenue Change (TPC-H Q6)                                 82.56                   88.52
+Forecasting Revenue Change (TPC-H Q7)                                113.80                  112.35
+National Market Share (TPC-H Q8)                                      59.62                  224.45
+Product Type Profit Measure (TPC-H Q9)                               262.96                  262.59
+Forecasting Revenue Change (TPC-H Q10)                               118.70                  108.60
+Important Stock Identification (TPC-H Q11)                            17.43                   16.36
+Shipping Modes and Order Priority (TPC-H Q12)                        129.20                  122.00
+Customer Distribution (TPC-H Q13)                                    183.17                  170.49
+Forecasting Revenue Change (TPC-H Q14)                               102.71                   98.94
+Top Supplier Query (TPC-H Q15)                                        91.41                   86.07
+Parts/Supplier Relationship (TPC-H Q16)                              116.13                  115.44
+Small-Quantity-Order Revenue (TPC-H Q17)                             186.98                  166.73
+Large Volume Customer (TPC-H Q18)                                    509.59                  476.42
+Discounted Revenue (TPC-H Q19)                                        16.46                   15.73
+Potential Part Promotion (TPC-H Q20)                                  26.70                   26.09
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                  137.76                  126.61
+Global Sales Opportunity Query (TPC-H Q22)                            33.29                   32.15
 
 ### Loading [s]
                         timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1-1          21.0            5.0         1.0       85.0     117.0
-PostgreSQL-BHT-8-2-1-1          21.0            5.0         1.0       85.0     117.0
+PostgreSQL-BHT-8-1-1-1          16.0            5.0         2.0       85.0     113.0
+PostgreSQL-BHT-8-2-1-1          16.0            5.0         2.0       85.0     113.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                         Geo Times [s]
 DBMS                                 
 PostgreSQL-BHT-8-1-1-1           0.10
-PostgreSQL-BHT-8-2-1-1           0.15
+PostgreSQL-BHT-8-2-1-1           0.14
 
 ### Power@Size ((3600*SF)/(geo times))
                         Power@Size [~Q/h]
 DBMS                                     
-PostgreSQL-BHT-8-1-1-1            3944.97
-PostgreSQL-BHT-8-2-1-1            2565.78
+PostgreSQL-BHT-8-1-1-1            3753.82
+PostgreSQL-BHT-8-2-1-1            2646.26
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
                                                     time [s]  count   SF  Throughput@Size
 DBMS                 SF  num_experiment num_client                                       
-PostgreSQL-BHT-8-1-1 0.1 1              1                  5      1  0.1           1584.0
-PostgreSQL-BHT-8-2-1 0.1 2              1                 10      1  0.1            792.0
+PostgreSQL-BHT-8-1-1 0.1 1              1                  4      1  0.1          1980.00
+PostgreSQL-BHT-8-2-1 0.1 2              1                 13      1  0.1           609.23
 
 ### Workflow
                                    orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-1  0.1     8               1           1       1765878196     1765878201
-PostgreSQL-BHT-8-2-1-1  PostgreSQL-BHT-8-2-1  0.1     8               2           1       1765878472     1765878482
+PostgreSQL-BHT-8-1-1-1  PostgreSQL-BHT-8-1-1  0.1     8               1           1       1765906579     1765906583
+PostgreSQL-BHT-8-2-1-1  PostgreSQL-BHT-8-2-1  0.1     8               2           1       1765906885     1765906898
 
 #### Actual
 DBMS PostgreSQL-BHT-8 - Pods [[1], [1]]
