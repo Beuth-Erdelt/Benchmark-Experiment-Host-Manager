@@ -53,6 +53,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 Example:
 ```bash
 nohup python tpcds.py -ms 1 -dt -tr \
+  -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -63,7 +64,8 @@ nohup python tpcds.py -ms 1 -dt -tr \
 ```
 
 This
-* starts a clean instance of PostgreSQL, MonetDB and MariaDB (at the same time, `-ms`)
+* starts a clean instance of PostgreSQL, MonetDB, MySQL and MariaDB (one after the other, `-ms`)
+  * fixed 64 Gi RAM (request `-rr` and limit `-rl`)
   * data directory inside a Docker container
   * with a maximum of 1 DBMS per time (`-ms`)
 * creates TPC-DS schema in each database

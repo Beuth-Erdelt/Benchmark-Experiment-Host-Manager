@@ -66,6 +66,7 @@ wait_process "ycsb"
 
 #### TCP-H Compare (Example-TPC-H.md)
 nohup python tpch.py -ms 1 -dt -tr \
+  -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
@@ -132,6 +133,7 @@ nohup python tpch.py -ms 1 -dt -tr \
 #### Wait so that next experiment receives a different code
 #sleep 600
 wait_process "tpch"
+
 
 nohup python tpch.py -ms 1 -dt -tr \
   -dbms PostgreSQL \
