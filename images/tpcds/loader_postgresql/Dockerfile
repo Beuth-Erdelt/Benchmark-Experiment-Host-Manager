@@ -1,10 +1,10 @@
 ######################################################################################
-# Dockerfile for Bexhoma - Benchmarker TPC-H
+# Dockerfile for Bexhoma - Benchmarker TPC-DS
 ######################################################################################
 #
 # This Dockerfile builds an image for a Bexhoma component "loader".
 #
-# Base Image: debian:stable-20221004-slim
+# Base Image: alpine:3.15
 #
 # Author: Patrick K. Erdelt
 # Email: patrick.erdelt@bht-berlin.de
@@ -16,15 +16,17 @@
 # Redis client is installed.
 # PostgreSQL client is installed.
 ######################################################################################
-FROM debian:stable-20221004-slim
+FROM alpine:3.15
 
-RUN apt-get -y update && apt-get clean all
+RUN apk update
 
-RUN apt-get install -y build-essential
-RUN apt-get install -y wget
-RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make && cp src/redis-cli /usr/local/bin/ && chmod 755 /usr/local/bin/redis-cli
+RUN apk add --no-cache bash
+RUN apk add --no-cache nano
+RUN apk add --no-cache make cmake gcc libc-dev
 
-RUN apt-get update && apt-get -y install postgresql-client
+RUN apk add redis
+
+RUN apk update && apk --update add postgresql-client
 
 ENV SF=1
 ENV BEXHOMA_NUM_PODS=4
@@ -47,14 +49,9 @@ ENV BEXHOMA_USER postgres
 
 WORKDIR /tmp
 
-RUN mkdir -p /tmp/tpcds
-
-#COPY ./*.dat /tmp/
+RUN mkdir -p /tmp/tpch
 
 COPY ./loader.sh /tmp/loader.sh
 RUN ["chmod", "+x", "/tmp/loader.sh"]
 
-
 CMD ["/bin/bash", "-c", "/tmp/loader.sh"]
-#CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
-

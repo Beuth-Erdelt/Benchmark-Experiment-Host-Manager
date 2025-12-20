@@ -31,7 +31,7 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: bexhoma-prometheus
-        image: bexhoma/monitoring:latest
+        image: bexhoma/monitoring:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CONFIGURATION, value: 'MySQL'}

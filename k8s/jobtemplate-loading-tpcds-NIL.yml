@@ -20,7 +20,7 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: datagenerator
-        image: bexhoma/generator_tpcds:latest
+        image: bexhoma/generator_tpcds:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         #securityContext:

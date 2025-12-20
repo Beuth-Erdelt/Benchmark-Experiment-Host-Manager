@@ -4,7 +4,7 @@
 #
 # This Dockerfile builds an image for a Bexhoma component "loader".
 #
-# Base Image: debian:stable-20221004-slim
+# Base Image: debian:stable-20251103-slim
 #
 # Author: Patrick K. Erdelt
 # Email: patrick.erdelt@bht-berlin.de
@@ -16,7 +16,7 @@
 # Redis client is installed.
 # MariaDB client is installed.
 ######################################################################################
-FROM debian:stable-20221004-slim
+FROM debian:stable-20251103-slim
 
 RUN apt-get -y update && apt-get clean all
 

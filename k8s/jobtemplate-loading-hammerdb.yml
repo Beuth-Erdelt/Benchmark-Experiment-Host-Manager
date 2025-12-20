@@ -22,7 +22,7 @@ spec:
       containers:
       - name: sensor
         #image: bexhoma/generator_hammerdb:4.12
-        image: bexhoma/generator_hammerdb:5.0
+        image: bexhoma/generator_hammerdb:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-timescaledb-aws-1658676533'}

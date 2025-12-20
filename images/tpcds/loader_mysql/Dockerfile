@@ -1,5 +1,5 @@
 ######################################################################################
-# Dockerfile for Bexhoma - Benchmarker TPC-H
+# Dockerfile for Bexhoma - Benchmarker TPC-DS
 ######################################################################################
 #
 # This Dockerfile builds an image for a Bexhoma component "loader".
@@ -27,32 +27,31 @@ RUN apt-get install -y build-essential
 RUN apt-get install -y wget
 RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make && cp src/redis-cli /usr/local/bin/ && chmod 755 /usr/local/bin/redis-cli
 
-
+# Set noninteractive frontend to avoid prompts
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install prerequisites
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    lsb-release \
-    ca-certificates \
-    apt-transport-https \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update --allow-releaseinfo-change \
+    && apt-get install -y --no-install-recommends wget gnupg lsb-release ca-certificates
 
-# Download MySQL APT config package
-RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.30-1_all.deb
 
-# Install the package (non-interactive)
-RUN DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.30-1_all.deb
+# Download current MySQL APT config package
+RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.36-1_all.deb
 
-# Change the distribution from trixie to bookworm to match supported repo
-RUN sed -i 's/trixie/bookworm/g' /etc/apt/sources.list.d/mysql.list
+# Install non‑interactive
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.36-1_all.deb
 
-# Update package lists and install MySQL Shell
-RUN apt-get update && apt-get install -y mysql-shell
+# (Optional) If you need to override distro codename
+#RUN sed -i 's/trixie/bookworm/g' /etc/apt/sources.list.d/mysql.list
 
-# Cleanup
-RUN rm -f mysql-apt-config_0.8.30-1_all.deb \
-    && rm -rf /var/lib/apt/lists/*
+# Install MySQL Shell
+#RUN apt-get update && apt-get install -y mysql-shell
+
+# Clean up
+#RUN rm -f mysql-apt-config_0.8.36-1_all.deb \
+#    && rm -rf /var/lib/apt/lists/*
+
+
 
 #&& apt-get install -y mysql-apt-config && apt-get install -y mysql-shell
 
@@ -63,7 +62,11 @@ RUN rm -f mysql-apt-config_0.8.30-1_all.deb \
 #RUN apt-get install -y lsb-release gnupg apt-transport-https
 
 ### install mysqlsh
-#RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debian12_amd64.deb
+RUN wget https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.3-1debian12_amd64.deb
+# Install + auto-fix dependencies
+RUN apt-get update && \
+    dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb || apt-get -f install -y && \
+    rm -rf /var/lib/apt/lists/*
 #RUN dpkg -i mysql-shell_8.4.3-1debian12_amd64.deb
 #RUN apt-get install mysql-shell -y
 
@@ -74,8 +77,14 @@ RUN apt-get update && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 RUN apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
-	&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
+
+# Add MySQL GPG key to trusted keyring
+RUN wget https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 -O /usr/share/keyrings/mysql-archive-keyring.gpg
+
+# Update MySQL sources list to use the keyring
+#RUN sed -i 's|deb http://repo.mysql.com/apt/debian bookworm|deb [signed-by=/usr/share/keyrings/mysql-archive-keyring.gpg] http://repo.mysql.com/apt/debian bookworm|g' /etc/apt/sources.list.d/mysql.list
 
 ### install mysql
 RUN apt-get update && \

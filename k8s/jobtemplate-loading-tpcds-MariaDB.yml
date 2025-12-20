@@ -20,7 +20,7 @@ spec:
       #  effect: "NoSchedule"
       initContainers:
       - name: datagenerator
-        image: bexhoma/generator_tpcds:latest
+        image: bexhoma/generator_tpcds:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         #securityContext:
@@ -50,7 +50,7 @@ spec:
         - {mountPath: /data, name: benchmark-data-volume}
       containers:
       - name: sensor
-        image: bexhoma/loader_tpcds_mariadb:latest
+        image: bexhoma/loader_tpcds_mariadb:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         #imagePullPolicy: IfNotPresent
         #securityContext:
