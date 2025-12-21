@@ -177,7 +177,7 @@ echo "FILENAME $FILENAME"
 
 ######################## Remove schema parameter from PGBouncer URL ###################
 if [[ "$BEXHOMA_DBMS" == "PGBouncer" ]]; then
-	sed -i "s/&amp;currentSchema=BEXHOMA_SCHEMA/" $FILENAME
+    sed -i 's/&amp;currentSchema=BEXHOMA_SCHEMA//g' "$FILENAME"
 fi
 
 ######################## Replace parameters in workload file ###################
