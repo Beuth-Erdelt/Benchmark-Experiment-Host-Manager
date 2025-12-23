@@ -1,2 +1,6 @@
-*.sh  text eol=lf
-*.py  text eol=lf
+
+# Do not normalize EOL for anything by default
+* -text
+
+# Enforce LF (Unix) for shell scripts only
+*.sh text eol=lf
