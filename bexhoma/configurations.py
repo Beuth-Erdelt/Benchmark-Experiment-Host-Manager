@@ -5087,7 +5087,7 @@ def load_data_asynch(app, component, experiment, configuration, pod_sut, scriptf
     #path = self.experiment.path
     #loadData = self.dockertemplate['loadData']
     def execute_command_in_pod_sut(command, pod, context):
-        fullcommand = 'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'.format(context=context, pod=pod, command=command.replace('"','\\"'))
+        fullcommand = 'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'.format(context=context, pod=pod, command=command.replace('"','\\"').replace('\n','\\n'))
         logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
         #print(fullcommand)
         proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

@@ -1,16 +1,16 @@
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1727s 
-    Code: 1745336081
-    Benchbase runs the TPC-C benchmark.
+    Duration: 1796s 
+    Code: 1766317588
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 10 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction.
-    Experiment uses bexhoma version 0.8.4.
-    Benchmark is limited to DBMS ['PGBouncer'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['PGBouncer'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
@@ -22,39 +22,50 @@ Benchbase Workload SF=16
     Experiment is run once.
 
 ### Connections
-pgb-1-2-32-32-1 uses docker image postgres:16.1
-    RAM:541008592896
+pgb-1-2-32-32-1 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:206801068
-    datadisk:4323
+    disk:439338
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1745336081
-pgb-1-2-32-32-2 uses docker image postgres:16.1
-    RAM:541008592896
+                code:1766317588
+pgb-1-2-32-32-2 uses docker image postgres:17.5
+    RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
+    host:5.15.0-160-generic
     node:cl-worker11
-    disk:207951228
-    datadisk:5447
+    disk:439611
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1745336081
+                code:1766317588
 
 ### Execution
+
+#### Per Pod
+                   experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                               
+pgb-1-2-32-32-1-1               1         32   16384       1      1  600.0           0                   1338.633227                 460.943297         0.0                                                      50566.0                                              23900.0
+pgb-1-2-32-32-2-2               1         16    8192       2      1  600.0           0                    531.819916                 440.416597         0.0                                                      64653.0                                              30077.0
+pgb-1-2-32-32-2-1               1         16    8192       2      2  600.0           2                    528.941645                 440.568316         0.0                                                      64861.0                                              30241.0
+
+#### Aggregated Parallel
                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-pgb-1-2-32-32-1               1         32   16384          1  600.0           1                       1632.17                     467.24         0.0                                                      30530.0                                              19602.0
-pgb-1-2-32-32-2               1         32   16384          2  600.0           2                       1529.88                     934.00         0.0                                                      38417.0                                              20915.0
+pgb-1-2-32-32-1               1         32   16384          1  600.0           0                       1338.63                     460.94         0.0                                                      50566.0                                              23900.0
+pgb-1-2-32-32-2               1         32   16384          2  600.0           2                       1060.76                     880.98         0.0                                                      64861.0                                              30159.0
 
 ### Workflow
 
@@ -66,8 +77,8 @@ DBMS pgb-1-2-32-32 - Pods [[1, 2]]
 
 ### Loading
                  time_load  terminals  pods  Throughput [SF/h]
-pgb-1-2-32-32-1      154.0        1.0   1.0         374.025974
-pgb-1-2-32-32-2      154.0        1.0   2.0         374.025974
+pgb-1-2-32-32-1      188.0        1.0   1.0         306.382979
+pgb-1-2-32-32-2      188.0        1.0   2.0         306.382979
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
