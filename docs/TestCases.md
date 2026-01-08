@@ -4563,43 +4563,53 @@ test_benchbase_testcase_mysql_1.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1713s 
-    Code: 1748932537
-    Benchbase runs the TPC-C benchmark.
+    Duration: 763s 
+    Code: 1767873545
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['MySQL'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker21.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is tested with [160] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
 MySQL-1-1-1024-1 uses docker image mysql:8.4.0
-    RAM:541008568320
+    RAM:608117153792
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:328988352
-    datadisk:11132
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:165887
+    datadisk:35712
+    cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1748932537
+                code:1767873545
+                TENANT_VOL:False
 
 ### Execution
+
+#### Per Pod
+                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                
+MySQL-1-1-1024-1-1               1        160    8192       1      1  300.0           0                   5553.136283                5461.042956         0.0                                                      56047.0                                              28802.0
+
+#### Aggregated Parallel
                   experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MySQL-1-1-1024-1               1         16    8192          1  300.0           0                        104.93                     104.49         0.0                                                     477418.0                                             152341.0
+MySQL-1-1-1024-1               1        160    8192          1  300.0           0                       5553.14                    5461.04         0.0                                                      56047.0                                              28802.0
 
 ### Workflow
 
@@ -4611,7 +4621,7 @@ DBMS MySQL-1-1-1024 - Pods [[1]]
 
 ### Loading
                   time_load  terminals  pods  Throughput [SF/h]
-MySQL-1-1-1024-1      804.0        1.0   1.0          71.641791
+MySQL-1-1-1024-1      156.0        1.0   1.0         369.230769
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -5092,44 +5102,53 @@ test_benchbase_testcase_mariadb_1.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1014s 
-    Code: 1748947031
-    Benchbase runs the TPC-C benchmark.
+    Duration: 766s 
+    Code: 1767879317
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [8].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker21.
     Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1] pods.
+    Benchmarking is tested with [160] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
 MariaDB-1-1-1024-1 uses docker image mariadb:11.4.7
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:319539432
-    datadisk:1904
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:132497
+    datadisk:1892
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1748947031
+                code:1767879317
 
 ### Execution
+
+#### Per Pod
+                      experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                  
+MariaDB-1-1-1024-1-1               1        160    8192       1      1  300.0           0                   7873.212846                7736.059521         0.0                                                      39931.0                                              17849.0
+
+#### Aggregated Parallel
                     experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MariaDB-1-1-1024-1               1         16    8192          1  300.0           0                        157.65                     156.99         0.0                                                      31711.0                                              93467.0
+MariaDB-1-1-1024-1               1        160    8192          1  300.0           0                       7873.21                    7736.06         0.0                                                      39931.0                                              17849.0
 
 ### Workflow
 
@@ -5141,7 +5160,7 @@ DBMS MariaDB-1-1-1024 - Pods [[1]]
 
 ### Loading
                     time_load  terminals  pods  Throughput [SF/h]
-MariaDB-1-1-1024-1      327.0        1.0   1.0         176.146789
+MariaDB-1-1-1024-1      148.0        1.0   1.0         389.189189
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -6444,18 +6463,18 @@ test_hammerdb_testcase_mariadb_1.log
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 953s 
-    Code: 1750102784
+    Duration: 830s 
+    Code: 1767886199
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.8.
+    Experiment uses bexhoma version 0.8.20.
     Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker21.
     Loading is tested with [8] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -6463,21 +6482,23 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:394837604
-    datadisk:1651
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:132294
+    datadisk:1678
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1750102784
+        code:1767886199
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
-MariaDB-BHT-8-1-1               1      16       1          1         0.0  11404.0  26579.0         5       0
+                   experiment_run  vusers  client  pod_count  efficiency      NOPM       TPM  duration  errors
+MariaDB-BHT-8-1-1               1      16       1          1         0.0  166830.0  387630.0         5       0
 
 Warehouses: 16
 
@@ -6491,7 +6512,7 @@ DBMS MariaDB-BHT-8-1 - Pods [[1]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-MariaDB-BHT-8-1-1      185.0        1.0   1.0                 311.351351
+MariaDB-BHT-8-1-1       60.0        1.0   1.0                      960.0
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
