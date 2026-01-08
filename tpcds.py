@@ -258,12 +258,17 @@ if __name__ == '__main__':
                     TRANSFORM_RAW_DATA = 1,
                     TPCDS_TABLE = limit_import_table,
                     MYSQL_LOADING_FROM = "LOCAL",
+                    BEXHOMA_USER = "bexhoma",
+                    BEXHOMA_PASSWORD = "password",
                     )
                 config.set_benchmarking_parameters(
                     SF = SF,
                     DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
                     DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
                     DBMSBENCHMARKER_DEV = debugging,
+                    )
+                config.set_sut_parameters(
+                    MARIADB_DATABASE = "tpcds",
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MySQL" in args.dbms or len(args.dbms) == 0):

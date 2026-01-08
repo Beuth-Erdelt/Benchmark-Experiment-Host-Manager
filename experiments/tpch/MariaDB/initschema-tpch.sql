@@ -1,4 +1,4 @@
-CREATE DATABASE tpch;
+-- CREATE DATABASE tpch;
 
 -- sccsid:     @(#)dss.ddl  2.1.8.1
 create table tpch.nation  ( n_nationkey  integer not null,

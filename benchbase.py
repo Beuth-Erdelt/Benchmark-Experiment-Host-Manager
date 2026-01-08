@@ -684,8 +684,8 @@ if __name__ == '__main__':
                         BENCHBASE_TIME = SD,
                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                         BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BEXHOMA_USER = "root",
-                        BEXHOMA_PASSWORD = "root",
+                        BEXHOMA_USER = "bexhoma",
+                        BEXHOMA_PASSWORD = "password",
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
@@ -719,6 +719,8 @@ if __name__ == '__main__':
                                         BENCHBASE_TIME = SD,
                                         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
                                         BENCHBASE_BATCHSIZE = extra_batchsize,
+                                        BEXHOMA_USER = "bexhoma",
+                                        BEXHOMA_PASSWORD = "password",
                                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
