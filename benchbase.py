@@ -689,6 +689,9 @@ if __name__ == '__main__':
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
+                    config.set_sut_parameters(
+                        MARIADB_DATABASE = "benchbase",
+                        )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
                     for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):

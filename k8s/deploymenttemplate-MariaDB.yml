@@ -50,6 +50,7 @@ spec:
         #args: ["--innodb_log_buffer_size", "17179869184", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296", "--LimitMEMLOCK", "16M"]
         #args: ["--innodb_log_buffer_size", "17179869184", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         args:
+          - "--max_connections=1500"
           # --- I/O Threading ---
           - "--innodb-read-io-threads=64"         # Use all cores for read I/O
           - "--innodb-write-io-threads=64"        # Use all cores for write I/O
