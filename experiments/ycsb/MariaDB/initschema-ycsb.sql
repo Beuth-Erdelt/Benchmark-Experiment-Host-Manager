@@ -1,4 +1,4 @@
-CREATE DATABASE ycsb;
+-- CREATE DATABASE ycsb;
 
 CREATE TABLE ycsb.usertable (
   `YCSB_KEY` varchar(255) NOT NULL,
