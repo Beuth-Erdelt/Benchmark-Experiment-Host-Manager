@@ -15,7 +15,7 @@
 ######################################################################################
 
 
-BEXHOMA_NODE_SUT="cl-worker21"
+BEXHOMA_NODE_SUT="cl-worker25"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -91,6 +91,7 @@ wait_process "tpch"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
+  -rr 64Gi -lr 64Gi \
   -dt \
   -t 1200 \
   -dbms MySQL \
@@ -118,6 +119,7 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
+  -rr 64Gi -lr 64Gi \
   -dt \
   -t 1200 \
   -dbms MySQL \
@@ -139,7 +141,8 @@ nohup python tpch.py -ms 1 -tr \
 wait_process "tpch"
 
 nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
-  -dbms PostgreSQL \
+  -dbms MySQL \
+  -rr 128Gi -lr 128Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 10 \
@@ -150,7 +153,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -rnl "$BEXHOMA_NODE_LOAD" \
   -rnb "$BEXHOMA_NODE_BENCHMARK" \
   -rst ramdisk -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_ramdisk.log &
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log &
 
 wait_process "tpch"
 
@@ -183,6 +186,7 @@ wait_process "tpch"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
+  -rr 64Gi -lr 64Gi \
   -dt \
   -t 1200 \
   -dbms PostgreSQL \
@@ -207,6 +211,7 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
+  -rr 64Gi -lr 64Gi \
   -dt \
   -t 1200 \
   -dbms PostgreSQL \
@@ -307,8 +312,26 @@ nohup python tpch.py -ms 1 -tr \
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
 
 
+
 #### Wait so that next experiment receives a different code
 #sleep 1200
+wait_process "tpch"
+
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms MariaDB \
+  -rr 128Gi -lr 128Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn "$BEXHOMA_NODE_SUT" \
+  -rnl "$BEXHOMA_NODE_LOAD" \
+  -rnb "$BEXHOMA_NODE_BENCHMARK" \
+  -rst ramdisk -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log &
+
 wait_process "tpch"
 
 

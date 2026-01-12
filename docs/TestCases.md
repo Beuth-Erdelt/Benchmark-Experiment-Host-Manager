@@ -19,7 +19,7 @@ mkdir -p $LOG_DIR
 See also [more test cases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test-more.sh) for more and longer running test cases and other DBMS.
 
 See the [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) for some demo test logs.
-The folder also contains \*_summary.txt` files containing only the result summary.
+The folder also contains `\*_summary.txt` files containing only the result summary.
 
 
 ## TPC-H
@@ -1249,7 +1249,35 @@ TEST passed: Workflow as planned
 
 
 
+#### TPC-H RAM Disk Test
 
+This loads TPC-H data (SF=3) into a database that is stored on a RAM disk.
+The disk has size 50GB.
+Make sure you have enough RAM.
+
+```bash
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms MySQL \
+  -rr 128Gi -lr 128Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn "$BEXHOMA_NODE_SUT" \
+  -rnl "$BEXHOMA_NODE_LOAD" \
+  -rnb "$BEXHOMA_NODE_BENCHMARK" \
+  -rst ramdisk -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log &
+```
+
+yields (after ca. 15 minutes) something like
+
+doc_tpch_testcase_ramdisk.log
+```markdown
+## Show Summary
+```
 
 
 ### MariaDB
@@ -1788,6 +1816,38 @@ TEST passed: Workflow as planned
 
 
 
+
+
+#### TPC-H RAM Disk Test
+
+This loads TPC-H data (SF=3) into a database that is stored on a RAM disk.
+The disk has size 50GB.
+Make sure you have enough RAM.
+
+```bash
+nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+  -dbms MariaDB \
+  -rr 128Gi -lr 128Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc -ma \
+  -rnn "$BEXHOMA_NODE_SUT" \
+  -rnl "$BEXHOMA_NODE_LOAD" \
+  -rnb "$BEXHOMA_NODE_BENCHMARK" \
+  -rst ramdisk -rss 100Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log &
+
+```
+
+yields (after ca. 15 minutes) something like
+
+doc_tpch_testcase_ramdisk.log
+```markdown
+## Show Summary
+```
 
 
 
