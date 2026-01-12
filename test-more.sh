@@ -89,20 +89,20 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-nohup python tpch.py -ms 1 -tr \
-  -sf 10 \
-  -rr 64Gi -lr 64Gi \
-  -dt \
-  -t 1200 \
-  -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_2.log &
+# nohup python tpch.py -ms 1 -tr \
+#   -sf 10 \
+#   -rr 64Gi -lr 64Gi \
+#   -dt \
+#   -t 1200 \
+#   -dbms MySQL \
+#   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+#   -ii -ic -is \
+#   -nlp 8 \
+#   -nbp 1 \
+#   -ne 1 \
+#   -nc 1 \
+#   -m -mc \
+#   run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_2.log
 
@@ -130,7 +130,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst shared -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
@@ -140,7 +140,7 @@ nohup python tpch.py -ms 1 -tr \
 #sleep 1200
 wait_process "tpch"
 
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+nohup python tpch.py -ms 1 -dt -tr \
   -dbms MySQL \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
@@ -152,7 +152,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -rnn "$BEXHOMA_NODE_SUT" \
   -rnl "$BEXHOMA_NODE_LOAD" \
   -rnb "$BEXHOMA_NODE_BENCHMARK" \
-  -rst ramdisk -rss 100Gi \
+  -rst ramdisk -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log &
 
 wait_process "tpch"
@@ -184,20 +184,20 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-nohup python tpch.py -ms 1 -tr \
-  -sf 10 \
-  -rr 64Gi -lr 64Gi \
-  -dt \
-  -t 1200 \
-  -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
+# nohup python tpch.py -ms 1 -tr \
+#   -sf 10 \
+#   -rr 64Gi -lr 64Gi \
+#   -dt \
+#   -t 1200 \
+#   -dbms PostgreSQL \
+#   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+#   -ii -ic -is \
+#   -nlp 8 \
+#   -nbp 1 \
+#   -ne 1 \
+#   -nc 1 \
+#   -m -mc \
+#   run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
 
 
 #### Wait so that next experiment receives a different code
@@ -222,7 +222,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst shared -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
 
 
@@ -266,19 +266,19 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-nohup python tpch.py -ms 1 -tr \
-  -sf 1 \
-  -dt \
-  -t 1200 \
-  -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_2.log &
+# nohup python tpch.py -ms 1 -tr \
+#   -sf 1 \
+#   -dt \
+#   -t 1200 \
+#   -dbms MariaDB \
+#   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+#   -ii -ic -is \
+#   -nlp 8 \
+#   -nbp 1 \
+#   -ne 1 \
+#   -nc 1 \
+#   -m -mc \
+#   run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_2.log
 
@@ -306,7 +306,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst shared -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
@@ -329,7 +329,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -rnn "$BEXHOMA_NODE_SUT" \
   -rnl "$BEXHOMA_NODE_LOAD" \
   -rnb "$BEXHOMA_NODE_BENCHMARK" \
-  -rst ramdisk -rss 100Gi \
+  -rst ramdisk -rss 50Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log &
 
 wait_process "tpch"
