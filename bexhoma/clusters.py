@@ -1561,8 +1561,8 @@ class testbed():
         if self.monitor_cluster_exists:
             return
         if not self.monitor_cluster_exists:
-            # give it 5 tries, one every 10 seconds
-            for tries in range(5):
+            # give it 10 tries, one every 10 seconds
+            for tries in range(10):
                 self.wait(10, silent=True)
                 self.monitor_cluster_exists = self.test_if_monitoring_healthy()
                 if self.monitor_cluster_exists:
