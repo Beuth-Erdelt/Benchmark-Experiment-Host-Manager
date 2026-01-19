@@ -15,7 +15,7 @@
 ######################################################################################
 
 
-BEXHOMA_NODE_SUT="cl-worker25"
+BEXHOMA_NODE_SUT="cl-worker21"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -89,20 +89,20 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-# nohup python tpch.py -ms 1 -tr \
-#   -sf 10 \
-#   -rr 64Gi -lr 64Gi \
-#   -dt \
-#   -t 1200 \
-#   -dbms MySQL \
-#   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#   -ii -ic -is \
-#   -nlp 8 \
-#   -nbp 1 \
-#   -ne 1 \
-#   -nc 1 \
-#   -m -mc \
-#   run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_2.log &
+nohup python tpch.py -ms 1 -tr \
+  -sf 10 \
+  -rr 128Gi -lr 128Gi \
+  -dt \
+  -t 1200 \
+  -dbms MySQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_2.log
 
@@ -119,7 +119,7 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
-  -rr 64Gi -lr 64Gi \
+  -rr 128Gi -lr 128Gi \
   -dt \
   -t 1200 \
   -dbms MySQL \
@@ -184,20 +184,20 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-# nohup python tpch.py -ms 1 -tr \
-#   -sf 10 \
-#   -rr 64Gi -lr 64Gi \
-#   -dt \
-#   -t 1200 \
-#   -dbms PostgreSQL \
-#   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#   -ii -ic -is \
-#   -nlp 8 \
-#   -nbp 1 \
-#   -ne 1 \
-#   -nc 1 \
-#   -m -mc \
-#   run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
+nohup python tpch.py -ms 1 -tr \
+  -sf 10 \
+  -rr 128Gi -lr 128Gi \
+  -dt \
+  -t 1200 \
+  -dbms PostgreSQL \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
 
 
 #### Wait so that next experiment receives a different code
@@ -211,7 +211,7 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
-  -rr 64Gi -lr 64Gi \
+  -rr 128Gi -lr 128Gi \
   -dt \
   -t 1200 \
   -dbms PostgreSQL \
@@ -266,19 +266,19 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-# nohup python tpch.py -ms 1 -tr \
-#   -sf 1 \
-#   -dt \
-#   -t 1200 \
-#   -dbms MariaDB \
-#   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#   -ii -ic -is \
-#   -nlp 8 \
-#   -nbp 1 \
-#   -ne 1 \
-#   -nc 1 \
-#   -m -mc \
-#   run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_2.log &
+nohup python tpch.py -ms 1 -tr \
+  -sf 1 \
+  -dt \
+  -t 1200 \
+  -dbms MariaDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ii -ic -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_2.log
 

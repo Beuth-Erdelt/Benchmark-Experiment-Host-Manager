@@ -18,7 +18,7 @@
 # Import functions from testfunctions.sh
 source ./testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker21"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -49,13 +49,8 @@ wait_process "ycsb"
 ####################################################
 
 
-BEXHOMA_NODE_SUT="cl-worker11"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-
-
 # Single host Redis
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -78,7 +73,7 @@ wait_process "ycsb"
 
 
 # Cluster of 3 Redis instances
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -101,7 +96,7 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 # Cluster of 3 Redis instances and replication
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -126,7 +121,7 @@ wait_process "ycsb"
 
 
 # Single host Redis with PVC
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -152,7 +147,7 @@ wait_process "ycsb"
 # Cluster of 3 Redis instances and PVC
 ########### not sure this works - redis nodes rely on IPs and do not find eachother after restart
 
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
