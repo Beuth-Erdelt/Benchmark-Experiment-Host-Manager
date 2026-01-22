@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is starting...done
 Message Queue                 : is starting...done
-Experiment                    : has code 1768834395
-Experiment                    : starts at 2026-01-19 15:53:36.129134 (33026579.599684395)
+Experiment                    : has code 1769092236
+Experiment                    : starts at 2026-01-22 15:31:07.888554 (33284431.359104905)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -19,7 +19,7 @@ Experiment is limited to DBMS ['Redis'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker3.
+SUT is fixed to cl-worker14.
 Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [128] threads, split into [1] pods.
@@ -31,12 +31,12 @@ Redis-64-8-196608             : deployments ['sut']
 Redis-64-8-196608             : stateful sets []
 Redis-64-8-196608             : pvcs ['sut']
 Redis-64-8-196608             : found labels on pvc = []
-Redis-64-8-196608             : name of SUT pods = bexhoma-sut-redis-64-8-196608-1768834395
-Redis-64-8-196608             : name of SUT service = bexhoma-sut-redis-64-8-196608-1768834395
+Redis-64-8-196608             : name of SUT pods = bexhoma-sut-redis-64-8-196608-1769092236
+Redis-64-8-196608             : name of SUT service = bexhoma-sut-redis-64-8-196608-1769092236
 Redis-64-8-196608             : name of SUT PVC name = bexhoma-storage-redis-ycsb-1
 - waiting 30s -               : done
 Redis-64-8-196608             : is not loaded yet
-Redis-64-8-196608             : connect to pod bexhoma-sut-redis-64-8-196608-1768834395-67c6c8d977-hmzzq to load scripts
+Redis-64-8-196608             : connect to pod bexhoma-sut-redis-64-8-196608-1769092236-9f958fd65-vsfpp to load scripts
 Redis-64-8-196608             : list of pvcs ['bexhoma-storage-redis-ycsb-1']
 Redis-64-8-196608             : will be labeling bexhoma-storage-redis-ycsb-1
 Redis-64-8-196608             : start asynch loading scripts of type loaded
@@ -50,12 +50,12 @@ Redis-64-8-196608             : is loading
 - waiting 30s -               : done
 Redis-64-8-196608             : showing loader times
 Redis-64-8-196608             : generator times (start/end per pod and container) []
-Redis-64-8-196608             : loader times (start/end per pod and container) [(1768834458, 1768834546), (1768834459, 1768834547), (1768834458, 1768834547), (1768834458, 1768834546), (1768834459, 1768834547), (1768834458, 1768834546), (1768834458, 1768834546), (1768834459, 1768834547)]
-Redis-64-8-196608             : total times (start/end per pod and container) [(1768834458, 1768834546), (1768834459, 1768834547), (1768834458, 1768834547), (1768834458, 1768834546), (1768834459, 1768834547), (1768834458, 1768834546), (1768834458, 1768834546), (1768834459, 1768834547)]
-Redis-64-8-196608             : loader timespan (first to last [s]) = 89
+Redis-64-8-196608             : loader times (start/end per pod and container) [(1769092311, 1769092402), (1769092312, 1769092402), (1769092311, 1769092402), (1769092311, 1769092402), (1769092311, 1769092401), (1769092311, 1769092402), (1769092311, 1769092402), (1769092311, 1769092401)]
+Redis-64-8-196608             : total times (start/end per pod and container) [(1769092311, 1769092402), (1769092312, 1769092402), (1769092311, 1769092402), (1769092311, 1769092402), (1769092311, 1769092401), (1769092311, 1769092402), (1769092311, 1769092402), (1769092311, 1769092401)]
+Redis-64-8-196608             : loader timespan (first to last [s]) = 91
 Redis-64-8-196608             : list of pvcs ['bexhoma-storage-redis-ycsb-1']
 Redis-64-8-196608             : will be labeling bexhoma-storage-redis-ycsb-1
-Redis-64-8-196608             : connect to pod bexhoma-sut-redis-64-8-196608-1768834395-67c6c8d977-hmzzq to load scripts
+Redis-64-8-196608             : connect to pod bexhoma-sut-redis-64-8-196608-1769092236-9f958fd65-vsfpp to load scripts
 Redis-64-8-196608             : list of pvcs ['bexhoma-storage-redis-ycsb-1']
 Redis-64-8-196608             : will be labeling bexhoma-storage-redis-ycsb-1
 Redis-64-8-196608             : start asynch loading scripts of type indexed
@@ -66,12 +66,12 @@ Redis-64-8-196608             : benchmarks done 0 of 2. This will be client 1
 Redis-64-8-196608             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 128, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'redis', 'BEXHOMA_REPLICAS': 0, 'YCSB_INSERTORDER': 'hashed'}
 Redis-64-8-196608-1-1         : start benchmarking
 Redis-64-8-196608-1-1         : needs monitoring (common metrics) for deployment sut
-Redis-64-8-196608             : benchmarking results in folder /home/perdelt/benchmarks/1768834395
+Redis-64-8-196608             : benchmarking results in folder /home/perdelt/benchmarks/1769092236
 - waiting 10s -               : done
-Redis-64-8-196608             : benchmarking is waiting for job bexhoma-benchmarker-redis-64-8-196608-1768834395-1-1-8p9mn: found
+Redis-64-8-196608             : benchmarking is waiting for job bexhoma-benchmarker-redis-64-8-196608-1769092236-1-1-7xfrz: found
 Redis-64-8-196608-1-1         : needs monitoring (common metrics) for deployment sut
 Redis-64-8-196608-1-1         : collecting metrics of data injector at connection Redis-64-8-196608-1-1
-Redis-64-8-196608-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1768834395(.*)", pod=~"(.*)redis-64-8-196608-1768834395(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Redis-64-8-196608-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1769092236(.*)", pod=~"(.*)redis-64-8-196608-1769092236(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Redis-64-8-196608             : has running benchmarks
 - waiting 30s -               : done
@@ -96,19 +96,23 @@ Redis-64-8-196608             : has running benchmarks
 Redis-64-8-196608             : has running benchmarks
 - waiting 30s -               : done
 Redis-64-8-196608             : has running benchmarks
-timing_benchmarker [(1768834619, 1768834979)]
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+timing_benchmarker [(1769092471, 1769092894)]
 Redis-64-8-196608-1-1         : showing benchmarker times
-Redis-64-8-196608-1-1         : benchmarker timespan job from 1768834617 to 1768835003
-Redis-64-8-196608-1-1         : benchmarker timespan pods from 1768834619 to 1768834979
-Redis-64-8-196608-1-1         : benchmarker timespan (start to end single container [s]) = 360
-Redis-64-8-196608-1-1         : benchmarker times (start/end per pod and container) = [(1768834619, 1768834979)]
-Redis-64-8-196608-1-1         : found and updated times {'benchmarker': [(1768834619, 1768834979)]}
+Redis-64-8-196608-1-1         : benchmarker timespan job from 1769092469 to 1769092918
+Redis-64-8-196608-1-1         : benchmarker timespan pods from 1769092471 to 1769092894
+Redis-64-8-196608-1-1         : benchmarker timespan (start to end single container [s]) = 423
+Redis-64-8-196608-1-1         : benchmarker times (start/end per pod and container) = [(1769092471, 1769092894)]
+Redis-64-8-196608-1-1         : found and updated times {'benchmarker': [(1769092471, 1769092894)]}
 Redis-64-8-196608-1-1         : needs monitoring (common metrics) for deployment sut
 Redis-64-8-196608-1-1         : collecting metrics of benchmarker at connection Redis-64-8-196608-1-1
-Redis-64-8-196608-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1768834395(.*)", pod=~"(.*)redis-64-8-196608-1768834395(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Redis-64-8-196608-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1769092236(.*)", pod=~"(.*)redis-64-8-196608-1769092236(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Redis-64-8-196608             : can be stopped
-Redis-64-8-196608             : had 0 restarts at worker bexhoma-sut-redis-64-8-196608-1768834395-67c6c8d977-hmzzq
+Redis-64-8-196608             : had 0 restarts at worker bexhoma-sut-redis-64-8-196608-1769092236-9f958fd65-vsfpp
 Redis-64-8-196608             : still being removed
 - waiting 30s -               : done
 Redis-64-8-196608             : still being removed
@@ -119,18 +123,18 @@ Redis-64-8-196608             : stateful sets []
 Redis-64-8-196608             : pvcs ['sut']
 Redis-64-8-196608             : list of pvcs ['bexhoma-storage-redis-ycsb-1']
 Redis-64-8-196608             : storage bexhoma-storage-redis-ycsb-1 exists
-Redis-64-8-196608             : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '223', 'timeLoadingEnd': '1768834582', 'timeLoadingStart': '1768834448', 'time_generated': '0', 'time_indexed': '134', 'time_ingested': '89', 'time_initschema': '1', 'time_loaded': '0'}
-Redis-64-8-196608             : name of SUT pods = bexhoma-sut-redis-64-8-196608-1768834395
-Redis-64-8-196608             : name of SUT service = bexhoma-sut-redis-64-8-196608-1768834395
+Redis-64-8-196608             : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '225', 'timeLoadingEnd': '1769092434', 'timeLoadingStart': '1769092300', 'time_generated': '0', 'time_indexed': '134', 'time_ingested': '91', 'time_initschema': '1', 'time_loaded': '0'}
+Redis-64-8-196608             : name of SUT pods = bexhoma-sut-redis-64-8-196608-1769092236
+Redis-64-8-196608             : name of SUT service = bexhoma-sut-redis-64-8-196608-1769092236
 Redis-64-8-196608             : name of SUT PVC name = bexhoma-storage-redis-ycsb-1
 Redis-64-8-196608             : copied label indexed = True
 Redis-64-8-196608             : copied label loaded = True
-Redis-64-8-196608             : copied label timeLoading = 223
-Redis-64-8-196608             : copied label timeLoadingEnd = 1768834582
-Redis-64-8-196608             : copied label timeLoadingStart = 1768834448
+Redis-64-8-196608             : copied label timeLoading = 225
+Redis-64-8-196608             : copied label timeLoadingEnd = 1769092434
+Redis-64-8-196608             : copied label timeLoadingStart = 1769092300
 Redis-64-8-196608             : copied label time_generated = 0
 Redis-64-8-196608             : copied label time_indexed = 134
-Redis-64-8-196608             : copied label time_ingested = 89
+Redis-64-8-196608             : copied label time_ingested = 91
 Redis-64-8-196608             : copied label time_initschema = 1
 Redis-64-8-196608             : copied label time_loaded = 0
 Redis-64-8-196608             : loading is set to finished
@@ -140,9 +144,9 @@ Redis-64-8-196608             : benchmarks done 1 of 2. This will be client 1
 Redis-64-8-196608             : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 128, 'YCSB_TARGET': 65536, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 10000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'redis', 'BEXHOMA_REPLICAS': 0, 'YCSB_INSERTORDER': 'hashed'}
 Redis-64-8-196608-2-1         : start benchmarking
 Redis-64-8-196608-2-1         : needs monitoring (common metrics) for deployment sut
-Redis-64-8-196608             : benchmarking results in folder /home/perdelt/benchmarks/1768834395
+Redis-64-8-196608             : benchmarking results in folder /home/perdelt/benchmarks/1769092236
 - waiting 10s -               : done
-Redis-64-8-196608             : benchmarking is waiting for job bexhoma-benchmarker-redis-64-8-196608-1768834395-2-1-w97f4: found
+Redis-64-8-196608             : benchmarking is waiting for job bexhoma-benchmarker-redis-64-8-196608-1769092236-2-1-c2fdt: found
 - waiting 30s -               : done
 Redis-64-8-196608             : has running benchmarks
 - waiting 30s -               : done
@@ -165,20 +169,24 @@ Redis-64-8-196608             : has running benchmarks
 Redis-64-8-196608             : has running benchmarks
 - waiting 30s -               : done
 Redis-64-8-196608             : has running benchmarks
-timing_benchmarker [(1768835147, 1768835481)]
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+- waiting 30s -               : done
+Redis-64-8-196608             : has running benchmarks
+timing_benchmarker [(1769093062, 1769093464)]
 Redis-64-8-196608-2-1         : showing benchmarker times
-Redis-64-8-196608-2-1         : benchmarker timespan job from 1768835145 to 1768835495
-Redis-64-8-196608-2-1         : benchmarker timespan pods from 1768835147 to 1768835481
-Redis-64-8-196608-2-1         : benchmarker timespan (start to end single container [s]) = 334
-Redis-64-8-196608-2-1         : benchmarker times (start/end per pod and container) = [(1768835147, 1768835481)]
-Redis-64-8-196608-2-1         : found and updated times {'benchmarker': [(1768835147, 1768835481)]}
+Redis-64-8-196608-2-1         : benchmarker timespan job from 1769093060 to 1769093472
+Redis-64-8-196608-2-1         : benchmarker timespan pods from 1769093062 to 1769093464
+Redis-64-8-196608-2-1         : benchmarker timespan (start to end single container [s]) = 402
+Redis-64-8-196608-2-1         : benchmarker times (start/end per pod and container) = [(1769093062, 1769093464)]
+Redis-64-8-196608-2-1         : found and updated times {'benchmarker': [(1769093062, 1769093464)]}
 Redis-64-8-196608-2-1         : needs monitoring (common metrics) for deployment sut
 Redis-64-8-196608-2-1         : collecting metrics of benchmarker at connection Redis-64-8-196608-2-1
-Redis-64-8-196608-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1768834395(.*)", pod=~"(.*)redis-64-8-196608-1768834395(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Redis-64-8-196608-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)redis-64-8-196608-1769092236(.*)", pod=~"(.*)redis-64-8-196608-1769092236(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Redis-64-8-196608             : can be stopped
-Redis-64-8-196608             : had 0 restarts at worker bexhoma-sut-redis-64-8-196608-1768834395-557b9fc54f-wspz8
-Experiment                    : ends at 2026-01-19 16:12:11.310346 (33027694.780900825) - 1115.18s total
+Redis-64-8-196608             : had 0 restarts at worker bexhoma-sut-redis-64-8-196608-1769092236-7d8895c87-xzh7w
+Experiment                    : ends at 2026-01-22 15:51:49.227174 (33285672.697728388) - 1241.34s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -189,8 +197,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1116s 
-    Code: 1768834395
+    Duration: 1242s 
+    Code: 1769092236
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -207,7 +215,7 @@ YCSB SF=1
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker3.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
@@ -220,8 +228,8 @@ Redis-64-8-196608-1-1 uses docker image redis:7.4.2
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-164-generic
-    node:cl-worker3
-    disk:57730
+    node:cl-worker14
+    disk:94799
     datadisk:1095
     volume_size:50G
     volume_used:1.1G
@@ -232,14 +240,14 @@ Redis-64-8-196608-1-1 uses docker image redis:7.4.2
     client:1
     numExperiment:1
     eval_parameters
-        code:1768834395
+        code:1769092236
 Redis-64-8-196608-2-1 uses docker image redis:7.4.2
     RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-164-generic
-    node:cl-worker3
-    disk:57730
+    node:cl-worker14
+    disk:94800
     datadisk:1095
     volume_size:50G
     volume_used:1.1G
@@ -250,16 +258,16 @@ Redis-64-8-196608-2-1 uses docker image redis:7.4.2
     client:1
     numExperiment:2
     eval_parameters
-        code:1768834395
+        code:1769092236
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   11396.457123                87909.0             1000000                              8665.0
+Redis-64-8-196608               1       64  196608          8           0                   11028.635421                90904.0             1000000                              9029.0
 
 ### Execution
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1-1               1      128   65536          1           0                       27799.17               359723.0           4998791                            8903.0             5001209                              8903.0
-Redis-64-8-196608-2-1               2      128   65536          1           0                       29930.53               334107.0           4999025                            8311.0             5000975                              8319.0
+Redis-64-8-196608-1-1               1      128   65536          1           0                       23618.66               423394.0           4999900                           10335.0             5000100                             10335.0
+Redis-64-8-196608-2-1               2      128   65536          1           0                       24868.69               402112.0           5000937                            9775.0             4999063                              9767.0
 
 ### Workflow
 
@@ -273,12 +281,12 @@ DBMS Redis-64-8-196608 - Pods [[1], [1]]
 
 ### Loading phase: component loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1       75.45        0           0.1                  0.1
+Redis-64-8-196608-1-1      111.56     1.44           0.1                  0.1
 
 ### Execution phase: component benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1       447.8     1.51          0.13                 0.13
-Redis-64-8-196608-2-1       447.8     1.65          0.13                 0.13
+Redis-64-8-196608-1-1      480.61     1.31          0.13                 0.13
+Redis-64-8-196608-2-1      480.61     1.30          0.13                 0.13
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

@@ -751,8 +751,8 @@ test_tpch_testcase_mysql_1.log
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 404s 
-    Code: 1768216270
+    Duration: 957s 
+    Code: 1768474622
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -765,7 +765,7 @@ TPC-H Queries SF=1
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker25.
+    SUT is fixed to cl-worker21.
     Loading is tested with [1] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -773,18 +773,18 @@ TPC-H Queries SF=1
 
 ### Connections
 MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
-    RAM:540590825472
-    Cores:96
+    RAM:608117153792
+    Cores:64
     host:6.8.0-90-generic
-    node:cl-worker25
-    disk:212793
-    datadisk:33842
-    cpu_list:0-95
+    node:cl-worker21
+    disk:168141
+    datadisk:35749
+    cpu_list:0-63
     args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1768216270
+        code:1768474622
 
 ### Errors (failed queries)
 No errors
@@ -794,51 +794,51 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MySQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                              79.76
-Minimum Cost Supplier Query (TPC-H Q2)                          3.45
-Shipping Priority (TPC-H Q3)                                    2.16
-Order Priority Checking Query (TPC-H Q4)                        1.93
-Local Supplier Volume (TPC-H Q5)                                1.85
-Forecasting Revenue Change (TPC-H Q6)                           1.68
-Forecasting Revenue Change (TPC-H Q7)                           2.34
-National Market Share (TPC-H Q8)                                1.69
-Product Type Profit Measure (TPC-H Q9)                          1.48
-Forecasting Revenue Change (TPC-H Q10)                          1.58
-Important Stock Identification (TPC-H Q11)                      1.11
-Shipping Modes and Order Priority (TPC-H Q12)                   1.30
-Customer Distribution (TPC-H Q13)                               1.02
-Forecasting Revenue Change (TPC-H Q14)                          0.99
-Top Supplier Query (TPC-H Q15)                                  2.48
-Parts/Supplier Relationship (TPC-H Q16)                         1.54
-Small-Quantity-Order Revenue (TPC-H Q17)                        1.13
-Large Volume Customer (TPC-H Q18)                               1.23
-Discounted Revenue (TPC-H Q19)                                  1.87
-Potential Part Promotion (TPC-H Q20)                            2.81
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)             2.32
-Global Sales Opportunity Query (TPC-H Q22)                    280.53
+Pricing Summary Report (TPC-H Q1)                           12260.45
+Minimum Cost Supplier Query (TPC-H Q2)                        146.25
+Shipping Priority (TPC-H Q3)                                 1883.98
+Order Priority Checking Query (TPC-H Q4)                      795.36
+Local Supplier Volume (TPC-H Q5)                             1983.93
+Forecasting Revenue Change (TPC-H Q6)                        2198.38
+Forecasting Revenue Change (TPC-H Q7)                        2782.64
+National Market Share (TPC-H Q8)                             4202.42
+Product Type Profit Measure (TPC-H Q9)                       3209.75
+Forecasting Revenue Change (TPC-H Q10)                       1678.74
+Important Stock Identification (TPC-H Q11)                    218.48
+Shipping Modes and Order Priority (TPC-H Q12)                3297.46
+Customer Distribution (TPC-H Q13)                            5281.52
+Forecasting Revenue Change (TPC-H Q14)                       2525.19
+Top Supplier Query (TPC-H Q15)                              19888.85
+Parts/Supplier Relationship (TPC-H Q16)                       507.04
+Small-Quantity-Order Revenue (TPC-H Q17)                      413.95
+Large Volume Customer (TPC-H Q18)                            2960.24
+Discounted Revenue (TPC-H Q19)                                194.13
+Potential Part Promotion (TPC-H Q20)                          392.06
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          7460.02
+Global Sales Opportunity Query (TPC-H Q22)                    235.02
 
 ### Loading [s]
                  timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MySQL-BHT-8-1-1          16.0           56.0         0.0      139.0     217.0
+MySQL-BHT-8-1-1          21.0           70.0         0.0      648.0     742.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                  Geo Times [s]
 DBMS                          
-MySQL-BHT-8-1-1            0.0
+MySQL-BHT-8-1-1           1.59
 
 ### Power@Size ((3600*SF)/(geo times))
                  Power@Size [~Q/h]
 DBMS                              
-MySQL-BHT-8-1-1         1412601.32
+MySQL-BHT-8-1-1            2351.72
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
                                              time [s]  count   SF  Throughput@Size
 DBMS          SF  num_experiment num_client                                       
-MySQL-BHT-8-1 1.0 1              1                  3      1  1.0          26400.0
+MySQL-BHT-8-1 1.0 1              1                 80      1  1.0            990.0
 
 ### Workflow
                      orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MySQL-BHT-8-1-1  MySQL-BHT-8-1  1.0     8               1           1       1768216605     1768216608
+MySQL-BHT-8-1-1  MySQL-BHT-8-1  1.0     8               1           1       1768475451     1768475531
 
 #### Actual
 DBMS MySQL-BHT-8 - Pods [[1]]
