@@ -133,7 +133,7 @@ spec:
           #- "track_wal_io_timing=1"
           # --- Connection & Worker Processes ---
           - "-c"
-          - "max_connections=1500"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
+          - "max_connections=3000"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
           - "-c"
           - "max_worker_processes=64"    # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-WORKER-PROCESSES
           - "-c"
