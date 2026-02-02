@@ -2,106 +2,119 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1748451753
-Experiment                    : starts at 2025-05-28 19:02:33.510756 (12643916.98130692)
+Experiment                    : has code 1770027140
+Experiment                    : starts at 2026-02-02 11:12:20.565472 (34219304.03602363)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.7.
+Experiment uses bexhoma version 0.8.20.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['DatabaseService'].
+Experiment is limited to DBMS ['DatabaseService'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
+SUT is fixed to cl-worker14.
 Database is persisted to disk of type shared and size 1Gi.
 Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-done
-DatabaseService-BHT-8         : will start now
-DatabaseService-BHT-8         : Name of SUT pods = bexhoma-sut-databaseservice-bht-8-1748451753
-DatabaseService-BHT-8         : Name of SUT service = bexhoma-sut-databaseservice-bht-8-1748451753
-DatabaseService-BHT-8         : Name of SUT PVC name = bexhoma-storage-databaseservice-tpch-3
+DBS-BHT-8                     : will start now
+DBS-BHT-8                     : deployments ['sut']
+DBS-BHT-8                     : stateful sets []
+DBS-BHT-8                     : pvcs ['sut']
+DBS-BHT-8                     : list of pvcs ['bexhoma-storage-dbs-tpch-3']
+DBS-BHT-8                     : found labels on pvc = []
+DBS-BHT-8                     : name of SUT pods = bexhoma-sut-dbs-bht-8-1770027140
+DBS-BHT-8                     : name of SUT service = bexhoma-sut-dbs-bht-8-1770027140
+DBS-BHT-8                     : name of SUT PVC name = bexhoma-storage-dbs-tpch-3
 - waiting 30s -               : done
-DatabaseService-BHT-8         : waits for health check to succeed
+DBS-BHT-8                     : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-BHT-8         : waits for health check to succeed
+DBS-BHT-8                     : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-BHT-8         : waits for health check to succeed
+DBS-BHT-8                     : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-BHT-8         : waits for health check to succeed
+DBS-BHT-8                     : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is not loaded yet
-DatabaseService-BHT-8         : will start loading but not before 2025-05-28 17:06:35 (that is in 60 secs)
+DBS-BHT-8                     : is not loaded yet
+DBS-BHT-8                     : will start loading but not before 2026-02-02 10:15:56 (that is in 60 secs)
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is not loaded yet
-DatabaseService-BHT-8         : will start loading but not before 2025-05-28 17:06:35
-done
-DatabaseService-BHT-8         : is not loaded yet
-DatabaseService-BHT-8         : start asynch loading scripts of type loaded
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is not loaded yet
+DBS-BHT-8                     : will start loading but not before 2026-02-02 10:15:56
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is not loaded yet
+DBS-BHT-8                     : connect to pod bexhoma-sut-dbs-bht-8-1770027140-6bbf7cdd8f-67fns to load scripts
+DBS-BHT-8                     : list of pvcs ['bexhoma-storage-dbs-tpch-3']
+DBS-BHT-8                     : will be labeling bexhoma-storage-dbs-tpch-3
+DBS-BHT-8                     : start asynch loading scripts of type loaded
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
-done
-DatabaseService-BHT-8         : showing loader times
-DatabaseService-BHT-8         : generator timespan (first to last [s]) = 1
-DatabaseService-BHT-8         : loader timespan (first to last [s]) = 115
-DatabaseService-BHT-8         : total timespan (first to last [s]) = 123
-DatabaseService-BHT-8         : start asynch loading scripts of type indexed
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : showing loader times
+DBS-BHT-8                     : generator times (start/end per pod and container) [(1770027394, 1770027394), (1770027384, 1770027384), (1770027372, 1770027372), (1770027387, 1770027387), (1770027381, 1770027381), (1770027370, 1770027370), (1770027376, 1770027376), (1770027391, 1770027391)]
+DBS-BHT-8                     : loader times (start/end per pod and container) [(1770027399, 1770027450), (1770027398, 1770027450), (1770027399, 1770027450), (1770027399, 1770027450), (1770027398, 1770027450), (1770027398, 1770027450), (1770027398, 1770027448), (1770027398, 1770027448)]
+DBS-BHT-8                     : total times (start/end per pod and container) [(1770027394, 1770027394), (1770027384, 1770027384), (1770027372, 1770027372), (1770027387, 1770027387), (1770027381, 1770027381), (1770027370, 1770027370), (1770027376, 1770027376), (1770027391, 1770027391), (1770027399, 1770027450), (1770027398, 1770027450), (1770027399, 1770027450), (1770027399, 1770027450), (1770027398, 1770027450), (1770027398, 1770027450), (1770027398, 1770027448), (1770027398, 1770027448)]
+DBS-BHT-8                     : generator timespan (first to last [s]) = 24
+DBS-BHT-8                     : loader timespan (first to last [s]) = 52
+DBS-BHT-8                     : total timespan (first to last [s]) = 80
+DBS-BHT-8                     : list of pvcs ['bexhoma-storage-dbs-tpch-3']
+DBS-BHT-8                     : will be labeling bexhoma-storage-dbs-tpch-3
+DBS-BHT-8                     : connect to pod bexhoma-sut-dbs-bht-8-1770027140-6bbf7cdd8f-67fns to load scripts
+DBS-BHT-8                     : list of pvcs ['bexhoma-storage-dbs-tpch-3']
+DBS-BHT-8                     : will be labeling bexhoma-storage-dbs-tpch-3
+DBS-BHT-8                     : start asynch loading scripts of type indexed
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
+DBS-BHT-8                     : is loading
 - waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
-- waiting 30s -               : done
-DatabaseService-BHT-8         : is loading
-done
-DatabaseService-BHT-8         : benchmarks done 0 of 1. This will be client 1
-DatabaseService-BHT-8-1       : start benchmarking
-DatabaseService-BHT-8         : benchmarking results in folder /home/perdelt/benchmarks/1748451753
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+DBS-BHT-8                     : benchmarks done 0 of 1. This will be client 1
+DBS-BHT-8-1                   : start benchmarking
+DBS-BHT-8-1                   : needs monitoring (common metrics) for deployment sut
+DBS-BHT-8                     : benchmarking results in folder /home/perdelt/benchmarks/1770027140
 - waiting 10s -               : done
-found
-DatabaseService-BHT-8-1       : collecting metrics of data generator at connection DatabaseService-BHT-8-1
-DatabaseService-BHT-8-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-bht-8-1748451753(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-DatabaseService-BHT-8-1       : collecting metrics of data injector at connection DatabaseService-BHT-8-1
-DatabaseService-BHT-8-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-bht-8-1748451753(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+DBS-BHT-8                     : benchmarking is waiting for job bexhoma-benchmarker-dbs-bht-8-1770027140-1-1-j75m6: found
+DBS-BHT-8-1                   : needs monitoring (common metrics) for deployment sut
+DBS-BHT-8-1                   : collecting metrics of data generator at connection DBS-BHT-8-1
+DBS-BHT-8-1                   : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dbs-bht-8-1770027140(.*)", pod=~"(.*)dbs-bht-8-1770027140(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+DBS-BHT-8-1                   : collecting metrics of data injector at connection DBS-BHT-8-1
+DBS-BHT-8-1                   : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dbs-bht-8-1770027140(.*)", pod=~"(.*)dbs-bht-8-1770027140(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-DatabaseService-BHT-8         : has running benchmarks
+DBS-BHT-8                     : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-BHT-8         : has running benchmarks
-done
-DatabaseService-BHT-8         : has running benchmarks
-DatabaseService-BHT-8-1       : showing benchmarker times
-DatabaseService-BHT-8-1       : benchmarker timespan (start to end single container [s]) = 113
-DatabaseService-BHT-8-1       : benchmarker times (start/end per pod and container) = [(1748452403, 1748452480)]
-DatabaseService-BHT-8-1       : found and updated times {'benchmarker': [(1748452403, 1748452480)]}
-DatabaseService-BHT-8-1       : collecting metrics of benchmarker at connection DatabaseService-BHT-8-1
-DatabaseService-BHT-8-1       : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)databaseservice-bht-8-1748451753(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-DatabaseService-BHT-8         : can be stopped
-Experiment                    : ends at 2025-05-28 19:15:49.646947 (12644713.117500778) - 796.14s total
+DBS-BHT-8                     : has running benchmarks
+timing_benchmarker [(1770027661, 1770027709)]
+DBS-BHT-8-1                   : showing benchmarker times
+DBS-BHT-8-1                   : benchmarker timespan job from 1770027656 to 1770027739
+DBS-BHT-8-1                   : benchmarker timespan pods from 1770027661 to 1770027709
+DBS-BHT-8-1                   : benchmarker timespan (start to end single container [s]) = 48
+DBS-BHT-8-1                   : benchmarker times (start/end per pod and container) = [(1770027661, 1770027709)]
+DBS-BHT-8-1                   : found and updated times {'benchmarker': [(1770027661, 1770027709)]}
+DBS-BHT-8-1                   : needs monitoring (common metrics) for deployment sut
+DBS-BHT-8-1                   : collecting metrics of benchmarker at connection DBS-BHT-8-1
+DBS-BHT-8-1                   : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dbs-bht-8-1770027140(.*)", pod=~"(.*)dbs-bht-8-1770027140(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+DBS-BHT-8                     : can be stopped
+DBS-BHT-8                     : had 0 restarts at worker bexhoma-sut-dbs-bht-8-1770027140-6bbf7cdd8f-67fns
+Experiment                    : ends at 2026-02-02 11:22:56.335979 (34219939.80653309) - 635.77s total
 Join results done!
-done!
+Build evaluation cube done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -111,8 +124,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=3
     Type: tpch
-    Duration: 797s 
-    Code: 1748451753
+    Duration: 636s 
+    Code: 1770027140
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -120,13 +133,13 @@ TPC-H Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 1Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
@@ -134,20 +147,22 @@ TPC-H Queries SF=3
     Experiment is run once.
 
 ### Connections
-DatabaseService-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301221844
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95599
     datadisk:39
     volume_size:1.0G
     volume_used:36M
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748451753
+        code:1770027140
 
 ### Errors (failed queries)
 No errors
@@ -156,64 +171,66 @@ No errors
 No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS                                                 DatabaseService-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                      6357.74
-Minimum Cost Supplier Query (TPC-H Q2)                                 2135.17
-Shipping Priority (TPC-H Q3)                                           2504.64
-Order Priority Checking Query (TPC-H Q4)                               3144.02
-Local Supplier Volume (TPC-H Q5)                                       2288.10
-Forecasting Revenue Change (TPC-H Q6)                                  1195.12
-Forecasting Revenue Change (TPC-H Q7)                                  2350.99
-National Market Share (TPC-H Q8)                                       1436.89
-Product Type Profit Measure (TPC-H Q9)                                 3269.30
-Forecasting Revenue Change (TPC-H Q10)                                 3054.53
-Important Stock Identification (TPC-H Q11)                              568.73
-Shipping Modes and Order Priority (TPC-H Q12)                          2437.11
-Customer Distribution (TPC-H Q13)                                      6173.29
-Forecasting Revenue Change (TPC-H Q14)                                 1280.12
-Top Supplier Query (TPC-H Q15)                                         1424.75
-Parts/Supplier Relationship (TPC-H Q16)                                1286.89
-Small-Quantity-Order Revenue (TPC-H Q17)                               6146.37
-Large Volume Customer (TPC-H Q18)                                     17883.03
-Discounted Revenue (TPC-H Q19)                                         1923.28
-Potential Part Promotion (TPC-H Q20)                                   1246.67
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2818.44
-Global Sales Opportunity Query (TPC-H Q22)                              464.29
+DBMS                                                 DBS-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                          3311.45
+Minimum Cost Supplier Query (TPC-H Q2)                     1030.73
+Shipping Priority (TPC-H Q3)                               1463.99
+Order Priority Checking Query (TPC-H Q4)                   2025.43
+Local Supplier Volume (TPC-H Q5)                           1314.89
+Forecasting Revenue Change (TPC-H Q6)                       706.22
+Forecasting Revenue Change (TPC-H Q7)                      1316.59
+National Market Share (TPC-H Q8)                            897.64
+Product Type Profit Measure (TPC-H Q9)                     2122.85
+Forecasting Revenue Change (TPC-H Q10)                     1635.44
+Important Stock Identification (TPC-H Q11)                  321.04
+Shipping Modes and Order Priority (TPC-H Q12)              1428.78
+Customer Distribution (TPC-H Q13)                          3783.11
+Forecasting Revenue Change (TPC-H Q14)                      764.48
+Top Supplier Query (TPC-H Q15)                              804.45
+Parts/Supplier Relationship (TPC-H Q16)                     735.08
+Small-Quantity-Order Revenue (TPC-H Q17)                   3111.23
+Large Volume Customer (TPC-H Q18)                         10341.22
+Discounted Revenue (TPC-H Q19)                             1115.25
+Potential Part Promotion (TPC-H Q20)                        604.73
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)        1505.44
+Global Sales Opportunity Query (TPC-H Q22)                  276.40
 
 ### Loading [s]
-                           timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-DatabaseService-BHT-8-1-1           1.0          115.0         1.0      219.0     343.0
+               timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+DBS-BHT-8-1-1          24.0           52.0         1.0      267.0     348.0
 
 ### Geometric Mean of Medians of Timer Run [s]
-                           Geo Times [s]
-DBMS                                    
-DatabaseService-BHT-8-1-1           2.34
+               Geo Times [s]
+DBMS                        
+DBS-BHT-8-1-1           1.35
 
 ### Power@Size ((3600*SF)/(geo times))
-                           Power@Size [~Q/h]
-DBMS                                        
-DatabaseService-BHT-8-1-1            4756.79
+               Power@Size [~Q/h]
+DBMS                            
+DBS-BHT-8-1-1            8369.13
 
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                      time [s]  count  SF  Throughput@Size
-DBMS                    SF num_experiment num_client                                      
-DatabaseService-BHT-8-1 3  1              1                 77      1   3          3085.71
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                           time [s]  count   SF  Throughput@Size
+DBMS        SF  num_experiment num_client                                       
+DBS-BHT-8-1 3.0 1              1                 48      1  3.0           4950.0
 
 ### Workflow
+                 orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+DBS-BHT-8-1-1  DBS-BHT-8-1  3.0     8               1           1       1770027664     1770027712
 
 #### Actual
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 ### Ingestion - Loader
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1       30.12     0.06          0.03                 2.27
+             CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-BHT-8-1        22.8        0           0.0                 0.28
 
 ### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1       15.65     0.29          0.27                 0.28
+             CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-BHT-8-1        0.02        0           0.0                  0.0
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -221,6 +238,6 @@ TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
+TEST passed: Workflow as planned
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned

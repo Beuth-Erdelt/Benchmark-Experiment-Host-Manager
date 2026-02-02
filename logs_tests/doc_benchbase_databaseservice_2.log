@@ -2,102 +2,115 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1748449442
-Experiment                    : starts at 2025-05-28 18:24:01.688602 (12641605.159156837)
+Experiment                    : has code 1770025008
+Experiment                    : starts at 2026-02-02 10:36:48.677873 (34217172.14842671)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-Experiment uses bexhoma version 0.8.7.
-Benchmark is limited to DBMS ['DatabaseService'].
+Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+Experiment uses bexhoma version 0.8.20.
+Experiment is limited to DBMS ['DatabaseService'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
+SUT is fixed to cl-worker14.
 Loading is skipped.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-done
-DatabaseService-1-1-1024      : will start now
-DatabaseService-1-1-1024      : Name of SUT pods = bexhoma-sut-databaseservice-1-1-1024-1748449442
-DatabaseService-1-1-1024      : Name of SUT service = bexhoma-sut-databaseservice-1-1-1024-1748449442
+DBS-1-1-1024                  : will start now
+DBS-1-1-1024                  : deployments ['sut']
+DBS-1-1-1024                  : stateful sets []
+DBS-1-1-1024                  : pvcs ['sut']
+DBS-1-1-1024                  : name of SUT pods = bexhoma-sut-dbs-1-1-1024-1770025008
+DBS-1-1-1024                  : name of SUT service = bexhoma-sut-dbs-1-1-1024-1770025008
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : waits for health check to succeed
+DBS-1-1-1024                  : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : waits for health check to succeed
+DBS-1-1-1024                  : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : waits for health check to succeed
+DBS-1-1-1024                  : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : will start benchmarking but not before 2025-05-28 16:27:32 (that is in 60 secs)
+DBS-1-1-1024                  : waits for health check to succeed
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : will start benchmarking but not before 2025-05-28 16:27:32
-done
-DatabaseService-1-1-1024      : benchmarks done 0 of 1. This will be client 1
-DatabaseService-1-1-1024      : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_HOST': 'bexhoma-service.perdelt.svc.cluster.local', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-DatabaseService-1-1-1024-1    : start benchmarking
-DatabaseService-1-1-1024      : benchmarking results in folder /home/perdelt/benchmarks/1748449442
+DBS-1-1-1024                  : will start benchmarking but not before 2026-02-02 09:40:22 (that is in 60 secs)
+- waiting 30s -               : done
+DBS-1-1-1024                  : will start benchmarking but not before 2026-02-02 09:40:22
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+DBS-1-1-1024                  : benchmarks done 0 of 1. This will be client 1
+DBS-1-1-1024                  : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_HOST': 'bexhoma-service.perdelt.svc.cluster.local', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
+DBS-1-1-1024-1                : start benchmarking
+DBS-1-1-1024                  : benchmarking results in folder /home/perdelt/benchmarks/1770025008
 - waiting 10s -               : done
-DatabaseService-1-1-1024      : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-1-1-1024-1748449442-1-rxd98: found
+DBS-1-1-1024                  : benchmarking is waiting for job bexhoma-benchmarker-dbs-1-1-1024-1770025008-1-1-m88vc: found
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
-done
-DatabaseService-1-1-1024      : has running benchmarks
-DatabaseService-1-1-1024-1    : showing benchmarker times
-DatabaseService-1-1-1024-1    : benchmarker timespan (start to end single container [s]) = 312
-DatabaseService-1-1-1024-1    : benchmarker times (start/end per pod and container) = []
-DatabaseService-1-1-1024-1    : found and updated times {'benchmarker': []}
-done
-DatabaseService-1-1-1024      : benchmarks done 0 of 1. This will be client 2
-DatabaseService-1-1-1024      : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_HOST': 'bexhoma-service.perdelt.svc.cluster.local', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-DatabaseService-1-1-1024-2    : start benchmarking
-DatabaseService-1-1-1024      : benchmarking results in folder /home/perdelt/benchmarks/1748449442
+DBS-1-1-1024                  : has running benchmarks
+- waiting 30s -               : done
+DBS-1-1-1024                  : has running benchmarks
+timing_benchmarker [(1770025230, 1770025535)]
+DBS-1-1-1024-1                : showing benchmarker times
+DBS-1-1-1024-1                : benchmarker timespan job from 1770025228 to 1770025548
+DBS-1-1-1024-1                : benchmarker timespan pods from 1770025230 to 1770025535
+DBS-1-1-1024-1                : benchmarker timespan (start to end single container [s]) = 305
+DBS-1-1-1024-1                : benchmarker times (start/end per pod and container) = [(1770025230, 1770025535)]
+DBS-1-1-1024-1                : found and updated times {'benchmarker': [(1770025230, 1770025535)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+DBS-1-1-1024                  : benchmarks done 0 of 1. This will be client 2
+DBS-1-1-1024                  : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BEXHOMA_HOST': 'bexhoma-service.perdelt.svc.cluster.local', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
+DBS-1-1-1024-2                : start benchmarking
+DBS-1-1-1024                  : benchmarking results in folder /home/perdelt/benchmarks/1770025008
 - waiting 10s -               : done
-DatabaseService-1-1-1024      : benchmarking is waiting for job bexhoma-benchmarker-databaseservice-1-1-1024-1748449442-1-cmd64: found
+DBS-1-1-1024                  : benchmarking is waiting for job bexhoma-benchmarker-dbs-1-1-1024-1770025008-1-2-489b8: found
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
+DBS-1-1-1024                  : has running benchmarks
 - waiting 30s -               : done
-DatabaseService-1-1-1024      : has running benchmarks
-done
-DatabaseService-1-1-1024      : has running benchmarks
-DatabaseService-1-1-1024-2    : showing benchmarker times
-DatabaseService-1-1-1024-2    : benchmarker timespan (start to end single container [s]) = 313
-DatabaseService-1-1-1024-2    : benchmarker times (start/end per pod and container) = []
-DatabaseService-1-1-1024-2    : found and updated times {'benchmarker': []}
-done
-DatabaseService-1-1-1024      : can be stopped
-Experiment ends at 2025-05-28 18:39:05.493764 (12642508.964317502): 903.8051606658846s total
+DBS-1-1-1024                  : has running benchmarks
+- waiting 30s -               : done
+DBS-1-1-1024                  : has running benchmarks
+timing_benchmarker [(1770025586, 1770025889), (1770025586, 1770025890)]
+DBS-1-1-1024-2                : showing benchmarker times
+DBS-1-1-1024-2                : benchmarker timespan job from 1770025584 to 1770025903
+DBS-1-1-1024-2                : benchmarker timespan pods from 1770025586 to 1770025890
+DBS-1-1-1024-2                : benchmarker timespan (start to end single container [s]) = 304
+DBS-1-1-1024-2                : benchmarker times (start/end per pod and container) = [(1770025586, 1770025889), (1770025586, 1770025890)]
+DBS-1-1-1024-2                : found and updated times {'benchmarker': [(1770025586, 1770025889), (1770025586, 1770025890)]}
+- waiting 30s -               : done
+DBS-1-1-1024                  : can be stopped
+DBS-1-1-1024                  : had 0 restarts at worker bexhoma-sut-dbs-1-1-1024-1770025008-574464999-29xq2
+Experiment                    : ends at 2026-02-02 10:52:15.821197 (34218099.29175159) - 927.14s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -106,20 +119,20 @@ Result workflow not complete
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 904s 
-    Code: 1748449442
-    Benchbase runs the TPC-C benchmark.
+    Duration: 928s 
+    Code: 1770025008
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is skipped.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1, 2] pods.
@@ -127,52 +140,65 @@ Benchbase Workload SF=16
     Experiment is run once.
 
 ### Connections
-DatabaseService-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260964
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1748449442
-DatabaseService-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008568320
+                code:1770025008
+DBS-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260968
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1748449442
+                code:1770025008
 
 ### Execution
-                            experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-DatabaseService-1-1-1024-1               1         16   16384          1  300.0           0                       1719.43                    1711.63         0.0                                                      21103.0                                               9298.0
-DatabaseService-1-1-1024-2               1         16   16384          2  300.0           3                       1645.82                    1630.34         0.0                                                      21870.0                                               9713.0
+
+#### Per Pod
+                  experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                              
+DBS-1-1-1024-1-1               1         16   16384       1      1  300.0           0                   4236.779164                4218.015834         0.0                                                       8145.0                                               3774.0
+DBS-1-1-1024-2-1               1          8    8192       2      1  300.0           3                   1947.856369                1928.746372         0.0                                                       9277.0                                               4103.0
+DBS-1-1-1024-2-2               1          8    8192       2      2  300.0           2                   1959.836444                1940.699779         0.0                                                       9306.0                                               4078.0
+
+#### Aggregated Parallel
+                experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DBS-1-1-1024-1               1         16   16384          1  300.0           0                       4236.78                    4218.02         0.0                                                       8145.0                                               3774.0
+DBS-1-1-1024-2               1         16   16384          2  300.0           5                       3907.69                    3869.45         0.0                                                       9306.0                                               4090.5
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
+DBMS DBS-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
-DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+DBMS DBS-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                            time_load  terminals  pods  Throughput [SF/h]
-DatabaseService-1-1-1024-1          0          1     1                inf
-DatabaseService-1-1-1024-2          0          1     2                inf
+                time_load  terminals  pods  Throughput [SF/h]
+DBS-1-1-1024-1          0          1     1                inf
+DBS-1-1-1024-2          0          1     2                inf
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

@@ -186,9 +186,9 @@ doc_ycsb_databaseservice_1.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 385s 
-    Code: 1748446240
-    YCSB tool runs the benchmark.
+    Duration: 432s 
+    Code: 1770021926
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
@@ -198,54 +198,56 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260764
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95637
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1748446240
+        code:1770021926
 
 ### Loading
-                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8           0                   64327.577784                15642.0             1000000                              4663.5
+                experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DBS-64-8-65536               1       64   65536          8           0                   64525.023063                15517.0             1000000                             3249.75
 
 ### Execution
-                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1           0                       63471.91                15755.0            501144                            1681.0              498856                              2429.0
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DBS-64-8-65536-1               1       64   65536          1           0                       64354.21                15539.0            499599                             380.0              500401                               526.0
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-64-8-65536 - Pods [[1]]
+DBMS DBS-64-8-65536 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-64-8-65536 - Pods [[1]]
+DBMS DBS-64-8-65536 - Pods [[1]]
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1730133803` with the experiment code.
@@ -296,9 +298,9 @@ doc_ycsb_databaseservice_2.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 413s 
-    Code: 1748446660
-    YCSB tool runs the benchmark.
+    Duration: 423s 
+    Code: 1770022407
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
@@ -308,13 +310,13 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is skipped.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
@@ -322,42 +324,46 @@ YCSB SF=1
     Experiment is run once.
 
 ### Connections
-DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260760
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95637
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1748446660
+        code:1770022407
 
 ### Execution
-                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1           0                       65327.88               153074.0           4999406                            1545.0             5000594                              2119.0
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DBS-64-8-65536-1               1       64   65536          1           0                       65406.93               152889.0           5000880                             361.0             4999120                               441.0
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-64-8-65536 - Pods [[1]]
+DBMS DBS-64-8-65536 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-64-8-65536 - Pods [[1]]
+DBMS DBS-64-8-65536 - Pods [[1]]
 
-### Execution - Benchmarker
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      860.16     6.97           0.6                 0.61
+### Monitoring
+
+### Execution phase: component benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-64-8-65536-1      507.73     4.34          0.13                 0.14
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
@@ -425,9 +431,9 @@ doc_ycsb_databaseservice_3.log
 ### Workload
 YCSB SF=5
     Type: ycsb
-    Duration: 647s 
-    Code: 1748447481
-    YCSB tool runs the benchmark.
+    Duration: 563s 
+    Code: 1770023227
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 5000000.
@@ -437,13 +443,13 @@ YCSB SF=5
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 1Gi.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
@@ -451,54 +457,58 @@ YCSB SF=5
     Experiment is run once.
 
 ### Connections
-DatabaseService-64-8-65536-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-64-8-65536-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301221604
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95599
     datadisk:39
     volume_size:1.0G
     volume_used:36M
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1748447481
+        code:1770023227
 
 ### Loading
-                            experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-DatabaseService-64-8-65536               1       64   65536          8           0                    43458.11845               115916.0             5000000                              6277.0
+                experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+DBS-64-8-65536               1       64   65536          8           0                   65334.817539                76544.0             5000000                             2950.25
 
 ### Execution
-                              experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-DatabaseService-64-8-65536-1               1       64   65536          1           0                       65335.14               153057.0           5000426                            1626.0             4999574                              2397.0
+                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+DBS-64-8-65536-1               1       64   65536          1           0                       65411.21               152879.0           5000229                             394.0             4999771                               549.0
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-64-8-65536 - Pods [[1]]
+DBMS DBS-64-8-65536 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-64-8-65536 - Pods [[1]]
+DBMS DBS-64-8-65536 - Pods [[1]]
 
-### Ingestion - Loader
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      517.95     1.67          4.61                 4.64
+### Monitoring
 
-### Execution - Benchmarker
-                              CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-64-8-65536-1      660.48        0           0.6                 0.61
+### Loading phase: component loader
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-64-8-65536-1      449.57     6.73          0.11                 0.11
+
+### Execution phase: component benchmarker
+                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-64-8-65536-1      487.65     4.51          0.13                 0.13
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 ## YCSB Example Explained
@@ -604,72 +614,85 @@ doc_benchbase_databaseservice_1.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1153s 
-    Code: 1748448241
-    Benchbase runs the TPC-C benchmark.
+    Duration: 1124s 
+    Code: 1770023868
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1, 2] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-DatabaseService-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260956
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1748448241
-DatabaseService-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008568320
+                code:1770023868
+DBS-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260960
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1748448241
+                code:1770023868
 
 ### Execution
-                            experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-DatabaseService-1-1-1024-1               1         16   16384          1  300.0           0                       1819.79                    1811.94         0.0                                                      20223.0                                               8784.0
-DatabaseService-1-1-1024-2               1         16   16384          2  300.0           2                       1694.17                    1678.63         0.0                                                      21579.0                                               9434.5
+
+#### Per Pod
+                  experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                              
+DBS-1-1-1024-1-1               1         16   16384       1      1  300.0           0                   4194.929755                4175.883089         0.0                                                       8048.0                                               3812.0
+DBS-1-1-1024-2-1               1          8    8192       2      1  300.0           0                   1923.152613                1905.305953         0.0                                                       9602.0                                               4157.0
+DBS-1-1-1024-2-2               1          8    8192       2      2  300.0           2                   1926.136593                1908.153260         0.0                                                       9540.0                                               4150.0
+
+#### Aggregated Parallel
+                experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DBS-1-1-1024-1               1         16   16384          1  300.0           0                       4194.93                    4175.88         0.0                                                       8048.0                                               3812.0
+DBS-1-1-1024-2               1         16   16384          2  300.0           2                       3849.29                    3813.46         0.0                                                       9602.0                                               4153.5
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
+DBMS DBS-1-1-1024 - Pods [[1, 2]]
 
 #### Planned
-DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+DBMS DBS-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                            time_load  terminals  pods  Throughput [SF/h]
-DatabaseService-1-1-1024-1      138.0        1.0   1.0         417.391304
-DatabaseService-1-1-1024-2      138.0        1.0   2.0         417.391304
+                time_load  terminals  pods  Throughput [SF/h]
+DBS-1-1-1024-1      147.0        1.0   1.0         391.836735
+DBS-1-1-1024-2      147.0        1.0   2.0         391.836735
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -712,20 +735,20 @@ doc_benchbase_databaseservice_2.log
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 904s 
-    Code: 1748449442
-    Benchbase runs the TPC-C benchmark.
+    Duration: 928s 
+    Code: 1770025008
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is skipped.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1, 2] pods.
@@ -733,52 +756,65 @@ Benchbase Workload SF=16
     Experiment is run once.
 
 ### Connections
-DatabaseService-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-1-1-1024-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260964
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1748449442
-DatabaseService-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008568320
+                code:1770025008
+DBS-1-1-1024-2 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301260968
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1748449442
+                code:1770025008
 
 ### Execution
-                            experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-DatabaseService-1-1-1024-1               1         16   16384          1  300.0           0                       1719.43                    1711.63         0.0                                                      21103.0                                               9298.0
-DatabaseService-1-1-1024-2               1         16   16384          2  300.0           3                       1645.82                    1630.34         0.0                                                      21870.0                                               9713.0
+
+#### Per Pod
+                  experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                              
+DBS-1-1-1024-1-1               1         16   16384       1      1  300.0           0                   4236.779164                4218.015834         0.0                                                       8145.0                                               3774.0
+DBS-1-1-1024-2-1               1          8    8192       2      1  300.0           3                   1947.856369                1928.746372         0.0                                                       9277.0                                               4103.0
+DBS-1-1-1024-2-2               1          8    8192       2      2  300.0           2                   1959.836444                1940.699779         0.0                                                       9306.0                                               4078.0
+
+#### Aggregated Parallel
+                experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+DBS-1-1-1024-1               1         16   16384          1  300.0           0                       4236.78                    4218.02         0.0                                                       8145.0                                               3774.0
+DBS-1-1-1024-2               1         16   16384          2  300.0           5                       3907.69                    3869.45         0.0                                                       9306.0                                               4090.5
 
 ### Workflow
 
 #### Actual
-DBMS DatabaseService-1-1-1024 - Pods [[2, 1]]
+DBMS DBS-1-1-1024 - Pods [[2, 1]]
 
 #### Planned
-DBMS DatabaseService-1-1-1024 - Pods [[1, 2]]
+DBMS DBS-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
-                            time_load  terminals  pods  Throughput [SF/h]
-DatabaseService-1-1-1024-1          0          1     1                inf
-DatabaseService-1-1-1024-2          0          1     2                inf
+                time_load  terminals  pods  Throughput [SF/h]
+DBS-1-1-1024-1          0          1     1                inf
+DBS-1-1-1024-2          0          1     2                inf
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
@@ -959,8 +995,8 @@ doc_tpch_testcase_databaseservice_2.log
 ### Workload
 TPC-H Queries SF=3
     Type: tpch
-    Duration: 356s 
-    Code: 1748451283
+    Duration: 331s 
+    Code: 1770026669
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -968,13 +1004,13 @@ TPC-H Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is skipped.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
@@ -982,18 +1018,20 @@ TPC-H Queries SF=3
     Experiment is run once.
 
 ### Connections
-DatabaseService-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301261168
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95638
     datadisk:39
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748451283
+        code:1770026669
 
 ### Errors (failed queries)
 No errors
@@ -1002,60 +1040,62 @@ No errors
 No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS                                                 DatabaseService-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                      6103.48
-Minimum Cost Supplier Query (TPC-H Q2)                                 2128.07
-Shipping Priority (TPC-H Q3)                                           2509.14
-Order Priority Checking Query (TPC-H Q4)                               3125.44
-Local Supplier Volume (TPC-H Q5)                                       2280.83
-Forecasting Revenue Change (TPC-H Q6)                                  1172.20
-Forecasting Revenue Change (TPC-H Q7)                                  2272.18
-National Market Share (TPC-H Q8)                                       1456.72
-Product Type Profit Measure (TPC-H Q9)                                 3146.07
-Forecasting Revenue Change (TPC-H Q10)                                 3055.84
-Important Stock Identification (TPC-H Q11)                              575.48
-Shipping Modes and Order Priority (TPC-H Q12)                          2469.13
-Customer Distribution (TPC-H Q13)                                      6326.06
-Forecasting Revenue Change (TPC-H Q14)                                 1260.00
-Top Supplier Query (TPC-H Q15)                                         1394.92
-Parts/Supplier Relationship (TPC-H Q16)                                1371.46
-Small-Quantity-Order Revenue (TPC-H Q17)                               5731.77
-Large Volume Customer (TPC-H Q18)                                     21455.66
-Discounted Revenue (TPC-H Q19)                                         1953.47
-Potential Part Promotion (TPC-H Q20)                                   1098.27
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2715.51
-Global Sales Opportunity Query (TPC-H Q22)                              441.81
+DBMS                                                 DBS-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                          3255.56
+Minimum Cost Supplier Query (TPC-H Q2)                     1021.21
+Shipping Priority (TPC-H Q3)                               1431.78
+Order Priority Checking Query (TPC-H Q4)                   1989.65
+Local Supplier Volume (TPC-H Q5)                           1285.98
+Forecasting Revenue Change (TPC-H Q6)                       690.38
+Forecasting Revenue Change (TPC-H Q7)                      1270.43
+National Market Share (TPC-H Q8)                            873.18
+Product Type Profit Measure (TPC-H Q9)                     2124.62
+Forecasting Revenue Change (TPC-H Q10)                     1611.95
+Important Stock Identification (TPC-H Q11)                  332.01
+Shipping Modes and Order Priority (TPC-H Q12)              1492.37
+Customer Distribution (TPC-H Q13)                          4015.32
+Forecasting Revenue Change (TPC-H Q14)                      760.89
+Top Supplier Query (TPC-H Q15)                              784.28
+Parts/Supplier Relationship (TPC-H Q16)                     734.32
+Small-Quantity-Order Revenue (TPC-H Q17)                   3154.54
+Large Volume Customer (TPC-H Q18)                         10315.88
+Discounted Revenue (TPC-H Q19)                             1085.44
+Potential Part Promotion (TPC-H Q20)                        604.28
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)        1483.49
+Global Sales Opportunity Query (TPC-H Q22)                  272.17
 
 ### Loading [s]
-                           timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-DatabaseService-BHT-8-1-1             0              0           0          0         0
+               timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+DBS-BHT-8-1-1             0              0           0          0         0
 
 ### Geometric Mean of Medians of Timer Run [s]
-                           Geo Times [s]
-DBMS                                    
-DatabaseService-BHT-8-1-1           2.32
+               Geo Times [s]
+DBMS                        
+DBS-BHT-8-1-1           1.34
 
 ### Power@Size ((3600*SF)/(geo times))
-                           Power@Size [~Q/h]
-DBMS                                        
-DatabaseService-BHT-8-1-1            4786.94
+               Power@Size [~Q/h]
+DBMS                            
+DBS-BHT-8-1-1            8418.43
 
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                      time [s]  count  SF  Throughput@Size
-DBMS                    SF num_experiment num_client                                      
-DatabaseService-BHT-8-1 3  1              1                 80      1   3           2970.0
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                           time [s]  count   SF  Throughput@Size
+DBMS        SF  num_experiment num_client                                       
+DBS-BHT-8-1 3.0 1              1                 47      1  3.0          5055.32
 
 ### Workflow
+                 orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+DBS-BHT-8-1-1  DBS-BHT-8-1  3.0     8               1           1       1770026898     1770026945
 
 #### Actual
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 ### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1       14.24        0          0.25                 0.26
+             CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-BHT-8-1           0        0           0.0                  0.0
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1063,8 +1103,8 @@ TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 ```
 
 
@@ -1115,8 +1155,8 @@ doc_tpch_testcase_databaseservice_3.log
 ### Workload
 TPC-H Queries SF=3
     Type: tpch
-    Duration: 797s 
-    Code: 1748451753
+    Duration: 636s 
+    Code: 1770027140
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -1124,13 +1164,13 @@ TPC-H Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 1Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
@@ -1138,20 +1178,22 @@ TPC-H Queries SF=3
     Experiment is run once.
 
 ### Connections
-DatabaseService-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301221844
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95599
     datadisk:39
     volume_size:1.0G
     volume_used:36M
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748451753
+        code:1770027140
 
 ### Errors (failed queries)
 No errors
@@ -1160,64 +1202,66 @@ No errors
 No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS                                                 DatabaseService-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                      6357.74
-Minimum Cost Supplier Query (TPC-H Q2)                                 2135.17
-Shipping Priority (TPC-H Q3)                                           2504.64
-Order Priority Checking Query (TPC-H Q4)                               3144.02
-Local Supplier Volume (TPC-H Q5)                                       2288.10
-Forecasting Revenue Change (TPC-H Q6)                                  1195.12
-Forecasting Revenue Change (TPC-H Q7)                                  2350.99
-National Market Share (TPC-H Q8)                                       1436.89
-Product Type Profit Measure (TPC-H Q9)                                 3269.30
-Forecasting Revenue Change (TPC-H Q10)                                 3054.53
-Important Stock Identification (TPC-H Q11)                              568.73
-Shipping Modes and Order Priority (TPC-H Q12)                          2437.11
-Customer Distribution (TPC-H Q13)                                      6173.29
-Forecasting Revenue Change (TPC-H Q14)                                 1280.12
-Top Supplier Query (TPC-H Q15)                                         1424.75
-Parts/Supplier Relationship (TPC-H Q16)                                1286.89
-Small-Quantity-Order Revenue (TPC-H Q17)                               6146.37
-Large Volume Customer (TPC-H Q18)                                     17883.03
-Discounted Revenue (TPC-H Q19)                                         1923.28
-Potential Part Promotion (TPC-H Q20)                                   1246.67
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2818.44
-Global Sales Opportunity Query (TPC-H Q22)                              464.29
+DBMS                                                 DBS-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                          3311.45
+Minimum Cost Supplier Query (TPC-H Q2)                     1030.73
+Shipping Priority (TPC-H Q3)                               1463.99
+Order Priority Checking Query (TPC-H Q4)                   2025.43
+Local Supplier Volume (TPC-H Q5)                           1314.89
+Forecasting Revenue Change (TPC-H Q6)                       706.22
+Forecasting Revenue Change (TPC-H Q7)                      1316.59
+National Market Share (TPC-H Q8)                            897.64
+Product Type Profit Measure (TPC-H Q9)                     2122.85
+Forecasting Revenue Change (TPC-H Q10)                     1635.44
+Important Stock Identification (TPC-H Q11)                  321.04
+Shipping Modes and Order Priority (TPC-H Q12)              1428.78
+Customer Distribution (TPC-H Q13)                          3783.11
+Forecasting Revenue Change (TPC-H Q14)                      764.48
+Top Supplier Query (TPC-H Q15)                              804.45
+Parts/Supplier Relationship (TPC-H Q16)                     735.08
+Small-Quantity-Order Revenue (TPC-H Q17)                   3111.23
+Large Volume Customer (TPC-H Q18)                         10341.22
+Discounted Revenue (TPC-H Q19)                             1115.25
+Potential Part Promotion (TPC-H Q20)                        604.73
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)        1505.44
+Global Sales Opportunity Query (TPC-H Q22)                  276.40
 
 ### Loading [s]
-                           timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-DatabaseService-BHT-8-1-1           1.0          115.0         1.0      219.0     343.0
+               timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+DBS-BHT-8-1-1          24.0           52.0         1.0      267.0     348.0
 
 ### Geometric Mean of Medians of Timer Run [s]
-                           Geo Times [s]
-DBMS                                    
-DatabaseService-BHT-8-1-1           2.34
+               Geo Times [s]
+DBMS                        
+DBS-BHT-8-1-1           1.35
 
 ### Power@Size ((3600*SF)/(geo times))
-                           Power@Size [~Q/h]
-DBMS                                        
-DatabaseService-BHT-8-1-1            4756.79
+               Power@Size [~Q/h]
+DBMS                            
+DBS-BHT-8-1-1            8369.13
 
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                      time [s]  count  SF  Throughput@Size
-DBMS                    SF num_experiment num_client                                      
-DatabaseService-BHT-8-1 3  1              1                 77      1   3          3085.71
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                           time [s]  count   SF  Throughput@Size
+DBMS        SF  num_experiment num_client                                       
+DBS-BHT-8-1 3.0 1              1                 48      1  3.0           4950.0
 
 ### Workflow
+                 orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+DBS-BHT-8-1-1  DBS-BHT-8-1  3.0     8               1           1       1770027664     1770027712
 
 #### Actual
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 ### Ingestion - Loader
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1       30.12     0.06          0.03                 2.27
+             CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-BHT-8-1        22.8        0           0.0                 0.28
 
 ### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1       15.65     0.29          0.27                 0.28
+             CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-BHT-8-1        0.02        0           0.0                  0.0
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1225,9 +1269,9 @@ TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
+TEST passed: Workflow as planned
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
 ```
 
 ### Execution Only with Persistent Storage
@@ -1259,8 +1303,8 @@ doc_tpch_testcase_databaseservice_4.log
 ### Workload
 TPC-H Queries SF=3
     Type: tpch
-    Duration: 416s 
-    Code: 1748452594
+    Duration: 363s 
+    Code: 1770027860
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -1268,13 +1312,13 @@ TPC-H Queries SF=3
     All instances use the same query parameters.
     Timeout per query is 1200.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['DatabaseService'].
+    Experiment is limited to DBMS ['DatabaseService'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 1Gi.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
@@ -1282,20 +1326,22 @@ TPC-H Queries SF=3
     Experiment is run once.
 
 ### Connections
-DatabaseService-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008568320
+DBS-BHT-8-1-1 uses docker image postgres:16.1
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301221828
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95599
     datadisk:39
     volume_size:1.0G
     volume_used:36M
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1748452594
+        code:1770027860
 
 ### Errors (failed queries)
 No errors
@@ -1304,60 +1350,62 @@ No errors
 No warnings
 
 ### Latency of Timer Execution [ms]
-DBMS                                                 DatabaseService-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                                      6263.50
-Minimum Cost Supplier Query (TPC-H Q2)                                 2133.18
-Shipping Priority (TPC-H Q3)                                           2482.10
-Order Priority Checking Query (TPC-H Q4)                               3149.55
-Local Supplier Volume (TPC-H Q5)                                       2294.43
-Forecasting Revenue Change (TPC-H Q6)                                  1216.18
-Forecasting Revenue Change (TPC-H Q7)                                  2326.49
-National Market Share (TPC-H Q8)                                       1460.17
-Product Type Profit Measure (TPC-H Q9)                                 3149.31
-Forecasting Revenue Change (TPC-H Q10)                                 3091.49
-Important Stock Identification (TPC-H Q11)                              574.96
-Shipping Modes and Order Priority (TPC-H Q12)                          2474.71
-Customer Distribution (TPC-H Q13)                                      6408.21
-Forecasting Revenue Change (TPC-H Q14)                                 1287.85
-Top Supplier Query (TPC-H Q15)                                         1452.80
-Parts/Supplier Relationship (TPC-H Q16)                                1282.46
-Small-Quantity-Order Revenue (TPC-H Q17)                               6328.12
-Large Volume Customer (TPC-H Q18)                                     19081.41
-Discounted Revenue (TPC-H Q19)                                         1934.88
-Potential Part Promotion (TPC-H Q20)                                   1167.20
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                    2720.93
-Global Sales Opportunity Query (TPC-H Q22)                              450.14
+DBMS                                                 DBS-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                          3271.95
+Minimum Cost Supplier Query (TPC-H Q2)                     1022.68
+Shipping Priority (TPC-H Q3)                               1492.51
+Order Priority Checking Query (TPC-H Q4)                   1960.39
+Local Supplier Volume (TPC-H Q5)                           1304.60
+Forecasting Revenue Change (TPC-H Q6)                       711.05
+Forecasting Revenue Change (TPC-H Q7)                      1279.19
+National Market Share (TPC-H Q8)                            875.71
+Product Type Profit Measure (TPC-H Q9)                     2158.35
+Forecasting Revenue Change (TPC-H Q10)                     1576.68
+Important Stock Identification (TPC-H Q11)                  333.58
+Shipping Modes and Order Priority (TPC-H Q12)              1402.53
+Customer Distribution (TPC-H Q13)                          4195.88
+Forecasting Revenue Change (TPC-H Q14)                      774.27
+Top Supplier Query (TPC-H Q15)                              797.79
+Parts/Supplier Relationship (TPC-H Q16)                     709.22
+Small-Quantity-Order Revenue (TPC-H Q17)                   3076.76
+Large Volume Customer (TPC-H Q18)                         10399.91
+Discounted Revenue (TPC-H Q19)                             1097.23
+Potential Part Promotion (TPC-H Q20)                        572.90
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)        1518.35
+Global Sales Opportunity Query (TPC-H Q22)                  269.54
 
 ### Loading [s]
-                           timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-DatabaseService-BHT-8-1-1           1.0          115.0         1.0      219.0     343.0
+               timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+DBS-BHT-8-1-1          24.0           52.0         1.0      267.0     348.0
 
 ### Geometric Mean of Medians of Timer Run [s]
-                           Geo Times [s]
-DBMS                                    
-DatabaseService-BHT-8-1-1           2.34
+               Geo Times [s]
+DBMS                        
+DBS-BHT-8-1-1           1.34
 
 ### Power@Size ((3600*SF)/(geo times))
-                           Power@Size [~Q/h]
-DBMS                                        
-DatabaseService-BHT-8-1-1            4750.11
+               Power@Size [~Q/h]
+DBMS                            
+DBS-BHT-8-1-1            8410.41
 
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                      time [s]  count  SF  Throughput@Size
-DBMS                    SF num_experiment num_client                                      
-DatabaseService-BHT-8-1 3  1              1                 79      1   3          3007.59
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                           time [s]  count   SF  Throughput@Size
+DBMS        SF  num_experiment num_client                                       
+DBS-BHT-8-1 3.0 1              1                 47      1  3.0          5055.32
 
 ### Workflow
+                 orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+DBS-BHT-8-1-1  DBS-BHT-8-1  3.0     8               1           1       1770028123     1770028170
 
 #### Actual
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 #### Planned
-DBMS DatabaseService-BHT-8 - Pods [[1]]
+DBMS DBS-BHT-8 - Pods [[1]]
 
 ### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-DatabaseService-BHT-8-1        15.2     0.26          0.27                 0.28
+             CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+DBS-BHT-8-1        11.0        0          0.27                 0.27
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1365,6 +1413,6 @@ TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size contains no 0 or NaN
 TEST passed: No SQL errors
 TEST passed: No SQL warnings
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 ```
