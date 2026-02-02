@@ -1,36 +1,39 @@
 Data Directory                : is running
 Result Directory              : is running
-Dashboard                     : is running
-Message Queue                 : is running
-Experiment                    : has code 1748462231
-Experiment                    : starts at 2025-05-28 21:57:11.475052 (12654394.94560194)
+Dashboard                     : is starting...done
+Message Queue                 : is starting...done
+Experiment                    : has code 1770043933
+Experiment                    : starts at 2026-02-02 15:52:44.041823 (34236127.51237441)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-Experiment uses bexhoma version 0.8.7.
+Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+Experiment uses bexhoma version 0.8.20.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['YugabyteDB'].
+Experiment is limited to DBMS ['YugabyteDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
+SUT is fixed to cl-worker14.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-done
 YugabyteDB-1-1-1024           : will start now
-YugabyteDB-1-1-1024           : Name of SUT pods = bexhoma-sut-yugabytedb-1-1-1024-1748462231
-YugabyteDB-1-1-1024           : Name of SUT service = bexhoma-sut-yugabytedb-1-1-1024-1748462231
+YugabyteDB-1-1-1024           : deployments ['sut']
+YugabyteDB-1-1-1024           : stateful sets []
+YugabyteDB-1-1-1024           : pvcs ['sut']
+YugabyteDB-1-1-1024           : name of SUT pods = bexhoma-sut-yugabytedb-1-1-1024-1770043933
+YugabyteDB-1-1-1024           : name of SUT service = bexhoma-sut-yugabytedb-1-1-1024-1770043933
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : is not loaded yet
-YugabyteDB-1-1-1024           : will start loading but not before 2025-05-28 19:59:12 (that is in 60 secs)
+YugabyteDB-1-1-1024           : will start loading but not before 2026-02-02 14:54:16 (that is in 60 secs)
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : is not loaded yet
-YugabyteDB-1-1-1024           : will start loading but not before 2025-05-28 19:59:12
-done
+YugabyteDB-1-1-1024           : will start loading but not before 2026-02-02 14:54:16
+- waiting 30s -               : done
 YugabyteDB-1-1-1024           : is not loaded yet
+YugabyteDB-1-1-1024           : connect to pod bexhoma-sut-yugabytedb-1-1-1024-1770043933-54fccf8f6d-w8r2s to load scripts
 YugabyteDB-1-1-1024           : start asynch loading scripts of type loaded
 YugabyteDB-1-1-1024           : is loading
 - waiting 30s -               : done
@@ -52,34 +55,46 @@ YugabyteDB-1-1-1024           : is loading
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : is loading
 - waiting 30s -               : done
-YugabyteDB-1-1-1024           : is loading
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : is loading
-done
 YugabyteDB-1-1-1024           : showing loader times
-YugabyteDB-1-1-1024           : loader timespan (first to last [s]) = 336
+YugabyteDB-1-1-1024           : generator times (start/end per pod and container) []
+YugabyteDB-1-1-1024           : loader times (start/end per pod and container) [(1770044061, 1770044358)]
+YugabyteDB-1-1-1024           : total times (start/end per pod and container) [(1770044061, 1770044358)]
+YugabyteDB-1-1-1024           : loader timespan (first to last [s]) = 297
+YugabyteDB-1-1-1024           : connect to pod bexhoma-sut-yugabytedb-1-1-1024-1770043933-54fccf8f6d-w8r2s to load scripts
 YugabyteDB-1-1-1024           : start asynch loading scripts of type indexed
 YugabyteDB-1-1-1024           : is loading
-done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
 YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 1
-YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'yugabyte', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_PORT': 5433, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'yugabyte', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_PORT': 5433, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 YugabyteDB-1-1-1024-1         : start benchmarking
 {'api_version': 'v1',
  'items': [],
  'kind': 'PodList',
  'metadata': {'_continue': None,
               'remaining_item_count': None,
-              'resource_version': '2624689067',
+              'resource_version': '3128412668',
               'self_link': None}}
-YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1748462231
+{'api_version': 'v1',
+ 'items': [],
+ 'kind': 'PodList',
+ 'metadata': {'_continue': None,
+              'remaining_item_count': None,
+              'resource_version': '3128412671',
+              'self_link': None}}
+YugabyteDB-1-1-1024-1         : needs monitoring (common metrics) for deployment sut
+YugabyteDB-1-1-1024-1         : needs monitoring (custom metrics) for stateful set yb-tserver
+YugabyteDB-1-1-1024-1         : needs monitoring (custom metrics) for stateful set yb-master
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1770043933
 - waiting 10s -               : done
-found
-YugabyteDB-1-1-1024-1         : collecting loading metrics of SUT at connection YugabyteDB-1-1-1024-1
-YugabyteDB-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-YugabyteDB-1-1-1024-1         : collecting metrics of data generator at connection YugabyteDB-1-1-1024-1
-YugabyteDB-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1748462231(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1770043933-1-1-kqrpg: found
+YugabyteDB-1-1-1024-1         : needs monitoring (common metrics) for deployment sut
+YugabyteDB-1-1-1024-1         : needs monitoring (custom metrics) for stateful set yb-tserver
+YugabyteDB-1-1-1024-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)", pod=~"(.*)yb-tserver-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+YugabyteDB-1-1-1024-1         : needs monitoring (custom metrics) for stateful set yb-master
+YugabyteDB-1-1-1024-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-master-(.*)", pod=~"(.*)yb-master-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 YugabyteDB-1-1-1024-1         : collecting metrics of data injector at connection YugabyteDB-1-1-1024-1
-YugabyteDB-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1748462231(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+YugabyteDB-1-1-1024-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -98,74 +113,110 @@ YugabyteDB-1-1-1024           : has running benchmarks
 YugabyteDB-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 YugabyteDB-1-1-1024           : has running benchmarks
+timing_benchmarker [(1770044409, 1770044712)]
 YugabyteDB-1-1-1024-1         : showing benchmarker times
-YugabyteDB-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 329
-YugabyteDB-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1748462753, 1748463060)]
-YugabyteDB-1-1-1024-1         : found and updated times {'benchmarker': [(1748462753, 1748463060)]}
-YugabyteDB-1-1-1024-1         : collecting execution metrics of SUT at connection YugabyteDB-1-1-1024-1
-YugabyteDB-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+YugabyteDB-1-1-1024-1         : benchmarker timespan job from 1770044407 to 1770044742
+YugabyteDB-1-1-1024-1         : benchmarker timespan pods from 1770044409 to 1770044712
+YugabyteDB-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 303
+YugabyteDB-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1770044409, 1770044712)]
+YugabyteDB-1-1-1024-1         : found and updated times {'benchmarker': [(1770044409, 1770044712)]}
+YugabyteDB-1-1-1024-1         : needs monitoring (common metrics) for deployment sut
+YugabyteDB-1-1-1024-1         : needs monitoring (custom metrics) for stateful set yb-tserver
+YugabyteDB-1-1-1024-1         : collecting execution metrics of yb-tserver at connection YugabyteDB-1-1-1024-1
+YugabyteDB-1-1-1024-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)", pod=~"(.*)yb-tserver-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+YugabyteDB-1-1-1024-1         : needs monitoring (custom metrics) for stateful set yb-master
+YugabyteDB-1-1-1024-1         : collecting execution metrics of yb-master at connection YugabyteDB-1-1-1024-1
+YugabyteDB-1-1-1024-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-master-(.*)", pod=~"(.*)yb-master-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 YugabyteDB-1-1-1024-1         : collecting metrics of benchmarker at connection YugabyteDB-1-1-1024-1
-YugabyteDB-1-1-1024-1         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1748462231(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
+YugabyteDB-1-1-1024-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
 YugabyteDB-1-1-1024           : benchmarks done 0 of 1. This will be client 2
-YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BEXHOMA_USER': 'yugabyte', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_PORT': 5433, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
+YugabyteDB-1-1-1024           : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'yugabyte', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'yugabyte', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_PORT': 5433, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
 YugabyteDB-1-1-1024-2         : start benchmarking
 {'api_version': 'v1',
  'items': [],
  'kind': 'PodList',
  'metadata': {'_continue': None,
               'remaining_item_count': None,
-              'resource_version': '2624695299',
+              'resource_version': '3128418903',
               'self_link': None}}
-YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1748462231
-- waiting 10s -               : done
-found
-YugabyteDB-1-1-1024-2         : collecting loading metrics of SUT at connection YugabyteDB-1-1-1024-2
-YugabyteDB-1-1-1024-2         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-YugabyteDB-1-1-1024-2         : collecting metrics of data generator at connection YugabyteDB-1-1-1024-2
-YugabyteDB-1-1-1024-2         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1748462231(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-YugabyteDB-1-1-1024-2         : collecting metrics of data injector at connection YugabyteDB-1-1-1024-2
-YugabyteDB-1-1-1024-2         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1748462231(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-- waiting 30s -               : done
-YugabyteDB-1-1-1024           : has running benchmarks
-done
-YugabyteDB-1-1-1024           : has running benchmarks
-YugabyteDB-1-1-1024-2         : showing benchmarker times
-YugabyteDB-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 329
-YugabyteDB-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1748463127, 1748463434), (1748463127, 1748463434)]
-YugabyteDB-1-1-1024-2         : found and updated times {'benchmarker': [(1748463127, 1748463434), (1748463127, 1748463434)]}
-YugabyteDB-1-1-1024-2         : collecting execution metrics of SUT at connection YugabyteDB-1-1-1024-2
-YugabyteDB-1-1-1024-2         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-YugabyteDB-1-1-1024-2         : collecting metrics of benchmarker at connection YugabyteDB-1-1-1024-2
-YugabyteDB-1-1-1024-2         : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1748462231(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-YugabyteDB-1-1-1024           : can be stopped
 {'api_version': 'v1',
  'items': [],
  'kind': 'PodList',
  'metadata': {'_continue': None,
               'remaining_item_count': None,
-              'resource_version': '2624701503',
+              'resource_version': '3128418903',
               'self_link': None}}
-Experiment ends at 2025-05-28 22:18:16.648060 (12655660.11861331): 1265.1730113700032s total
+YugabyteDB-1-1-1024-2         : needs monitoring (common metrics) for deployment sut
+YugabyteDB-1-1-1024-2         : needs monitoring (custom metrics) for stateful set yb-tserver
+YugabyteDB-1-1-1024-2         : needs monitoring (custom metrics) for stateful set yb-master
+YugabyteDB-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1770043933
+- waiting 10s -               : done
+YugabyteDB-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-yugabytedb-1-1-1024-1770043933-1-2-5j8gg: found
+YugabyteDB-1-1-1024-2         : needs monitoring (common metrics) for deployment sut
+YugabyteDB-1-1-1024-2         : needs monitoring (custom metrics) for stateful set yb-tserver
+YugabyteDB-1-1-1024-2         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)", pod=~"(.*)yb-tserver-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+YugabyteDB-1-1-1024-2         : needs monitoring (custom metrics) for stateful set yb-master
+YugabyteDB-1-1-1024-2         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-master-(.*)", pod=~"(.*)yb-master-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+YugabyteDB-1-1-1024-2         : collecting metrics of data injector at connection YugabyteDB-1-1-1024-2
+YugabyteDB-1-1-1024-2         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : has running benchmarks
+timing_benchmarker [(1770044793, 1770045097), (1770044794, 1770045098)]
+YugabyteDB-1-1-1024-2         : showing benchmarker times
+YugabyteDB-1-1-1024-2         : benchmarker timespan job from 1770044791 to 1770045126
+YugabyteDB-1-1-1024-2         : benchmarker timespan pods from 1770044793 to 1770045098
+YugabyteDB-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 305
+YugabyteDB-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1770044793, 1770045097), (1770044794, 1770045098)]
+YugabyteDB-1-1-1024-2         : found and updated times {'benchmarker': [(1770044793, 1770045097), (1770044794, 1770045098)]}
+YugabyteDB-1-1-1024-2         : needs monitoring (common metrics) for deployment sut
+YugabyteDB-1-1-1024-2         : needs monitoring (custom metrics) for stateful set yb-tserver
+YugabyteDB-1-1-1024-2         : collecting execution metrics of yb-tserver at connection YugabyteDB-1-1-1024-2
+YugabyteDB-1-1-1024-2         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-tserver-(.*)", pod=~"(.*)yb-tserver-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+YugabyteDB-1-1-1024-2         : needs monitoring (custom metrics) for stateful set yb-master
+YugabyteDB-1-1-1024-2         : collecting execution metrics of yb-master at connection YugabyteDB-1-1-1024-2
+YugabyteDB-1-1-1024-2         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yb-master-(.*)", pod=~"(.*)yb-master-(.*)"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+YugabyteDB-1-1-1024-2         : collecting metrics of benchmarker at connection YugabyteDB-1-1-1024-2
+YugabyteDB-1-1-1024-2         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", pod=~"(.*)yugabytedb-1-1-1024-1770043933(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+YugabyteDB-1-1-1024           : can be stopped
+YugabyteDB-1-1-1024           : had 0 restarts at worker bexhoma-sut-yugabytedb-1-1-1024-1770043933-54fccf8f6d-w8r2s
+{'api_version': 'v1',
+ 'items': [],
+ 'kind': 'PodList',
+ 'metadata': {'_continue': None,
+              'remaining_item_count': None,
+              'resource_version': '3128424887',
+              'self_link': None}}
+{'api_version': 'v1',
+ 'items': [],
+ 'kind': 'PodList',
+ 'metadata': {'_continue': None,
+              'remaining_item_count': None,
+              'resource_version': '3128424889',
+              'self_link': None}}
+Experiment                    : ends at 2026-02-02 16:12:51.981911 (34237335.45246557) - 1207.94s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -174,21 +225,21 @@ Result workflow not complete
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=16
+Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1266s 
-    Code: 1748462231
-    Benchbase runs the TPC-C benchmark.
+    Duration: 1208s 
+    Code: 1770043933
+    Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Benchmarking runs for 5 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.7.
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['YugabyteDB'].
+    Experiment is limited to DBMS ['YugabyteDB'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1, 2] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -196,36 +247,47 @@ Benchbase Workload SF=16
 
 ### Connections
 YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301261896
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:96156
+    cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1748462231
+                code:1770043933
 YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:301261900
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:96156
+    cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1748462231
+                code:1770043933
 
 ### Execution
+
+#### Per Pod
+                         experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                     
+YugabyteDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    273.556656                 272.353323         0.0                                                     159601.0                                              58473.0
+YugabyteDB-1-1-1024-2-2               1          8    8192       2      1  300.0           0                    108.296656                 107.706656         0.0                                                     188166.0                                              73855.0
+YugabyteDB-1-1-1024-2-1               1          8    8192       2      2  300.0           0                    120.636616                 120.006616         0.0                                                     179169.0                                              66285.0
+
+#### Aggregated Parallel
                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         16   16384          1  300.0           0                        130.27                     129.72         0.0                                                     330908.0                                             122732.0
-YugabyteDB-1-1-1024-2               1         16   16384          2  300.0           0                        160.55                     159.73         0.0                                                     279105.0                                              99666.0
+YugabyteDB-1-1-1024-1               1         16   16384          1  300.0           0                        273.56                     272.35         0.0                                                     159601.0                                              58473.0
+YugabyteDB-1-1-1024-2               1         16   16384          2  300.0           0                        228.93                     227.71         0.0                                                     188166.0                                              70070.0
 
 ### Workflow
 
@@ -237,33 +299,47 @@ DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-YugabyteDB-1-1-1024-1      336.0        1.0   1.0         171.428571
-YugabyteDB-1-1-1024-2      336.0        1.0   2.0         171.428571
+YugabyteDB-1-1-1024-1      297.0        1.0   1.0         193.939394
+YugabyteDB-1-1-1024-2      297.0        1.0   2.0         193.939394
 
-### Ingestion - SUT
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1     8344.07    10.97          4.98                12.98
-YugabyteDB-1-1-1024-2     8344.07    10.97          4.98                12.98
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component yb-tserver
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1     1014.93     9.53           1.3                  1.3
-YugabyteDB-1-1-1024-2     1014.93     9.53           1.3                  1.3
+YugabyteDB-1-1-1024-1     4981.89    30.79          5.18                 13.1
+YugabyteDB-1-1-1024-2     4981.89    30.79          5.18                 13.1
 
-### Execution - SUT
+### Loading phase: component yb-master
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1     9926.98    20.46          4.92                14.00
-YugabyteDB-1-1-1024-2    12709.70    14.19          5.19                14.85
+YugabyteDB-1-1-1024-1       15.15     0.15          0.22                 0.26
+YugabyteDB-1-1-1024-2       15.15     0.15          0.22                 0.26
 
-### Execution - Benchmarker
+### Loading phase: component loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1      137.64     0.52          0.35                 0.35
-YugabyteDB-1-1-1024-2      119.33     0.29          0.81                 0.81
+YugabyteDB-1-1-1024-1     1347.81    13.02          0.27                 0.27
+YugabyteDB-1-1-1024-2     1347.81    13.02          0.27                 0.27
+
+### Execution phase: component yb-tserver
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-1-1-1024-1     9612.59    35.80          5.69                15.56
+YugabyteDB-1-1-1024-2     9011.56    32.68          6.21                16.91
+
+### Execution phase: component yb-master
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-1-1-1024-1        9.65     0.07          0.22                 0.26
+YugabyteDB-1-1-1024-2       11.81     0.08          0.23                 0.27
+
+### Execution phase: component benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+YugabyteDB-1-1-1024-1      157.36     0.51          0.29                 0.29
+YugabyteDB-1-1-1024-2      157.36     1.02          0.29                 0.29
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component yb-master contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component yb-master contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
