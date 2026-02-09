@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 802s 
-    Code: 1770031501
+    Duration: 800s 
+    Code: 1770049453
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -35,18 +35,18 @@ YugabyteDB-64-8-65536-1 uses docker image postgres:15.0
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:96155
+    disk:96156
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1770031501
+        code:1770049453
 
 ### Execution
                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-YugabyteDB-64-8-65536-1               1       64   65536          1           0                        15686.5               637491.0           4999104                           57343.0             5000896                             61183.0
+YugabyteDB-64-8-65536-1               1       64   65536          1           0                       16067.48               622375.0           4998449                           58047.0             5001551                             60351.0
 
 ### Workflow
 
@@ -60,15 +60,15 @@ DBMS YugabyteDB-64-8-65536 - Pods [[1]]
 
 ### Execution phase: component yb-tserver
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1    20488.52    36.82          7.32                18.04
+YugabyteDB-64-8-65536-1     20761.2    38.53          7.32                17.67
 
 ### Execution phase: component yb-master
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1       18.77     0.09          0.19                 0.24
+YugabyteDB-64-8-65536-1       18.06     0.07           0.2                 0.24
 
 ### Execution phase: component benchmarker
                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-64-8-65536-1      527.22      1.0          0.14                 0.14
+YugabyteDB-64-8-65536-1      534.16     1.11          0.13                 0.14
 
 ### Tests
 TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

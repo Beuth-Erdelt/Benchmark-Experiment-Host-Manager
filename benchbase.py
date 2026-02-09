@@ -733,6 +733,9 @@ if __name__ == '__main__':
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     config = configurations.benchbase(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    create_schema = "true"
+                    if type_of_benchmark == "tpcc":
+                        create_schema = "false"
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
@@ -846,7 +849,7 @@ if __name__ == '__main__':
                         BEXHOMA_PORT = 5433,
                         BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
                         BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
-                        #BENCHBASE_CREATE_SCHEMA = "false",
+                        BENCHBASE_CREATE_SCHEMA = create_schema,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []

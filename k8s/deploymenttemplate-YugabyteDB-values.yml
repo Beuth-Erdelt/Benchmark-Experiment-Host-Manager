@@ -1,0 +1,57 @@
+# ------------------------------------------------------------
+# YugabyteDB Helm values for "bexhoma"
+# ------------------------------------------------------------
+
+# ------------------------------------------------------------
+# Global flags
+# ------------------------------------------------------------
+gflags:
+  tserver:
+    ysql_enable_packed_row: true
+    ysql_max_connections: 1280
+
+# ------------------------------------------------------------
+# Master configuration
+# ------------------------------------------------------------
+resource:
+  master:
+    limits:
+      cpu: "2"
+      memory: 8Gi
+    requests:
+      cpu: "2"
+      memory: 8Gi
+    replicas: 3
+
+  tserver:
+    limits:
+      cpu: "8"
+      memory: 8Gi
+    requests:
+      cpu: "8"
+      memory: 8Gi
+    replicas: 3
+
+# ------------------------------------------------------------
+# Storage configuration
+# ------------------------------------------------------------
+storage:
+  ephemeral: true   # WAL / temp files on EmptyDir
+
+  master:
+    size: 100Gi
+    storageClass: shared
+
+  tserver:
+    size: 100Gi
+    storageClass: shared
+
+# ------------------------------------------------------------
+# TServer scheduling
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# Networking
+# ------------------------------------------------------------
+enableLoadBalancer: true
