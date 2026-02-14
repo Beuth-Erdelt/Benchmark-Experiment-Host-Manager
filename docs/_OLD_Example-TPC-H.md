@@ -1,4 +1,4 @@
-# Example: TPC-H
+﻿# Example: TPC-H
 
 This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
 

@@ -55,7 +55,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 test_ycsb_start_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB Start DBMS
@@ -110,7 +110,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 test_ycsb_load_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB Data Loading SF=1
@@ -187,7 +187,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 test_ycsb_run_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -306,7 +306,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 test_benchbase_start_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Start DBMS
@@ -358,7 +358,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 test_benchbase_load_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Data tpcc Loading SF=1
@@ -428,7 +428,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 test_benchbase_run_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -539,7 +539,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 test_hammerdb_start_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Start DBMS
@@ -589,7 +589,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 test_hammerdb_load_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
@@ -658,7 +658,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 test_hammerdb_run_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=1 (warehouses for TPC-C)
@@ -770,7 +770,7 @@ nohup python tpch.py -ms 1 -tr \
 
 test_tpch_start_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Start DBMS
@@ -820,7 +820,7 @@ nohup python tpch.py -ms 1 -tr \
 
 test_tpch_load_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Data Loading SF=1
@@ -879,7 +879,7 @@ nohup python tpch.py -ms 1 -tr \
 
 test_tpch_run_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1038,7 +1038,7 @@ nohup python tpcds.py -ms 1 -tr \
 
 test_tpcds_start_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Start DBMS
@@ -1088,7 +1088,7 @@ nohup python tpcds.py -ms 1 -tr \
 
 test_tpcds_load_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Data Loading SF=1
@@ -1147,7 +1147,7 @@ nohup python tpcds.py -ms 1 -tr \
 
 test_tpcds_run_postgresql.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1

@@ -1,4 +1,4 @@
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=128 (warehouses for TPC-C)

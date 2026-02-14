@@ -97,7 +97,7 @@ At the end of a benchmark you will see a summary like
 
 doc_hammerdb_testcase_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -323,7 +323,7 @@ If monitoring is activated, the summary also contains a section like
 
 doc_hammerdb_testcase_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -473,7 +473,7 @@ The result looks something like
 
 doc_hammerdb_testcase_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -593,7 +593,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 doc_hammerdb_testcase_keytime.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)

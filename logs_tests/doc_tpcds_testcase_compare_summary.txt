@@ -1,4 +1,4 @@
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1

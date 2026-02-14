@@ -3,8 +3,11 @@ param(
     [string]$Path
 )
 
-# Alle Dateien rekursiv durchlaufen
-Get-ChildItem -Path $Path -Recurse -File | ForEach-Object {
+# Definiere die erlaubten Textdateiendungen
+$textExtensions = @(".txt", ".csv", ".py", ".sh", ".md", ".json", ".log")
+
+# Alle Dateien rekursiv durchlaufen, nur die mit Text-Endungen
+Get-ChildItem -Path $Path -Recurse -File | Where-Object { $textExtensions -contains $_.Extension.ToLower() } | ForEach-Object {
 
     # Datei als Raw-Text lesen
     $content = Get-Content $_.FullName -Raw
