@@ -1,4 +1,4 @@
-# Example: Benchmark CockroachDB
+﻿# Example: Benchmark CockroachDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 

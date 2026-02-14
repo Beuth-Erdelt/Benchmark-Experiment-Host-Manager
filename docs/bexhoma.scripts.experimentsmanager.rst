@@ -1,4 +1,4 @@
-bexhoma.scripts.experimentsmanager module
+﻿bexhoma.scripts.experimentsmanager module
 =========================================
 
 .. automodule:: bexhoma.scripts.experimentsmanager

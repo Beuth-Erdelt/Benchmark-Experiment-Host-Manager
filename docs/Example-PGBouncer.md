@@ -1,4 +1,4 @@
-# Example: Benchmark PGBouncer
+﻿# Example: Benchmark PGBouncer
 
 This differs from the default behaviour of bexhoma, since we benchmark a DBMS **with a pooling component, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 

@@ -1,4 +1,4 @@
-# Example: Benchmark Citus
+﻿# Example: Benchmark Citus
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -1885,12 +1885,12 @@ We configure the experiment to use 48 shards, run for 20 minutes and split the 2
 Database is persisted on PVCs.
 The experiment runs twice for confidence.
 
-Note: In [1] YCSB is run as this: *For this benchmark, the coordinator’s CPU usage becomes a scaling bottleneck. Hence, we ran the benchmark with every worker node acting as coordinator and configured YCSB to load balance across all nodes.* This apparently uses [4], part of the Citus benchmark toolkit [3], and PostgreSQL loadbalancer feature [5].
+Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s CPU usage becomes a scaling bottleneck. Hence, we ran the benchmark with every worker node acting as coordinator and configured YCSB to load balance across all nodes.* This apparently uses [4], part of the Citus benchmark toolkit [3], and PostgreSQL loadbalancer feature [5].
 
 [1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
 > Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
 > 2021. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21).
-> Association for Computing Machinery, New York, NY, USA, 2490–2502.
+> Association for Computing Machinery, New York, NY, USA, 2490â€“2502.
 > https://dl.acm.org/doi/10.1145/3448016.3457551
 
 [2] [How to benchmark performance of Citus and Postgres with HammerDB on Azure](https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-benchmark-performance-of-citus-and-postgres-with-hammerdb-on-azure/3254918)
@@ -2583,7 +2583,7 @@ In a correlated subquery there cannot be a replicated table, so we have to rewri
 [1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
 > Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
 > 2021. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21).
-> Association for Computing Machinery, New York, NY, USA, 2490–2502.
+> Association for Computing Machinery, New York, NY, USA, 2490â€“2502.
 > https://dl.acm.org/doi/10.1145/3448016.3457551
 
 [2] [Citus TPC-H tests - schema](https://github.com/dimitri/tpch-citus/tree/master/schema)

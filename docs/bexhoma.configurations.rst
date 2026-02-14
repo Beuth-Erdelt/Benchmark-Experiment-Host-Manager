@@ -1,4 +1,4 @@
-bexhoma.configurations module
+﻿bexhoma.configurations module
 =============================
 
 .. automodule:: bexhoma.configurations

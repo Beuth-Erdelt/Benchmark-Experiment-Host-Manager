@@ -1,4 +1,4 @@
-# Example: Benchmark YugabyteDB
+﻿# Example: Benchmark YugabyteDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 

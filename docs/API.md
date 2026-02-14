@@ -1,4 +1,4 @@
-# API Details
+﻿# API Details
 
 This document contains API details about methods for **parameters**
 * [`set_code()`](#set-code)

@@ -1,4 +1,4 @@
-bexhoma.experiments module
+﻿bexhoma.experiments module
 ==========================
 
 .. automodule:: bexhoma.experiments
