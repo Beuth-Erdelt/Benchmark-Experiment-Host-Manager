@@ -3,18 +3,19 @@
 ### Workload
 Benchbase Workload tpcc SF=1
     Type: benchbase
-    Duration: 1400s 
-    Code: 1758719572
+    Duration: 3858s 
+    Code: 1771164231
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.12.
+    Experiment uses bexhoma version 0.8.20.
     Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
+    Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [10] threads, split into [1] pods.
     Benchmarking is run as [1, 1] times the number of benchmarking pods.
@@ -23,86 +24,102 @@ Benchbase Workload tpcc SF=1
 
 ### Connections
 MySQL-1-1-1024-0-1 uses docker image mysql:8.4.0
-    RAM:541008568320
+    RAM:541008474112
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:444749600
-    datadisk:4429
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97595
+    volume_size:50G
+    volume_used:33G
     cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1758719572
+                code:1771164231
                 TENANT_BY:container
                 TENANT_NUM:2
+                TENANT_VOL:False
 MySQL-1-1-1024-0-2 uses docker image mysql:8.4.0
-    RAM:541008568320
+    RAM:541008474112
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:444763700
-    datadisk:4434
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97595
+    volume_size:50G
+    volume_used:33G
     cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1758719572
+                code:1771164231
                 TENANT_BY:container
                 TENANT_NUM:2
+                TENANT_VOL:False
 MySQL-1-1-1024-1-1 uses docker image mysql:8.4.0
-    RAM:541008568320
+    RAM:541008474112
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:444749600
-    datadisk:4425
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97595
+    volume_size:50G
+    volume_used:33G
     cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1758719572
+                code:1771164231
                 TENANT_BY:container
                 TENANT_NUM:2
                 TENANT:1
+                TENANT_VOL:False
 MySQL-1-1-1024-1-2 uses docker image mysql:8.4.0
-    RAM:541008568320
+    RAM:541008474112
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:444763700
-    datadisk:4434
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97595
+    volume_size:50G
+    volume_used:33G
     cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1758719572
+                code:1771164231
                 TENANT_BY:container
                 TENANT_NUM:2
                 TENANT:1
+                TENANT_VOL:False
 
 ### Execution
 
 #### Per Pod
                       experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                                  
-MySQL-1-1-1024-0-1-1               1         10    1024       1      1  300.0           0                      0.440000                   0.440000   92.379445                                                     108783.0                                              30251.0
-MySQL-1-1-1024-1-1-1               1         10    1024       1      1  300.0           0                      0.453332                   0.453332   95.178545                                                     156823.0                                              34946.0
-MySQL-1-1-1024-0-2-1               1         10    1024       2      1  300.0           0                      0.479999                   0.479999  100.777296                                                      56416.0                                              22940.0
-MySQL-1-1-1024-1-2-1               1         10    1024       2      1  300.0           0                      0.473332                   0.476665  100.077439                                                      60623.0                                              23523.0
+MySQL-1-1-1024-0-1-1               1         10    1024       1      1  300.0           0                      0.480000                   0.480000  100.777595                                                     151957.0                                             102338.0
+MySQL-1-1-1024-1-1-1               1         10    1024       1      1  300.0           0                      0.346667                   0.350000   73.483661                                                   78167439.0                                            7722663.0
+MySQL-1-1-1024-0-2-1               1         10    1024       2      1  300.0           0                      0.453333                   0.450000   94.478979                                                     148986.0                                              30868.0
+MySQL-1-1-1024-1-2-1               1         10    1024       2      1  300.0           0                      0.450000                   0.446667   93.779140                                                      56007.0                                              28646.0
 
 #### Aggregated Parallel
      experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-1-1               1         20    2048          2  300.0           0                          0.89                       0.89         0.0                                                     156823.0                                              32598.5
-1-2               1         20    2048          2  300.0           0                          0.95                       0.96         0.0                                                      60623.0                                              23231.5
+1-1               1         20    2048          2  300.0           0                          0.83                       0.83         0.0                                                   78167439.0                                            3912500.5
+1-2               1         20    2048          2  300.0           0                          0.90                       0.90         0.0                                                     148986.0                                              29757.0
 
 ### Workflow
 
@@ -116,10 +133,10 @@ DBMS MySQL-1-1-1024-1 - Pods [[1, 1]]
 
 ### Loading
                     time_load  terminals  pods  Throughput [SF/h]
-MySQL-1-1-1024-0-1      182.0        1.0   1.0           19.78022
-MySQL-1-1-1024-0-2      182.0        1.0   1.0           19.78022
-MySQL-1-1-1024-1-1      182.0        1.0   1.0           19.78022
-MySQL-1-1-1024-1-2      182.0        1.0   1.0           19.78022
+MySQL-1-1-1024-0-1     1846.0        1.0   1.0           1.950163
+MySQL-1-1-1024-0-2     1846.0        1.0   1.0           1.950163
+MySQL-1-1-1024-1-1     1839.0        1.0   1.0           1.957586
+MySQL-1-1-1024-1-2     1839.0        1.0   1.0           1.957586
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
