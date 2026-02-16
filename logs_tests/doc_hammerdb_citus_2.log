@@ -1,19 +1,19 @@
-﻿Data Directory                : is running
+Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1764292636
-Experiment                    : starts at 2025-11-28 02:17:16.202842 (28484799.673392683)
+Experiment                    : has code 1771317344
+Experiment                    : starts at 2026-02-17 09:35:45.033118 (35509508.50366811)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 128. Benchmarking runs for 30 minutes. Benchmarking also logs latencies.
-Experiment uses bexhoma version 0.8.16.
+Experiment uses bexhoma version 0.8.20.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['Citus'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
+SUT is fixed to cl-worker14.
 Database is persisted to disk of type shared and size 50Gi.
 Loading is tested with [128] threads, split into [1] pods.
 Benchmarking is tested with [128] threads, split into [1, 2, 4, 8] pods.
@@ -26,8 +26,8 @@ Citus-BHT-128-1               : stateful sets ['worker']
 Citus-BHT-128-1               : pvcs ['sut']
 Citus-BHT-128-1               : list of pvcs ['bexhoma-storage-citus-hammerdb-128', 'bxw-bexhoma-worker-citus-hammerdb-128-0', 'bxw-bexhoma-worker-citus-hammerdb-128-1', 'bxw-bexhoma-worker-citus-hammerdb-128-2', 'bxw-bexhoma-worker-citus-hammerdb-128-3']
 Citus-BHT-128-1               : found labels on pvc = []
-Citus-BHT-128-1               : name of SUT pods = bexhoma-sut-citus-bht-128-1-1764292636
-Citus-BHT-128-1               : name of SUT service = bexhoma-sut-citus-bht-128-1-1764292636
+Citus-BHT-128-1               : name of SUT pods = bexhoma-sut-citus-bht-128-1-1771317344
+Citus-BHT-128-1               : name of SUT service = bexhoma-sut-citus-bht-128-1-1771317344
 Citus-BHT-128-1               : name of SUT PVC name = bexhoma-storage-citus-hammerdb-128
 Citus-BHT-128-1               : name of worker pods = bexhoma-worker-citus-hammerdb-128
 Citus-BHT-128-1               : name of worker service headless = bexhoma-worker-citus-hammerdb-128
@@ -60,9 +60,9 @@ Citus-BHT-128-1               : worker pods found (only stateful set pods): ['be
 Citus-BHT-128-1               : found 1 / 4 running workers (component worker)
 Citus-BHT-128-1               : waits for health check of workers to succeed
 - waiting 30s -               : done
-Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2']
-Citus-BHT-128-1               : worker pods found (only stateful set pods): ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2']
-Citus-BHT-128-1               : found 2 / 4 running workers (component worker)
+Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1']
+Citus-BHT-128-1               : worker pods found (only stateful set pods): ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1']
+Citus-BHT-128-1               : found 1 / 4 running workers (component worker)
 Citus-BHT-128-1               : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2']
@@ -83,6 +83,11 @@ Citus-BHT-128-1               : waits for health check of workers to succeed
 Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2']
 Citus-BHT-128-1               : worker pods found (only stateful set pods): ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2']
 Citus-BHT-128-1               : found 2 / 4 running workers (component worker)
+Citus-BHT-128-1               : waits for health check of workers to succeed
+- waiting 30s -               : done
+Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2', 'bexhoma-worker-citus-hammerdb-128-3']
+Citus-BHT-128-1               : worker pods found (only stateful set pods): ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2', 'bexhoma-worker-citus-hammerdb-128-3']
+Citus-BHT-128-1               : found 3 / 4 running workers (component worker)
 Citus-BHT-128-1               : waits for health check of workers to succeed
 - waiting 30s -               : done
 Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2', 'bexhoma-worker-citus-hammerdb-128-3']
@@ -127,13 +132,13 @@ Citus-BHT-128-1               : worker bexhoma-worker-citus-hammerdb-128-1.bexho
 Citus-BHT-128-1               : worker bexhoma-worker-citus-hammerdb-128-2.bexhoma-worker-citus-hammerdb-128 attached
 Citus-BHT-128-1               : worker bexhoma-worker-citus-hammerdb-128-3.bexhoma-worker-citus-hammerdb-128 attached
 Citus-BHT-128-1               : is not loaded yet
-Citus-BHT-128-1               : will start loading but not before 2025-11-28 01:27:50 (that is in 60 secs)
+Citus-BHT-128-1               : will start loading but not before 2026-02-17 08:46:45 (that is in 60 secs)
 - waiting 30s -               : done
 Citus-BHT-128-1               : is not loaded yet
-Citus-BHT-128-1               : will start loading but not before 2025-11-28 01:27:50
+Citus-BHT-128-1               : will start loading but not before 2026-02-17 08:46:45
 - waiting 30s -               : done
 Citus-BHT-128-1               : is not loaded yet
-Citus-BHT-128-1               : connect to pod bexhoma-sut-citus-bht-128-1-1764292636-55cc9b6bd5-vjt74 to load scripts
+Citus-BHT-128-1               : connect to pod bexhoma-sut-citus-bht-128-1-1771317344-8dd945c46-n9ldc to load scripts
 Citus-BHT-128-1               : list of pvcs ['bexhoma-storage-citus-hammerdb-128', 'bxw-bexhoma-worker-citus-hammerdb-128-0', 'bxw-bexhoma-worker-citus-hammerdb-128-1', 'bxw-bexhoma-worker-citus-hammerdb-128-2', 'bxw-bexhoma-worker-citus-hammerdb-128-3']
 Citus-BHT-128-1               : will be labeling bexhoma-storage-citus-hammerdb-128
 Citus-BHT-128-1               : start asynch loading scripts of type loaded
@@ -167,20 +172,14 @@ Citus-BHT-128-1               : is loading
 - waiting 30s -               : done
 Citus-BHT-128-1               : is loading
 - waiting 30s -               : done
-Citus-BHT-128-1               : is loading
-- waiting 30s -               : done
-Citus-BHT-128-1               : is loading
-- waiting 30s -               : done
-Citus-BHT-128-1               : is loading
-- waiting 30s -               : done
 Citus-BHT-128-1               : showing loader times
 Citus-BHT-128-1               : generator times (start/end per pod and container) []
-Citus-BHT-128-1               : loader times (start/end per pod and container) [(1764293275, 1764293812)]
-Citus-BHT-128-1               : total times (start/end per pod and container) [(1764293275, 1764293812)]
-Citus-BHT-128-1               : loader timespan (first to last [s]) = 537
+Citus-BHT-128-1               : loader times (start/end per pod and container) [(1771318010, 1771318456)]
+Citus-BHT-128-1               : total times (start/end per pod and container) [(1771318010, 1771318456)]
+Citus-BHT-128-1               : loader timespan (first to last [s]) = 446
 Citus-BHT-128-1               : list of pvcs ['bexhoma-storage-citus-hammerdb-128', 'bxw-bexhoma-worker-citus-hammerdb-128-0', 'bxw-bexhoma-worker-citus-hammerdb-128-1', 'bxw-bexhoma-worker-citus-hammerdb-128-2', 'bxw-bexhoma-worker-citus-hammerdb-128-3']
 Citus-BHT-128-1               : will be labeling bexhoma-storage-citus-hammerdb-128
-Citus-BHT-128-1               : connect to pod bexhoma-sut-citus-bht-128-1-1764292636-55cc9b6bd5-vjt74 to load scripts
+Citus-BHT-128-1               : connect to pod bexhoma-sut-citus-bht-128-1-1771317344-8dd945c46-n9ldc to load scripts
 Citus-BHT-128-1               : list of pvcs ['bexhoma-storage-citus-hammerdb-128', 'bxw-bexhoma-worker-citus-hammerdb-128-0', 'bxw-bexhoma-worker-citus-hammerdb-128-1', 'bxw-bexhoma-worker-citus-hammerdb-128-2', 'bxw-bexhoma-worker-citus-hammerdb-128-3']
 Citus-BHT-128-1               : will be labeling bexhoma-storage-citus-hammerdb-128
 Citus-BHT-128-1               : start asynch loading scripts of type indexed
@@ -202,16 +201,16 @@ Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-3 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-3
-Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1764292636
+Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1771317344
 - waiting 10s -               : done
-Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1764292636-1-1-nbnls: found
+Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1771317344-1-1-xjlz6: found
 Citus-BHT-128-1-1             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-1             : collecting loading metrics of SUT at connection Citus-BHT-128-1-1
-Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-1             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-1             : collecting metrics of data injector at connection Citus-BHT-128-1-1
-Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
@@ -344,21 +343,21 @@ Citus-BHT-128-1               : has running benchmarks
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
-timing_benchmarker [(1764293895, 1764295967)]
+timing_benchmarker [(1771318527, 1771320600)]
 Citus-BHT-128-1-1             : showing benchmarker times
-Citus-BHT-128-1-1             : benchmarker timespan job from 1764293893 to 1764295999
-Citus-BHT-128-1-1             : benchmarker timespan pods from 1764293895 to 1764295967
-Citus-BHT-128-1-1             : benchmarker timespan (start to end single container [s]) = 2072
-Citus-BHT-128-1-1             : benchmarker times (start/end per pod and container) = [(1764293895, 1764295967)]
-Citus-BHT-128-1-1             : found and updated times {'benchmarker': [(1764293895, 1764295967)]}
+Citus-BHT-128-1-1             : benchmarker timespan job from 1771318525 to 1771320610
+Citus-BHT-128-1-1             : benchmarker timespan pods from 1771318527 to 1771320600
+Citus-BHT-128-1-1             : benchmarker timespan (start to end single container [s]) = 2073
+Citus-BHT-128-1-1             : benchmarker times (start/end per pod and container) = [(1771318527, 1771320600)]
+Citus-BHT-128-1-1             : found and updated times {'benchmarker': [(1771318527, 1771320600)]}
 Citus-BHT-128-1-1             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-1             : collecting execution metrics of SUT at connection Citus-BHT-128-1-1
-Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-1             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-1             : collecting execution metrics of worker at connection Citus-BHT-128-1-1
 Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-1             : collecting metrics of benchmarker at connection Citus-BHT-128-1-1
-Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-0 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-0
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
@@ -380,16 +379,16 @@ Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-3 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-3
-Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1764292636
+Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1771317344
 - waiting 10s -               : done
-Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1764292636-1-2-5gmq2: found
+Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1771317344-1-2-2k5mn: found
 Citus-BHT-128-1-2             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-2             : collecting loading metrics of SUT at connection Citus-BHT-128-1-2
-Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-2             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-2             : collecting metrics of data injector at connection Citus-BHT-128-1-2
-Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
@@ -518,23 +517,21 @@ Citus-BHT-128-1               : has running benchmarks
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
-- waiting 30s -               : done
-Citus-BHT-128-1               : has running benchmarks
-timing_benchmarker [(1764296068, 1764298136), (1764296068, 1764298137)]
+timing_benchmarker [(1771320677, 1771322684), (1771320677, 1771322685)]
 Citus-BHT-128-1-2             : showing benchmarker times
-Citus-BHT-128-1-2             : benchmarker timespan job from 1764296065 to 1764298141
-Citus-BHT-128-1-2             : benchmarker timespan pods from 1764296068 to 1764298137
-Citus-BHT-128-1-2             : benchmarker timespan (start to end single container [s]) = 2069
-Citus-BHT-128-1-2             : benchmarker times (start/end per pod and container) = [(1764296068, 1764298136), (1764296068, 1764298137)]
-Citus-BHT-128-1-2             : found and updated times {'benchmarker': [(1764296068, 1764298136), (1764296068, 1764298137)]}
+Citus-BHT-128-1-2             : benchmarker timespan job from 1771320675 to 1771322700
+Citus-BHT-128-1-2             : benchmarker timespan pods from 1771320677 to 1771322685
+Citus-BHT-128-1-2             : benchmarker timespan (start to end single container [s]) = 2008
+Citus-BHT-128-1-2             : benchmarker times (start/end per pod and container) = [(1771320677, 1771322684), (1771320677, 1771322685)]
+Citus-BHT-128-1-2             : found and updated times {'benchmarker': [(1771320677, 1771322684), (1771320677, 1771322685)]}
 Citus-BHT-128-1-2             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-2             : collecting execution metrics of SUT at connection Citus-BHT-128-1-2
-Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-2             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-2             : collecting execution metrics of worker at connection Citus-BHT-128-1-2
 Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-2             : collecting metrics of benchmarker at connection Citus-BHT-128-1-2
-Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-2             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-0 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-0
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
@@ -556,16 +553,16 @@ Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-3 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-3
-Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1764292636
+Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1771317344
 - waiting 10s -               : done
-Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1764292636-1-3-bdl6b: found
+Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1771317344-1-3-gsxhg: found
 Citus-BHT-128-1-3             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-3             : collecting loading metrics of SUT at connection Citus-BHT-128-1-3
-Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-3             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-3             : collecting metrics of data injector at connection Citus-BHT-128-1-3
-Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
@@ -696,21 +693,21 @@ Citus-BHT-128-1               : has running benchmarks
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
-timing_benchmarker [(1764298211, 1764300264), (1764298212, 1764300264), (1764298212, 1764300264), (1764298211, 1764300264)]
+timing_benchmarker [(1771322769, 1771324821), (1771322768, 1771324821), (1771322769, 1771324821), (1771322769, 1771324821)]
 Citus-BHT-128-1-3             : showing benchmarker times
-Citus-BHT-128-1-3             : benchmarker timespan job from 1764298207 to 1764300299
-Citus-BHT-128-1-3             : benchmarker timespan pods from 1764298211 to 1764300264
+Citus-BHT-128-1-3             : benchmarker timespan job from 1771322765 to 1771324839
+Citus-BHT-128-1-3             : benchmarker timespan pods from 1771322768 to 1771324821
 Citus-BHT-128-1-3             : benchmarker timespan (start to end single container [s]) = 2053
-Citus-BHT-128-1-3             : benchmarker times (start/end per pod and container) = [(1764298211, 1764300264), (1764298212, 1764300264), (1764298212, 1764300264), (1764298211, 1764300264)]
-Citus-BHT-128-1-3             : found and updated times {'benchmarker': [(1764298211, 1764300264), (1764298212, 1764300264), (1764298212, 1764300264), (1764298211, 1764300264)]}
+Citus-BHT-128-1-3             : benchmarker times (start/end per pod and container) = [(1771322769, 1771324821), (1771322768, 1771324821), (1771322769, 1771324821), (1771322769, 1771324821)]
+Citus-BHT-128-1-3             : found and updated times {'benchmarker': [(1771322769, 1771324821), (1771322768, 1771324821), (1771322769, 1771324821), (1771322769, 1771324821)]}
 Citus-BHT-128-1-3             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-3             : collecting execution metrics of SUT at connection Citus-BHT-128-1-3
-Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-3             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-3             : collecting execution metrics of worker at connection Citus-BHT-128-1-3
 Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-3             : collecting metrics of benchmarker at connection Citus-BHT-128-1-3
-Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-3             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-0 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-0
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
@@ -732,16 +729,16 @@ Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-3 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-3
-Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1764292636
+Citus-BHT-128-1               : benchmarking results in folder /home/perdelt/benchmarks/1771317344
 - waiting 10s -               : done
-Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1764292636-1-4-8jd5l: found
+Citus-BHT-128-1               : benchmarking is waiting for job bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd: found
 Citus-BHT-128-1-4             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-4             : collecting loading metrics of SUT at connection Citus-BHT-128-1-4
-Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-4             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-4             : collecting metrics of data injector at connection Citus-BHT-128-1-4
-Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
@@ -868,37 +865,1333 @@ Citus-BHT-128-1               : has running benchmarks
 Citus-BHT-128-1               : has running benchmarks
 - waiting 30s -               : done
 Citus-BHT-128-1               : has running benchmarks
-- waiting 30s -               : done
-Citus-BHT-128-1               : has running benchmarks
-timing_benchmarker [(1764300374, 1764302418), (1764300375, 1764302419), (1764300374, 1764302419), (1764300375, 1764302413), (1764300374, 1764302419), (1764300374, 1764302418), (1764300374, 1764302418), (1764300374, 1764302419)]
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1771317344/bexhoma-benchmarker-citus-bht-128-1-1771317344-1-4-2qcvd.tokens.
+dbmsbenchmarker.log
+- waiting 30s -               : done
+Citus-BHT-128-1               : has running benchmarks
+timing_benchmarker [(1771324912, 1771326936), (1771324911, 1771326928), (1771324912, 1771326903), (1771324912, 1771326956), (1771324912, 1771326921), (1771324912, 1771326947), (1771324911, 1771326930), (1771324911, 1771326929)]
 Citus-BHT-128-1-4             : showing benchmarker times
-Citus-BHT-128-1-4             : benchmarker timespan job from 1764300366 to 1764302458
-Citus-BHT-128-1-4             : benchmarker timespan pods from 1764300374 to 1764302419
+Citus-BHT-128-1-4             : benchmarker timespan job from 1771324904 to 1771326987
+Citus-BHT-128-1-4             : benchmarker timespan pods from 1771324911 to 1771326956
 Citus-BHT-128-1-4             : benchmarker timespan (start to end single container [s]) = 2045
-Citus-BHT-128-1-4             : benchmarker times (start/end per pod and container) = [(1764300374, 1764302418), (1764300375, 1764302419), (1764300374, 1764302419), (1764300375, 1764302413), (1764300374, 1764302419), (1764300374, 1764302418), (1764300374, 1764302418), (1764300374, 1764302419)]
-Citus-BHT-128-1-4             : found and updated times {'benchmarker': [(1764300374, 1764302418), (1764300375, 1764302419), (1764300374, 1764302419), (1764300375, 1764302413), (1764300374, 1764302419), (1764300374, 1764302418), (1764300374, 1764302418), (1764300374, 1764302419)]}
+Citus-BHT-128-1-4             : benchmarker times (start/end per pod and container) = [(1771324912, 1771326936), (1771324911, 1771326928), (1771324912, 1771326903), (1771324912, 1771326956), (1771324912, 1771326921), (1771324912, 1771326947), (1771324911, 1771326930), (1771324911, 1771326929)]
+Citus-BHT-128-1-4             : found and updated times {'benchmarker': [(1771324912, 1771326936), (1771324911, 1771326928), (1771324912, 1771326903), (1771324912, 1771326956), (1771324912, 1771326921), (1771324912, 1771326947), (1771324911, 1771326930), (1771324911, 1771326929)]}
 Citus-BHT-128-1-4             : needs monitoring (common metrics) for deployment sut
 Citus-BHT-128-1-4             : collecting execution metrics of SUT at connection Citus-BHT-128-1-4
-Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-4             : needs monitoring (custom metrics) for stateful set worker
 Citus-BHT-128-1-4             : collecting execution metrics of worker at connection Citus-BHT-128-1-4
 Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", pod=~"(.*)bexhoma-worker-citus-hammerdb-128-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1-4             : collecting metrics of benchmarker at connection Citus-BHT-128-1-4
-Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1764292636(.*)", pod=~"(.*)citus-bht-128-1-1764292636(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Citus-BHT-128-1-4             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)citus-bht-128-1-1771317344(.*)", pod=~"(.*)citus-bht-128-1-1771317344(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-0 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-0
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-1 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-2 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-2
 Citus-BHT-128-1               : get size via pod bexhoma-worker-citus-hammerdb-128-3 and write to pvc bxw-bexhoma-worker-citus-hammerdb-128-3
 - waiting 30s -               : done
 Citus-BHT-128-1               : can be stopped
-Citus-BHT-128-1               : had 0 restarts at worker bexhoma-sut-citus-bht-128-1-1764292636-55cc9b6bd5-vjt74
+Citus-BHT-128-1               : had 0 restarts at worker bexhoma-sut-citus-bht-128-1-1771317344-8dd945c46-n9ldc
 Citus-BHT-128-1               : worker pods found: ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2', 'bexhoma-worker-citus-hammerdb-128-3']
 Citus-BHT-128-1               : worker pods found (only stateful set pods): ['bexhoma-worker-citus-hammerdb-128-0', 'bexhoma-worker-citus-hammerdb-128-1', 'bexhoma-worker-citus-hammerdb-128-2', 'bexhoma-worker-citus-hammerdb-128-3']
 Citus-BHT-128-1               : had 0 restarts at worker bexhoma-worker-citus-hammerdb-128-0
 Citus-BHT-128-1               : had 0 restarts at worker bexhoma-worker-citus-hammerdb-128-1
 Citus-BHT-128-1               : had 0 restarts at worker bexhoma-worker-citus-hammerdb-128-2
 Citus-BHT-128-1               : had 0 restarts at worker bexhoma-worker-citus-hammerdb-128-3
-Experiment                    : ends at 2025-11-28 05:01:51.233758 (28494674.70431254) - 9875.03s total
+Experiment                    : ends at 2026-02-17 12:17:19.911867 (35519203.38242175) - 9694.88s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -909,19 +2202,19 @@ Result workflow not complete
 ### Workload
 HammerDB Workload SF=128 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 9876s 
-    Code: 1764292636
+    Duration: 9695s 
+    Code: 1771317344
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 128. Benchmarking runs for 30 minutes. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.16.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['Citus'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 50Gi.
     Loading is tested with [128] threads, split into [1] pods.
     Benchmarking is tested with [128] threads, split into [1, 2, 4, 8] pods.
@@ -930,12 +2223,12 @@ HammerDB Workload SF=128 (warehouses for TPC-C)
 
 ### Connections
 Citus-BHT-128-1-1 uses docker image citusdata/citus:13.2.0-alpine
-    RAM:541008486400
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:421727
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:98900
     volume_size:50.0G
     volume_used:40.0M
     cpu_list:0-63
@@ -943,61 +2236,61 @@ Citus-BHT-128-1-1 uses docker image citusdata/citus:13.2.0-alpine
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-153-generic
-        node:cl-worker17
-        disk:1671834
-        volume_size:50.0G
-        volume_used:6.2G
-        cpu_list:0-31
-        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-    worker 1
-        RAM:811500781568
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-        Cores:40
-        host:6.8.0-1041-nvidia
-        node:cl-worker19
-        disk:1489667
-        volume_size:50.0G
-        volume_used:3.2G
-        cpu_list:0-39
-        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-    worker 2
-        RAM:810205974528
-        CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-        Cores:32
-        host:6.8.0-60-generic
-        node:cl-worker20
-        disk:591118
-        volume_size:50.0G
-        volume_used:3.2G
-        cpu_list:0-31
-        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-    worker 3
-        RAM:1081649913856
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:321457
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:340701
         volume_size:50.0G
         volume_used:6.1G
-        cpu_list:0-55
+        cpu_list:0-127
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    worker 1
+        RAM:1077382688768
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1323757
+        volume_size:50.0G
+        volume_used:3.2G
+        cpu_list:0-255
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    worker 2
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:874573
+        volume_size:50.0G
+        volume_used:3.2G
+        cpu_list:0-223
+        args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    worker 3
+        RAM:1081742745600
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:512319
+        volume_size:50.0G
+        volume_used:6.1G
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     eval_parameters
-        code:1764292636
+        code:1771317344
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
 Citus-BHT-128-1-2 uses docker image citusdata/citus:13.2.0-alpine
-    RAM:541008486400
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:421728
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:98900
     volume_size:50.0G
     volume_used:40.0M
     cpu_list:0-63
@@ -1005,61 +2298,61 @@ Citus-BHT-128-1-2 uses docker image citusdata/citus:13.2.0-alpine
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-153-generic
-        node:cl-worker17
-        disk:1671820
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:340868
         volume_size:50.0G
         volume_used:8.9G
-        cpu_list:0-31
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 1
-        RAM:811500781568
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-        Cores:40
-        host:6.8.0-1041-nvidia
-        node:cl-worker19
-        disk:1489669
+        RAM:1077382688768
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1323595
         volume_size:50.0G
         volume_used:6.1G
-        cpu_list:0-39
+        cpu_list:0-255
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 2
-        RAM:810205974528
-        CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-        Cores:32
-        host:6.8.0-60-generic
-        node:cl-worker20
-        disk:591118
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:874582
         volume_size:50.0G
         volume_used:6.1G
-        cpu_list:0-31
+        cpu_list:0-223
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 3
-        RAM:1081649913856
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:321458
+        RAM:1081742745600
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:512320
         volume_size:50.0G
         volume_used:6.1G
-        cpu_list:0-55
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     eval_parameters
-        code:1764292636
+        code:1771317344
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
 Citus-BHT-128-1-3 uses docker image citusdata/citus:13.2.0-alpine
-    RAM:541008486400
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:421728
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:98900
     volume_size:50.0G
     volume_used:76.0M
     cpu_list:0-63
@@ -1067,61 +2360,61 @@ Citus-BHT-128-1-3 uses docker image citusdata/citus:13.2.0-alpine
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-153-generic
-        node:cl-worker17
-        disk:1671821
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:340869
         volume_size:50.0G
-        volume_used:12.9G
-        cpu_list:0-31
+        volume_used:13.4G
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 1
-        RAM:811500781568
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-        Cores:40
-        host:6.8.0-1041-nvidia
-        node:cl-worker19
-        disk:1489670
+        RAM:1077382688768
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1323599
         volume_size:50.0G
-        volume_used:8.1G
-        cpu_list:0-39
+        volume_used:10.1G
+        cpu_list:0-255
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 2
-        RAM:810205974528
-        CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-        Cores:32
-        host:6.8.0-60-generic
-        node:cl-worker20
-        disk:591118
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:874581
         volume_size:50.0G
-        volume_used:6.6G
-        cpu_list:0-31
+        volume_used:7.2G
+        cpu_list:0-223
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 3
-        RAM:1081649913856
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:321461
+        RAM:1081742745600
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:512310
         volume_size:50.0G
-        volume_used:8.3G
-        cpu_list:0-55
+        volume_used:7.9G
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     eval_parameters
-        code:1764292636
+        code:1771317344
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
 Citus-BHT-128-1-4 uses docker image citusdata/citus:13.2.0-alpine
-    RAM:541008486400
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:421728
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:98900
     volume_size:50.0G
     volume_used:76.0M
     cpu_list:0-63
@@ -1129,122 +2422,122 @@ Citus-BHT-128-1-4 uses docker image citusdata/citus:13.2.0-alpine
     requests_cpu:4
     requests_memory:16Gi
     worker 0
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-153-generic
-        node:cl-worker17
-        disk:1671831
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:387860
         volume_size:50.0G
-        volume_used:15.0G
-        cpu_list:0-31
+        volume_used:17.9G
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 1
-        RAM:811500781568
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-        Cores:40
-        host:6.8.0-1041-nvidia
-        node:cl-worker19
-        disk:1489663
+        RAM:1077382688768
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1323604
         volume_size:50.0G
-        volume_used:12.0G
-        cpu_list:0-39
+        volume_used:12.2G
+        cpu_list:0-255
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 2
-        RAM:810205974528
-        CPU:Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
-        Cores:32
-        host:6.8.0-60-generic
-        node:cl-worker20
-        disk:591118
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:874580
         volume_size:50.0G
-        volume_used:9.9G
-        cpu_list:0-31
+        volume_used:11.2G
+        cpu_list:0-223
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     worker 3
-        RAM:1081649913856
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-60-generic
-        node:cl-worker34
-        disk:321461
+        RAM:1081742745600
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:512311
         volume_size:50.0G
-        volume_used:12.0G
-        cpu_list:0-55
+        volume_used:12.7G
+        cpu_list:0-127
         args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
     eval_parameters
-        code:1764292636
+        code:1771317344
         BEXHOMA_REPLICAS:1
         BEXHOMA_SHARDS:48
         BEXHOMA_WORKERS:4
 
 ### Execution
-                   experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM       TPM  duration  errors
-Citus-BHT-128-1-1               1     128       1          1    610.24    1251.2         0.0  22048.0  50667.00        30       0
-Citus-BHT-128-1-2               1     128       2          2      0.00       0.0         0.0  19794.0  45450.00        30       0
-Citus-BHT-128-1-3               1     128       3          4      0.00       0.0         0.0  20452.5  47083.75        30       0
-Citus-BHT-128-1-4               1     128       4          8      0.00       0.0         0.0  20950.0  48245.50        30       0
+                   experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency      NOPM       TPM  duration  errors
+Citus-BHT-128-1-1               1     128       1          1    445.72    905.27         0.0  20846.00  47932.00        30       0
+Citus-BHT-128-1-2               1     128       2          2    454.03    948.90         0.0  29880.00  68688.00        30       0
+Citus-BHT-128-1-3               1     128       3          4      0.00      0.00         0.0  30871.25  71078.25        30       0
+Citus-BHT-128-1-4               1     128       4          8    429.93    890.60         0.0  33519.38  77090.75        30       0
 
 Warehouses: 128
 
 ### Workflow
 
 #### Actual
-DBMS Citus-BHT-128-1 - Pods [[8, 4, 2, 1]]
+DBMS Citus-BHT-128-1 - Pods [[1, 4, 8, 2]]
 
 #### Planned
 DBMS Citus-BHT-128-1 - Pods [[1, 2, 4, 8]]
 
 ### Loading
                    time_load  terminals  pods  Imported warehouses [1/h]
-Citus-BHT-128-1-1      537.0        1.0   1.0                 858.100559
-Citus-BHT-128-1-2      537.0        1.0   2.0                 858.100559
-Citus-BHT-128-1-3      537.0        1.0   4.0                 858.100559
-Citus-BHT-128-1-4      537.0        1.0   8.0                 858.100559
+Citus-BHT-128-1-1      446.0        1.0   1.0                1033.183857
+Citus-BHT-128-1-2      446.0        1.0   2.0                1033.183857
+Citus-BHT-128-1-3      446.0        1.0   4.0                1033.183857
+Citus-BHT-128-1-4      446.0        1.0   8.0                1033.183857
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-128-1-1     1243.72     4.94          0.98                 1.05
-Citus-BHT-128-1-2     1243.72     4.94          0.98                 1.05
-Citus-BHT-128-1-3     1243.72     4.94          0.98                 1.05
-Citus-BHT-128-1-4     1243.72     4.94          0.98                 1.05
+Citus-BHT-128-1-1     1077.52     4.65          0.99                 1.06
+Citus-BHT-128-1-2     1077.52     4.65          0.99                 1.06
+Citus-BHT-128-1-3     1077.52     4.65          0.99                 1.06
+Citus-BHT-128-1-4     1077.52     4.65          0.99                 1.06
 
 ### Loading phase: component worker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-128-1-1     1946.33     4.99         13.69                39.46
-Citus-BHT-128-1-2     1946.33     4.99         13.69                39.46
-Citus-BHT-128-1-3     1946.33     4.99         13.69                39.46
-Citus-BHT-128-1-4     1946.33     4.99         13.69                39.46
+Citus-BHT-128-1-1     1106.37     3.86          13.1                 39.1
+Citus-BHT-128-1-2     1106.37     3.86          13.1                 39.1
+Citus-BHT-128-1-3     1106.37     3.86          13.1                 39.1
+Citus-BHT-128-1-4     1106.37     3.86          13.1                 39.1
 
 ### Loading phase: component loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-128-1-1     3383.23    31.63           0.8                  0.8
-Citus-BHT-128-1-2     3383.23    31.63           0.8                  0.8
-Citus-BHT-128-1-3     3383.23    31.63           0.8                  0.8
-Citus-BHT-128-1-4     3383.23    31.63           0.8                  0.8
+Citus-BHT-128-1-1     3013.39    24.81           0.8                  0.8
+Citus-BHT-128-1-2     3013.39    24.81           0.8                  0.8
+Citus-BHT-128-1-3     3013.39    24.81           0.8                  0.8
+Citus-BHT-128-1-4     3013.39    24.81           0.8                  0.8
 
 ### Execution phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-128-1-1     1062.39     0.74          1.00                 1.07
-Citus-BHT-128-1-2     1093.99     0.89          1.00                 1.07
-Citus-BHT-128-1-3     1138.71     0.93          1.01                 1.07
-Citus-BHT-128-1-4     1248.77     1.32          1.02                 1.09
+Citus-BHT-128-1-1      739.12     0.55          1.00                 1.07
+Citus-BHT-128-1-2     1065.20     0.78          1.00                 1.07
+Citus-BHT-128-1-3     1101.19     0.76          1.01                 1.08
+Citus-BHT-128-1-4     1200.28     0.85          1.02                 1.09
 
 ### Execution phase: component worker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-128-1-1    14060.07     9.33         18.08                49.01
-Citus-BHT-128-1-2    12311.30     7.78         20.26                58.81
-Citus-BHT-128-1-3    12498.48     8.47         22.31                62.10
-Citus-BHT-128-1-4    12845.10     9.41         24.23                62.73
+Citus-BHT-128-1-1     8235.29     6.35         16.77                48.02
+Citus-BHT-128-1-2    11562.76     7.88         20.34                58.54
+Citus-BHT-128-1-3    12634.64     8.34         23.60                63.28
+Citus-BHT-128-1-4    13119.50     9.79         26.24                63.79
 
 ### Execution phase: component benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Citus-BHT-128-1-1      376.10     0.28          1.00                 1.01
-Citus-BHT-128-1-2      376.10     0.35          1.00                 1.01
-Citus-BHT-128-1-3      359.74     0.26          0.49                 0.49
-Citus-BHT-128-1-4      368.05     0.32          0.26                 0.27
+Citus-BHT-128-1-1      371.84     0.29          0.98                 0.98
+Citus-BHT-128-1-2      496.60     0.34          0.98                 0.98
+Citus-BHT-128-1-3      512.31     0.47          0.61                 0.61
+Citus-BHT-128-1-4      542.51     0.39          0.33                 0.34
 
 ### Tests
 TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

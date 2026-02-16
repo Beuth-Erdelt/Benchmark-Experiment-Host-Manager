@@ -1,10 +1,10 @@
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
     Type: ycsb
-    Duration: 1652s 
-    Code: 1759184964
+    Duration: 28473s 
+    Code: 1771364070
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -15,14 +15,14 @@ YCSB SF=3
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [2, 3].
-    Experiment uses bexhoma version 0.8.12.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
     Experiment is limited to DBMS ['MySQL'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker34.
+    SUT is fixed to cl-worker14.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1, 8] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -30,126 +30,141 @@ YCSB SF=3
 
 ### Connections
 MySQL-64-8-65536-1 uses docker image mysql:8.4.0
-    RAM:1081649909760
-    Cores:56
-    host:6.8.0-60-generic
-    node:cl-worker34
-    disk:330132120
-    datadisk:13797
-    cpu_list:0-55
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:141101
+    datadisk:42197
+    cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     limits_memory:64Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1759184964
+        code:1771364070
 MySQL-64-8-65536-2 uses docker image mysql:8.4.0
-    RAM:1081649909760
-    Cores:56
-    host:6.8.0-60-generic
-    node:cl-worker34
-    disk:333691036
-    datadisk:17272
-    cpu_list:0-55
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:144574
+    datadisk:45670
+    cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     limits_memory:64Gi
     client:2
     numExperiment:1
     eval_parameters
-        code:1759184964
+        code:1771364070
 MySQL-64-8-65536-3 uses docker image mysql:8.4.0
-    RAM:1081649909760
-    Cores:56
-    host:6.8.0-60-generic
-    node:cl-worker34
-    disk:337214248
-    datadisk:20712
-    cpu_list:0-55
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:148017
+    datadisk:49112
+    cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     limits_memory:64Gi
     client:3
     numExperiment:1
     eval_parameters
-        code:1759184964
+        code:1771364070
 MySQL-64-8-65536-4 uses docker image mysql:8.4.0
-    RAM:1081649909760
-    Cores:56
-    host:6.8.0-60-generic
-    node:cl-worker34
-    disk:340740564
-    datadisk:24155
-    cpu_list:0-55
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:151461
+    datadisk:52556
+    cpu_list:0-63
+    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     limits_memory:64Gi
     client:4
     numExperiment:1
     eval_parameters
-        code:1759184964
+        code:1771364070
 
 ### Loading
                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MySQL-64-8-65536               1       64   65536          8           0                   13541.835304               223043.0             3000000                             48147.0
+MySQL-64-8-65536               1       64   65536          8           0                     765.957097              3917747.0             3000000                            275903.0
 
 ### Execution
                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MySQL-64-8-65536-1               1       64   32768          1           0                       26399.39               113639.0           1499422                            1113.0             1500578                             34143.0
-MySQL-64-8-65536-2               1       64   32768          8           0                       28140.27               107557.0           1500696                            1037.0             1499304                             37279.0
-MySQL-64-8-65536-3               1       64   49152          1           0                       27472.78               109199.0           1499345                            1087.0             1500655                             34623.0
-MySQL-64-8-65536-4               1       64   49152          8           0                       27370.86               110089.0           1498488                            1035.0             1501512                             38367.0
+MySQL-64-8-65536-1               1       64   32768          1           0                         541.79              5537223.0           1500535                            1238.0             1499465                           3880959.0
+MySQL-64-8-65536-2               1       64   32768          8           0                         509.85              5917334.0           1499437                            1251.0             1500563                           4116479.0
+MySQL-64-8-65536-3               1       64   49152          1           0                         478.32              6271956.0           1499274                            1243.0             1500726                           4370431.0
+MySQL-64-8-65536-4               1       64   49152          8           0                         497.86              6045538.0           1500052                            1243.0             1499948                           4210687.0
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
+DBMS MySQL-64-8-65536 - Pods [[8, 8, 1, 1]]
 
 #### Planned
 DBMS MySQL-64-8-65536 - Pods [[1, 8, 1, 8]]
 
-### Ingestion - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-64-8-65536-1     1570.44     9.53         39.48                47.26
-MySQL-64-8-65536-2     1570.44     9.53         39.48                47.26
-MySQL-64-8-65536-3     1570.44     9.53         39.48                47.26
-MySQL-64-8-65536-4     1570.44     9.53         39.48                47.26
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: SUT deployment
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-64-8-65536-1      486.66     4.16          0.13                 0.13
-MySQL-64-8-65536-2      486.66     4.16          0.13                 0.13
-MySQL-64-8-65536-3      486.66     4.16          0.13                 0.13
-MySQL-64-8-65536-4      486.66     4.16          0.13                 0.13
+MySQL-64-8-65536-1     2384.11     0.83         25.65                35.75
+MySQL-64-8-65536-2     2384.11     0.83         25.65                35.75
+MySQL-64-8-65536-3     2384.11     0.83         25.65                35.75
+MySQL-64-8-65536-4     2384.11     0.83         25.65                35.75
 
-### Execution - SUT
+### Loading phase: component loader
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-64-8-65536-1     1002.30    10.11         39.60                50.53
-MySQL-64-8-65536-2      899.03     9.24         39.72                53.90
-MySQL-64-8-65536-3      902.48     9.80         39.84                57.32
-MySQL-64-8-65536-4      605.43     9.57         39.97                59.87
+MySQL-64-8-65536-1      745.51     0.32          0.13                 0.13
+MySQL-64-8-65536-2      745.51     0.32          0.13                 0.13
+MySQL-64-8-65536-3      745.51     0.32          0.13                 0.13
+MySQL-64-8-65536-4      745.51     0.32          0.13                 0.13
 
-### Execution - Benchmarker
+### Execution phase: SUT deployment
                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-64-8-65536-1      381.88     0.00          0.16                 0.16
-MySQL-64-8-65536-2      566.99     6.97          0.16                 0.16
-MySQL-64-8-65536-3      680.65     9.54          0.16                 0.17
-MySQL-64-8-65536-4      635.01    10.38          0.16                 0.17
+MySQL-64-8-65536-1     1573.97     0.33         25.83                40.31
+MySQL-64-8-65536-2     1583.82     0.30         25.98                44.84
+MySQL-64-8-65536-3     1584.30     0.29         26.14                49.38
+MySQL-64-8-65536-4     1575.57     0.31         26.28                53.90
+
+### Execution phase: component benchmarker
+                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MySQL-64-8-65536-1      579.61     0.14          0.16                 0.16
+MySQL-64-8-65536-2      579.61     0.33          0.15                 0.15
+MySQL-64-8-65536-3      647.48     0.16          0.16                 0.16
+MySQL-64-8-65536-4      590.32     0.33          0.15                 0.15
 
 ### Application Metrics
+
+#### Loading phase: SUT deployment
                     InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
-MySQL-64-8-65536-1                           1.0                  11009.87                    0.04                0.0                    0.0
-MySQL-64-8-65536-2                           1.0                  13654.49                    0.04                0.0                    0.0
-MySQL-64-8-65536-3                           0.0                  13937.51                    0.04                0.0                    0.0
-MySQL-64-8-65536-4                           0.0                  13042.39                    0.04                0.0                    0.0
+MySQL-64-8-65536-1                           1.0                    927.44                    0.04                0.0                    0.0
+MySQL-64-8-65536-2                           1.0                    927.44                    0.04                0.0                    0.0
+MySQL-64-8-65536-3                           1.0                    927.44                    0.04                0.0                    0.0
+MySQL-64-8-65536-4                           1.0                    927.44                    0.04                0.0                    0.0
+
+#### Execution phase: SUT deployment
+                    InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
+MySQL-64-8-65536-1                           1.0                    587.64                    0.04               0.00                    0.0
+MySQL-64-8-65536-2                           0.0                    555.33                    0.04               0.00                    0.0
+MySQL-64-8-65536-3                           0.0                    521.90                    0.04               0.17                    0.0
+MySQL-64-8-65536-4                           0.0                    539.26                    0.04               0.01                    0.0
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column

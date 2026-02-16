@@ -60,7 +60,7 @@ This
 
 doc_benchbase_run_postgresql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -201,7 +201,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 doc_hammerdb_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -326,7 +326,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
 
 doc_tpch_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -485,7 +485,7 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
 
 doc_tpcds_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=3
@@ -727,7 +727,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -943,7 +943,7 @@ This
 
 doc_benchbase_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -1082,7 +1082,7 @@ nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
 
 doc_hammerdb_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -1205,6 +1205,10 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log &
 ```
 
+doc_tpch_run_mysql_appmetrics.log
+```markdown
+## Show Summary
+```
 
 
 ### TPC-DS
@@ -1212,6 +1216,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
 Example:
 ```bash
 nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+  -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
@@ -1223,6 +1228,10 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log &
 ```
 
+doc_tpcds_run_mysql_appmetrics.log
+```markdown
+## Show Summary
+```
 
 
 
@@ -1250,7 +1259,7 @@ nohup python ycsb.py -ms 1 -tr -lr 64Gi \
 
 doc_ycsb_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3

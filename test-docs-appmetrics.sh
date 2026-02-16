@@ -18,7 +18,7 @@
 # Import functions from testfunctions.sh
 source ./testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -202,6 +202,7 @@ wait_process "tpch"
 
 #### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+  -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \

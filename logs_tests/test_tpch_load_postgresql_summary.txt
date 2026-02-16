@@ -1,4 +1,4 @@
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Data Loading SF=1
