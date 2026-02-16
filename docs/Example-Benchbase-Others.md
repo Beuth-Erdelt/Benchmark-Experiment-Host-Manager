@@ -1,4 +1,4 @@
-# Benchmark: Benchbase's Others
+﻿# Benchmark: Benchbase's Others
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -23,12 +23,12 @@ References:
 > The Twitter workload is inspired by the popular micro-blogging
 website. In order to provide a realistic benchmark, we obtained
 an anonymized snapshot of the Twitter social graph from August
-2009 that contains 51 million users and almost 2 billion “follows”
+2009 that contains 51 million users and almost 2 billion â€œfollowsâ€
 relationships [...]. We created a synthetic workload generator that
 is based on an approximation of the queries/transactions needed to
 support the application functionalities as we observe them by using the web site, along with information derived from a data set
 of 200,000 tweets. Although we do not claim that this is a precise
-representation of Twitter’s system, it still reflects its important characteristics, such as heavily skewed many-to-many relationships. [1]
+representation of Twitterâ€™s system, it still reflects its important characteristics, such as heavily skewed many-to-many relationships. [1]
 
 1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
 1. Image Benchbase Twitter Benchmark: https://github.com/cmu-db/benchbase/wiki/Twitter
@@ -84,7 +84,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_twitter_simple.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload twitter SF=16
@@ -186,7 +186,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_testcase_twitter_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload twitter SF=1600
@@ -438,7 +438,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_chbenchmark_simple.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload chbenchmark SF=10
@@ -539,7 +539,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_testcase_chbenchmark_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload chbenchmark SF=100
@@ -750,7 +750,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_c.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -870,7 +870,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_a.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -989,7 +989,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_b.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1113,7 +1113,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_d.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1216,7 +1216,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_e.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1315,7 +1315,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_f.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000

@@ -1,4 +1,4 @@
-# Example: MonetDB TPC-H@100
+﻿# Example: MonetDB TPC-H@100
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 

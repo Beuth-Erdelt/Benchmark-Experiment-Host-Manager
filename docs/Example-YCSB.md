@@ -1,4 +1,4 @@
-# Benchmark: YCSB
+﻿# Benchmark: YCSB
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -6,8 +6,8 @@ YCSB does allow scaling data generation and ingestion, and scaling the benchmark
 Scale-out can simulate distributed clients.
 It is not self-evident and sure, that scale-out and scale-up yield the same performance results [3].
 
-> The goal of the YCSB project is to develop a framework and common set of workloads for evaluating the performance of different “key-value” and “cloud” serving stores. [...]
-The workloads in the core package are a variation of the same basic application type. In this application, there is a table of records, each with F fields. Each record is identif ied by a primary key, which is a string like “user234123”. Each field is named field0, field1 and so on. The values of each field are a random string of ASCII characters of length L.
+> The goal of the YCSB project is to develop a framework and common set of workloads for evaluating the performance of different â€œkey-valueâ€ and â€œcloudâ€ serving stores. [...]
+The workloads in the core package are a variation of the same basic application type. In this application, there is a table of records, each with F fields. Each record is identif ied by a primary key, which is a string like â€œuser234123â€. Each field is named field0, field1 and so on. The values of each field are a random string of ASCII characters of length L.
 Each operation against the data store is randomly chosen to be one of:
 > * Insert: Insert a new record.
 > * Update: Update a record by replacing the value of one f ield. 
@@ -109,7 +109,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_testcase_loading.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -394,7 +394,7 @@ Each of the drivers has 64 threads and a target of twice or three times (`-ltf`)
 
 doc_ycsb_testcase_benchmarking.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -538,7 +538,7 @@ If monitoring is activated, the summary also contains a section like this:
 
 doc_ycsb_testcase_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -738,7 +738,7 @@ The result looks something like
 
 doc_ycsb_testcase_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -960,7 +960,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_a.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1097,7 +1097,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_b.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1234,7 +1234,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_c.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1380,7 +1380,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_d.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1504,7 +1504,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_e.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1622,7 +1622,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_f.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10

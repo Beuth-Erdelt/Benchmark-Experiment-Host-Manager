@@ -1,4 +1,4 @@
-# Monitoring
+﻿# Monitoring
 
 Monitoring refers to automatical observation of resource consumption of components.
 

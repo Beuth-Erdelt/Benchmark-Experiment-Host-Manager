@@ -1,4 +1,4 @@
-# Example: Benchmark YugabyteDB
+﻿# Example: Benchmark YugabyteDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 
@@ -179,7 +179,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_yugabytedb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -322,7 +322,7 @@ This skips loading (`-sl`), as data is already present in the database.
 
 doc_ycsb_yugabytedb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -464,7 +464,7 @@ This approach helps bexhoma to persist status information, but it does not persi
 
 doc_ycsb_yugabytedb_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -670,7 +670,7 @@ yields
 
 doc_benchbase_yugabytedb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16

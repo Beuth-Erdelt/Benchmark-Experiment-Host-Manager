@@ -1,4 +1,4 @@
-# Concepts
+﻿# Concepts
 
 An **experiment** is a benchmark of a DBMS in a certain **host setting** and a specific **benchmark setting**.
 
