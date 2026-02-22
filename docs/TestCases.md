@@ -1,4 +1,4 @@
-﻿# Test Cases
+# Test Cases
 
 There is a variety of combinations of options that can be tested.
 
@@ -47,7 +47,7 @@ yields (after ca. 10 minutes) something like
 
 test_tpch_testcase_postgresql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -180,7 +180,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_postgresql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -335,7 +335,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_postgresql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -588,7 +588,7 @@ yields (after ca. 15 minutes) something like
 
 doc_tpch_testcase_ramdisk.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -746,7 +746,7 @@ yields (after ca. 10 minutes) something like
 
 test_tpch_testcase_mysql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -878,7 +878,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mysql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1031,7 +1031,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mysql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1432,7 +1432,7 @@ yields (after ca. 10 minutes) something like
 
 test_tpch_testcase_mariadb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1561,7 +1561,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mariadb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1715,7 +1715,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpch_testcase_mariadb_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1975,7 +1975,7 @@ yields (after ca. 15 minutes) something like
 
 doc_tpch_testcase_mariadb_ramdisk.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -2141,7 +2141,7 @@ yields (after ca. 10 minutes) something like
 
 test_tpcds_testcase_postgresql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -2347,7 +2347,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpcds_testcase_postgresql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=10
@@ -2585,7 +2585,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpcds_testcase_postgresql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=10
@@ -2939,7 +2939,7 @@ yields (after ca. 10 minutes) something like
 
 test_tpcds_testcase_mysql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -3144,7 +3144,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpcds_testcase_mysql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=10
@@ -3374,7 +3374,7 @@ yields (after ca. 15 minutes) something like
 
 test_tpcds_testcase_mysql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=10
@@ -3700,7 +3700,7 @@ yields (after ca. 10 minutes) something like
 
 test_tpcds_testcase_mariadb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -4334,7 +4334,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_postgresql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -4423,7 +4423,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_postgresql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -4526,7 +4526,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_postgresql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -4629,7 +4629,7 @@ yields (after ca. 30 minutes) something like
 
 test_benchbase_testcase_postgresql_4.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -4875,7 +4875,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mysql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -4973,7 +4973,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mysql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -5074,7 +5074,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mysql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -5176,7 +5176,7 @@ yields (after ca. 30 minutes) something like
 
 test_benchbase_testcase_mysql_4.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -5414,7 +5414,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mariadb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -5512,7 +5512,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mariadb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -5615,7 +5615,7 @@ yields (after ca. 10 minutes) something like
 
 test_benchbase_testcase_mariadb_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -5718,7 +5718,7 @@ yields (after ca. 30 minutes) something like
 
 test_benchbase_testcase_mariadb_4.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload SF=16
@@ -5970,7 +5970,7 @@ yields (after ca. 10 minutes)
 
 test_hammerdb_testcase_postgresql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6052,7 +6052,7 @@ yields (after ca. 15 minutes)
 
 test_hammerdb_testcase_postgresql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6147,7 +6147,7 @@ yields (after ca. 60 minutes)
 
 test_hammerdb_testcase_postgresql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6372,7 +6372,7 @@ yields (after ca. 10 minutes)
 
 test_hammerdb_testcase_mysql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6453,7 +6453,7 @@ yields (after ca. 15 minutes)
 
 test_hammerdb_testcase_mysql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6557,7 +6557,7 @@ yields (after ca. 60 minutes)
 
 test_hammerdb_testcase_mysql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6773,7 +6773,7 @@ yields (after ca. 10 minutes)
 
 test_hammerdb_testcase_mariadb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6857,7 +6857,7 @@ yields (after ca. 15 minutes)
 
 test_hammerdb_testcase_mariadb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -6962,7 +6962,7 @@ yields (after ca. 60 minutes)
 
 test_hammerdb_testcase_mariadb_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -7203,7 +7203,7 @@ yields (after ca. 15 minutes) something like
 
 test_ycsb_testcase_postgresql_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -7295,7 +7295,7 @@ yields (after ca. 10 minutes) something like
 
 test_ycsb_testcase_postgresql_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -7408,7 +7408,7 @@ yields (after ca. 15 minutes) something like
 
 test_ycsb_testcase_postgresql_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -7618,7 +7618,7 @@ yields (after ca. 5 minutes) something like
 
 test_ycsb_testcase_postgresql_4.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -7709,7 +7709,7 @@ yields (after ca. 10 minutes) something like
 
 test_ycsb_testcase_postgresql_5.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -7803,5 +7803,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 TEST passed: Result contains no FAILED column
 ```
+
+
 
 

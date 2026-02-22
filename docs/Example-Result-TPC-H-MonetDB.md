@@ -1,4 +1,4 @@
-﻿# Example: MonetDB TPC-H@100
+# Example: MonetDB TPC-H@100
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -751,4 +751,6 @@ TEST passed: Workflow as planned
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
+
+
 

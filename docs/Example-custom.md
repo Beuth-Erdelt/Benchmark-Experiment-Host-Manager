@@ -1,4 +1,4 @@
-﻿# Example: Run a custom SQL workload
+# Example: Run a custom SQL workload
 
 This example assumes you have
 * a DBMS installed outside of bexhoma
@@ -187,3 +187,5 @@ Dummy-BHT-1-1-1-18
   time_start:1691160821
   time_end:1691160823
 ```
+
+

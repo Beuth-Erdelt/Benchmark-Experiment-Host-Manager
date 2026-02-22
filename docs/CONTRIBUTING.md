@@ -1,4 +1,4 @@
-﻿# Contributing to Bexhoma
+# Contributing to Bexhoma
 
 You would like to contribute? Great!
 
@@ -43,3 +43,4 @@ Likewise for any enhancement or bug fix, we require including an additional test
 
 The file https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh includes some demo tests.
 For new or important features, we are happy to include a "TEST Passed" or "TEST failed" scenario.
+

@@ -1,4 +1,4 @@
-﻿# Example: Benchmark CockroachDB
+# Example: Benchmark CockroachDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -121,7 +121,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_cockroachdb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -330,7 +330,7 @@ The result looks something like
 
 doc_ycsb_cockroachdb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -539,7 +539,7 @@ The result looks something like
 
 doc_ycsb_cockroachdb_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -748,7 +748,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_cockroachdb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -921,7 +921,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_cockroachdb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1256,7 +1256,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_cockroachdb_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1570,4 +1570,6 @@ TEST passed: Workflow as planned
 ### Benchbase Example Explained
 
 The setup is the same as for YCSB (see above).
+
+
 

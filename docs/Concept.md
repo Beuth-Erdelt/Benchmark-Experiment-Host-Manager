@@ -1,4 +1,4 @@
-﻿# Concepts
+# Concepts
 
 An **experiment** is a benchmark of a DBMS in a certain **host setting** and a specific **benchmark setting**.
 
@@ -72,3 +72,5 @@ If you use Bexhoma in work contributing to a scientific publication, we kindly a
 > In: Nambiar, R., Poess, M. (eds) Performance Evaluation and Benchmarking. TPCTC 2023.
 > Lecture Notes in Computer Science, vol 14247. Springer, Cham.
 > https://doi.org/10.1007/978-3-031-68031-1_9
+
+

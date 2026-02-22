@@ -1,4 +1,4 @@
-﻿# Deployments in Kubernetes
+# Deployments in Kubernetes
 
 The deployment is expected to be given as a file named `'deployment-'+docker+'-'+instance+'.yml'`
 Such files are generated from a template.
@@ -82,3 +82,5 @@ cluster.set_resources(
 ```
 
 For further information and option see the [documentation](API.html#set-resources).
+
+

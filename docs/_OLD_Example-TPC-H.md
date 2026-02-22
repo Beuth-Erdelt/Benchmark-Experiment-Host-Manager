@@ -1,4 +1,4 @@
-﻿# Example: TPC-H
+# Example: TPC-H
 
 This example shows how to benchmark 22 reading queries Q1-Q22 derived from TPC-H in MonetDB and PostgreSQL.
 
@@ -116,4 +116,6 @@ cpu_type = str(args.request_cpu_type)
 ## Evaluate Results in Dashboard
 
 Evaluation is done using DBMSBenchmarker: https://github.com/Beuth-Erdelt/DBMS-Benchmarker/blob/master/docs/Dashboard.html
+
+
 

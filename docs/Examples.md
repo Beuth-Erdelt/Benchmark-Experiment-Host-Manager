@@ -1,4 +1,4 @@
-﻿# Basic examples
+# Basic examples
 
 ## Files
 
@@ -138,5 +138,7 @@ cluster.runExperiment(volume='tpch', docker='OmniSci', script='1shard-SF1', inst
 cluster.runExperiment(volume='tpch', docker='OmniSci', script='1shard-SF1', instance='4xK80')
 cluster.runExperiment(volume='tpch', docker='OmniSci', script='1shard-SF1', instance='8xK80')
 ```
+
+
 
 

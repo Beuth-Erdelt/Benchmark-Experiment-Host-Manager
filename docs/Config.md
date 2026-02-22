@@ -1,4 +1,4 @@
-﻿# Cluster-Config
+# Cluster-Config
 
 The configuration of the cluster, that is the possible host and experiment settings, is set in a file `cluster.config` and consists of these parts (see also [example](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) config file):
 
@@ -102,5 +102,7 @@ The examples scripts above (like `initdata-tpch-SF1.sql` for example) refer to `
 
 Database systems are described in the `docker` section.
 Please see [DBMS section](https://bexhoma.readthedocs.io/en/latest/DBMS.html) for more informations.
+
+
 
 

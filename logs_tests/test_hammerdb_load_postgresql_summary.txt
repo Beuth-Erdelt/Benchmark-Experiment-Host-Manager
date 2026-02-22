@@ -51,3 +51,5 @@ PostgreSQL-BHT-1-1-1       11.94        0          0.02                 0.02
 ### Tests
 TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+
+

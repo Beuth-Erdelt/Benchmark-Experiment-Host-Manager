@@ -1,4 +1,4 @@
-﻿# Monitoring
+# Monitoring
 
 Monitoring refers to automatical observation of resource consumption of components.
 
@@ -270,3 +270,5 @@ It automatically contains data about all databases in the system.
     },
 },
 ```
+
+

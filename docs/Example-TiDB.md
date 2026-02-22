@@ -1,4 +1,4 @@
-﻿# Example: Benchmark TiDB
+# Example: Benchmark TiDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 TiDB is a disaggregated DBMS.
@@ -120,7 +120,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_tidb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -407,7 +407,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_tidb_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -686,3 +686,5 @@ TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
+
+

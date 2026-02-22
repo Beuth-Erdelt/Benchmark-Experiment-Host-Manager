@@ -1,4 +1,4 @@
-﻿# Example: Benchmark PGBouncer
+# Example: Benchmark PGBouncer
 
 This differs from the default behaviour of bexhoma, since we benchmark a DBMS **with a pooling component, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -113,7 +113,7 @@ At the end of a benchmark you will see a summary like
 
 test_ycsb_testcase_pgbouncer_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=16
@@ -289,7 +289,7 @@ The result looks something like
 
 test_ycsb_testcase_pgbouncer_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=16
@@ -501,7 +501,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_testcase_newconn.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -617,7 +617,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_testcase_newconn_pool.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -703,4 +703,6 @@ pgb-1-2-32-32-2      172.0        1.0   2.0         334.883721
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
+
+
 

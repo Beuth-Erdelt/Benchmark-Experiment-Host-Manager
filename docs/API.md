@@ -1,4 +1,4 @@
-﻿# API Details
+# API Details
 
 This document contains API details about methods for **parameters**
 * [`set_code()`](#set-code)
@@ -445,3 +445,5 @@ workflow = experiments.workflow(clusterconfig='cluster.config', code=code)
 workflow.runWorkflow()
 workflow.cluster.runReporting()
 ```
+
+

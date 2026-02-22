@@ -1,4 +1,4 @@
-﻿# Benchmark: Benchbase's TPC-C
+# Benchmark: Benchbase's TPC-C
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -102,7 +102,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -353,7 +353,7 @@ The result looks something like
 
 doc_benchbase_testcase_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -515,7 +515,7 @@ The result looks something like
 
 doc_benchbase_testcase_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -646,7 +646,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_testcase_keytime.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=160
@@ -846,3 +846,4 @@ Now also efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/secon
 * 12.86 is the theoretical limit in the TPC-C speficications
 
 Note that these are statistical values.
+
