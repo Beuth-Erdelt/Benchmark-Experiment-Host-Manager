@@ -8,7 +8,7 @@ TiDB is a disaggregated DBMS.
 TiDB offers several installation methods, including an operator [1].
 We here rely on a [manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-TiDB.yml) for a version that is suitable for bexhoma.
 TiDB clusters consist of three core components: TiDB, PD (Placement Driver), and TiKV.
-Unlike traditional databases, TiDB does not require a single coordinator nodeâ€”PD handles cluster metadata management and scheduling.
+Unlike traditional databases, TiDB does not require a single coordinator node - PD handles cluster metadata management and scheduling.
 In Bexhoma, TiDB pods are deployed as a Deployment, PD as a StatefulSet, and TiKV as another StatefulSet to ensure stable identities and persistent storage.
 A Kubernetes Service exposes TiDB for external communication within the cluster, while headless Services enable internal discovery and communication between PD and TiKV pods.
 
