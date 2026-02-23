@@ -953,6 +953,24 @@ scrape_configs:
       - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
+                        working_example_of_service_discovery_prometheus_config = ""
+                        working_example_of_service_discovery_prometheus_config += """
+  - job_name: 'bexhoma-postgres'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["perdelt"]
+    relabel_configs:
+      # Only keep pods whose name matches pattern
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_name]
+        regex: bexhoma-sut-postgresql-1-1-1024-.*
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:9187'
+        action: replace
+"""
                         if self.monitor_app_active:
                             if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery']:
                                 prometheus_config += """
