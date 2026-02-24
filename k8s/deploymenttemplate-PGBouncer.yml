@@ -69,11 +69,21 @@ spec:
         - name: DB_PORT
           value: "9092"
         - name: AUTH_TYPE
-          value: trust #scram-sha-256 #trust #md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
+          value: trust # trust #scram-sha-256 #trust #md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
         - name: POOL_MODE
           value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
           value: postgres
+        #- name: STATS_USERS
+        #  value: postgres
+        #- name: PGBOUNCER_USERLIST
+        #  value: |
+        #    "postgres" ""
+        #  # "postgres" "md53175bce1d3201d16594cebf9d7eb3f9d"
+        #  # "pgbouncer_user" "md5ba183d8c6c6317fb447602eb1aa144f7"
+        #  # md5 hash of password+username
+        #  # echo -n "1234pgbouncer_user" | md5sum
+        #  # ba183d8c6c6317fb447602eb1aa144f7
         - name: DEFAULT_POOL_SIZE
           value: "32"
         - name: MIN_POOL_SIZE
@@ -106,6 +116,13 @@ spec:
         #  limits: {cpu: 16000m, memory: 128Gi}
         #  requests: {cpu: 4000m, memory: 4Gi}
         #  #, ephemeral-storage: "1536Gi"}
+      - name: pgbouncer-exporter
+        image: quay.io/prometheuscommunity/pgbouncer-exporter:latest
+        args:
+          - "--pgBouncer.connectionString=localhost:5432/pgbouncer?sslmode=disable"
+        ports:
+        - containerPort: 9127
+          name: metrics
 ---
 apiVersion: v1
 kind: Service
@@ -151,6 +168,8 @@ spec:
           value: /var/lib/postgresql/data/pgdata
         - name: PGPORT
           value: "5432" # remove/comment this line for default ports
+        #- name: POSTGRES_PASSWORD
+        #  value: postgres
         # pg_ctl: cannot be run as root
         lifecycle:
           #postStart:
@@ -255,6 +274,7 @@ spec:
           #  value: "postgresql://user:password@/postgres?host=/var/run/postgresql"
         ports:
           - containerPort: 9187
+            name: metrics
         resources:
           requests: {cpu: 1000m, memory: 4Gi}
           limits: {cpu: 1000m, memory: 4Gi}

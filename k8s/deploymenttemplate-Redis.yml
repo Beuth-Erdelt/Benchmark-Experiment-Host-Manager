@@ -45,13 +45,14 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: redis:7.4.2
+        image: redis:8.6.1 #7.4.2
         args: ["--maxclients", "10000", "--io-threads", "64"]
         env:
           - name: MASTER
             value: "true"
         ports:
           - containerPort: 6379
+            name: server
         readinessProbe:
           exec:
             command:
@@ -85,6 +86,14 @@ spec:
         volumeMounts:
         #- {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /data, name: benchmark-storage-volume}
+      - name: monitor-application
+        image: oliver006/redis_exporter:latest
+        args:
+          - "--redis.addr=redis://localhost:6379"
+          - "--is-cluster=1"
+        ports:
+          - containerPort: 9121
+            name: metrics
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
