@@ -144,5 +144,3 @@ CockroachDB-1-1-1024-2      168.0        1.0   2.0         342.857143
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
-
-

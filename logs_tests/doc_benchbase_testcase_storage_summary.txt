@@ -90,5 +90,3 @@ PostgreSQL-1-1-1024-2-1      626.0        1.0   1.0           92.01278
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
-
-

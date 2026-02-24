@@ -1835,6 +1835,133 @@ nohup python ycsb.py -ms 1 -tr \
 doc_ycsb_run_cockroachdb_appmetrics.log
 ```markdown
 ## Show Summary
+
+### Workload
+YCSB SF=10
+    Type: ycsb
+    Duration: 1978s 
+    Code: 1771954541
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 10000000.
+    Ordering of inserts is hashed.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [4].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['CockroachDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:99653
+    cpu_list:0-63
+    args:['-c', 'while true; do echo hello; sleep 10;done']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    worker 0
+        RAM:2164173176832
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1037682
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-223
+    worker 1
+        RAM:1081649827840
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:196185
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-55
+    worker 2
+        RAM:1081742741504
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:610872
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-127
+    eval_parameters
+        code:1771954541
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+
+### Loading
+                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+CockroachDB-64-8-65536               1       64   65536          8           0                   16773.885849               597276.0            10000000                              9675.0
+
+### Execution
+                          experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+CockroachDB-64-8-65536-1               1       64   65536          1           0                       14302.53               699177.0           4998839                            5623.0             5001161                            122623.0
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-64-8-65536 - Pods [[1]]
+
+#### Planned
+DBMS CockroachDB-64-8-65536 - Pods [[1]]
+
+### Monitoring
+
+### Loading phase: component worker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1    16761.16     31.0         20.92                58.79
+
+### Loading phase: component loader
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      745.64     1.64          0.11                 0.11
+
+### Execution phase: component worker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1    18851.82    30.87         23.19                 63.8
+
+### Execution phase: component benchmarker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      602.98     0.92          0.13                 0.13
+
+### Application Metrics
+
+#### Loading phase: component worker
+                          Raft Messages Received (AppResp) [msgs/s]  Raft Network In (Bytes/sec)  Raft Recovery Snapshot In (Bytes/sec)  Replicate Queue Adds Attempted [adds/s]  Replicate Queue Purgatory Count
+CockroachDB-64-8-65536-1                                   58510.88                  47747884.41                                    0.0                                      0.0                              0.0
+
+#### Execution phase: component worker
+                          Raft Messages Received (AppResp) [msgs/s]  Raft Network In (Bytes/sec)  Raft Recovery Snapshot In (Bytes/sec)  Replicate Queue Adds Attempted [adds/s]  Replicate Queue Purgatory Count
+CockroachDB-64-8-65536-1                                   21050.24                  14144523.39                                    0.0                                      0.0                              0.0
+
+### Tests
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
@@ -1871,6 +1998,157 @@ nohup python ycsb.py -tr \
 doc_ycsb_run_redis_appmetrics.log
 ```markdown
 ## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 602s 
+    Code: 1771952254
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 10000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [12].
+    Factors for benchmarking are [4].
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['Redis'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [128] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+Redis-64-8-196608-1 uses docker image redis:7.4.2
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:99653
+    cpu_list:0-63
+    args:['--maxclients', '10000', '--io-threads', '64']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    worker 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1026253
+        cpu_list:0-223
+    worker 1
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:185464
+        cpu_list:0-55
+    worker 2
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:600112
+        cpu_list:0-127
+    worker 3
+        RAM:540492902400
+        CPU:Intel(R) Xeon(R) Gold 6430
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker38
+        disk:284861
+        cpu_list:0-127
+    worker 4
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:367112
+        cpu_list:0-127
+    worker 5
+        RAM:1077382688768
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1222333
+        cpu_list:0-255
+    worker 6
+        node:cl-worker37
+    eval_parameters
+        code:1771952254
+        BEXHOMA_REPLICAS:1
+        BEXHOMA_WORKERS:3
+
+### Loading
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+Redis-64-8-196608               1       64  196608          8           0                   26996.063231                37317.0             1000000                              4668.5
+
+### Execution
+                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+Redis-64-8-196608-1               1      128   65536          1           0                       60705.03               164731.0           5000370                            3187.0             4999630                              3187.0
+
+### Workflow
+
+#### Actual
+DBMS Redis-64-8-196608 - Pods [[1]]
+
+#### Planned
+DBMS Redis-64-8-196608 - Pods [[1]]
+
+### Monitoring
+
+### Loading phase: component worker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1      170.94      2.3          3.52                 3.53
+
+### Loading phase: component loader
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1        7.24        0          0.12                 0.12
+
+### Execution phase: component worker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1      478.44     3.77          3.61                 3.61
+
+### Execution phase: component benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1       655.5     4.85           0.3                  0.3
+
+### Application Metrics
+
+#### Loading phase: component worker
+                     Redis Cluster State  Connected Clients [count]  Redis Memory Used [Gi]  Redis Master Link Status  Redis Operations Rate [ops/s]
+Redis-64-8-196608-1                  6.0                      201.0                    3.46                       3.0                        6191.34
+
+#### Execution phase: component worker
+                     Redis Cluster State  Connected Clients [count]  Redis Memory Used [Gi]  Redis Master Link Status  Redis Operations Rate [ops/s]
+Redis-64-8-196608-1                  6.0                      393.0                    3.49                       3.0                        7755.43
+
+### Tests
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
@@ -1911,6 +2189,211 @@ nohup python ycsb.py -ms 1 -tr \
 doc_ycsb_run_tidb_appmetrics.log
 ```markdown
 ## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 725s 
+    Code: 1771951481
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['TiDB'].
+    Import is handled by 8 processes (pods).
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
+    RAM:1081853952000
+    CPU:Intel(R) Xeon(R) Gold 6438Y+
+    Cores:128
+    host:6.8.0-90-generic
+    node:cl-worker37
+    disk:418862
+    cpu_list:0-127
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    sut 0
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:418862
+        cpu_list:0-127
+    sut 1
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1046969
+        cpu_list:0-223
+    sut 2
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:192279
+        cpu_list:0-55
+    pd 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1046968
+        cpu_list:0-223
+    pd 1
+        RAM:540492902400
+        CPU:Intel(R) Xeon(R) Gold 6430
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker38
+        disk:284264
+        cpu_list:0-127
+    pd 2
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:599516
+        cpu_list:0-127
+    tikv 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1046968
+        cpu_list:0-223
+    tikv 1
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:418862
+        cpu_list:0-127
+    tikv 2
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:192279
+        cpu_list:0-55
+    eval_parameters
+        code:1771951481
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+
+### Loading
+                 experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+TiDB-64-8-16384               1       64   16384          8           0                   15324.080341                65996.0             1000000                              8323.0
+
+### Execution
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+TiDB-64-8-16384-1               1       64   16384          1           0                       11405.63                87676.0            500097                            2869.0              499903                            176639.0
+
+### Workflow
+
+#### Actual
+DBMS TiDB-64-8-16384 - Pods [[1]]
+
+#### Planned
+DBMS TiDB-64-8-16384 - Pods [[1]]
+
+### Monitoring
+
+### Loading phase: SUT deployment
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1      824.01     9.14          1.96                 2.84
+
+### Loading phase: component pd
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       65.48     0.66          0.27                 0.27
+
+### Loading phase: component tikv
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       411.0     3.95          5.36                15.44
+
+### Loading phase: component loader
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       39.43        0          0.11                 0.12
+
+### Execution phase: SUT deployment
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       465.5     7.85          1.22                  2.1
+
+### Execution phase: component pd
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       34.91     0.49          0.27                 0.27
+
+### Execution phase: component tikv
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1      278.49     4.35          6.52                18.15
+
+### Execution phase: component benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       34.94        0          0.14                 0.14
+
+### Application Metrics
+
+#### Loading phase: SUT deployment
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+
+#### Loading phase: component pd
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+
+#### Loading phase: component tikv
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+
+#### Execution phase: SUT deployment
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+
+#### Execution phase: component pd
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+
+#### Execution phase: component tikv
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+
+### Tests
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 

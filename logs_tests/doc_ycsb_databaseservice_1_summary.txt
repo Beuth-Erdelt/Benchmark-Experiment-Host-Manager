@@ -65,5 +65,3 @@ TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
 TEST passed: Execution Phase: contains no FAILED column
-
-

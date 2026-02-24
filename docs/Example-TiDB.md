@@ -120,7 +120,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_tidb_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -407,7 +407,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_tidb_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16

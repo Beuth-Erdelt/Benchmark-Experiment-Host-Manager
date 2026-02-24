@@ -113,5 +113,3 @@ TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned
 TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
-
-

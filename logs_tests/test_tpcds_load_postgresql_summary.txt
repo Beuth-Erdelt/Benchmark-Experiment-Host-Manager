@@ -41,5 +41,3 @@ PostgreSQL-BHT-1-1 uses docker image postgres:16.1
 PostgreSQL-BHT-1-1           0.0            0.0         1.0        1.0       3.0
 
 ### Tests
-
-

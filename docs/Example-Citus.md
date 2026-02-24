@@ -116,7 +116,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -331,7 +331,7 @@ The result looks something like
 
 doc_ycsb_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -613,7 +613,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_citus_1.log
 ```markdown
-﻿
+
 ```
 
 ### Benchbase More Complex
@@ -654,7 +654,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_citus_2.log
 ```markdown
-﻿
+
 ```
 
 
@@ -705,7 +705,7 @@ nohup python benchbase.py -ms 1 -tr \
 
 doc_benchbase_citus_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1400,7 +1400,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 doc_hammerdb_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -1517,7 +1517,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 doc_hammerdb_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=128 (warehouses for TPC-C)
@@ -1938,7 +1938,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 doc_hammerdb_citus_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=500 (warehouses for TPC-C)
@@ -2620,7 +2620,7 @@ nohup python tpch.py -ms 1 -tr \
 
 test_tpch_testcase_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -2807,7 +2807,7 @@ nohup python tpch.py -ms 1 -tr \
 
 test_tpch_testcase_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -3236,7 +3236,7 @@ nohup python tpch.py -ms 1 -tr \
 
 test_tpch_testcase_citus_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10

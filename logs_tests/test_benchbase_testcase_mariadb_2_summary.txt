@@ -76,5 +76,3 @@ MariaDB-1-1-1024-2-1      471.0        1.0   1.0         122.292994
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
-
-

@@ -91,5 +91,3 @@ TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 TEST passed: Result contains no FAILED column
-
-

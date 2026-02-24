@@ -100,5 +100,3 @@ TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
-
-

@@ -119,5 +119,3 @@ TEST passed: Execution phase: component yb-tserver contains no 0 or NaN in CPU [
 TEST passed: Execution phase: component yb-master contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-
-

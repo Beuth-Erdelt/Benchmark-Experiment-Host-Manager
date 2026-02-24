@@ -117,5 +117,3 @@ TEST passed: No SQL warnings
 TEST passed: Workflow as planned
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-
-

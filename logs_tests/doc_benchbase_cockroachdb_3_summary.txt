@@ -305,5 +305,3 @@ TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 TEST failed: Execution phase: component worker contains 0 or NaN in CPU [CPUs]
 TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-
-

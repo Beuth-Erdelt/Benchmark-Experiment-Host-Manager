@@ -83,5 +83,3 @@ pgb-1-2-32-32-2      172.0        1.0   2.0         334.883721
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
-
-

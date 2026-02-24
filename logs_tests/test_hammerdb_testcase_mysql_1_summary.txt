@@ -54,5 +54,3 @@ MySQL-BHT-8-1-1      375.0        1.0   1.0                      153.6
 ### Tests
 TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
-
-

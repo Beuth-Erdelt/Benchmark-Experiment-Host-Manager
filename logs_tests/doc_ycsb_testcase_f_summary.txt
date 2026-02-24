@@ -109,5 +109,3 @@ TEST failed: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs]
 TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 TEST passed: Execution Phase: contains no FAILED column
-
-

@@ -1,0 +1,206 @@
+## Show Summary
+
+### Workload
+YCSB SF=1
+    Type: ycsb
+    Duration: 725s 
+    Code: 1771951481
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'A'.
+    Number of rows to insert is 1000000.
+    Ordering of inserts is hashed.
+    Number of operations is 1000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [1].
+    Factors for benchmarking are [1].
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['TiDB'].
+    Import is handled by 8 processes (pods).
+    Loading is tested with [64] threads, split into [8] pods.
+    Benchmarking is tested with [64] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
+    RAM:1081853952000
+    CPU:Intel(R) Xeon(R) Gold 6438Y+
+    Cores:128
+    host:6.8.0-90-generic
+    node:cl-worker37
+    disk:418862
+    cpu_list:0-127
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    sut 0
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:418862
+        cpu_list:0-127
+    sut 1
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1046969
+        cpu_list:0-223
+    sut 2
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:192279
+        cpu_list:0-55
+    pd 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1046968
+        cpu_list:0-223
+    pd 1
+        RAM:540492902400
+        CPU:Intel(R) Xeon(R) Gold 6430
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker38
+        disk:284264
+        cpu_list:0-127
+    pd 2
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:599516
+        cpu_list:0-127
+    tikv 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1046968
+        cpu_list:0-223
+    tikv 1
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:418862
+        cpu_list:0-127
+    tikv 2
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:192279
+        cpu_list:0-55
+    eval_parameters
+        code:1771951481
+        BEXHOMA_REPLICAS:3
+        BEXHOMA_WORKERS:3
+
+### Loading
+                 experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+TiDB-64-8-16384               1       64   16384          8           0                   15324.080341                65996.0             1000000                              8323.0
+
+### Execution
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
+TiDB-64-8-16384-1               1       64   16384          1           0                       11405.63                87676.0            500097                            2869.0              499903                            176639.0
+
+### Workflow
+
+#### Actual
+DBMS TiDB-64-8-16384 - Pods [[1]]
+
+#### Planned
+DBMS TiDB-64-8-16384 - Pods [[1]]
+
+### Monitoring
+
+### Loading phase: SUT deployment
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1      824.01     9.14          1.96                 2.84
+
+### Loading phase: component pd
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       65.48     0.66          0.27                 0.27
+
+### Loading phase: component tikv
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       411.0     3.95          5.36                15.44
+
+### Loading phase: component loader
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       39.43        0          0.11                 0.12
+
+### Execution phase: SUT deployment
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       465.5     7.85          1.22                  2.1
+
+### Execution phase: component pd
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       34.91     0.49          0.27                 0.27
+
+### Execution phase: component tikv
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1      278.49     4.35          6.52                18.15
+
+### Execution phase: component benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-64-8-16384-1       34.94        0          0.14                 0.14
+
+### Application Metrics
+
+#### Loading phase: SUT deployment
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+
+#### Loading phase: component pd
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+
+#### Loading phase: component tikv
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+
+#### Execution phase: SUT deployment
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+
+#### Execution phase: component pd
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+
+#### Execution phase: component tikv
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+
+### Tests
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column

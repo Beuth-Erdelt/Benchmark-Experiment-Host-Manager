@@ -36,5 +36,3 @@ PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
 
 ### Tests
 TEST passed: Result contains no FAILED column
-
-
