@@ -972,35 +972,8 @@ scrape_configs:
         action: replace
 """
                         if self.monitor_app_active:
-                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery']:
-                                prometheus_config += """
-  - job_name: 'pgbouncer-pods'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_interval}
-    metrics_path: /metrics
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only select pods by labels
-      - source_labels: [__meta_kubernetes_pod_label_app,
-                        __meta_kubernetes_pod_label_component,
-                        __meta_kubernetes_pod_label_dbms]
-        regex: bexhoma;pool;PGBouncer
-        action: keep
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:9127'
-        action: replace
-      # Optional: rename instance label to pod name
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: instance
-      # Optional: drop pods that are not running
-      - source_labels: [__meta_kubernetes_pod_phase]
-        regex: Running
-        action: keep""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery'] and 'discovery_config' in self.dockertemplate['monitor'] and len(self.dockertemplate['monitor']['discovery_config']) > 0:
+                                prometheus_config += self.dockertemplate['monitor']['discovery_config'].format(namespace=self.experiment.namespace, master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                                 prometheus_config_redis = ""
                                 prometheus_config_redis += """
   - job_name: 'redis-pods'

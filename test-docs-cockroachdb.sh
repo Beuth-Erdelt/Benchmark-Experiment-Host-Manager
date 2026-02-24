@@ -121,7 +121,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  -m -mc -ma \
+  -m -mc \
   run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_3.log &
 
 

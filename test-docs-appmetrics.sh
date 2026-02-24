@@ -233,6 +233,93 @@ wait_process "hammerdb"
 
 
 
+####################################################
+######### CockroachDB Application Metrics ##########
+####################################################
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
+
+
+
+
+
+####################################################
+############ Redis Application Metrics #############
+####################################################
+
+
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 1 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
+
+
+
+
+
+####################################################
+############# TiDB Application Metrics #############
+####################################################
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  --workload a \
+  -dbms TiDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log &
+
+
+wait_process "ycsb"
+
+
 
 
 

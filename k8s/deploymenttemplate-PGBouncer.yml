@@ -69,11 +69,13 @@ spec:
         - name: DB_PORT
           value: "9092"
         - name: AUTH_TYPE
-          value: trust # trust #scram-sha-256 #trust #md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
+          value: trust #scram-sha-256 #trust #md5 # scram-sha-256 # remove/comment this line if using postgres:13 and lower
         - name: POOL_MODE
           value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
           value: postgres
+        - name: IGNORE_STARTUP_PARAMETERS
+          value: "extra_float_digits"
         #- name: STATS_USERS
         #  value: postgres
         #- name: PGBOUNCER_USERLIST
@@ -116,10 +118,30 @@ spec:
         #  limits: {cpu: 16000m, memory: 128Gi}
         #  requests: {cpu: 4000m, memory: 4Gi}
         #  #, ephemeral-storage: "1536Gi"}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  cfg="/etc/pgbouncer/pgbouncer.ini"
+                  # wait up to 30s for the entrypoint to generate the file
+                  for i in $(seq 1 30); do
+                    [ -s "$cfg" ] && break
+                    sleep 1
+                  done
+                  # append the admin DB mapping if missing
+                  if ! grep -qE '^[[:space:]]*pgbouncer[[:space:]]*=' "$cfg"; then
+                    printf '\npgbouncer = pgbouncer\n' >> "$cfg"
+                  fi
+                  # ask PgBouncer (PID 1) to reload config (online)
+                  kill -HUP 1 || true
       - name: pgbouncer-exporter
         image: quay.io/prometheuscommunity/pgbouncer-exporter:latest
         args:
-          - "--pgBouncer.connectionString=localhost:5432/pgbouncer?sslmode=disable"
+          - "--pgBouncer.connectionString=postgres://postgres@localhost:5432/pgbouncer?sslmode=disable"
         ports:
         - containerPort: 9127
           name: metrics

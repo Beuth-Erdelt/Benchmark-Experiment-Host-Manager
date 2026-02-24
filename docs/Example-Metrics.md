@@ -60,7 +60,7 @@ This
 
 doc_benchbase_run_postgresql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -214,7 +214,7 @@ nohup python hammerdb.py -ms 1 -tr \
 
 doc_hammerdb_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -343,7 +343,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
 
 doc_tpch_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -494,7 +494,7 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
 
 doc_tpcds_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=3
@@ -729,7 +729,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 doc_ycsb_testcase_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -960,7 +960,7 @@ This
 
 doc_benchbase_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -1112,7 +1112,7 @@ nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
 
 doc_hammerdb_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -1241,7 +1241,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
 
 doc_tpch_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -1392,7 +1392,7 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
 
 doc_tpcds_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=3
@@ -1626,7 +1626,7 @@ nohup python ycsb.py -ms 1 -tr -lr 64Gi \
 
 doc_ycsb_run_mysql_appmetrics.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -1798,6 +1798,120 @@ TEST passed: Workflow as planned
 TEST passed: Execution Phase: contains no FAILED column
 ```
 
+
+
+
+
+
+
+
+## CockroachDB
+
+### YCSB
+
+Example:
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
+```
+
+doc_ycsb_run_cockroachdb_appmetrics.log
+```markdown
+## Show Summary
+```
+
+
+
+
+
+## Redis
+
+### YCSB
+
+Example:
+```bash
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 1 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
+```
+
+doc_ycsb_run_redis_appmetrics.log
+```markdown
+## Show Summary
+```
+
+
+
+
+
+
+
+
+
+## TiDB
+
+### YCSB
+
+Example:
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  --workload a \
+  -dbms TiDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log &
+```
+
+doc_ycsb_run_tidb_appmetrics.log
+```markdown
+## Show Summary
+```
 
 
 
