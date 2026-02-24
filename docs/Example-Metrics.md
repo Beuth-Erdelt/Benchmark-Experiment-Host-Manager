@@ -2403,10 +2403,155 @@ TEST passed: Execution Phase: contains no FAILED column
 
 
 
+## PGBouncer
 
+### YCSB
 
+Example:
+```bash
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rr 64Gi -lr 64Gi \
+  -tb 16384 \
+  -nlp 16 \
+  -nlt 64 \
+  -nlf 11 \
+  -nbp 16 \
+  -nbt 128 \
+  -nbf 11 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  -npp 4 \
+  -npi 128 \
+  -npo 64 \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
+```
 
+doc_ycsb_run_pgbouncer_appmetrics.log
+```markdown
+## Show Summary
 
+### Workload
+YCSB SF=16
+    Type: ycsb
+    Duration: 1507s 
+    Code: 1771966682
+    Intro: YCSB driver runs the experiment.
+    This experiment compares run time and resource consumption of YCSB queries.
+    Workload is 'C'.
+    Number of rows to insert is 16000000.
+    Ordering of inserts is hashed.
+    Number of operations is 16000000.
+    Batch size is ''.
+    Target is based on multiples of '16384'.
+    Factors for loading are [11].
+    Factors for benchmarking are [11].
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['PGBouncer'].
+    Import is handled by 16 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
+    Loading is tested with [64] threads, split into [16] pods.
+    Benchmarking is tested with [128] threads, split into [16] pods.
+    Pooling is done with [4] pods having [128] inbound and [64] outbound connections in total.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
 
+### Connections
+pgb-64-4-128-64-1 uses docker image postgres:17.5
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:137874
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+    requests_cpu:4
+    requests_memory:64Gi
+    limits_memory:64Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1771966682
 
+### Loading
+                 experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
+pgb-64-4-128-64               1       64  180224         16           0                   32182.084209               526269.0            16000000                              5684.0
 
+### Execution
+                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
+pgb-64-4-128-64-1               1      128  180224         16           0                       61278.93               263267.0          16000000                            2941.0
+
+### Workflow
+
+#### Actual
+DBMS pgb-64-4-128-64 - Pods [[16]]
+
+#### Planned
+DBMS pgb-64-4-128-64 - Pods [[16]]
+
+### Monitoring
+
+### Loading phase: component pool
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1        1.53      0.0          0.05                 0.05
+
+### Loading phase: SUT deployment
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     3526.86     9.96         23.96                42.19
+
+### Loading phase: component loader
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1      1268.9     2.82          0.11                 0.11
+
+### Execution phase: component pool
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1        0.35      0.0          0.05                 0.05
+
+### Execution phase: SUT deployment
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     2532.29    17.17         26.71                44.96
+
+### Execution phase: component benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-64-4-128-64-1     1186.89     8.76          0.11                 0.11
+
+### Application Metrics
+
+#### Loading phase: component pool
+                   PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients  PgBouncer Pool Load Pressure [%]
+pgb-64-4-128-64-1                                33965.62                        0.0                             100.0
+
+#### Loading phase: SUT deployment
+                   PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients  PgBouncer Pool Load Pressure [%]
+pgb-64-4-128-64-1                                33965.62                        0.0                             100.0
+
+#### Execution phase: component pool
+                   PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients  PgBouncer Pool Load Pressure [%]
+pgb-64-4-128-64-1                                 58823.2                        0.0                             100.0
+
+#### Execution phase: SUT deployment
+                   PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients  PgBouncer Pool Load Pressure [%]
+pgb-64-4-128-64-1                                 58823.2                        0.0                             100.0
+
+### Tests
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+TEST passed: Execution Phase: contains no FAILED column
+```

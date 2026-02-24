@@ -322,6 +322,33 @@ wait_process "ycsb"
 
 
 
+####################################################
+########### PGBouncer Application Metrics ##########
+####################################################
+
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rr 64Gi -lr 64Gi \
+  -tb 16384 \
+  -nlp 16 \
+  -nlt 64 \
+  -nlf 11 \
+  -nbp 16 \
+  -nbt 128 \
+  -nbf 11 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  -npp 4 \
+  -npi 128 \
+  -npo 64 \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
 
 
 

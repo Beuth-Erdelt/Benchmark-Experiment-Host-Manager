@@ -73,9 +73,17 @@ spec:
         - name: POOL_MODE
           value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
-          value: postgres
+          value: "postgres"
+        #- name: ADMIN_USERS
+        #  value: postgres
         - name: IGNORE_STARTUP_PARAMETERS
           value: "extra_float_digits"
+        - name: AUTH_FILE
+          valueFrom:
+            secretKeyRef:
+              name: does-not-exist
+              key: nope
+              optional: true
         #- name: STATS_USERS
         #  value: postgres
         #- name: PGBOUNCER_USERLIST
@@ -114,10 +122,6 @@ spec:
         #  periodSeconds: 60
         ports:
         - {containerPort: 5432}
-        #resources:
-        #  limits: {cpu: 16000m, memory: 128Gi}
-        #  requests: {cpu: 4000m, memory: 4Gi}
-        #  #, ephemeral-storage: "1536Gi"}
         lifecycle:
           postStart:
             exec:
@@ -126,22 +130,29 @@ spec:
                 - -c
                 - |
                   set -eu
-                  cfg="/etc/pgbouncer/pgbouncer.ini"
-                  # wait up to 30s for the entrypoint to generate the file
-                  for i in $(seq 1 30); do
-                    [ -s "$cfg" ] && break
-                    sleep 1
-                  done
-                  # append the admin DB mapping if missing
-                  if ! grep -qE '^[[:space:]]*pgbouncer[[:space:]]*=' "$cfg"; then
-                    printf '\npgbouncer = pgbouncer\n' >> "$cfg"
+                  userlist="/etc/pgbouncer/userlist.txt"
+                  user="postgres"
+                  pass="postgres"
+                  # Ensure userlist exists
+                  : > "${userlist}"  # creates file if missing; leaves content if exists
+                  # Check if user already present (idempotent)
+                  if ! grep -qE "^\"${user}\"" "${userlist}"; then
+                    echo "Adding '${user}' to userlist..."
+                    hash=$(echo -n "${pass}${user}" | md5sum | cut -d' ' -f1)
+                    printf '"%s" "md5%s"\n' "${user}" "${hash}" >> "${userlist}"
+                    # Reload PgBouncer configuration (SIGHUP triggers config reload, not restart)
+                    kill -HUP 1 || true
+                  else
+                    echo "'${user}' already present in userlist; nothing to do."
                   fi
-                  # ask PgBouncer (PID 1) to reload config (online)
-                  kill -HUP 1 || true
+        #resources:
+        #  limits: {cpu: 16000m, memory: 128Gi}
+        #  requests: {cpu: 4000m, memory: 4Gi}
+        #  #, ephemeral-storage: "1536Gi"}
       - name: pgbouncer-exporter
         image: quay.io/prometheuscommunity/pgbouncer-exporter:latest
         args:
-          - "--pgBouncer.connectionString=postgres://postgres@localhost:5432/pgbouncer?sslmode=disable"
+          - "--pgBouncer.connectionString=postgres://postgres:postgres@localhost:5432/pgbouncer?sslmode=disable"
         ports:
         - containerPort: 9127
           name: metrics
