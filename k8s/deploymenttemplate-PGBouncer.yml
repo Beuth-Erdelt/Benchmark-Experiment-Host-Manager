@@ -292,7 +292,7 @@ spec:
         # , "-c", "listen_addresses='*'", "-c", "logging_collector=on"
         # , "-c", "pg_stat_statements.save=off", "-c", "pg_stat_statements.track=all", "-c", "shared_preload_libraries='pg_stat_statements'"
       - name: monitor-application
-        image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
+        image: prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
         env:
           - name: DATA_SOURCE_URI

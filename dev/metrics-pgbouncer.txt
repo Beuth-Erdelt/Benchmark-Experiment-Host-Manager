@@ -1,0 +1,288 @@
+# HELP go_gc_duration_seconds A summary of the wall-time pause (stop-the-world) duration in garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 0.000238695
+go_gc_duration_seconds{quantile="0.25"} 0.000290339
+go_gc_duration_seconds{quantile="0.5"} 0.000375937
+go_gc_duration_seconds{quantile="0.75"} 0.001975962
+go_gc_duration_seconds{quantile="1"} 0.00241119
+go_gc_duration_seconds_sum 0.010190124
+go_gc_duration_seconds_count 11
+# HELP go_gc_gogc_percent Heap size target percentage configured by the user, otherwise 100. This value is set by the GOGC environment variable, and the runtime/debug.SetGCPercent function. Sourced from /gc/gogc:percent.
+# TYPE go_gc_gogc_percent gauge
+go_gc_gogc_percent 100
+# HELP go_gc_gomemlimit_bytes Go runtime memory limit configured by the user, otherwise math.MaxInt64. This value is set by the GOMEMLIMIT environment variable, and the runtime/debug.SetMemoryLimit function. Sourced from /gc/gomemlimit:bytes.
+# TYPE go_gc_gomemlimit_bytes gauge
+go_gc_gomemlimit_bytes 9.223372036854776e+18
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 11
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.25.7"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated in heap and currently in use. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 5.205824e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated in heap until now, even if released already. Equals to /gc/heap/allocs:bytes.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 2.6331032e+07
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table. Equals to /memory/classes/profiling/buckets:bytes.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.444441e+06
+# HELP go_memstats_frees_total Total number of heap objects frees. Equals to /gc/heap/frees:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 117070
+# HELP go_memstats_gc_sys_bytes Number of bytes used for garbage collection system metadata. Equals to /memory/classes/metadata/other:bytes.
+# TYPE go_memstats_gc_sys_bytes gauge
+go_memstats_gc_sys_bytes 2.91816e+06
+# HELP go_memstats_heap_alloc_bytes Number of heap bytes allocated and currently in use, same as go_memstats_alloc_bytes. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_heap_alloc_bytes gauge
+go_memstats_heap_alloc_bytes 5.205824e+06
+# HELP go_memstats_heap_idle_bytes Number of heap bytes waiting to be used. Equals to /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_idle_bytes gauge
+go_memstats_heap_idle_bytes 7.733248e+06
+# HELP go_memstats_heap_inuse_bytes Number of heap bytes that are in use. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes
+# TYPE go_memstats_heap_inuse_bytes gauge
+go_memstats_heap_inuse_bytes 7.569408e+06
+# HELP go_memstats_heap_objects Number of currently allocated objects. Equals to /gc/heap/objects:objects.
+# TYPE go_memstats_heap_objects gauge
+go_memstats_heap_objects 8961
+# HELP go_memstats_heap_released_bytes Number of heap bytes released to OS. Equals to /memory/classes/heap/released:bytes.
+# TYPE go_memstats_heap_released_bytes gauge
+go_memstats_heap_released_bytes 6.504448e+06
+# HELP go_memstats_heap_sys_bytes Number of heap bytes obtained from system. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes + /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_sys_bytes gauge
+go_memstats_heap_sys_bytes 1.5302656e+07
+# HELP go_memstats_last_gc_time_seconds Number of seconds since 1970 of last garbage collection.
+# TYPE go_memstats_last_gc_time_seconds gauge
+go_memstats_last_gc_time_seconds 1.7719648205216815e+09
+# HELP go_memstats_mallocs_total Total number of heap objects allocated, both live and gc-ed. Semantically a counter version for go_memstats_heap_objects gauge. Equals to /gc/heap/allocs:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_mallocs_total counter
+go_memstats_mallocs_total 126031
+# HELP go_memstats_mcache_inuse_bytes Number of bytes in use by mcache structures. Equals to /memory/classes/metadata/mcache/inuse:bytes.
+# TYPE go_memstats_mcache_inuse_bytes gauge
+go_memstats_mcache_inuse_bytes 154624
+# HELP go_memstats_mcache_sys_bytes Number of bytes used for mcache structures obtained from system. Equals to /memory/classes/metadata/mcache/inuse:bytes + /memory/classes/metadata/mcache/free:bytes.
+# TYPE go_memstats_mcache_sys_bytes gauge
+go_memstats_mcache_sys_bytes 157040
+# HELP go_memstats_mspan_inuse_bytes Number of bytes in use by mspan structures. Equals to /memory/classes/metadata/mspan/inuse:bytes.
+# TYPE go_memstats_mspan_inuse_bytes gauge
+go_memstats_mspan_inuse_bytes 218240
+# HELP go_memstats_mspan_sys_bytes Number of bytes used for mspan structures obtained from system. Equals to /memory/classes/metadata/mspan/inuse:bytes + /memory/classes/metadata/mspan/free:bytes.
+# TYPE go_memstats_mspan_sys_bytes gauge
+go_memstats_mspan_sys_bytes 228480
+# HELP go_memstats_next_gc_bytes Number of heap bytes when next garbage collection will take place. Equals to /gc/heap/goal:bytes.
+# TYPE go_memstats_next_gc_bytes gauge
+go_memstats_next_gc_bytes 7.71117e+06
+# HELP go_memstats_other_sys_bytes Number of bytes used for other system allocations. Equals to /memory/classes/other:bytes.
+# TYPE go_memstats_other_sys_bytes gauge
+go_memstats_other_sys_bytes 2.418095e+06
+# HELP go_memstats_stack_inuse_bytes Number of bytes obtained from system for stack allocator in non-CGO environments. Equals to /memory/classes/heap/stacks:bytes.
+# TYPE go_memstats_stack_inuse_bytes gauge
+go_memstats_stack_inuse_bytes 1.47456e+06
+# HELP go_memstats_stack_sys_bytes Number of bytes obtained from system for stack allocator. Equals to /memory/classes/heap/stacks:bytes + /memory/classes/os-stacks:bytes.
+# TYPE go_memstats_stack_sys_bytes gauge
+go_memstats_stack_sys_bytes 1.47456e+06
+# HELP go_memstats_sys_bytes Number of bytes obtained from system. Equals to /memory/classes/total:byte.
+# TYPE go_memstats_sys_bytes gauge
+go_memstats_sys_bytes 2.3943432e+07
+# HELP go_sched_gomaxprocs_threads The current runtime.GOMAXPROCS setting, or the number of operating system threads that can execute user-level Go code simultaneously. Sourced from /sched/gomaxprocs:threads.
+# TYPE go_sched_gomaxprocs_threads gauge
+go_sched_gomaxprocs_threads 128
+# HELP go_threads Number of OS threads created.
+# TYPE go_threads gauge
+go_threads 16
+# HELP pgbouncer_cached_dns_names Count of DNS names in the cache
+# TYPE pgbouncer_cached_dns_names gauge
+pgbouncer_cached_dns_names 1
+# HELP pgbouncer_cached_dns_zones Count of DNS zones in the cache
+# TYPE pgbouncer_cached_dns_zones gauge
+pgbouncer_cached_dns_zones 0
+# HELP pgbouncer_config_max_client_connections Config maximum number of client connections
+# TYPE pgbouncer_config_max_client_connections gauge
+pgbouncer_config_max_client_connections 128
+# HELP pgbouncer_config_max_user_connections Config maximum number of server connections per user
+# TYPE pgbouncer_config_max_user_connections gauge
+pgbouncer_config_max_user_connections 0
+# HELP pgbouncer_databases Count of databases
+# TYPE pgbouncer_databases gauge
+pgbouncer_databases 2
+# HELP pgbouncer_databases_current_connections Current number of connections for this database
+# TYPE pgbouncer_databases_current_connections gauge
+pgbouncer_databases_current_connections{database="pgbouncer",force_user="pgbouncer",host="",name="pgbouncer",pool_mode="statement",port="5432"} 0
+pgbouncer_databases_current_connections{database="postgres",force_user="",host="bexhoma-pool-pgb-64-4-128-64-1771964114",name="postgres",pool_mode="",port="9092"} 64
+# HELP pgbouncer_databases_disabled 1 if this database is currently disabled, else 0
+# TYPE pgbouncer_databases_disabled gauge
+pgbouncer_databases_disabled{database="pgbouncer",force_user="pgbouncer",host="",name="pgbouncer",pool_mode="statement",port="5432"} 0
+pgbouncer_databases_disabled{database="postgres",force_user="",host="bexhoma-pool-pgb-64-4-128-64-1771964114",name="postgres",pool_mode="",port="9092"} 0
+# HELP pgbouncer_databases_max_connections Maximum number of allowed connections for this database
+# TYPE pgbouncer_databases_max_connections gauge
+pgbouncer_databases_max_connections{database="pgbouncer",force_user="pgbouncer",host="",name="pgbouncer",pool_mode="statement",port="5432"} 0
+pgbouncer_databases_max_connections{database="postgres",force_user="",host="bexhoma-pool-pgb-64-4-128-64-1771964114",name="postgres",pool_mode="",port="9092"} 0
+# HELP pgbouncer_databases_paused 1 if this database is currently paused, else 0
+# TYPE pgbouncer_databases_paused gauge
+pgbouncer_databases_paused{database="pgbouncer",force_user="pgbouncer",host="",name="pgbouncer",pool_mode="statement",port="5432"} 0
+pgbouncer_databases_paused{database="postgres",force_user="",host="bexhoma-pool-pgb-64-4-128-64-1771964114",name="postgres",pool_mode="",port="9092"} 0
+# HELP pgbouncer_databases_pool_size Maximum number of server connections
+# TYPE pgbouncer_databases_pool_size gauge
+pgbouncer_databases_pool_size{database="pgbouncer",force_user="pgbouncer",host="",name="pgbouncer",pool_mode="statement",port="5432"} 2
+pgbouncer_databases_pool_size{database="postgres",force_user="",host="bexhoma-pool-pgb-64-4-128-64-1771964114",name="postgres",pool_mode="",port="9092"} 64
+# HELP pgbouncer_exporter_build_info A metric with a constant '1' value labeled by version, revision, branch, goversion from which pgbouncer_exporter was built, and the goos and goarch for the build.
+# TYPE pgbouncer_exporter_build_info gauge
+pgbouncer_exporter_build_info{branch="HEAD",goarch="amd64",goos="linux",goversion="go1.25.7",revision="a0e0af37bcb72ee50369f7bf3de34c569b960343",tags="unknown",version="0.11.1"} 1
+# HELP pgbouncer_free_clients Count of free clients
+# TYPE pgbouncer_free_clients gauge
+pgbouncer_free_clients 49
+# HELP pgbouncer_free_servers Count of free servers
+# TYPE pgbouncer_free_servers gauge
+pgbouncer_free_servers 36
+# HELP pgbouncer_in_flight_dns_queries Count of in-flight DNS queries
+# TYPE pgbouncer_in_flight_dns_queries gauge
+pgbouncer_in_flight_dns_queries -62
+# HELP pgbouncer_login_clients Count of clients in login state
+# TYPE pgbouncer_login_clients gauge
+pgbouncer_login_clients 0
+# HELP pgbouncer_pools Count of pools
+# TYPE pgbouncer_pools gauge
+pgbouncer_pools 2
+# HELP pgbouncer_pools_client_active_cancel_connections Client connections that have forwarded query cancellations to the server and are waiting for the server response
+# TYPE pgbouncer_pools_client_active_cancel_connections gauge
+pgbouncer_pools_client_active_cancel_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_client_active_cancel_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_client_active_connections Client connections linked to server connection and able to process queries, shown as connection
+# TYPE pgbouncer_pools_client_active_connections gauge
+pgbouncer_pools_client_active_connections{database="pgbouncer",user="pgbouncer"} 1
+pgbouncer_pools_client_active_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_client_maxwait_seconds Age of oldest unserved client connection, shown as second
+# TYPE pgbouncer_pools_client_maxwait_seconds gauge
+pgbouncer_pools_client_maxwait_seconds{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_client_maxwait_seconds{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_client_waiting_cancel_connections Client connections that have not forwarded query cancellations to the server yet
+# TYPE pgbouncer_pools_client_waiting_cancel_connections gauge
+pgbouncer_pools_client_waiting_cancel_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_client_waiting_cancel_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_client_waiting_connections Client connections waiting on a server connection, shown as connection
+# TYPE pgbouncer_pools_client_waiting_connections gauge
+pgbouncer_pools_client_waiting_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_client_waiting_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_active_cancel_connections Server connections that are currently forwarding a cancel request.
+# TYPE pgbouncer_pools_server_active_cancel_connections gauge
+pgbouncer_pools_server_active_cancel_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_active_cancel_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_active_connections Server connections linked to a client connection, shown as connection
+# TYPE pgbouncer_pools_server_active_connections gauge
+pgbouncer_pools_server_active_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_active_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_being_canceled_connections Servers that normally could become idle but are waiting to do so until all in-flight cancel requests have completed that were sent to cancel a query on this server.
+# TYPE pgbouncer_pools_server_being_canceled_connections gauge
+pgbouncer_pools_server_being_canceled_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_being_canceled_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_idle_connections Server connections idle and ready for a client query, shown as connection
+# TYPE pgbouncer_pools_server_idle_connections gauge
+pgbouncer_pools_server_idle_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_idle_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_login_connections Server connections currently in the process of logging in, shown as connection
+# TYPE pgbouncer_pools_server_login_connections gauge
+pgbouncer_pools_server_login_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_login_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_testing_connections Server connections currently running either server_reset_query or server_check_query, shown as connection
+# TYPE pgbouncer_pools_server_testing_connections gauge
+pgbouncer_pools_server_testing_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_testing_connections{database="postgres",user="postgres"} 0
+# HELP pgbouncer_pools_server_used_connections Server connections idle more than server_check_delay, needing server_check_query, shown as connection
+# TYPE pgbouncer_pools_server_used_connections gauge
+pgbouncer_pools_server_used_connections{database="pgbouncer",user="pgbouncer"} 0
+pgbouncer_pools_server_used_connections{database="postgres",user="postgres"} 64
+# HELP pgbouncer_stats_totals_binds_total Total number of prepared statements readied for execution with a Bind message
+# TYPE pgbouncer_stats_totals_binds_total counter
+pgbouncer_stats_totals_binds_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_binds_total{database="postgres"} 0
+# HELP pgbouncer_stats_totals_client_parses_total Total number of prepared statement Parse messages received from clients
+# TYPE pgbouncer_stats_totals_client_parses_total counter
+pgbouncer_stats_totals_client_parses_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_client_parses_total{database="postgres"} 0
+# HELP pgbouncer_stats_totals_client_wait_seconds_total Time spent by clients waiting for a server in seconds
+# TYPE pgbouncer_stats_totals_client_wait_seconds_total counter
+pgbouncer_stats_totals_client_wait_seconds_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_client_wait_seconds_total{database="postgres"} 0.115934
+# HELP pgbouncer_stats_totals_queries_duration_seconds_total Total number of seconds spent by pgbouncer when actively connected to PostgreSQL, executing queries
+# TYPE pgbouncer_stats_totals_queries_duration_seconds_total counter
+pgbouncer_stats_totals_queries_duration_seconds_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_queries_duration_seconds_total{database="postgres"} 6498.313639
+# HELP pgbouncer_stats_totals_queries_pooled_total Total number of SQL queries pooled
+# TYPE pgbouncer_stats_totals_queries_pooled_total counter
+pgbouncer_stats_totals_queries_pooled_total{database="pgbouncer"} 27
+pgbouncer_stats_totals_queries_pooled_total{database="postgres"} 4.000032e+06
+# HELP pgbouncer_stats_totals_received_bytes_total Total volume in bytes of network traffic received by pgbouncer, shown as bytes
+# TYPE pgbouncer_stats_totals_received_bytes_total counter
+pgbouncer_stats_totals_received_bytes_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_received_bytes_total{database="postgres"} 4.47953692e+09
+# HELP pgbouncer_stats_totals_sent_bytes_total Total volume in bytes of network traffic sent by pgbouncer, shown as bytes
+# TYPE pgbouncer_stats_totals_sent_bytes_total counter
+pgbouncer_stats_totals_sent_bytes_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_sent_bytes_total{database="postgres"} 1.0800408e+08
+# HELP pgbouncer_stats_totals_server_assignments_total Total number of client connections which have been served since process start
+# TYPE pgbouncer_stats_totals_server_assignments_total counter
+pgbouncer_stats_totals_server_assignments_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_server_assignments_total{database="postgres"} 16
+# HELP pgbouncer_stats_totals_server_in_transaction_seconds_total Total number of seconds spent by pgbouncer when connected to PostgreSQL in a transaction, either idle in transaction or executing queries
+# TYPE pgbouncer_stats_totals_server_in_transaction_seconds_total counter
+pgbouncer_stats_totals_server_in_transaction_seconds_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_server_in_transaction_seconds_total{database="postgres"} 6498.313639
+# HELP pgbouncer_stats_totals_server_parses_total Total number of prepared statement Parse messages sent by pgbouncer to PostgreSQL
+# TYPE pgbouncer_stats_totals_server_parses_total counter
+pgbouncer_stats_totals_server_parses_total{database="pgbouncer"} 0
+pgbouncer_stats_totals_server_parses_total{database="postgres"} 0
+# HELP pgbouncer_stats_totals_sql_transactions_pooled_total Total number of SQL transactions pooled
+# TYPE pgbouncer_stats_totals_sql_transactions_pooled_total counter
+pgbouncer_stats_totals_sql_transactions_pooled_total{database="pgbouncer"} 27
+pgbouncer_stats_totals_sql_transactions_pooled_total{database="postgres"} 4.000032e+06
+# HELP pgbouncer_up The pgbouncer scrape succeeded
+# TYPE pgbouncer_up gauge
+pgbouncer_up 1
+# HELP pgbouncer_used_clients Count of used clients
+# TYPE pgbouncer_used_clients gauge
+pgbouncer_used_clients 1
+# HELP pgbouncer_used_servers Count of used servers
+# TYPE pgbouncer_used_servers gauge
+pgbouncer_used_servers 64
+# HELP pgbouncer_users Count of users
+# TYPE pgbouncer_users gauge
+pgbouncer_users 2
+# HELP pgbouncer_version_info The pgbouncer version info
+# TYPE pgbouncer_version_info gauge
+pgbouncer_version_info{version="PgBouncer 1.25.1"} 1
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 0.34
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 524287
+# HELP process_network_receive_bytes_total Number of bytes received by the process over the network.
+# TYPE process_network_receive_bytes_total counter
+process_network_receive_bytes_total 5.005559665e+09
+# HELP process_network_transmit_bytes_total Number of bytes sent by the process over the network.
+# TYPE process_network_transmit_bytes_total counter
+process_network_transmit_bytes_total 5.005633103e+09
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 9
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 1.4675968e+07
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.77196412288e+09
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 1.271287808e+09
+# HELP process_virtual_memory_max_bytes Maximum amount of virtual memory available in bytes.
+# TYPE process_virtual_memory_max_bytes gauge
+process_virtual_memory_max_bytes 1.8446744073709552e+19
+# HELP promhttp_metric_handler_requests_in_flight Current number of scrapes being served.
+# TYPE promhttp_metric_handler_requests_in_flight gauge
+promhttp_metric_handler_requests_in_flight 1
+# HELP promhttp_metric_handler_requests_total Total number of scrapes by HTTP status code.
+# TYPE promhttp_metric_handler_requests_total counter
+promhttp_metric_handler_requests_total{code="200"} 24
+promhttp_metric_handler_requests_total{code="500"} 0
+promhttp_metric_handler_requests_total{code="503"} 0

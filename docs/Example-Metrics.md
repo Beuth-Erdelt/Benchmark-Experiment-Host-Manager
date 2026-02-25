@@ -1965,6 +1965,176 @@ TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
+### Benchbase's TPC-C
+
+Example:
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -dbms CockroachDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
+```
+
+doc_benchbase_cockroachdb_1.log
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=16
+    Type: benchbase
+    Duration: 1117s 
+    Code: 1770923951
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['CockroachDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:96794
+    cpu_list:0-63
+    args:['-c', 'while true; do echo hello; sleep 10;done']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    worker 0
+        RAM:2164173176832
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:898268
+        datadisk:291861
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-223
+    worker 1
+        RAM:1081742745600
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:466964
+        datadisk:291679
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-127
+    worker 2
+        RAM:540579303424
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:415112
+        datadisk:291982
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-127
+    eval_parameters
+                code:1770923951
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
+CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:96794
+    cpu_list:0-63
+    args:['-c', 'while true; do echo hello; sleep 10;done']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    worker 0
+        RAM:2164173176832
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:898463
+        datadisk:292053
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-223
+    worker 1
+        RAM:1081742745600
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:467124
+        datadisk:291839
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-127
+    worker 2
+        RAM:540579303424
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:415110
+        datadisk:291979
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-127
+    eval_parameters
+                code:1770923951
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
+
+### Execution
+
+#### Per Pod
+                          experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                      
+CockroachDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    312.983331                 311.596665         0.0                                                     103278.0                                              51107.0
+CockroachDB-1-1-1024-2-2               1          8    8192       2      1  300.0           0                    127.093312                 126.606646         0.0                                                     132056.0                                              62933.0
+CockroachDB-1-1-1024-2-1               1          8    8192       2      2  300.0           0                    121.826654                 121.349987         0.0                                                     132987.0                                              65652.0
+
+#### Aggregated Parallel
+                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+CockroachDB-1-1-1024-1               1         16   16384          1  300.0           0                        312.98                     311.60         0.0                                                     103278.0                                              51107.0
+CockroachDB-1-1-1024-2               1         16   16384          2  300.0           0                        248.92                     247.96         0.0                                                     132987.0                                              64292.5
+
+### Workflow
+
+#### Actual
+DBMS CockroachDB-1-1-1024 - Pods [[2, 1]]
+
+#### Planned
+DBMS CockroachDB-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                        time_load  terminals  pods  Throughput [SF/h]
+CockroachDB-1-1-1024-1      168.0        1.0   1.0         342.857143
+CockroachDB-1-1-1024-2      168.0        1.0   2.0         342.857143
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
+
 
 
 
@@ -2193,8 +2363,8 @@ doc_ycsb_run_tidb_appmetrics.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 725s 
-    Code: 1771951481
+    Duration: 768s 
+    Code: 1772032663
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -2217,64 +2387,64 @@ YCSB SF=1
 
 ### Connections
 TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
-    RAM:1081853952000
-    CPU:Intel(R) Xeon(R) Gold 6438Y+
-    Cores:128
+    RAM:1081649827840
+    CPU:AMD EPYC 7453 28-Core Processor
+    Cores:56
     host:6.8.0-90-generic
-    node:cl-worker37
-    disk:418862
-    cpu_list:0-127
+    node:cl-worker34
+    disk:191783
+    cpu_list:0-55
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     sut 0
-        RAM:1081853952000
-        CPU:Intel(R) Xeon(R) Gold 6438Y+
-        Cores:128
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
         host:6.8.0-90-generic
-        node:cl-worker37
-        disk:418862
-        cpu_list:0-127
+        node:cl-worker34
+        disk:191792
+        cpu_list:0-55
     sut 1
         RAM:2164173176832
         CPU:INTEL(R) XEON(R) PLATINUM 8570
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1046969
+        disk:1063292
         cpu_list:0-223
     sut 2
-        RAM:1081649827840
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-90-generic
-        node:cl-worker34
-        disk:192279
-        cpu_list:0-55
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:613086
+        cpu_list:0-127
     pd 0
         RAM:2164173176832
         CPU:INTEL(R) XEON(R) PLATINUM 8570
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1046968
+        disk:1063290
         cpu_list:0-223
     pd 1
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:350019
+        cpu_list:0-127
+    pd 2
         RAM:540492902400
         CPU:Intel(R) Xeon(R) Gold 6430
         Cores:128
         host:6.8.0-90-generic
         node:cl-worker38
-        disk:284264
-        cpu_list:0-127
-    pd 2
-        RAM:1081742741504
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:6.8.0-100-generic
-        node:cl-worker29
-        disk:599516
+        disk:286622
         cpu_list:0-127
     tikv 0
         RAM:2164173176832
@@ -2282,36 +2452,36 @@ TiDB-64-8-16384-1 uses docker image pingcap/tidb:v7.1.0
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1046968
+        disk:1063291
         cpu_list:0-223
     tikv 1
-        RAM:1081853952000
-        CPU:Intel(R) Xeon(R) Gold 6438Y+
-        Cores:128
-        host:6.8.0-90-generic
-        node:cl-worker37
-        disk:418862
-        cpu_list:0-127
-    tikv 2
         RAM:1081649827840
         CPU:AMD EPYC 7453 28-Core Processor
         Cores:56
         host:6.8.0-90-generic
         node:cl-worker34
-        disk:192279
+        disk:191792
         cpu_list:0-55
+    tikv 2
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:613086
+        cpu_list:0-127
     eval_parameters
-        code:1771951481
+        code:1772032663
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-TiDB-64-8-16384               1       64   16384          8           0                   15324.080341                65996.0             1000000                              8323.0
+TiDB-64-8-16384               1       64   16384          8           0                   14825.849618                69483.0             1000000                              8624.0
 
 ### Execution
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-TiDB-64-8-16384-1               1       64   16384          1           0                       11405.63                87676.0            500097                            2869.0              499903                            176639.0
+TiDB-64-8-16384-1               1       64   16384          1           0                       10874.53                91958.0            499884                            2959.0              500116                            186239.0
 
 ### Workflow
 
@@ -2325,61 +2495,61 @@ DBMS TiDB-64-8-16384 - Pods [[1]]
 
 ### Loading phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      824.01     9.14          1.96                 2.84
+TiDB-64-8-16384-1      720.03     9.71          1.97                 2.84
 
 ### Loading phase: component pd
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       65.48     0.66          0.27                 0.27
+TiDB-64-8-16384-1      126.99     1.15          0.29                  0.3
 
 ### Loading phase: component tikv
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       411.0     3.95          5.36                15.44
+TiDB-64-8-16384-1      420.49     5.51          5.23                15.03
 
 ### Loading phase: component loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       39.43        0          0.11                 0.12
+TiDB-64-8-16384-1       70.31     1.17          0.11                 0.12
 
 ### Execution phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       465.5     7.85          1.22                  2.1
+TiDB-64-8-16384-1      476.21     7.03          0.98                 1.85
 
 ### Execution phase: component pd
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       34.91     0.49          0.27                 0.27
+TiDB-64-8-16384-1      103.76      1.5           0.3                  0.3
 
 ### Execution phase: component tikv
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1      278.49     4.35          6.52                18.15
+TiDB-64-8-16384-1      271.34     4.26          6.64                19.23
 
 ### Execution phase: component benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-64-8-16384-1       34.94        0          0.14                 0.14
+TiDB-64-8-16384-1       24.96        0          0.14                 0.14
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
-                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     64.0                              0.0                                4226.59                          3.77                 0.18
 
 #### Loading phase: component pd
-                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     64.0                              0.0                                4226.59                          3.77                 0.18
 
 #### Loading phase: component tikv
-                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-64-8-16384-1                     65.0                               0.01                                4364.85                          3.54                    0
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     64.0                              0.0                                4226.59                          3.77                 0.18
 
 #### Execution phase: SUT deployment
-                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     67.0                              0.0                                2973.36                          4.51                 0.24
 
 #### Execution phase: component pd
-                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     67.0                              0.0                                2973.36                          4.51                 0.24
 
 #### Execution phase: component tikv
-                   PD Cluster Leader Count  PD Leader Balance Actions [ops/s]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-64-8-16384-1                     68.0                                0.0                                1200.83                          4.32                    0
+                   PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-64-8-16384-1                     67.0                              0.0                                2973.36                          4.51                 0.24
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -2397,6 +2567,343 @@ TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
+### Benchbase's TPC-C
+
+Example:
+```bash
+
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  -dbms TiDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log &
+```
+
+doc_benchbase_run_tidb_appmetrics.log
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=16
+    Type: benchbase
+    Duration: 1710s 
+    Code: 1772089864
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['TiDB'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [16] threads, split into [1, 2] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:101154
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    sut 0
+        RAM:541008474112
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-164-generic
+        node:cl-worker14
+        disk:101154
+        cpu_list:0-63
+    sut 1
+        RAM:541008474112
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-164-generic
+        node:cl-worker14
+        disk:101154
+        cpu_list:0-63
+    sut 2
+        RAM:541008474112
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-164-generic
+        node:cl-worker14
+        disk:101154
+        cpu_list:0-63
+    pd 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1066893
+        cpu_list:0-223
+    pd 1
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:616695
+        cpu_list:0-127
+    pd 2
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:350686
+        cpu_list:0-127
+    tikv 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1066883
+        cpu_list:0-223
+    tikv 1
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:193135
+        cpu_list:0-55
+    tikv 2
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:616708
+        cpu_list:0-127
+    eval_parameters
+                code:1772089864
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
+TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:101154
+    cpu_list:0-63
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    sut 0
+        RAM:541008474112
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-164-generic
+        node:cl-worker14
+        disk:101154
+        cpu_list:0-63
+    sut 1
+        RAM:541008474112
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-164-generic
+        node:cl-worker14
+        disk:101154
+        cpu_list:0-63
+    sut 2
+        RAM:541008474112
+        CPU:AMD Opteron(tm) Processor 6378
+        Cores:64
+        host:5.15.0-164-generic
+        node:cl-worker14
+        disk:101154
+        cpu_list:0-63
+    pd 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1064754
+        cpu_list:0-223
+    pd 1
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:614776
+        cpu_list:0-127
+    pd 2
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:350686
+        cpu_list:0-127
+    tikv 0
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:1064758
+        cpu_list:0-223
+    tikv 1
+        RAM:1081649827840
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:195137
+        cpu_list:0-55
+    tikv 2
+        RAM:1081742741504
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-100-generic
+        node:cl-worker29
+        disk:614776
+        cpu_list:0-127
+    eval_parameters
+                code:1772089864
+                BEXHOMA_REPLICAS:3
+                BEXHOMA_WORKERS:3
+
+### Execution
+
+#### Per Pod
+                   experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                               
+TiDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    265.589952                 264.396619         0.0                                                     126539.0                                              60225.0
+TiDB-1-1-1024-2-2               1          8    8192       2      1  300.0           0                    127.933287                 126.636621         0.0                                                     141449.0                                              62515.0
+TiDB-1-1-1024-2-1               1          8    8192       2      2  300.0           0                    127.346639                 125.956639         0.0                                                     141769.0                                              62794.0
+
+#### Aggregated Parallel
+                 experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+TiDB-1-1-1024-1               1         16   16384          1  300.0           0                        265.59                     264.40         0.0                                                     126539.0                                              60225.0
+TiDB-1-1-1024-2               1         16   16384          2  300.0           0                        255.28                     252.59         0.0                                                     141769.0                                              62654.5
+
+### Workflow
+
+#### Actual
+DBMS TiDB-1-1-1024 - Pods [[1, 2]]
+
+#### Planned
+DBMS TiDB-1-1-1024 - Pods [[1, 2]]
+
+### Loading
+                 time_load  terminals  pods  Throughput [SF/h]
+TiDB-1-1-1024-1      280.0        1.0   1.0         205.714286
+TiDB-1-1-1024-2      280.0        1.0   2.0         205.714286
+
+### Monitoring
+
+### Loading phase: SUT deployment
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1     2222.73     9.88          5.55                 5.81
+TiDB-1-1-1024-2     2222.73     9.88          5.55                 5.81
+
+### Loading phase: component pd
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1      163.21      0.6          0.31                 0.31
+TiDB-1-1-1024-2      163.21      0.6          0.31                 0.31
+
+### Loading phase: component tikv
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1     2509.42    12.75         10.17                27.64
+TiDB-1-1-1024-2     2509.42    12.75         10.17                27.64
+
+### Loading phase: component loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1      963.33     8.84          0.33                 0.33
+TiDB-1-1-1024-2      963.33     8.84          0.33                 0.33
+
+### Execution phase: SUT deployment
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1     3146.63    11.52          1.05                 1.31
+TiDB-1-1-1024-2     2734.63    10.53          1.10                 1.35
+
+### Execution phase: component pd
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1      383.89     1.41          0.31                 0.31
+TiDB-1-1-1024-2      356.37     1.42          0.32                 0.32
+
+### Execution phase: component tikv
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1     1426.96     5.93         12.75                29.98
+TiDB-1-1-1024-2     1464.03     5.88         14.24                32.02
+
+### Execution phase: component benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+TiDB-1-1-1024-1      262.05     1.14          0.32                 0.32
+TiDB-1-1-1024-2      262.05     0.82          0.32                 0.32
+
+### Application Metrics
+
+#### Loading phase: SUT deployment
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-1-1-1024-1                    114.0                             38.0                                 434.52                         24.19                 0.24
+TiDB-1-1-1024-2                    114.0                             38.0                                 434.52                         24.19                 0.24
+
+#### Loading phase: component pd
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-1-1-1024-1                    114.0                             38.0                                 434.52                         24.19                 0.24
+TiDB-1-1-1024-2                    114.0                             38.0                                 434.52                         24.19                 0.24
+
+#### Loading phase: component tikv
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-1-1-1024-1                    114.0                             38.0                                 434.52                         24.19                 0.24
+TiDB-1-1-1024-2                    114.0                             38.0                                 434.52                         24.19                 0.24
+
+#### Execution phase: SUT deployment
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-1-1-1024-1                    116.0                              6.0                                6555.00                         23.91                 0.31
+TiDB-1-1-1024-2                    118.0                              0.0                                5557.92                          3.95                 0.38
+
+#### Execution phase: component pd
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-1-1-1024-1                    116.0                              6.0                                6555.00                         23.91                 0.31
+TiDB-1-1-1024-2                    118.0                              0.0                                5557.92                          3.95                 0.38
+
+#### Execution phase: component tikv
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
+TiDB-1-1-1024-1                    116.0                              6.0                                6555.00                         23.91                 0.31
+TiDB-1-1-1024-2                    118.0                              0.0                                5557.92                          3.95                 0.38
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
 
 
 
@@ -2439,8 +2946,8 @@ doc_ycsb_run_pgbouncer_appmetrics.log
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 1557s 
-    Code: 1771968321
+    Duration: 1683s 
+    Code: 1772028909
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'C'.
@@ -2472,7 +2979,7 @@ pgb-64-4-128-64-1 uses docker image postgres:17.5
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:137869
+    disk:137878
     cpu_list:0-63
     args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
@@ -2481,15 +2988,15 @@ pgb-64-4-128-64-1 uses docker image postgres:17.5
     client:1
     numExperiment:1
     eval_parameters
-        code:1771968321
+        code:1772028909
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-pgb-64-4-128-64               1       64  180224         16           0                   29432.423428               563476.0            16000000                             5965.75
+pgb-64-4-128-64               1       64  180224         16           0                    28547.64669               572465.0            16000000                              5978.5
 
 ### Execution
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-pgb-64-4-128-64-1               1      128  180224         16           0                       72030.19               224377.0          16000000                            2643.0
+pgb-64-4-128-64-1               1      128  180224         16           0                       74488.72               239864.0          16000000                            2847.0
 
 ### Workflow
 
@@ -2503,45 +3010,45 @@ DBMS pgb-64-4-128-64 - Pods [[16]]
 
 ### Loading phase: component pool
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1        1.49      0.0          0.05                 0.05
+pgb-64-4-128-64-1        1.63      0.0          0.05                 0.05
 
 ### Loading phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     3632.58     6.81         24.62                42.87
+pgb-64-4-128-64-1     3621.06     8.73         24.02                42.16
 
 ### Loading phase: component loader
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     1286.68     2.52          0.11                 0.11
+pgb-64-4-128-64-1     1282.09     2.45          0.11                 0.11
 
 ### Execution phase: component pool
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1        0.31      0.0          0.05                 0.05
+pgb-64-4-128-64-1        0.37      0.0          0.05                 0.05
 
 ### Execution phase: SUT deployment
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     2548.17     18.2          26.7                44.95
+pgb-64-4-128-64-1      2401.4    17.53          26.7                44.96
 
 ### Execution phase: component benchmarker
                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1     1189.86     8.67           0.1                 0.11
+pgb-64-4-128-64-1     1274.64    10.23           0.1                 0.11
 
 ### Application Metrics
 
 #### Loading phase: component pool
                    PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-64-4-128-64-1                                29574.53                           0.52                                  0.0                                     149.0                             100.0
+pgb-64-4-128-64-1                                30006.98                           0.48                                  0.0                                     170.0                             100.0
 
 #### Loading phase: SUT deployment
                    PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-64-4-128-64-1                                29574.53                           0.52                                  0.0                                     149.0                             100.0
+pgb-64-4-128-64-1                                30006.98                           0.48                                  0.0                                     170.0                             100.0
 
 #### Execution phase: component pool
                    PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-64-4-128-64-1                                57247.02                           0.11                                  0.0                                      46.0                             100.0
+pgb-64-4-128-64-1                                58412.18                           0.13                                  0.0                                      42.0                             100.0
 
 #### Execution phase: SUT deployment
                    PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-64-4-128-64-1                                57247.02                           0.11                                  0.0                                      46.0                             100.0
+pgb-64-4-128-64-1                                58412.18                           0.13                                  0.0                                      42.0                             100.0
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
@@ -2555,3 +3062,177 @@ TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU 
 TEST passed: Workflow as planned
 TEST passed: Execution Phase: contains no FAILED column
 ```
+
+
+### Benchbase's TPC-C
+
+Example:
+```bash
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 10 \
+  -xconn \
+  -dbms PGBouncer \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -npp 2 \
+  -npi 32 \
+  -npo 32 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log &
+```
+
+doc_benchbase_run_pgbouncer_appmetrics.log
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=16
+    Type: benchbase
+    Duration: 1875s 
+    Code: 1772102398
+    Intro: Benchbase runs a TPC-C experiment.
+    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+    Benchbase data is generated and loaded using several threads.
+    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['PGBouncer'].
+    Import is handled by 1 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
+    Loading is tested with [1] threads, split into [1] pods.
+    Benchmarking is tested with [32] threads, split into [1, 2] pods.
+    Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+pgb-1-2-32-32-1 uses docker image postgres:17.5
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:104558
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+                code:1772102398
+pgb-1-2-32-32-2 uses docker image postgres:17.5
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:104834
+    cpu_list:0-63
+    args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:2
+    numExperiment:1
+    eval_parameters
+                code:1772102398
+
+### Execution
+
+#### Per Pod
+                   experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                               
+pgb-1-2-32-32-1-1               1         32   16384       1      1  600.0           3                   1471.308245                 467.363305         0.0                                                      36340.0                                              21745.0
+pgb-1-2-32-32-2-2               1         16    8192       2      1  600.0           3                    649.181649                 447.421655         0.0                                                      47371.0                                              24639.0
+pgb-1-2-32-32-2-1               1         16    8192       2      2  600.0           3                    632.781608                 447.343292         0.0                                                      47365.0                                              25277.0
+
+#### Aggregated Parallel
+                 experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+pgb-1-2-32-32-1               1         32   16384          1  600.0           3                       1471.31                     467.36         0.0                                                      36340.0                                              21745.0
+pgb-1-2-32-32-2               1         32   16384          2  600.0           6                       1281.96                     894.76         0.0                                                      47371.0                                              24958.0
+
+### Workflow
+
+#### Actual
+DBMS pgb-1-2-32-32 - Pods [[1, 2]]
+
+#### Planned
+DBMS pgb-1-2-32-32 - Pods [[1, 2]]
+
+### Loading
+                 time_load  terminals  pods  Throughput [SF/h]
+pgb-1-2-32-32-1      146.0        1.0   1.0         394.520548
+pgb-1-2-32-32-2      146.0        1.0   2.0         394.520548
+
+### Monitoring
+
+### Loading phase: component pool
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-1-2-32-32-1        0.45      0.0          0.02                 0.02
+pgb-1-2-32-32-2        0.45      0.0          0.02                 0.02
+
+### Loading phase: SUT deployment
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-1-2-32-32-1       669.0     4.62          4.69                 6.32
+pgb-1-2-32-32-2       669.0     4.62          4.69                 6.32
+
+### Loading phase: component loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-1-2-32-32-1     1298.35    13.53          0.25                 0.25
+pgb-1-2-32-32-2     1298.35    13.53          0.25                 0.25
+
+### Execution phase: component pool
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-1-2-32-32-1        1.20      0.0          0.03                 0.03
+pgb-1-2-32-32-2        1.11      0.0          0.03                 0.03
+
+### Execution phase: SUT deployment
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-1-2-32-32-1     2041.72     3.84          4.98                 6.86
+pgb-1-2-32-32-2     4060.49     7.11          5.52                 7.86
+
+### Execution phase: component benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+pgb-1-2-32-32-1     13582.7    25.27          0.54                 0.54
+pgb-1-2-32-32-2     13582.7    35.58          0.54                 0.54
+
+### Application Metrics
+
+#### Loading phase: component pool
+                 PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
+pgb-1-2-32-32-1                                  223.22                           0.18                                  0.0                                      48.0                             100.0
+pgb-1-2-32-32-2                                  223.22                           0.18                                  0.0                                      48.0                             100.0
+
+#### Loading phase: SUT deployment
+                 PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
+pgb-1-2-32-32-1                                  223.22                           0.18                                  0.0                                      48.0                             100.0
+pgb-1-2-32-32-2                                  223.22                           0.18                                  0.0                                      48.0                             100.0
+
+#### Execution phase: component pool
+                 PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
+pgb-1-2-32-32-1                                 9652.58                           0.47                                  0.0                                      57.0                             100.0
+pgb-1-2-32-32-2                                19207.30                           0.11                                  0.0                                      58.0                             100.0
+
+#### Execution phase: SUT deployment
+                 PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
+pgb-1-2-32-32-1                                 9652.58                           0.47                                  0.0                                      57.0                             100.0
+pgb-1-2-32-32-2                                19207.30                           0.11                                  0.0                                      58.0                             100.0
+
+### Tests
+TEST passed: Throughput (requests/second) contains no 0 or NaN
+TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component pool contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+

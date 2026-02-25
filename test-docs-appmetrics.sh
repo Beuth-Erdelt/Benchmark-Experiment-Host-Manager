@@ -258,7 +258,25 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc -ma \
   run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
 
+wait_process "ycsb"
 
+
+#### Benchbase Simple (Example-CockroachDB.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -dbms CockroachDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
+
+wait_process "benchbase"
 
 
 
@@ -287,6 +305,7 @@ nohup python ycsb.py -tr \
   -m -mc -ma \
   run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
 
+wait_process "ycsb"
 
 
 
@@ -320,6 +339,22 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  -dbms TiDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log &
+
+wait_process "benchbase"
+
 
 
 ####################################################
@@ -350,7 +385,27 @@ nohup python ycsb.py -ms 1 -tr \
   -npo 64 \
   run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
 
+wait_process "ycsb"
 
+
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 10 \
+  -xconn \
+  -dbms PGBouncer \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -npp 2 \
+  -npi 32 \
+  -npo 32 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log &
+
+wait_process "benchbase"
 
 
 

@@ -24,6 +24,7 @@
     ./Example-CockroachDB.md
     ./Example-TiDB.md
     ./Example-Redis.md
+    ./Example-PGBouncer.md
     ./Example-CloudDatabase.md
     ./Example-custom.md
     ./Example-Multi-Tenant.md
