@@ -1,27 +1,26 @@
-param(
-    [Parameter(Mandatory=$true)]
-    [string]$Path
+$paths = @(
+    "docs",
+    "logs_tests"
 )
 
-# Definiere die erlaubten Textdateiendungen
-$textExtensions = @(".txt", ".csv", ".py", ".sh", ".md", ".json", ".log")
+foreach ($path in $paths) {
+    Get-ChildItem -Path $path -File -Recurse -Include *.md, *.txt | ForEach-Object {
 
-# Alle Dateien rekursiv durchlaufen, nur die mit Text-Endungen
-Get-ChildItem -Path $Path -Recurse -File | Where-Object { $textExtensions -contains $_.Extension.ToLower() } | ForEach-Object {
+        # --- Dateiinhalt in UTF-8 einlesen ---
+        $utf8 = New-Object System.Text.UTF8Encoding($true)  # BOM optional erlauben
+        $reader = New-Object System.IO.StreamReader($_.FullName, $utf8)
+        $content = $reader.ReadToEnd()
+        $reader.Close()
 
-    # Datei als Raw-Text lesen
-    $content = Get-Content $_.FullName -Raw
+        # --- Zeilenenden konvertieren ---
+        $content = $content -replace "`r`n", "`n"
 
-    if ($null -ne $content) {
-        # CRLF (\r\n) und CR (\r) in LF (\n) umwandeln
-        $newContent = $content -replace "`r`n", "`n" -replace "`r", "`n"
+        # --- UTF-8 ohne BOM schreiben ---
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        $writer = New-Object System.IO.StreamWriter($_.FullName, $false, $utf8NoBom)
+        $writer.Write($content)
+        $writer.Close()
 
-        # Nur überschreiben, wenn sich etwas geändert hat
-        if ($newContent -ne $content) {
-            Set-Content -Path $_.FullName -Value $newContent -NoNewline -Encoding utf8
-            Write-Host "Converted: $($_.FullName)"
-        }
+        Write-Host "Verarbeitet: $($_.FullName)"
     }
 }
-
-Write-Host "Done."

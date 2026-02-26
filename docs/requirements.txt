@@ -1,4 +1,4 @@
-﻿sphinx
+sphinx
 sphinx-rtd-theme
 sphinx-mdinclude
 bexhoma
