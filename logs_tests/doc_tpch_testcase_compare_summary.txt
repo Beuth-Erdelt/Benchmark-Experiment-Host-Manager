@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 722s 
-    Code: 1767863586
+    Duration: 6624s 
+    Code: 1772132709
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -14,6 +14,9 @@ TPC-H Queries SF=1
     Import sets indexes and constraints after loading and recomputes statistics.
     Experiment uses bexhoma version 0.8.20.
     Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker14.
     Loading is tested with [8] threads, split into [8] pods.
     Benchmarking is tested with [1] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -21,59 +24,59 @@ TPC-H Queries SF=1
 
 ### Connections
 MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:559088
-    datadisk:2099
-    cpu_list:0-223
-    args:['--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:148921
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     eval_parameters
-        code:1767863586
+        code:1772132709
 MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:559603
-    datadisk:2938
-    cpu_list:0-223
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:149774
+    cpu_list:0-63
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     eval_parameters
-        code:1767863586
+        code:1772132709
 MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:2164173176832
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:559090
-    datadisk:35749
-    cpu_list:0-223
+    RAM:541008474112
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:182586
+    cpu_list:0-63
     args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     eval_parameters
-        code:1767863586
-PostgreSQL-BHT-8-1-1 uses docker image postgres:17.5
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:563691
-    datadisk:2756
-    cpu_list:0-223
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
+        code:1772132709
+PostgreSQL-BHT-8-1-1 uses docker image postgres:18.2
+    RAM:541008474112
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:148816
+    cpu_list:0-63
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:64Gi
+    limits_memory:64Gi
     eval_parameters
-        code:1767863586
+        code:1772132709
 
 ### Errors (failed queries)
 No errors
@@ -83,66 +86,66 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                              5774.35             372.36           6146.37                860.63
-Minimum Cost Supplier Query (TPC-H Q2)                          345.24              16.87             76.45                169.74
-Shipping Priority (TPC-H Q3)                                   1285.32              40.81            975.07                234.93
-Order Priority Checking Query (TPC-H Q4)                        316.12              71.48            358.42                132.66
-Local Supplier Volume (TPC-H Q5)                                790.68              38.81            900.42                210.15
-Forecasting Revenue Change (TPC-H Q6)                           745.47              12.43            959.16                153.66
-Forecasting Revenue Change (TPC-H Q7)                           950.39              34.94           1344.05                229.20
-National Market Share (TPC-H Q8)                               1534.73             157.01           1940.31                120.52
-Product Type Profit Measure (TPC-H Q9)                         1510.87              37.86           1460.28                346.40
-Forecasting Revenue Change (TPC-H Q10)                          717.28              58.35            891.52                385.90
-Important Stock Identification (TPC-H Q11)                      117.47               7.96            116.37                 59.65
-Shipping Modes and Order Priority (TPC-H Q12)                  2518.85              31.01           1608.24                198.15
-Customer Distribution (TPC-H Q13)                              2511.25             150.45           2690.96                633.14
-Forecasting Revenue Change (TPC-H Q14)                         8785.05              19.05           1142.18                233.60
-Top Supplier Query (TPC-H Q15)                                 1499.67              15.83           9279.35                174.98
-Parts/Supplier Relationship (TPC-H Q16)                         166.08              30.07            259.74                175.63
-Small-Quantity-Order Revenue (TPC-H Q17)                         48.43              37.75            269.17                604.83
-Large Volume Customer (TPC-H Q18)                              2469.26              76.69           1383.69               2110.40
-Discounted Revenue (TPC-H Q19)                                   76.80              41.24            112.39                 41.90
-Potential Part Promotion (TPC-H Q20)                            186.73              16.64            223.23                124.01
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           44424.38            1177.67           3841.48                249.27
-Global Sales Opportunity Query (TPC-H Q22)                      103.45              18.94            114.29                 74.40
+Pricing Summary Report (TPC-H Q1)                             25658.29            1058.80          29064.46               2028.92
+Minimum Cost Supplier Query (TPC-H Q2)                         1302.54              25.96            359.86                447.13
+Shipping Priority (TPC-H Q3)                                   5396.46             108.68           4235.12                710.16
+Order Priority Checking Query (TPC-H Q4)                       1035.89             149.28           1580.40                342.78
+Local Supplier Volume (TPC-H Q5)                               3382.99              68.04           4048.76                617.70
+Forecasting Revenue Change (TPC-H Q6)                          3281.91              27.15           4173.34                454.52
+Forecasting Revenue Change (TPC-H Q7)                          3460.43              96.02           5881.82                710.81
+National Market Share (TPC-H Q8)                               6278.81             441.64           9139.40                414.38
+Product Type Profit Measure (TPC-H Q9)                         5395.12             103.07           7001.70               1028.47
+Forecasting Revenue Change (TPC-H Q10)                         2882.37             136.91           4033.74               1118.22
+Important Stock Identification (TPC-H Q11)                      399.08              18.01            491.93                159.83
+Shipping Modes and Order Priority (TPC-H Q12)                 11344.40              54.59           7061.09                632.14
+Customer Distribution (TPC-H Q13)                              9830.44             527.38          12839.86               1957.52
+Forecasting Revenue Change (TPC-H Q14)                        28827.78              36.94           5107.15                493.01
+Top Supplier Query (TPC-H Q15)                                 6878.66              36.69          38836.63                494.84
+Parts/Supplier Relationship (TPC-H Q16)                         651.74              83.97            922.78                556.05
+Small-Quantity-Order Revenue (TPC-H Q17)                        157.92              63.63           1282.78               1794.64
+Large Volume Customer (TPC-H Q18)                             10197.63             220.03           5920.24               5329.01
+Discounted Revenue (TPC-H Q19)                                  280.65              86.71            438.88                116.51
+Potential Part Promotion (TPC-H Q20)                            504.22              38.89            759.12                291.64
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          193516.10            2535.43          18481.79                737.86
+Global Sales Opportunity Query (TPC-H Q22)                      388.16              56.86            521.29                216.40
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1             20.0           35.0         1.0      316.0     376.0
-MonetDB-BHT-8-1-1             18.0            4.0         1.0       89.0     114.0
-MySQL-BHT-64-1-1              22.0           42.0         1.0      407.0     476.0
-PostgreSQL-BHT-8-1-1          18.0            4.0         0.0      144.0     171.0
+MariaDB-BHT-8-1-1             23.0          250.0         2.0     1779.0    2056.0
+MonetDB-BHT-8-1-1             22.0           20.0         8.0      153.0     208.0
+MySQL-BHT-64-1-1              18.0          256.0         4.0     2541.0    2823.0
+PostgreSQL-BHT-8-1-1          24.0           26.0         1.0      167.0     220.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-MariaDB-BHT-8-1-1              0.84
-MonetDB-BHT-8-1-1              0.05
-MySQL-BHT-64-1-1               0.79
-PostgreSQL-BHT-8-1-1           0.23
+MariaDB-BHT-8-1-1              3.19
+MonetDB-BHT-8-1-1              0.12
+MySQL-BHT-64-1-1               3.43
+PostgreSQL-BHT-8-1-1           0.65
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-MariaDB-BHT-8-1-1               4445.01
-MonetDB-BHT-8-1-1              81411.06
-MySQL-BHT-64-1-1                4707.33
-PostgreSQL-BHT-8-1-1           16326.98
+MariaDB-BHT-8-1-1               1157.78
+MonetDB-BHT-8-1-1              34899.99
+MySQL-BHT-64-1-1                1074.39
+PostgreSQL-BHT-8-1-1            5786.21
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
                                                   time [s]  count   SF  Throughput@Size
 DBMS               SF  num_experiment num_client                                       
-MariaDB-BHT-8-1    1.0 1              1                 79      1  1.0          1002.53
-MonetDB-BHT-8-1    1.0 1              1                  5      1  1.0         15840.00
-MySQL-BHT-64-1     1.0 1              1                 39      1  1.0          2030.77
-PostgreSQL-BHT-8-1 1.0 1              1                 10      1  1.0          7920.00
+MariaDB-BHT-8-1    1.0 1              1                326      1  1.0           242.94
+MonetDB-BHT-8-1    1.0 1              1                 10      1  1.0          7920.00
+MySQL-BHT-64-1     1.0 1              1                167      1  1.0           474.25
+PostgreSQL-BHT-8-1 1.0 1              1                 25      1  1.0          3168.00
 
 ### Workflow
                                orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MariaDB-BHT-8-1-1        MariaDB-BHT-8-1  1.0     8               1           1       1767864187     1767864266
-MonetDB-BHT-8-1-1        MonetDB-BHT-8-1  1.0     8               1           1       1767863826     1767863831
-MySQL-BHT-64-1-1          MySQL-BHT-64-1  1.0     8               1           1       1767864201     1767864240
-PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  1.0     8               1           1       1767863943     1767863953
+MariaDB-BHT-8-1-1        MariaDB-BHT-8-1  1.0     8               1           1       1772135733     1772136059
+MonetDB-BHT-8-1-1        MonetDB-BHT-8-1  1.0     8               1           1       1772133527     1772133537
+MySQL-BHT-64-1-1          MySQL-BHT-64-1  1.0     8               1           1       1772139099     1772139266
+PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  1.0     8               1           1       1772133097     1772133122
 
 #### Actual
 DBMS MariaDB-BHT-8 - Pods [[1]]

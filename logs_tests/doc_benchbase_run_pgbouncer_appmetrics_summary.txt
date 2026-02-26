@@ -3,8 +3,8 @@
 ### Workload
 Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1875s 
-    Code: 1772102398
+    Duration: 1722s 
+    Code: 1772127208
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
@@ -30,7 +30,7 @@ pgb-1-2-32-32-1 uses docker image postgres:17.5
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:104558
+    disk:149935
     cpu_list:0-63
     args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
@@ -38,14 +38,14 @@ pgb-1-2-32-32-1 uses docker image postgres:17.5
     client:1
     numExperiment:1
     eval_parameters
-                code:1772102398
+                code:1772127208
 pgb-1-2-32-32-2 uses docker image postgres:17.5
     RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:104834
+    disk:150211
     cpu_list:0-63
     args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
     requests_cpu:4
@@ -53,21 +53,21 @@ pgb-1-2-32-32-2 uses docker image postgres:17.5
     client:2
     numExperiment:1
     eval_parameters
-                code:1772102398
+                code:1772127208
 
 ### Execution
 
 #### Per Pod
                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                               
-pgb-1-2-32-32-1-1               1         32   16384       1      1  600.0           3                   1471.308245                 467.363305         0.0                                                      36340.0                                              21745.0
-pgb-1-2-32-32-2-2               1         16    8192       2      1  600.0           3                    649.181649                 447.421655         0.0                                                      47371.0                                              24639.0
-pgb-1-2-32-32-2-1               1         16    8192       2      2  600.0           3                    632.781608                 447.343292         0.0                                                      47365.0                                              25277.0
+pgb-1-2-32-32-1-1               1         32   16384       1      1  600.0           0                   1462.708074                 467.373250         0.0                                                      36413.0                                              21873.0
+pgb-1-2-32-32-2-2               1         16    8192       2      1  600.0           0                    638.818260                 447.596615         0.0                                                      47747.0                                              25038.0
+pgb-1-2-32-32-2-1               1         16    8192       2      2  600.0           0                    624.471533                 447.493238         0.0                                                      48025.0                                              25613.0
 
 #### Aggregated Parallel
                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-pgb-1-2-32-32-1               1         32   16384          1  600.0           3                       1471.31                     467.36         0.0                                                      36340.0                                              21745.0
-pgb-1-2-32-32-2               1         32   16384          2  600.0           6                       1281.96                     894.76         0.0                                                      47371.0                                              24958.0
+pgb-1-2-32-32-1               1         32   16384          1  600.0           0                       1462.71                     467.37         0.0                                                      36413.0                                              21873.0
+pgb-1-2-32-32-2               1         32   16384          2  600.0           0                       1263.29                     895.09         0.0                                                      48025.0                                              25325.5
 
 ### Workflow
 
@@ -79,62 +79,62 @@ DBMS pgb-1-2-32-32 - Pods [[1, 2]]
 
 ### Loading
                  time_load  terminals  pods  Throughput [SF/h]
-pgb-1-2-32-32-1      146.0        1.0   1.0         394.520548
-pgb-1-2-32-32-2      146.0        1.0   2.0         394.520548
+pgb-1-2-32-32-1      165.0        1.0   1.0         349.090909
+pgb-1-2-32-32-2      165.0        1.0   2.0         349.090909
 
 ### Monitoring
 
 ### Loading phase: component pool
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-1-2-32-32-1        0.45      0.0          0.02                 0.02
-pgb-1-2-32-32-2        0.45      0.0          0.02                 0.02
+pgb-1-2-32-32-1        0.42      0.0          0.02                 0.02
+pgb-1-2-32-32-2        0.42      0.0          0.02                 0.02
 
 ### Loading phase: SUT deployment
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-1-2-32-32-1       669.0     4.62          4.69                 6.32
-pgb-1-2-32-32-2       669.0     4.62          4.69                 6.32
+pgb-1-2-32-32-1       743.2     7.32          4.38                  6.0
+pgb-1-2-32-32-2       743.2     7.32          4.38                  6.0
 
 ### Loading phase: component loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-1-2-32-32-1     1298.35    13.53          0.25                 0.25
-pgb-1-2-32-32-2     1298.35    13.53          0.25                 0.25
+pgb-1-2-32-32-1     1522.56     13.6          0.25                 0.25
+pgb-1-2-32-32-2     1522.56     13.6          0.25                 0.25
 
 ### Execution phase: component pool
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-1-2-32-32-1        1.20      0.0          0.03                 0.03
-pgb-1-2-32-32-2        1.11      0.0          0.03                 0.03
+pgb-1-2-32-32-1        1.22      0.0          0.03                 0.03
+pgb-1-2-32-32-2        1.35      0.0          0.03                 0.03
 
 ### Execution phase: SUT deployment
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-1-2-32-32-1     2041.72     3.84          4.98                 6.86
-pgb-1-2-32-32-2     4060.49     7.11          5.52                 7.86
+pgb-1-2-32-32-1     1984.64     4.16          4.97                 6.85
+pgb-1-2-32-32-2     4162.56     8.03          5.53                 7.88
 
 ### Execution phase: component benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-1-2-32-32-1     13582.7    25.27          0.54                 0.54
-pgb-1-2-32-32-2     13582.7    35.58          0.54                 0.54
+pgb-1-2-32-32-1    13777.89    26.44           0.5                  0.5
+pgb-1-2-32-32-2    13777.89    39.75           0.5                  0.5
 
 ### Application Metrics
 
 #### Loading phase: component pool
                  PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-1-2-32-32-1                                  223.22                           0.18                                  0.0                                      48.0                             100.0
-pgb-1-2-32-32-2                                  223.22                           0.18                                  0.0                                      48.0                             100.0
+pgb-1-2-32-32-1                                  223.43                           0.24                                  0.0                                      48.0                             100.0
+pgb-1-2-32-32-2                                  223.43                           0.24                                  0.0                                      48.0                             100.0
 
 #### Loading phase: SUT deployment
                  PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-1-2-32-32-1                                  223.22                           0.18                                  0.0                                      48.0                             100.0
-pgb-1-2-32-32-2                                  223.22                           0.18                                  0.0                                      48.0                             100.0
+pgb-1-2-32-32-1                                  223.43                           0.24                                  0.0                                      48.0                             100.0
+pgb-1-2-32-32-2                                  223.43                           0.24                                  0.0                                      48.0                             100.0
 
 #### Execution phase: component pool
                  PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-1-2-32-32-1                                 9652.58                           0.47                                  0.0                                      57.0                             100.0
-pgb-1-2-32-32-2                                19207.30                           0.11                                  0.0                                      58.0                             100.0
+pgb-1-2-32-32-1                                 9647.87                           0.44                                  0.0                                      58.0                             100.0
+pgb-1-2-32-32-2                                19084.53                           0.11                                  0.0                                      54.0                             100.0
 
 #### Execution phase: SUT deployment
                  PgBouncer Query Throughput [queries/s]  PgBouncer Waiting Clients [s]  PgBouncer Waiting Clients [clients]  PgBouncer Idle Connections [connections]  PgBouncer Pool Load Pressure [%]
-pgb-1-2-32-32-1                                 9652.58                           0.47                                  0.0                                      57.0                             100.0
-pgb-1-2-32-32-2                                19207.30                           0.11                                  0.0                                      58.0                             100.0
+pgb-1-2-32-32-1                                 9647.87                           0.44                                  0.0                                      58.0                             100.0
+pgb-1-2-32-32-2                                19084.53                           0.11                                  0.0                                      54.0                             100.0
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN
