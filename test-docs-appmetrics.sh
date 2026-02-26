@@ -274,7 +274,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log &
 
 wait_process "benchbase"
 
