@@ -1,0 +1,723 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+Cluster monitoring            : starting...
+done
+Experiment                    : has code 1768297734
+Experiment                    : starts at 2026-01-13 10:49:46.387348 (32489949.857899632)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=10) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 1200.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.8.20.
+System metrics are monitored by a cluster-wide installation.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['MariaDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker19.
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker25.
+Database is persisted to disk of type ramdisk and size 50Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+invalid literal for int() with base 10: 'nvidia driver modules are not yet loaded, invoking runc directly\n200\n'
+MariaDB-BHT-8                 : will start now
+MariaDB-BHT-8                 : deployments ['sut']
+MariaDB-BHT-8                 : stateful sets []
+MariaDB-BHT-8                 : pvcs ['sut']
+MariaDB-BHT-8                 : name of SUT pods = bexhoma-sut-mariadb-bht-8-1768297734
+MariaDB-BHT-8                 : name of SUT service = bexhoma-sut-mariadb-bht-8-1768297734
+MariaDB-BHT-8                 : uses RAM disk
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for monitoring
+MariaDB-BHT-8                 : wants to monitor all components in cluster
+MariaDB-BHT-8                 : cannot rely on preinstalled monitoring
+MariaDB-BHT-8                 : starts monitoring with prometheus pod
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.1 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.218 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.10.204 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.11.183 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.14.159 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.131 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.121 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.49 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.74 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.151 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.144 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.2 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.50 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.51 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.3.179 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.184 (added to Prometheus) of daemonset
+MariaDB-BHT-8                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.22 (added to Prometheus) of daemonset
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : waits for health check to succeed
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is not loaded yet
+MariaDB-BHT-8                 : will start loading but not before 2026-01-13 09:53:23 (that is in 60 secs)
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is not loaded yet
+MariaDB-BHT-8                 : will start loading but not before 2026-01-13 09:53:23
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is not loaded yet
+MariaDB-BHT-8                 : connect to pod bexhoma-sut-mariadb-bht-8-1768297734-75c89d9578-zr5vh to load scripts
+MariaDB-BHT-8                 : start asynch loading scripts of type loaded
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : showing loader times
+MariaDB-BHT-8                 : generator times (start/end per pod and container) [(1768298019, 1768298019), (1768298038, 1768298038), (1768298039, 1768298039), (1768298022, 1768298022), (1768298020, 1768298020), (1768298038, 1768298038), (1768298021, 1768298021), (1768298035, 1768298035)]
+MariaDB-BHT-8                 : loader times (start/end per pod and container) [(1768298043, 1768298665), (1768298043, 1768298705), (1768298043, 1768298705), (1768298043, 1768298706), (1768298043, 1768298705), (1768298043, 1768298697), (1768298043, 1768298704), (1768298043, 1768298647)]
+MariaDB-BHT-8                 : total times (start/end per pod and container) [(1768298019, 1768298019), (1768298038, 1768298038), (1768298039, 1768298039), (1768298022, 1768298022), (1768298020, 1768298020), (1768298038, 1768298038), (1768298021, 1768298021), (1768298035, 1768298035), (1768298043, 1768298665), (1768298043, 1768298705), (1768298043, 1768298705), (1768298043, 1768298706), (1768298043, 1768298705), (1768298043, 1768298697), (1768298043, 1768298704), (1768298043, 1768298647)]
+MariaDB-BHT-8                 : generator timespan (first to last [s]) = 20
+MariaDB-BHT-8                 : loader timespan (first to last [s]) = 663
+MariaDB-BHT-8                 : total timespan (first to last [s]) = 687
+MariaDB-BHT-8                 : connect to pod bexhoma-sut-mariadb-bht-8-1768297734-75c89d9578-zr5vh to load scripts
+MariaDB-BHT-8                 : start asynch loading scripts of type indexed
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+MariaDB-BHT-8                 : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+MariaDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
+MariaDB-BHT-8-1               : start benchmarking
+MariaDB-BHT-8-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1768297734
+- waiting 10s -               : done
+MariaDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-mariadb-bht-8-1768297734-1-1-c2p9p: found
+MariaDB-BHT-8-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-BHT-8-1               : collecting loading metrics of SUT at connection MariaDB-BHT-8-1
+MariaDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1768297734(.*)", pod=~"(.*)mariadb-bht-8-1768297734(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-BHT-8-1               : collecting metrics of data generator at connection MariaDB-BHT-8-1
+MariaDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1768297734(.*)", pod=~"(.*)mariadb-bht-8-1768297734(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-BHT-8-1               : collecting metrics of data injector at connection MariaDB-BHT-8-1
+MariaDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1768297734(.*)", pod=~"(.*)mariadb-bht-8-1768297734(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MariaDB-BHT-8                 : has running benchmarks
+timing_benchmarker [(1768303537, 1768305343)]
+MariaDB-BHT-8-1               : showing benchmarker times
+MariaDB-BHT-8-1               : benchmarker timespan job from 1768303533 to 1768305369
+MariaDB-BHT-8-1               : benchmarker timespan pods from 1768303537 to 1768305343
+MariaDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 1806
+MariaDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1768303537, 1768305343)]
+MariaDB-BHT-8-1               : found and updated times {'benchmarker': [(1768303537, 1768305343)]}
+MariaDB-BHT-8-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-BHT-8-1               : collecting execution metrics of SUT at connection MariaDB-BHT-8-1
+MariaDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1768297734(.*)", pod=~"(.*)mariadb-bht-8-1768297734(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-BHT-8-1               : collecting metrics of benchmarker at connection MariaDB-BHT-8-1
+MariaDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-bht-8-1768297734(.*)", pod=~"(.*)mariadb-bht-8-1768297734(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+MariaDB-BHT-8                 : can be stopped
+MariaDB-BHT-8                 : had 0 restarts at worker bexhoma-sut-mariadb-bht-8-1768297734-75c89d9578-zr5vh
+Experiment                    : ends at 2026-01-13 12:56:53.660411 (32497577.130965624) - 7627.27s total
+Join results done!
+Build evaluation cube done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=10
+    Type: tpch
+    Duration: 7628s 
+    Code: 1768297734
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MariaDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker25.
+    Database is persisted to disk of type ramdisk and size 50Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
+    RAM:540590825472
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:6.8.0-90-generic
+    node:cl-worker25
+    disk:145637
+    datadisk:19100
+    cpu_list:0-95
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    requests_cpu:4
+    requests_memory:128Gi
+    limits_memory:128Gi
+    eval_parameters
+        code:1768297734
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 MariaDB-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                            114423.02
+Minimum Cost Supplier Query (TPC-H Q2)                         7747.37
+Shipping Priority (TPC-H Q3)                                  30342.23
+Order Priority Checking Query (TPC-H Q4)                      31246.95
+Local Supplier Volume (TPC-H Q5)                              18629.03
+Forecasting Revenue Change (TPC-H Q6)                         15724.64
+Forecasting Revenue Change (TPC-H Q7)                         20455.43
+National Market Share (TPC-H Q8)                              36163.29
+Product Type Profit Measure (TPC-H Q9)                        37858.41
+Forecasting Revenue Change (TPC-H Q10)                        13718.84
+Important Stock Identification (TPC-H Q11)                     2384.18
+Shipping Modes and Order Priority (TPC-H Q12)                 51186.14
+Customer Distribution (TPC-H Q13)                             60262.60
+Forecasting Revenue Change (TPC-H Q14)                       235780.37
+Top Supplier Query (TPC-H Q15)                                33839.35
+Parts/Supplier Relationship (TPC-H Q16)                        3268.94
+Small-Quantity-Order Revenue (TPC-H Q17)                        893.48
+Large Volume Customer (TPC-H Q18)                             62896.12
+Discounted Revenue (TPC-H Q19)                                 2182.75
+Potential Part Promotion (TPC-H Q20)                           4777.25
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)         1012263.88
+Global Sales Opportunity Query (TPC-H Q22)                     1930.87
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MariaDB-BHT-8-1-1          20.0          663.0         0.0     5507.0    6194.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MariaDB-BHT-8-1-1          19.68
+
+### Power@Size ((3600*SF)/(geo times))
+                   Power@Size [~Q/h]
+DBMS                                
+MariaDB-BHT-8-1-1            1858.39
+
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                                time [s]  count    SF  Throughput@Size
+DBMS            SF   num_experiment num_client                                        
+MariaDB-BHT-8-1 10.0 1              1               1806      1  10.0           438.54
+
+### Workflow
+                         orig_name    SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+MariaDB-BHT-8-1-1  MariaDB-BHT-8-1  10.0     8               1           1       1768303540     1768305346
+
+#### Actual
+DBMS MariaDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MariaDB-BHT-8 - Pods [[1]]
+
+### Ingestion - Loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1        25.9     0.14          0.01                 1.31
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1     1920.11     4.41        125.95               125.95
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1       20.17     0.07          0.33                 0.33
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]

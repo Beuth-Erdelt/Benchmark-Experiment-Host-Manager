@@ -117,7 +117,7 @@ spec:
           - --addr=0.0.0.0:20160
           - --advertise-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20160
           #- --advertise-status-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20180
-          #- --status-addr=0.0.0.0:20180
+          - --status-addr=0.0.0.0:20180
           - --pd=$(BEXHOMA_PD_LIST)
           - --data-dir=/var/lib/tikv
         env:
@@ -131,6 +131,8 @@ spec:
         ports:
           - containerPort: 20160
             name: tikv
+          - containerPort: 20180
+            name: metrics
         volumeMounts:
           - name: bxw
             mountPath: /var/lib/tikv

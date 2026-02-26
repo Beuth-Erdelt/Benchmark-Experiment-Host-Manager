@@ -73,7 +73,27 @@ spec:
         - name: POOL_MODE
           value: session # mode = transaction not working for YCSB
         - name: ADMIN_USERS
-          value: postgres
+          value: "postgres"
+        #- name: ADMIN_USERS
+        #  value: postgres
+        - name: IGNORE_STARTUP_PARAMETERS
+          value: "extra_float_digits"
+        - name: AUTH_FILE
+          valueFrom:
+            secretKeyRef:
+              name: does-not-exist
+              key: nope
+              optional: true
+        #- name: STATS_USERS
+        #  value: postgres
+        #- name: PGBOUNCER_USERLIST
+        #  value: |
+        #    "postgres" ""
+        #  # "postgres" "md53175bce1d3201d16594cebf9d7eb3f9d"
+        #  # "pgbouncer_user" "md5ba183d8c6c6317fb447602eb1aa144f7"
+        #  # md5 hash of password+username
+        #  # echo -n "1234pgbouncer_user" | md5sum
+        #  # ba183d8c6c6317fb447602eb1aa144f7
         - name: DEFAULT_POOL_SIZE
           value: "32"
         - name: MIN_POOL_SIZE
@@ -102,10 +122,40 @@ spec:
         #  periodSeconds: 60
         ports:
         - {containerPort: 5432}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  userlist="/etc/pgbouncer/userlist.txt"
+                  user="postgres"
+                  pass="postgres"
+                  # Ensure userlist exists
+                  : > "${userlist}"  # creates file if missing; leaves content if exists
+                  # Check if user already present (idempotent)
+                  if ! grep -qE "^\"${user}\"" "${userlist}"; then
+                    echo "Adding '${user}' to userlist..."
+                    hash=$(echo -n "${pass}${user}" | md5sum | cut -d' ' -f1)
+                    printf '"%s" "md5%s"\n' "${user}" "${hash}" >> "${userlist}"
+                    # Reload PgBouncer configuration (SIGHUP triggers config reload, not restart)
+                    kill -HUP 1 || true
+                  else
+                    echo "'${user}' already present in userlist; nothing to do."
+                  fi
         #resources:
         #  limits: {cpu: 16000m, memory: 128Gi}
         #  requests: {cpu: 4000m, memory: 4Gi}
         #  #, ephemeral-storage: "1536Gi"}
+      - name: pgbouncer-exporter
+        image: quay.io/prometheuscommunity/pgbouncer-exporter:latest
+        args:
+          - "--pgBouncer.connectionString=postgres://postgres:postgres@localhost:5432/pgbouncer?sslmode=disable"
+        ports:
+        - containerPort: 9127
+          name: metrics
 ---
 apiVersion: v1
 kind: Service
@@ -151,6 +201,8 @@ spec:
           value: /var/lib/postgresql/data/pgdata
         - name: PGPORT
           value: "5432" # remove/comment this line for default ports
+        #- name: POSTGRES_PASSWORD
+        #  value: postgres
         # pg_ctl: cannot be run as root
         lifecycle:
           #postStart:
@@ -240,7 +292,7 @@ spec:
         # , "-c", "listen_addresses='*'", "-c", "logging_collector=on"
         # , "-c", "pg_stat_statements.save=off", "-c", "pg_stat_statements.track=all", "-c", "shared_preload_libraries='pg_stat_statements'"
       - name: monitor-application
-        image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
+        image: prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
         env:
           - name: DATA_SOURCE_URI
@@ -255,6 +307,7 @@ spec:
           #  value: "postgresql://user:password@/postgres?host=/var/run/postgresql"
         ports:
           - containerPort: 9187
+            name: metrics
         resources:
           requests: {cpu: 1000m, memory: 4Gi}
           limits: {cpu: 1000m, memory: 4Gi}

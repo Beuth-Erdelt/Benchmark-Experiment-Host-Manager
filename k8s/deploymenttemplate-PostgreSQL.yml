@@ -59,7 +59,8 @@ spec:
           - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       containers:
       - name: dbms
-        image: postgres:17.5
+        image: postgres:18.2
+        #image: postgres:17.5
         #image: postgres:18beta1-alpine
         #image: postgres:16.9
         env:
@@ -84,7 +85,7 @@ spec:
               #command: ["/bin/sh", "-c", "gosu postgres 'pg_ctl stop -m smart -t 120'"]
               #command: ["/bin/sh", "-c", "gosu postgres '/usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120'"]
               #command: ["/bin/sh -c 'gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120'"]
-              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
               #command: ["/bin/sh", "-c", "echo 'Hello from the preStop handler' > /usr/share/message && cat /usr/share/message"]
         #command: ["sh", "-c", "trap 'gosu postgres pg_ctl stop -m smart' SIGTERM; gosu postgres postgres"] # trap: SIGTERM: bad trap
         readinessProbe:
@@ -133,7 +134,7 @@ spec:
           #- "track_wal_io_timing=1"
           # --- Connection & Worker Processes ---
           - "-c"
-          - "max_connections=1500"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
+          - "max_connections=3000"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
           - "-c"
           - "max_worker_processes=64"    # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-WORKER-PROCESSES
           - "-c"

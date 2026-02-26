@@ -3,18 +3,18 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1619s 
-    Code: 1749652973
+    Duration: 1689s 
+    Code: 1769098732
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.8.
+    Experiment uses bexhoma version 0.8.20.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 30Gi.
     Loading is tested with [8] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1] pods.
@@ -22,39 +22,43 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     Experiment is run 2 times.
 
 ### Connections
-PostgreSQL-BHT-8-1-1-1 uses docker image postgres:16.1
-    RAM:541008568320
+PostgreSQL-BHT-8-1-1-1 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386849948
-    datadisk:3303
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95452
+    datadisk:3286
     volume_size:30G
     volume_used:3.3G
+    cpu_list:0-63
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749652973
-PostgreSQL-BHT-8-1-2-1 uses docker image postgres:16.1
-    RAM:541008568320
+        code:1769098732
+PostgreSQL-BHT-8-1-2-1 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386843044
-    datadisk:3935
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:95452
+    datadisk:3784
     volume_size:30G
-    volume_used:3.9G
+    volume_used:3.7G
+    cpu_list:0-63
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749652973
+        code:1769098732
 
 ### Execution
-                        experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1      16       1          1     12.26     17.14         0.0   7766.0  24311.0         5       0
-PostgreSQL-BHT-8-1-2-1               2      16       1          1     13.09     17.35         0.0  11291.0  34891.0         5       0
+                        experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency    NOPM      TPM  duration  errors
+PostgreSQL-BHT-8-1-1-1               1      16       1          1    252.31    426.13         0.0  5993.0  13841.0         5       0
+PostgreSQL-BHT-8-1-2-1               2      16       1          1    316.71    531.02         0.0  7069.0  16319.0         5       0
 
 Warehouses: 16
 
@@ -68,8 +72,8 @@ DBMS PostgreSQL-BHT-8-1 - Pods [[1], [1]]
 
 ### Loading
                         time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1-1      105.0        1.0   1.0                 548.571429
-PostgreSQL-BHT-8-1-2-1      105.0        1.0   1.0                 548.571429
+PostgreSQL-BHT-8-1-1-1      195.0        1.0   1.0                 295.384615
+PostgreSQL-BHT-8-1-2-1      195.0        1.0   1.0                 295.384615
 
 ### Tests
 TEST passed: NOPM contains no 0 or NaN

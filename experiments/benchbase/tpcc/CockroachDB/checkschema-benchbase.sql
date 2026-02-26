@@ -11,8 +11,8 @@ SELECT * FROM crdb_internal.gossip_nodes;
 -- SELECT * FROM crdb_internal.range_stats;
 
 -- This table offers information about the health and status of nodes in the CockroachDB cluster.
-SELECT 'crdb_internal.node_status' AS message;
-SELECT * FROM crdb_internal.node_status;
+-- SELECT 'crdb_internal.node_status' AS message;
+-- SELECT * FROM crdb_internal.node_status;
 
 SELECT 'crdb_internal.tables' AS message;
 SELECT * FROM crdb_internal.tables;

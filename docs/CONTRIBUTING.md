@@ -11,7 +11,7 @@ Some things that you can help on include:
 
 ## Non-code contributions
 
-Even if you don’t feel ready or able to contribute code, you can still help out. There always things that can be improved on the documentation (even just proof reading, or telling us if a section isn’t clear enough).
+Even if you donâ€™t feel ready or able to contribute code, you can still help out. There always things that can be improved on the documentation (even just proof reading, or telling us if a section isnâ€™t clear enough).
 
 
 ## Code contributions
@@ -43,3 +43,4 @@ Likewise for any enhancement or bug fix, we require including an additional test
 
 The file https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh includes some demo tests.
 For new or important features, we are happy to include a "TEST Passed" or "TEST failed" scenario.
+

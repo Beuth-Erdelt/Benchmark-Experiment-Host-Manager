@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
     Type: tpch
-    Duration: 615s 
-    Code: 1759402958
+    Duration: 572s 
+    Code: 1771155095
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -12,12 +12,12 @@ TPC-H Queries SF=1
     All instances use the same query parameters.
     Timeout per query is 600.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.12.
+    Experiment uses bexhoma version 0.8.20.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 2 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 10Gi. Persistent storage is removed at experiment start.
     Loading is tested with [1] threads, split into [2] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
@@ -27,75 +27,71 @@ TPC-H Queries SF=1
 
 ### Connections
 PostgreSQL-BHT-2-1-1 uses docker image postgres:17.5
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435724468
-    datadisk:5475
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97594
     volume_size:10G
     volume_used:5.4G
     cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1759402958
+        code:1771155095
         TENANT_BY:schema
         TENANT_NUM:2
 PostgreSQL-BHT-2-1-2 uses docker image postgres:17.5
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435724468
-    datadisk:5475
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97594
     volume_size:10G
     volume_used:5.4G
     cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1759402958
+        code:1771155095
         TENANT_BY:schema
         TENANT_NUM:2
 PostgreSQL-BHT-2-2-1 uses docker image postgres:17.5
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435724468
-    datadisk:5475
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97594
     volume_size:10G
     volume_used:5.4G
     cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1759402958
+        code:1771155095
         TENANT_BY:schema
         TENANT_NUM:2
 PostgreSQL-BHT-2-2-2 uses docker image postgres:17.5
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435724468
-    datadisk:5475
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:97594
     volume_size:10G
     volume_used:5.4G
     cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1759402958
+        code:1771155095
         TENANT_BY:schema
         TENANT_NUM:2
 
@@ -107,64 +103,64 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 PostgreSQL-BHT-2-1-1  PostgreSQL-BHT-2-1-2  PostgreSQL-BHT-2-2-1  PostgreSQL-BHT-2-2-2
-Pricing Summary Report (TPC-H Q1)                                 2332.46               2318.94               2340.15               2343.78
-Minimum Cost Supplier Query (TPC-H Q2)                             468.83                458.70                438.98                444.77
-Shipping Priority (TPC-H Q3)                                       710.97                708.05                684.19                687.35
-Order Priority Checking Query (TPC-H Q4)                           348.92                357.27                348.77                349.66
-Local Supplier Volume (TPC-H Q5)                                   633.65                668.95                628.10                645.97
-Forecasting Revenue Change (TPC-H Q6)                              474.77                480.29                477.86                475.61
-Forecasting Revenue Change (TPC-H Q7)                              751.52                768.74                759.71                762.00
-National Market Share (TPC-H Q8)                                   435.24                443.65                394.47                395.25
-Product Type Profit Measure (TPC-H Q9)                            1758.78               1050.29               1744.00               1025.41
-Forecasting Revenue Change (TPC-H Q10)                             587.50                605.99                588.45                599.80
-Important Stock Identification (TPC-H Q11)                         166.55                181.98                167.34                168.53
-Shipping Modes and Order Priority (TPC-H Q12)                      678.03                689.00                687.42                688.09
-Customer Distribution (TPC-H Q13)                                 2165.05               2205.25               2183.33               2169.83
-Forecasting Revenue Change (TPC-H Q14)                             502.16                789.92                511.25                796.60
-Top Supplier Query (TPC-H Q15)                                     510.95                516.98                525.03                520.16
-Parts/Supplier Relationship (TPC-H Q16)                            569.83                577.69                567.62                576.51
-Small-Quantity-Order Revenue (TPC-H Q17)                          2013.91               2029.44               1954.49               2052.52
-Large Volume Customer (TPC-H Q18)                                 5666.74               5980.98               6977.59               5704.89
-Discounted Revenue (TPC-H Q19)                                     121.68                904.45                124.35                125.00
-Potential Part Promotion (TPC-H Q20)                               253.39                258.17                240.32                250.78
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                782.68                780.74                767.43                772.78
-Global Sales Opportunity Query (TPC-H Q22)                         224.27                268.02                222.31                227.52
+Pricing Summary Report (TPC-H Q1)                                 2411.08               2403.19               2425.79               2407.37
+Minimum Cost Supplier Query (TPC-H Q2)                             439.94                467.01                434.89                414.78
+Shipping Priority (TPC-H Q3)                                       697.77                707.71                666.93                668.20
+Order Priority Checking Query (TPC-H Q4)                           351.26                350.15                341.89                333.54
+Local Supplier Volume (TPC-H Q5)                                   616.96                625.09                618.80                598.31
+Forecasting Revenue Change (TPC-H Q6)                              444.14                462.67                452.13                443.85
+Forecasting Revenue Change (TPC-H Q7)                              689.42                727.88                735.41                693.86
+National Market Share (TPC-H Q8)                                   404.82                405.47                378.89                359.16
+Product Type Profit Measure (TPC-H Q9)                             957.99                984.81                967.66                943.49
+Forecasting Revenue Change (TPC-H Q10)                             591.24                593.20                592.22                589.27
+Important Stock Identification (TPC-H Q11)                         176.00                159.46                159.83                148.27
+Shipping Modes and Order Priority (TPC-H Q12)                      657.38                641.41                652.67                635.84
+Customer Distribution (TPC-H Q13)                                 2173.49               2106.22               2102.04               2111.43
+Forecasting Revenue Change (TPC-H Q14)                             813.81                485.70                804.44                483.60
+Top Supplier Query (TPC-H Q15)                                     527.44                495.87                502.02                494.56
+Parts/Supplier Relationship (TPC-H Q16)                            547.92                558.22                544.22                553.96
+Small-Quantity-Order Revenue (TPC-H Q17)                          2083.41               2032.64               1980.89               1857.56
+Large Volume Customer (TPC-H Q18)                                 5590.37               5483.93               5752.63               5201.23
+Discounted Revenue (TPC-H Q19)                                     120.62                447.17                120.57                112.69
+Potential Part Promotion (TPC-H Q20)                               288.97                265.12                257.49                232.03
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                747.58                736.89                732.50                739.62
+Global Sales Opportunity Query (TPC-H Q22)                         214.11                286.57                213.69                210.73
 
 ### Loading [s]
                       timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-2-1-1           1.0          165.0         6.0      243.0     417.0
-PostgreSQL-BHT-2-1-2           1.0          165.0         6.0      243.0     417.0
-PostgreSQL-BHT-2-2-1           1.0          165.0         6.0      243.0     417.0
-PostgreSQL-BHT-2-2-2           1.0          165.0         6.0      243.0     417.0
+PostgreSQL-BHT-2-1-1           1.0          129.0         2.0      227.0     360.0
+PostgreSQL-BHT-2-1-2           1.0          129.0         2.0      227.0     360.0
+PostgreSQL-BHT-2-2-1           1.0          129.0         2.0      227.0     360.0
+PostgreSQL-BHT-2-2-2           1.0          129.0         2.0      227.0     360.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                       Geo Times [s]
 DBMS                               
-PostgreSQL-BHT-2-1-1           0.64
-PostgreSQL-BHT-2-1-2           0.72
-PostgreSQL-BHT-2-2-1           0.64
-PostgreSQL-BHT-2-2-2           0.64
+PostgreSQL-BHT-2-1-1           0.63
+PostgreSQL-BHT-2-1-2           0.66
+PostgreSQL-BHT-2-2-1           0.62
+PostgreSQL-BHT-2-2-2           0.59
 
 ### Power@Size ((3600*SF)/(geo times))
                       Power@Size [~Q/h]
 DBMS                                   
-PostgreSQL-BHT-2-1-1            5596.46
-PostgreSQL-BHT-2-1-2            5000.20
-PostgreSQL-BHT-2-2-1            5599.34
-PostgreSQL-BHT-2-2-2            5620.96
+PostgreSQL-BHT-2-1-1            5684.00
+PostgreSQL-BHT-2-1-2            5443.38
+PostgreSQL-BHT-2-2-1            5791.32
+PostgreSQL-BHT-2-2-2            6120.36
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
                                                   time [s]  count   SF  Throughput@Size
 DBMS               SF  num_experiment num_client                                       
-PostgreSQL-BHT-2-1 1.0 1              1                 25      2  1.0           6336.0
-PostgreSQL-BHT-2-2 1.0 1              2                 25      2  1.0           6336.0
+PostgreSQL-BHT-2-1 1.0 1              1                 23      2  1.0          6886.96
+PostgreSQL-BHT-2-2 1.0 1              2                 23      2  1.0          6886.96
 
 ### Workflow
                                orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-PostgreSQL-BHT-2-1-1  PostgreSQL-BHT-2-1  1.0     2               1           1       1759403423     1759403447
-PostgreSQL-BHT-2-1-2  PostgreSQL-BHT-2-1  1.0     2               1           1       1759403422     1759403447
-PostgreSQL-BHT-2-2-1  PostgreSQL-BHT-2-2  1.0     2               1           2       1759403502     1759403527
-PostgreSQL-BHT-2-2-2  PostgreSQL-BHT-2-2  1.0     2               1           2       1759403502     1759403525
+PostgreSQL-BHT-2-1-1  PostgreSQL-BHT-2-1  1.0     2               1           1       1771155499     1771155522
+PostgreSQL-BHT-2-1-2  PostgreSQL-BHT-2-1  1.0     2               1           1       1771155499     1771155522
+PostgreSQL-BHT-2-2-1  PostgreSQL-BHT-2-2  1.0     2               1           2       1771155589     1771155612
+PostgreSQL-BHT-2-2-2  PostgreSQL-BHT-2-2  1.0     2               1           2       1771155589     1771155611
 
 #### Actual
 DBMS PostgreSQL-BHT-2 - Pods [[2, 2]]

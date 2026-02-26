@@ -1,4 +1,4 @@
-bexhoma.scripts.tpch module
+﻿bexhoma.scripts.tpch module
 ===========================
 
 .. automodule:: bexhoma.scripts.tpch

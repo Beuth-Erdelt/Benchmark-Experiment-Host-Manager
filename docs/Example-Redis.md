@@ -122,8 +122,8 @@ doc_ycsb_redis_1.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 643s 
-    Code: 1759414876
+    Duration: 535s 
+    Code: 1768489319
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -134,13 +134,13 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.13.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker21.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -148,12 +148,13 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:436845892
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:133663
+    datadisk:1095
     cpu_list:0-63
     args:['--maxclients', '10000', '--io-threads', '64']
     requests_cpu:4
@@ -161,15 +162,15 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
     client:1
     numExperiment:1
     eval_parameters
-        code:1759414876
+        code:1768489319
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   11886.145473                84374.0             1000000                              8139.5
+Redis-64-8-196608               1       64  196608          8           0                   17103.422938                58720.0             1000000                              5656.0
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       25524.85               391775.0           5000441                            9479.0             4999559                              9479.0
+Redis-64-8-196608-1               1      128   65536          1           0                       34157.56               292761.0           4996598                            7015.0             5003402                              7027.0
 
 ### Workflow
 
@@ -179,31 +180,23 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 #### Planned
 DBMS Redis-64-8-196608 - Pods [[1]]
 
-### Ingestion - SUT
-                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      123.85     1.07          1.78                 1.79
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       112.5        0           0.1                  0.1
+Redis-64-8-196608-1        55.7        0           0.1                  0.1
 
-### Execution - SUT
+### Execution phase: component benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      510.62     1.71          2.77                 2.78
-
-### Execution - Benchmarker
-                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1     1079.49     3.44          0.13                 0.13
+Redis-64-8-196608-1      434.48     1.86          0.12                 0.13
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 To see the summary again you can simply call `bexperiments summary -e 1742224433` with the experiment code.
@@ -262,8 +255,8 @@ doc_ycsb_redis_2.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 412s 
-    Code: 1759415596
+    Duration: 338s 
+    Code: 1768489920
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -274,13 +267,13 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.13.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker21.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -288,12 +281,13 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435725032
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:132569
+    datadisk:1
     cpu_list:0-63
     args:['--maxclients', '10000', '--io-threads', '64']
     requests_cpu:4
@@ -301,40 +295,45 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
     client:1
     numExperiment:1
     worker 0
-        RAM:540590919680
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-83-generic
-        node:cl-worker24
-        disk:165120420
-        cpu_list:0-95
-    worker 1
-        RAM:1081742843904
+        RAM:540579340288
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
-        host:6.8.0-79-generic
-        node:cl-worker29
-        disk:848290608
+        host:6.8.0-90-generic
+        node:cl-worker22
+        disk:193246
+        datadisk:95
         cpu_list:0-127
+    worker 1
+        RAM:540590821376
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-90-generic
+        node:cl-worker23
+        disk:132896
+        datadisk:108
+        cpu_list:0-95
     worker 2
-        RAM:540492988416
-        CPU:Intel(R) Xeon(R) Gold 6430
-        Cores:128
-        host:6.8.0-60-generic
-        node:cl-worker38
-        disk:295510308
-        cpu_list:0-127
+        RAM:540590825472
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-90-generic
+        node:cl-worker25
+        disk:154935
+        datadisk:94
+        cpu_list:0-95
+    worker 3
+        node:cl-worker24
     eval_parameters
-        code:1759415596
+        code:1768489920
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   23278.764181                43144.0             1000000                              5027.0
+Redis-64-8-196608               1       64  196608          8           0                   18102.824041                 6905.0              125000                              94.625
 
 ### Execution
-                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       63016.74               158688.0           4997785                            2313.0             5002215                              2263.0
+                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)  [READ-FAILED].Operations  [READ-FAILED].99thPercentileLatency(us)
+Redis-64-8-196608-1               1      128   65536          1           0                       64106.26               155991.0           4197044                            4211.0             4995899                              4247.0                    807057                                   4391.0
 
 ### Workflow
 
@@ -344,31 +343,33 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 #### Planned
 DBMS Redis-64-8-196608 - Pods [[1]]
 
-### Ingestion - SUT
-                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       58.32     1.17          0.95                 0.95
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component worker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1        0.15        0           0.0                  0.0
+Redis-64-8-196608-1        3.23        0          0.11                 0.12
 
-### Execution - SUT
+### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      283.75     2.43          1.93                 1.94
+Redis-64-8-196608-1           0        0           0.0                  0.0
 
-### Execution - Benchmarker
+### Execution phase: component worker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      990.76     8.77          0.29                 0.29
+Redis-64-8-196608-1      280.55     2.57           0.6                 0.61
+
+### Execution phase: component benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1       537.9      4.6          0.29                 0.29
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST failed: Loading phase: component loader contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST failed: Execution Phase: contains FAILED column
 ```
 
 ## Replication
@@ -407,9 +408,9 @@ doc_ycsb_redis_3.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 521s 
-    Code: 1748908617
-    YCSB tool runs the benchmark.
+    Duration: 414s 
+    Code: 1769094442
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
@@ -419,13 +420,13 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.7.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['Redis'].
+    Experiment is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -433,72 +434,87 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1 uses docker image redis:7.4.2
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384172
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:94800
+    datadisk:1
+    cpu_list:0-63
+    args:['--maxclients', '10000', '--io-threads', '64']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     worker 0
-        RAM:1081854078976
+        RAM:1081742745600
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker29
+        disk:384581
+        datadisk:717
+        cpu_list:0-127
+    worker 1
+        RAM:540492902400
+        CPU:Intel(R) Xeon(R) Gold 6430
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker38
+        disk:250672
+        datadisk:795
+        cpu_list:0-127
+    worker 2
+        RAM:1081853980672
         CPU:Intel(R) Xeon(R) Gold 6438Y+
         Cores:128
-        host:6.8.0-60-generic
+        host:6.8.0-90-generic
         node:cl-worker37
-        disk:225821596
-    worker 1
-        RAM:1081965518848
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1075-nvidia
-        node:cl-worker27
-        disk:1390953880
-    worker 2
-        RAM:540595884032
+        disk:397176
+        datadisk:716
+        cpu_list:0-127
+    worker 3
+        RAM:540590821376
         CPU:AMD EPYC 7352 24-Core Processor
         Cores:96
-        host:5.15.0-140-generic
+        host:6.8.0-90-generic
         node:cl-worker23
-        disk:538881736
-    worker 3
-        RAM:540579409920
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:6.8.0-60-generic
-        node:cl-worker22
-        disk:436304024
+        disk:145224
+        datadisk:710
+        cpu_list:0-95
     worker 4
-        RAM:1081742848000
-        CPU:AMD EPYC 7502 32-Core Processor
-        Cores:128
-        host:6.8.0-60-generic
-        node:cl-worker29
-        disk:543559412
+        RAM:2164173176832
+        CPU:INTEL(R) XEON(R) PLATINUM 8570
+        Cores:224
+        host:6.8.0-90-generic
+        node:cl-worker36
+        disk:638453
+        datadisk:721
+        cpu_list:0-223
     worker 5
-        RAM:1077382844416
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:6.8.0-1025-nvidia
-        node:cl-worker28
-        disk:1414280788
+        RAM:540590821376
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
+        host:6.8.0-90-generic
+        node:cl-worker24
+        disk:200821
+        datadisk:797
+        cpu_list:0-95
     worker 6
-        node:cl-worker13
+        node:cl-worker22
     eval_parameters
-        code:1748908617
+        code:1769094442
         BEXHOMA_REPLICAS:1
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   24697.223422                40771.0             1000000                              5192.0
+Redis-64-8-196608               1       64  196608          8           0                   36836.051418                27372.0             1000000                             3403.75
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       57502.33               173906.0           4999600                            3971.0             5000400                              3963.0
+Redis-64-8-196608-1               1      128   65536          1           0                       60827.99               164398.0           5007774                            1383.0             4992226                              1352.0
 
 ### Workflow
 
@@ -508,31 +524,33 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 #### Planned
 DBMS Redis-64-8-196608 - Pods [[1]]
 
-### Ingestion - SUT
-                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      267.75     0.68          3.08                 3.11
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component worker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      165.43        0          4.05                 4.07
+Redis-64-8-196608-1       96.15     3.15          2.65                 2.69
 
-### Execution - SUT
+### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       601.3     1.01          4.29                 4.33
+Redis-64-8-196608-1           0        0           0.0                  0.0
 
-### Execution - Benchmarker
+### Execution phase: component worker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      512.26     5.73          0.83                 0.83
+Redis-64-8-196608-1      425.05     3.29          3.78                 3.79
+
+### Execution phase: component benchmarker
+                     CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+Redis-64-8-196608-1      693.18     4.81           0.3                  0.3
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST failed: Loading phase: component loader contains 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 
@@ -586,8 +604,8 @@ doc_ycsb_redis_4.log
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 1280s 
-    Code: 1759416376
+    Duration: 1242s 
+    Code: 1769092236
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -598,13 +616,13 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.13.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['Redis'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [128] threads, split into [1] pods.
@@ -613,14 +631,15 @@ YCSB SF=1
 
 ### Connections
 Redis-64-8-196608-1-1 uses docker image redis:7.4.2
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435725032
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:94799
+    datadisk:1095
     volume_size:50G
-    volume_used:328M
+    volume_used:1.1G
     cpu_list:0-63
     args:['--maxclients', '10000', '--io-threads', '64']
     requests_cpu:4
@@ -628,14 +647,15 @@ Redis-64-8-196608-1-1 uses docker image redis:7.4.2
     client:1
     numExperiment:1
     eval_parameters
-        code:1759416376
+        code:1769092236
 Redis-64-8-196608-2-1 uses docker image redis:7.4.2
-    RAM:541008568320
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:435725248
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:94800
+    datadisk:1095
     volume_size:50G
     volume_used:1.1G
     cpu_list:0-63
@@ -645,16 +665,16 @@ Redis-64-8-196608-2-1 uses docker image redis:7.4.2
     client:1
     numExperiment:2
     eval_parameters
-        code:1759416376
+        code:1769092236
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   12229.039364                82060.0             1000000                              7882.0
+Redis-64-8-196608               1       64  196608          8           0                   11028.635421                90904.0             1000000                              9029.0
 
 ### Execution
                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1-1               1      128   65536          1           0                       25813.91               387388.0           4998395                            9375.0             5001605                              9367.0
-Redis-64-8-196608-2-1               2      128   65536          1           0                       24153.48               414019.0           5000309                           10167.0             4999691                             10183.0
+Redis-64-8-196608-1-1               1      128   65536          1           0                       23618.66               423394.0           4999900                           10335.0             5000100                             10335.0
+Redis-64-8-196608-2-1               2      128   65536          1           0                       24868.69               402112.0           5000937                            9775.0             4999063                              9767.0
 
 ### Workflow
 
@@ -664,33 +684,24 @@ DBMS Redis-64-8-196608 - Pods [[1], [1]]
 #### Planned
 DBMS Redis-64-8-196608 - Pods [[1], [1]]
 
-### Ingestion - SUT
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1       92.96     1.01          1.67                 1.67
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      114.09        0           0.1                  0.1
+Redis-64-8-196608-1-1      111.56     1.44           0.1                  0.1
 
-### Execution - SUT
+### Execution phase: component benchmarker
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1      508.11     1.48          3.01                 3.02
-Redis-64-8-196608-2-1      630.90     1.64          2.83                 2.83
-
-### Execution - Benchmarker
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1-1     1081.69     3.38          0.13                 0.13
-Redis-64-8-196608-2-1     1081.69     3.25          0.13                 0.13
+Redis-64-8-196608-1-1      480.61     1.31          0.13                 0.13
+Redis-64-8-196608-2-1      480.61     1.30          0.13                 0.13
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column
 ```
 
 ### Redis as a Cluster
@@ -960,4 +971,6 @@ In `cluster.config` there is a section:
 ```
 
 Notice how this does not have a JDBC section (as Redis does not support this).
+
+
 

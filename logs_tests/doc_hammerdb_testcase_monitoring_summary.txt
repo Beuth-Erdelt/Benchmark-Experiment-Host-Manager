@@ -3,61 +3,65 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
     Type: tpcc
-    Duration: 1384s 
-    Code: 1749651503
+    Duration: 1339s 
+    Code: 1769097321
     HammerDB runs the benchmark.
     This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
     TPC-C data is generated and loaded using several threads.
     Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.8.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [16] threads, split into [1] pods.
     Benchmarking is tested with [16] threads, split into [1, 2] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-16-1-1 uses docker image postgres:16.1
-    RAM:541008568320
+PostgreSQL-BHT-16-1-1 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:390709484
-    datadisk:3298
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:98727
+    datadisk:3282
+    cpu_list:0-63
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749651503
-PostgreSQL-BHT-16-1-2 uses docker image postgres:16.1
-    RAM:541008568320
+        code:1769097321
+PostgreSQL-BHT-16-1-2 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:391075408
-    datadisk:3951
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:99587
+    datadisk:4142
+    cpu_list:0-63
+    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
     requests_memory:16Gi
     eval_parameters
-        code:1749651503
+        code:1769097321
 
 ### Execution
-                       experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency    NOPM      TPM  duration  errors
-PostgreSQL-BHT-16-1-1               1      16       1          1     12.83     17.24         0.0  7865.0  24254.0         5       0
-PostgreSQL-BHT-16-1-2               1      16       2          2     14.34     18.51         0.0  7205.5  22161.0         5       0
+                       experiment_run  vusers  client  pod_count  P95 [ms]  P99 [ms]  efficiency     NOPM      TPM  duration  errors
+PostgreSQL-BHT-16-1-1               1      16       1          1     34.01     66.31         0.0  13242.0  30632.0         5       0
+PostgreSQL-BHT-16-1-2               1      16       2          2     33.81     58.54         0.0  20703.5  47538.5         5       0
 
 Warehouses: 16
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1]]
+DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 
 #### Planned
 DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
@@ -67,30 +71,32 @@ DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2]]
 PostgreSQL-BHT-16-1-1       84.0        1.0   1.0                 685.714286
 PostgreSQL-BHT-16-1-2       84.0        1.0   2.0                 685.714286
 
-### Ingestion - SUT
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      145.57        0          3.77                 4.47
-PostgreSQL-BHT-16-1-2      145.57        0          3.77                 4.47
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: SUT deployment
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1      134.84        0          0.15                 0.15
-PostgreSQL-BHT-16-1-2      134.84        0          0.15                 0.15
+PostgreSQL-BHT-16-1-1      113.98     1.52          7.77                 8.43
+PostgreSQL-BHT-16-1-2      113.98     1.52          7.77                 8.43
 
-### Execution - SUT
+### Loading phase: component loader
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1    25472.40    59.92          5.29                 5.98
-PostgreSQL-BHT-16-1-2    25629.48    59.75          5.39                 6.20
+PostgreSQL-BHT-16-1-1      201.08        0          0.15                 0.15
+PostgreSQL-BHT-16-1-2      201.08        0          0.15                 0.15
 
-### Execution - Benchmarker
+### Execution phase: SUT deployment
                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-16-1-1       37.72     0.09          0.11                 0.12
-PostgreSQL-BHT-16-1-2       37.72     0.07          0.22                 0.23
+PostgreSQL-BHT-16-1-1      278.05     1.52           8.2                 9.04
+PostgreSQL-BHT-16-1-2      373.24     0.89           8.6                 9.66
+
+### Execution phase: component benchmarker
+                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+PostgreSQL-BHT-16-1-1       50.21     0.12          0.14                 0.15
+PostgreSQL-BHT-16-1-2       50.21     0.28          0.14                 0.15
 
 ### Tests
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned

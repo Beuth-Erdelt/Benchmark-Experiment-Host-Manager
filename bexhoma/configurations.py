@@ -953,32 +953,135 @@ scrape_configs:
       - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # application monitor
                         # TODO: test for dbms other than PostgreSQL
+                        working_example_of_service_discovery_prometheus_config = ""
+                        working_example_of_service_discovery_prometheus_config += """
+  - job_name: 'bexhoma-postgres'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["perdelt"]
+    relabel_configs:
+      # Only keep pods whose name matches pattern
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_name]
+        regex: bexhoma-sut-postgresql-1-1-1024-.*
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:9187'
+        action: replace
+"""
                         if self.monitor_app_active:
-                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery']:
-                                prometheus_config += """
-  - job_name: 'tidb-pods'
+                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery'] and 'discovery_config' in self.dockertemplate['monitor'] and len(self.dockertemplate['monitor']['discovery_config']) > 0:
+                                prometheus_config += self.dockertemplate['monitor']['discovery_config'].format(namespace=self.experiment.namespace, master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                                prometheus_config_redis = ""
+                                prometheus_config_redis += """
+  - job_name: 'redis-pods'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_interval}
     metrics_path: /metrics
     kubernetes_sd_configs:
       - role: pod
+        namespaces:
+          names: ["perdelt"]
     relabel_configs:
-      # Only select TiDB pods by labels
+      # Only select pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;worker;Redis
+        action: keep
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:9121'
+        action: replace
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                                prometheus_config_tidb = ""
+                                prometheus_config_tidb += """
+  - job_name: 'tidb-pods-tidb'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["perdelt"]
+    relabel_configs:
+      # Only select pods by labels
       - source_labels: [__meta_kubernetes_pod_label_app,
                         __meta_kubernetes_pod_label_component,
                         __meta_kubernetes_pod_label_dbms]
         regex: bexhoma;sut;TiDB
         action: keep
-
-      # Set the address to pod IP + metrics port
+      # Map pod IP -> address:port
       - source_labels: [__meta_kubernetes_pod_ip]
         target_label: __address__
-        replacement: ${{1}}:9500
-
+        replacement: '$1:9500'
+        action: replace
       # Optional: rename instance label to pod name
       - source_labels: [__meta_kubernetes_pod_name]
         target_label: instance
-
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep
+  - job_name: 'tidb-pods-tikv'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["perdelt"]
+    relabel_configs:
+      # Only select pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;tikv;TiDB
+        action: keep
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:20180'
+        action: replace
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep
+  - job_name: 'tidb-pods-pd'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["perdelt"]
+    relabel_configs:
+      # Only select pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;pd;TiDB
+        action: keep
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:2379'
+        action: replace
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
       # Optional: drop pods that are not running
       - source_labels: [__meta_kubernetes_pod_phase]
         regex: Running
@@ -1014,6 +1117,7 @@ scrape_configs:
                                 #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
                                 #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                                 i = 0
+                                prometheus_config_working_endpoints_ignored = ""
                                 #for pod in pods_worker:
                                 for endpoint in endpoints_worker:
                                     if endpoint in endpoints_cluster:
@@ -1022,7 +1126,7 @@ scrape_configs:
                                         continue
                                     print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
                                     #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
-                                    prometheus_config += """
+                                    prometheus_config_working_endpoints_ignored += """
   - job_name: 'monitor-app-{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
@@ -1030,18 +1134,27 @@ scrape_configs:
     static_configs:
       - targets: ['{endpoint}:8080']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                                     i = i + 1
-                                not_used_discovery_does_not_workprometheus_config = ""
-                                not_used_discovery_does_not_workprometheus_config += """
+                                prometheus_config_cockroachdb = ""
+                                prometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     metrics_path: /_status/vars
     kubernetes_sd_configs:
-    - role: pod
+      - role: pod
+        namespaces:
+          names: ["perdelt"]
     relabel_configs:
-    - source_labels: [__meta_kubernetes_pod_name]
-      action: keep
-      regex: bexhoma-worker-cockroachdb-ycsb-1-[0-9]+""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+      # Only keep pods whose name matches pattern
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_name]
+        regex: bexhoma-worker-cockroachdb-.*
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:8080'
+        action: replace
+""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                             else:
                                 # no blackbox mode, normal scraping target directly
                                 prometheus_config += """
@@ -1076,9 +1189,9 @@ scrape_configs:
                             for endpoint in endpoints_worker:
                                 if endpoint in endpoints_cluster:
                                     # we already monitor this endpoint
-                                    print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (already monitored by cluster)".format(configuration, endpoint))
+                                    print("{:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {} (already monitored by cluster)".format(configuration, endpoint))
                                     continue
-                                print("{:30s}: found worker endpoint (cAdvisor) for monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
+                                print("{:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
                                 #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
                                 prometheus_config += """
   - job_name: 'monitor-gpu-{endpoint}'

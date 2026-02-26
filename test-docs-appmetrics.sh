@@ -18,7 +18,7 @@
 # Import functions from testfunctions.sh
 source ./testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -202,6 +202,7 @@ wait_process "tpch"
 
 #### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+  -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
@@ -232,10 +233,179 @@ wait_process "hammerdb"
 
 
 
+####################################################
+######### CockroachDB Application Metrics ##########
+####################################################
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 10 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 3 \
+  --workload a \
+  -dbms CockroachDB \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
+
+wait_process "ycsb"
+
+
+#### Benchbase Simple (Example-CockroachDB.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -dbms CockroachDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log &
+
+wait_process "benchbase"
+
+
+
+####################################################
+############ Redis Application Metrics #############
+####################################################
+
+
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 1 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
+
+wait_process "ycsb"
 
 
 
 
+####################################################
+############# TiDB Application Metrics #############
+####################################################
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 1 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  --workload a \
+  -dbms TiDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 1 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log &
+
+
+wait_process "ycsb"
+
+
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -nw 3 \
+  -nwr 3 \
+  -nsr 3 \
+  -dbms TiDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log &
+
+wait_process "benchbase"
+
+
+
+####################################################
+########### PGBouncer Application Metrics ##########
+####################################################
+
+
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 16 \
+  -sfo 16 \
+  --workload c \
+  -dbms PGBouncer \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rr 64Gi -lr 64Gi \
+  -tb 16384 \
+  -nlp 16 \
+  -nlt 64 \
+  -nlf 11 \
+  -nbp 16 \
+  -nbt 128 \
+  -nbf 11 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  -npp 4 \
+  -npi 128 \
+  -npo 64 \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
+
+wait_process "ycsb"
+
+
+#### Benchbase Scale (Example-Benchbase.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 10 \
+  -xconn \
+  -dbms PGBouncer \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -npp 2 \
+  -npi 32 \
+  -npo 32 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log &
+
+wait_process "benchbase"
 
 
 

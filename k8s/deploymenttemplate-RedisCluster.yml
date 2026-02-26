@@ -258,6 +258,14 @@ spec:
         volumeMounts:
         - name: bxw
           mountPath: /data
+      - name: monitor-application
+        image: oliver006/redis_exporter:latest
+        args:
+          - "--redis.addr=redis://localhost:6379"
+          - "--is-cluster"
+        ports:
+          - containerPort: 9121
+            name: metrics
       volumes:
       #- name: benchmark-data-volume
       #  persistentVolumeClaim: {claimName: bexhoma-data}
