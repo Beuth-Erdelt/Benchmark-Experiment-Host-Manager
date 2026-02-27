@@ -18,7 +18,7 @@
 # Import functions from testfunctions.sh
 source ./testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -119,11 +119,12 @@ wait_process "benchbase"
 
 
 #### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 sleep 30
 
 
 nohup python benchbase.py -ms 1 -tr \
+  -rr 128Gi -lr 128Gi \
   -sf 160 \
   -sd 30 \
   -xkey \

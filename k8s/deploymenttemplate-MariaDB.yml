@@ -50,6 +50,7 @@ spec:
         #args: ["--innodb_log_buffer_size", "17179869184", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296", "--LimitMEMLOCK", "16M"]
         #args: ["--innodb_log_buffer_size", "17179869184", "--innodb-write-io-threads", "16", "--innodb-log-file-size", "4294967296"]
         args:
+          - "--max_connections=1500"
           # --- I/O Threading ---
           - "--innodb-read-io-threads=64"         # Use all cores for read I/O
           - "--innodb-write-io-threads=64"        # Use all cores for write I/O
@@ -72,13 +73,21 @@ spec:
           # --- Doublewrite Buffer ---
           - "--innodb-doublewrite=0"              # Disable on CephFS
         env:
-          - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
+          #- {name: MARIADB_ROOT_PASSWORD, value: 'password'}
+          #- {name: MYSQL_ROOT_PASSWORD, value: 'password'}
+          # not more than 1 root user
+          - {name: MARIADB_USER, value: 'bexhoma'}
+          - {name: MARIADB_ROOT_PASSWORD, value: 'password'}
+          - {name: MARIADB_DATABASE, value: 'mariadb'}
+          - {name: MYSQL_USER, value: 'bexhoma'}
+          - {name: MYSQL_PASSWORD, value: 'password'}
+          - {name: MYSQL_DATABASE, value: 'mariadb'}
         readinessProbe: #mysqladmin ping > /dev/null 2>&1 && echo "MySQL server is running." || echo "MySQL server is not running."
           exec:
             command: [
               "/bin/sh", 
               "-c", 
-              "if mariadb -e 'SELECT 1+1;'; then exit 0; else exit 1; fi"
+              "if mariadb --user=root --password=password -e 'SELECT 1+1;'; then exit 0; else exit 1; fi"
             ]
           initialDelaySeconds: 15
           periodSeconds: 60

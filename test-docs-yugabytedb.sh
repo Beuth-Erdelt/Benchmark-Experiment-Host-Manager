@@ -18,7 +18,7 @@
 # Import functions from testfunctions.sh
 source ./testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -53,37 +53,72 @@ wait_process "ycsb"
 
 
 install_yugabytedb() {
+  # Parameter: $1 = persistent storage? yes/no
+  PERSISTENT=${1:-yes}  # Default: persistent
+
+  if [[ "$PERSISTENT" == "yes" ]]; then
+    EPHEMERAL=false
+  else
+    EPHEMERAL=true
+  fi
+
   helm install bexhoma yugabytedb/yugabyte \
-  --version 2.23.0 \
-  --set \
+    --version 2025.2.0 \
+    --set \
 gflags.tserver.ysql_enable_packed_row=true,\
 gflags.tserver.ysql_max_connections=1280,\
 resource.master.limits.cpu=2,\
-resource.master.limits.memory=8Gi,\
+resource.master.limits.memory=16Gi,\
 resource.master.requests.cpu=2,\
-resource.master.requests.memory=8Gi,\
+resource.master.requests.memory=16Gi,\
 resource.tserver.limits.cpu=8,\
-resource.tserver.limits.memory=8Gi,\
+resource.tserver.limits.memory=16Gi,\
 resource.tserver.requests.cpu=8,\
-resource.tserver.requests.memory=8Gi,\
+resource.tserver.requests.memory=16Gi,\
 storage.master.size=100Gi,\
+storage.master.storageClass=shared,\
 storage.tserver.size=100Gi,\
-storage.ephemeral=true,\
-tserver.tolerations[0].effect=NoSchedule,\
-tserver.tolerations[0].key=nvidia.com/gpu,\
-enableLoadBalancer=True
+storage.tserver.storageClass=shared,\
+storage.ephemeral=$EPHEMERAL,\
+tserver.livenessProbe.timeoutSeconds=10,\
+master.livenessProbe.timeoutSeconds=10,\
+enableLoadBalancer=true
+
+  echo "Waiting 60s for pods to start..."
   sleep 60
 }
+
+#install_yugabytedb yes   # persistent storage
+#install_yugabytedb no    # ephemeral storage
+#install_yugabytedb       # default = persistent
+
 
 remove_yugabytedb() {
+  # Parameter: $1 = remove PVCs? yes/no
+  REMOVE_PVC=${1:-no}  # default: do NOT remove PVCs
+
+  echo "Deleting Helm release bexhoma..."
   helm delete bexhoma
-  kubectl delete pvc -l app=yb-tserver
-  kubectl delete pvc -l app=yb-master
+
+  if [[ "$REMOVE_PVC" == "yes" ]]; then
+    echo "Removing PVCs for yb-tserver and yb-master..."
+    kubectl delete pvc -l app=yb-tserver
+    kubectl delete pvc -l app=yb-master
+  else
+    echo "Keeping PVCs (persistent storage not deleted)"
+  fi
+
+  echo "Waiting 60s for cleanup..."
   sleep 60
 }
 
+#remove_yugabytedb yes   # Helm release + PVCs
+#remove_yugabytedb no    # nur Helm release, PVCs behalten
+#remove_yugabytedb       # default = no
+
+
 # install YugabyteDB
-install_yugabytedb
+install_yugabytedb no
 
 #### YCSB Ingestion (Example-YugaByteDB.md)
 nohup python ycsb.py -ms 1 -tr \
@@ -107,7 +142,7 @@ nohup python ycsb.py -ms 1 -tr \
 
 wait_process "ycsb"
 
-
+# skip loading, because previous process has generated it
 #### YCSB Execution (Example-YugaByteDB.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -133,11 +168,11 @@ wait_process "ycsb"
 
 
 # remove YugabyteDB installation
-remove_yugabytedb
+remove_yugabytedb no
 sleep 30
 
 # install YugabyteDB
-install_yugabytedb
+install_yugabytedb no
 sleep 30
 
 kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
@@ -168,11 +203,11 @@ wait_process "ycsb"
 
 
 # remove YugabyteDB installation
-remove_yugabytedb
+remove_yugabytedb no
 sleep 30
 
 # install YugabyteDB
-install_yugabytedb
+install_yugabytedb no
 sleep 30
 
 
@@ -194,12 +229,34 @@ wait_process "benchbase"
 
 
 # remove YugabyteDB installation
-remove_yugabytedb
+remove_yugabytedb no
 sleep 30
 
 # install YugabyteDB
-install_yugabytedb
+install_yugabytedb no
 sleep 30
+
+# kubectl patch statefulset yb-tserver --type=merge -p '
+# spec:
+#   template:
+#     spec:
+#       containers:
+#       - name: yb-tserver
+#         livenessProbe:
+#           exec:
+#             command: ["true"]
+# '
+
+# kubectl patch statefulset yb-master --type=merge -p '
+# spec:
+#   template:
+#     spec:
+#       containers:
+#       - name: yb-master
+#         livenessProbe:
+#           exec:
+#             command: ["true"]
+# '
 
 
 #### Benchbase More Complex (Example-YugaByteDB.md)
@@ -222,7 +279,7 @@ wait_process "benchbase"
 
 
 # remove YugabyteDB installation
-remove_yugabytedb
+remove_yugabytedb no
 
 
 

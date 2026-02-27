@@ -2,25 +2,34 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1747702329
-Experiment                    : starts at 2025-05-20 02:52:08.888399 (11894492.358952278)
+Experiment                    : has code 1769711345
+Experiment                    : starts at 2026-01-29 19:29:05.484792 (33903508.95534533)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
-Benchmark is 'chbenchmark'. Scaling factor is 100. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-Experiment uses bexhoma version 0.8.5.
-Benchmark is limited to DBMS ['PostgreSQL'].
+Benchmark is 'chbenchmark'. Scaling factor is 100. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 20 minutes.
+Experiment uses bexhoma version 0.8.20.
+Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
+SUT is fixed to cl-worker14.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [100] threads, split into [1, 2, 5, 10] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
-done
+Cluster monitoring            : is running
+PostgreSQL-1-1-1024           : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : will start now
-PostgreSQL-1-1-1024           : Name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1747702329
-PostgreSQL-1-1-1024           : Name of SUT service = bexhoma-sut-postgresql-1-1-1024-1747702329
+PostgreSQL-1-1-1024           : deployments ['sut']
+PostgreSQL-1-1-1024           : stateful sets []
+PostgreSQL-1-1-1024           : pvcs ['sut']
+PostgreSQL-1-1-1024           : name of SUT pods = bexhoma-sut-postgresql-1-1-1024-1769711345
+PostgreSQL-1-1-1024           : name of SUT service = bexhoma-sut-postgresql-1-1-1024-1769711345
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : waits for health check to succeed
 - waiting 30s -               : done
@@ -29,12 +38,7 @@ PostgreSQL-1-1-1024           : waits for health check to succeed
 PostgreSQL-1-1-1024           : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2025-05-20 00:55:40 (that is in 60 secs)
-- waiting 30s -               : done
-PostgreSQL-1-1-1024           : is not loaded yet
-PostgreSQL-1-1-1024           : will start loading but not before 2025-05-20 00:55:40
-done
-PostgreSQL-1-1-1024           : is not loaded yet
+PostgreSQL-1-1-1024           : connect to pod bexhoma-sut-postgresql-1-1-1024-1769711345-c5cb6df9-2sszc to load scripts
 PostgreSQL-1-1-1024           : start asynch loading scripts of type loaded
 PostgreSQL-1-1-1024           : is loading
 - waiting 30s -               : done
@@ -69,18 +73,53 @@ PostgreSQL-1-1-1024           : is loading
 PostgreSQL-1-1-1024           : is loading
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : is loading
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : is loading
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : showing loader times
-PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 509
+PostgreSQL-1-1-1024           : generator times (start/end per pod and container) []
+PostgreSQL-1-1-1024           : loader times (start/end per pod and container) [(1769711565, 1769712537)]
+PostgreSQL-1-1-1024           : total times (start/end per pod and container) [(1769711565, 1769712537)]
+PostgreSQL-1-1-1024           : loader timespan (first to last [s]) = 972
+PostgreSQL-1-1-1024           : connect to pod bexhoma-sut-postgresql-1-1-1024-1769711345-c5cb6df9-2sszc to load scripts
 PostgreSQL-1-1-1024           : start asynch loading scripts of type indexed
 PostgreSQL-1-1-1024           : is loading
-done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 100, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a'}
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 100, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a', 'BEXHOMA_TENANT_BY': '', 'BEXHOMA_TENANT_NUM': 0}
 PostgreSQL-1-1-1024-1         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1747702329
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1769711345
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1747702329-1-1-fdrcn: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-1-hqdv2: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -227,19 +266,319 @@ PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
+timing_benchmarker [(1769712592, 1769719450)]
 PostgreSQL-1-1-1024-1         : showing benchmarker times
-PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 2252
-PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1747703092, 1747705319)]
-PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1747703092, 1747705319)]}
-done
+PostgreSQL-1-1-1024-1         : benchmarker timespan job from 1769712591 to 1769719475
+PostgreSQL-1-1-1024-1         : benchmarker timespan pods from 1769712592 to 1769719450
+PostgreSQL-1-1-1024-1         : benchmarker timespan (start to end single container [s]) = 6858
+PostgreSQL-1-1-1024-1         : benchmarker times (start/end per pod and container) = [(1769712592, 1769719450)]
+PostgreSQL-1-1-1024-1         : found and updated times {'benchmarker': [(1769712592, 1769719450)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 2
-PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 50, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a'}
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 50, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a', 'BEXHOMA_TENANT_BY': '', 'BEXHOMA_TENANT_NUM': 0}
 PostgreSQL-1-1-1024-2         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1747702329
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1769711345
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1747702329-1-2-cg6jl: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-2-8bnws: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -390,21 +729,263 @@ PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
+timing_benchmarker [(1769719514, 1769725420), (1769719514, 1769725601)]
 PostgreSQL-1-1-1024-2         : showing benchmarker times
-PostgreSQL-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 2348
-PostgreSQL-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1747705379, 1747707714), (1747705379, 1747707673)]
-PostgreSQL-1-1-1024-2         : found and updated times {'benchmarker': [(1747705379, 1747707714), (1747705379, 1747707673)]}
-done
+PostgreSQL-1-1-1024-2         : benchmarker timespan job from 1769719512 to 1769725606
+PostgreSQL-1-1-1024-2         : benchmarker timespan pods from 1769719514 to 1769725601
+PostgreSQL-1-1-1024-2         : benchmarker timespan (start to end single container [s]) = 6087
+PostgreSQL-1-1-1024-2         : benchmarker times (start/end per pod and container) = [(1769719514, 1769725420), (1769719514, 1769725601)]
+PostgreSQL-1-1-1024-2         : found and updated times {'benchmarker': [(1769719514, 1769725420), (1769719514, 1769725601)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 3
-PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 3276, 'BENCHBASE_TERMINALS': 20, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a'}
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 3276, 'BENCHBASE_TERMINALS': 20, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a', 'BEXHOMA_TENANT_BY': '', 'BEXHOMA_TENANT_NUM': 0}
 PostgreSQL-1-1-1024-3         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1747702329
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1769711345
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1747702329-1-3-5ntr6: found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-4gbpw: found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -543,35 +1124,1609 @@ PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Warning:
+Raw output (bytes): b'error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Warning: is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Warning:.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=Use
+Raw output (bytes): b'error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container Use is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.Use.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=from
+Raw output (bytes): b'error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container from is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.from.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=the
+Raw output (bytes): b'error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container the is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.the.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=TokenRequest
+Raw output (bytes): b'error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container TokenRequest is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.TokenRequest.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=API
+Raw output (bytes): b'error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container API is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.API.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=or
+Raw output (bytes): b'error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container or is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.or.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=manually
+Raw output (bytes): b'error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container manually is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.manually.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=created
+Raw output (bytes): b'error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container created is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.created.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens
+Raw output (bytes): b'error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container tokens is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=instead
+Raw output (bytes): b'error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container instead is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.instead.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=of
+Raw output (bytes): b'error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container of is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.of.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=auto-generated
+Raw output (bytes): b'error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container auto-generated is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.auto-generated.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=secret-based
+Raw output (bytes): b'error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\n'
+Decoded with utf-8:
+error: container secret-based is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.secret-based.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr --container=tokens.
+dbmsbenchmarker
+Raw output (bytes): b'error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr\nTraceback (most recent call last):\n  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>\n    from dbmsbenchmarker.scripts.cli import run_benchmarker\n  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>\n    from .__version__ import __version__\nModuleNotFoundError: No module named \'dbmsbenchmarker.scripts.__version__\'\n'
+Decoded with utf-8:
+error: container tokens. is not valid for pod bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr
+Traceback (most recent call last):
+  File "/home/perdelt/anaconda3/envs/bexhoma/bin/dbmsbenchmarker", line 3, in <module>
+    from dbmsbenchmarker.scripts.cli import run_benchmarker
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.11/site-packages/dbmsbenchmarker/scripts/__init__.py", line 5, in <module>
+    from .__version__ import __version__
+ModuleNotFoundError: No module named 'dbmsbenchmarker.scripts.__version__'
+
+Bexhoma                       : no data error for log /home/perdelt/benchmarks/1769711345/bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-3-xdrtr.tokens.
+dbmsbenchmarker.log
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+timing_benchmarker [(1769725649, 1769732388), (1769725648, 1769732328), (1769725648, 1769732207), (1769725648, 1769732086), (1769725649, 1769732146)]
 PostgreSQL-1-1-1024-3         : showing benchmarker times
-PostgreSQL-1-1-1024-3         : benchmarker timespan (start to end single container [s]) = 2391
-PostgreSQL-1-1-1024-3         : benchmarker times (start/end per pod and container) = [(1747707765, 1747710069), (1747707764, 1747710110), (1747707764, 1747710096), (1747707764, 1747709879), (1747707764, 1747710123)]
-PostgreSQL-1-1-1024-3         : found and updated times {'benchmarker': [(1747707765, 1747710069), (1747707764, 1747710110), (1747707764, 1747710096), (1747707764, 1747709879), (1747707764, 1747710123)]}
-done
+PostgreSQL-1-1-1024-3         : benchmarker timespan job from 1769725643 to 1769732394
+PostgreSQL-1-1-1024-3         : benchmarker timespan pods from 1769725648 to 1769732388
+PostgreSQL-1-1-1024-3         : benchmarker timespan (start to end single container [s]) = 6740
+PostgreSQL-1-1-1024-3         : benchmarker times (start/end per pod and container) = [(1769725649, 1769732388), (1769725648, 1769732328), (1769725648, 1769732207), (1769725648, 1769732086), (1769725649, 1769732146)]
+PostgreSQL-1-1-1024-3         : found and updated times {'benchmarker': [(1769725649, 1769732388), (1769725648, 1769732328), (1769725648, 1769732207), (1769725648, 1769732086), (1769725649, 1769732146)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
 PostgreSQL-1-1-1024           : benchmarks done 0 of 1. This will be client 4
-PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 1638, 'BENCHBASE_TERMINALS': 10, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a'}
+PostgreSQL-1-1-1024           : we will change parameters of benchmark as {'SF': '100', 'BENCHBASE_BENCH': 'chbenchmark', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 1638, 'BENCHBASE_TERMINALS': 10, 'BENCHBASE_TIME': 1200, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'false', 'BENCHBASE_YCSB_WORKLOAD': 'a', 'BEXHOMA_TENANT_BY': '', 'BEXHOMA_TENANT_NUM': 0}
 PostgreSQL-1-1-1024-4         : start benchmarking
-PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1747702329
+PostgreSQL-1-1-1024           : benchmarking results in folder /home/perdelt/benchmarks/1769711345
 - waiting 10s -               : done
-PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1747702329-1-4-4btcs: .found
+PostgreSQL-1-1-1024           : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1-1024-1769711345-1-4-54pfw: .found
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
@@ -698,147 +2853,477 @@ PostgreSQL-1-1-1024           : has running benchmarks
 PostgreSQL-1-1-1024           : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
-done
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1024           : has running benchmarks
+timing_benchmarker [(1769732441, 1769738938), (1769732441, 1769739362), (1769732442, 1769738696), (1769732442, 1769738273), (1769732441, 1769739241), (1769732442, 1769739181), (1769732442, 1769739301), (1769732441, 1769738454), (1769732442, 1769739423), (1769732442, 1769739121)]
 PostgreSQL-1-1-1024-4         : showing benchmarker times
-PostgreSQL-1-1-1024-4         : benchmarker timespan (start to end single container [s]) = 2402
-PostgreSQL-1-1-1024-4         : benchmarker times (start/end per pod and container) = [(1747710194, 1747712484), (1747710195, 1747712511), (1747710194, 1747712566), (1747710194, 1747712402), (1747710194, 1747712538), (1747710194, 1747712155), (1747710194, 1747712552), (1747710195, 1747712293), (1747710194, 1747712443), (1747710194, 1747712252)]
-PostgreSQL-1-1-1024-4         : found and updated times {'benchmarker': [(1747710194, 1747712484), (1747710195, 1747712511), (1747710194, 1747712566), (1747710194, 1747712402), (1747710194, 1747712538), (1747710194, 1747712155), (1747710194, 1747712552), (1747710195, 1747712293), (1747710194, 1747712443), (1747710194, 1747712252)]}
-done
+PostgreSQL-1-1-1024-4         : benchmarker timespan job from 1769732432 to 1769739461
+PostgreSQL-1-1-1024-4         : benchmarker timespan pods from 1769732441 to 1769739423
+PostgreSQL-1-1-1024-4         : benchmarker timespan (start to end single container [s]) = 6982
+PostgreSQL-1-1-1024-4         : benchmarker times (start/end per pod and container) = [(1769732441, 1769738938), (1769732441, 1769739362), (1769732442, 1769738696), (1769732442, 1769738273), (1769732441, 1769739241), (1769732442, 1769739181), (1769732442, 1769739301), (1769732441, 1769738454), (1769732442, 1769739423), (1769732442, 1769739121)]
+PostgreSQL-1-1-1024-4         : found and updated times {'benchmarker': [(1769732441, 1769738938), (1769732441, 1769739362), (1769732442, 1769738696), (1769732442, 1769738273), (1769732441, 1769739241), (1769732442, 1769739181), (1769732442, 1769739301), (1769732441, 1769738454), (1769732442, 1769739423), (1769732442, 1769739121)]}
+- waiting 30s -               : done
 PostgreSQL-1-1-1024           : can be stopped
-Experiment ends at 2025-05-20 05:43:38.822055 (11904782.292607617): 10289.933655338362s total
+PostgreSQL-1-1-1024           : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1-1024-1769711345-c5cb6df9-2sszc
+Experiment                    : ends at 2026-01-30 03:18:14.326190 (33931657.79674339) - 28148.84s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow not complete
+Result workflow complete
 
 ## Show Summary
 
 ### Workload
-Benchbase Workload SF=100
+Benchbase Workload chbenchmark SF=100
     Type: benchbase
-    Duration: 10290s 
-    Code: 1747702329
-    Benchbase runs the CH-Benchmark benchmark.
+    Duration: 28149s 
+    Code: 1769711345
+    Intro: Benchbase runs the CH-Benchmark benchmark.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
-    Benchmark is 'chbenchmark'. Scaling factor is 100. Benchmarking runs for 20 minutes. Target is based on multiples of '1024'. Factors for benchmarking are [16].
-    Experiment uses bexhoma version 0.8.5.
-    Benchmark is limited to DBMS ['PostgreSQL'].
+    Benchmark is 'chbenchmark'. Scaling factor is 100. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 20 minutes.
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['PostgreSQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [1] threads, split into [1] pods.
     Benchmarking is tested with [100] threads, split into [1, 2, 5, 10] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
     Experiment is run once.
 
 ### Connections
-PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008592896
+PostgreSQL-1-1-1024-1 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
-    node:cl-worker11
-    disk:281246612
-    datadisk:26552
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:121550
+    datadisk:26551
+    cpu_list:0-63
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:128Gi
+    limits_memory:128Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1747702329
-PostgreSQL-1-1-1024-2 uses docker image postgres:16.1
-    RAM:541008592896
+                code:1769711345
+                TENANT_VOL:False
+PostgreSQL-1-1-1024-2 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
-    node:cl-worker11
-    disk:281247588
-    datadisk:26553
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:121551
+    datadisk:26552
+    cpu_list:0-63
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:128Gi
+    limits_memory:128Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1747702329
-PostgreSQL-1-1-1024-3 uses docker image postgres:16.1
-    RAM:541008592896
+                code:1769711345
+                TENANT_VOL:False
+PostgreSQL-1-1-1024-3 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
-    node:cl-worker11
-    disk:281248884
-    datadisk:26554
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:121553
+    datadisk:26553
+    cpu_list:0-63
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:128Gi
+    limits_memory:128Gi
     client:3
     numExperiment:1
     eval_parameters
-                code:1747702329
-PostgreSQL-1-1-1024-4 uses docker image postgres:16.1
-    RAM:541008592896
+                code:1769711345
+                TENANT_VOL:False
+PostgreSQL-1-1-1024-4 uses docker image postgres:17.5
+    RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
-    host:5.15.0-134-generic
-    node:cl-worker11
-    disk:281248756
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:121554
     datadisk:26554
+    cpu_list:0-63
+    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
     requests_cpu:4
-    requests_memory:16Gi
+    requests_memory:128Gi
+    limits_memory:128Gi
     client:4
     numExperiment:1
     eval_parameters
-                code:1747702329
+                code:1769711345
+                TENANT_VOL:False
 
 ### Execution
+
+#### Per Pod
+                          experiment_run  terminals  target  client  child    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
+connection_pod                                                                                                                                                                                                                                                                       
+PostgreSQL-1-1-1024-1-1                1        100   16384       1      1  1200.0           0                      1.305833                   1.389167         0.0                                                  151416763.0                                           36135855.0
+PostgreSQL-1-1-1024-2-1                1         50    8192       2      1  1200.0           0                      0.816667                   0.858333         0.0                                                  152281461.0                                           35185760.0
+PostgreSQL-1-1-1024-2-2                1         50    8192       2      2  1200.0           0                      0.672500                   0.714167         0.0                                                  149561106.0                                           37882450.0
+PostgreSQL-1-1-1024-3-4                1         20    3276       3      1  1200.0           0                      0.299167                   0.315833         0.0                                                  141921391.0                                           31337907.0
+PostgreSQL-1-1-1024-3-5                1         20    3276       3      2  1200.0           0                      0.275000                   0.291667         0.0                                                  159692838.0                                           33584855.0
+PostgreSQL-1-1-1024-3-3                1         20    3276       3      3  1200.0           0                      0.270000                   0.286667         0.0                                                  124688355.0                                           30029797.0
+PostgreSQL-1-1-1024-3-2                1         20    3276       3      4  1200.0           0                      0.346667                   0.363333         0.0                                                  115455529.0                                           29153268.0
+PostgreSQL-1-1-1024-3-1                1         20    3276       3      5  1200.0           0                      0.151667                   0.168333         0.0                                                  199020582.0                                           51030100.0
+PostgreSQL-1-1-1024-4-9                1         10    1638       4      1  1200.0           0                      0.139167                   0.148333         0.0                                                  117861669.0                                           28162282.0
+PostgreSQL-1-1-1024-4-8                1         10    1638       4      2  1200.0           0                      0.168333                   0.176667         0.0                                                  114463914.0                                           24092157.0
+PostgreSQL-1-1-1024-4-6                1         10    1638       4      3  1200.0           0                      0.133333                   0.142500         0.0                                                  105598190.0                                           24386481.0
+PostgreSQL-1-1-1024-4-10               1         10    1638       4      4  1200.0           0                      0.124167                   0.132500         0.0                                                  145410189.0                                           32230068.0
+PostgreSQL-1-1-1024-4-5                1         10    1638       4      5  1200.0           0                      0.132500                   0.141667         0.0                                                  113440999.0                                           29401984.0
+PostgreSQL-1-1-1024-4-4                1         10    1638       4      6  1200.0           0                      0.105833                   0.115000         0.0                                                  137983316.0                                           31487385.0
+PostgreSQL-1-1-1024-4-2                1         10    1638       4      7  1200.0           0                      0.125833                   0.134167         0.0                                                  125049955.0                                           31459832.0
+PostgreSQL-1-1-1024-4-1                1         10    1638       4      8  1200.0           0                      0.191667                   0.200833         0.0                                                  140162337.0                                           34524133.0
+PostgreSQL-1-1-1024-4-7                1         10    1638       4      9  1200.0           0                      0.121667                   0.130000         0.0                                                  124211024.0                                           37291231.0
+PostgreSQL-1-1-1024-4-3                1         10    1638       4     10  1200.0           0                      0.098333                   0.107500         0.0                                                  152749259.0                                           30912961.0
+
+#### Aggregated Parallel
                        experiment_run  terminals  target  pod_count    time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1        100   16384          1  1200.0           0                          1.49                       1.57         0.0                                                  155122295.0                                           39775170.0
-PostgreSQL-1-1-1024-2               1        100   16384          2  1200.0           0                          1.48                       1.57         0.0                                                  149910286.0                                           37690642.0
-PostgreSQL-1-1-1024-3               1        100   16380          5  1200.0           0                          1.46                       1.54         0.0                                                  144308986.0                                           38445031.4
-PostgreSQL-1-1-1024-4               1        100   16380         10  1200.0           0                          1.52                       1.61         0.0                                                  158376775.0                                           37062834.3
+PostgreSQL-1-1-1024-1               1        100   16384          1  1200.0           0                          1.31                       1.39         0.0                                                  151416763.0                                           36135855.0
+PostgreSQL-1-1-1024-2               1        100   16384          2  1200.0           0                          1.49                       1.57         0.0                                                  152281461.0                                           36534105.0
+PostgreSQL-1-1-1024-3               1        100   16380          5  1200.0           0                          1.34                       1.43         0.0                                                  199020582.0                                           35027185.4
+PostgreSQL-1-1-1024-4               1        100   16380         10  1200.0           0                          1.34                       1.43         0.0                                                  152749259.0                                           30394851.4
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[10, 5, 2, 1]]
+DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 5, 10]]
 
 #### Planned
 DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 5, 10]]
 
 ### Loading
                        time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1      509.0        1.0   1.0         707.269155
-PostgreSQL-1-1-1024-2      509.0        1.0   2.0         707.269155
-PostgreSQL-1-1-1024-3      509.0        1.0   5.0         707.269155
-PostgreSQL-1-1-1024-4      509.0        1.0  10.0         707.269155
+PostgreSQL-1-1-1024-1      972.0        1.0   1.0          370.37037
+PostgreSQL-1-1-1024-2      972.0        1.0   2.0          370.37037
+PostgreSQL-1-1-1024-3      972.0        1.0   5.0          370.37037
+PostgreSQL-1-1-1024-4      972.0        1.0  10.0          370.37037
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

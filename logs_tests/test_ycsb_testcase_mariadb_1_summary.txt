@@ -3,9 +3,9 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 2910s 
-    Code: 1749005908
-    YCSB tool runs the benchmark.
+    Duration: 2456s 
+    Code: 1767887403
+    Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
     Number of rows to insert is 1000000.
@@ -15,12 +15,12 @@ YCSB SF=1
     Target is based on multiples of '1024'.
     Factors for loading are [1].
     Factors for benchmarking are [1].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['MariaDB'].
+    Experiment uses bexhoma version 0.8.20.
+    Experiment is limited to DBMS ['MariaDB'].
     Import is handled by 4 and 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker21.
     Loading is tested with [32, 64] threads, split into [4, 8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -28,38 +28,100 @@ YCSB SF=1
 
 ### Connections
 MariaDB-32-4-1024-1 uses docker image mariadb:11.4.7
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
     Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:334126904
-    datadisk:1888
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:137746
+    datadisk:1794
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-        code:1749005908
+        code:1767887403
+MariaDB-32-8-1024-1 uses docker image mariadb:11.4.7
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
+    Cores:64
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:137746
+    datadisk:1770
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1767887403
+MariaDB-64-4-1024-1 uses docker image mariadb:11.4.7
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
+    Cores:64
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:137746
+    datadisk:1794
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1767887403
+MariaDB-64-8-1024-1 uses docker image mariadb:11.4.7
+    RAM:608117153792
+    CPU:AMD EPYC 7542 32-Core Processor
+    Cores:64
+    host:6.8.0-90-generic
+    node:cl-worker21
+    disk:137746
+    datadisk:1770
+    cpu_list:0-63
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    requests_cpu:4
+    requests_memory:16Gi
+    client:1
+    numExperiment:1
+    eval_parameters
+        code:1767887403
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MariaDB-32-4-1024               1       32    1024          4           0                     648.497085              1542266.0             1000000                           1384191.0
+MariaDB-32-4-1024               1       32    1024          4           0                    1023.703077               976855.0             1000000                             2736.50
+MariaDB-64-4-1024               1       64    1024          4           0                    1023.675307               976880.0             1000000                             2816.50
+MariaDB-32-8-1024               1       32    1024          8           0                    1023.715915               976848.0             1000000                             3304.50
+MariaDB-64-8-1024               1       64    1024          8           0                    1023.679236               976881.0             1000000                             3643.75
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MariaDB-32-4-1024-1               1       64    1024          1           0                        1023.51               977026.0            499957                            1635.0              500043                              2329.0
+MariaDB-32-4-1024-1               1       64    1024          1           0                        1023.59               976957.0            500781                             415.0              499219                               431.0
+MariaDB-32-8-1024-1               1       64    1024          1           0                        1023.55               976996.0            500435                             409.0              499565                               422.0
+MariaDB-64-4-1024-1               1       64    1024          1           0                        1023.58               976966.0            499977                             397.0              500023                               402.0
+MariaDB-64-8-1024-1               1       64    1024          1           0                        1023.57               976969.0            500456                             400.0              499544                               405.0
 
 ### Workflow
 
 #### Actual
+DBMS MariaDB-64-4-1024 - Pods [[1]]
 DBMS MariaDB-32-4-1024 - Pods [[1]]
+DBMS MariaDB-64-8-1024 - Pods [[1]]
+DBMS MariaDB-32-8-1024 - Pods [[1]]
 
 #### Planned
 DBMS MariaDB-32-4-1024 - Pods [[1]]
+DBMS MariaDB-32-8-1024 - Pods [[1]]
+DBMS MariaDB-64-4-1024 - Pods [[1]]
+DBMS MariaDB-64-8-1024 - Pods [[1]]
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column

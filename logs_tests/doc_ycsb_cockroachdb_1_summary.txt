@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 2006s 
-    Code: 1761586778
+    Duration: 1241s 
+    Code: 1770916869
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -15,13 +15,13 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.13.
+    Experiment uses bexhoma version 0.8.20.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['CockroachDB'].
     Import is handled by 8 processes (pods).
     Loading is fixed to cl-worker19.
     Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
+    SUT is fixed to cl-worker14.
     Loading is tested with [64] threads, split into [8] pods.
     Benchmarking is tested with [64] threads, split into [1] pods.
     Benchmarking is run as [1] times the number of benchmarking pods.
@@ -29,11 +29,11 @@ YCSB SF=1
 
 ### Connections
 CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008486400
+    RAM:541008474112
     Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:409800
+    host:5.15.0-164-generic
+    node:cl-worker14
+    disk:96794
     cpu_list:0-63
     args:['-c', 'while true; do echo hello; sleep 10;done']
     requests_cpu:4
@@ -41,47 +41,49 @@ CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
     client:1
     numExperiment:1
     worker 0
-        RAM:2164173279232
+        RAM:2164173176832
         Cores:224
-        host:6.8.0-79-generic
+        host:6.8.0-90-generic
         node:cl-worker36
-        disk:696566
-        datadisk:291820
+        disk:899847
+        datadisk:291814
         volume_size:1000G
         volume_used:283G
         cpu_list:0-223
     worker 1
-        RAM:1077382864896
+        RAM:1077382688768
         Cores:256
-        host:6.8.0-1025-nvidia
+        host:6.8.0-1044-nvidia
         node:cl-worker28
-        disk:1278309
-        datadisk:291608
+        disk:1351593
+        datadisk:291607
         volume_size:1000G
         volume_used:283G
         cpu_list:0-255
     worker 2
-        RAM:1081742749696
+        RAM:1081742745600
         Cores:128
-        host:6.8.0-86-generic
+        host:6.8.0-90-generic
         node:cl-worker29
-        disk:1266909
-        datadisk:291680
+        disk:466892
+        datadisk:291609
         volume_size:1000G
         volume_used:283G
         cpu_list:0-127
+    worker 3
+        node:cl-worker22
     eval_parameters
-        code:1761586778
+        code:1770916869
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 
 ### Loading
                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8           0                   17093.920482                59043.0             1000000                              7032.0
+CockroachDB-64-8-65536               1       64   65536          8           0                   15744.474954                63680.0             1000000                              8276.0
 
 ### Execution
                           experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1           0                        9615.54              1039983.0           4999669                            7867.0             5000331                            245887.0
+CockroachDB-64-8-65536-1               1       64   65536          1           0                       11570.86               864240.0           4999832                            6867.0             5000168                            134527.0
 
 ### Workflow
 
@@ -91,28 +93,30 @@ DBMS CockroachDB-64-8-65536 - Pods [[1]]
 #### Planned
 DBMS CockroachDB-64-8-65536 - Pods [[1]]
 
-### Ingestion - SUT
-                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1     1510.92    19.55          7.41                 11.6
+### Monitoring
 
-### Ingestion - Loader
+### Loading phase: component worker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1       56.28        0           0.1                 0.11
+CockroachDB-64-8-65536-1     1401.18    19.31          3.98                 7.89
 
-### Execution - SUT
+### Loading phase: component loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1    24795.12    32.11         11.79                25.62
+CockroachDB-64-8-65536-1        6.03        0           0.1                 0.11
 
-### Execution - Benchmarker
+### Execution phase: component worker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      677.82     0.95          0.13                 0.13
+CockroachDB-64-8-65536-1     19911.9    26.51         10.72                26.83
+
+### Execution phase: component benchmarker
+                          CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+CockroachDB-64-8-65536-1      590.23     0.74          0.13                 0.13
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+TEST passed: Execution Phase: contains no FAILED column

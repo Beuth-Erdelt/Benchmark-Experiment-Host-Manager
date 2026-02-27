@@ -18,7 +18,7 @@
 # Import functions from testfunctions.sh
 source ./testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -68,6 +68,7 @@ wait_process "benchbase"
 
 #### Benchbase Scale (Example-Benchbase-Others.md)
 nohup python benchbase.py -ms 1 -tr \
+  -rr 128Gi -lr 128Gi \
   -sf 1600 \
   -sd 20 \
   -dbms PostgreSQL \
@@ -106,6 +107,7 @@ wait_process "benchbase"
 
 #### Benchbase Scale (Example-Benchbase-Others.md)
 nohup python benchbase.py -ms 1 -tr \
+  -rr 128Gi -lr 128Gi \
   -sf 100 \
   -sd 20 \
   -dbms PostgreSQL \

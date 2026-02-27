@@ -1,0 +1,127 @@
+## Show Summary
+
+### Workload
+TPC-H Queries SF=10
+    Type: tpch
+    Duration: 7628s 
+    Code: 1768297734
+    This includes the reading queries of TPC-H.
+    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+    TPC-H (SF=10) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q22.
+    All instances use the same query parameters.
+    Timeout per query is 1200.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Experiment uses bexhoma version 0.8.20.
+    System metrics are monitored by a cluster-wide installation.
+    Application metrics are monitored by sidecar containers.
+    Experiment is limited to DBMS ['MariaDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker25.
+    Database is persisted to disk of type ramdisk and size 50Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
+    RAM:540590825472
+    CPU:AMD EPYC 7352 24-Core Processor
+    Cores:96
+    host:6.8.0-90-generic
+    node:cl-worker25
+    disk:145637
+    datadisk:19100
+    cpu_list:0-95
+    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    requests_cpu:4
+    requests_memory:128Gi
+    limits_memory:128Gi
+    eval_parameters
+        code:1768297734
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS                                                 MariaDB-BHT-8-1-1
+Pricing Summary Report (TPC-H Q1)                            114423.02
+Minimum Cost Supplier Query (TPC-H Q2)                         7747.37
+Shipping Priority (TPC-H Q3)                                  30342.23
+Order Priority Checking Query (TPC-H Q4)                      31246.95
+Local Supplier Volume (TPC-H Q5)                              18629.03
+Forecasting Revenue Change (TPC-H Q6)                         15724.64
+Forecasting Revenue Change (TPC-H Q7)                         20455.43
+National Market Share (TPC-H Q8)                              36163.29
+Product Type Profit Measure (TPC-H Q9)                        37858.41
+Forecasting Revenue Change (TPC-H Q10)                        13718.84
+Important Stock Identification (TPC-H Q11)                     2384.18
+Shipping Modes and Order Priority (TPC-H Q12)                 51186.14
+Customer Distribution (TPC-H Q13)                             60262.60
+Forecasting Revenue Change (TPC-H Q14)                       235780.37
+Top Supplier Query (TPC-H Q15)                                33839.35
+Parts/Supplier Relationship (TPC-H Q16)                        3268.94
+Small-Quantity-Order Revenue (TPC-H Q17)                        893.48
+Large Volume Customer (TPC-H Q18)                             62896.12
+Discounted Revenue (TPC-H Q19)                                 2182.75
+Potential Part Promotion (TPC-H Q20)                           4777.25
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)         1012263.88
+Global Sales Opportunity Query (TPC-H Q22)                     1930.87
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MariaDB-BHT-8-1-1          20.0          663.0         0.0     5507.0    6194.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MariaDB-BHT-8-1-1          19.68
+
+### Power@Size ((3600*SF)/(geo times))
+                   Power@Size [~Q/h]
+DBMS                                
+MariaDB-BHT-8-1-1            1858.39
+
+### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
+                                                time [s]  count    SF  Throughput@Size
+DBMS            SF   num_experiment num_client                                        
+MariaDB-BHT-8-1 10.0 1              1               1806      1  10.0           438.54
+
+### Workflow
+                         orig_name    SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+MariaDB-BHT-8-1-1  MariaDB-BHT-8-1  10.0     8               1           1       1768303540     1768305346
+
+#### Actual
+DBMS MariaDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MariaDB-BHT-8 - Pods [[1]]
+
+### Ingestion - Loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1        25.9     0.14          0.01                 1.31
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1     1920.11     4.41        125.95               125.95
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MariaDB-BHT-8-1       20.17     0.07          0.33                 0.33
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size contains no 0 or NaN
+TEST passed: No SQL errors
+TEST passed: No SQL warnings
+TEST passed: Workflow as planned
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]

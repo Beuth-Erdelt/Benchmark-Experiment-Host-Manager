@@ -502,6 +502,9 @@ if __name__ == '__main__':
                         BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_INSERTORDER = extra_insert_order,
                         )
+                    config.set_sut_parameters(
+                        MARIADB_DATABASE = "ycsb",
+                        )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
                     for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):

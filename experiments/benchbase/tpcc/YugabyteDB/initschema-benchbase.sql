@@ -217,6 +217,8 @@ CREATE TABLE order_line (
 
 
 
+SELECT current_timestamp AS "Time after creation";
 
+SELECT pg_sleep(300);
 
-SELECT pg_sleep(30);
+SELECT current_timestamp AS "Time after waiting";

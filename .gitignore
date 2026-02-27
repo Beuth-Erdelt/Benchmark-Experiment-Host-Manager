@@ -3,6 +3,7 @@
 /clusterconfig.py
 tmp/*
 /cluster.config
+/cluster-tests.config
 1*/
 jars/*
 build/*

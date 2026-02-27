@@ -1,4 +1,4 @@
-bexhoma.clusters module
+﻿bexhoma.clusters module
 =======================
 
 .. automodule:: bexhoma.clusters

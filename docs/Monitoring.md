@@ -9,7 +9,7 @@ Bexhoma basically offers two variants
 Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
 However bexhoma can optionally install these components if missing.
 
-There is a third option in alpha status: `-ma` for collection of application metrics, for example, pgexporter
+There is a third option in alpha status: `-ma` for collection of application metrics, for example, pgexporter.
 
 ## Configuration and Options
 
@@ -270,3 +270,5 @@ It automatically contains data about all databases in the system.
     },
 },
 ```
+
+

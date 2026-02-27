@@ -320,11 +320,14 @@ if __name__ == '__main__':
                     HAMMERDB_TYPE = "mariadb",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                    BEXHOMA_USER = "root",
-                    BEXHOMA_PASSWORD = "root",
+                    BEXHOMA_USER = "bexhoma",
+                    BEXHOMA_PASSWORD = "password",
                     HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
                     HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
+                config.set_sut_parameters(
+                    MARIADB_DATABASE = "tpcc",
+                    )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
                 for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
@@ -352,8 +355,8 @@ if __name__ == '__main__':
                                     HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "mariadb",
                                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                                    BEXHOMA_USER = "root",
-                                    BEXHOMA_PASSWORD = "root",
+                                    BEXHOMA_USER = "bexhoma",
+                                    BEXHOMA_PASSWORD = "password",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
                                     HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
                                     HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,

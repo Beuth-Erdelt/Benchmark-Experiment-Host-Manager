@@ -2,15 +2,15 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1764245999
-Experiment                    : starts at 2025-11-27 13:19:59.575580 (28438163.046131503)
+Experiment                    : has code 1766270524
+Experiment                    : starts at 2025-12-20 23:42:07.297398 (184408.3694029)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=100) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 3600.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.16.
+Experiment uses bexhoma version 0.8.19.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['MonetDB'].
 Import is handled by 8 processes (pods).
@@ -29,36 +29,36 @@ MonetDB-BHT-8                 : stateful sets []
 MonetDB-BHT-8                 : pvcs ['sut']
 MonetDB-BHT-8                 : list of pvcs ['bexhoma-storage-monetdb-tpch-100']
 MonetDB-BHT-8                 : storage bexhoma-storage-monetdb-tpch-100 exists
-MonetDB-BHT-8                 : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '8879', 'timeLoadingEnd': '1764076350', 'timeLoadingStart': '1764069157', 'time_generated': '17', 'time_indexed': '7193', 'time_ingested': '1654', 'time_initconstraints': '2571', 'time_initindexes': '202', 'time_initschema': '12', 'time_initstatistics': '2707', 'time_loaded': '11'}
-MonetDB-BHT-8                 : name of SUT pods = bexhoma-sut-monetdb-bht-8-1764245999
-MonetDB-BHT-8                 : name of SUT service = bexhoma-sut-monetdb-bht-8-1764245999
+MonetDB-BHT-8                 : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '9906', 'timeLoadingEnd': '1766263851', 'timeLoadingStart': '1766255581', 'time_generated': '25', 'time_indexed': '8270', 'time_ingested': '1596', 'time_initconstraints': '3118', 'time_initindexes': '180', 'time_initschema': '11', 'time_initstatistics': '3281', 'time_loaded': '12'}
+MonetDB-BHT-8                 : name of SUT pods = bexhoma-sut-monetdb-bht-8-1766270524
+MonetDB-BHT-8                 : name of SUT service = bexhoma-sut-monetdb-bht-8-1766270524
 MonetDB-BHT-8                 : name of SUT PVC name = bexhoma-storage-monetdb-tpch-100
 MonetDB-BHT-8                 : copied label indexed = True
 MonetDB-BHT-8                 : copied label loaded = True
-MonetDB-BHT-8                 : copied label timeLoading = 8879
-MonetDB-BHT-8                 : copied label timeLoadingEnd = 1764076350
-MonetDB-BHT-8                 : copied label timeLoadingStart = 1764069157
-MonetDB-BHT-8                 : copied label time_generated = 17
-MonetDB-BHT-8                 : copied label time_indexed = 7193
-MonetDB-BHT-8                 : copied label time_ingested = 1654
-MonetDB-BHT-8                 : copied label time_initconstraints = 2571
-MonetDB-BHT-8                 : copied label time_initindexes = 202
-MonetDB-BHT-8                 : copied label time_initschema = 12
-MonetDB-BHT-8                 : copied label time_initstatistics = 2707
-MonetDB-BHT-8                 : copied label time_loaded = 11
+MonetDB-BHT-8                 : copied label timeLoading = 9906
+MonetDB-BHT-8                 : copied label timeLoadingEnd = 1766263851
+MonetDB-BHT-8                 : copied label timeLoadingStart = 1766255581
+MonetDB-BHT-8                 : copied label time_generated = 25
+MonetDB-BHT-8                 : copied label time_indexed = 8270
+MonetDB-BHT-8                 : copied label time_ingested = 1596
+MonetDB-BHT-8                 : copied label time_initconstraints = 3118
+MonetDB-BHT-8                 : copied label time_initindexes = 180
+MonetDB-BHT-8                 : copied label time_initschema = 11
+MonetDB-BHT-8                 : copied label time_initstatistics = 3281
+MonetDB-BHT-8                 : copied label time_loaded = 12
 MonetDB-BHT-8                 : loading is set to finished
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2025-11-27 12:21:31 (that is in 60 secs)
+MonetDB-BHT-8                 : will start benchmarking but not before 2025-12-20 22:43:47 (that is in 60 secs)
 - waiting 30s -               : done
-MonetDB-BHT-8                 : will start benchmarking but not before 2025-11-27 12:21:31
+MonetDB-BHT-8                 : will start benchmarking but not before 2025-12-20 22:43:47
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
 MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 1
 MonetDB-BHT-8-1               : start benchmarking
 MonetDB-BHT-8-1               : needs monitoring (common metrics) for deployment sut
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1764245999
+MonetDB-BHT-8                 : benchmarking results in folder C:\data\benchmarks/1766270524
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1764245999-1-1-bsq8t: .found
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1766270524-1-1-2pr8f: found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -165,28 +165,26 @@ MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-timing_benchmarker [(1764246110, 1764247763)]
+timing_benchmarker [(1766270662, 1766272444)]
 MonetDB-BHT-8-1               : showing benchmarker times
-MonetDB-BHT-8-1               : benchmarker timespan job from 1764246097 to 1764247782
-MonetDB-BHT-8-1               : benchmarker timespan pods from 1764246110 to 1764247763
-MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 1653
-MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1764246110, 1764247763)]
-MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1764246110, 1764247763)]}
+MonetDB-BHT-8-1               : benchmarker timespan job from 1766270657 to 1766272485
+MonetDB-BHT-8-1               : benchmarker timespan pods from 1766270662 to 1766272444
+MonetDB-BHT-8-1               : benchmarker timespan (start to end single container [s]) = 1782
+MonetDB-BHT-8-1               : benchmarker times (start/end per pod and container) = [(1766270662, 1766272444)]
+MonetDB-BHT-8-1               : found and updated times {'benchmarker': [(1766270662, 1766272444)]}
 MonetDB-BHT-8-1               : needs monitoring (common metrics) for deployment sut
 MonetDB-BHT-8-1               : collecting execution metrics of SUT at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1764245999(.*)", pod=~"(.*)monetdb-bht-8-1764245999(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MonetDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1766270524(.*)", pod=~"(.*)monetdb-bht-8-1766270524(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MonetDB-BHT-8-1               : collecting metrics of benchmarker at connection MonetDB-BHT-8-1
-MonetDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1764245999(.*)", pod=~"(.*)monetdb-bht-8-1764245999(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MonetDB-BHT-8-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1766270524(.*)", pod=~"(.*)monetdb-bht-8-1766270524(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
 MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 2
 MonetDB-BHT-8-2               : start benchmarking
 MonetDB-BHT-8-2               : needs monitoring (common metrics) for deployment sut
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1764245999
+MonetDB-BHT-8                 : benchmarking results in folder C:\data\benchmarks/1766270524
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1764245999-1-2-4g4xz: found
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1766270524-1-2-n9gkc: .found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -227,28 +225,26 @@ MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
-- waiting 30s -               : done
-MonetDB-BHT-8                 : has running benchmarks
-timing_benchmarker [(1764247836, 1764248453)]
+timing_benchmarker [(1766272566, 1766273243)]
 MonetDB-BHT-8-2               : showing benchmarker times
-MonetDB-BHT-8-2               : benchmarker timespan job from 1764247828 to 1764248486
-MonetDB-BHT-8-2               : benchmarker timespan pods from 1764247836 to 1764248453
-MonetDB-BHT-8-2               : benchmarker timespan (start to end single container [s]) = 617
-MonetDB-BHT-8-2               : benchmarker times (start/end per pod and container) = [(1764247836, 1764248453)]
-MonetDB-BHT-8-2               : found and updated times {'benchmarker': [(1764247836, 1764248453)]}
+MonetDB-BHT-8-2               : benchmarker timespan job from 1766272553 to 1766273265
+MonetDB-BHT-8-2               : benchmarker timespan pods from 1766272566 to 1766273243
+MonetDB-BHT-8-2               : benchmarker timespan (start to end single container [s]) = 677
+MonetDB-BHT-8-2               : benchmarker times (start/end per pod and container) = [(1766272566, 1766273243)]
+MonetDB-BHT-8-2               : found and updated times {'benchmarker': [(1766272566, 1766273243)]}
 MonetDB-BHT-8-2               : needs monitoring (common metrics) for deployment sut
 MonetDB-BHT-8-2               : collecting execution metrics of SUT at connection MonetDB-BHT-8-2
-MonetDB-BHT-8-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1764245999(.*)", pod=~"(.*)monetdb-bht-8-1764245999(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MonetDB-BHT-8-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1766270524(.*)", pod=~"(.*)monetdb-bht-8-1766270524(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MonetDB-BHT-8-2               : collecting metrics of benchmarker at connection MonetDB-BHT-8-2
-MonetDB-BHT-8-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1764245999(.*)", pod=~"(.*)monetdb-bht-8-1764245999(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MonetDB-BHT-8-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1766270524(.*)", pod=~"(.*)monetdb-bht-8-1766270524(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 3.
 MonetDB-BHT-8                 : benchmarks done 0 of 1. This will be client 3
 MonetDB-BHT-8-3               : start benchmarking
 MonetDB-BHT-8-3               : needs monitoring (common metrics) for deployment sut
-MonetDB-BHT-8                 : benchmarking results in folder /home/perdelt/benchmarks/1764245999
+MonetDB-BHT-8                 : benchmarking results in folder C:\data\benchmarks/1766270524
 - waiting 10s -               : done
-MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1764245999-1-3-chqq6: .found
+MonetDB-BHT-8                 : benchmarking is waiting for job bexhoma-benchmarker-monetdb-bht-8-1766270524-1-3-rl54r: found
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
@@ -319,22 +315,26 @@ MonetDB-BHT-8                 : has running benchmarks
 MonetDB-BHT-8                 : has running benchmarks
 - waiting 30s -               : done
 MonetDB-BHT-8                 : has running benchmarks
-timing_benchmarker [(1764248541, 1764249647), (1764248541, 1764249648), (1764248541, 1764249651)]
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+- waiting 30s -               : done
+MonetDB-BHT-8                 : has running benchmarks
+timing_benchmarker [(1766273343, 1766274609), (1766273343, 1766274608), (1766273343, 1766274614)]
 MonetDB-BHT-8-3               : showing benchmarker times
-MonetDB-BHT-8-3               : benchmarker timespan job from 1764248531 to 1764249679
-MonetDB-BHT-8-3               : benchmarker timespan pods from 1764248541 to 1764249651
-MonetDB-BHT-8-3               : benchmarker timespan (start to end single container [s]) = 1110
-MonetDB-BHT-8-3               : benchmarker times (start/end per pod and container) = [(1764248541, 1764249647), (1764248541, 1764249648), (1764248541, 1764249651)]
-MonetDB-BHT-8-3               : found and updated times {'benchmarker': [(1764248541, 1764249647), (1764248541, 1764249648), (1764248541, 1764249651)]}
+MonetDB-BHT-8-3               : benchmarker timespan job from 1766273335 to 1766274653
+MonetDB-BHT-8-3               : benchmarker timespan pods from 1766273343 to 1766274614
+MonetDB-BHT-8-3               : benchmarker timespan (start to end single container [s]) = 1271
+MonetDB-BHT-8-3               : benchmarker times (start/end per pod and container) = [(1766273343, 1766274609), (1766273343, 1766274608), (1766273343, 1766274614)]
+MonetDB-BHT-8-3               : found and updated times {'benchmarker': [(1766273343, 1766274609), (1766273343, 1766274608), (1766273343, 1766274614)]}
 MonetDB-BHT-8-3               : needs monitoring (common metrics) for deployment sut
 MonetDB-BHT-8-3               : collecting execution metrics of SUT at connection MonetDB-BHT-8-3
-MonetDB-BHT-8-3               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1764245999(.*)", pod=~"(.*)monetdb-bht-8-1764245999(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MonetDB-BHT-8-3               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1766270524(.*)", pod=~"(.*)monetdb-bht-8-1766270524(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MonetDB-BHT-8-3               : collecting metrics of benchmarker at connection MonetDB-BHT-8-3
-MonetDB-BHT-8-3               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1764245999(.*)", pod=~"(.*)monetdb-bht-8-1764245999(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MonetDB-BHT-8-3               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-bht-8-1766270524(.*)", pod=~"(.*)monetdb-bht-8-1766270524(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 MonetDB-BHT-8                 : can be stopped
-MonetDB-BHT-8                 : had 0 restarts at worker bexhoma-sut-monetdb-bht-8-1764245999-54c88b6c4d-zl6mg
-Experiment                    : ends at 2025-11-27 14:22:00.560429 (28441884.030983374) - 3720.98s total
+MonetDB-BHT-8                 : had 0 restarts at worker bexhoma-sut-monetdb-bht-8-1766270524-77b74c9984-qcvnb
+Experiment                    : ends at 2025-12-21 00:51:47.464241 (188588.5362521) - 4180.17s total
 Join results done!
 Build evaluation cube done!
 Experiment                    : downloading partial results
@@ -346,8 +346,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=100
     Type: tpch
-    Duration: 3721s 
-    Code: 1764245999
+    Duration: 4181s 
+    Code: 1766270524
     This includes the reading queries of TPC-H.
     This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
     TPC-H (SF=100) data is loaded and benchmark is executed.
@@ -355,7 +355,7 @@ TPC-H Queries SF=100
     All instances use the same query parameters.
     Timeout per query is 3600.
     Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.16.
+    Experiment uses bexhoma version 0.8.19.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['MonetDB'].
     Import is handled by 8 processes (pods).
@@ -369,86 +369,81 @@ TPC-H Queries SF=100
     Experiment is run once.
 
 ### Connections
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Mar2025
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2025
     RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:420892
-    datadisk:214825
+    disk:435028
     volume_size:1000G
-    volume_used:210G
+    volume_used:191G
     cpu_list:0-63
     requests_cpu:4
     requests_memory:256Gi
     limits_memory:256Gi
     eval_parameters
-        code:1764245999
-MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Mar2025
+        code:1766270524
+MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Dec2025
     RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:420892
-    datadisk:214825
+    disk:435028
     volume_size:1000G
-    volume_used:215G
+    volume_used:199G
     cpu_list:0-63
     requests_cpu:4
     requests_memory:256Gi
     limits_memory:256Gi
     eval_parameters
-        code:1764245999
-MonetDB-BHT-8-3-1 uses docker image monetdb/monetdb:Mar2025
+        code:1766270524
+MonetDB-BHT-8-3-1 uses docker image monetdb/monetdb:Dec2025
     RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:420892
-    datadisk:214825
+    disk:435029
     volume_size:1000G
-    volume_used:210G
+    volume_used:191G
     cpu_list:0-63
     requests_cpu:4
     requests_memory:256Gi
     limits_memory:256Gi
     eval_parameters
-        code:1764245999
-MonetDB-BHT-8-3-2 uses docker image monetdb/monetdb:Mar2025
+        code:1766270524
+MonetDB-BHT-8-3-2 uses docker image monetdb/monetdb:Dec2025
     RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:420892
-    datadisk:214825
+    disk:435029
     volume_size:1000G
-    volume_used:210G
+    volume_used:191G
     cpu_list:0-63
     requests_cpu:4
     requests_memory:256Gi
     limits_memory:256Gi
     eval_parameters
-        code:1764245999
-MonetDB-BHT-8-3-3 uses docker image monetdb/monetdb:Mar2025
+        code:1766270524
+MonetDB-BHT-8-3-3 uses docker image monetdb/monetdb:Dec2025
     RAM:541008486400
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-160-generic
     node:cl-worker11
-    disk:420892
-    datadisk:214825
+    disk:435029
     volume_size:1000G
-    volume_used:210G
+    volume_used:191G
     cpu_list:0-63
     requests_cpu:4
     requests_memory:256Gi
     limits_memory:256Gi
     eval_parameters
-        code:1764245999
+        code:1766270524
 
 ### Errors (failed queries)
 No errors
@@ -458,69 +453,69 @@ No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS                                                 MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3
-Pricing Summary Report (TPC-H Q1)                            572039.47          255207.17          509168.41          505326.23          498909.74
-Minimum Cost Supplier Query (TPC-H Q2)                        30268.95           11094.24           16501.43           20397.91           26218.52
-Shipping Priority (TPC-H Q3)                                  84225.45           13685.24           31426.72           32663.00           30795.34
-Order Priority Checking Query (TPC-H Q4)                     282408.27           13806.58           23831.19           24449.57           24483.18
-Local Supplier Volume (TPC-H Q5)                              14416.21           10700.94           15652.76           13695.28           15520.60
-Forecasting Revenue Change (TPC-H Q6)                          6850.36            6998.22            8067.89            8122.54            8087.37
-Forecasting Revenue Change (TPC-H Q7)                          8223.70            5977.03           14384.42           13058.83           12794.40
-National Market Share (TPC-H Q8)                              90389.99           36421.67           47260.15           48558.01           47703.13
-Product Type Profit Measure (TPC-H Q9)                        28767.57           14662.66           27779.30           26462.56           27835.34
-Forecasting Revenue Change (TPC-H Q10)                        62386.19           22628.32           34007.12           33367.77           35317.27
-Important Stock Identification (TPC-H Q11)                     5910.12            1187.33            1171.19            3143.58             932.31
-Shipping Modes and Order Priority (TPC-H Q12)                  5890.49            4720.47            8391.76            8608.96            8400.16
-Customer Distribution (TPC-H Q13)                            264559.04          100853.60          111680.99          123142.51          127995.02
-Forecasting Revenue Change (TPC-H Q14)                         9211.93            7381.95            8327.66             645.15             989.07
-Top Supplier Query (TPC-H Q15)                                10053.06            6443.23            8473.57            5289.03            5336.34
-Parts/Supplier Relationship (TPC-H Q16)                       12904.93           12095.87           12718.55           12329.56           11997.62
-Small-Quantity-Order Revenue (TPC-H Q17)                      51153.18           14088.99           95864.52           96131.02           91302.47
-Large Volume Customer (TPC-H Q18)                             43891.23           21421.92           37014.57           36678.93           35789.28
-Discounted Revenue (TPC-H Q19)                                 7001.95            7749.74           10696.45           11005.48           11320.08
-Potential Part Promotion (TPC-H Q20)                           8786.27            5292.32            6816.10            6878.47            6841.78
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           21009.96           19239.45           50461.66           55552.98           51126.66
-Global Sales Opportunity Query (TPC-H Q22)                     7607.57            7373.05            8056.91            6422.94            8612.33
+Pricing Summary Report (TPC-H Q1)                            591277.14          261524.30          566156.69          558857.84          539082.36
+Minimum Cost Supplier Query (TPC-H Q2)                        30266.80           11032.26             645.70            7922.03           27171.99
+Shipping Priority (TPC-H Q3)                                  94682.84           20364.77           82631.38           85049.97           82597.44
+Order Priority Checking Query (TPC-H Q4)                     290058.43           18501.86           18678.75           17392.24           18201.60
+Local Supplier Volume (TPC-H Q5)                              16215.89           11163.20           15763.86           15301.89           13393.76
+Forecasting Revenue Change (TPC-H Q6)                          6765.17            5950.13            3745.67            3179.03            5657.54
+Forecasting Revenue Change (TPC-H Q7)                         16173.90           13112.58           14845.79           19581.00           15774.20
+National Market Share (TPC-H Q8)                             109311.90           37776.13           60552.65           55750.01           57616.94
+Product Type Profit Measure (TPC-H Q9)                        35028.63           17074.22           29464.51           27190.09           31788.97
+Forecasting Revenue Change (TPC-H Q10)                        62211.13           26603.27           29398.03           33336.95           32355.41
+Important Stock Identification (TPC-H Q11)                     6174.49            1306.02            3361.11            1599.41             760.49
+Shipping Modes and Order Priority (TPC-H Q12)                  6440.30            5157.87            8723.46            8708.53            8602.71
+Customer Distribution (TPC-H Q13)                            297212.72          123149.85          145616.55          139883.02          146678.82
+Forecasting Revenue Change (TPC-H Q14)                         7884.28            6540.19            5960.01           11357.77            4855.90
+Top Supplier Query (TPC-H Q15)                                13773.89            5910.43            8096.48            8205.58            8160.97
+Parts/Supplier Relationship (TPC-H Q16)                       14167.91           14666.84           16307.02           19377.82           15382.95
+Small-Quantity-Order Revenue (TPC-H Q17)                      57844.14           10762.18          123723.83          120778.78          124213.32
+Large Volume Customer (TPC-H Q18)                             43786.72           22160.84           34575.90           34430.06           35973.60
+Discounted Revenue (TPC-H Q19)                                 7174.37            6782.56           10248.88           10210.40            8903.52
+Potential Part Promotion (TPC-H Q20)                          10125.61            6464.84            7849.34            8288.70            7808.59
+Suppliers Who Kept Orders Waiting Query (TPC-H Q21)           30820.01           22863.39           52127.29           56491.84           50028.85
+Global Sales Opportunity Query (TPC-H Q22)                     6718.82            7549.45            6673.40            6388.51            7471.33
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1          17.0         1654.0        11.0     7193.0    8879.0
-MonetDB-BHT-8-2-1          17.0         1654.0        11.0     7193.0    8879.0
-MonetDB-BHT-8-3-1          17.0         1654.0        11.0     7193.0    8879.0
-MonetDB-BHT-8-3-2          17.0         1654.0        11.0     7193.0    8879.0
-MonetDB-BHT-8-3-3          17.0         1654.0        11.0     7193.0    8879.0
+MonetDB-BHT-8-1-1          25.0         1596.0        12.0     8270.0    9906.0
+MonetDB-BHT-8-2-1          25.0         1596.0        12.0     8270.0    9906.0
+MonetDB-BHT-8-3-1          25.0         1596.0        12.0     8270.0    9906.0
+MonetDB-BHT-8-3-2          25.0         1596.0        12.0     8270.0    9906.0
+MonetDB-BHT-8-3-3          25.0         1596.0        12.0     8270.0    9906.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1          26.46
-MonetDB-BHT-8-2-1          13.31
-MonetDB-BHT-8-3-1          21.37
-MonetDB-BHT-8-3-2          19.03
-MonetDB-BHT-8-3-3          19.36
+MonetDB-BHT-8-1-1          29.58
+MonetDB-BHT-8-2-1          14.67
+MonetDB-BHT-8-3-1          19.36
+MonetDB-BHT-8-3-2          22.12
+MonetDB-BHT-8-3-3          22.42
 
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1           13859.65
-MonetDB-BHT-8-2-1           28541.64
-MonetDB-BHT-8-3-1           17811.43
-MonetDB-BHT-8-3-2           19545.84
-MonetDB-BHT-8-3-3           19782.48
+MonetDB-BHT-8-1-1           12432.80
+MonetDB-BHT-8-2-1           25917.35
+MonetDB-BHT-8-3-1           19175.05
+MonetDB-BHT-8-3-2           17035.51
+MonetDB-BHT-8-3-3           17257.47
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
                                                  time [s]  count     SF  Throughput@Size
 DBMS            SF    num_experiment num_client                                         
-MonetDB-BHT-8-1 100.0 1              1               1653      1  100.0          4791.29
-MonetDB-BHT-8-2 100.0 1              2                617      1  100.0         12836.30
-MonetDB-BHT-8-3 100.0 1              3               1110      3  100.0         21405.41
+MonetDB-BHT-8-1 100.0 1              1               1782      1  100.0          4444.44
+MonetDB-BHT-8-2 100.0 1              2                677      1  100.0         11698.67
+MonetDB-BHT-8-3 100.0 1              3               1271      3  100.0         18693.94
 
 ### Workflow
                          orig_name     SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MonetDB-BHT-8-1-1  MonetDB-BHT-8-1  100.0     8               1           1       1764246113     1764247766
-MonetDB-BHT-8-2-1  MonetDB-BHT-8-2  100.0     8               1           2       1764247839     1764248456
-MonetDB-BHT-8-3-1  MonetDB-BHT-8-3  100.0     8               1           3       1764248544     1764249650
-MonetDB-BHT-8-3-2  MonetDB-BHT-8-3  100.0     8               1           3       1764248544     1764249654
-MonetDB-BHT-8-3-3  MonetDB-BHT-8-3  100.0     8               1           3       1764248544     1764249651
+MonetDB-BHT-8-1-1  MonetDB-BHT-8-1  100.0     8               1           1       1766270665     1766272447
+MonetDB-BHT-8-2-1  MonetDB-BHT-8-2  100.0     8               1           2       1766272569     1766273246
+MonetDB-BHT-8-3-1  MonetDB-BHT-8-3  100.0     8               1           3       1766273346     1766274612
+MonetDB-BHT-8-3-2  MonetDB-BHT-8-3  100.0     8               1           3       1766273346     1766274617
+MonetDB-BHT-8-3-3  MonetDB-BHT-8-3  100.0     8               1           3       1766273346     1766274611
 
 #### Actual
 DBMS MonetDB-BHT-8 - Pods [[1, 1, 3]]
@@ -530,15 +525,15 @@ DBMS MonetDB-BHT-8 - Pods [[1, 1, 3]]
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1     6449.32    23.90         51.69               104.45
-MonetDB-BHT-8-2     4940.70    25.88         85.20               177.94
-MonetDB-BHT-8-3    13964.50    42.01        130.70               256.00
+MonetDB-BHT-8-1     6900.04    22.54         67.20               113.19
+MonetDB-BHT-8-2     4918.34    20.77         82.51               175.16
+MonetDB-BHT-8-3    11922.36    33.66        127.29               256.00
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       28.66     0.12          0.32                 0.33
-MonetDB-BHT-8-2       28.66     0.11          0.32                 0.33
-MonetDB-BHT-8-3       60.66     0.41          0.33                 0.34
+MonetDB-BHT-8-1       29.19     0.17          0.37                 0.38
+MonetDB-BHT-8-2       29.19     0.16          0.37                 0.38
+MonetDB-BHT-8-3       62.74     0.44          0.39                 0.40
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
