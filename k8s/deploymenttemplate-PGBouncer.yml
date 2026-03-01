@@ -43,7 +43,7 @@ spec:
       #  kubernetes.io/hostname: cl-worker19
       containers:
       - name: pool
-        image: edoburu/pgbouncer
+        image: edoburu/pgbouncer:v1.25.1-p0
         # connect via 'psql -U postgres -p 5432 -h localhost pgbouncer'
         # SHOW STATS;
         # SHOW POOLS;
@@ -193,7 +193,7 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: postgres:17.5
+        image: postgres:18.3 #17.5
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
@@ -292,7 +292,7 @@ spec:
         # , "-c", "listen_addresses='*'", "-c", "logging_collector=on"
         # , "-c", "pg_stat_statements.save=off", "-c", "pg_stat_statements.track=all", "-c", "shared_preload_libraries='pg_stat_statements'"
       - name: monitor-application
-        image: prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
+        image: prometheuscommunity/postgres-exporter:v0.19.1 #v0.17.1 #v0.15.0
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
         env:
           - name: DATA_SOURCE_URI
