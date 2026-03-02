@@ -2522,7 +2522,7 @@ class default():
         evaluate.load_experiment(code=code, silent=True)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluate, "sutloading")
+            df_monitoring = self.show_summary_monitoring_table(evaluate, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")

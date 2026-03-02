@@ -1,16 +1,16 @@
 ## Show Summary
 
 ### Workload
-TPC-DS Queries SF=100
+TPC-DS Queries SF=30
     Type: tpcds
-    Duration: 4638s 
-    Code: 1772385585
+    Duration: 2117s 
+    Code: 1772477169
     This includes the reading queries of TPC-DS.
     This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-    TPC-DS (SF=100) data is loaded and benchmark is executed.
+    TPC-DS (SF=30) data is loaded and benchmark is executed.
     Query ordering is Q1 - Q99.
     All instances use the same query parameters.
-    Timeout per query is 7200.
+    Timeout per query is 14400.
     Import sets indexes and constraints after loading and recomputes statistics.
     Experiment uses bexhoma version 0.8.21.
     System metrics are monitored by a cluster-wide installation.
@@ -29,150 +29,146 @@ MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2025
     Cores:224
     host:6.8.0-90-generic
     node:cl-worker36
-    disk:1109114
+    disk:1191991
     volume_size:1000G
-    volume_used:273G
+    volume_used:74G
     cpu_list:0-223
     requests_cpu:4
-    requests_memory:512Gi
-    limits_memory:512Gi
+    requests_memory:1024Gi
+    limits_memory:1024Gi
     eval_parameters
-        code:1772385585
+        code:1772477169
 
 ### Errors (failed queries)
-            MonetDB-BHT-8-1-1
-TPC-DS Q90               True
-TPC-DS Q95               True
-TPC-DS Q90
-MonetDB-BHT-8-1-1: numRun 1: : java.sql.SQLException: division by zero.
-TPC-DS Q95
-MonetDB-BHT-8-1-1: numRun 1: : java.sql.SQLException: Could not allocate memory
+No errors
 
 ### Warnings (result mismatch)
 No warnings
 
 ### Latency of Timer Execution [ms]
 DBMS           MonetDB-BHT-8-1-1
-TPC-DS Q1                 803.26
-TPC-DS Q2                4667.21
-TPC-DS Q3                1246.53
-TPC-DS Q4               55869.79
-TPC-DS Q5                6543.97
-TPC-DS Q6                2870.13
-TPC-DS Q7                1438.48
-TPC-DS Q8                1816.18
-TPC-DS Q9                1869.72
-TPC-DS Q10                830.47
-TPC-DS Q11              22704.15
-TPC-DS Q12                457.85
-TPC-DS Q13               1949.31
-TPC-DS Q14a+b          135444.30
-TPC-DS Q15                510.26
-TPC-DS Q16              42680.12
-TPC-DS Q17               8746.99
-TPC-DS Q18               3490.41
-TPC-DS Q19                447.45
-TPC-DS Q20                210.11
-TPC-DS Q21               1333.52
-TPC-DS Q22              16913.56
-TPC-DS Q23a+b          148058.47
-TPC-DS Q24a+b          101990.26
-TPC-DS Q25              13488.55
-TPC-DS Q26               1904.61
-TPC-DS Q27              51389.71
-TPC-DS Q28               5121.52
-TPC-DS Q29               8296.51
-TPC-DS Q30               1738.75
-TPC-DS Q31              15321.12
-TPC-DS Q32                570.42
-TPC-DS Q33               1444.39
-TPC-DS Q34               1422.05
-TPC-DS Q35               4143.74
-TPC-DS Q36               7189.31
-TPC-DS Q37               4963.53
-TPC-DS Q38              14305.47
-TPC-DS Q39a+b           25747.08
-TPC-DS Q40               4634.87
-TPC-DS Q41                 24.26
-TPC-DS Q42               1470.04
-TPC-DS Q43               1415.55
-TPC-DS Q44                863.84
-TPC-DS Q45               1470.89
-TPC-DS Q46               1860.90
-TPC-DS Q47               2730.29
-TPC-DS Q48               5468.61
-TPC-DS Q49              15911.71
-TPC-DS Q50               1420.84
-TPC-DS Q51              10957.92
-TPC-DS Q52                912.79
-TPC-DS Q53                537.63
-TPC-DS Q54              10055.36
-TPC-DS Q55                100.13
-TPC-DS Q56               1001.53
-TPC-DS Q57                728.32
-TPC-DS Q58               1954.52
-TPC-DS Q59               3431.82
-TPC-DS Q60               1294.14
-TPC-DS Q61                245.75
-TPC-DS Q62               2832.12
-TPC-DS Q63                265.05
-TPC-DS Q64              20708.14
-TPC-DS Q65               6470.44
-TPC-DS Q66               6933.91
-TPC-DS Q67              26053.65
-TPC-DS Q68               1077.78
-TPC-DS Q69               1673.19
-TPC-DS Q70               5660.63
-TPC-DS Q71               2229.19
-TPC-DS Q72               8119.56
-TPC-DS Q73                127.71
-TPC-DS Q74               7391.91
-TPC-DS Q75              20545.13
-TPC-DS Q76               2810.43
-TPC-DS Q77               4306.82
-TPC-DS Q78              55360.34
-TPC-DS Q79                152.42
-TPC-DS Q80              30296.25
-TPC-DS Q81               2497.01
-TPC-DS Q82               8605.44
-TPC-DS Q83               1681.21
-TPC-DS Q84                 98.31
-TPC-DS Q85               1688.35
-TPC-DS Q86               1108.47
-TPC-DS Q87              11233.44
-TPC-DS Q88               1235.72
-TPC-DS Q89               1284.00
-TPC-DS Q91                296.49
-TPC-DS Q92                966.61
-TPC-DS Q93               8884.00
-TPC-DS Q94              50120.04
-TPC-DS Q96                 28.35
-TPC-DS Q97              14379.74
-TPC-DS Q98                689.67
-TPC-DS Q99               1582.23
+TPC-DS Q1                 193.27
+TPC-DS Q2                1526.60
+TPC-DS Q3                 380.82
+TPC-DS Q4               14935.93
+TPC-DS Q5                1541.80
+TPC-DS Q6                 649.31
+TPC-DS Q7                 439.74
+TPC-DS Q8                 384.51
+TPC-DS Q9                 729.72
+TPC-DS Q10                188.86
+TPC-DS Q11               6298.10
+TPC-DS Q12                147.34
+TPC-DS Q13                631.75
+TPC-DS Q14a+b           30432.64
+TPC-DS Q15                232.85
+TPC-DS Q16              39752.83
+TPC-DS Q17               2337.01
+TPC-DS Q18               1060.14
+TPC-DS Q19                241.70
+TPC-DS Q20                108.09
+TPC-DS Q21                231.53
+TPC-DS Q22               1063.13
+TPC-DS Q23a+b           48877.88
+TPC-DS Q24a+b           10765.56
+TPC-DS Q25               2444.36
+TPC-DS Q26                278.23
+TPC-DS Q27               1638.08
+TPC-DS Q28               1104.57
+TPC-DS Q29               2209.12
+TPC-DS Q30                 97.37
+TPC-DS Q31               1810.39
+TPC-DS Q32                140.76
+TPC-DS Q33                135.26
+TPC-DS Q34                332.76
+TPC-DS Q35                919.98
+TPC-DS Q36               1095.37
+TPC-DS Q37                561.93
+TPC-DS Q38               2449.73
+TPC-DS Q39a+b            1039.45
+TPC-DS Q40               1121.32
+TPC-DS Q41                  4.98
+TPC-DS Q42                 87.49
+TPC-DS Q43                217.30
+TPC-DS Q44               5426.16
+TPC-DS Q45                163.15
+TPC-DS Q46                196.36
+TPC-DS Q47                819.24
+TPC-DS Q48                445.06
+TPC-DS Q49               1180.53
+TPC-DS Q50                731.27
+TPC-DS Q51               2320.06
+TPC-DS Q52                 77.56
+TPC-DS Q53                106.32
+TPC-DS Q54                107.43
+TPC-DS Q55                 69.33
+TPC-DS Q56                215.84
+TPC-DS Q57                184.76
+TPC-DS Q58                616.98
+TPC-DS Q59                885.19
+TPC-DS Q60                159.01
+TPC-DS Q61                181.21
+TPC-DS Q62                499.11
+TPC-DS Q63                109.98
+TPC-DS Q64               4943.99
+TPC-DS Q65               1176.64
+TPC-DS Q66               1530.81
+TPC-DS Q67               5031.62
+TPC-DS Q68                300.06
+TPC-DS Q69                396.97
+TPC-DS Q70               1459.57
+TPC-DS Q71                385.23
+TPC-DS Q72               1418.80
+TPC-DS Q73                136.81
+TPC-DS Q74               1874.97
+TPC-DS Q75               5674.84
+TPC-DS Q76               6814.96
+TPC-DS Q77                785.78
+TPC-DS Q78              11417.69
+TPC-DS Q79                262.48
+TPC-DS Q80               8096.49
+TPC-DS Q81                162.02
+TPC-DS Q82                512.69
+TPC-DS Q83                110.86
+TPC-DS Q84                 51.48
+TPC-DS Q85                424.81
+TPC-DS Q86                327.47
+TPC-DS Q87               3162.41
+TPC-DS Q88               1022.97
+TPC-DS Q89                260.37
+TPC-DS Q90                130.10
+TPC-DS Q91                 30.01
+TPC-DS Q92                146.50
+TPC-DS Q93               2205.86
+TPC-DS Q94              37402.72
+TPC-DS Q95             425489.83
+TPC-DS Q96               3739.14
+TPC-DS Q97               3242.70
+TPC-DS Q98                413.30
+TPC-DS Q99               1472.86
 
 ### Loading [s]
                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0          763.0        13.0     3194.0    3978.0
+MonetDB-BHT-8-1-1           1.0          257.0        11.0     1070.0    1376.0
 
 ### Geometric Mean of Medians of Timer Run [s]
                    Geo Times [s]
 DBMS                            
-MonetDB-BHT-8-1-1           2.91
+MonetDB-BHT-8-1-1           0.76
 
 ### Power@Size ((3600*SF)/(geo times))
                    Power@Size [~Q/h]
 DBMS                                
-MonetDB-BHT-8-1-1          125557.85
+MonetDB-BHT-8-1-1          147316.59
 
 ### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                                 time [s]  count     SF  Throughput@Size
-DBMS            SF    num_experiment num_client                                         
-MonetDB-BHT-8-1 100.0 1              1               1128      1  100.0         30957.45
+                                                time [s]  count    SF  Throughput@Size
+DBMS            SF   num_experiment num_client                                        
+MonetDB-BHT-8-1 30.0 1              1                747      1  30.0         14313.25
 
 ### Workflow
-                         orig_name     SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MonetDB-BHT-8-1-1  MonetDB-BHT-8-1  100.0     8               1           1       1772389011     1772390139
+                         orig_name    SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
+MonetDB-BHT-8-1-1  MonetDB-BHT-8-1  30.0     8               1           1       1772478466     1772479213
 
 #### Actual
 DBMS MonetDB-BHT-8 - Pods [[1]]
@@ -180,23 +176,27 @@ DBMS MonetDB-BHT-8 - Pods [[1]]
 #### Planned
 DBMS MonetDB-BHT-8 - Pods [[1]]
 
+### Ingestion - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1     2418.14    12.11         73.33                73.35
+
 ### Ingestion - Loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1      1132.6     2.29          0.06                23.99
+MonetDB-BHT-8-1      262.31     1.54          0.02                 6.08
 
 ### Execution - SUT
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1    28140.51    84.73        431.99               511.96
+MonetDB-BHT-8-1    26665.86   155.19       1001.41               1024.0
 
 ### Execution - Benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       21.39     0.02          0.33                 0.33
+MonetDB-BHT-8-1       26.94     0.12          0.37                 0.38
 
 ### Tests
 TEST passed: Geo Times [s] contains no 0 or NaN
 TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 TEST passed: Throughput@Size contains no 0 or NaN
-TEST failed: SQL errors
+TEST passed: No SQL errors
 TEST passed: No SQL warnings
 TEST passed: Workflow as planned
 TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
