@@ -3044,7 +3044,7 @@ scrape_configs:
             metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
             metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
         print("{:30s}: example metric {}".format(connection, metric_example))
-        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -mt {metrics_type} -ct {component_type} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
+        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -mt {metrics_type} -ct {component_type} -com {component} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
         stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
         self.logger.debug(stdout)
         self.logger.debug(stderr)
