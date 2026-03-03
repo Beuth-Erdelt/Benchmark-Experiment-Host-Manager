@@ -1014,8 +1014,8 @@ scrape_configs:
           - {master}:9500
         labels:
           app: mysql-app""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                        print(prometheus_config)
-                        exit()
+                        #print(prometheus_config)
+                        #exit()
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
@@ -2975,30 +2975,40 @@ scrape_configs:
                     #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
             # application metrics
-            if self.monitor_app_active and 'monitor' in self.dockertemplate and 'metrics' in self.dockertemplate['monitor']:
-                for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
-                    # default components (managed by bexhoma)
-                    c['monitoring']['metrics'][metricname] = metricdata.copy()
-                    #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
-                    # other components (not managed by bexhoma)
-                    #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
-                    #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
-                if 'statefulset' in self.deployment_infos:
-                    for name, statefulset in self.deployment_infos['statefulset'].items():
-                        #print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
-                        metrics_type = f"metrics_{name}"
-                        #c['monitoring'][metrics_type] = {}
-                        #c['monitoring']['metrics_custom'][name] = {}
-                        #for metricname, metricdata in config_K8s['monitor']['metrics'].items():
-                        for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
+            if self.monitor_app_active and 'monitor' in self.dockertemplate:
+                for component, application_monitoring in self.dockertemplate['monitor'].items():
+                    print("{:30s}: need application metrics for {}".format(self.configuration, component))
+                    application_metrics_name = application_monitoring['metrics']
+                    print("{:30s}: load application metrics of type {}".format(self.configuration, application_metrics_name))
+                    if application_metrics_name in config_K8s['monitor']:
+                        metrics_template = config_K8s['monitor'][application_metrics_name]['metrics'].copy()
+                        for metricname, metricdata in metrics_template.items():
                             # default components (managed by bexhoma)
-                            #c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            c['monitoring']['metrics'][metricname]['component'] = component
                             #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                            #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                             # other components (not managed by bexhoma)
-                            c['monitoring'][metrics_type][metricname] = metricdata.copy()
-                            c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database, component=name)
+                            #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                            #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                        if 'statefulset' in self.deployment_infos:
+                            for name, statefulset in self.deployment_infos['statefulset'].items():
+                                #print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                                metrics_type = f"metrics_{name}"
+                                #c['monitoring'][metrics_type] = {}
+                                #c['monitoring']['metrics_custom'][name] = {}
+                                #for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                                for metricname, metricdata in metrics_template.items():
+                                    # default components (managed by bexhoma)
+                                    #c['monitoring']['metrics'][metricname] = metricdata.copy()
+                                    #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                                    #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                                    # other components (not managed by bexhoma)
+                                    c['monitoring'][metrics_type][metricname] = metricdata.copy()
+                                    c['monitoring'][metrics_type][metricname]['component'] = component
+                                    c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database, component=name)
+                    else:
+                        print("{:30s}: application metrics of type {} not found!".format(self.configuration, self.dockertemplate['monitor']['metrics']))
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
