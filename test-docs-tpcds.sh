@@ -159,22 +159,21 @@ wait_process "tpcds"
 
 
 #### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-100
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-30
 sleep 30
 
 
-#### TCP-DS Power 100 (Example-TPC-DS.md)
+#### TCP-DS Power 30 (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 \
   -m -mc \
-  -sf 100 \
+  -sf 30 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 7200 -dt \
-  -rst shared -rss 1000Gi \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi -rsr \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
 
 
@@ -183,17 +182,16 @@ nohup python tpcds.py -ms 1 \
 wait_process "tpcds"
 
 
-#### TCP-DS Power 100 (Example-TPC-DS.md)
+#### TCP-DS Power 30 (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 \
   -m -mc \
-  -sf 100 \
+  -sf 30 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 2 -ne 1,1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 7200 -dt \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
 
@@ -203,17 +201,16 @@ nohup python tpcds.py -ms 1 \
 wait_process "tpcds"
 
 
-#### TCP-DS Throughput 100 (Example-TPC-DS.md)
+#### TCP-DS Throughput 30 (Example-TPC-DS.md)
 nohup python tpcds.py -ms 1 \
   -m -mc \
-  -sf 100 \
+  -sf 30 \
   -ii -ic -is \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1,1,3 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 7200 -dt \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
   -rst shared -rss 1000Gi \
   run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
 

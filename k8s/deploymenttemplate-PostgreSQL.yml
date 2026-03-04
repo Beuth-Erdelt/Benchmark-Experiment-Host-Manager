@@ -59,8 +59,7 @@ spec:
           - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       containers:
       - name: dbms
-        image: postgres:18.2
-        #image: postgres:17.5
+        image: postgres:18.3 #17.5
         #image: postgres:18beta1-alpine
         #image: postgres:16.9
         env:
@@ -225,7 +224,7 @@ spec:
           #- "-c"
           #- "huge_pages=try"                          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-HUGE-PAGES
       - name: monitor-application
-        image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1 #v0.15.0
+        image: prometheuscommunity/postgres-exporter:v0.19.1 #v0.17.1 #v0.15.0
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
         env:
           - name: DATA_SOURCE_URI

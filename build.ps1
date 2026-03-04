@@ -1,5 +1,5 @@
 
-$dbmsbenchmarker = "v0.14.16"
+$dbmsbenchmarker = "v0.14.20"
 $version = (pip show bexhoma | Select-String "Version" | ForEach-Object { ($_ -split " ")[1] })
 #$version="latest"
 

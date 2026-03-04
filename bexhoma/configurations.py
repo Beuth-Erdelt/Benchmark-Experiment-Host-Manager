@@ -597,7 +597,7 @@ class default():
                 configuration = self.configuration
                 #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
                 num_ready = 0
-                pods_worker = self.get_worker_pods(component=component)#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                pods_worker = self.get_worker_pods(component=component, only_stateful=True)#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                     status = self.experiment.cluster.get_pod_status(pod)
@@ -619,11 +619,27 @@ class default():
         :return: True, if dbms is existing
         """
         app = self.appname
-        component = 'sut'
         configuration = self.configuration
-        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
-        if len(pods) > 0:
-            return True
+        components = list(self.deployment_infos['deployment'].keys())
+        for component in components:
+            pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+            if len(pods) > 0:
+                return True
+        components = list(self.deployment_infos['statefulset'].keys())
+        for component in components:
+            pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+            if len(pods) > 0:
+                return True
+        #component = 'sut'
+        #configuration = self.configuration
+        #pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        #if len(pods) > 0:
+        #    return True
+        #component = 'worker'
+        #configuration = self.configuration
+        #pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        #if len(pods) > 0:
+        #    return True
         return False
     def maintaining_is_running(self):
         """
@@ -952,149 +968,21 @@ scrape_configs:
     static_configs:
       - targets: ['{master}:9400']""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
                         # application monitor
-                        # TODO: test for dbms other than PostgreSQL
-                        working_example_of_service_discovery_prometheus_config = ""
-                        working_example_of_service_discovery_prometheus_config += """
-  - job_name: 'bexhoma-postgres'
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only keep pods whose name matches pattern
-      - action: keep
-        source_labels: [__meta_kubernetes_pod_name]
-        regex: bexhoma-sut-postgresql-1-1-1024-.*
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:9187'
-        action: replace
-"""
                         if self.monitor_app_active:
-                            if 'monitor' in self.dockertemplate and 'discovery' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['discovery'] and 'discovery_config' in self.dockertemplate['monitor'] and len(self.dockertemplate['monitor']['discovery_config']) > 0:
-                                prometheus_config += self.dockertemplate['monitor']['discovery_config'].format(namespace=self.experiment.namespace, master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                                prometheus_config_redis = ""
-                                prometheus_config_redis += """
-  - job_name: 'redis-pods'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_interval}
-    metrics_path: /metrics
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only select pods by labels
-      - source_labels: [__meta_kubernetes_pod_label_app,
-                        __meta_kubernetes_pod_label_component,
-                        __meta_kubernetes_pod_label_dbms]
-        regex: bexhoma;worker;Redis
-        action: keep
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:9121'
-        action: replace
-      # Optional: rename instance label to pod name
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: instance
-      # Optional: drop pods that are not running
-      - source_labels: [__meta_kubernetes_pod_phase]
-        regex: Running
-        action: keep""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                                prometheus_config_tidb = ""
-                                prometheus_config_tidb += """
-  - job_name: 'tidb-pods-tidb'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_interval}
-    metrics_path: /metrics
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only select pods by labels
-      - source_labels: [__meta_kubernetes_pod_label_app,
-                        __meta_kubernetes_pod_label_component,
-                        __meta_kubernetes_pod_label_dbms]
-        regex: bexhoma;sut;TiDB
-        action: keep
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:9500'
-        action: replace
-      # Optional: rename instance label to pod name
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: instance
-      # Optional: drop pods that are not running
-      - source_labels: [__meta_kubernetes_pod_phase]
-        regex: Running
-        action: keep
-  - job_name: 'tidb-pods-tikv'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_interval}
-    metrics_path: /metrics
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only select pods by labels
-      - source_labels: [__meta_kubernetes_pod_label_app,
-                        __meta_kubernetes_pod_label_component,
-                        __meta_kubernetes_pod_label_dbms]
-        regex: bexhoma;tikv;TiDB
-        action: keep
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:20180'
-        action: replace
-      # Optional: rename instance label to pod name
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: instance
-      # Optional: drop pods that are not running
-      - source_labels: [__meta_kubernetes_pod_phase]
-        regex: Running
-        action: keep
-  - job_name: 'tidb-pods-pd'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_interval}
-    metrics_path: /metrics
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only select pods by labels
-      - source_labels: [__meta_kubernetes_pod_label_app,
-                        __meta_kubernetes_pod_label_component,
-                        __meta_kubernetes_pod_label_dbms]
-        regex: bexhoma;pd;TiDB
-        action: keep
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:2379'
-        action: replace
-      # Optional: rename instance label to pod name
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: instance
-      # Optional: drop pods that are not running
-      - source_labels: [__meta_kubernetes_pod_phase]
-        regex: Running
-        action: keep""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                            elif 'monitor' in self.dockertemplate and 'blackbox' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['blackbox']:
-                                app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
-                                if self.tenant_per == 'database' and self.num_tenants > 0:
-                                    connections = [
-                                        f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
-                                        for i in range(self.num_tenants)
-                                    ]
-                                    app_monitor_targets += "\n".join(connections)
-                                prometheus_config += """
+                            if 'monitor' in self.dockertemplate:
+                                for component, application_monitoring in self.dockertemplate['monitor'].items():
+                                    print("{:30s}: need application monitoring for {}".format(configuration, component))
+                                    if 'discovery' in application_monitoring and application_monitoring['discovery'] and 'discovery_config' in application_monitoring and len(application_monitoring['discovery_config']) > 0:
+                                        prometheus_config += application_monitoring['discovery_config'].format(namespace=self.experiment.namespace, master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                                    elif 'blackbox' in application_monitoring and application_monitoring['blackbox']:
+                                        app_monitor_targets = "\n          - postgres@localhost:5432/postgres?sslmode=disable\n"
+                                        if self.tenant_per == 'database' and self.num_tenants > 0:
+                                            connections = [
+                                                f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
+                                                for i in range(self.num_tenants)
+                                            ]
+                                            app_monitor_targets += "\n".join(connections)
+                                        prometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
@@ -1110,54 +998,30 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: {master}:9500""".format(master=name_monitor_application, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout, app_monitor_targets=app_monitor_targets)
-                            elif 'monitor' in self.dockertemplate and 'headless' in self.dockertemplate['monitor'] and self.dockertemplate['monitor']['headless']:
-                                endpoints_cluster = [] # there cannot be a cluster-wide application monitoring
-                                # no blackbox mode, normal scraping target directly
-                                endpoints_worker = self.get_worker_endpoints()
-                                #name_worker = self.generate_component_name(component='worker', configuration=self.configuration, experiment=self.code)
-                                #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
-                                i = 0
-                                prometheus_config_working_endpoints_ignored = ""
-                                #for pod in pods_worker:
-                                for endpoint in endpoints_worker:
-                                    if endpoint in endpoints_cluster:
-                                        # we already monitor this endpoint
-                                        print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (already monitored by cluster)".format(configuration, endpoint))
-                                        continue
-                                    print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
-                                    #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
-                                    prometheus_config_working_endpoints_ignored += """
+                                    elif 'headless' in application_monitoring and application_monitoring['headless']:
+                                        endpoints_cluster = [] # there cannot be a cluster-wide application monitoring
+                                        # no blackbox mode, normal scraping target directly
+                                        endpoints_worker = self.get_worker_endpoints()
+                                        i = 0
+                                        prometheus_config_working_endpoints_ignored = ""
+                                        for endpoint in endpoints_worker:
+                                            if endpoint in endpoints_cluster:
+                                                # we already monitor this endpoint
+                                                print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (already monitored by cluster)".format(configuration, endpoint))
+                                                continue
+                                            print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (added to Prometheus) of sidecar container".format(configuration, endpoint))
+                                            #print('Worker: {worker}.{service_sut}'.format(worker=pod, service_sut=name_worker))
+                                            prometheus_config += """
   - job_name: 'monitor-app-{endpoint}'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     metrics_path: /_status/vars
     static_configs:
       - targets: ['{endpoint}:8080']""".format(endpoint=endpoint, client=i, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                                    i = i + 1
-                                prometheus_config_cockroachdb = ""
-                                prometheus_config += """
-  - job_name: 'monitor-app'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
-    metrics_path: /_status/vars
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names: ["perdelt"]
-    relabel_configs:
-      # Only keep pods whose name matches pattern
-      - action: keep
-        source_labels: [__meta_kubernetes_pod_name]
-        regex: bexhoma-worker-cockroachdb-.*
-      # Map pod IP -> address:port
-      - source_labels: [__meta_kubernetes_pod_ip]
-        target_label: __address__
-        replacement: '$1:8080'
-        action: replace
-""".format(master=name_service, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
-                            else:
-                                # no blackbox mode, normal scraping target directly
-                                prometheus_config += """
+                                            i = i + 1
+                                    else:
+                                        # no blackbox mode, normal scraping target directly
+                                        prometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
@@ -1166,6 +1030,8 @@ scrape_configs:
           - {master}:9500
         labels:
           app: mysql-app""".format(master=name_sut, prometheus_interval=self.prometheus_interval, prometheus_timeout=self.prometheus_timeout)
+                        #print(prometheus_config)
+                        #exit()
                         # service of cluster
                         endpoints_cluster = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                         i = 0
@@ -1938,7 +1804,7 @@ scrape_configs:
                 ################
                 dep['metadata']['name'] = name_worker
                 dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = 'worker'
+                #dep['metadata']['labels']['component'] = 'worker'
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
@@ -3125,30 +2991,40 @@ scrape_configs:
                     #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
                     #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
             # application metrics
-            if self.monitor_app_active and 'monitor' in self.dockertemplate and 'metrics' in self.dockertemplate['monitor']:
-                for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
-                    # default components (managed by bexhoma)
-                    c['monitoring']['metrics'][metricname] = metricdata.copy()
-                    #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                    c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
-                    # other components (not managed by bexhoma)
-                    #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
-                    #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
-                if 'statefulset' in self.deployment_infos:
-                    for name, statefulset in self.deployment_infos['statefulset'].items():
-                        #print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
-                        metrics_type = f"metrics_{name}"
-                        #c['monitoring'][metrics_type] = {}
-                        #c['monitoring']['metrics_custom'][name] = {}
-                        #for metricname, metricdata in config_K8s['monitor']['metrics'].items():
-                        for metricname, metricdata in self.dockertemplate['monitor']['metrics'].items():
+            if self.monitor_app_active and 'monitor' in self.dockertemplate:
+                for component, application_monitoring in self.dockertemplate['monitor'].items():
+                    print("{:30s}: need application metrics for {}".format(self.configuration, component))
+                    application_metrics_name = application_monitoring['metrics']
+                    print("{:30s}: load application metrics of type {}".format(self.configuration, application_metrics_name))
+                    if application_metrics_name in config_K8s['monitor']:
+                        metrics_template = config_K8s['monitor'][application_metrics_name]['metrics'].copy()
+                        for metricname, metricdata in metrics_template.items():
                             # default components (managed by bexhoma)
-                            #c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            c['monitoring']['metrics'][metricname]['component'] = component
                             #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
-                            #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                            c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
                             # other components (not managed by bexhoma)
-                            c['monitoring'][metrics_type][metricname] = metricdata.copy()
-                            c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database, component=name)
+                            #c['monitoring']['metrics_special'][metricname] = metricdata.copy()
+                            #c['monitoring']['metrics_special'][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring']['metrics_special'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                        if 'statefulset' in self.deployment_infos:
+                            for name, statefulset in self.deployment_infos['statefulset'].items():
+                                #print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                                metrics_type = f"metrics_{name}"
+                                #c['monitoring'][metrics_type] = {}
+                                #c['monitoring']['metrics_custom'][name] = {}
+                                #for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                                for metricname, metricdata in metrics_template.items():
+                                    # default components (managed by bexhoma)
+                                    #c['monitoring']['metrics'][metricname] = metricdata.copy()
+                                    #c['monitoring']['metrics'][metricname]['query'] = c['monitoring']['metrics'][metricname]['query'].format(host=node, gpuid=gpuid, configuration=self.configuration.lower(), experiment=self.code)
+                                    #c['monitoring']['metrics'][metricname]['query'] = self.set_metric_of_config_default(metric=c['monitoring']['metrics'][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database)
+                                    # other components (not managed by bexhoma)
+                                    c['monitoring'][metrics_type][metricname] = metricdata.copy()
+                                    c['monitoring'][metrics_type][metricname]['component'] = component
+                                    c['monitoring'][metrics_type][metricname]['query'] = self.set_metric_of_config(metric=c['monitoring'][metrics_type][metricname]['query'], host=node, gpuid=gpuid, schema=schema, database=database, component=name)
+                    else:
+                        print("{:30s}: application metrics of type {} not found!".format(self.configuration, self.dockertemplate['monitor']['metrics']))
         if 'JDBC' in c:
             database = c['JDBC']['database'] if 'database' in c['JDBC'] else self.experiment.volume
             schema = c['JDBC']['schema'] if 'schema' in c['JDBC'] else ''
@@ -3184,7 +3060,7 @@ scrape_configs:
             metric_example['query'] = metric_example['query'].replace('container="dbms"', 'container="{}"'.format(container))
             metric_example['query'] = metric_example['query'].replace('container!="dbms"', 'container!="{}"'.format(container))
         print("{:30s}: example metric {}".format(connection, metric_example))
-        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -mt {metrics_type} -ct {component_type} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
+        cmd['fetch_loading_metrics'] = f'python metrics.py -r /results/ -db -mt {metrics_type} -ct {component_type} -com {component} -cn {container} -c {connection} -cf {connection_file} -f {config_folder} -e {experiment} -ts {time_start} -te {time_end}'
         stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['fetch_loading_metrics'], pod=pod_dashboard, container="dashboard")
         self.logger.debug(stdout)
         self.logger.debug(stderr)
@@ -4752,7 +4628,7 @@ scrape_configs:
         #name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.get_experiment_name(), configuration=storageConfiguration)
         name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.storage_label, configuration=storageConfiguration)
         return name_worker
-    def get_worker_pods(self, component='worker'):
+    def get_worker_pods(self, component='worker', only_stateful=False):
         """
         Returns a list of all pod names of workers for the current SUT.
         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -4769,10 +4645,13 @@ scrape_configs:
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
             print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
-            #pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
-            print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
+            pods_worker_stateful = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
+            print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker_stateful))
         #print("Worker pods found: ", pods_worker)
-        return pods_worker
+        if only_stateful:
+            return pods_worker_stateful
+        else:
+            return pods_worker
     def get_worker_endpoints(self):
         """
         Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
