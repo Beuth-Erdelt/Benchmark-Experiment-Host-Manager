@@ -314,7 +314,7 @@ spec:
       labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
     spec:
       containers:
-      - name: cluster-init
+      - name: dbms
         image: redis:7.0
         imagePullPolicy: IfNotPresent
         env:
