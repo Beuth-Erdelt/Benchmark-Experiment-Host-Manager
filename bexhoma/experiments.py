@@ -1463,10 +1463,10 @@ class default():
                                 config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
                                 print("{:30s}: has pending maintaining".format(config.configuration))
-                # store logs of successful worker job pods
+                # store logs of successful init job pods
                 #print("{:30s}: looking for completed startup pods".format(config.configuration))
                 app = self.cluster.appname
-                component = 'worker'
+                component = 'init'
                 pods = self.cluster.get_job_pods(app=app, component=component, experiment=self.code, configuration=configuration)
                 for pod in pods:
                     status = self.cluster.get_pod_status(pod)
@@ -1588,7 +1588,7 @@ class default():
                                             self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
                                         if not self.cluster.pod_description_exists(pod_name=pod):
                                             self.cluster.logger.debug("Store description of pod {}".format(pod))
-                                            self.cluster.store_pod_description(pod_name=pod)
+                                            self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                         restarts = config.get_host_restarts(pod)
                                         print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
                                 statefulsets = list(config.deployment_infos['statefulset'].keys())
@@ -1602,7 +1602,7 @@ class default():
                                             self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
                                         if not self.cluster.pod_description_exists(pod_name=pod):
                                             self.cluster.logger.debug("Store description of pod {}".format(pod))
-                                            self.cluster.store_pod_description(pod_name=pod)
+                                            self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                         restarts = config.get_host_restarts(pod)
                                         print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
                                 # old, static way of storing logs1

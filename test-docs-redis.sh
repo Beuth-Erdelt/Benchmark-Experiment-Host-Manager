@@ -145,8 +145,6 @@ wait_process "ycsb"
 
 
 # Cluster of 3 Redis instances and PVC
-########### not sure this works - redis nodes rely on IPs and do not find eachother after restart
-
 nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \

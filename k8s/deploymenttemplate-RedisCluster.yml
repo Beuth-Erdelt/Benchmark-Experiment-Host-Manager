@@ -307,11 +307,11 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: cluster-init
-  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  labels: {app: bexhoma, component: init, configuration: default, experiment: default}
 spec:
   template:
     metadata:
-      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+      labels: {app: bexhoma, component: init, configuration: default, experiment: default}
     spec:
       containers:
       - name: dbms

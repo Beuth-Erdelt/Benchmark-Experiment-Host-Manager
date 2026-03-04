@@ -1804,7 +1804,7 @@ scrape_configs:
                 ################
                 dep['metadata']['name'] = name_worker
                 dep['metadata']['labels']['app'] = app
-                dep['metadata']['labels']['component'] = 'worker'
+                #dep['metadata']['labels']['component'] = 'worker'
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = self.docker
