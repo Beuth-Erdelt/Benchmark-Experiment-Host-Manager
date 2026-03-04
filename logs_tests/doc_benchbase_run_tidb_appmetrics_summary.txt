@@ -3,13 +3,13 @@
 ### Workload
 Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1604s 
-    Code: 1772124187
+    Duration: 1849s 
+    Code: 1772625941
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.20.
+    Experiment uses bexhoma version 0.8.21.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
     Experiment is limited to DBMS ['TiDB'].
@@ -29,7 +29,7 @@ TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:146532
+    disk:148452
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
@@ -41,7 +41,7 @@ TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
         Cores:64
         host:5.15.0-164-generic
         node:cl-worker14
-        disk:146532
+        disk:148452
         cpu_list:0-63
     sut 1
         RAM:541008474112
@@ -49,7 +49,7 @@ TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
         Cores:64
         host:5.15.0-164-generic
         node:cl-worker14
-        disk:146532
+        disk:148452
         cpu_list:0-63
     sut 2
         RAM:541008474112
@@ -57,39 +57,39 @@ TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
         Cores:64
         host:5.15.0-164-generic
         node:cl-worker14
-        disk:146532
+        disk:148452
         cpu_list:0-63
     pd 0
-        RAM:1081649823744
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-90-generic
-        node:cl-worker34
-        disk:235247
-        cpu_list:0-55
-    pd 1
         RAM:2164173176832
         CPU:INTEL(R) XEON(R) PLATINUM 8570
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1101747
+        disk:1393182
         cpu_list:0-223
-    pd 2
-        RAM:540590821376
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
+    pd 1
+        RAM:1081649823744
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
         host:6.8.0-90-generic
-        node:cl-worker24
-        disk:169863
-        cpu_list:0-95
+        node:cl-worker34
+        disk:347735
+        cpu_list:0-55
+    pd 2
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:427849
+        cpu_list:0-127
     tikv 0
         RAM:2164173176832
         CPU:INTEL(R) XEON(R) PLATINUM 8570
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1101748
+        disk:1413646
         cpu_list:0-223
     tikv 1
         RAM:1081649823744
@@ -97,18 +97,18 @@ TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
         Cores:56
         host:6.8.0-90-generic
         node:cl-worker34
-        disk:235247
+        disk:347735
         cpu_list:0-55
     tikv 2
-        RAM:1081965416448
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1093-nvidia
-        node:cl-worker27
-        disk:1152776
-        cpu_list:0-255
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:413382
+        cpu_list:0-127
     eval_parameters
-                code:1772124187
+                code:1772625941
                 BEXHOMA_REPLICAS:3
                 BEXHOMA_WORKERS:3
 TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
@@ -117,7 +117,7 @@ TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:146532
+    disk:148452
     cpu_list:0-63
     requests_cpu:4
     requests_memory:16Gi
@@ -129,7 +129,7 @@ TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
         Cores:64
         host:5.15.0-164-generic
         node:cl-worker14
-        disk:146532
+        disk:148452
         cpu_list:0-63
     sut 1
         RAM:541008474112
@@ -137,7 +137,7 @@ TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
         Cores:64
         host:5.15.0-164-generic
         node:cl-worker14
-        disk:146532
+        disk:148452
         cpu_list:0-63
     sut 2
         RAM:541008474112
@@ -145,39 +145,39 @@ TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
         Cores:64
         host:5.15.0-164-generic
         node:cl-worker14
-        disk:146532
+        disk:148452
         cpu_list:0-63
     pd 0
-        RAM:1081649823744
-        CPU:AMD EPYC 7453 28-Core Processor
-        Cores:56
-        host:6.8.0-90-generic
-        node:cl-worker34
-        disk:232383
-        cpu_list:0-55
-    pd 1
         RAM:2164173176832
         CPU:INTEL(R) XEON(R) PLATINUM 8570
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1104604
+        disk:718762
         cpu_list:0-223
-    pd 2
-        RAM:540590821376
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
+    pd 1
+        RAM:1081649823744
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
         host:6.8.0-90-generic
-        node:cl-worker24
-        disk:169867
-        cpu_list:0-95
+        node:cl-worker34
+        disk:345947
+        cpu_list:0-55
+    pd 2
+        RAM:1081853952000
+        CPU:Intel(R) Xeon(R) Gold 6438Y+
+        Cores:128
+        host:6.8.0-90-generic
+        node:cl-worker37
+        disk:427849
+        cpu_list:0-127
     tikv 0
         RAM:2164173176832
         CPU:INTEL(R) XEON(R) PLATINUM 8570
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1104596
+        disk:718764
         cpu_list:0-223
     tikv 1
         RAM:1081649823744
@@ -185,18 +185,18 @@ TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
         Cores:56
         host:6.8.0-90-generic
         node:cl-worker34
-        disk:232383
+        disk:345947
         cpu_list:0-55
     tikv 2
-        RAM:1081965416448
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1093-nvidia
-        node:cl-worker27
-        disk:1150981
-        cpu_list:0-255
+        RAM:540579303424
+        CPU:AMD EPYC 7502 32-Core Processor
+        Cores:128
+        host:6.8.0-94-generic
+        node:cl-worker22
+        disk:411310
+        cpu_list:0-127
     eval_parameters
-                code:1772124187
+                code:1772625941
                 BEXHOMA_REPLICAS:3
                 BEXHOMA_WORKERS:3
 
@@ -205,14 +205,14 @@ TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
 #### Per Pod
                    experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                               
-TiDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    279.653319                 278.453319         0.0                                                     119632.0                                              57200.0
-TiDB-1-1-1024-2-1               1          8    8192       2      1  300.0           0                    131.666635                 130.236635         0.0                                                     138092.0                                              60741.0
-TiDB-1-1-1024-2-2               1          8    8192       2      2  300.0           0                    133.463318                 132.066652         0.0                                                     132922.0                                              59925.0
+TiDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    153.976643                 153.219977         0.0                                                     245805.0                                             103887.0
+TiDB-1-1-1024-2-2               1          8    8192       2      1  300.0           0                     50.433331                  50.063331         0.0                                                     298438.0                                             158586.0
+TiDB-1-1-1024-2-1               1          8    8192       2      2  300.0           0                     50.503329                  50.219995         0.0                                                     298906.0                                             158346.0
 
 #### Aggregated Parallel
                  experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-TiDB-1-1-1024-1               1         16   16384          1  300.0           0                        279.65                     278.45         0.0                                                     119632.0                                              57200.0
-TiDB-1-1-1024-2               1         16   16384          2  300.0           0                        265.13                     262.30         0.0                                                     138092.0                                              60333.0
+TiDB-1-1-1024-1               1         16   16384          1  300.0           0                        153.98                     153.22         0.0                                                     245805.0                                             103887.0
+TiDB-1-1-1024-2               1         16   16384          2  300.0           0                        100.94                     100.28         0.0                                                     298906.0                                             158466.0
 
 ### Workflow
 
@@ -224,82 +224,82 @@ DBMS TiDB-1-1-1024 - Pods [[1, 2]]
 
 ### Loading
                  time_load  terminals  pods  Throughput [SF/h]
-TiDB-1-1-1024-1      262.0        1.0   1.0         219.847328
-TiDB-1-1-1024-2      262.0        1.0   2.0         219.847328
+TiDB-1-1-1024-1      656.0        1.0   1.0          87.804878
+TiDB-1-1-1024-2      656.0        1.0   2.0          87.804878
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     2014.67    10.74          1.87                 2.13
-TiDB-1-1-1024-2     2014.67    10.74          1.87                 2.13
+TiDB-1-1-1024-1     2098.32     4.71          0.77                 1.04
+TiDB-1-1-1024-2     2098.32     4.71          0.77                 1.04
 
 ### Loading phase: component pd
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1       102.8     0.41          0.29                 0.29
-TiDB-1-1-1024-2       102.8     0.41          0.29                 0.29
+TiDB-1-1-1024-1      108.99     0.18          0.29                 0.29
+TiDB-1-1-1024-2      108.99     0.18          0.29                 0.29
 
 ### Loading phase: component tikv
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     2063.53    12.35          9.99                 27.3
-TiDB-1-1-1024-2     2063.53    12.35          9.99                 27.3
+TiDB-1-1-1024-1     1980.27     4.35          9.84                 28.9
+TiDB-1-1-1024-2     1980.27     4.35          9.84                 28.9
 
 ### Loading phase: component loader
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     1039.48     9.72          0.39                 0.39
-TiDB-1-1-1024-2     1039.48     9.72          0.39                 0.39
+TiDB-1-1-1024-1      593.24     3.29          0.34                 0.34
+TiDB-1-1-1024-2      593.24     3.29          0.34                 0.34
 
 ### Execution phase: SUT deployment
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     3286.46    11.87          0.91                 1.17
-TiDB-1-1-1024-2     2984.52    10.76          0.92                 1.17
+TiDB-1-1-1024-1     1799.72     7.43          0.86                 1.13
+TiDB-1-1-1024-2     1260.18     4.65          2.38                 2.65
 
 ### Execution phase: component pd
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1      249.64     0.96          0.29                 0.29
-TiDB-1-1-1024-2      246.98     0.92          0.30                 0.30
+TiDB-1-1-1024-1      113.90     0.45          0.29                  0.3
+TiDB-1-1-1024-2       94.74     0.36          0.30                  0.3
 
 ### Execution phase: component tikv
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     1364.63     5.54         12.34                30.14
-TiDB-1-1-1024-2     1275.58     5.47         13.69                31.68
+TiDB-1-1-1024-1      705.14     3.29         12.23                31.80
+TiDB-1-1-1024-2      504.90     2.04         12.54                26.39
 
 ### Execution phase: component benchmarker
                  CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1      220.12     1.13          0.32                 0.32
-TiDB-1-1-1024-2      287.54     1.28          0.32                 0.32
+TiDB-1-1-1024-1      141.91     0.77          0.29                 0.29
+TiDB-1-1-1024-2      141.91     0.67          0.29                 0.29
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-1-1-1024-1                    109.0                             32.0                                 436.34                         22.25                 0.23
-TiDB-1-1-1024-2                    109.0                             32.0                                 436.34                         22.25                 0.23
+                 TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]
+TiDB-1-1-1024-1                                 227.29                         64.54
+TiDB-1-1-1024-2                                 227.29                         64.54
 
 #### Loading phase: component pd
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-1-1-1024-1                    109.0                             32.0                                 436.34                         22.25                 0.23
-TiDB-1-1-1024-2                    109.0                             32.0                                 436.34                         22.25                 0.23
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]
+TiDB-1-1-1024-1                      109                               76
+TiDB-1-1-1024-2                      109                               76
 
 #### Loading phase: component tikv
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-1-1-1024-1                    109.0                             32.0                                 436.34                         22.25                 0.23
-TiDB-1-1-1024-2                    109.0                             32.0                                 436.34                         22.25                 0.23
+                 TiKV Store Used [%]  TiKV Compaction Time Median [s]  TiKV Compaction Flow [Gi]  TiKV Compaction Pending [Gi]
+TiDB-1-1-1024-1                 0.33                        514707.84                       14.4                          1.22
+TiDB-1-1-1024-2                 0.33                        514707.84                       14.4                          1.22
 
 #### Execution phase: SUT deployment
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-1-1-1024-1                    112.0                              8.0                                6686.72                         21.27                 0.31
-TiDB-1-1-1024-2                    113.0                              0.0                                4185.02                          3.58                 0.38
+                 TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]
+TiDB-1-1-1024-1                                3827.00                         62.67
+TiDB-1-1-1024-2                                1445.08                         11.10
 
 #### Execution phase: component pd
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-1-1-1024-1                    112.0                              8.0                                6686.72                         21.27                 0.31
-TiDB-1-1-1024-2                    113.0                              0.0                                4185.02                          3.58                 0.38
+                 PD Cluster Leader Count  PD Leader Balance Actions [ops]
+TiDB-1-1-1024-1                    111.0                              2.0
+TiDB-1-1-1024-2                    111.0                              0.0
 
 #### Execution phase: component tikv
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]  TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]  TiKV Store Used [%]
-TiDB-1-1-1024-1                    112.0                              8.0                                6686.72                         21.27                 0.31
-TiDB-1-1-1024-2                    113.0                              0.0                                4185.02                          3.58                 0.38
+                 TiKV Store Used [%]  TiKV Compaction Time Median [s]  TiKV Compaction Flow [Gi]  TiKV Compaction Pending [Gi]
+TiDB-1-1-1024-1                 0.37                          80400.0                       2.36                          0.72
+TiDB-1-1-1024-2                 0.41                          70563.0                       0.09                          0.00
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

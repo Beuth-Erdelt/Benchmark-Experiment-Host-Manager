@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=10
     Type: ycsb
-    Duration: 1820s 
-    Code: 1772119501
+    Duration: 2373s 
+    Code: 1772582969
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -15,7 +15,7 @@ YCSB SF=10
     Target is based on multiples of '16384'.
     Factors for loading are [4].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.20.
+    Experiment uses bexhoma version 0.8.21.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
     Experiment is limited to DBMS ['CockroachDB'].
@@ -34,7 +34,7 @@ CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:145628
+    disk:147519
     cpu_list:0-63
     args:['-c', 'while true; do echo hello; sleep 10;done']
     requests_cpu:4
@@ -46,40 +46,40 @@ CockroachDB-64-8-65536-1 uses docker image cockroachdb/cockroach:v24.2.4
         Cores:224
         host:6.8.0-90-generic
         node:cl-worker36
-        disk:1091726
+        disk:1241112
         volume_size:1000G
         volume_used:283G
         cpu_list:0-223
     worker 1
-        RAM:1081742741504
-        Cores:128
-        host:6.8.0-100-generic
-        node:cl-worker29
-        disk:640386
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-127
-    worker 2
-        RAM:1081965416448
+        RAM:1077382688768
         Cores:256
-        host:5.15.0-1093-nvidia
-        node:cl-worker27
-        disk:1138429
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1286031
         volume_size:1000G
         volume_used:283G
         cpu_list:0-255
+    worker 2
+        RAM:1081649823744
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:340146
+        volume_size:1000G
+        volume_used:283G
+        cpu_list:0-55
     eval_parameters
-        code:1772119501
+        code:1772582969
         BEXHOMA_REPLICAS:3
         BEXHOMA_WORKERS:3
 
 ### Loading
                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-CockroachDB-64-8-65536               1       64   65536          8           0                   17517.551237               572768.0            10000000                              8507.0
+CockroachDB-64-8-65536               1       64   65536          8           0                   11044.001737               906372.0            10000000                             36739.0
 
 ### Execution
                           experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-CockroachDB-64-8-65536-1               1       64   65536          1           0                       12492.55               800477.0           4997230                            6123.0             5002770                            166783.0
+CockroachDB-64-8-65536-1               1       64   65536          1           0                       11407.91               876585.0           4998723                            8287.0             5001277                            164863.0
 
 ### Workflow
 
@@ -93,29 +93,29 @@ DBMS CockroachDB-64-8-65536 - Pods [[1]]
 
 ### Loading phase: component worker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1    17409.38    33.66         22.21                59.54
+CockroachDB-64-8-65536-1    17936.67    22.76         20.38                58.57
 
 ### Loading phase: component loader
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      799.06     1.75          0.11                 0.11
+CockroachDB-64-8-65536-1       874.6      1.4          0.11                 0.11
 
 ### Execution phase: component worker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1    21835.55    29.63         27.71                79.03
+CockroachDB-64-8-65536-1    18645.75    22.97          22.2                62.33
 
 ### Execution phase: component benchmarker
                           CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-CockroachDB-64-8-65536-1      594.93      0.8          0.13                 0.13
+CockroachDB-64-8-65536-1      632.17     0.75          0.13                 0.13
 
 ### Application Metrics
 
 #### Loading phase: component worker
                           Raft Messages Received (AppResp) [msgs/s]  Raft Network In (Bytes/sec)  Raft Recovery Snapshot In (Bytes/sec)  Replicate Queue Adds Attempted [adds/s]  Replicate Queue Purgatory Count
-CockroachDB-64-8-65536-1                                   60621.93                  49424428.37                                    0.0                                      0.0                              0.0
+CockroachDB-64-8-65536-1                                   42555.88                  31441801.98                                      0                                        0                                0
 
 #### Execution phase: component worker
                           Raft Messages Received (AppResp) [msgs/s]  Raft Network In (Bytes/sec)  Raft Recovery Snapshot In (Bytes/sec)  Replicate Queue Adds Attempted [adds/s]  Replicate Queue Purgatory Count
-CockroachDB-64-8-65536-1                                    18892.2                  14363345.59                                    0.0                                      0.0                              0.0
+CockroachDB-64-8-65536-1                                   19133.88                  12917918.59                                      0                                        0                                0
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
