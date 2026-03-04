@@ -597,7 +597,7 @@ class default():
                 configuration = self.configuration
                 #pods = self.experiment.cluster.get_pods(app, component, self.experiment_name, configuration)
                 num_ready = 0
-                pods_worker = self.get_worker_pods(component=component)#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
+                pods_worker = self.get_worker_pods(component=component, only_stateful=True)#self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
                 for pod in pods_worker:
                     #stdin, stdout, stderr = self.execute_command_in_pod_sut(self.dockertemplate['attachWorker'].format(worker=pod, service_sut=name_worker), pod_sut)
                     status = self.experiment.cluster.get_pod_status(pod)
@@ -619,11 +619,27 @@ class default():
         :return: True, if dbms is existing
         """
         app = self.appname
-        component = 'sut'
         configuration = self.configuration
-        pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
-        if len(pods) > 0:
-            return True
+        components = list(self.deployment_infos['deployment'].keys())
+        for component in components:
+            pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+            if len(pods) > 0:
+                return True
+        components = list(self.deployment_infos['statefulset'].keys())
+        for component in components:
+            pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+            if len(pods) > 0:
+                return True
+        #component = 'sut'
+        #configuration = self.configuration
+        #pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        #if len(pods) > 0:
+        #    return True
+        #component = 'worker'
+        #configuration = self.configuration
+        #pods = self.experiment.cluster.get_pods(app, component, self.experiment.code, configuration)
+        #if len(pods) > 0:
+        #    return True
         return False
     def maintaining_is_running(self):
         """
@@ -4612,7 +4628,7 @@ scrape_configs:
         #name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.get_experiment_name(), configuration=storageConfiguration)
         name_worker = self.generate_component_name(app=self.appname, component=component, experiment=self.storage_label, configuration=storageConfiguration)
         return name_worker
-    def get_worker_pods(self, component='worker'):
+    def get_worker_pods(self, component='worker', only_stateful=False):
         """
         Returns a list of all pod names of workers for the current SUT.
         Default is component name is 'worker' for a bexhoma managed DBMS.
@@ -4629,10 +4645,13 @@ scrape_configs:
         #pods_worker = self.experiment.cluster.get_pods(component='worker', configuration=self.configuration, experiment=self.code)
         if self.num_worker > 0:
             print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
-            #pods_worker = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
-            print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker))
+            pods_worker_stateful = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
+            print("{:30s}: worker pods found (only stateful set pods): {}".format(self.configuration, pods_worker_stateful))
         #print("Worker pods found: ", pods_worker)
-        return pods_worker
+        if only_stateful:
+            return pods_worker_stateful
+        else:
+            return pods_worker
     def get_worker_endpoints(self):
         """
         Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
