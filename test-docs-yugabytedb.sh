@@ -286,6 +286,64 @@ remove_yugabytedb no
 
 
 
+################################################
+######## YugaByteDB Application Metrics ########
+################################################
+
+
+# install YugabyteDB
+install_yugabytedb no
+sleep 30
+
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  -sfo 10 \
+  --workload a \
+  -dbms YugabyteDB \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log &
+
+wait_process "ycsb"
+
+
+# remove YugabyteDB installation
+remove_yugabytedb no
+
+
+# install YugabyteDB
+install_yugabytedb no
+sleep 30
+
+
+#### Benchbase Simple (Example-YugaByteDB.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms YugabyteDB \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log &
+
+wait_process "benchbase"
+
+
+# remove YugabyteDB installation
+remove_yugabytedb no
+
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
