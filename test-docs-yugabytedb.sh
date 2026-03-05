@@ -63,7 +63,7 @@ install_yugabytedb() {
   fi
 
   helm install bexhoma yugabytedb/yugabyte \
-    --version 2025.2.0 \
+    --version 2025.2.1 \
     --set \
 gflags.tserver.ysql_enable_packed_row=true,\
 gflags.tserver.ysql_max_connections=1280,\

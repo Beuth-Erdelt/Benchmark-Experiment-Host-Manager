@@ -782,7 +782,7 @@ class testbed():
         self.logger.debug('get_statefulset_pods'+label)
         try: 
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
-            pprint(api_response)
+            #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:

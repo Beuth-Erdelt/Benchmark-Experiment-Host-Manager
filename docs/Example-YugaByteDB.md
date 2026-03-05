@@ -44,7 +44,7 @@ The number of tserver depends on the size of the data and the cluster.
 
 ```bash
 helm install bexhoma yugabytedb/yugabyte \
---version 2.23.0 \
+--version 2025.2.1 \
 --set \
 gflags.tserver.ysql_enable_packed_row=true,\
 resource.master.limits.cpu=2,\
