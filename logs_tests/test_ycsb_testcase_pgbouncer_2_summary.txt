@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=16
     Type: ycsb
-    Duration: 2104s 
-    Code: 1771188775
+    Duration: 2241s 
+    Code: 1772818607
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'C'.
@@ -15,7 +15,7 @@ YCSB SF=16
     Target is based on multiples of '16384'.
     Factors for loading are [11].
     Factors for benchmarking are [11].
-    Experiment uses bexhoma version 0.8.20.
+    Experiment uses bexhoma version 0.9.1.
     System metrics are monitored by a cluster-wide installation.
     Experiment is limited to DBMS ['PGBouncer'].
     Import is handled by 16 processes (pods).
@@ -30,13 +30,13 @@ YCSB SF=16
     Experiment is run 2 times.
 
 ### Connections
-pgb-64-4-128-64-1-1 uses docker image postgres:17.5
+pgb-64-4-128-64-1-1 uses docker image postgres:18.3
     RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:97597
+    disk:147808
     volume_size:100G
     volume_used:38G
     cpu_list:0-63
@@ -47,14 +47,14 @@ pgb-64-4-128-64-1-1 uses docker image postgres:17.5
     client:1
     numExperiment:1
     eval_parameters
-        code:1771188775
-pgb-64-4-128-64-2-1 uses docker image postgres:17.5
+        code:1772818607
+pgb-64-4-128-64-2-1 uses docker image postgres:18.3
     RAM:541008474112
     CPU:AMD Opteron(tm) Processor 6378
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:97597
+    disk:147808
     volume_size:100G
     volume_used:38G
     cpu_list:0-63
@@ -65,16 +65,16 @@ pgb-64-4-128-64-2-1 uses docker image postgres:17.5
     client:1
     numExperiment:2
     eval_parameters
-        code:1771188775
+        code:1772818607
 
 ### Loading
                  experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-pgb-64-4-128-64               1       64  180224         16           0                   23425.458887               688318.0            16000000                              7603.5
+pgb-64-4-128-64               1       64  180224         16           0                   29817.971326               559652.0            16000000                              5611.5
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-pgb-64-4-128-64-1-1               1      128  180224         16           0                       74311.62               219972.0          16000000                            2719.0
-pgb-64-4-128-64-2-1               2      128  180224         16           0                       47501.63               338075.0          16000000                            3455.0
+pgb-64-4-128-64-1-1               1      128  180224         16           0                       58867.96               273598.0          16000000                            2621.0
+pgb-64-4-128-64-2-1               2      128  180224         16           0                       62046.15               261303.0          16000000                            3153.0
 
 ### Workflow
 
@@ -88,30 +88,30 @@ DBMS pgb-64-4-128-64 - Pods [[16], [16]]
 
 ### Loading phase: component pool
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1      795.64     1.35          0.02                 0.02
+pgb-64-4-128-64-1-1        0.44      0.0          0.04                 0.04
 
 ### Loading phase: SUT deployment
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     3662.34     6.39         23.56                41.88
+pgb-64-4-128-64-1-1     3676.11     7.41         23.55                41.83
 
 ### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     1299.14     3.47          0.11                 0.11
+pgb-64-4-128-64-1-1     1261.91     3.93          0.11                 0.11
 
 ### Execution phase: component pool
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1      688.22      4.0          0.01                 0.01
-pgb-64-4-128-64-2-1     1508.65      4.0          0.02                 0.02
+pgb-64-4-128-64-1-1        0.15      0.0          0.04                 0.04
+pgb-64-4-128-64-2-1        0.85      0.0          0.04                 0.04
 
 ### Execution phase: SUT deployment
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     2207.89    15.77         26.21                44.47
-pgb-64-4-128-64-2-1     6885.48    13.56         24.90                43.35
+pgb-64-4-128-64-1-1     2566.21    16.67         26.25                44.51
+pgb-64-4-128-64-2-1     7052.93    27.99         24.94                43.39
 
 ### Execution phase: component benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-pgb-64-4-128-64-1-1     1057.32     7.03          0.11                 0.11
-pgb-64-4-128-64-2-1     1028.40     5.16          0.11                 0.11
+pgb-64-4-128-64-1-1     1277.76     9.48          0.11                 0.11
+pgb-64-4-128-64-2-1     1183.79     8.98          0.11                 0.11
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

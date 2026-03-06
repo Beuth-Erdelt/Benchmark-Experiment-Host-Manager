@@ -3,13 +3,13 @@
 ### Workload
 Benchbase Workload tpcc SF=1
     Type: benchbase
-    Duration: 3130s 
-    Code: 1772201428
+    Duration: 2706s 
+    Code: 1772811599
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.20.
+    Experiment uses bexhoma version 0.9.1.
     Experiment is limited to DBMS ['MySQL'].
     Import is handled by 1 processes (pods).
     Loading is fixed to cl-worker19.
@@ -28,7 +28,7 @@ MySQL-1-1-1024-1 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:146843
+    disk:147807
     volume_size:50G
     volume_used:33G
     cpu_list:0-63
@@ -39,7 +39,7 @@ MySQL-1-1-1024-1 uses docker image mysql:8.4.0
     client:1
     numExperiment:1
     eval_parameters
-                code:1772201428
+                code:1772811599
                 TENANT_BY:database
                 TENANT_NUM:2
                 TENANT_VOL:False
@@ -48,7 +48,7 @@ MySQL-1-1-1024-2 uses docker image mysql:8.4.0
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:146843
+    disk:147807
     volume_size:50G
     volume_used:33G
     cpu_list:0-63
@@ -59,7 +59,7 @@ MySQL-1-1-1024-2 uses docker image mysql:8.4.0
     client:2
     numExperiment:1
     eval_parameters
-                code:1772201428
+                code:1772811599
                 TENANT_BY:database
                 TENANT_NUM:2
                 TENANT_VOL:False
@@ -69,15 +69,15 @@ MySQL-1-1-1024-2 uses docker image mysql:8.4.0
 #### Per Pod
                     experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
 connection_pod                                                                                                                                                                                                                                                                
-MySQL-1-1-1024-1-1               1         10    1024       1      1  300.0           0                      0.486667                   0.480000  100.777588                                                     747035.0                                             234830.0
-MySQL-1-1-1024-1-2               1         10    1024       1      2  300.0           0                      0.436667                   0.440000   92.379462                                                    4543211.0                                             496056.0
-MySQL-1-1-1024-2-2               1         10    1024       2      1  300.0           0                      0.500000                   0.496667  104.276807                                                     164983.0                                              55657.0
-MySQL-1-1-1024-2-1               1         10    1024       2      2  300.0           0                      0.480000                   0.476666  100.077685                                                     136146.0                                              40417.0
+MySQL-1-1-1024-1-1               1         10    1024       1      1  300.0           0                      0.466667                   0.463333   97.278365                                                     109631.0                                              64847.0
+MySQL-1-1-1024-1-2               1         10    1024       1      2  300.0           0                      0.470000                   0.470000   98.678068                                                     134946.0                                              56621.0
+MySQL-1-1-1024-2-2               1         10    1024       2      1  300.0           0                      0.486666                   0.483333  101.477395                                                      39949.0                                              25434.0
+MySQL-1-1-1024-2-1               1         10    1024       2      2  300.0           0                      0.533333                   0.536666  112.674923                                                     133835.0                                              28955.0
 
 #### Aggregated Parallel
                   experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-MySQL-1-1-1024-1               1         20    2048          2  300.0           0                          0.92                       0.92         0.0                                                    4543211.0                                             365443.0
-MySQL-1-1-1024-2               1         20    2048          2  300.0           0                          0.98                       0.97         0.0                                                     164983.0                                              48037.0
+MySQL-1-1-1024-1               1         20    2048          2  300.0           0                          0.94                       0.93         0.0                                                     134946.0                                              60734.0
+MySQL-1-1-1024-2               1         20    2048          2  300.0           0                          1.02                       1.02         0.0                                                     133835.0                                              27194.5
 
 ### Workflow
 
@@ -89,8 +89,8 @@ DBMS MySQL-1-1-1024 - Pods [[2, 2]]
 
 ### Loading
                   time_load  terminals  pods  Throughput [SF/h]
-MySQL-1-1-1024-1     1284.0        1.0   2.0           2.803738
-MySQL-1-1-1024-2     1284.0        1.0   2.0           2.803738
+MySQL-1-1-1024-1     1012.0        1.0   2.0           3.557312
+MySQL-1-1-1024-2     1012.0        1.0   2.0           3.557312
 
 ### Tests
 TEST passed: Throughput (requests/second) contains no 0 or NaN

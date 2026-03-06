@@ -3,13 +3,13 @@
 ### Workload
 Benchbase Workload tpcc SF=16
     Type: benchbase
-    Duration: 1086s 
-    Code: 1772720146
+    Duration: 440s 
+    Code: 1772845672
     Intro: Benchbase runs a TPC-C experiment.
     This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
     Benchbase data is generated and loaded using several threads.
     Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.22.
+    Experiment uses bexhoma version 0.9.1.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
     Experiment is limited to DBMS ['YugabyteDB'].
@@ -21,121 +21,55 @@ Benchbase Workload tpcc SF=16
 
 ### Connections
 YugabyteDB-1-1-1024-1 uses docker image postgres:15.0
-    RAM:2164173176832
+    RAM:2164173209600
     CPU:INTEL(R) XEON(R) PLATINUM 8570
     Cores:224
     host:6.8.0-90-generic
     node:cl-worker36
-    disk:746847
+    disk:699850
     cpu_list:0-223
     requests_cpu:4
     requests_memory:16Gi
     client:1
     numExperiment:1
     eval_parameters
-                code:1772720146
+                code:1772845672
 YugabyteDB-1-1-1024-2 uses docker image postgres:15.0
-    RAM:2164173176832
+    RAM:2164173209600
     CPU:INTEL(R) XEON(R) PLATINUM 8570
     Cores:224
     host:6.8.0-90-generic
     node:cl-worker36
-    disk:763518
+    disk:699847
     cpu_list:0-223
     requests_cpu:4
     requests_memory:16Gi
     client:2
     numExperiment:1
     eval_parameters
-                code:1772720146
+                code:1772845672
 
 ### Execution
 
 #### Per Pod
-                         experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-connection_pod                                                                                                                                                                                                                                                                     
-YugabyteDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    339.639960                 338.106627         0.0                                                     116768.0                                              47090.0
-YugabyteDB-1-1-1024-2-1               1          8    8192       2      1  300.0           0                    180.176657                 179.353324         0.0                                                     104688.0                                              44384.0
-YugabyteDB-1-1-1024-2-2               1          8    8192       2      2  300.0           1                    185.809957                 184.956624         0.0                                                     103239.0                                              43041.0
-
-#### Aggregated Parallel
-                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-YugabyteDB-1-1-1024-1               1         16   16384          1  300.0           0                        339.64                     338.11         0.0                                                     116768.0                                              47090.0
-YugabyteDB-1-1-1024-2               1         16   16384          2  300.0           1                        365.99                     364.31         0.0                                                     104688.0                                              43712.5
-
-### Workflow
-
-#### Actual
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
-
-#### Planned
-DBMS YugabyteDB-1-1-1024 - Pods [[1, 2]]
-
-### Loading
-                       time_load  terminals  pods  Throughput [SF/h]
-YugabyteDB-1-1-1024-1      107.0        1.0   1.0         538.317757
-YugabyteDB-1-1-1024-2      107.0        1.0   2.0         538.317757
-
-### Monitoring
-
-### Loading phase: component yb-tserver
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1     2247.78    21.94          7.59                15.47
-YugabyteDB-1-1-1024-2     3912.93    27.88          8.07                16.06
-
-### Loading phase: component yb-master
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1        8.74     0.06          0.25                 0.27
-YugabyteDB-1-1-1024-2       14.97     0.06          0.26                 0.29
-
-### Loading phase: component loader
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1      149.45     3.11          0.26                 0.26
-YugabyteDB-1-1-1024-2      149.45     3.11          0.26                 0.26
-
-### Execution phase: component yb-tserver
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1     8889.01    33.17          9.06                18.53
-YugabyteDB-1-1-1024-2     9703.40    36.66          9.82                21.75
-
-### Execution phase: component yb-master
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1       12.18     0.06          0.29                 0.32
-YugabyteDB-1-1-1024-2       16.55     0.07          0.34                 0.37
-
-### Execution phase: component benchmarker
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-YugabyteDB-1-1-1024-1      101.25     0.43          0.31                 0.31
-YugabyteDB-1-1-1024-2      101.25     0.84          0.56                 0.56
-
-### Application Metrics
-
-#### Loading phase: component yb-tserver
-                       YSQL Query Throughput [ops/s]  Tablet Read Latency [ms]  Tablet Write Latency [ms]  Active YSQL Connections  TServer Follower Lag [ms]
-YugabyteDB-1-1-1024-1                         243.97                      0.26                      27.12                      0.0                     1632.0
-YugabyteDB-1-1-1024-2                        4245.55                      0.35                      27.12                      0.0                     1632.0
-
-#### Loading phase: component yb-master
-                       YB-Master RPC Throughput [ops/s]  YB-Master Avg RPC Latency [ms]  Table Metadata Operations [ops/s]  YB-Master Clock Error  Tablet Location Requests [ops/s]
-YugabyteDB-1-1-1024-1                              2.58                            1.17                               0.04            502993000.0                              2.54
-YugabyteDB-1-1-1024-2                              2.58                            1.17                               0.04            502997000.0                              2.54
-
-#### Execution phase: component yb-tserver
-                       YSQL Query Throughput [ops/s]  Tablet Read Latency [ms]  Tablet Write Latency [ms]  Active YSQL Connections  TServer Follower Lag [ms]
-YugabyteDB-1-1-1024-1                       11826.25                      0.35                      14.19                        0                        601
-YugabyteDB-1-1-1024-2                        4519.30                      0.36                       1.67                        0                        980
-
-#### Execution phase: component yb-master
-                       YB-Master RPC Throughput [ops/s]  YB-Master Avg RPC Latency [ms]  Table Metadata Operations [ops/s]  YB-Master Clock Error  Tablet Location Requests [ops/s]
-YugabyteDB-1-1-1024-1                              2.56                            0.05                               0.03              502997000                              2.52
-YugabyteDB-1-1-1024-2                              0.00                            0.05                               0.00              502030000                              0.00
-
-### Tests
-TEST passed: Throughput (requests/second) contains no 0 or NaN
-TEST passed: Loading phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
-TEST passed: Loading phase: component yb-master contains no 0 or NaN in CPU [CPUs]
-TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component yb-master contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
+python : Traceback (most recent call last):
+In Zeile:1 Zeichen:1
++ python benchbase.py -ms 1 -tr `
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\benchbase.py", line 1206, in <module>
+    experiment.process()
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments.py", line 252, in process
+    self.show_summary()
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments.py", line 4349, in show_summary
+    df_plot = self.evaluator.benchmarking_set_datatypes(df)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators.py", line 1467, in 
+benchmarking_set_datatypes
+    df_typed = df.astype({
+               ^^^^^^^^^^^
+  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\generic.py", line 6627, in astype
+    raise KeyError(
+KeyError: "Only a column name can be used for the key in a dtype mappings argument. 'scalefactor' not found in columns."
