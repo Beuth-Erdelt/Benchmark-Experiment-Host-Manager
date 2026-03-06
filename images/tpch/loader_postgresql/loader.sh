@@ -5,6 +5,10 @@ DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
 
+################### Turn Some Parameters into Numbers ###################
+BEXHOMA_CHILD=${BEXHOMA_CHILD//[^0-9]/}
+BEXHOMA_TENANT_NUM=${BEXHOMA_TENANT_NUM//[^0-9]/}
+
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
@@ -28,23 +32,33 @@ BEXHOMA_CHILD_TMP=$BEXHOMA_CHILD
 if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
     echo "BEXHOMA_TENANT_BY is schema"
     #BEXHOMA_NUM_PODS=1
-	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
-	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
-    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+    #BEXHOMA_CHILD=$(( ( BEXHOMA_CHILD - 1 ) % BEXHOMA_TENANT_NUM + 1 ))
+    #SCHEMA_INDEX=$(( ( BEXHOMA_CHILD - 1 ) / BEXHOMA_TENANT_NUM ))
+    SCHEMA_INDEX=$(( ( BEXHOMA_CHILD - 1 ) % BEXHOMA_TENANT_NUM ))
+    BEXHOMA_CHILD=$(( ( BEXHOMA_CHILD - 1 ) / BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_SCHEMA="tenant_${SCHEMA_INDEX}"
+    #BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "SCHEMA_INDEX:$SCHEMA_INDEX"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+    echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+    echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     echo "BEXHOMA_TENANT_BY is database"
     #BEXHOMA_NUM_PODS=1
-	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
-	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
-    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+    BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+    #BEXHOMA_CHILD=$(( ( BEXHOMA_CHILD - 1 ) % BEXHOMA_TENANT_NUM + 1 ))
+    #DB_INDEX=$(( ( BEXHOMA_CHILD - 1 ) / BEXHOMA_TENANT_NUM ))
+    DB_INDEX=$(( ( BEXHOMA_CHILD - 1 ) % BEXHOMA_TENANT_NUM ))
+    BEXHOMA_CHILD=$(( ( BEXHOMA_CHILD - 1 ) / BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_DATABASE="tenant_${DB_INDEX}"
+    #BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+    echo "DB_INDEX:$DB_INDEX"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+    echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+    echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 elif [ "$BEXHOMA_TENANT_BY" = "container" ]; then
     echo "BEXHOMA_TENANT_BY is container"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
@@ -113,29 +127,29 @@ fi
 
 ######################## Wait until all pods of experiment are ready ########################
 if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
-	if test $BEXHOMA_SYNCH_LOAD -gt 0
-	then
-		echo "Querying counter bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT"
-		# add this pod to counter
-		redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT"
-		# wait for number of pods to be as expected
-		while : ; do
-			PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT)"
-			echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
-			if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
-			then
-				echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
-				break
-			elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
-			then
-				echo "Too many pods! Restart occured?"
-				exit 0
-			else
-				echo "We have to wait"
-				sleep 1
-			fi
-		done
-	fi
+    if test $BEXHOMA_SYNCH_LOAD -gt 0
+    then
+        echo "Querying counter bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT"
+        # add this pod to counter
+        redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT"
+        # wait for number of pods to be as expected
+        while : ; do
+            PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-$BEXHOMA_EXPERIMENT)"
+            echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+            if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+            then
+                echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+                break
+            elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+            then
+                echo "Too many pods! Restart occured?"
+                exit 0
+            else
+                echo "We have to wait"
+                sleep 1
+            fi
+        done
+    fi
 fi
 
 ######################## Multi-Tenant parameters ########################

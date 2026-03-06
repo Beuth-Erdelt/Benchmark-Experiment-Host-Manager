@@ -13,7 +13,7 @@
 # Description: This container runs a 
 # It expects the content of the config file (normally `/etc/prometheus/prometheus.yml`) as a string in `$BEXHOMA_WORKERS`.
 ######################################################################################
-FROM prom/prometheus:v3.10.0 #v2.24.1
+FROM prom/prometheus:v3.10.0
 
 COPY prometheus.yml /etc/prometheus/prometheus.yml
 
