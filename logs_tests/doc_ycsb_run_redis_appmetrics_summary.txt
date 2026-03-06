@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
     Type: ycsb
-    Duration: 767s 
-    Code: 1772586693
+    Duration: 574s 
+    Code: 1772796836
     Intro: YCSB driver runs the experiment.
     This experiment compares run time and resource consumption of YCSB queries.
     Workload is 'A'.
@@ -15,7 +15,7 @@ YCSB SF=1
     Target is based on multiples of '16384'.
     Factors for loading are [12].
     Factors for benchmarking are [4].
-    Experiment uses bexhoma version 0.8.21.
+    Experiment uses bexhoma version 0.8.22.
     System metrics are monitored by a cluster-wide installation.
     Application metrics are monitored by sidecar containers.
     Experiment is limited to DBMS ['Redis'].
@@ -35,7 +35,7 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
     Cores:64
     host:5.15.0-164-generic
     node:cl-worker14
-    disk:147519
+    disk:147806
     cpu_list:0-63
     args:['--maxclients', '10000', '--io-threads', '64']
     requests_cpu:4
@@ -43,66 +43,65 @@ Redis-64-8-196608-1 uses docker image redis:7.4.2
     client:1
     numExperiment:1
     worker 0
-        RAM:2164173176832
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
+        RAM:540590817280
+        CPU:AMD EPYC 7352 24-Core Processor
+        Cores:96
         host:6.8.0-90-generic
-        node:cl-worker36
-        disk:1238403
-        cpu_list:0-223
+        node:cl-worker23
+        disk:1156453
+        cpu_list:0-95
     worker 1
-        RAM:1077382688768
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:6.8.0-1044-nvidia
-        node:cl-worker28
-        disk:1279484
-        cpu_list:0-255
+        RAM:1081649823744
+        CPU:AMD EPYC 7453 28-Core Processor
+        Cores:56
+        host:6.8.0-90-generic
+        node:cl-worker34
+        disk:330073
+        cpu_list:0-55
     worker 2
         RAM:540579303424
         CPU:AMD EPYC 7502 32-Core Processor
         Cores:128
         host:6.8.0-94-generic
         node:cl-worker22
-        disk:397554
+        disk:411568
         cpu_list:0-127
     worker 3
+        RAM:1077382688768
+        CPU:AMD EPYC 7742 64-Core Processor
+        Cores:256
+        host:6.8.0-1044-nvidia
+        node:cl-worker28
+        disk:1286179
+        cpu_list:0-255
+    worker 4
         RAM:1081965416448
         CPU:AMD EPYC 7742 64-Core Processor
         Cores:256
         host:5.15.0-1093-nvidia
         node:cl-worker27
-        disk:1249447
+        disk:1307312
         cpu_list:0-255
-    worker 4
+    worker 5
         RAM:1081853952000
         CPU:Intel(R) Xeon(R) Gold 6438Y+
         Cores:128
         host:6.8.0-90-generic
         node:cl-worker37
-        disk:428432
+        disk:414951
         cpu_list:0-127
-    worker 5
-        RAM:337974857728
-        CPU:Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
-        Cores:32
-        host:5.15.0-164-generic
-        node:cl-worker17
-        disk:1484958
-        cpu_list:0-31
-    worker 6
     eval_parameters
-        code:1772586693
+        code:1772796836
         BEXHOMA_REPLICAS:1
         BEXHOMA_WORKERS:3
 
 ### Loading
                    experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-Redis-64-8-196608               1       64  196608          8           0                   21430.963505                46918.0             1000000                              6175.5
+Redis-64-8-196608               1       64  196608          8           0                   26064.186909                38595.0             1000000                              4865.5
 
 ### Execution
                      experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-Redis-64-8-196608-1               1      128   65536          1           0                       60803.95               164463.0           4999181                            4035.0             5000819                              4037.0
+Redis-64-8-196608-1               1      128   65536          1           0                       61076.54               163729.0           5001247                            3595.0             4998753                              3595.0
 
 ### Workflow
 
@@ -116,29 +115,29 @@ DBMS Redis-64-8-196608 - Pods [[1]]
 
 ### Loading phase: component worker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       204.3     2.41          3.57                 3.59
+Redis-64-8-196608-1      182.23     2.42          3.53                 3.54
 
 ### Loading phase: component loader
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       97.44        0          0.12                 0.12
+Redis-64-8-196608-1       77.11        0          0.12                 0.12
 
 ### Execution phase: component worker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1       449.3     4.01          3.87                 3.91
+Redis-64-8-196608-1      470.22     4.22          3.73                 3.79
 
 ### Execution phase: component benchmarker
                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-Redis-64-8-196608-1      688.15      4.7           0.3                  0.3
+Redis-64-8-196608-1      501.08     4.83           0.3                  0.3
 
 ### Application Metrics
 
 #### Loading phase: component worker
                      Redis Cluster State  Connected Clients [count]  Redis Memory Used [Gi]  Redis Master Link Status  Redis Operations Rate [ops/s]
-Redis-64-8-196608-1                    6                        201                    3.48                         3                        5842.28
+Redis-64-8-196608-1                    6                        201                    3.47                         3                        5923.78
 
 #### Execution phase: component worker
                      Redis Cluster State  Connected Clients [count]  Redis Memory Used [Gi]  Redis Master Link Status  Redis Operations Rate [ops/s]
-Redis-64-8-196608-1                    6                        414                    3.51                         3                       12117.86
+Redis-64-8-196608-1                    6                        437                     3.5                         3                        7442.91
 
 ### Tests
 TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
