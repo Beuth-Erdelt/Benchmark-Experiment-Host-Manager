@@ -173,7 +173,7 @@ You can find the number also in the output of `ycsb.py`.
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
 If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1730133803` (removes everything that is related to experiment `1730133803`).
 
-### Evaluate Results
+## Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
