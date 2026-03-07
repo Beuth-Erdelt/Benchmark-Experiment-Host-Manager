@@ -609,7 +609,7 @@ nohup python benchbase.py -ms 1 -tr \
   run </dev/null &>$LOG_DIR/doc_benchbase_citus_1.log &
 ```
 
-### Evaluate Results
+## Evaluate Results
 
 doc_benchbase_citus_1.log
 ```markdown
