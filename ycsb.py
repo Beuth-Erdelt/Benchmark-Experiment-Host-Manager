@@ -92,6 +92,7 @@ if __name__ == '__main__':
     parser.add_argument('-mtb', '--multi-tenant-by', help='one tenant per (schema, database, container)', default='')
     parser.add_argument('-mtv', '--multi-tenant-volume', help='one volume per tenant per (for per-database)', action='store_true', default=False)
     parser.add_argument('-tr',  '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
+    parser.add_argument("--set", dest="sets", action="append", default=[], help="Selector assignment, e.g. deployment[sut].container[dbms].max_worker_processes=128")
     # evaluate args
     args = parser.parse_args()
     if args.debug:

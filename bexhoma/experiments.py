@@ -46,6 +46,7 @@ from importlib.metadata import version
 from pathlib import Path
 import platform
 import math
+from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 
@@ -67,6 +68,33 @@ class DictToObject(object):
         objd = dict(_traverse(k, v) for k, v in dictionary.items())
         self.__dict__.update(objd)
 
+
+SELECTOR_RE = re.compile(
+    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
+    re.IGNORECASE
+)
+
+def parse_set_arg(s: str) -> Tuple[dict, str]:
+    """
+    Parses a single --set argument of the form:
+      <selector>=<value>
+    where selector is:
+      deployment[NAME].container[CONTAINER].PARAM
+      statefulset[NAME].container[CONTAINER].PARAM
+    Returns: (selector_dict, value_str)
+    """
+    if "=" not in s:
+        raise ValueError(f"--set expects selector=value (got: {s})")
+    selector, value = s.split("=", 1)
+    m = SELECTOR_RE.match(selector.strip())
+    if not m:
+        raise ValueError(
+            "Invalid selector. Expected e.g. "
+            "deployment[sut].container[dbms].max_worker_processes"
+        )
+    d = m.groupdict()
+    d["kind"] = d["kind"].lower()
+    return d, value.strip()
 
 
 class default():
@@ -364,6 +392,11 @@ class default():
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
+        self.dbms_args = []
+        for s in args.sets:
+            sel, value = parse_set_arg(s)
+            self.dbms_args.append((sel, value))
+        #print(self.dbms_args)
         mode = str(parameter['mode'])
         if mode=='load' or mode=='start':
             self.benchmarking_active = False
