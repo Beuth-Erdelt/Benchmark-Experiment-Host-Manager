@@ -393,9 +393,10 @@ class default():
         self.args = args
         self.args_dict = parameter
         self.dbms_args = []
-        for s in args.sets:
-            sel, value = parse_set_arg(s)
-            self.dbms_args.append((sel, value))
+        if 'sets' in parameter:
+            for s in args.sets:
+                sel, value = parse_set_arg(s)
+                self.dbms_args.append((sel, value))
         #print(self.dbms_args)
         mode = str(parameter['mode'])
         if mode=='load' or mode=='start':
