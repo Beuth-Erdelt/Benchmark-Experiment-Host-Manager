@@ -44,6 +44,47 @@ from pathlib import Path
 from dbmsbenchmarker import *
 from .__version__ import __version__
 
+import platform
+
+def to_unc(path: str) -> str:
+    """
+    Convert a local Windows drive path (D:/..., D:\..., etc.)
+    into a UNC administrative share:
+        \\localhost\D$\...
+    On Linux/macOS, returns the normalized path unchanged.
+    UNC input is returned unchanged.
+
+    Works on: Windows (all versions), Linux, macOS.
+    """
+
+    # Normalize path (handles forward/back slashes, etc.)
+    p = Path(path)
+
+    # Non-Windows → return as-is (string form)
+    if platform.system() != "Windows":
+        return str(p)
+
+    # If path is already UNC → return unchanged
+    if str(p).startswith("\\\\"):
+        return str(p)
+
+    # Windows drive path? Example: D:\something
+    drive = p.drive  # e.g. "D:"
+    if drive:
+        # Extract drive letter without ":"
+        drive_letter = drive.rstrip(":").upper()
+
+        # Remaining path without drive:
+        rel = p.relative_to(drive + "\\")
+
+        # Build UNC path: \\localhost\D$\rest\of\path
+        unc = f"\\\\localhost\\{drive_letter}$\\{rel.as_posix()}"
+        # UNC must use backslashes
+        return unc.replace("/", "\\")
+
+    # If no drive and not UNC (rare), just return normalized
+    return str(p)
+
 class testbed():
     """
     :Date: 2022-10-01
@@ -1043,9 +1084,11 @@ class testbed():
                 return "", stdout, stderr
         return "", "", ""
     def file_upload(self, filename_remote, filename_local, pod, container="dashboard"):
+        filename_local = to_unc(filename_local)
         cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
         return self.kubectl(cmd)
     def file_download(self, filename_source, filename_destination, pod, container="dashboard"):
+        filename_local = to_unc(filename_local)
         cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
         return self.kubectl(cmd)
     def check_DBMS_connection(self, ip, port):
