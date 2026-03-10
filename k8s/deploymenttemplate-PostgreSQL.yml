@@ -147,7 +147,7 @@ spec:
           - "-c"
           - "effective_io_concurrency=64" # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
           - "-c"
-          - "io_method=io_uring"          # https://www.postgresql.org/docs/18/runtime-config-resource.html#GUC-IO-METHOD
+          - "io_method=worker"            # https://www.postgresql.org/docs/18/runtime-config-resource.html#GUC-IO-METHOD
           #io_method=sync
           #io_method=worker
           #io_method=io_uring
