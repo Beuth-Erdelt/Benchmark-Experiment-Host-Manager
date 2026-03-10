@@ -2286,34 +2286,48 @@ class default():
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
         list_monitoring_app = list()
-        df_monitoring_app = pd.DataFrame()
+        #df_monitoring_app = pd.DataFrame()
+        monitoring_applications = dict()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            #print(c['monitoring']['metrics'])
             ##########
-            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
-                num_metrics_included = 0
-                for metricname, metric in c['monitoring']['metrics'].items():
-                    #print(metric['type'])
-                    if num_metrics_included >= 5:
-                        continue
-                    if metric['type'] == 'application' and metric['active'] == True:
-                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
-                        #print(df)
-                        if metric['metric'] == 'counter':
-                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-                        else:
-                            df = df.mean().sort_index()
-                        df_cleaned = pd.DataFrame(df)
-                        df_cleaned.columns = [metric['title']]
-                        if not df_cleaned.empty:
-                            list_monitoring_app.append(df_cleaned.copy())
-                            num_metrics_included = num_metrics_included + 1
-                if len(list_monitoring_app) > 0:
-                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
-                #print(df_monitoring_app)
+            #print("    deployment_infos: "+str(c['deployment_infos']))
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
+                for component, title in self.workload['monitoring_components'].items():
+                    #print(component, title)
+                    list_monitoring_app = list()
+                    df_monitoring_app = pd.DataFrame()
+                    num_metrics_included = 0
+                    for metricname, metric in c['monitoring']['metrics'].items():
+                        #print(metric['type'])
+                        if num_metrics_included >= 5:
+                            continue
+                        if metric['type'] == 'application' and metric['active'] == True:
+                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
+                            if not df.empty:
+                                list_monitoring_app
+                                if metric['metric'] == 'counter':
+                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                                else:
+                                    df = df.max().sort_index()
+                                df_cleaned = pd.DataFrame(df)
+                                df_cleaned.columns = [metric['title']]
+                                if not df_cleaned.empty:
+                                    list_monitoring_app.append(df_cleaned.copy())
+                                    num_metrics_included = num_metrics_included + 1
+                    if len(list_monitoring_app) > 0:
+                        df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                        df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                        monitoring_applications[title] = df_monitoring_app
+                    #print(df_monitoring_app)
+                    #print(monitoring_applications)
+                    # currently: only first component, only stream
+                    # TODO: make dynamical
+                    #break
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
@@ -2492,9 +2506,15 @@ class default():
                     print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
-        if not df_monitoring_app.empty:
+        #if not df_monitoring_app.empty:
+        if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            print(df_monitoring_app)
+            #print(monitoring_applications)#df_monitoring_app)
+            for title, metrics in monitoring_applications.items():
+                print("\n#### "+title)
+                print(metrics)
+            #print("\n### Application Metrics")
+            #print(df_monitoring_app)
         print("\n### Tests")
         if self.benchmarking_is_active():
             self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
