@@ -1356,9 +1356,10 @@ class default():
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
         filename_remote = self.result_filename_remote(filename)
+        self.experimentfile_upload(filename=filename)
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
-        self.cluster.kubectl(cmd['upload_results'])
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
+        #self.cluster.kubectl(cmd['upload_results'])
     def work_benchmark_list(self, intervals=30, stop_after_starting=False, stop_after_loading=False, stop_after_benchmarking=False):
         """
         Run typical workflow:
@@ -2046,8 +2047,9 @@ class default():
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
-                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        stdout = self.experimentfile_upload(filename=filename)
+                        #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        #stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
                 # get monitoring for benchmarking
                 if self.monitoring_active:
@@ -3103,12 +3105,14 @@ class tpcc(default):
         # download all results from cluster
         #filename = 'evaluation.json'
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        ##cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('tpcc.show_summary()')
         print("\n## Show Summary")
@@ -3702,12 +3706,14 @@ class ycsb(default):
         #cmd['upload_config'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/connections.config', from_file=self.path+"/connections.config")
         #self.cluster.kubectl(cmd['upload_config'])
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        ##cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('ycsb.show_summary()')
         print("\n## Show Summary")
@@ -4240,11 +4246,13 @@ class benchbase(default):
                 self.cluster.logger.debug(stdout)
         cmd = {}
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('benchbase.show_summary()')
         print("\n## Show Summary")

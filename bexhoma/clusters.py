@@ -1087,7 +1087,7 @@ class testbed():
         filename_local = to_unc(filename_local)
         cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
         return self.kubectl(cmd)
-    def file_download(self, filename_source, filename_destination, pod, container="dashboard"):
+    def file_download(self, filename_remote, filename_local, pod, container="dashboard"):
         filename_local = to_unc(filename_local)
         cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
         return self.kubectl(cmd)
