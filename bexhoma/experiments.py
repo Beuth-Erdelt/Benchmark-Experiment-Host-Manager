@@ -46,6 +46,7 @@ from importlib.metadata import version
 from pathlib import Path
 import platform
 import math
+from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 
@@ -67,6 +68,33 @@ class DictToObject(object):
         objd = dict(_traverse(k, v) for k, v in dictionary.items())
         self.__dict__.update(objd)
 
+
+SELECTOR_RE = re.compile(
+    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
+    re.IGNORECASE
+)
+
+def parse_set_arg(s: str) -> Tuple[dict, str]:
+    """
+    Parses a single --set argument of the form:
+      <selector>=<value>
+    where selector is:
+      deployment[NAME].container[CONTAINER].PARAM
+      statefulset[NAME].container[CONTAINER].PARAM
+    Returns: (selector_dict, value_str)
+    """
+    if "=" not in s:
+        raise ValueError(f"--set expects selector=value (got: {s})")
+    selector, value = s.split("=", 1)
+    m = SELECTOR_RE.match(selector.strip())
+    if not m:
+        raise ValueError(
+            "Invalid selector. Expected e.g. "
+            "deployment[sut].container[dbms].max_worker_processes"
+        )
+    d = m.groupdict()
+    d["kind"] = d["kind"].lower()
+    return d, value.strip()
 
 
 class default():
@@ -364,6 +392,12 @@ class default():
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
+        self.dbms_args = []
+        if 'sets' in parameter:
+            for s in args.sets:
+                sel, value = parse_set_arg(s)
+                self.dbms_args.append((sel, value))
+        #print(self.dbms_args)
         mode = str(parameter['mode'])
         if mode=='load' or mode=='start':
             self.benchmarking_active = False
@@ -1075,12 +1109,14 @@ class default():
         print("done!")
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        ##cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
         #print("{:30s}: downloading partial results".format("Experiment"))
         #print("{:30s}: uploading full results".format("Experiment"))
         # single files?
@@ -1320,9 +1356,10 @@ class default():
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
         filename_remote = self.result_filename_remote(filename)
+        self.experimentfile_upload(filename=filename)
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
-        self.cluster.kubectl(cmd['upload_results'])
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
+        #self.cluster.kubectl(cmd['upload_results'])
     def work_benchmark_list(self, intervals=30, stop_after_starting=False, stop_after_loading=False, stop_after_benchmarking=False):
         """
         Run typical workflow:
@@ -2010,8 +2047,9 @@ class default():
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
-                        cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-                        stdout = self.cluster.kubectl(cmd['upload_connection_file'])
+                        stdout = self.experimentfile_upload(filename=filename)
+                        #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
+                        #stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
                 # get monitoring for benchmarking
                 if self.monitoring_active:
@@ -2248,34 +2286,48 @@ class default():
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
         list_monitoring_app = list()
-        df_monitoring_app = pd.DataFrame()
+        #df_monitoring_app = pd.DataFrame()
+        monitoring_applications = dict()
         for c in connections_sorted:
             print(c['name'],
                   "uses docker image",
                   c['parameter']['dockerimage'])
+            #print(c['monitoring']['metrics'])
             ##########
-            if 'monitoring' in c and 'metrics' in c['monitoring'] and len(list_monitoring_app) == 0:
-                num_metrics_included = 0
-                for metricname, metric in c['monitoring']['metrics'].items():
-                    #print(metric['type'])
-                    if num_metrics_included >= 5:
-                        continue
-                    if metric['type'] == 'application' and metric['active'] == True:
-                        df = self.evaluator.get_monitoring_metric(metric=metricname, component='stream')
-                        #print(df)
-                        if metric['metric'] == 'counter':
-                            df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-                        else:
-                            df = df.mean().sort_index()
-                        df_cleaned = pd.DataFrame(df)
-                        df_cleaned.columns = [metric['title']]
-                        if not df_cleaned.empty:
-                            list_monitoring_app.append(df_cleaned.copy())
-                            num_metrics_included = num_metrics_included + 1
-                if len(list_monitoring_app) > 0:
-                    df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                    df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
-                #print(df_monitoring_app)
+            #print("    deployment_infos: "+str(c['deployment_infos']))
+            ##########
+            if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
+                for component, title in self.workload['monitoring_components'].items():
+                    #print(component, title)
+                    list_monitoring_app = list()
+                    df_monitoring_app = pd.DataFrame()
+                    num_metrics_included = 0
+                    for metricname, metric in c['monitoring']['metrics'].items():
+                        #print(metric['type'])
+                        if num_metrics_included >= 5:
+                            continue
+                        if metric['type'] == 'application' and metric['active'] == True:
+                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
+                            if not df.empty:
+                                list_monitoring_app
+                                if metric['metric'] == 'counter':
+                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                                else:
+                                    df = df.max().sort_index()
+                                df_cleaned = pd.DataFrame(df)
+                                df_cleaned.columns = [metric['title']]
+                                if not df_cleaned.empty:
+                                    list_monitoring_app.append(df_cleaned.copy())
+                                    num_metrics_included = num_metrics_included + 1
+                    if len(list_monitoring_app) > 0:
+                        df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+                        df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                        monitoring_applications[title] = df_monitoring_app
+                    #print(df_monitoring_app)
+                    #print(monitoring_applications)
+                    # currently: only first component, only stream
+                    # TODO: make dynamical
+                    #break
             infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
@@ -2454,9 +2506,15 @@ class default():
                     print("DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
-        if not df_monitoring_app.empty:
+        #if not df_monitoring_app.empty:
+        if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            print(df_monitoring_app)
+            #print(monitoring_applications)#df_monitoring_app)
+            for title, metrics in monitoring_applications.items():
+                print("\n#### "+title)
+                print(metrics)
+            #print("\n### Application Metrics")
+            #print(df_monitoring_app)
         print("\n### Tests")
         if self.benchmarking_is_active():
             self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
@@ -3067,12 +3125,14 @@ class tpcc(default):
         # download all results from cluster
         #filename = 'evaluation.json'
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        ##cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('tpcc.show_summary()')
         print("\n## Show Summary")
@@ -3666,12 +3726,14 @@ class ycsb(default):
         #cmd['upload_config'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/connections.config', from_file=self.path+"/connections.config")
         #self.cluster.kubectl(cmd['upload_config'])
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        ##cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('ycsb.show_summary()')
         print("\n## Show Summary")
@@ -4204,11 +4266,13 @@ class benchbase(default):
                 self.cluster.logger.debug(stdout)
         cmd = {}
         print("{:30s}: downloading partial results".format("Experiment"))
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
+        self.experimentfile_download(filename='')
+        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
+        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
-        cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        self.cluster.kubectl(cmd['upload_results'])
+        self.experimentfile_upload(filename='')
+        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
+        #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('benchbase.show_summary()')
         print("\n## Show Summary")

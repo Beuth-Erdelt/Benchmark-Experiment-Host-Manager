@@ -143,6 +143,15 @@ spec:
           - "-c"
           - "max_parallel_maintenance_workers=64" # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-MAINTENANCE-WORKERS
 
+          # --- IO  Settings ---
+          - "-c"
+          - "effective_io_concurrency=64" # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
+          - "-c"
+          - "io_method=worker"            # https://www.postgresql.org/docs/18/runtime-config-resource.html#GUC-IO-METHOD
+          #io_method=sync
+          #io_method=worker
+          #io_method=io_uring
+
           # --- Memory Settings ---
           - "-c"
           - "shared_buffers=256GB"       # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS
@@ -205,8 +214,8 @@ spec:
           #- "seq_page_cost=1.0"                      # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
           #- "-c"
           #- "cpu_tuple_cost=0.01"                    # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-CPU-TUPLE-COST
-          - "-c"
-          - "effective_io_concurrency=64"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
+          #- "-c"
+          #- "effective_io_concurrency=64"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
           #- "-c"
           #- "default_statistics_target=500"          # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-DEFAULT-STATISTICS-TARGET
 

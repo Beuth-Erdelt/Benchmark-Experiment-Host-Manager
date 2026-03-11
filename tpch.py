@@ -85,6 +85,7 @@ if __name__ == '__main__':
     parser.add_argument('-icol',  '--init-columns', help='uses columnar storage (for Citus)', action='store_true', default=False)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False)
     parser.add_argument('-shq', '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
+    parser.add_argument("--set", dest="sets", action="append", default=[], help="Selector assignment, e.g. deployment[sut].container[dbms].max_worker_processes=128")
     # evaluate args
     args = parser.parse_args()
     if args.debug:

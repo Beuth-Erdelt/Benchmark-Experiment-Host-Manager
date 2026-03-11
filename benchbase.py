@@ -90,6 +90,7 @@ if __name__ == '__main__':
     #parser.add_argument('-nt', '--num-target', help='total number of loaders per configuration', default="1024")
     #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 1024 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
     parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 1024 = 2**10', default="1024")
+    parser.add_argument("--set", dest="sets", action="append", default=[], help="Selector assignment, e.g. deployment[sut].container[dbms].max_worker_processes=128")
     # evaluate args
     args = parser.parse_args()
     if args.debug:

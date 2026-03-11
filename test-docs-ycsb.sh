@@ -154,8 +154,23 @@ nohup python ycsb.py -ms 1 -tr \
 #sleep 900
 wait_process "ycsb"
 
+nohup python ycsb.py -ms 1 -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 1 \
+  -nlt 64 \
+  -nlf 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -nbf 2 \
+  -ne 1 \
+  -nc 1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log &
 
-
+wait_process "ycsb"
 
 ###########################################
 ############## All Workloads ##############
