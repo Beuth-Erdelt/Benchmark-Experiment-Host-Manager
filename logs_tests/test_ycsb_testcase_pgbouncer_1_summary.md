@@ -29,7 +29,7 @@ YCSB SF=16
   * Experiment is run once.
 
 ### Connections
-*  pgb-64-4-128-64-1 uses docker image postgres:18.3
+* pgb-64-4-128-64-1 uses docker image postgres:18.3
   * RAM:541008474112
   * CPU:AMD Opteron(tm) Processor 6378
   * Cores:64
