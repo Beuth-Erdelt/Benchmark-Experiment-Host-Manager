@@ -94,7 +94,7 @@ clean_logs() {
         echo "Cleaning $file"
         filename=$(basename "$file" .log)
         dos2unix "$file"
-        awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.txt"
+        awk '/## Show Summary/ {show=1} show {print}' "$file" > "$LOG_DIR/${filename}_summary.md"
     done
 
     echo "Extraction complete! Files are saved in $LOG_DIR."

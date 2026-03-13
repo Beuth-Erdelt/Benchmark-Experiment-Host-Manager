@@ -47,7 +47,7 @@ for filename in os.listdir(md_directory):
         def replace_block(match):
             log_marker = match.group('logfile')
             base_name = os.path.splitext(log_marker)[0]
-            summary_filename = f"{base_name}_summary.txt"
+            summary_filename = f"{base_name}_summary.md"
             summary_path = os.path.join(logs_directory, summary_filename)
             print(f"->Looking for {summary_path}")
             if os.path.exists(summary_path):
