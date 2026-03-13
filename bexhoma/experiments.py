@@ -2265,7 +2265,7 @@ class default():
         #df_monitoring_app = pd.DataFrame()
         monitoring_applications = dict()
         for c in connections_sorted:
-            print("* ", c['name'], "uses docker image", c['parameter']['dockerimage'])
+            print("* {} uses docker image {}".format(c['name'], c['parameter']['dockerimage']))
             if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
                 for component, title in self.workload['monitoring_components'].items():
                     #print(component, title)
