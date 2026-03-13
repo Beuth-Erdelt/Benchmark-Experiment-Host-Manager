@@ -2292,6 +2292,7 @@ class default():
                     if len(list_monitoring_app) > 0:
                         df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
                         df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+                        df_monitoring_app = df_monitoring_app.rename_axis(index="DBMS")
                         monitoring_applications[title] = df_monitoring_app
                     #print(df_monitoring_app)
                     #print(monitoring_applications)
@@ -3890,125 +3891,120 @@ class ycsb(default):
         #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('ycsb.show_summary()')
-        print("\n## Show Summary")
-        pd.set_option("display.max_rows", None)
-        pd.set_option('display.max_colwidth', None)
-        pd.set_option('display.max_rows', 500)
-        pd.set_option('display.max_columns', 500)
-        pd.set_option('display.width', 1000)
+        connections_sorted, monitoring_applications = self.show_summary_header()
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
-            workload_properties = ast.literal_eval(inp.read())
-            self.workload = workload_properties
-        #print(workload_properties) # sut_service
-        print("\n### Workload\n"+workload_properties['name'])
-        print("    Type: "+workload_properties['type'])
-        print("    Duration: {}s ".format(workload_properties['duration']))
-        print("    Code: "+code)
-        #print("    Name: "+workload_properties['name'])
-        print("    Intro: "+workload_properties['intro'])
-        print("    "+workload_properties['info'].replace('\n', '\n    '))
-        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
-            for error, messages in workload_properties['workflow_errors'].items():
-                print("    Error: "+error)
-                for message in messages:
-                    print("        "+message)
-        if 'sut_service' in workload_properties:
-            print("\n### Services")
-            for c in sorted(workload_properties['sut_service']):
-                print(c)
-                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
-        print("\n### Connections")
-        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
-            connections = ast.literal_eval(inf.read())
-        pretty_connections = json.dumps(connections, indent=2)
-        #print(pretty_connections)
-        connections_sorted = sorted(connections, key=lambda c: c['name'])
-        monitoring_applications = dict()
-        for c in connections_sorted:
-            print(c['name'],
-                  "uses docker image",
-                  c['parameter']['dockerimage'])
-            #print(c['monitoring']['metrics'])
-            ##########
-            #print("    deployment_infos: "+str(c['deployment_infos']))
-            ##########
-            if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
-                for component, title in self.workload['monitoring_components'].items():
-                    #print(component, title)
-                    list_monitoring_app = list()
-                    df_monitoring_app = pd.DataFrame()
-                    num_metrics_included = 0
-                    for metricname, metric in c['monitoring']['metrics'].items():
-                        #print(metric['type'])
-                        if num_metrics_included >= 5:
-                            continue
-                        if metric['type'] == 'application' and metric['active'] == True:
-                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
-                            if not df.empty:
-                                list_monitoring_app
-                                if metric['metric'] == 'counter':
-                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-                                else:
-                                    df = df.max().sort_index()
-                                df_cleaned = pd.DataFrame(df)
-                                df_cleaned.columns = [metric['title']]
-                                if not df_cleaned.empty:
-                                    list_monitoring_app.append(df_cleaned.copy())
-                                    num_metrics_included = num_metrics_included + 1
-                    if len(list_monitoring_app) > 0:
-                        df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                        df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
-                        monitoring_applications[title] = df_monitoring_app
-                    #print(df_monitoring_app)
-                    #print(monitoring_applications)
-                    # currently: only first component, only stream
-                    # TODO: make dynamical
-                    #break
-            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-            key = 'client'
-            if key in c['parameter']:
-                info = c['parameter'][key]
-                infos.append("    {}:{}".format(key,info))
-            key = 'numExperiment'
-            if key in c['parameter']:
-                info = c['parameter'][key]
-                infos.append("    {}:{}".format(key,info))
-            for info in infos:
-                print(info)
-            if 'sut' in c and len(c['sut']) > 0:
-                for i, sut in enumerate(c['sut']):
-                    print("    sut {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                    for info in infos:
-                        print(info)
-            if 'worker' in c and len(c['worker']) > 0:
-                for worker_type in c['worker'].keys():
-                    for i, worker in enumerate(c['worker'][worker_type]):
-                        print("    {} {}".format(worker_type, i))
-                        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                        for info in infos:
-                            print(info)
-            #if 'worker' in c and len(c['worker']) > 0:
-            #    for i, worker in enumerate(c['worker']):
-            #        print("    worker {}".format(i))
-            #        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-            #        for info in infos:
-            #            print(info)
-            #if 'store' in c and len(c['store']) > 0:
-            #    for i, worker in enumerate(c['store']):
-            #        print("    store {}".format(i))
-            #        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-            #        for info in infos:
-            #            print(info)
-            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
-                for i, parameters in c['parameter']['connection_parameter'].items():
-                    if i == "eval_parameters":
-                        print("    "+i)
-                        infos = ["        {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                        for info in infos:
-                            print(info)
+        # with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+        #     workload_properties = ast.literal_eval(inp.read())
+        #     self.workload = workload_properties
+        # #print(workload_properties) # sut_service
+        # print("\n### Workload\n"+workload_properties['name'])
+        # print("    Type: "+workload_properties['type'])
+        # print("    Duration: {}s ".format(workload_properties['duration']))
+        # print("    Code: "+code)
+        # #print("    Name: "+workload_properties['name'])
+        # print("    Intro: "+workload_properties['intro'])
+        # print("    "+workload_properties['info'].replace('\n', '\n    '))
+        # if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+        #     for error, messages in workload_properties['workflow_errors'].items():
+        #         print("    Error: "+error)
+        #         for message in messages:
+        #             print("        "+message)
+        # if 'sut_service' in workload_properties:
+        #     print("\n### Services")
+        #     for c in sorted(workload_properties['sut_service']):
+        #         print(c)
+        #         print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
+        # print("\n### Connections")
+        # with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+        #     connections = ast.literal_eval(inf.read())
+        # pretty_connections = json.dumps(connections, indent=2)
+        # #print(pretty_connections)
+        # connections_sorted = sorted(connections, key=lambda c: c['name'])
+        # monitoring_applications = dict()
+        # for c in connections_sorted:
+        #     print(c['name'],
+        #           "uses docker image",
+        #           c['parameter']['dockerimage'])
+        #     #print(c['monitoring']['metrics'])
+        #     ##########
+        #     #print("    deployment_infos: "+str(c['deployment_infos']))
+        #     ##########
+        #     if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
+        #         for component, title in self.workload['monitoring_components'].items():
+        #             #print(component, title)
+        #             list_monitoring_app = list()
+        #             df_monitoring_app = pd.DataFrame()
+        #             num_metrics_included = 0
+        #             for metricname, metric in c['monitoring']['metrics'].items():
+        #                 #print(metric['type'])
+        #                 if num_metrics_included >= 5:
+        #                     continue
+        #                 if metric['type'] == 'application' and metric['active'] == True:
+        #                     df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
+        #                     if not df.empty:
+        #                         list_monitoring_app
+        #                         if metric['metric'] == 'counter':
+        #                             df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+        #                         else:
+        #                             df = df.max().sort_index()
+        #                         df_cleaned = pd.DataFrame(df)
+        #                         df_cleaned.columns = [metric['title']]
+        #                         if not df_cleaned.empty:
+        #                             list_monitoring_app.append(df_cleaned.copy())
+        #                             num_metrics_included = num_metrics_included + 1
+        #             if len(list_monitoring_app) > 0:
+        #                 df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+        #                 df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+        #                 monitoring_applications[title] = df_monitoring_app
+        #             #print(df_monitoring_app)
+        #             #print(monitoring_applications)
+        #             # currently: only first component, only stream
+        #             # TODO: make dynamical
+        #             #break
+        #     infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #     key = 'client'
+        #     if key in c['parameter']:
+        #         info = c['parameter'][key]
+        #         infos.append("    {}:{}".format(key,info))
+        #     key = 'numExperiment'
+        #     if key in c['parameter']:
+        #         info = c['parameter'][key]
+        #         infos.append("    {}:{}".format(key,info))
+        #     for info in infos:
+        #         print(info)
+        #     if 'sut' in c and len(c['sut']) > 0:
+        #         for i, sut in enumerate(c['sut']):
+        #             print("    sut {}".format(i))
+        #             infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #             for info in infos:
+        #                 print(info)
+        #     if 'worker' in c and len(c['worker']) > 0:
+        #         for worker_type in c['worker'].keys():
+        #             for i, worker in enumerate(c['worker'][worker_type]):
+        #                 print("    {} {}".format(worker_type, i))
+        #                 infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #                 for info in infos:
+        #                     print(info)
+        #     #if 'worker' in c and len(c['worker']) > 0:
+        #     #    for i, worker in enumerate(c['worker']):
+        #     #        print("    worker {}".format(i))
+        #     #        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #     #        for info in infos:
+        #     #            print(info)
+        #     #if 'store' in c and len(c['store']) > 0:
+        #     #    for i, worker in enumerate(c['store']):
+        #     #        print("    store {}".format(i))
+        #     #        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #     #        for info in infos:
+        #     #            print(info)
+        #     if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+        #         for i, parameters in c['parameter']['connection_parameter'].items():
+        #             if i == "eval_parameters":
+        #                 print("    "+i)
+        #                 infos = ["        {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #                 for info in infos:
+        #                     print(info)
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -4017,7 +4013,7 @@ class ycsb(default):
         test_loading = False
         df = self.evaluator.get_df_loading()
         if not df.empty:
-            print("\n### Loading")
+            print("\n### Loading\n")
             df = df.sort_values(['configuration','experiment_run','client'])
             df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
             #print(df)
@@ -4026,7 +4022,9 @@ class ycsb(default):
             df_aggregated = self.evaluator.loading_aggregate_by_parallel_pods(df_plot)
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            print(df_aggregated_loaded)
+            df_aggregated_loaded = df_aggregated_loaded.rename_axis(index="DBMS")
+            print(df_aggregated_loaded.to_markdown(index=True))
+            #print(df_aggregated_loaded)
             # Make a copy to format safely
             #formatted_df = df_aggregated_loaded.copy()
             # Select float columns
@@ -4041,7 +4039,7 @@ class ycsb(default):
         df = self.evaluator.get_df_benchmarking()
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            print("\n### Execution")
+            print("\n### Execution\n")
             df.fillna(0, inplace=True)
             #print(df.T)
             #exit()
@@ -4065,7 +4063,9 @@ class ycsb(default):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            print(df_aggregated_reduced)
+            #print(df_aggregated_reduced)
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            print(df_aggregated_reduced.to_markdown(index=True))
             #formatted_df = df_aggregated_reduced.copy()
             # Select float columns
             #float_cols = formatted_df.select_dtypes(include="float").columns
@@ -4080,15 +4080,15 @@ class ycsb(default):
         if self.benchmarking_is_active():
             print("\n### Workflow")
             workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = workload_properties['workflow_planned']
+            workflow_planned = self.workload['workflow_planned']
             if len(workflow_actual) > 0:
-                print("\n#### Actual")
+                print("\n#### Actual\n")
                 for c in workflow_actual:
-                    print("DBMS", c, "- Pods", workflow_actual[c])
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
             if len(workflow_planned) > 0:
-                print("\n#### Planned")
+                print("\n#### Planned\n")
                 for c in workflow_planned:
-                    print("DBMS", c, "- Pods", workflow_planned[c])
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         #if not df_monitoring_app.empty:
@@ -4096,8 +4096,9 @@ class ycsb(default):
             print("\n### Application Metrics")
             #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
-                print("\n#### "+title)
-                print(metrics)
+                print("\n#### "+title+"\n")
+                metrics.index.names = ["DBMS"]
+                print(metrics.to_markdown(index=True))
         print("\n### Tests")
         if test_loading:
             self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
@@ -4106,19 +4107,19 @@ class ycsb(default):
             print(test_results_monitoring)
         if self.benchmarking_is_active():
             if self.test_workflow(workflow_actual, workflow_planned):
-                print("TEST passed: Workflow as planned")
+                print("* TEST passed: Workflow as planned")
             else:
-                print("TEST failed: Workflow not as planned")
+                print("* TEST failed: Workflow not as planned")
         silent = False
         if contains_failed:
             if not silent:
-                print("TEST failed: {} contains FAILED column".format("Execution Phase:"))
+                print("* TEST failed: {} contains FAILED column".format("Execution Phase:"))
             return False
         else:
             if not silent:
-                print("TEST passed: {} contains no FAILED column".format("Execution Phase:"))
+                print("* TEST passed: {} contains no FAILED column".format("Execution Phase:"))
             return True
-    def show_summary_monitoring(self):
+    def show_summary_monitoring_OLD(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
@@ -4429,110 +4430,105 @@ class benchbase(default):
         #self.cluster.kubectl(cmd['upload_results'])
     def show_summary(self):
         #print('benchbase.show_summary()')
-        print("\n## Show Summary")
-        pd.set_option("display.max_rows", None)
-        pd.set_option('display.max_colwidth', None)
-        pd.set_option('display.max_rows', 500)
-        pd.set_option('display.max_columns', 500)
-        pd.set_option('display.width', 1000)
+        connections_sorted, monitoring_applications = self.show_summary_header()
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
-        with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
-            workload_properties = ast.literal_eval(inp.read())
-            self.workload = workload_properties
-        print("\n### Workload\n"+workload_properties['name'])
-        print("    Type: "+workload_properties['type'])
-        print("    Duration: {}s ".format(workload_properties['duration']))
-        print("    Code: "+code)
-        #print("    Name: "+workload_properties['name'])
-        print("    Intro: "+workload_properties['intro'])
-        print("    "+workload_properties['info'].replace('\n', '\n    '))
-        if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
-            for error, messages in workload_properties['workflow_errors'].items():
-                print("    Error: "+error)
-                for message in messages:
-                    print("        "+message)
-        if 'sut_service' in workload_properties:
-            print("\n### Services")
-            for c in sorted(workload_properties['sut_service']):
-                print(c)
-                print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
-        print("\n### Connections")
-        with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
-            connections = ast.literal_eval(inf.read())
-        pretty_connections = json.dumps(connections, indent=2)
-        #print(pretty_connections)
-        connections_sorted = sorted(connections, key=lambda c: c['name'])
-        monitoring_applications = dict()
-        for c in connections_sorted:
-            print(c['name'],
-                  "uses docker image",
-                  c['parameter']['dockerimage'])
-            #print(c['monitoring']['metrics'])
-            ##########
-            if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
-                for component, title in self.workload['monitoring_components'].items():
-                    #print(component, title)
-                    list_monitoring_app = list()
-                    df_monitoring_app = pd.DataFrame()
-                    num_metrics_included = 0
-                    for metricname, metric in c['monitoring']['metrics'].items():
-                        #print(metric['type'])
-                        if num_metrics_included >= 5:
-                            continue
-                        if metric['type'] == 'application' and metric['active'] == True:
-                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
-                            if not df.empty:
-                                list_monitoring_app
-                                if metric['metric'] == 'counter':
-                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-                                else:
-                                    df = df.max().sort_index()
-                                df_cleaned = pd.DataFrame(df)
-                                df_cleaned.columns = [metric['title']]
-                                if not df_cleaned.empty:
-                                    list_monitoring_app.append(df_cleaned.copy())
-                                    num_metrics_included = num_metrics_included + 1
-                    if len(list_monitoring_app) > 0:
-                        df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
-                        df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
-                        monitoring_applications[title] = df_monitoring_app
-                    #print(df_monitoring_app)
-                    #print(monitoring_applications)
-                    # currently: only first component, only stream
-                    # TODO: make dynamical
-                    #break
-            infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-            key = 'client'
-            if key in c['parameter']:
-                info = c['parameter'][key]
-                infos.append("    {}:{}".format(key,info))
-            key = 'numExperiment'
-            if key in c['parameter']:
-                info = c['parameter'][key]
-                infos.append("    {}:{}".format(key,info))
-            for info in infos:
-                print(info)
-            if 'sut' in c and len(c['sut']) > 0:
-                for i, sut in enumerate(c['sut']):
-                    print("    sut {}".format(i))
-                    infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                    for info in infos:
-                        print(info)
-            if 'worker' in c and len(c['worker']) > 0:
-                for worker_type in c['worker'].keys():
-                    for i, worker in enumerate(c['worker'][worker_type]):
-                        print("    {} {}".format(worker_type, i))
-                        infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                        for info in infos:
-                            print(info)
-            if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
-                for i, parameters in c['parameter']['connection_parameter'].items():
-                    if i == "eval_parameters":
-                        print("    "+i)
-                        infos = ["                {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
-                        for info in infos:
-                            print(info)
+        # with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
+        #     workload_properties = ast.literal_eval(inp.read())
+        #     self.workload = workload_properties
+        # print("\n### Workload\n"+workload_properties['name'])
+        # print("    Type: "+workload_properties['type'])
+        # print("    Duration: {}s ".format(workload_properties['duration']))
+        # print("    Code: "+code)
+        # #print("    Name: "+workload_properties['name'])
+        # print("    Intro: "+workload_properties['intro'])
+        # print("    "+workload_properties['info'].replace('\n', '\n    '))
+        # if 'workflow_errors' in workload_properties and len(workload_properties['workflow_errors']) > 0:
+        #     for error, messages in workload_properties['workflow_errors'].items():
+        #         print("    Error: "+error)
+        #         for message in messages:
+        #             print("        "+message)
+        # if 'sut_service' in workload_properties:
+        #     print("\n### Services")
+        #     for c in sorted(workload_properties['sut_service']):
+        #         print(c)
+        #         print("    {}".format(self.generate_port_forward(workload_properties['sut_service'][c])))
+        # print("\n### Connections")
+        # with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
+        #     connections = ast.literal_eval(inf.read())
+        # pretty_connections = json.dumps(connections, indent=2)
+        # #print(pretty_connections)
+        # connections_sorted = sorted(connections, key=lambda c: c['name'])
+        # monitoring_applications = dict()
+        # for c in connections_sorted:
+        #     print(c['name'],
+        #           "uses docker image",
+        #           c['parameter']['dockerimage'])
+        #     #print(c['monitoring']['metrics'])
+        #     ##########
+        #     if 'monitoring' in c and 'metrics' in c['monitoring']: # and len(list_monitoring_app) == 0:
+        #         for component, title in self.workload['monitoring_components'].items():
+        #             #print(component, title)
+        #             list_monitoring_app = list()
+        #             df_monitoring_app = pd.DataFrame()
+        #             num_metrics_included = 0
+        #             for metricname, metric in c['monitoring']['metrics'].items():
+        #                 #print(metric['type'])
+        #                 if num_metrics_included >= 5:
+        #                     continue
+        #                 if metric['type'] == 'application' and metric['active'] == True:
+        #                     df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
+        #                     if not df.empty:
+        #                         list_monitoring_app
+        #                         if metric['metric'] == 'counter':
+        #                             df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+        #                         else:
+        #                             df = df.max().sort_index()
+        #                         df_cleaned = pd.DataFrame(df)
+        #                         df_cleaned.columns = [metric['title']]
+        #                         if not df_cleaned.empty:
+        #                             list_monitoring_app.append(df_cleaned.copy())
+        #                             num_metrics_included = num_metrics_included + 1
+        #             if len(list_monitoring_app) > 0:
+        #                 df_monitoring_app = pd.concat(list_monitoring_app, axis=1).round(2)
+        #                 df_monitoring_app = df_monitoring_app.reindex(index=evaluators.natural_sort(df_monitoring_app.index))
+        #                 monitoring_applications[title] = df_monitoring_app
+        #             #print(df_monitoring_app)
+        #             #print(monitoring_applications)
+        #             # currently: only first component, only stream
+        #             # TODO: make dynamical
+        #             #break
+        #     infos = ["    {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #     key = 'client'
+        #     if key in c['parameter']:
+        #         info = c['parameter'][key]
+        #         infos.append("    {}:{}".format(key,info))
+        #     key = 'numExperiment'
+        #     if key in c['parameter']:
+        #         info = c['parameter'][key]
+        #         infos.append("    {}:{}".format(key,info))
+        #     for info in infos:
+        #         print(info)
+        #     if 'sut' in c and len(c['sut']) > 0:
+        #         for i, sut in enumerate(c['sut']):
+        #             print("    sut {}".format(i))
+        #             infos = ["        {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #             for info in infos:
+        #                 print(info)
+        #     if 'worker' in c and len(c['worker']) > 0:
+        #         for worker_type in c['worker'].keys():
+        #             for i, worker in enumerate(c['worker'][worker_type]):
+        #                 print("    {} {}".format(worker_type, i))
+        #                 infos = ["        {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #                 for info in infos:
+        #                     print(info)
+        #     if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
+        #         for i, parameters in c['parameter']['connection_parameter'].items():
+        #             if i == "eval_parameters":
+        #                 print("    "+i)
+        #                 infos = ["                {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+        #                 for info in infos:
+        #                     print(info)
         #print("found", len(connections), "connections")
         #evaluate = inspector.inspector(resultfolder)       # no evaluation cube
         #evaluate.load_experiment(code=code, silent=False)
@@ -4560,7 +4556,7 @@ class benchbase(default):
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
             print("\n### Execution")
-            print("\n#### Per Pod")
+            print("\n#### Per Pod\n")
             warehouses = int(df['sf'].max())
             columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
@@ -4570,8 +4566,9 @@ class benchbase(default):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            print(df_plot_filtered.sort_values(['experiment_run', 'client', 'child']))
-            print("\n#### Aggregated Parallel")
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            print(df_plot_filtered.to_markdown(index=True))
+            print("\n#### Aggregated Parallel\n")
             if self.workload['tenant_per'] == "container":
                 # we want to aggregate containers of DBMS running in parallel
                 #print(type(df_plot))
@@ -4587,7 +4584,8 @@ class benchbase(default):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
-            print(df_aggregated_reduced)
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            print(df_aggregated_reduced.to_markdown(index=True))
         #print("\nWarehouses:", warehouses)
         # test: show time series
         #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
@@ -4595,18 +4593,18 @@ class benchbase(default):
         if self.benchmarking_is_active():
             print("\n### Workflow")
             workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = workload_properties['workflow_planned']
+            workflow_planned = self.workload['workflow_planned']
             if len(workflow_actual) > 0:
-                print("\n#### Actual")
+                print("\n#### Actual\n")
                 for c in workflow_actual:
-                    print("DBMS", c, "- Pods", workflow_actual[c])
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
             if len(workflow_planned) > 0:
-                print("\n#### Planned")
+                print("\n#### Planned\n")
                 for c in workflow_planned:
-                    print("DBMS", c, "- Pods", workflow_planned[c])
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
         #####################
         if self.loading_is_active():
-            print("\n### Loading")
+            print("\n### Loading\n")
             #connections_sorted = sorted(connections, key=lambda c: c['name']) 
             result = dict()
             for c in connections_sorted:
@@ -4636,7 +4634,8 @@ class benchbase(default):
             #df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
             df_connections['Throughput [SF/h]'] = df_tpx['time_load']
             df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
-            print(df_connections)
+            df_connections = df_connections.rename_axis(index="DBMS")
+            print(df_connections.to_markdown(index=True))
             #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         test_results_monitoring = self.show_summary_monitoring()
@@ -4644,18 +4643,18 @@ class benchbase(default):
             print("\n### Application Metrics")
             #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
-                print("\n#### "+title)
-                print(metrics)
+                print("\n#### "+title+"\n")
+                print(metrics.to_markdown(index=True))
         print("\n### Tests")
         self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.benchmarking_is_active():
             if self.test_workflow(workflow_actual, workflow_planned):
-                print("TEST passed: Workflow as planned")
+                print("* TEST passed: Workflow as planned")
             else:
-                print("TEST failed: Workflow not as planned")
-    def show_summary_monitoring(self):
+                print("* TEST failed: Workflow not as planned")
+    def show_summary_monitoring_OLD(self):
         test_results = ""
         #resultfolder = self.cluster.config['benchmarker']['resultfolder']
         #code = self.code
