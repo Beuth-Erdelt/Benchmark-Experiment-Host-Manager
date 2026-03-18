@@ -48,14 +48,15 @@ import platform
 
 def to_unc(path: str) -> str:
     """
-    Convert a local Windows drive path (D:/..., D:\..., etc.)
-    into a UNC administrative share:
-        \\localhost\D$\...
+    Convert a local Windows drive path (D:/..., D:\\..., etc.)
+    into a UNC administrative share.
     On Linux/macOS, returns the normalized path unchanged.
     UNC input is returned unchanged.
 
     Works on: Windows (all versions), Linux, macOS.
     """
+    # Looks like:
+    # \\localhost\D$\...
 
     # Normalize path (handles forward/back slashes, etc.)
     p = Path(path)
