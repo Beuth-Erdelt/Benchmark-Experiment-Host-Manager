@@ -659,7 +659,7 @@ class default():
             except Exception as e:
                 return 1
             finally:
-                return 1
+                pass
         return 1
     def wait(self,
              sec,
