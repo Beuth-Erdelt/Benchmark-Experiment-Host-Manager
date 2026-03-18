@@ -56,7 +56,7 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 ### YCSB
 
-1. Run `python ycsb.py -ms 1 -tr -sf 1 --workload a -dbms PostgreSQL -tb 16384 -nlp 1 -nlt 64 -nlf 4 -nbp 1,8 -nbt 64 -nbf 2,3 run`.  
+1. Run `python ycsb.py run -ms 1 -tr -sf 1 --workload a -dbms PostgreSQL -tb 16384 -nlp 1 -nlt 64 -nlf 4 -nbp 1,8 -nbt 64 -nbf 2,3`.  
   This installs PostgreSQL and runs YCSB workload A with varying target. The driver is monolithic with 64 threads. The experiments runs a second time with the driver scaled out to 8 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
@@ -66,7 +66,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
 
 ### HammerDB's TPC-C
 
-1. Run `python hammerdb.py -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL -nlt 16 -nbp 1,2 -nbt 16 run`.  
+1. Run `python hammerdb.py run -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL -nlt 16 -nbp 1,2 -nbt 16`.  
   This installs PostgreSQL and runs HammerDB's TPC-C with 16 warehouses. The driver is monolithic with 16 threads. The experiments runs a second time with the driver scaled out to 2 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
@@ -76,7 +76,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.ht
 
 ### Benchbase's TPC-C
 
-1. Run `python benchbase.py -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL -nbp 1,2 -nbt 16 -nbf 16 -tb 1024 run`.  
+1. Run `python benchbase.py run -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL -nbp 1,2 -nbt 16 -nbf 16 -tb 1024`.  
   This installs PostgreSQL and runs Benchbase's TPC-C with 16 warehouses. The driver is monolithic with 16 threads. The experiments runs a second time with the driver scaled out to 2 instances each having 8 threads.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
@@ -86,7 +86,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.ht
 
 ### TPC-H
 
-1. Run `python tpch.py -ms 1 -dbms PostgreSQL run`.  
+1. Run `python tpch.py run -ms 1 -dbms PostgreSQL`.  
   This installs PostgreSQL and runs TPC-H at scale factor 1. The driver is monolithic.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
@@ -96,7 +96,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
 
 ### TPC-DS
 
-1. Run `python tpcds.py -ms 1 -dbms PostgreSQL run`.  
+1. Run `python tpcds.py run -ms 1 -dbms PostgreSQL`.  
   This installs PostgreSQL and runs TPC-DS at scale factor 1. The driver is monolithic.
 1. You can watch status using `bexperiments status` while running.
 1. After benchmarking has finished, you will see a summary.  
