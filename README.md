@@ -35,6 +35,7 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Install the package `pip install bexhoma`
+    * This will require Java and some buildtools
 1. Make sure you have a working `kubectl` installed.
     * (Also make sure to have access to a running Kubernetes cluster - for example [Minikube](https://minikube.sigs.k8s.io/docs/start/))
     * (Also make sure, you can create PV via PVC and dynamic provisioning)
