@@ -723,7 +723,7 @@ class default():
 
         :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
         """
-        self.workload = kwargs
+        self.workload = {**self.workload, **kwargs}
     def set_querymanagement(self,
                             **kwargs):
         """
@@ -2586,12 +2586,12 @@ class default():
                 #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
                 df_time['num_experiment'] = int(c['parameter']['numExperiment'])
                 df_time['num_client'] = int(c['parameter']['client'])
-                df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
-                df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+                df_time['benchmark_start'] = int(eva['times']['total'][c['name']]['time_start'])
+                df_time['benchmark_end'] = int(eva['times']['total'][c['name']]['time_end'])
                 df_merged_time = pd.concat([df_merged_time, df_time])
             df_time = df_merged_time.sort_index()
-            benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
-            benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+            benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client'])[['benchmark_start']].min(numeric_only=True)
+            benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client'])[['benchmark_end']].max(numeric_only=True)
             df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
             df_benchmark.columns = ['time [s]']
             benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
