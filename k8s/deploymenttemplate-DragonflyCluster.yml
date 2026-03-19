@@ -120,11 +120,11 @@ spec:
 
             if [ "$ORDINAL" -eq 0 ]; then
               echo "Starting as MASTER ($POD_NAME)"
-              exec dragonfly --logtostderr
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080
             else
               MASTER="${STATEFULSET_NAME}-0.${BEXHOMA_WORKER_SERVICE}:6379"
               echo "Starting as REPLICA of $MASTER"
-              exec dragonfly --logtostderr --replicaof=$MASTER
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --replicaof=$MASTER
             fi
         env:
           - name: POD_NAME
@@ -138,6 +138,8 @@ spec:
         ports:
           - containerPort: 6379
             name: server
+          - containerPort: 8080
+            name: admin
         resources:
           limits: {cpu: 16000m, memory: 64Gi}
           requests: {cpu: 16000m, memory: 64Gi}
@@ -168,3 +170,73 @@ spec:
         requests:
           storage: 100Gi
       storageClassName: shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-init
+  labels: {app: bexhoma, component: init, configuration: default, experiment: default}
+spec:
+  template:
+    metadata:
+      labels: {app: bexhoma, component: init, configuration: default, experiment: default}
+    spec:
+      containers:
+        - name: dbms
+          image: python:3.11-slim
+          env:
+            - name: BEXHOMA_STORE_LIST
+              value: "dragonfly-0.dragonfly-cluster-headless,dragonfly-1.dragonfly-cluster-headless,dragonfly-2.dragonfly-cluster-headless"
+            - name: NUM_MASTERS
+              value: "3"          # number of master pods
+            - name: REPLICAS_PER_MASTER
+              value: "0"          # number of replicas per master
+          command:
+            - bash
+            - -c
+            - |
+              set -e
+
+              echo "Installing dependencies..."
+              pip install --no-cache-dir redis requests
+
+              echo "Downloading cluster_mgr.py..."
+              python3 - <<EOF
+              import requests
+              url = "https://raw.githubusercontent.com/dragonflydb/dragonfly/main/tools/cluster_mgr.py"
+              r = requests.get(url)
+              open("/tmp/cluster_mgr.py", "w").write(r.text)
+              EOF
+
+              echo "Parsing BEXHOMA_STORE_LIST..."
+              # handle comma or space separated
+              NODES_RAW=$(echo "$BEXHOMA_STORE_LIST" | tr ',' ' ')
+              NODES=($NODES_RAW)
+
+              echo "Waiting for Dragonfly pods..."
+              python3 - <<PY
+              import socket
+              import time
+              nodes = '${NODES_RAW}'
+              for node in nodes.split():
+                  host = node.split(":")[0] if ":" in node else node
+                  port = 6379
+                  print(f"Waiting for {host}:{port} ...")
+                  while True:
+                      try:
+                          with socket.create_connection((host, port), timeout=2):
+                              break
+                      except Exception:
+                          time.sleep(2)
+              print("All nodes reachable")
+              PY
+              echo "Forming Dragonfly cluster..."
+              # Run cluster_mgr.py with new args
+              python3 /tmp/cluster_mgr.py \
+                --num_masters $NUM_MASTERS \
+                --replicas_per_master $REPLICAS_PER_MASTER \
+                --first_port 6379
+
+              echo "Dragonfly cluster formation complete!"
+      restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 300  # Deletes the job and pods 300 seconds after completion
