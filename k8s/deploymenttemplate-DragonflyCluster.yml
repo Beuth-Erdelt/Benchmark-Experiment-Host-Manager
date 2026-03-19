@@ -28,7 +28,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-deployment-redis
+  name: bexhoma-deployment-dragonfly
 spec:
   replicas: 1
   selector:
@@ -209,7 +209,7 @@ spec:
               EOF
 
               echo "Parsing BEXHOMA_STORE_LIST..."
-              # handle comma or space separated
+              # Convert comma to space if needed
               NODES_RAW=$(echo "$BEXHOMA_STORE_LIST" | tr ',' ' ')
               NODES=($NODES_RAW)
 
@@ -230,12 +230,86 @@ spec:
                           time.sleep(2)
               print("All nodes reachable")
               PY
-              echo "Forming Dragonfly cluster..."
-              # Run cluster_mgr.py with new args
-              python3 /tmp/cluster_mgr.py \
-                --num_masters $NUM_MASTERS \
-                --replicas_per_master $REPLICAS_PER_MASTER \
-                --first_port 6379
+
+              FIRST_NODE=${NODES[0]}
+              PORT=6379
+
+              ALREADY_CONFIGURED=$(python3 - <<PY
+              import os
+              import redis
+              FIRST_NODE = os.environ.get("FIRST_NODE", "$FIRST_NODE")
+              PORT = int(os.environ.get("PORT", "$PORT"))
+
+              r = redis.Redis(host=FIRST_NODE, port=PORT, decode_responses=True)
+              try:
+                  info = r.cluster("INFO")
+                  cluster_state = info.get("cluster_state", "fail")
+                  slots_assigned = int(info.get("cluster_slots_assigned", 0))
+                  if cluster_state == "ok" and slots_assigned > 0:
+                      print("yes")
+                  else:
+                      print("no")
+              except redis.exceptions.ResponseError:
+                  # Cluster not yet configured
+                  print("no")
+              PY
+              )
+
+              #echo "Configuring first pod as initial master..."
+              if [ "$ALREADY_CONFIGURED" = "no" ]; then
+                  echo "Configuring first pod as initial master..."
+                  python3 /tmp/cluster_mgr.py \
+                      --action=config_single_remote \
+                      --target_host $FIRST_NODE \
+                      --target_port $PORT
+              else
+                  echo "[INFO] Node $FIRST_NODE already configured, skipping config_single_remote"
+              fi
+
+              echo "Attaching remaining nodes..."
+              for node in "${NODES[@]:1}"; do
+                echo "Attaching $node as master..."
+                python3 /tmp/cluster_mgr.py \
+                  --action=attach \
+                  --target_host $FIRST_NODE \
+                  --target_port 6379 \
+                  --attach_host $node \
+                  --attach_port 6379 \
+                  --attach_as_replica False
+              done
+
+              echo "Cluster formation complete — redistributing slots evenly..."
+
+              # Total slots
+              TOTAL_SLOTS=16384
+              NUM_MASTERS=${#NODES[@]}
+              SLOTS_PER_MASTER=$((TOTAL_SLOTS / NUM_MASTERS))
+              EXTRA_SLOTS=$((TOTAL_SLOTS % NUM_MASTERS))
+
+              # Calculate slot ranges for each master
+              START=0
+              for i in "${!NODES[@]}"; do
+                NODE=${NODES[$i]}
+                END=$((START + SLOTS_PER_MASTER - 1))
+                # Assign extra slots to the first few masters if TOTAL_SLOTS not divisible evenly
+                if [ $i -lt $EXTRA_SLOTS ]; then
+                  END=$((END + 1))
+                fi
+
+                if [ "$NODE" != "$FIRST_NODE" ]; then
+                  echo "Migrating slots $START-$END from $FIRST_NODE to $NODE..."
+                  python3 /tmp/cluster_mgr.py \
+                    --action=migrate \
+                    --target_host $FIRST_NODE \
+                    --attach_host $NODE \
+                    --slot_start $START \
+                    --slot_end $END \
+                    --target_port 6379 \
+                    --attach_port 6379
+                fi
+
+                START=$((END + 1))
+              done
 
               echo "Dragonfly cluster formation complete!"
       restartPolicy: OnFailure
