@@ -1,6 +1,6 @@
 #!/bin/bash
 ######################################################################################
-# Bash Script for Bexhoma Test Runs - Redis
+# Bash Script for Bexhoma Test Runs - Dragonfly
 ######################################################################################
 #
 # This scripts starts a sequence of experiments with varying parameters.
@@ -45,7 +45,7 @@ wait_process "ycsb"
 
 
 ####################################################
-#################### YCSB Redis ####################
+################## YCSB Dragonfly ##################
 ####################################################
 
 
@@ -54,7 +54,7 @@ nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
-  -dbms Redis \
+  -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -66,10 +66,18 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_1.log &
+  -rr 64Gi -lr 64Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_1.log &
 
 
 wait_process "ycsb"
+
+
+
+
+####################################################
+############### Not implemented yet! ###############
+####################################################
 
 
 # Cluster of 3 Redis instances
