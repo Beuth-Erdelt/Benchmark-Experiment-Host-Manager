@@ -1643,6 +1643,11 @@ scrape_configs:
                 print(exc)
         for key in reversed(range(len(result))):#enumerate(result):
             dep = result[key]
+            ################
+            ################
+            # Kind=PersistentVolumeClaim
+            ################
+            ################
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
                 if not use_storage:
@@ -1980,11 +1985,18 @@ scrape_configs:
                 dep['metadata']['labels']['volume'] = self.volume
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
+                # statefulset.kubernetes.io/pod-name
+                # 'statefulset.kubernetes.io/pod-name': 'bexhoma-worker-0'
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                dep['spec']['selector']['configuration'] = configuration
-                dep['spec']['selector']['experiment'] = experiment
-                dep['spec']['selector']['dbms'] = self.docker
-                dep['spec']['selector']['volume'] = self.volume
+                #print(dep['spec']['selector'])
+                if 'statefulset.kubernetes.io/pod-name' in dep['spec']['selector']:
+                    # only select static master of statefuleSet
+                    dep['spec']['selector']['statefulset.kubernetes.io/pod-name'] = env['BEXHOMA_WORKER_NAME']+'-0'
+                else:
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
                 if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports

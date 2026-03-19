@@ -926,9 +926,10 @@ if __name__ == '__main__':
                     config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
-                        BEXHOMA_DBMS_TYPE = "redis-cluster"
-                    else:
-                        BEXHOMA_DBMS_TYPE = "redis"
+                        #BEXHOMA_DBMS_TYPE = "redis-cluster"
+                    #else:
+                    #    BEXHOMA_DBMS_TYPE = "redis"
+                    BEXHOMA_DBMS_TYPE = "redis"
                     config.set_storage(
                         storageConfiguration = 'dragonfly'
                         )

@@ -86,7 +86,7 @@ nohup python ycsb.py -tr \
   -sfo 10 \
   -nw 3 \
   --workload a \
-  -dbms Redis \
+  -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -98,7 +98,8 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_2.log &
+  -rr 64Gi -lr 64Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_2.log &
 
 
 wait_process "ycsb"
@@ -133,7 +134,7 @@ nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
-  -dbms Redis \
+  -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -146,7 +147,8 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
+  -rr 64Gi -lr 64Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_4.log &
 
 
 wait_process "ycsb"
