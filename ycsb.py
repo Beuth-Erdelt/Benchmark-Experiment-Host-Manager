@@ -924,12 +924,12 @@ if __name__ == '__main__':
                     num_worker_inc_replicas = num_worker * (1+num_worker_replicas)
                     config = configurations.ycsb(experiment=experiment, docker='Dragonfly', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker_inc_replicas)
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    BEXHOMA_DBMS_TYPE = "redis"
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
-                        #BEXHOMA_DBMS_TYPE = "redis-cluster"
-                    #else:
-                    #    BEXHOMA_DBMS_TYPE = "redis"
-                    BEXHOMA_DBMS_TYPE = "redis"
+                        BEXHOMA_DBMS_TYPE = "redis-cluster"
+                    else:
+                        BEXHOMA_DBMS_TYPE = "redis"
                     config.set_storage(
                         storageConfiguration = 'dragonfly'
                         )

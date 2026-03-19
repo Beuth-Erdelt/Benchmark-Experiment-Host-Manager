@@ -21,8 +21,8 @@ spec:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6379}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
-  selector: # {app: bexhoma, component: worker, configuration: default, experiment: default}
-    statefulset.kubernetes.io/pod-name: bexhoma-worker-0
+  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  #  statefulset.kubernetes.io/pod-name: bexhoma-worker-0
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -257,13 +257,16 @@ spec:
 
               #echo "Configuring first pod as initial master..."
               if [ "$ALREADY_CONFIGURED" = "no" ]; then
-                  echo "Configuring first pod as initial master..."
+                  echo "Configuring first pod as initial master with pre-assigned slots..."
+
+                  # Pass the full slot assignment to the first node
                   python3 /tmp/cluster_mgr.py \
                       --action=config_single_remote \
                       --target_host $FIRST_NODE \
-                      --target_port $PORT
+                      --target_port $PORT \
+                      --num_masters 3
               else
-                  echo "[INFO] Node $FIRST_NODE already configured, skipping config_single_remote"
+                  echo "[INFO] Node $FIRST_NODE already configured, skipping initial config"
               fi
 
               echo "Attaching remaining nodes..."
@@ -276,39 +279,6 @@ spec:
                   --attach_host $node \
                   --attach_port 6379 \
                   --attach_as_replica False
-              done
-
-              echo "Cluster formation complete — redistributing slots evenly..."
-
-              # Total slots
-              TOTAL_SLOTS=16384
-              NUM_MASTERS=${#NODES[@]}
-              SLOTS_PER_MASTER=$((TOTAL_SLOTS / NUM_MASTERS))
-              EXTRA_SLOTS=$((TOTAL_SLOTS % NUM_MASTERS))
-
-              # Calculate slot ranges for each master
-              START=0
-              for i in "${!NODES[@]}"; do
-                NODE=${NODES[$i]}
-                END=$((START + SLOTS_PER_MASTER - 1))
-                # Assign extra slots to the first few masters if TOTAL_SLOTS not divisible evenly
-                if [ $i -lt $EXTRA_SLOTS ]; then
-                  END=$((END + 1))
-                fi
-
-                if [ "$NODE" != "$FIRST_NODE" ]; then
-                  echo "Migrating slots $START-$END from $FIRST_NODE to $NODE..."
-                  python3 /tmp/cluster_mgr.py \
-                    --action=migrate \
-                    --target_host $FIRST_NODE \
-                    --attach_host $NODE \
-                    --slot_start $START \
-                    --slot_end $END \
-                    --target_port 6379 \
-                    --attach_port 6379
-                fi
-
-                START=$((END + 1))
               done
 
               echo "Dragonfly cluster formation complete!"
