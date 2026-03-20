@@ -263,23 +263,56 @@ spec:
                   python3 /tmp/cluster_mgr.py \
                       --action=config_single_remote \
                       --target_host $FIRST_NODE \
-                      --target_port $PORT \
-                      --num_masters 3
+                      --target_port $PORT
+
+                  echo "Attaching remaining nodes..."
+                  for node in "${NODES[@]:1}"; do
+                    echo "Attaching $node as master..."
+                    python3 /tmp/cluster_mgr.py \
+                      --action=attach \
+                      --target_host $FIRST_NODE \
+                      --target_port 6379 \
+                      --attach_host $node \
+                      --attach_port 6379 \
+                      --attach_as_replica False
+                  done
+
+                  echo "Cluster formation complete - redistributing slots evenly..."
+
+                  # Total slots
+                  TOTAL_SLOTS=16384
+                  NUM_MASTERS=${#NODES[@]}
+                  SLOTS_PER_MASTER=$((TOTAL_SLOTS / NUM_MASTERS))
+                  EXTRA_SLOTS=$((TOTAL_SLOTS % NUM_MASTERS))
+
+                  # Calculate slot ranges for each master
+                  START=0
+                  for i in "${!NODES[@]}"; do
+                    NODE=${NODES[$i]}
+                    END=$((START + SLOTS_PER_MASTER - 1))
+                    # Assign extra slots to the first few masters if TOTAL_SLOTS not divisible evenly
+                    if [ $i -lt $EXTRA_SLOTS ]; then
+                      END=$((END + 1))
+                    fi
+
+                    if [ "$NODE" != "$FIRST_NODE" ]; then
+                      echo "Moving slots $START-$END from $FIRST_NODE to $NODE..."
+                      python3 /tmp/cluster_mgr.py \
+                        --action=move \
+                        --target_host $FIRST_NODE \
+                        --attach_host $NODE \
+                        --slot_start $START \
+                        --slot_end $END \
+                        --target_port 6379 \
+                        --attach_port 6379
+                    fi
+
+                    START=$((END + 1))
+                  done
+
               else
                   echo "[INFO] Node $FIRST_NODE already configured, skipping initial config"
               fi
-
-              echo "Attaching remaining nodes..."
-              for node in "${NODES[@]:1}"; do
-                echo "Attaching $node as master..."
-                python3 /tmp/cluster_mgr.py \
-                  --action=attach \
-                  --target_host $FIRST_NODE \
-                  --target_port 6379 \
-                  --attach_host $node \
-                  --attach_port 6379 \
-                  --attach_as_replica False
-              done
 
               echo "Dragonfly cluster formation complete!"
       restartPolicy: OnFailure
