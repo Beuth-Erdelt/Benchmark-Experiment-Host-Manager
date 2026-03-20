@@ -124,7 +124,8 @@ spec:
             else
               MASTER="${STATEFULSET_NAME}-0.${BEXHOMA_WORKER_SERVICE}:6379"
               echo "Starting as REPLICA of $MASTER"
-              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --replicaof=$MASTER
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080
+              # --replicaof=$MASTER
             fi
         env:
           - name: POD_NAME
@@ -255,6 +256,7 @@ spec:
               PY
               )
 
+              ALREADY_CONFIGURED="no"
               #echo "Configuring first pod as initial master..."
               if [ "$ALREADY_CONFIGURED" = "no" ]; then
                   echo "Configuring first pod as initial master with pre-assigned slots..."
@@ -263,7 +265,8 @@ spec:
                   python3 /tmp/cluster_mgr.py \
                       --action=config_single_remote \
                       --target_host $FIRST_NODE \
-                      --target_port $PORT
+                      --target_port $PORT \
+                      --num_masters=3 #--replicas_per_master=1
 
                   echo "Attaching remaining nodes..."
                   for node in "${NODES[@]:1}"; do
@@ -273,8 +276,7 @@ spec:
                       --target_host $FIRST_NODE \
                       --target_port 6379 \
                       --attach_host $node \
-                      --attach_port 6379 \
-                      --attach_as_replica False
+                      --attach_port 6379 
                   done
 
                   echo "Cluster formation complete - redistributing slots evenly..."
@@ -296,9 +298,9 @@ spec:
                     fi
 
                     if [ "$NODE" != "$FIRST_NODE" ]; then
-                      echo "Moving slots $START-$END from $FIRST_NODE to $NODE..."
+                      echo "Migrating slots $START-$END from $FIRST_NODE to $NODE..."
                       python3 /tmp/cluster_mgr.py \
-                        --action=move \
+                        --action=migrate \
                         --target_host $FIRST_NODE \
                         --attach_host $NODE \
                         --slot_start $START \
