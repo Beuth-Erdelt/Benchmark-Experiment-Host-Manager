@@ -48,6 +48,12 @@ spec:
       containers:
       - name: dbms
         image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
+        imagePullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - |
+            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=16GiB
         ports:
           - containerPort: 6379
         ports:
@@ -73,7 +79,7 @@ spec:
           #    - ALL
           readOnlyRootFilesystem: false
         resources:
-          limits: {cpu: 16000m, memory: 128Gi}
+          limits: {cpu: 16000m, memory: 16Gi}
           requests: {cpu: 1000m, memory: 1Gi}
           #, ephemeral-storage: "1536Gi"}
 ---
@@ -120,11 +126,11 @@ spec:
 
             if [ "$ORDINAL" -eq 0 ]; then
               echo "Starting as MASTER ($POD_NAME)"
-              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --maxmemory=128GiB
             else
               MASTER="${STATEFULSET_NAME}-0.${BEXHOMA_WORKER_SERVICE}:6379"
               echo "Starting as REPLICA of $MASTER"
-              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --maxmemory=128GiB
               # --replicaof=$MASTER
             fi
         env:
@@ -142,8 +148,8 @@ spec:
           - containerPort: 8080
             name: admin
         resources:
-          limits: {cpu: 16000m, memory: 64Gi}
-          requests: {cpu: 16000m, memory: 64Gi}
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 16000m, memory: 128Gi}
         livenessProbe:
           tcpSocket:
             port: 6379
@@ -198,16 +204,12 @@ spec:
             - |
               set -e
 
+              apt-get update && \
+                apt-get install -y --no-install-recommends redis-tools jq ca-certificates && \
+                rm -rf /var/lib/apt/lists/*
+
               echo "Installing dependencies..."
               pip install --no-cache-dir redis requests
-
-              echo "Downloading cluster_mgr.py..."
-              python3 - <<EOF
-              import requests
-              url = "https://raw.githubusercontent.com/dragonflydb/dragonfly/main/tools/cluster_mgr.py"
-              r = requests.get(url)
-              open("/tmp/cluster_mgr.py", "w").write(r.text)
-              EOF
 
               echo "Parsing BEXHOMA_STORE_LIST..."
               # Convert comma to space if needed
@@ -232,90 +234,80 @@ spec:
               print("All nodes reachable")
               PY
 
-              FIRST_NODE=${NODES[0]}
               PORT=6379
 
-              ALREADY_CONFIGURED=$(python3 - <<PY
-              import os
-              import redis
-              FIRST_NODE = os.environ.get("FIRST_NODE", "$FIRST_NODE")
-              PORT = int(os.environ.get("PORT", "$PORT"))
+              # Read the actual node IDs from each node
+              declare -A NODE_IDS
+              for NODE in "${NODES[@]}"; do
+                #ID=$(redis-cli -h "$NODE" -p "$PORT" CLUSTER MYID | awk '$2 ~ /myself/ {print $1}')
+                ID=$(redis-cli -h "$NODE" -p "$PORT" CLUSTER MYID)
+                if [[ -z "$ID" ]]; then
+                  echo "Failed to read node ID from $NODE"
+                  exit 1
+                fi
+                NODE_IDS[$NODE]=$ID
+                echo "Node $NODE has ID ${NODE_IDS[$NODE]}"
+              done
 
-              r = redis.Redis(host=FIRST_NODE, port=PORT, decode_responses=True)
-              try:
-                  info = r.cluster("INFO")
-                  cluster_state = info.get("cluster_state", "fail")
-                  slots_assigned = int(info.get("cluster_slots_assigned", 0))
-                  if cluster_state == "ok" and slots_assigned > 0:
-                      print("yes")
-                  else:
-                      print("no")
-              except redis.exceptions.ResponseError:
-                  # Cluster not yet configured
-                  print("no")
-              PY
-              )
+              FIRST_NODE=${NODES[0]}
+              TOTAL_SLOTS=16384
+              NUM_MASTERS=${#NODES[@]}
+              SLOTS_PER_MASTER=$((TOTAL_SLOTS / NUM_MASTERS))
+              EXTRA_SLOTS=$((TOTAL_SLOTS % NUM_MASTERS))
 
-              ALREADY_CONFIGURED="no"
-              #echo "Configuring first pod as initial master..."
-              if [ "$ALREADY_CONFIGURED" = "no" ]; then
-                  echo "Configuring first pod as initial master with pre-assigned slots..."
+              echo "Building cluster config..."
 
-                  # Pass the full slot assignment to the first node
-                  python3 /tmp/cluster_mgr.py \
-                      --action=config_single_remote \
-                      --target_host $FIRST_NODE \
-                      --target_port $PORT \
-                      --num_masters=3 #--replicas_per_master=1
+              CONFIG_FILE=/tmp/cluster_config.json
+              echo "[" > $CONFIG_FILE
 
-                  echo "Attaching remaining nodes..."
-                  for node in "${NODES[@]:1}"; do
-                    echo "Attaching $node as master..."
-                    python3 /tmp/cluster_mgr.py \
-                      --action=attach \
-                      --target_host $FIRST_NODE \
-                      --target_port 6379 \
-                      --attach_host $node \
-                      --attach_port 6379 
-                  done
+              START=0
+              for i in "${!NODES[@]}"; do
+                NODE=${NODES[$i]}
 
-                  echo "Cluster formation complete - redistributing slots evenly..."
+                END=$((START + SLOTS_PER_MASTER - 1))
+                if [ $i -lt $EXTRA_SLOTS ]; then
+                  END=$((END + 1))
+                fi
 
-                  # Total slots
-                  TOTAL_SLOTS=16384
-                  NUM_MASTERS=${#NODES[@]}
-                  SLOTS_PER_MASTER=$((TOTAL_SLOTS / NUM_MASTERS))
-                  EXTRA_SLOTS=$((TOTAL_SLOTS % NUM_MASTERS))
+                cat >> $CONFIG_FILE <<EOF
+              {
+                "master": { "id": "${NODE_IDS[$NODE]}", "ip": "$NODE", "port": $PORT },
+                "slot_ranges": [ { "start": $START, "end": $END } ],
+                "replicas": []
+              }
+              EOF
 
-                  # Calculate slot ranges for each master
-                  START=0
-                  for i in "${!NODES[@]}"; do
-                    NODE=${NODES[$i]}
-                    END=$((START + SLOTS_PER_MASTER - 1))
-                    # Assign extra slots to the first few masters if TOTAL_SLOTS not divisible evenly
-                    if [ $i -lt $EXTRA_SLOTS ]; then
-                      END=$((END + 1))
-                    fi
+                if [ $i -lt $((NUM_MASTERS-1)) ]; then
+                  echo "," >> $CONFIG_FILE
+                fi
 
-                    if [ "$NODE" != "$FIRST_NODE" ]; then
-                      echo "Migrating slots $START-$END from $FIRST_NODE to $NODE..."
-                      python3 /tmp/cluster_mgr.py \
-                        --action=migrate \
-                        --target_host $FIRST_NODE \
-                        --attach_host $NODE \
-                        --slot_start $START \
-                        --slot_end $END \
-                        --target_port 6379 \
-                        --attach_port 6379
-                    fi
+                START=$((END + 1))
+              done
 
-                    START=$((END + 1))
-                  done
+              echo "]" >> $CONFIG_FILE
 
-              else
-                  echo "[INFO] Node $FIRST_NODE already configured, skipping initial config"
-              fi
+              echo "Config:"
+              cat $CONFIG_FILE
+
+              echo "Submitting cluster config..."
+              CONFIG_JSON=$(jq -c . /tmp/cluster_config.json)  # compact JSON using jq
+
+              for node in "${NODES[@]}"; do
+                  host=${node%%:*}
+                  port=${node##*:}
+                  [ "$host" = "$port" ] && port=6379
+
+                  echo "[INFO] Pushing cluster config to $host:$port"
+                  redis-cli -h "$host" -p "$port" DFLYCLUSTER CONFIG "$CONFIG_JSON"
+              done
+
+              echo "Verify:"
+              echo "redis-cli -h ${NODES[0]} -p $PORT CLUSTER SLOTS"
+              redis-cli -h ${NODES[0]} -p $PORT CLUSTER SLOTS
+              redis-cli -h ${NODES[0]} -p $PORT CLUSTER INFO
+              redis-cli -h ${NODES[0]} -p $PORT CLUSTER NODES
 
               echo "Dragonfly cluster formation complete!"
       restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 180
   ttlSecondsAfterFinished: 300  # Deletes the job and pods 300 seconds after completion

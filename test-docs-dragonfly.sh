@@ -80,8 +80,8 @@ wait_process "ycsb"
 ####################################################
 
 
-# Cluster of 3 Redis instances
-nohup python ycsb.py -tr \
+# Cluster of 3 Dragonfly instances
+nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -104,14 +104,14 @@ nohup python ycsb.py -tr \
 
 wait_process "ycsb"
 
-# Cluster of 3 Redis instances and replication
+# Cluster of 3 Dragonfly instances and replication
 nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
   -nwr 1 \
   --workload a \
-  -dbms Redis \
+  -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -123,13 +123,13 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_3.log &
 
 
 wait_process "ycsb"
 
 
-# Single host Redis with PVC
+# Single host Dragonfly with PVC
 nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
@@ -160,7 +160,7 @@ nohup python ycsb.py -tr \
   -sfo 10 \
   -nw 3 \
   --workload a \
-  -dbms Redis \
+  -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
@@ -173,7 +173,8 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_5.log &
+  -rr 64Gi -lr 64Gi \
+  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_5.log &
 
 
 wait_process "ycsb"

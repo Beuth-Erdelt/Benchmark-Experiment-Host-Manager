@@ -45,8 +45,13 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.30.3
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
         imagePullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - |
+            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=128GiB
         env:
         #- name: DFLY_MAXMEMORY_POLICY
         #  value: "allkeys-lru"
