@@ -1526,7 +1526,7 @@ scrape_configs:
                     worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=worker_name, worker_number=worker)
                     list_of_workers_pvcs.append(worker_full_name)
                 self.deployment_infos['statefulset'][stateful_set]['pvc'] = list_of_workers_pvcs
-        #print(self.deployment_infos)
+        self.logger.debug(self.deployment_infos)
         # get labels from existing (i.e., loaded pvc)
         labels_on_existing_pvc = get_labels_from_loaded_pvc()
         if use_storage and not use_ramdisk:
