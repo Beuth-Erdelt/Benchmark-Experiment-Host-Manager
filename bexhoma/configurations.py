@@ -3745,7 +3745,7 @@ scrape_configs:
                                 initscript_filled.write(data)
                             #self.experiment.experimentfile_upload(filename=filename) # does not work, because it changes filename
                             self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
-                            stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+                            stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
                             #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
             return
         if self.num_tenants > 0 and self.tenant_per == 'database':
@@ -3764,7 +3764,7 @@ scrape_configs:
             with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
             self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
-            stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+            stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
             #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
         if len(self.ddl_parameters):
             #for script in self.initscript:
@@ -3780,7 +3780,7 @@ scrape_configs:
                         filename_in_container = scriptfolder+script
                         filename_in_resultfolder = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
                         self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
-                        stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+                        stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
                         #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
                         filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
                         filename_base, file_extension = os.path.splitext(script)
@@ -3800,7 +3800,7 @@ scrape_configs:
                     #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_source, pod_name=self.pod_sut, to_name=filename_in_container))
                     shutil.copy(filename_source, filename_in_resultfolder)
                     self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
-                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
     def attach_worker(self):
         """
         Attaches worker nodes to the master of the sut.
