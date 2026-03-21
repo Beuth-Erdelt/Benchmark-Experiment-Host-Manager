@@ -60,6 +60,10 @@ spec:
         ports:
           - containerPort: 6379
             name: server
+        lifecycle:
+          preStop:
+            exec:
+              command: ["redis-cli", "SAVE"]
         livenessProbe:
           tcpSocket:
             port: 6379

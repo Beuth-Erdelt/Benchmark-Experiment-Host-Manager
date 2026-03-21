@@ -53,7 +53,7 @@ spec:
           - sh
           - -c
           - |
-            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=16GiB
+            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=64GiB
         ports:
           - containerPort: 6379
         ports:
@@ -198,6 +198,10 @@ spec:
               value: "3"          # number of master pods
             - name: REPLICAS_PER_MASTER
               value: "0"          # number of replicas per master
+          lifecycle:
+            preStop:
+              exec:
+                command: ["redis-cli", "SAVE"]
           command:
             - bash
             - -c
