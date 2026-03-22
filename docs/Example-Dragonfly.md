@@ -1055,23 +1055,191 @@ YCSB SF=1
 In `cluster.config` there is a section:
 
 ```python
-'Dragonfly': {
-    'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
-    'delay_prepare': 0,
-    'attachWorker': '',
-    'template': {
-        'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
-        'auth': ["root", ""],
-    },
-    'logfile': '/var/log/redis/redis-server.log',
-    'datadir': '/data',
-    'priceperhourdollar': 0.0,
-},
+        'Dragonfly': {
+            'loadData': 'redis-cli < {scriptname}',
+            #'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
+            'delay_prepare': 0,
+            'attachWorker': '',
+            'template': {
+                'version': 'xxx',
+                'alias': 'Key-Value-1',
+                'docker_alias': 'KV1',
+                'auth': ["root", ""],
+            },
+            'logfile': '/var/log/redis/redis-server.log',
+            'datadir': '/data',
+            'priceperhourdollar': 0.0,
+            'monitor': {
+                'sut': {
+                    'metrics': 'dragonfly',
+                    'discovery': True,
+                    'headless': True,
+                    'discovery_config': """
+  - job_name: 'dragonfly-pods'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["{namespace}"]
+    relabel_configs:
+      # Only select pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;sut;Dragonfly
+        action: keep
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:6379'
+        action: replace
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep"""
+                },
+            },
+        },
 ```
 
 Notice how this does not have a JDBC section (as Dragonfly does not support this).
 
+This section is for a single host deployment.
+For a cluster there is another section:
+```python
+        'DragonflyCluster': {
+            'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
+            'delay_prepare': 0,
+            'attachWorker': '',
+            'template': {
+                'version': 'xxx',
+                'alias': 'Key-Value-1',
+                'docker_alias': 'KV1',
+                'auth': ["root", ""],
+            },
+            'logfile': '/var/log/redis/redis-server.log',
+            'datadir': '/data',
+            'priceperhourdollar': 0.0,
+            'monitor': {
+                'worker': {
+                    'metrics': 'dragonfly',
+                    'discovery': True,
+                    'headless': True,
+                    'discovery_config': """
+  - job_name: 'dragonfly-pods'
+    scrape_interval: {prometheus_interval}
+    scrape_timeout: {prometheus_interval}
+    metrics_path: /metrics
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["{namespace}"]
+    relabel_configs:
+      # Only select pods by labels
+      - source_labels: [__meta_kubernetes_pod_label_app,
+                        __meta_kubernetes_pod_label_component,
+                        __meta_kubernetes_pod_label_dbms]
+        regex: bexhoma;worker;DragonflyCluster
+        action: keep
+      # Map pod IP -> address:port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '$1:6379'
+        action: replace
+      # Optional: rename instance label to pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: instance
+      # Optional: drop pods that are not running
+      - source_labels: [__meta_kubernetes_pod_phase]
+        regex: Running
+        action: keep"""
+                },
+            },
+        },
+```
 
-
+Both sections contain a reference to (the same) dict of application metrics, that can be collected if activated.
+As of bexhoma v0.9.4, this is (see demo configuration):
+```python
+'dragonfly': {
+    'metrics': {
+        'dragonfly_reply_total': {
+            # Gesamtzahl aller an Clients gesendeten Antworten (Replies)
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(dragonfly_reply_total)',
+            'title': 'Replies Sent [count]'
+        },
+        'dragonfly_memory_used_bytes': {
+            # Aktuell genutzter Arbeitsspeicher des Servers
+            'type': 'application',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(dragonfly_memory_used_bytes)/1024/1024/1024',
+            'title': 'Memory Usage [Gi]'
+        },
+        'dragonfly_commands_processed_total': {
+            # Gesamtzahl aller verarbeiteten Kommandos (Request Load)
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(rate(dragonfly_commands_processed_total[5m]))',
+            'title': 'Processed Commands [per second]'
+        },
+        'dragonfly_net_input_bytes_total': {
+            # Eingehende Netzwerkdaten von Clients
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(rate(dragonfly_net_input_bytes_total[5m]))/1024/1024',
+            'title': 'Network Input [MB/sec]'
+        },
+        'dragonfly_connected_replica_lag_records': {
+            # Rückstand eines Replicas in Datensätzen
+            'type': 'application',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(dragonfly_connected_replica_lag_records)',
+            'title': 'Replica Lag [records]'
+        },
+        'dragonfly_moved_errors_total': {
+            # Anzahl der Slot-Migrationsfehler im Cluster
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(dragonfly_moved_errors_total)',
+            'title': 'Cluster Slot Moved Errors [count]'
+        },
+        'dragonfly_replication_streaming_bytes': {
+            # Speicherverbrauch für laufende Streaming-Replikation
+            'type': 'application',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(dragonfly_replication_streaming_bytes)/1024/1024/1024',
+            'title': 'Replication Streaming Memory [Gi]'
+        },
+        'dragonfly_replication_full_sync_bytes': {
+            # Speicherverbrauch während voller Synchronisation (Full Sync)
+            'type': 'application',
+            'active': True,
+            'metric': 'gauge',
+            'query': 'sum(dragonfly_replication_full_sync_bytes)/1024/1024/1024',
+            'title': 'Full Sync Replication Memory [Gi]'
+        },
+        'dragonfly_replication_psync_count': {
+            # Anzahl der PSYNC-Replikationsereignisse
+            'type': 'application',
+            'active': True,
+            'metric': 'counter',
+            'query': 'sum(dragonfly_replication_psync_count)',
+            'title': 'PSync Events [count]'
+        },
+    }
+},
+```
