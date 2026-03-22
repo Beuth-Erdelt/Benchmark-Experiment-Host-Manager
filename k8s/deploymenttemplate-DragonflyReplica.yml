@@ -1,0 +1,308 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6379}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
+  selector: #{app: bexhoma, component: worker, configuration: default, experiment: default}
+    statefulset.kubernetes.io/pod-name: bexhoma-worker-0 # always write to first master
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-dragonfly
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      containers:
+      - name: dbms
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
+        imagePullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - |
+            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=64GiB
+        ports:
+          - containerPort: 6379
+        ports:
+          - containerPort: 6379
+            name: server
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 1000
+          #runAsGroup: 1000
+          #capabilities:
+          #  drop:
+          #    - ALL
+          readOnlyRootFilesystem: false
+        resources:
+          limits: {cpu: 16000m, memory: 16Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+          #, ephemeral-storage: "1536Gi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+  annotations:
+spec:
+  ports:
+  - {port: 6379, protocol: TCP, name: port-dbms, targetPort: 6379}
+  - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
+  publishNotReadyAddresses: true
+  clusterIP: None
+  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  serviceName: bexhoma-workers
+  replicas: 3
+  selector:
+    matchLabels:
+      {app: bexhoma, component: worker, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      nodeSelector:
+      tolerations:
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: dbms
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
+        command:
+          - sh
+          - -c
+          - |
+            ORDINAL=${POD_NAME##*-}
+
+            if [ "$ORDINAL" -eq 0 ]; then
+              echo "Starting as MASTER ($POD_NAME)"
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --maxmemory=128GiB
+            else
+              MASTER="${STATEFULSET_NAME}-0.${BEXHOMA_WORKER_SERVICE}:6379"
+              echo "Starting as REPLICA of $MASTER"
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --maxmemory=128GiB --replicaof=$MASTER
+            fi
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: STATEFULSET_NAME
+            value: bexhoma-worker
+          - name: BEXHOMA_WORKER_SERVICE
+            value: bexhoma-workers
+        ports:
+          - containerPort: 6379
+            name: server
+          - containerPort: 8080
+            name: admin
+        resources:
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 16000m, memory: 128Gi}
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: bxw
+          mountPath: /data
+      volumes:
+      - name: bxw
+        persistentVolumeClaim: {claimName: bxw}
+  volumeClaimTemplates:
+  - metadata:
+      name: bxw
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-init
+  labels: {app: bexhoma, component: init, configuration: default, experiment: default}
+spec:
+  template:
+    metadata:
+      labels: {app: bexhoma, component: init, configuration: default, experiment: default}
+    spec:
+      containers:
+        - name: dbms
+          image: python:3.11-slim
+          env:
+            - name: BEXHOMA_STORE_LIST
+              value: "dragonfly-0.dragonfly-cluster-headless,dragonfly-1.dragonfly-cluster-headless,dragonfly-2.dragonfly-cluster-headless"
+            - name: NUM_MASTERS
+              value: "3"          # number of master pods
+            - name: REPLICAS_PER_MASTER
+              value: "0"          # number of replicas per master
+          lifecycle:
+            preStop:
+              exec:
+                command: ["redis-cli", "SAVE"]
+          command:
+            - bash
+            - -c
+            - |
+              set -e
+
+              apt-get update && \
+                apt-get install -y --no-install-recommends redis-tools jq ca-certificates && \
+                rm -rf /var/lib/apt/lists/*
+
+              echo "Installing dependencies..."
+              pip install --no-cache-dir redis requests
+
+              echo "Downloading cluster_mgr.py..."
+              python3 - <<EOF
+              import requests
+              url = "https://raw.githubusercontent.com/dragonflydb/dragonfly/main/tools/cluster_mgr.py"
+              r = requests.get(url)
+              open("/tmp/cluster_mgr.py", "w").write(r.text)
+              EOF
+
+              echo "Parsing BEXHOMA_STORE_LIST..."
+              # Convert comma to space if needed
+              NODES_RAW=$(echo "$BEXHOMA_STORE_LIST" | tr ',' ' ')
+              NODES=($NODES_RAW)
+
+              echo "Waiting for Dragonfly pods..."
+              python3 - <<PY
+              import socket
+              import time
+              nodes = '${NODES_RAW}'
+              for node in nodes.split():
+                  host = node.split(":")[0] if ":" in node else node
+                  port = 6379
+                  print(f"Waiting for {host}:{port} ...")
+                  while True:
+                      try:
+                          with socket.create_connection((host, port), timeout=2):
+                              break
+                      except Exception:
+                          time.sleep(2)
+              print("All nodes reachable")
+              PY
+
+              PORT=6379
+              FIRST_NODE=${NODES[0]}
+              PORT=6379
+
+              ALREADY_CONFIGURED=$(python3 - <<PY
+              import os
+              import redis
+              FIRST_NODE = os.environ.get("FIRST_NODE", "$FIRST_NODE")
+              PORT = int(os.environ.get("PORT", "$PORT"))
+
+              r = redis.Redis(host=FIRST_NODE, port=PORT, decode_responses=True)
+              try:
+                  info = r.cluster("INFO")
+                  cluster_state = info.get("cluster_state", "fail")
+                  slots_assigned = int(info.get("cluster_slots_assigned", 0))
+                  if cluster_state == "ok" and slots_assigned > 0:
+                      print("yes")
+                  else:
+                      print("no")
+              except redis.exceptions.ResponseError:
+                  # Cluster not yet configured
+                  print("no")
+              PY
+              )
+
+              #echo "Configuring first pod as initial master..."
+              if [ "$ALREADY_CONFIGURED" = "no" ]; then
+                  echo "Configuring first pod as initial master with pre-assigned slots..."
+
+                  # Pass the full slot assignment to the first node
+                  python3 /tmp/cluster_mgr.py \
+                      --action=config_single_remote \
+                      --target_host $FIRST_NODE \
+                      --target_port $PORT \
+                      --num_masters 3
+
+                  echo "Attaching remaining nodes..."
+                  for node in "${NODES[@]:1}"; do
+                    echo "Attaching $node as master..."
+                    python3 /tmp/cluster_mgr.py \
+                      --action=attach \
+                      --target_host $FIRST_NODE \
+                      --target_port 6379 \
+                      --attach_host $node \
+                      --attach_port 6379 \
+                      --attach_as_replica False
+                  done
+              else
+                  echo "[INFO] Node $FIRST_NODE already configured, skipping initial config"
+              fi
+
+              echo "Verify:"
+              echo "redis-cli -h ${NODES[0]} -p $PORT CLUSTER SLOTS"
+              redis-cli -h ${NODES[0]} -p $PORT CLUSTER SLOTS
+              redis-cli -h ${NODES[0]} -p $PORT CLUSTER INFO
+              redis-cli -h ${NODES[0]} -p $PORT CLUSTER NODES
+
+              echo "Dragonfly cluster formation complete!"
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 180
+  ttlSecondsAfterFinished: 300  # Deletes the job and pods 300 seconds after completion

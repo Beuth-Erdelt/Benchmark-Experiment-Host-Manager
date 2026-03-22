@@ -65,19 +65,13 @@ nohup python ycsb.py -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  -m -mc \
+  -m -mc -ma \
   -rr 64Gi -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_1.log &
 
 
 wait_process "ycsb"
 
-
-
-
-####################################################
-############### Not implemented yet! ###############
-####################################################
 
 
 # Cluster of 3 Dragonfly instances
@@ -97,7 +91,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  -m -mc \
+  -m -mc -ma \
   -rr 64Gi -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_2.log &
 
@@ -122,7 +116,7 @@ nohup python ycsb.py -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  -m -mc \
+  -m -mc -ma \
   run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_3.log &
 
 
@@ -145,7 +139,7 @@ nohup python ycsb.py -tr \
   -nbf 4 \
   -ne 1 \
   -nc 2 \
-  -m -mc \
+  -m -mc -ma \
   -rst shared -rss 50Gi -rsr \
   -rr 64Gi -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_4.log &
@@ -171,7 +165,7 @@ nohup python ycsb.py -tr \
   -nbf 4 \
   -ne 1 \
   -nc 2 \
-  -m -mc \
+  -m -mc -ma \
   -rst shared -rss 50Gi -rsr \
   -rr 64Gi -lr 64Gi \
   run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_5.log &

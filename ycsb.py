@@ -921,7 +921,7 @@ if __name__ == '__main__':
                 if ("Dragonfly" in args.dbms or len(args.dbms) == 0):
                     # Dragonfly
                     name_format = 'Dragonfly-{threads}-{pods}-{target}'
-                    num_worker_inc_replicas = num_worker * (1+num_worker_replicas)
+                    num_worker_inc_replicas = num_worker #* (1+num_worker_replicas)
                     if num_worker > 0:
                         docker = 'DragonflyCluster'
                     else:
@@ -931,9 +931,10 @@ if __name__ == '__main__':
                     if num_worker > 0:
                         #config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
                         config.monitoring_sut = False # should not be monitored since only dummy
-                        BEXHOMA_DBMS_TYPE = "redis-cluster"
-                    else:
-                        BEXHOMA_DBMS_TYPE = "redis"
+                        if num_worker_replicas > 0:
+                            config.sut_template = "deploymenttemplate-DragonflyReplica.yml"
+                        else:
+                            BEXHOMA_DBMS_TYPE = "redis-cluster" # multi-master aware client, finds correct master for each write
                     config.set_storage(
                         storageConfiguration = 'dragonfly'
                         )
