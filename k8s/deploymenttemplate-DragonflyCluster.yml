@@ -114,7 +114,7 @@ spec:
     spec:
       nodeSelector:
       tolerations:
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
         image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
