@@ -28,12 +28,12 @@ ENV PYTHON_VERSION=3.12.8
 ENV PYTHON_SRC=https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
 
 
-RUN apt update
-RUN apt install default-jre -y
+RUN apt-get update && apt-get install -y git
+RUN apt-get install default-jre -y
 
 # only needed in slim releases
-# RUN apt install git -y
-# RUN apt install build-essential -y
+# RUN apt-get install git -y
+# RUN apt-get install build-essential -y
 
 RUN pip uninstall dbmsbenchmarker -y
 RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.20
@@ -50,7 +50,7 @@ WORKDIR /usr/src/app/DBMS-Benchmarker
 
 #COPY . .
 
-RUN apt install nano -y
+RUN apt-get install nano -y
 
 SHELL ["/bin/bash", "-c"]
 
@@ -62,7 +62,7 @@ RUN python -m pip install virtualenv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN apt install git
+#RUN apt install git
 RUN pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.20
 
 RUN pip install jupyter
