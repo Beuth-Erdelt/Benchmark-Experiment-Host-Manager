@@ -18,15 +18,37 @@
 # Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker11"
+# Config nodes and paths
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+
+# Check for file
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
+
+# Check for directories
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
+
 
 if ! prepare_logs; then
     echo "Error: prepare_logs failed with code $?"
     exit 1
 fi
+echo "Passed: $LOG_DIR/ found."
+
+echo "Checks passed. Proceeding..."
 
 # Wait for all previous jobs to complete
 wait_process "tpch"
@@ -34,6 +56,12 @@ wait_process "tpcds"
 wait_process "hammerdb"
 wait_process "benchbase"
 wait_process "ycsb"
+
+
+
+
+
+
 
 
 

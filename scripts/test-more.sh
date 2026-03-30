@@ -15,31 +15,40 @@
 ######################################################################################
 
 
+# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-BEXHOMA_NODE_SUT="cl-worker21"
+
+# Config nodes and paths
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 
-mkdir -p $LOG_DIR
+# Check for file
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
 
-# Define the wait_process function
-wait_process() {
-    local process_name=$1
+# Check for directories
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
 
-    # Wait until the process with the name passed as an argument has terminated
-    while ps aux | grep "[p]ython $process_name.py" > /dev/null; do
-        # Process is still running, wait for 5 seconds
-        echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for process python $process_name.py to terminate..."
-        sleep 60
-    done
 
-    echo "$(date +"%Y-%m-%d %H:%M:%S"): Process python $process_name.py has terminated."
-}
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+echo "Passed: $LOG_DIR/ found."
 
-# Example usage
-#wait_process "tpch"
-
+echo "Checks passed. Proceeding..."
 
 # Wait for all previous jobs to complete
 wait_process "tpch"
@@ -47,6 +56,7 @@ wait_process "tpcds"
 wait_process "hammerdb"
 wait_process "benchbase"
 wait_process "ycsb"
+
 
 
 
