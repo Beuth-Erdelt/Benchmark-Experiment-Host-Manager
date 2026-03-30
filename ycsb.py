@@ -39,7 +39,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB', 'Dragonfly'], default=[], nargs='*')
     parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
     parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
@@ -918,6 +918,126 @@ if __name__ == '__main__':
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
                     #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                if ("Dragonfly" in args.dbms or len(args.dbms) == 0):
+                    # Dragonfly
+                    name_format = 'Dragonfly-{threads}-{pods}-{target}'
+                    num_worker_inc_replicas = num_worker #* (1+num_worker_replicas)
+                    if num_worker > 0:
+                        docker = 'DragonflyCluster'
+                    else:
+                        docker = 'Dragonfly'
+                    config = configurations.ycsb(experiment=experiment, docker=docker, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker_inc_replicas)
+                    BEXHOMA_DBMS_TYPE = "redis"
+                    if num_worker > 0:
+                        #config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
+                        config.monitoring_sut = False # should not be monitored since only dummy
+                        if num_worker_replicas > 0:
+                            config.sut_template = "deploymenttemplate-DragonflyReplica.yml"
+                        else:
+                            BEXHOMA_DBMS_TYPE = "redis-cluster" # multi-master aware client, finds correct master for each write
+                    config.set_storage(
+                        storageConfiguration = 'dragonfly'
+                        )
+                    config.set_ddl_parameters(
+                        num_worker_replicas = num_worker_replicas,
+                        num_worker_shards = num_worker_shards,
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        SF = SF,
+                        BEXHOMA_SYNCH_LOAD = 1,
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_STATUS = 1,
+                        YCSB_WORKLOAD = workload,
+                        YCSB_ROWS = ycsb_rows,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        YCSB_BATCHSIZE = batchsize,
+                        YCSB_STATUS_INTERVAL = scaling_logging,
+                        BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        YCSB_INSERTORDER = extra_insert_order,
+                        )
+                    def get_worker_name(self, component='worker'):
+                        """
+                        Returns a template for the worker names.
+                        Default is component name is 'worker' for a bexhoma managed DBMS.
+                        If PVC are used, this must be changed, since the experiment code as part of the worker names would imply the PVC also are only valid for the concrete experiment.
+                        This is used for example to find the pods of the workers in order to get the host infos (CPU, RAM, node name, ...).
+                        For Redis, this is shortend to bx-w- in the beginning, since Redis has a limitation for hostnames.
+
+                        :return: name template for worker pods
+                        """
+                        if self.storage['storageConfiguration']:
+                            storageConfiguration = self.storage['storageConfiguration']
+                        else:
+                            storageConfiguration = self.configuration
+                        # configure names
+                        if self.num_worker > 0:
+                            # we assume here, a stateful set is used
+                            # this means we do not want to have the experiment code as part of the names
+                            # this would imply there cannot be experiment independent pvcs
+                            self.experiment_name = self.storage_label#storageConfiguration
+                        else:
+                            self.experiment_name = self.code
+                        #name = self.generate_component_name(app=app, component=component, experiment=self.experiment_name, configuration=configuration)
+                        #name_worker = self.generate_component_name(app=app, component='worker', experiment=self.experiment_name, configuration=configuration)
+                        # test shorter names
+                        name_worker = self.generate_component_name(app="bx", component='w', experiment=self.experiment_name, configuration=storageConfiguration)
+                        #this works, but is long:
+                        #name_worker = self.generate_component_name(app=self.appname, component='worker', experiment=self.experiment_name, configuration=storageConfiguration)
+                        return name_worker
+                    config.get_worker_name = types.MethodType(get_worker_name, config)
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    """
+                                    print("benchmarking_target", benchmarking_target)
+                                    print("benchmarking_pods", benchmarking_pods)
+                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                    print("benchmarking_threads", benchmarking_threads)
+                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
+                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                    """
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        SF = SF,
+                                        BEXHOMA_SYNCH_LOAD = 1,
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_STATUS = 1,
+                                        YCSB_WORKLOAD = workload,
+                                        YCSB_ROWS = ycsb_rows,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        YCSB_BATCHSIZE = batchsize,
+                                        YCSB_STATUS_INTERVAL = scaling_logging,
+                                        BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
+                                        YCSB_INSERTORDER = extra_insert_order,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
                 if ("Redis" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
                     name_format = 'Redis-{threads}-{pods}-{target}'

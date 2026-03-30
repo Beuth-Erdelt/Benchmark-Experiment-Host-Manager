@@ -1,6 +1,6 @@
 #!/bin/bash
 ######################################################################################
-# Bash Script for Bexhoma Test Runs - Compare PostgreSQL with and without PGBouncer
+# Bash Script for Bexhoma Test Runs - Redis
 ######################################################################################
 #
 # This scripts starts a sequence of experiments with varying parameters.

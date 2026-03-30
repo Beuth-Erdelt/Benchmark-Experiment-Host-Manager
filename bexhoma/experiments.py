@@ -659,7 +659,7 @@ class default():
             except Exception as e:
                 return 1
             finally:
-                return 1
+                pass
         return 1
     def wait(self,
              sec,
@@ -723,7 +723,7 @@ class default():
 
         :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
         """
-        self.workload = kwargs
+        self.workload = {**self.workload, **kwargs}
     def set_querymanagement(self,
                             **kwargs):
         """
@@ -2479,7 +2479,7 @@ class default():
                 # remove only False rows
                 df = df[~(df == False).all(axis=1)]
                 #print(df)
-                print(df.to_markdown(index=True))
+                print(df.to_markdown(index=True, floatfmt=".2f"))
                 for error in list_error_queries:
                     numQuery = error[1:]        # remove the leading "Q""
                     list_errors = evaluate.get_error(numQuery)
@@ -2503,7 +2503,7 @@ class default():
                 # remove only False rows
                 df = df[~(df == False).all(axis=1)]
                 #print(df)
-                print(df.to_markdown(index=True))
+                print(df.to_markdown(index=True, floatfmt=".2f"))
             else:
                 print("No warnings")
         #####################
@@ -2516,7 +2516,7 @@ class default():
                 df.index = df.index.map(map_index_to_queryname)
                 #print(df)
                 df.index.names = ["DBMS"]
-                print(df.to_markdown(index=True))
+                print(df.to_markdown(index=True, floatfmt=".2f"))
                 num_of_queries = len(df.index)
         #####################
         if self.loading_is_active():
@@ -2540,7 +2540,7 @@ class default():
             #df.index.names = ["DBMS"]
             df = df.rename_axis(index="DBMS")
             #print(df)
-            print(df.to_markdown(index=True))
+            print(df.to_markdown(index=True, floatfmt=".2f"))
         #####################
         if self.benchmarking_is_active():
             print("\n### Geometric Mean of Medians of Timer Run [s]\n")
@@ -2550,7 +2550,7 @@ class default():
             df_geo_mean_runtime = df.copy()
             #print(df.round(2))
             df.index.names = ["DBMS"]
-            print(df.round(2).to_markdown(index=True))
+            print(df.round(2).to_markdown(index=True, floatfmt=".2f"))
         #####################
         if self.benchmarking_is_active():
             print("\n### Power@Size ((3600*SF)/(geo times))\n")
@@ -2563,7 +2563,7 @@ class default():
             df_power = df.copy()
             #print(df.round(2))
             df.index.names = ["DBMS"]
-            print(df.round(2).to_markdown(index=True))
+            print(df.round(2).to_markdown(index=True, floatfmt=".2f"))
         #####################
         if self.benchmarking_is_active():
             # aggregate time and throughput for parallel pods
@@ -2586,12 +2586,12 @@ class default():
                 #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
                 df_time['num_experiment'] = int(c['parameter']['numExperiment'])
                 df_time['num_client'] = int(c['parameter']['client'])
-                df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
-                df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
+                df_time['benchmark_start'] = int(eva['times']['total'][c['name']]['time_start'])
+                df_time['benchmark_end'] = int(eva['times']['total'][c['name']]['time_end'])
                 df_merged_time = pd.concat([df_merged_time, df_time])
             df_time = df_merged_time.sort_index()
-            benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
-            benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
+            benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client'])[['benchmark_start']].min(numeric_only=True)
+            benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client'])[['benchmark_end']].max(numeric_only=True)
             df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
             df_benchmark.columns = ['time [s]']
             benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
@@ -2604,13 +2604,13 @@ class default():
             df_benchmark.rename_axis(index_names, inplace=True)
             df_benchmark.index = df_benchmark.index.get_level_values(0)
             #print(df_benchmark)
-            print(df_benchmark.to_markdown(index=True))
+            print(df_benchmark.to_markdown(index=True, floatfmt=".2f"))
         #####################
         if self.benchmarking_is_active():
             print("\n### Workflow\n")
             #print(df_time)
             df_time.index.names = ["DBMS"]
-            print(df_time.to_markdown(index=True))
+            print(df_time.to_markdown(index=True, floatfmt=".2f"))
             workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df_time)
             #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
             workflow_planned = self.workload['workflow_planned']
@@ -2632,7 +2632,7 @@ class default():
                 print("\n#### "+title+"\n")
                 #print(metrics)
                 metrics.index.names = ["DBMS"]
-                print(metrics.to_markdown(index=True))
+                print(metrics.to_markdown(index=True, floatfmt=".2f"))
             #print("\n### Application Metrics")
             #print(df_monitoring_app)
         print("\n### Tests")
@@ -2710,7 +2710,7 @@ class default():
                     df = df.reindex(index=evaluators.natural_sort(df.index))
                     #print(df)
                     df.index.names = ["DBMS"]
-                    print(df.to_markdown(index=True))
+                    print(df.to_markdown(index=True, floatfmt=".2f"))
                     if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
                         test_results = test_results + f"* TEST failed: {title} contains 0 or NaN in CPU [CPUs]\n"
                     else:
@@ -3374,7 +3374,7 @@ class tpcc(default):
             if not df.empty:
                 print("\n### Loading\n")
                 #print(df)
-                print(df.to_markdown(index=True))
+                print(df.to_markdown(index=True, floatfmt=".2f"))
                 #df = df.sort_values(['configuration','experiment_run','client'])
                 #df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
                 #print(df)
@@ -3409,7 +3409,7 @@ class tpcc(default):
                         df_aggregated_reduced[col] = df_aggregated.loc[:,col]
                 #print(df_aggregated_reduced)
                 df_aggregated_reduced.index.names = ["DBMS"]
-                print(df_aggregated_reduced.to_markdown(index=True))
+                print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
             print("\n* Warehouses:", warehouses)
         #####################
         if self.benchmarking_is_active():
@@ -3458,7 +3458,7 @@ class tpcc(default):
             #df_loading_tpx = df_tpx['time_load']
             df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
             df_connections.index.names = ["DBMS"]
-            print(df_connections.to_markdown(index=True))
+            print(df_connections.to_markdown(index=True, floatfmt=".2f"))
             #print(df_connections)
         #####################
         test_results_monitoring = self.show_summary_monitoring()
@@ -3469,7 +3469,7 @@ class tpcc(default):
                 print("\n#### "+title+"\n")
                 #print(metrics)
                 metrics.index.names = ["DBMS"]
-                print(metrics.to_markdown(index=True))
+                print(metrics.to_markdown(index=True, floatfmt=".2f"))
         print("\n### Tests")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
@@ -4023,7 +4023,7 @@ class ycsb(default):
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             df_aggregated_loaded = df_aggregated_loaded.rename_axis(index="DBMS")
-            print(df_aggregated_loaded.to_markdown(index=True))
+            print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f"))
             #print(df_aggregated_loaded)
             # Make a copy to format safely
             #formatted_df = df_aggregated_loaded.copy()
@@ -4032,7 +4032,7 @@ class ycsb(default):
             # Format float columns as strings with no dtype conflict
             #for col in float_cols:
             #    formatted_df[col] = formatted_df[col].map(lambda x: f"{x:.0f}")
-            #print(df_aggregated_loaded.to_markdown(index=True)) #, disable_numparse=True)) #, floatfmt=".4f"))
+            #print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f")) #, disable_numparse=True)) #, floatfmt=".4f"))
             test_loading = True
         #####################
         contains_failed = False
@@ -4065,7 +4065,7 @@ class ycsb(default):
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             #print(df_aggregated_reduced)
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            print(df_aggregated_reduced.to_markdown(index=True))
+            print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
             #formatted_df = df_aggregated_reduced.copy()
             # Select float columns
             #float_cols = formatted_df.select_dtypes(include="float").columns
@@ -4098,7 +4098,7 @@ class ycsb(default):
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 metrics.index.names = ["DBMS"]
-                print(metrics.to_markdown(index=True))
+                print(metrics.to_markdown(index=True, floatfmt=".2f"))
         print("\n### Tests")
         if test_loading:
             self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
@@ -4567,7 +4567,7 @@ class benchbase(default):
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
-            print(df_plot_filtered.to_markdown(index=True))
+            print(df_plot_filtered.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Aggregated Parallel\n")
             if self.workload['tenant_per'] == "container":
                 # we want to aggregate containers of DBMS running in parallel
@@ -4585,7 +4585,7 @@ class benchbase(default):
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            print(df_aggregated_reduced.to_markdown(index=True))
+            print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
         #print("\nWarehouses:", warehouses)
         # test: show time series
         #print(self.evaluator.get_benchmark_logs_timeseries_df_aggregated(configuration="Citus-1-1-1024", client=2))
@@ -4635,7 +4635,7 @@ class benchbase(default):
             df_connections['Throughput [SF/h]'] = df_tpx['time_load']
             df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
             df_connections = df_connections.rename_axis(index="DBMS")
-            print(df_connections.to_markdown(index=True))
+            print(df_connections.to_markdown(index=True, floatfmt=".2f"))
             #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
         #####################
         test_results_monitoring = self.show_summary_monitoring()
@@ -4644,7 +4644,7 @@ class benchbase(default):
             #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
-                print(metrics.to_markdown(index=True))
+                print(metrics.to_markdown(index=True, floatfmt=".2f"))
         print("\n### Tests")
         self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:

@@ -1526,7 +1526,7 @@ scrape_configs:
                     worker_full_name = "bxw-{name_worker}-{worker_number}".format(name_worker=worker_name, worker_number=worker)
                     list_of_workers_pvcs.append(worker_full_name)
                 self.deployment_infos['statefulset'][stateful_set]['pvc'] = list_of_workers_pvcs
-        #print(self.deployment_infos)
+        self.logger.debug(self.deployment_infos)
         # get labels from existing (i.e., loaded pvc)
         labels_on_existing_pvc = get_labels_from_loaded_pvc()
         if use_storage and not use_ramdisk:
@@ -1643,6 +1643,11 @@ scrape_configs:
                 print(exc)
         for key in reversed(range(len(result))):#enumerate(result):
             dep = result[key]
+            ################
+            ################
+            # Kind=PersistentVolumeClaim
+            ################
+            ################
             if dep['kind'] == 'PersistentVolumeClaim':
                 pvc = dep['metadata']['name']
                 if not use_storage:
@@ -1980,11 +1985,18 @@ scrape_configs:
                 dep['metadata']['labels']['volume'] = self.volume
                 for label_key, label_value in self.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
+                # statefulset.kubernetes.io/pod-name
+                # 'statefulset.kubernetes.io/pod-name': 'bexhoma-worker-0'
                 #dep['spec']['selector'] = dep['metadata']['labels'].copy()
-                dep['spec']['selector']['configuration'] = configuration
-                dep['spec']['selector']['experiment'] = experiment
-                dep['spec']['selector']['dbms'] = self.docker
-                dep['spec']['selector']['volume'] = self.volume
+                #print(dep['spec']['selector'])
+                if 'statefulset.kubernetes.io/pod-name' in dep['spec']['selector']:
+                    # only select static master of statefuleSet
+                    dep['spec']['selector']['statefulset.kubernetes.io/pod-name'] = env['BEXHOMA_WORKER_NAME']+'-0'
+                else:
+                    dep['spec']['selector']['configuration'] = configuration
+                    dep['spec']['selector']['experiment'] = experiment
+                    dep['spec']['selector']['dbms'] = self.docker
+                    dep['spec']['selector']['volume'] = self.volume
                 if not self.monitoring_active or (self.experiment.cluster.monitor_cluster_exists and not self.monitor_app_active):
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         # remove monitoring ports
@@ -3733,6 +3745,7 @@ scrape_configs:
                                 initscript_filled.write(data)
                             #self.experiment.experimentfile_upload(filename=filename) # does not work, because it changes filename
                             self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+                            stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
                             #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
             return
         if self.num_tenants > 0 and self.tenant_per == 'database':
@@ -3751,6 +3764,7 @@ scrape_configs:
             with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
             self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+            stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
             #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
         if len(self.ddl_parameters):
             #for script in self.initscript:
@@ -3766,6 +3780,7 @@ scrape_configs:
                         filename_in_container = scriptfolder+script
                         filename_in_resultfolder = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
                         self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+                        stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
                         #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
                         filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
                         filename_base, file_extension = os.path.splitext(script)
@@ -3785,7 +3800,7 @@ scrape_configs:
                     #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_source, pod_name=self.pod_sut, to_name=filename_in_container))
                     shutil.copy(filename_source, filename_in_resultfolder)
                     self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
-                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i $'s/\\r//' {to_name}".format(to_name=filename_in_container))
+                    stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
     def attach_worker(self):
         """
         Attaches worker nodes to the master of the sut.
