@@ -16,9 +16,9 @@
 
 
 # Import functions from testfunctions.sh
-source ./testfunctions.sh
+source ./scripts/testfunctions.sh
 
-BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -54,95 +54,102 @@ wait_process "ycsb"
 ###########################################
 
 
-
-
 ###########################################
-############### Benchbase #################
+################ HammerDB #################
 ###########################################
 
-
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+#### HammerDB Scale (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
+  -nlt 16 \
   -nbp 1,2 \
-  -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -nbt 16 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_scale.log &
+
 
 #### Wait so that next experiment receives a different code
 #sleep 1200
-wait_process "benchbase"
+wait_process "hammerdb"
 
 
-#### Benchbase Monitoring (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+#### HammerDB Monitoring (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -sd 5 \
   -dbms PostgreSQL \
+  -nlt 16 \
   -nbp 1,2 \
-  -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -nbt 16 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log &
+
 
 #### Wait so that next experiment receives a different code
-wait_process "benchbase"
+#sleep 1200
+wait_process "hammerdb"
 
 
 #### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
+kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 sleep 30
 
 
-#### Benchbase Persistent Storage (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+#### HammerDB Persistent Storage (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
+  -xlat \
   -sd 5 \
   -dbms PostgreSQL \
+  -nlt 8 \
   -nbp 1 \
-  -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -nbt 16 \
+  -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_storage.log &
+
 
 #### Wait so that next experiment receives a different code
-wait_process "benchbase"
+#sleep 1200
+wait_process "hammerdb"
 
 
 #### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
+kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 sleep 30
 
 
-nohup python benchbase.py -ms 1 -tr \
-  -rr 128Gi -lr 128Gi \
-  -sf 160 \
-  -sd 30 \
+#### HammerDB Key time (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -sd 20 \
+  -xlat \
   -xkey \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
-  -nbp 1,2,5,10 \
-  -nbt 1600 \
-  -nbf 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 160 \
   -ne 1 \
-  -nc 1 \
+  -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
+  -rst shared -rss 30Gi \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_keytime.log &
 
 
 #### Wait so that next experiment receives a different code
-wait_process "benchbase"
+#sleep 3000
+wait_process "hammerdb"
+
+
+
+
 
 ###########################################
 ############## Clean Folder ###############

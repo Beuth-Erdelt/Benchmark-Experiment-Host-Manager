@@ -16,7 +16,7 @@
 
 
 # Import functions from testfunctions.sh
-source ./testfunctions.sh
+source ./scripts/testfunctions.sh
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"

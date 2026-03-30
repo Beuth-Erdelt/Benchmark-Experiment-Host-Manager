@@ -16,7 +16,7 @@
 
 
 # Import functions from testfunctions.sh
-source ./testfunctions.sh
+source ./scripts/testfunctions.sh
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
@@ -60,162 +60,192 @@ wait_process "ycsb"
 
 
 ###########################################
-################# TPC-H ###################
+################# TPC-DS ##################
 ###########################################
 
 
-#### TCP-H Compare (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+#### TCP-DS Compare (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
+  -t 1200 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
 
 
 #### Wait so that next experiment receives a different code
-wait_process "tpch"
+#sleep 7200
+wait_process "tpcds"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
-  -dbms PostgreSQL \
+#### TCP-DS Monitoring (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -rr 64Gi -lr 64Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monitoring.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+#### TCP-DS Throughput (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_throughput.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
+sleep 30
+
+
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+# does not work
+#nohup python tpcds.py -ms 1 -dt -tr \
+#  -dbms PostgreSQL \
+#  -nlp 8 \
+#  -nlt 8 \
+#  -sf 0.1 \
+#  -ii -ic -is \
+#  -nc 2 \
+#  -rst shared -rss 5Gi -rsr \
+#  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+#  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_fractional.log &
+#wait_process "tpcds"
+
+
+###########################################
+############# TPC-DS MonetDB ##############
+###########################################
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-30
+sleep 30
+
+
+#### TCP-DS Power 30 (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 \
+  -m -mc \
+  -sf 30 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1 \
+  -dbms MonetDB \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi -rsr \
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1800
+wait_process "tpcds"
+
+
+#### TCP-DS Power 30 (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 \
+  -m -mc \
+  -sf 30 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 2 -ne 1,1 \
+  -dbms MonetDB \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 4800
+wait_process "tpcds"
+
+
+#### TCP-DS Throughput 30 (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 \
+  -m -mc \
+  -sf 30 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1,1,3 \
+  -dbms MonetDB \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 4800
+wait_process "tpcds"
+
+
+
+
+
+
+
+###########################################
+############ Profiling MonetDB ############
+###########################################
+
+
+#### TCP-H Profiling (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 10 \
   -ii -ic -is \
+  -ne 1,1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
+  -rst shared -rss 50Gi \
+  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling.log &
 
 #### Wait so that next experiment receives a different code
 #sleep 600
-wait_process "tpch"
-
-
-#### TCP-H Throughput (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
-  -dbms PostgreSQL \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -ii -ic -is \
-  -nc 1 \
-  -ne 1,2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-sleep 30
-
-
-#### TCP-H Persistent Storage (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
-  -dbms PostgreSQL \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 1 \
-  -ii -ic -is \
-  -nc 2 \
-  -rst shared -rss 30Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
-
-
-nohup python tpch.py -ms 1 -dt -tr \
-  -dbms PostgreSQL \
-  -nlp 8 \
-  -nlt 8 \
-  -sf 0.1 \
-  -ii -ic -is \
-  -nc 2 \
-  -rst shared -rss 5Gi -rsr \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_fractional.log &
-
-wait_process "tpch"
-
-
-###########################################
-############# TPC-H MonetDB ###############
-###########################################
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpch-100
-sleep 30
-
-
-#### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 3600 -dt \
-  -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 1800
-wait_process "tpch"
-
-
-#### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 2 -ne 1,1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 3600 -dt \
-  -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
-
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpch"
-
-
-#### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,3 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 3600 -dt \
-  -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpch"
+wait_process "tpcds"
 
 
 

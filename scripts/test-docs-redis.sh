@@ -1,6 +1,6 @@
 #!/bin/bash
 ######################################################################################
-# Bash Script for Bexhoma Test Runs - Test scripts for database services
+# Bash Script for Bexhoma Test Runs - Redis
 ######################################################################################
 #
 # This scripts starts a sequence of experiments with varying parameters.
@@ -16,7 +16,7 @@
 
 
 # Import functions from testfunctions.sh
-source ./testfunctions.sh
+source ./scripts/testfunctions.sh
 
 BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
@@ -44,145 +44,131 @@ wait_process "ycsb"
 
 
 
+####################################################
+#################### YCSB Redis ####################
+####################################################
 
 
-
-#################################################
-################## CockroachDB ##################
-#################################################
-
-
-#### YCSB Ingestion (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+# Single host Redis
+nohup python ycsb.py -tr \
   -sf 1 \
   -sfo 10 \
-  -nw 3 \
-  -nwr 3 \
   --workload a \
-  -dbms CockroachDB \
+  -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -nlf 12 \
   -nbp 1 \
-  -nbt 64 \
+  -nbt 128 \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_1.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_1.log &
 
 
 wait_process "ycsb"
 
 
-#### YCSB PVC (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+# Cluster of 3 Redis instances
+nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -sfo 10 \
   -nw 3 \
-  -nwr 3 \
   --workload a \
-  -dbms CockroachDB \
+  -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -nlf 12 \
   -nbp 1 \
-  -nbt 64 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_2.log &
+
+
+wait_process "ycsb"
+
+# Cluster of 3 Redis instances and replication
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 10 \
+  -nw 3 \
+  -nwr 1 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
+  -nbf 4 \
+  -ne 1 \
+  -nc 1 \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+
+
+wait_process "ycsb"
+
+
+# Single host Redis with PVC
+nohup python ycsb.py -tr \
+  -sf 1 \
+  -sfo 10 \
+  --workload a \
+  -dbms Redis \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 12 \
+  -nbp 1 \
+  -nbt 128 \
   -nbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
 
 
 wait_process "ycsb"
 
 
-#### YCSB PVC (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
-  -sf 10 \
+# Cluster of 3 Redis instances and PVC
+nohup python ycsb.py -tr \
+  -sf 1 \
   -sfo 10 \
   -nw 3 \
-  -nwr 3 \
   --workload a \
-  -dbms CockroachDB \
+  -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -tb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -nlf 12 \
   -nbp 1 \
-  -nbt 64 \
+  -nbt 128 \
   -nbf 4 \
   -ne 1 \
-  -nc 1 \
+  -nc 2 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_3.log &
+  -rst shared -rss 50Gi -rsr \
+  run </dev/null &>$LOG_DIR/doc_ycsb_redis_5.log &
 
 
 wait_process "ycsb"
 
 
-#### Benchbase Simple (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 16 \
-  -sd 5 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
-  -nbp 1,2 \
-  -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
-
-
-wait_process "benchbase"
-
-
-#### Benchbase Complex (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 128 \
-  -sd 10 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
-  -nbp 1,2,4,8 \
-  -nbt 1280 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
-
-
-wait_process "benchbase"
-
-
-#### Benchbase Complex with PVC (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
-  -sf 128 \
-  -sd 10 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
-  -nbp 1,2,4,8 \
-  -nbt 1280 \
-  -nbf 16 \
-  -tb 1024 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc -ma \
-  -rst shared -rss 100Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_3.log &
-
-
-wait_process "benchbase"
 
 
 
