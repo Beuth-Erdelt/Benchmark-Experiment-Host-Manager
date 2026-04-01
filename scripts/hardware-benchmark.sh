@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# apt-get -y install fio
+# apt-get -y install fio jq sysbench bsdextrautils
 
 
 set -euo pipefail
@@ -8,6 +8,7 @@ set -euo pipefail
 TEST_DIR=${1:-/data/fiotest}
 DURATION=${2:-60}
 SIZE=${3:-8G}
+BLOCKSIZE=${4:-8k}
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTDIR="fio_results_${TIMESTAMP}"
@@ -64,7 +65,7 @@ echo "Running WAL-like sequential write test..."
 fio --name=wal_write \
   --filename=$TEST_DIR/testfile \
   --size=$SIZE \
-  --bs=8k \
+  --bs=$BLOCKSIZE \
   --rw=write \
   --ioengine=libaio \
   --direct=1 \
@@ -83,7 +84,7 @@ echo "Running fsync test..."
 fio --name=fsync_test \
   --filename=$TEST_DIR/testfile \
   --size=1G \
-  --bs=8k \
+  --bs=$BLOCKSIZE \
   --rw=write \
   --fsync=1 \
   --ioengine=sync \
@@ -100,7 +101,7 @@ echo "Running random read/write test..."
 fio --name=rand_rw \
   --filename=$TEST_DIR/testfile \
   --size=$SIZE \
-  --bs=8k \
+  --bs=$BLOCKSIZE \
   --rw=randrw \
   --rwmixread=50 \
   --ioengine=libaio \
@@ -117,11 +118,11 @@ fio --name=rand_rw \
 # Concurrency sweep (important for io_uring)
 # -------------------------------
 echo "Running concurrency sweep..."
-for depth in 1 8 32; do
+for depth in 1 2 4 8 16 32 64; do
   fio --name=iodepth_${depth} \
     --filename=$TEST_DIR/testfile \
     --size=$SIZE \
-    --bs=8k \
+    --bs=$BLOCKSIZE \
     --rw=randrw \
     --rwmixread=50 \
     --ioengine=libaio \
@@ -134,6 +135,64 @@ for depth in 1 8 32; do
     --output-format=json \
     > "$OUTDIR/randrw_iodepth_${depth}.json"
 done
+
+# -------------------------------
+# Random read sweep (important for effective_io_concurrency, random_page_cost)
+# -------------------------------
+for depth in 1 2; do
+  echo "=================================================="
+  echo "Running fio randread test: iodepth=$depth"
+  echo "Target file: $TEST_DIR/testfile"
+  echo "Size: $SIZE | bs: $BLOCKSIZE | runtime: $DURATION"
+  echo "=================================================="
+
+  OUTFILE="$OUTDIR/randread_iodepth_${depth}.json"
+
+  fio --name=randread_${depth} \
+    --filename=$TEST_DIR/testfile \
+    --size=$SIZE \
+    --bs=$BLOCKSIZE \
+    --rw=randread \
+    --ioengine=libaio \
+    --direct=1 \
+    --iodepth=$depth \
+    --numjobs=1 \
+    --runtime=$DURATION \
+    --time_based \
+    --group_reporting \
+    --output-format=json \
+    > "$OUTFILE"
+
+  echo
+  echo "📊 Summary for iodepth=$depth"
+
+  jq '{
+    iodepth: "'"$depth"'",
+    iops: .jobs[0].read.iops,
+    avg_lat_ns: .jobs[0].read.clat_ns.mean,
+    p99_lat_ns: .jobs[0].read.clat_ns.percentile["99.000000"]
+  }' "$OUTFILE"
+
+  echo
+done
+
+echo -e "run,iodepth,iops,avg_lat_ms,p99_lat_ms"
+
+#for depth in 1 2 4 8 16 32 64; do
+for depth in 1 2; do
+  file="$OUTDIR/randread_iodepth_${depth}.json"
+
+  iops=$(jq '.jobs[0].read.iops' "$file")
+
+  avg_lat_ns=$(jq '.jobs[0].read.clat_ns.mean' "$file")
+  p99_lat_ns=$(jq '.jobs[0].read.clat_ns.percentile["99.000000"]' "$file")
+
+  # convert ns → ms
+  avg_lat_ms=$(awk "BEGIN {print $avg_lat_ns/1000000}")
+  p99_lat_ms=$(awk "BEGIN {print $p99_lat_ns/1000000}")
+
+  echo "randread,$depth,$iops,$avg_lat_ms,$p99_lat_ms"
+done | column -t -s ","
 
 # -------------------------------
 # CPU test (sysbench if available)
