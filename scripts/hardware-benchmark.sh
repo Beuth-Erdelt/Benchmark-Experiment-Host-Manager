@@ -5,7 +5,8 @@
 
 set -euo pipefail
 
-TEST_DIR=${1:-/data/fiotest}
+#TEST_DIR=${1:-/data/fiotest}
+TEST_DIR=${1:-/tmp/fiotest}
 DURATION=${2:-60}
 SIZE=${3:-64G}
 BLOCKSIZE=${4:-8k}
@@ -208,7 +209,7 @@ fio --name=warmup \
 if [[ "$WORKLOAD_SYNC" == "yes" ]]; then
   echo "Running fsync test..."
 
-  for jobs in 1 2 4; do
+  for jobs in 1; do
     run="fsync_test"
     workload="seq_write"
     engine="sync"
@@ -216,7 +217,8 @@ if [[ "$WORKLOAD_SYNC" == "yes" ]]; then
     #numjobs=1
     numjobs=$jobs
     bs="$BLOCKSIZE"
-    size=1G
+    #size=1G
+    size="$SIZE"
     duration="$DURATION"
 
     print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
@@ -229,12 +231,16 @@ if [[ "$WORKLOAD_SYNC" == "yes" ]]; then
       --size="$size" \
       --bs="$bs" \
       --rw=write \
+      --fsync=32 \
+      --direct=1 \
+      --iodepth="$iodepth" \
       --ioengine=$engine \
       --runtime="$duration" \
       --time_based \
       --group_reporting \
       --output-format=json \
       > "$file"
+    # --sync_file_range=write:4096
 
     write_pct
   done
