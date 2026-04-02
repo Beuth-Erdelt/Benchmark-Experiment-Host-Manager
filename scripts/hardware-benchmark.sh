@@ -7,8 +7,11 @@ set -euo pipefail
 
 TEST_DIR=${1:-/data/fiotest}
 DURATION=${2:-60}
-SIZE=${3:-8G}
+SIZE=${3:-64G}
 BLOCKSIZE=${4:-8k}
+WORKLOAD_RANDREAD="no"
+WORKLOAD_RANDRW="no"
+WORKLOAD_SYNC="yes"
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTDIR="fio_results_${TIMESTAMP}"
@@ -167,185 +170,191 @@ fio --name=warmup \
 # -------------------------------
 # WAL-like test (sequential write)
 # -------------------------------
-echo "Running WAL-like sequential write test..."
+# echo "Running WAL-like sequential write test..."
 
-run="wal_write"
-workload="seq_write"
-engine="libaio"
-iodepth=1
-numjobs=1
-bs="$BLOCKSIZE"
-size="$SIZE"
-duration="$DURATION"
+# run="wal_write"
+# workload="seq_write"
+# engine="libaio"
+# iodepth=1
+# numjobs=1
+# bs="$BLOCKSIZE"
+# size="$SIZE"
+# duration="$DURATION"
 
-print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
+# print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
 
-file="$OUTDIR/wal_write.json"
+# file="$OUTDIR/wal_write.json"
 
-fio --name="$run" \
-  --filename="$TEST_DIR/testfile" \
-  --size="$size" \
-  --bs="$bs" \
-  --rw=write \
-  --ioengine=libaio \
-  --direct=1 \
-  --iodepth="$iodepth" \
-  --numjobs="$numjobs" \
-  --runtime="$duration" \
-  --time_based \
-  --group_reporting \
-  --output-format=json \
-  > "$file"
+# fio --name="$run" \
+#   --filename="$TEST_DIR/testfile" \
+#   --size="$size" \
+#   --bs="$bs" \
+#   --rw=write \
+#   --ioengine=libaio \
+#   --direct=1 \
+#   --iodepth="$iodepth" \
+#   --numjobs="$numjobs" \
+#   --runtime="$duration" \
+#   --time_based \
+#   --group_reporting \
+#   --output-format=json \
+#   > "$file"
 
-write_pct
+# write_pct
 
 # -------------------------------
 # Fsync test (CRITICAL for WAL)
 # -------------------------------
-echo "Running fsync test..."
+if [[ "$WORKLOAD_SYNC" == "yes" ]]; then
+  echo "Running fsync test..."
 
-run="fsync_test"
-workload="seq_write"
-engine="sync"
-iodepth=1
-numjobs=1
-bs="$BLOCKSIZE"
-size=1G
-duration="$DURATION"
+  for jobs in 1 2 4; do
+    run="fsync_test"
+    workload="seq_write"
+    engine="sync"
+    iodepth=1
+    #numjobs=1
+    numjobs=$jobs
+    bs="$BLOCKSIZE"
+    size=1G
+    duration="$DURATION"
 
-print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
+    print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
 
-file="$OUTDIR/wal_write.json"
+    #file="$OUTDIR/wal_write.json"
+    file="$OUTDIR/wal_write_${numjobs}.json"
 
-fio --name="$run" \
-  --filename="$TEST_DIR/testfile" \
-  --size="$size" \
-  --bs="$bs" \
-  --rw=write \
-  --ioengine=sync \
-  --runtime="$duration" \
-  --time_based \
-  --group_reporting \
-  --output-format=json \
-  > "$file"
-  #--numjobs="$numjobs" \
-  #--direct=1 \
-  #--iodepth="$iodepth" \
+    fio --name="$run" \
+      --filename="$TEST_DIR/testfile" \
+      --size="$size" \
+      --bs="$bs" \
+      --rw=write \
+      --ioengine=$engine \
+      --runtime="$duration" \
+      --time_based \
+      --group_reporting \
+      --output-format=json \
+      > "$file"
 
-write_pct
+    write_pct
+  done
+fi
 
 # -------------------------------
 # Random read/write test
 # -------------------------------
-echo "Running random read/write test..."
+# echo "Running random read/write test..."
 
-run="rand_rw"
-workload="randrw"
-engine="libaio"
-iodepth=32
-numjobs=4
-bs="$BLOCKSIZE"
-size="$SIZE"
-duration="$DURATION"
+# run="rand_rw"
+# workload="randrw"
+# engine="libaio"
+# iodepth=32
+# numjobs=4
+# bs="$BLOCKSIZE"
+# size="$SIZE"
+# duration="$DURATION"
 
-print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
+# print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
 
-file="$OUTDIR/randrw.json"
+# file="$OUTDIR/randrw.json"
 
-fio --name="$run" \
-  --filename="$TEST_DIR/testfile" \
-  --size="$size" \
-  --bs="$bs" \
-  --rw=randrw \
-  --rwmixread=50 \
-  --ioengine=libaio \
-  --numjobs="$numjobs" \
-  --direct=1 \
-  --iodepth="$iodepth" \
-  --runtime="$duration" \
-  --time_based \
-  --group_reporting \
-  --output-format=json \
-  > "$file"
+# fio --name="$run" \
+#   --filename="$TEST_DIR/testfile" \
+#   --size="$size" \
+#   --bs="$bs" \
+#   --rw=randrw \
+#   --rwmixread=50 \
+#   --ioengine=libaio \
+#   --numjobs="$numjobs" \
+#   --direct=1 \
+#   --iodepth="$iodepth" \
+#   --runtime="$duration" \
+#   --time_based \
+#   --group_reporting \
+#   --output-format=json \
+#   > "$file"
 
-write_pct
+# write_pct
 
 
 # -------------------------------
 # Concurrency sweep (important for io_uring)
 # -------------------------------
-echo "Running concurrency sweep..."
+if [[ "$WORKLOAD_RANDREAD" == "yes" ]]; then
+  echo "Running concurrency sweep..."
 
-for depth in 1 2 4 8 12 16 20 24; do
-  run="randrw_${depth}"
-  workload="randrw"
-  engine="libaio"
-  iodepth=$depth
-  numjobs=2
-  bs="$BLOCKSIZE"
-  size="$SIZE"
-  duration="$DURATION"
+  for depth in 1 2 4 8 12 16 20 24 30 36 48 54 60 66 72 78 84 90; do
+    run="randrw_${depth}"
+    workload="randrw"
+    engine="io_uring" #"libaio"
+    iodepth=$depth
+    numjobs=16
+    bs="$BLOCKSIZE"
+    size="$SIZE"
+    duration="$DURATION"
 
-  print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
+    print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
 
-  file="$OUTDIR/randrw_iodepth_${depth}.json"
+    file="$OUTDIR/randrw_iodepth_${depth}.json"
 
-  fio --name="$run" \
-    --filename="$TEST_DIR/testfile" \
-    --size="$size" \
-    --bs="$bs" \
-    --rw=randrw \
-    --rwmixread=50 \
-    --ioengine=libaio \
-    --numjobs="$numjobs" \
-    --direct=1 \
-    --iodepth="$iodepth" \
-    --runtime="$duration" \
-    --time_based \
-    --group_reporting \
-    --output-format=json \
-    > "$file"
+    fio --name="$run" \
+      --filename="$TEST_DIR/testfile" \
+      --size="$size" \
+      --bs="$bs" \
+      --rw=randrw \
+      --rwmixread=50 \
+      --ioengine=$engine \
+      --numjobs="$numjobs" \
+      --direct=1 \
+      --iodepth="$iodepth" \
+      --runtime="$duration" \
+      --time_based \
+      --group_reporting \
+      --output-format=json \
+      > "$file"
 
-  write_pct
-done
+    write_pct
+  done
+fi
 
 # -------------------------------
 # Random read sweep (important for effective_io_concurrency, random_page_cost)
 # -------------------------------
-echo "Running read sweep..."
+if [[ "$WORKLOAD_RANDRW" == "yes" ]]; then
+  echo "Running read sweep..."
 
-for depth in 1 2 4 8 12 16 20 24; do
-  run="randread_${depth}"
-  workload="randread"
-  engine="libaio"
-  iodepth=$depth
-  numjobs=1
-  bs="$BLOCKSIZE"
-  size="$SIZE"
-  duration="$DURATION"
+  for depth in 1 2 4 8 12 16 20 24 30 36 48 54 60 66 72 78 84 90; do
+    run="randread_${depth}"
+    workload="randread"
+    engine="io_uring" #"libaio"
+    iodepth=$depth
+    numjobs=16
+    bs="$BLOCKSIZE"
+    size="$SIZE"
+    duration="$DURATION"
 
-  print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
+    print_header "$run" "$workload" "$engine" "$iodepth" "$numjobs" "$bs" "$size" "$duration"
 
-  file="$OUTDIR/randread_iodepth_${depth}.json"
+    file="$OUTDIR/randread_iodepth_${depth}.json"
 
-  fio --name="$run" \
-    --filename="$TEST_DIR/testfile" \
-    --size="$size" \
-    --bs="$bs" \
-    --rw=randread \
-    --ioengine=libaio \
-    --numjobs="$numjobs" \
-    --direct=1 \
-    --iodepth="$iodepth" \
-    --runtime="$duration" \
-    --time_based \
-    --group_reporting \
-    --output-format=json \
-    > "$file"
+    fio --name="$run" \
+      --filename="$TEST_DIR/testfile" \
+      --size="$size" \
+      --bs="$bs" \
+      --rw=randread \
+      --ioengine=$engine \
+      --numjobs="$numjobs" \
+      --direct=1 \
+      --iodepth="$iodepth" \
+      --runtime="$duration" \
+      --time_based \
+      --group_reporting \
+      --output-format=json \
+      > "$file"
 
-  write_pct
-done
-
+    write_pct
+  done
+fi
 
 cat $META_FILE
 
