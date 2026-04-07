@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1774864106
-Experiment                    : starts at 2026-03-30 11:48:26.056837 (81642.322172927)
+Experiment                    : has code 1775546985
+Experiment                    : starts at 2026-04-07 09:29:45.290368 (156084.401310854)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -28,8 +28,8 @@ PostgreSQL-64-1-16384         : will start now
 PostgreSQL-64-1-16384         : deployments ['sut']
 PostgreSQL-64-1-16384         : stateful sets []
 PostgreSQL-64-1-16384         : pvcs ['sut']
-PostgreSQL-64-1-16384         : name of SUT pods = bexhoma-sut-postgresql-64-1-16384-1774864106
-PostgreSQL-64-1-16384         : name of SUT service = bexhoma-sut-postgresql-64-1-16384-1774864106
+PostgreSQL-64-1-16384         : name of SUT pods = bexhoma-sut-postgresql-64-1-16384-1775546985
+PostgreSQL-64-1-16384         : name of SUT service = bexhoma-sut-postgresql-64-1-16384-1775546985
 PostgreSQL-64-1-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-16384         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
@@ -55,13 +55,8 @@ PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max 
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-64-1-16384         : is not loaded yet
-PostgreSQL-64-1-16384         : connect to pod bexhoma-sut-postgresql-64-1-16384-1774864106-5bff8948b7-ntdds to load scripts
+PostgreSQL-64-1-16384         : connect to pod bexhoma-sut-postgresql-64-1-16384-1775546985-679b4b7487-f6jr7 to load scripts
 PostgreSQL-64-1-16384         : start asynch loading scripts of type loaded
-PostgreSQL-64-1-16384         : is loading
-PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
 PostgreSQL-64-1-16384         : is loading
 PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -114,10 +109,10 @@ PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max 
 - waiting 30s -               : done
 PostgreSQL-64-1-16384         : showing loader times
 PostgreSQL-64-1-16384         : generator times (start/end per pod and container) []
-PostgreSQL-64-1-16384         : loader times (start/end per pod and container) [(1774864302, 1774864595)]
-PostgreSQL-64-1-16384         : total times (start/end per pod and container) [(1774864302, 1774864595)]
-PostgreSQL-64-1-16384         : loader timespan (first to last [s]) = 293
-PostgreSQL-64-1-16384         : connect to pod bexhoma-sut-postgresql-64-1-16384-1774864106-5bff8948b7-ntdds to load scripts
+PostgreSQL-64-1-16384         : loader times (start/end per pod and container) [(1775547144, 1775547447)]
+PostgreSQL-64-1-16384         : total times (start/end per pod and container) [(1775547144, 1775547447)]
+PostgreSQL-64-1-16384         : loader timespan (first to last [s]) = 303
+PostgreSQL-64-1-16384         : connect to pod bexhoma-sut-postgresql-64-1-16384-1775546985-679b4b7487-f6jr7 to load scripts
 PostgreSQL-64-1-16384         : start asynch loading scripts of type indexed
 PostgreSQL-64-1-16384         : is loading
 PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -133,9 +128,9 @@ Experiment                    : Reset experiment counter. This is first run of c
 PostgreSQL-64-1-16384         : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-64-1-16384         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram', 'YCSB_INSERTORDER': 'hashed'}
 PostgreSQL-64-1-16384-1       : start benchmarking
-PostgreSQL-64-1-16384         : benchmarking results in folder /data/benchmarks/1774864106
+PostgreSQL-64-1-16384         : benchmarking results in folder /data/benchmarks/1775546985
 - waiting 10s -               : done
-PostgreSQL-64-1-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-16384-1774864106-1-1-d8t6q: ......found
+PostgreSQL-64-1-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-16384-1775546985-1-1-pnkg6: found
 PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -194,16 +189,16 @@ PostgreSQL-64-1-16384         : has running benchmarks
 PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-timing_benchmarker [(1774864756, 1774865109)]
+timing_benchmarker [(1775547537, 1775547888)]
 PostgreSQL-64-1-16384-1       : showing benchmarker times
-PostgreSQL-64-1-16384-1       : benchmarker timespan job from 1774864694 to 1774865123
-PostgreSQL-64-1-16384-1       : benchmarker timespan pods from 1774864756 to 1774865109
-PostgreSQL-64-1-16384-1       : benchmarker timespan (start to end single container [s]) = 353
-PostgreSQL-64-1-16384-1       : benchmarker times (start/end per pod and container) = [(1774864756, 1774865109)]
-PostgreSQL-64-1-16384-1       : found and updated times {'benchmarker': [(1774864756, 1774865109)]}
+PostgreSQL-64-1-16384-1       : benchmarker timespan job from 1775547542 to 1775547910
+PostgreSQL-64-1-16384-1       : benchmarker timespan pods from 1775547537 to 1775547888
+PostgreSQL-64-1-16384-1       : benchmarker timespan (start to end single container [s]) = 351
+PostgreSQL-64-1-16384-1       : benchmarker times (start/end per pod and container) = [(1775547537, 1775547888)]
+PostgreSQL-64-1-16384-1       : found and updated times {'benchmarker': [(1775547537, 1775547888)]}
 - waiting 30s -               : done
 PostgreSQL-64-1-16384         : can be stopped
-PostgreSQL-64-1-16384         : had 0 0 restarts at worker bexhoma-sut-postgresql-64-1-16384-1774864106-5bff8948b7-ntdds
+PostgreSQL-64-1-16384         : had 0 0 restarts at worker bexhoma-sut-postgresql-64-1-16384-1775546985-679b4b7487-f6jr7
 PostgreSQL-64-1-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -212,8 +207,8 @@ PostgreSQL-64-1-65536         : will start now
 PostgreSQL-64-1-65536         : deployments ['sut']
 PostgreSQL-64-1-65536         : stateful sets []
 PostgreSQL-64-1-65536         : pvcs ['sut']
-PostgreSQL-64-1-65536         : name of SUT pods = bexhoma-sut-postgresql-64-1-65536-1774864106
-PostgreSQL-64-1-65536         : name of SUT service = bexhoma-sut-postgresql-64-1-65536-1774864106
+PostgreSQL-64-1-65536         : name of SUT pods = bexhoma-sut-postgresql-64-1-65536-1775546985
+PostgreSQL-64-1-65536         : name of SUT service = bexhoma-sut-postgresql-64-1-65536-1775546985
 PostgreSQL-64-8-16384         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -234,7 +229,7 @@ PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max 
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-64-1-65536         : is not loaded yet
-PostgreSQL-64-1-65536         : connect to pod bexhoma-sut-postgresql-64-1-65536-1774864106-5cc6b9566b-ngvxv to load scripts
+PostgreSQL-64-1-65536         : connect to pod bexhoma-sut-postgresql-64-1-65536-1775546985-755fbdb958-ht9tv to load scripts
 PostgreSQL-64-1-65536         : start asynch loading scripts of type loaded
 PostgreSQL-64-1-65536         : is loading
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -278,10 +273,10 @@ PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max 
 - waiting 30s -               : done
 PostgreSQL-64-1-65536         : showing loader times
 PostgreSQL-64-1-65536         : generator times (start/end per pod and container) []
-PostgreSQL-64-1-65536         : loader times (start/end per pod and container) [(1774865353, 1774865650)]
-PostgreSQL-64-1-65536         : total times (start/end per pod and container) [(1774865353, 1774865650)]
-PostgreSQL-64-1-65536         : loader timespan (first to last [s]) = 297
-PostgreSQL-64-1-65536         : connect to pod bexhoma-sut-postgresql-64-1-65536-1774864106-5cc6b9566b-ngvxv to load scripts
+PostgreSQL-64-1-65536         : loader times (start/end per pod and container) [(1775548133, 1775548428)]
+PostgreSQL-64-1-65536         : total times (start/end per pod and container) [(1775548133, 1775548428)]
+PostgreSQL-64-1-65536         : loader timespan (first to last [s]) = 295
+PostgreSQL-64-1-65536         : connect to pod bexhoma-sut-postgresql-64-1-65536-1775546985-755fbdb958-ht9tv to load scripts
 PostgreSQL-64-1-65536         : start asynch loading scripts of type indexed
 PostgreSQL-64-1-65536         : is loading
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
@@ -294,9 +289,9 @@ PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max 
 PostgreSQL-64-1-65536         : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-64-1-65536         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram', 'YCSB_INSERTORDER': 'hashed'}
 PostgreSQL-64-1-65536-1       : start benchmarking
-PostgreSQL-64-1-65536         : benchmarking results in folder /data/benchmarks/1774864106
+PostgreSQL-64-1-65536         : benchmarking results in folder /data/benchmarks/1775546985
 - waiting 10s -               : done
-PostgreSQL-64-1-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-65536-1774864106-1-1-kcdl8: found
+PostgreSQL-64-1-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-1-65536-1775546985-1-1-k476n: found
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -343,16 +338,16 @@ PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max 
 PostgreSQL-64-1-65536         : has running benchmarks
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-timing_benchmarker [(1774865746, 1774866100)]
+timing_benchmarker [(1775548528, 1775548879)]
 PostgreSQL-64-1-65536-1       : showing benchmarker times
-PostgreSQL-64-1-65536-1       : benchmarker timespan job from 1774865745 to 1774866112
-PostgreSQL-64-1-65536-1       : benchmarker timespan pods from 1774865746 to 1774866100
-PostgreSQL-64-1-65536-1       : benchmarker timespan (start to end single container [s]) = 354
-PostgreSQL-64-1-65536-1       : benchmarker times (start/end per pod and container) = [(1774865746, 1774866100)]
-PostgreSQL-64-1-65536-1       : found and updated times {'benchmarker': [(1774865746, 1774866100)]}
+PostgreSQL-64-1-65536-1       : benchmarker timespan job from 1775548533 to 1775548894
+PostgreSQL-64-1-65536-1       : benchmarker timespan pods from 1775548528 to 1775548879
+PostgreSQL-64-1-65536-1       : benchmarker timespan (start to end single container [s]) = 351
+PostgreSQL-64-1-65536-1       : benchmarker times (start/end per pod and container) = [(1775548528, 1775548879)]
+PostgreSQL-64-1-65536-1       : found and updated times {'benchmarker': [(1775548528, 1775548879)]}
 - waiting 30s -               : done
 PostgreSQL-64-1-65536         : can be stopped
-PostgreSQL-64-1-65536         : had 0 0 restarts at worker bexhoma-sut-postgresql-64-1-65536-1774864106-5cc6b9566b-ngvxv
+PostgreSQL-64-1-65536         : had 0 0 restarts at worker bexhoma-sut-postgresql-64-1-65536-1775546985-755fbdb958-ht9tv
 PostgreSQL-64-8-16384         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
@@ -360,39 +355,8 @@ PostgreSQL-64-8-16384         : will start now
 PostgreSQL-64-8-16384         : deployments ['sut']
 PostgreSQL-64-8-16384         : stateful sets []
 PostgreSQL-64-8-16384         : pvcs ['sut']
-PostgreSQL-64-8-16384         : name of SUT pods = bexhoma-sut-postgresql-64-8-16384-1774864106
-PostgreSQL-64-8-16384         : name of SUT service = bexhoma-sut-postgresql-64-8-16384-1774864106
-PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : waits for health check to succeed
-PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : waits for health check to succeed
-PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : will start now
-PostgreSQL-64-8-16384         : deployments ['sut']
-PostgreSQL-64-8-16384         : stateful sets []
-PostgreSQL-64-8-16384         : pvcs ['sut']
-PostgreSQL-64-8-16384         : name of SUT pods = bexhoma-sut-postgresql-64-8-16384-1774864106
-PostgreSQL-64-8-16384         : name of SUT service = bexhoma-sut-postgresql-64-8-16384-1774864106
-PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : waits for health check to succeed
-PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : waits for health check to succeed
-PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : waits for health check to succeed
-PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-PostgreSQL-64-8-16384         : will start now
-PostgreSQL-64-8-16384         : deployments ['sut']
-PostgreSQL-64-8-16384         : stateful sets []
-PostgreSQL-64-8-16384         : pvcs ['sut']
-PostgreSQL-64-8-16384         : name of SUT pods = bexhoma-sut-postgresql-64-8-16384-1774864106
-PostgreSQL-64-8-16384         : name of SUT service = bexhoma-sut-postgresql-64-8-16384-1774864106
+PostgreSQL-64-8-16384         : name of SUT pods = bexhoma-sut-postgresql-64-8-16384-1775546985
+PostgreSQL-64-8-16384         : name of SUT service = bexhoma-sut-postgresql-64-8-16384-1775546985
 PostgreSQL-64-8-65536         : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
 - waiting 30s -               : done
 PostgreSQL-64-8-16384         : waits for health check to succeed
@@ -406,4 +370,322 @@ PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max 
 - waiting 30s -               : done
 PostgreSQL-64-8-16384         : waits for health check to succeed
 PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : 
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is not loaded yet
+PostgreSQL-64-8-16384         : connect to pod bexhoma-sut-postgresql-64-8-16384-1775546985-5bd94dbcfb-xz6xs to load scripts
+PostgreSQL-64-8-16384         : start asynch loading scripts of type loaded
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : showing loader times
+PostgreSQL-64-8-16384         : generator times (start/end per pod and container) []
+PostgreSQL-64-8-16384         : loader times (start/end per pod and container) [(1775549130, 1775549429), (1775549130, 1775549429), (1775549130, 1775549429), (1775549131, 1775549430), (1775549131, 1775549430), (1775549130, 1775549429), (1775549130, 1775549429), (1775549130, 1775549429)]
+PostgreSQL-64-8-16384         : total times (start/end per pod and container) [(1775549130, 1775549429), (1775549130, 1775549429), (1775549130, 1775549429), (1775549131, 1775549430), (1775549131, 1775549430), (1775549130, 1775549429), (1775549130, 1775549429), (1775549130, 1775549429)]
+PostgreSQL-64-8-16384         : loader timespan (first to last [s]) = 300
+PostgreSQL-64-8-16384         : connect to pod bexhoma-sut-postgresql-64-8-16384-1775546985-5bd94dbcfb-xz6xs to load scripts
+PostgreSQL-64-8-16384         : start asynch loading scripts of type indexed
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : is loading
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-64-8-16384         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram', 'YCSB_INSERTORDER': 'hashed'}
+PostgreSQL-64-8-16384-1       : start benchmarking
+PostgreSQL-64-8-16384         : benchmarking results in folder /data/benchmarks/1775546985
+- waiting 10s -               : done
+PostgreSQL-64-8-16384         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-16384-1775546985-1-1-hrwnd: found
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : has running benchmarks
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+timing_benchmarker [(1775549528, 1775549880)]
+PostgreSQL-64-8-16384-1       : showing benchmarker times
+PostgreSQL-64-8-16384-1       : benchmarker timespan job from 1775549526 to 1775549893
+PostgreSQL-64-8-16384-1       : benchmarker timespan pods from 1775549528 to 1775549880
+PostgreSQL-64-8-16384-1       : benchmarker timespan (start to end single container [s]) = 352
+PostgreSQL-64-8-16384-1       : benchmarker times (start/end per pod and container) = [(1775549528, 1775549880)]
+PostgreSQL-64-8-16384-1       : found and updated times {'benchmarker': [(1775549528, 1775549880)]}
+- waiting 30s -               : done
+PostgreSQL-64-8-16384         : can be stopped
+PostgreSQL-64-8-16384         : had 0 0 restarts at worker bexhoma-sut-postgresql-64-8-16384-1775546985-5bd94dbcfb-xz6xs
+PostgreSQL-64-8-65536         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : will start now
+PostgreSQL-64-8-65536         : deployments ['sut']
+PostgreSQL-64-8-65536         : stateful sets []
+PostgreSQL-64-8-65536         : pvcs ['sut']
+PostgreSQL-64-8-65536         : name of SUT pods = bexhoma-sut-postgresql-64-8-65536-1775546985
+PostgreSQL-64-8-65536         : name of SUT service = bexhoma-sut-postgresql-64-8-65536-1775546985
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is not loaded yet
+PostgreSQL-64-8-65536         : connect to pod bexhoma-sut-postgresql-64-8-65536-1775546985-85d8577fcc-mgrm6 to load scripts
+PostgreSQL-64-8-65536         : start asynch loading scripts of type loaded
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : showing loader times
+PostgreSQL-64-8-65536         : generator times (start/end per pod and container) []
+PostgreSQL-64-8-65536         : loader times (start/end per pod and container) [(1775550130, 1775550425), (1775550129, 1775550424), (1775550130, 1775550425), (1775550129, 1775550424), (1775550129, 1775550424), (1775550129, 1775550424), (1775550130, 1775550425), (1775550129, 1775550424)]
+PostgreSQL-64-8-65536         : total times (start/end per pod and container) [(1775550130, 1775550425), (1775550129, 1775550424), (1775550130, 1775550425), (1775550129, 1775550424), (1775550129, 1775550424), (1775550129, 1775550424), (1775550130, 1775550425), (1775550129, 1775550424)]
+PostgreSQL-64-8-65536         : loader timespan (first to last [s]) = 296
+PostgreSQL-64-8-65536         : connect to pod bexhoma-sut-postgresql-64-8-65536-1775546985-85d8577fcc-mgrm6 to load scripts
+PostgreSQL-64-8-65536         : start asynch loading scripts of type indexed
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : is loading
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-64-8-65536         : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 32768, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_MEASUREMENT_TYPE': 'hdrhistogram', 'YCSB_INSERTORDER': 'hashed'}
+PostgreSQL-64-8-65536-1       : start benchmarking
+PostgreSQL-64-8-65536         : benchmarking results in folder /data/benchmarks/1775546985
+- waiting 10s -               : done
+PostgreSQL-64-8-65536         : benchmarking is waiting for job bexhoma-benchmarker-postgresql-64-8-65536-1775546985-1-1-hnnmk: found
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : has running benchmarks
+timing_benchmarker [(1775550528, 1775550886)]
+PostgreSQL-64-8-65536-1       : showing benchmarker times
+PostgreSQL-64-8-65536-1       : benchmarker timespan job from 1775550526 to 1775550920
+PostgreSQL-64-8-65536-1       : benchmarker timespan pods from 1775550528 to 1775550886
+PostgreSQL-64-8-65536-1       : benchmarker timespan (start to end single container [s]) = 358
+PostgreSQL-64-8-65536-1       : benchmarker times (start/end per pod and container) = [(1775550528, 1775550886)]
+PostgreSQL-64-8-65536-1       : found and updated times {'benchmarker': [(1775550528, 1775550886)]}
+- waiting 30s -               : done
+PostgreSQL-64-8-65536         : can be stopped
+PostgreSQL-64-8-65536         : had 0 0 restarts at worker bexhoma-sut-postgresql-64-8-65536-1775546985-85d8577fcc-mgrm6
+Experiment                    : ends at 2026-04-07 10:35:53.410807 (160059.240568671) - 3974.84s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 3975s 
+* Code: 1775546985
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [1, 4].
+  * Factors for benchmarking are [2].
+  * Experiment uses bexhoma version 0.9.5.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 and 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker14.
+  * Loading is tested with [64] threads, split into [1, 8] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* PostgreSQL-64-1-16384-1 uses docker image postgres:18.3
+  * RAM:541008474112
+  * CPU:AMD Opteron(tm) Processor 6378
+  * Cores:64
+  * host:5.15.0-164-generic
+  * node:cl-worker14
+  * disk:152713
+  * datadisk:2392
+  * cpu_list:0-63
+  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1775546985
+* PostgreSQL-64-1-65536-1 uses docker image postgres:18.3
+  * RAM:541008474112
+  * CPU:AMD Opteron(tm) Processor 6378
+  * Cores:64
+  * host:5.15.0-164-generic
+  * node:cl-worker14
+  * disk:152713
+  * datadisk:2392
+  * cpu_list:0-63
+  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1775546985
+* PostgreSQL-64-8-16384-1 uses docker image postgres:18.3
+  * RAM:541008474112
+  * CPU:AMD Opteron(tm) Processor 6378
+  * Cores:64
+  * host:5.15.0-164-generic
+  * node:cl-worker14
+  * disk:152711
+  * datadisk:2391
+  * cpu_list:0-63
+  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1775546985
+* PostgreSQL-64-8-65536-1 uses docker image postgres:18.3
+  * RAM:541008474112
+  * CPU:AMD Opteron(tm) Processor 6378
+  * Cores:64
+  * host:5.15.0-164-generic
+  * node:cl-worker14
+  * disk:152711
+  * datadisk:2391
+  * cpu_list:0-63
+  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1775546985
+
+### Loading
+
+| DBMS                  |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-64-1-16384 |             1.00 |     64.00 | 16384.00 |        1.00 |         0.00 |                         3302.10 |               302838.00 |           1000000.00 |                             83839.00 |
+| PostgreSQL-64-8-16384 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 |                         3347.94 |               298733.00 |           1000000.00 |                             75583.00 |
+| PostgreSQL-64-1-65536 |             1.00 |     64.00 | 65536.00 |        1.00 |         0.00 |                         3391.84 |               294825.00 |           1000000.00 |                             67199.00 |
+| PostgreSQL-64-8-65536 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 |                         3392.04 |               294831.00 |           1000000.00 |                             50595.00 |
+
+### Execution
+
+| DBMS                    |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-64-1-16384-1 |             1.00 |     64.00 | 32768.00 |        1.00 |         0.00 |                         2853.12 |               350494.00 |          500507.00 |                             994.00 |            499493.00 |                            871423.00 |
+| PostgreSQL-64-1-65536-1 |             1.00 |     64.00 | 32768.00 |        1.00 |         0.00 |                         2852.27 |               350598.00 |          500530.00 |                             855.00 |            499470.00 |                            871423.00 |
+| PostgreSQL-64-8-16384-1 |             1.00 |     64.00 | 32768.00 |        1.00 |         0.00 |                         2840.35 |               352069.00 |          500033.00 |                             853.00 |            499967.00 |                            856063.00 |
+| PostgreSQL-64-8-65536-1 |             1.00 |     64.00 | 32768.00 |        1.00 |         0.00 |                         2795.10 |               357769.00 |          499687.00 |                             864.00 |            500313.00 |                            886783.00 |
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-64-1-16384 - Pods [[1]]
+* DBMS PostgreSQL-64-1-65536 - Pods [[1]]
+* DBMS PostgreSQL-64-8-65536 - Pods [[1]]
+* DBMS PostgreSQL-64-8-16384 - Pods [[1]]
+
+#### Planned
+
+* DBMS PostgreSQL-64-1-16384 - Pods [[1]]
+* DBMS PostgreSQL-64-1-65536 - Pods [[1]]
+* DBMS PostgreSQL-64-8-16384 - Pods [[1]]
+* DBMS PostgreSQL-64-8-65536 - Pods [[1]]
+
+### Tests
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
