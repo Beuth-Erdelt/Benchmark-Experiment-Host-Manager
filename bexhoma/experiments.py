@@ -1042,29 +1042,12 @@ class default():
                          pod_dashboard=''):
         """
         Let the dashboard pod build the evaluations.
-        This is specific to dbmsbenchmarker.
-
-        1) All local logs are copied to the pod.
-        2) Benchmarker in the dashboard pod is updated (dev channel)
-        3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
-        4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
         """
         self.cluster.logger.debug('default.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
         self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
-            """
-            pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
-            if len(pod_dashboard) > 0:
-                #pod_dashboard = pods[0]
-                status = self.cluster.get_pod_status(pod_dashboard)
-                self.cluster.logger.debug(pod_dashboard+status)
-                while status != "Running":
-                    self.wait(10)
-                    status = self.cluster.get_pod_status(pod_dashboard)
-                    self.cluster.logger.debug(pod_dashboard+status)
-            """
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
@@ -1083,72 +1066,11 @@ class default():
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
                 stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
-        # copy logs and yamls to result folder
-        """
-        print("Copy configuration and logs", end="", flush=True)
-        directory = os.fsencode(self.path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.endswith(".log") or filename.endswith(".yml") or filename.endswith(".error") or filename.endswith(".pickle"): 
-                self.cluster.kubectl('cp '+self.path+"/"+filename+' '+pod_dashboard+':/results/'+str(self.code)+'/'+filename+' -c dashboard')
-                print(".", end="", flush=True)
-        print("done!")
-        """
-        cmd = {}
-        # specific to dbmsbenchmarker
-        cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
-        self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
-        if self.benchmarking_is_active():
-            print("Join results ", end="", flush=True)
-            cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
-            self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
-            print("done!")
-        print("Build evaluation cube ", end="", flush=True)
-        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-        self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
-        print("done!")
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
         self.experimentfile_download(filename='')
-        #cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        #self.cluster.kubectl(cmd['download_results'])
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentfile_upload(filename='')
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/', from_file=self.path+"/")
-        ##cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/', from_file=self.path+"/")
-        #self.cluster.kubectl(cmd['upload_results'])
-        #print("{:30s}: downloading partial results".format("Experiment"))
-        #print("{:30s}: uploading full results".format("Experiment"))
-        # single files?
-        """
-        filename = 'evaluation.json'
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
-        self.cluster.kubectl(cmd['download_results'])
-        filename = 'evaluation.dict'
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
-        self.cluster.kubectl(cmd['download_results'])
-        filename = 'connections.config'
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
-        self.cluster.kubectl(cmd['download_results'])
-        filename = 'queries.config'
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
-        self.cluster.kubectl(cmd['download_results'])
-        filename = 'protocol.json'
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/'+filename, to=self.path+"/"+filename)
-        self.cluster.kubectl(cmd['download_results'])
-        # download complete result folder of experiment from pod
-        # this includes all measures like times and monitoring data
-        cmd['download_results'] = 'cp {from_file} {to} -c dashboard'.format(from_file=pod_dashboard+':/results/'+str(self.code)+'/', to=self.path+"/")
-        self.cluster.kubectl(cmd['download_results'])
-        ############ HammerDB
-        #self.path = "/home/perdelt/benchmarks/1668286639/"
-        directory = os.fsencode(self.path)
-        for file in os.listdir(directory):
-            filename = os.fsdecode(file)
-            if filename.endswith(".pickle"): 
-                df = pd.read_pickle(self.path+"/"+filename)
-                print(self.path+"/"+filename, df)
-        """
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
@@ -2663,13 +2585,82 @@ Some more concrete implementations
 
 """
 ############################################################################
+DBMSBenchmarker
+############################################################################
+"""
+
+
+
+class dbmsbenchmarker(default):
+    """
+    Class for defining an DBMSBenchmarker experiment.
+    This
+    
+    * merges results for different connections into one
+    """
+    def evaluate_results(self,
+                         pod_dashboard=''):
+        """
+        Let the dashboard pod build the evaluations.
+        This is specific to dbmsbenchmarker.
+
+        1) All local logs are copied to the pod.
+        2) Benchmarker in the dashboard pod is updated (dev channel)
+        3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
+        4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
+        """
+        self.cluster.logger.debug('dbmsbenchmarker.evaluate_results()')
+        self.evaluator.evaluate_results(pod_dashboard)
+        self.workload['workflow_errors'] = self.evaluator.workflow_errors
+        if len(pod_dashboard) == 0:
+            pod_dashboard = self.get_dashboard_pod()
+        if self.monitoring_active:
+            cmd = {}
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            self.cluster.logger.debug(stdout)
+            for component_type in self.workload['monitoring_components']:
+                cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                self.cluster.logger.debug(stdout)
+        # specific to dbmsbenchmarker
+        cmd = {}
+        cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
+        self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
+        if self.benchmarking_is_active():
+            print("Join results ", end="", flush=True)
+            cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
+            self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
+            print("done!")
+        print("Build evaluation cube ", end="", flush=True)
+        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
+        self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+        print("done!")
+        # download evaluation cubes
+        print("{:30s}: downloading partial results".format("Experiment"))
+        self.experimentfile_download(filename='')
+        print("{:30s}: uploading full results".format("Experiment"))
+        self.experimentfile_upload(filename='')
+
+
+"""
+############################################################################
 TPC-DS
 ############################################################################
 """
 
 
 
-class tpcds(default):
+class tpcds(dbmsbenchmarker):
     """
     Class for defining an TPC-DS experiment.
     This sets
@@ -2688,7 +2679,7 @@ class tpcds(default):
             script=None
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        dbmsbenchmarker.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.SF = SF
         if script is None:
             script = 'SF'+str(SF)+'-index'
@@ -2813,7 +2804,7 @@ class tpcds(default):
             if len(limit_import_table):
                 # import is limited to single table
                 self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
-        default.prepare_testbed(self, parameter)
+        dbmsbenchmarker.prepare_testbed(self, parameter)
 
 
 """
@@ -2822,7 +2813,7 @@ TPC-H
 ############################################################################
 """
 
-class tpch(default):
+class tpch(dbmsbenchmarker):
     """
     Class for defining an TPC-H experiment.
     This sets
@@ -2841,7 +2832,7 @@ class tpch(default):
             script=None
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        dbmsbenchmarker.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.SF = SF
         if script is None:
             script = 'SF'+str(SF)+'-index'
@@ -2962,7 +2953,7 @@ class tpch(default):
             if len(limit_import_table):
                 # import is limited to single table
                 self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)
-        default.prepare_testbed(self, parameter)
+        dbmsbenchmarker.prepare_testbed(self, parameter)
 
 
 
@@ -3084,7 +3075,7 @@ class tpcc(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def evaluate_results(self, pod_dashboard=''):
+    def OLD_evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
         This is specific to HammerDB.
@@ -3461,7 +3452,7 @@ class ycsb(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def evaluate_results(self, pod_dashboard=''):
+    def OLD_evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
         This is specific to YCSB.
@@ -3752,7 +3743,7 @@ class benchbase(default):
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
-    def evaluate_results(self, pod_dashboard=''):
+    def OLD_evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
         This is specific to Benchbase.
