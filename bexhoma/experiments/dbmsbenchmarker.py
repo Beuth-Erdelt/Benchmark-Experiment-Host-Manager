@@ -71,6 +71,17 @@ class dbmsbenchmarker(default):
     
     * merges results for different connections into one
     """
+    def __init__(self,
+            cluster,
+            code=None,
+            #queryfile = 'queries-tpch.config',
+            SF = '1',
+            num_experiment_to_apply = 1,
+            timeout = 7200,
+            #detached=False
+            ):
+        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        self.evaluator = evaluators.dbmsbenchmarker(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
                          pod_dashboard=''):
         """
