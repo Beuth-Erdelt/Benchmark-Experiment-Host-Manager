@@ -33,6 +33,9 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 ## Installation
 
+We recommend:
+* to also Jupyter install for notebooks `conda install -c conda-forge jupyter`
+
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Install the package `pip install bexhoma`
     * This will require Java and some buildtools
