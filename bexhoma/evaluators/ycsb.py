@@ -71,6 +71,7 @@ class ycsb(logger):
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
+            code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
@@ -103,7 +104,7 @@ class ycsb(logger):
             #return
             # test len of values, because of [ WARN]
             list_columns = [value[0]+"."+value[1] for value in result if len(value) > 1]
-            list_values = [connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions]
+            list_values = [code, connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions]
             list_measures = [value[2] for value in result if len(value) > 1]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
@@ -114,7 +115,7 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize', 'exceptions']
+            columns = ['code', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize', 'exceptions']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns
@@ -139,6 +140,7 @@ class ycsb(logger):
         try:
             df.fillna(0, inplace=True)
             df_typed = df.astype({
+                'code':'int',
                 'connection':'str',
                 'configuration':'str',
                 'experiment_run':'int',
@@ -294,6 +296,7 @@ class ycsb(logger):
             #print(key, len(grp.index))
             #print(grp)
             aggregate = {
+                'code':'max',
                 'client':'max',
                 'pod':'sum',
                 'pod_count':'count',
@@ -451,6 +454,7 @@ class ycsb(logger):
         #df = evaluation.get_df_loading()
         df.fillna(0, inplace=True)
         df_typed = df.astype({
+            'code':'str',
             'connection':'str',
             'configuration':'str',
             'experiment_run':'int',
@@ -503,6 +507,7 @@ class ycsb(logger):
             #print(key, len(grp.index))
             #print(grp)
             aggregate = {
+                'code':'max',
                 'client':'max',
                 'pod':'sum',
                 'pod_count':'count',

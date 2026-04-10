@@ -105,6 +105,8 @@ class default():
         """
         with open(self.path+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
+            if 'tenant_per' not in workload_properties or workload_properties['tenant_per'] == '':
+                workload_properties['tenant_per'] = 'None'
             return workload_properties
 
 
@@ -159,6 +161,7 @@ class default():
             df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
             df_time['num_experiment'] = int(c['parameter']['numExperiment'])
             df_time['num_client'] = int(c['parameter']['client'])
+            df_time['code'] = int(c['parameter']['code'])
             df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
             if not 'time_end' in eva['times']['total'][c['name']]:
                 return pd.DataFrame()
@@ -206,7 +209,7 @@ class default():
         df = self.get_performance_single(evaluation)
         if df.empty:
             return pd.DataFrame()
-        result = df.groupby('client').agg({
+        result = df.groupby(['experiment_run', 'client']).agg({
             'Throughput@Size': 'sum',
             'time [s]': 'max',
             'num_of_queries': 'max',
@@ -281,7 +284,7 @@ class default():
         return df_performance
 
 
-    def get_metrics(self, evaluation):
+    def get_metrics(self, evaluation=None):
         """
         Returns information about hardware metrics that were collected during the experiment.
 
@@ -299,6 +302,8 @@ class default():
         :return: A DataFrame listing hardware metrics and their metadata.
         :rtype: pandas.DataFrame
         """
+        if evaluation is None:
+            evaluation = self.get_evaluator()
         with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
             pretty_connections = json.dumps(connections, indent=2)
@@ -320,7 +325,36 @@ class default():
             return df
 
 
-    def get_loading_time_max(self, evaluation):
+    def get_connections(self, evaluation=None):
+        if evaluation is None:
+            evaluation = self.get_evaluator()
+        with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
+            connections = ast.literal_eval(inf.read())
+            pretty_connections = json.dumps(connections, indent=2)
+            #print(pretty_connections)
+            connections_sorted = sorted(connections, key=lambda c: c['name'])
+            result = dict()
+            for c in connections_sorted:
+                #pprint.pp(c)
+                result[c['name']] = {
+                    'code': c['parameter']['code'],
+                    'experiment_run': c['parameter']['numExperiment'],
+                    'client': c['parameter']['client'],
+                    'dockerimage': c['parameter']['dockerimage'],
+                    'name': c['name'],
+                    'time_load': c['timeLoad'],
+                    'time_ingest': c['timeIngesting'],
+                    'time_check': c['timeIndex'],
+                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+                    'pods': c['parameter']['parallelism'],
+                    'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
+                    'datadisk': c['hostsystem']['datadisk'],
+                }
+            df = pd.DataFrame(result).T
+            return df
+
+
+    def get_loading_time_max(self, evaluation=None):
         """
         Collects information about the loading processes from the experiment configuration.
 
@@ -343,6 +377,8 @@ class default():
         :return: A DataFrame with loading-related metrics and parameters for each connection.
         :rtype: pandas.DataFrame
         """
+        if evaluation is None:
+            evaluation = self.get_evaluator()
         with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
             pretty_connections = json.dumps(connections, indent=2)
@@ -546,8 +582,8 @@ class default():
         Retrieves and aggregates monitoring metrics for a specified component type, grouped by client.
 
         This function obtains detailed monitoring data using `show_summary_monitoring_table` for the
-        specified component type (default "stream"). It adds a 'client' column extracted from the DataFrame index,
-        then aggregates various hardware and application metrics by client using sum or mean as appropriate.
+        specified component type (default "stream"). It adds connection columns.
+        then aggregates various hardware and application metrics by code, experiment_run and client using sum or mean as appropriate.
 
         Aggregation is by summation except for type "ratio", which aggregates via max.
 
@@ -560,53 +596,21 @@ class default():
         """
         df_monitoring = self.show_summary_monitoring_table(evaluation, type)
         if len(df_monitoring) > 0:
+            #print(df_monitoring)
             df = df_monitoring.copy()  # avoid modifying original
-            df['client'] = df.index.str.rsplit('-', n=1).str[-1]
+            df_connections = self.get_connections(evaluation)
+            df = df.join(df_connections)
             #print(df)
-            """agg_dict = {
-                'CPU [CPUs]': 'sum',
-                'Max RAM [Gb]': 'sum',
-                'Max RAM Cached [Gb]': 'sum',
-                'Max CPU': 'sum',
-                'CPU Throttled': 'sum',
-                'Locks': 'sum',
-                'Access Exclusive': 'sum',
-                'Access Share': 'sum',
-                'Exclusive': 'sum',
-                'Row Exclusive': 'sum',
-                'Row Share': 'sum',
-                'Share': 'sum',
-                'Share Row Exclusive': 'sum',
-                'Share Update Exclusive': 'sum',
-                'SI Read': 'sum',
-                'Active': 'sum',
-                'Idle': 'sum',
-                'Transactions Idle': 'sum',
-                'Transactions Aborted': 'sum',
-                'Block Hits': 'sum',
-                'Block Reads': 'sum',
-                'Heap Reads': 'sum',
-                'Heap Hits': 'sum',
-                'Sync Time': 'sum',
-                'Write Time': 'sum',
-                'Number Autoanalyze': 'sum',
-                'Number Autovacuum': 'sum',
-                'Cache Hit Ratio [%]': 'mean',
-                'Variance of Core Util [%]': 'max',
-            }"""
+            #df['client'] = df.index.str.rsplit('-', n=1).str[-1]
+            #print(df)
             agg_dict = df_monitoring.columns
             # Filter aggregation dictionary to only include columns present in df
-            #filtered_agg_dict = {col: func for col, func in agg_dict.items() if col in df.columns}
             filtered_agg_dict = {col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum' for col in agg_dict if col in df.columns}
-            #if 'Core Utilization Variance [%]' in filtered_agg_dict:
-            #    filtered_agg_dict['Core Utilization Variance [%]'] = 'max'
-            #if 'Max Core Utilization [%]' in filtered_agg_dict:
-            #    filtered_agg_dict['Max Core Utilization [%]'] = 'max'
             if 'Total I/O Wait Time [s]' in filtered_agg_dict:
                 filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
             #print(filtered_agg_dict)
             # Apply groupby with filtered aggregation
-            result = df.groupby('client').agg(filtered_agg_dict).reset_index()
+            result = df.groupby(['code', 'experiment_run', 'client']).agg(filtered_agg_dict).reset_index()
             return result
 
 
@@ -666,7 +670,7 @@ class default():
             # Filter aggregation dictionary to only include columns present in df
             filtered_agg_dict = {col: func for col, func in agg_dict.items() if col in df.columns}
             # Apply groupby with filtered aggregation
-            result = df.groupby('client').agg(filtered_agg_dict).reset_index()
+            result = df.groupby(['experiment_run', 'client']).agg(filtered_agg_dict).reset_index()
             return result
 
 
@@ -743,6 +747,7 @@ class default():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
+            df_connections = self.get_connections(evaluation)
             df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
             df_monitoring.index.name="timestamp"
             df_long = df_monitoring.reset_index().melt(
@@ -753,32 +758,31 @@ class default():
             #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             if workload['tenant_per'] == 'container':
                 # 1 time series per tenant
-                df_long[["tenant", "client"]] = df_long["series"].str.rsplit("-", n=2, expand=True).iloc[:, 1:]
+                #df_long[["tenant", "client"]] = df_long["series"].str.rsplit("-", n=2, expand=True).iloc[:, 1:]
+                pass
             else:
                 # 1 time series for all tenants (it is 1 DBMS)
                 df_long['tenant'] = "0"
-                df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
+                #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             df_long['type'] = workload['tenant_per']
             df_long['num_tenants'] = workload['num_tenants']
             df_long['vol_tenants'] = workload['multi_tenant_volume']
-            df_long.drop(columns=['series'], inplace=True)
-            #df_monitoring.plot(title=metric)
-            #ax = df_monitoring.plot()
-            #ax.set_title(metric)
-            #plt.show()
+            df_long = pd.merge(df_long, df_connections, left_on='series', right_index=True, how='left')
+            #print(df_long)
+            #df_long.drop(columns=['series'], inplace=True)
             df_performance = pd.concat([df_performance, df_long])
-            #df_long
-            #df_2 = df_long.copy()
         df_sum = (
             df_performance
-            .groupby(["timestamp", "client", "type", 'vol_tenants', "num_tenants"], as_index=False)["value"]
+            .groupby(["timestamp", "code", "experiment_run", "client", "type", 'vol_tenants', "num_tenants"], as_index=False)["value"]
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)
         return df_sum
 
 
-    def get_evaluator(self, code):
+    def get_evaluator(self, code=''):
+        if code == '':
+            code = self.codes[0]
         evaluation = inspector.inspector(self.path)
         evaluation.load_experiment(code=code, silent=True)
         evaluation.code = code
@@ -806,7 +810,9 @@ class benchbase(default):
         default.__init__(self, path, codes)
 
 
-    def get_evaluator(self, code):
+    def get_evaluator(self, code=''):
+        if code == '':
+            code = self.codes[0]
         return evaluators.benchbase(code=code, path=self.path)
 
 
@@ -824,7 +830,7 @@ class benchbase(default):
         """
         df = evaluation.get_df_benchmarking()
         if not df.empty:
-            df = df.sort_values(['experiment_run', 'client'])
+            df = df.sort_values(['code', 'experiment_run', 'client'])
         else:
             print(evaluation.code, "is empty")
         return df
@@ -851,7 +857,7 @@ class benchbase(default):
                 print(evaluation.code, "has missing performance")
                 #print(evaluation.code, df)
                 return pd.DataFrame()
-            result = df.groupby('client').agg({
+            result = df.groupby(['code', 'experiment_run', 'client']).agg({
                 'Goodput (requests/second)': 'sum',
                 'num_errors': 'sum',
                 'Latency Distribution.Average Latency (microseconds)': 'mean',

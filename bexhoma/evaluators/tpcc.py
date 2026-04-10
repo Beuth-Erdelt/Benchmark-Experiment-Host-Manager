@@ -70,6 +70,7 @@ class tpcc(logger):
             #print("pod_name:", pod_name)
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
+            code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             iterations = re.findall('HAMMERDB_ITERATIONS (.+?)\n', stdout)[0]
             duration = re.findall('HAMMERDB_DURATION (.+?)\n', stdout)[0]
@@ -154,11 +155,11 @@ class tpcc(logger):
             # if latencies are logged
             list_latencies = list(extracted_data.values())
             #print(list_latencies)
-            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
+            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, code, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
             #print(result_list)
             df = pd.DataFrame(result_list)
             #print(list(extracted_data.keys()))
-            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
+            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             column_names.extend(list(extracted_data.keys()))
             #print(column_names)
             df.columns = column_names
@@ -207,6 +208,7 @@ class tpcc(logger):
                 'connection':'str',
                 'configuration':'str',
                 'experiment_run':'int',
+                'code':'int',
                 'client':'int',
                 'pod':'str',
                 'pod_count':'int',
@@ -236,6 +238,7 @@ class tpcc(logger):
                 'connection':'str',
                 'configuration':'str',
                 'experiment_run':'int',
+                'code':'int',
                 'client':'int',
                 'pod':'str',
                 'pod_count':'int',
@@ -268,6 +271,7 @@ class tpcc(logger):
             #print(grp)
             if 'CALLS' in grp:
                 aggregate = {
+                    'code':'max',
                     'client':'max',
                     'pod':'sum',
                     'pod_count':'count',
@@ -296,6 +300,7 @@ class tpcc(logger):
                 }
             else:
                 aggregate = {
+                    'code':'max',
                     'client':'max',
                     'pod':'sum',
                     'pod_count':'count',

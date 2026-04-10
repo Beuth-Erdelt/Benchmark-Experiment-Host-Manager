@@ -70,6 +70,7 @@ class benchbase(logger):
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
                 # log is incomplete
@@ -96,6 +97,7 @@ class benchbase(logger):
                 'connection': connection_name,
                 'configuration': configuration_name,
                 'experiment_run': experiment_run,
+                'code': code,
                 'client': client,
                 'pod': pod_name,
                 'pod_count': pod_count,
@@ -148,6 +150,7 @@ class benchbase(logger):
             'experiment_run':'int',
             'duration':'int',
             'client':'int',
+            'code': 'int',
             'pod':'str',
             'pod_count':'int',
             'bench':'str',
@@ -195,6 +198,7 @@ class benchbase(logger):
             #print(grp.columns)
             aggregate = {
                 'client':'max',
+                'code':'max',
                 'pod':'sum',
                 'pod_count':'count',
                 'duration':'max',
