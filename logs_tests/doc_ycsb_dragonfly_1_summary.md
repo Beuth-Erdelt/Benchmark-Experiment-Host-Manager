@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 497s 
-* Code: 1774190325
+* Duration: 387s 
+* Code: 1775666289
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -15,7 +15,7 @@ YCSB SF=1
   * Target is based on multiples of '16384'.
   * Factors for loading are [12].
   * Factors for benchmarking are [4].
-  * Experiment uses bexhoma version 0.9.4.
+  * Experiment uses bexhoma version 0.9.5.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Dragonfly'].
@@ -35,25 +35,26 @@ YCSB SF=1
   * Cores:64
   * host:5.15.0-164-generic
   * node:cl-worker14
-  * disk:152282
+  * disk:150958
+  * datadisk:1
   * cpu_list:0-63
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1774190325
+    * code:1775666289
 
 ### Loading
 
 | DBMS                  |   experiment_run |   threads |    target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------------------|-----------------:|----------:|----------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Dragonfly-64-8-196608 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 |                        54919.96 |                18773.00 |           1000000.00 |                              1548.25 |
+| Dragonfly-64-8-196608 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 |                        61249.27 |                16821.00 |           1000000.00 |                              1662.38 |
 
 ### Execution
 
 | DBMS                    |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| Dragonfly-64-8-196608-1 |             1.00 |    128.00 | 65536.00 |        1.00 |         0.00 |                        65499.04 |               152674.00 |         5001346.00 |                             534.00 |           4998654.00 |                               513.00 |
+| Dragonfly-64-8-196608-1 |             1.00 |    128.00 | 65536.00 |        1.00 |         0.00 |                        65500.75 |               152670.00 |         5000491.00 |                             499.00 |           4999509.00 |                               473.00 |
 
 ### Workflow
 
@@ -71,39 +72,25 @@ YCSB SF=1
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |       308.22 |      3.92 |           1.68 |                  1.68 |
+| Dragonfly-64-8-196608-1 |       242.02 |      3.54 |           1.62 |                  1.62 |
 
 ### Loading phase: component loader
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |         0.14 |      0.00 |           0.00 |                  0.00 |
+| Dragonfly-64-8-196608-1 |         0.15 |      0.00 |           0.00 |                  0.00 |
 
 ### Execution phase: SUT deployment
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |      1299.60 |      8.81 |           1.68 |                  1.68 |
+| Dragonfly-64-8-196608-1 |      1134.52 |      8.79 |           1.62 |                  1.62 |
 
 ### Execution phase: component benchmarker
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |       485.00 |      4.49 |           0.13 |                  0.13 |
-
-### Application Metrics
-
-#### Loading phase: SUT deployment
-
-| DBMS                    |   Replies Sent [count] |   Memory Usage [Gi] |   Processed Commands [per second] |   Network Input [MB/sec] |   Replica Lag [records] |
-|:------------------------|-----------------------:|--------------------:|----------------------------------:|-------------------------:|------------------------:|
-| Dragonfly-64-8-196608-1 |             2000001.00 |                1.53 |                           9990.22 |                     6.31 |                    0.00 |
-
-#### Execution phase: SUT deployment
-
-| DBMS                    |   Replies Sent [count] |   Memory Usage [Gi] |   Processed Commands [per second] |   Network Input [MB/sec] |   Replica Lag [records] |
-|:------------------------|-----------------------:|--------------------:|----------------------------------:|-------------------------:|------------------------:|
-| Dragonfly-64-8-196608-1 |             8673876.00 |                1.53 |                          24921.94 |                     3.94 |                    0.00 |
+| Dragonfly-64-8-196608-1 |       567.40 |      4.49 |           0.13 |                  0.13 |
 
 ### Tests
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
