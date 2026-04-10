@@ -91,7 +91,7 @@ class default():
         code = codes[0]
         evaluate = self.get_evaluator(code)
         self.df_metrics = self.get_metrics(evaluate)
-    def get_workload(self, code):
+    def get_workload(self, code=''):
         """
         Returns the workload data of an experiment given by its code.
 
@@ -103,12 +103,20 @@ class default():
         :return: A dictionary containing the workload properties.
         :rtype: dict
         """
+        if code == '':
+            code = self.codes[0]
         with open(self.path+"/"+code+"/queries.config",'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
             if 'tenant_per' not in workload_properties or workload_properties['tenant_per'] == '':
                 workload_properties['tenant_per'] = 'None'
             return workload_properties
 
+
+    def get_monitored_phases(self, code=''):
+        monitoring_components  = self.get_workload(code=code)['monitoring_components']
+        #print(monitoring_components)
+        df = pd.DataFrame.from_dict(monitoring_components, orient='index', columns=['description'])
+        return df
 
     def get_performance_single(self, evaluate):
         """
@@ -816,7 +824,7 @@ class benchbase(default):
         return evaluators.benchbase(code=code, path=self.path)
 
 
-    def get_performance_single(self, evaluation):
+    def get_performance_single(self, evaluation=None):
         """
         Reads the performance metrics and returns them without any aggregation across clients.
 
@@ -828,6 +836,8 @@ class benchbase(default):
         :return: A DataFrame containing unaggregated performance metrics per client.
         :rtype: pandas.DataFrame
         """
+        if evaluation is None:
+            evaluation = self.get_evaluator()
         df = evaluation.get_df_benchmarking()
         if not df.empty:
             df = df.sort_values(['code', 'experiment_run', 'client'])
@@ -851,19 +861,23 @@ class benchbase(default):
         :rtype: pandas.DataFrame
         """
         df = self.get_performance_single(evaluation)
+        df = evaluation.benchmarking_set_datatypes(df)
+        df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
+        #print(df_aggregated)
+        return df_aggregated
         #print(evaluation.code, df)
-        if not df.empty:
-            if not 'Goodput (requests/second)' in df.columns:
-                print(evaluation.code, "has missing performance")
-                #print(evaluation.code, df)
-                return pd.DataFrame()
-            result = df.groupby(['code', 'experiment_run', 'client']).agg({
-                'Goodput (requests/second)': 'sum',
-                'num_errors': 'sum',
-                'Latency Distribution.Average Latency (microseconds)': 'mean',
-                'Latency Distribution.99th Percentile Latency (microseconds)': 'max',
-            }).reset_index()
-        else:
-            print(evaluation.code, "has empty performance")
-            result = pd.DataFrame()
+        #if not df.empty:
+        #    if not 'Goodput (requests/second)' in df.columns:
+        #        print(evaluation.code, "has missing performance")
+        #        #print(evaluation.code, df)
+        #        return pd.DataFrame()
+        #    result = df.groupby(['code', 'experiment_run', 'client']).agg({
+        #        'Goodput (requests/second)': 'sum',
+        #        'num_errors': 'sum',
+        #        'Latency Distribution.Average Latency (microseconds)': 'mean',
+        #        'Latency Distribution.99th Percentile Latency (microseconds)': 'max',
+        #    }).reset_index()
+        #else:
+        #    print(evaluation.code, "has empty performance")
+        #    result = pd.DataFrame()
         return result
