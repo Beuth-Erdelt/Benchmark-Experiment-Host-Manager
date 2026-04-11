@@ -88,6 +88,7 @@ class default():
     def __init__(self, path, codes):
         self.path = path
         self.codes = codes
+        self.with_monitoring = True
         code = codes[0]
         evaluate = self.get_evaluator(code)
         self.df_metrics = self.get_metrics(evaluate)
@@ -113,6 +114,8 @@ class default():
 
 
     def get_monitored_phases(self, code=''):
+        if not self.with_monitoring:
+            return pd.DataFrame()
         monitoring_components  = self.get_workload(code=code)['monitoring_components']
         #print(monitoring_components)
         df = pd.DataFrame.from_dict(monitoring_components, orient='index', columns=['description'])
@@ -319,6 +322,10 @@ class default():
             connections_sorted = sorted(connections, key=lambda c: c['name'])
             result = dict()
             for c in connections_sorted:
+                if not 'metrics' in c['monitoring']:
+                    # no monitoring
+                    self.with_monitoring = False
+                    return pd.DataFrame()
                 #print(c)
                 for m, metric in c['monitoring']['metrics'].items():
                     if m in result:
@@ -532,6 +539,8 @@ class default():
         :return: A DataFrame combining all monitored metrics indexed by monitored entities.
         :rtype: pandas.DataFrame
         """
+        if not self.with_monitoring:
+            return pd.DataFrame()
         #scale = 1
         results = []
         for idx, row in self.df_metrics.iterrows():
@@ -580,6 +589,8 @@ class default():
         :return: A DataFrame containing the time series of the requested metric indexed by timestamps or monitoring targets.
         :rtype: pandas.DataFrame
         """
+        if not self.with_monitoring:
+            return pd.DataFrame()
         evaluate = self.get_evaluator(code)
         df = evaluate.get_monitoring_metric(metric=metric, component=component)
         return df
@@ -602,6 +613,8 @@ class default():
         :return: A DataFrame with aggregated monitoring metrics grouped by client. If no data is available, returns None.
         :rtype: pandas.DataFrame or None
         """
+        if not self.with_monitoring:
+            return pd.DataFrame()
         df_monitoring = self.show_summary_monitoring_table(evaluation, type)
         if len(df_monitoring) > 0:
             #print(df_monitoring)
@@ -618,7 +631,7 @@ class default():
                 filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
             #print(filtered_agg_dict)
             # Apply groupby with filtered aggregation
-            result = df.groupby(['code', 'experiment_run', 'client']).agg(filtered_agg_dict).reset_index()
+            result = df.groupby(['experiment_run', 'client']).agg(filtered_agg_dict).reset_index()
             return result
 
 
@@ -699,6 +712,8 @@ class default():
                  enriched with workload metadata.
         :rtype: pandas.DataFrame
         """
+        if not self.with_monitoring:
+            return pd.DataFrame()
         df_performance = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
@@ -733,6 +748,8 @@ class default():
                  enriched with workload metadata.
         :rtype: pandas.DataFrame
         """
+        if not self.with_monitoring:
+            return pd.DataFrame()
         df_performance = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
@@ -740,17 +757,21 @@ class default():
             df_monitoring = self.show_summary_monitoring_table(evaluation, type)
             if len(df_monitoring) > 0:
                 df = df_monitoring.copy()  # avoid modifying original
-                df['client'] = df.index.str.rsplit('-', n=1).str[-1]
+                df_connections = self.get_connections(evaluation)
+                df = df.join(df_connections)
+                #df['client'] = df.index.str.rsplit('-', n=1).str[-1]
                 df['type'] = workload['tenant_per']
                 df['num_tenants'] = workload['num_tenants']
                 df['vol_tenants']=workload['multi_tenant_volume']
-                df['code']=code
+                #df['code']=code
                 df_performance = pd.concat([df_performance, df])
         df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
+        if not self.with_monitoring:
+            return pd.DataFrame()
         df_performance = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
