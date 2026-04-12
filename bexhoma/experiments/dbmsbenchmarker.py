@@ -80,7 +80,7 @@ class dbmsbenchmarker(default):
             timeout = 7200,
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        default.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
         self.evaluator = evaluators.dbmsbenchmarker(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
                          pod_dashboard=''):

@@ -121,7 +121,49 @@ class default():
         df = pd.DataFrame.from_dict(monitoring_components, orient='index', columns=['description'])
         return df
 
-    def get_performance_single(self, evaluate):
+    def get_performance_single(self, evaluation=None):
+        """
+        Reads the performance metrics and returns them without any aggregation across clients.
+
+        This function retrieves benchmarking data from the given evaluation object,
+        sorts it by experiment run and client, and returns the resulting DataFrame.
+
+        :param evaluation: The evaluation object containing benchmarking data.
+        :type evaluation: object
+        :return: A DataFrame containing unaggregated performance metrics per client.
+        :rtype: pandas.DataFrame
+        """
+        if evaluation is None:
+            evaluation = self.get_evaluator()
+        df = evaluation.get_df_benchmarking()
+        if not df.empty:
+            df = df.sort_values(['code', 'experiment_run', 'client'])
+        else:
+            print(evaluation.code, "is empty")
+        return df
+
+        
+    def get_performance(self, evaluation):
+        """
+        Reads and aggregates the performance metrics across clients.
+
+        This function retrieves benchmarking data from the given evaluation object,
+        sorts it by experiment run and client, and performs aggregation by client.
+        It sums throughput and error counts, calculates the mean average latency, 
+        and determines the maximum 99th percentile latency per client.
+
+        :param evaluation: The evaluation object containing benchmarking data.
+        :type evaluation: object
+        :return: A DataFrame with aggregated performance metrics per client.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_performance_single(evaluation)
+        df = evaluation.benchmarking_set_datatypes(df)
+        df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
+        #print(df_aggregated)
+        return df_aggregated
+
+    def OLD_get_performance_single(self, evaluate):
         """
         Reads the performance metrics and returns them without any aggregation across clients.
         Computes performance metrics for a single experiment run, including latency, execution power,
@@ -204,7 +246,7 @@ class default():
         return df
 
 
-    def get_performance(self, evaluation):
+    def OLD_get_performance(self, evaluation):
         """
         Aggregates performance metrics from a single experiment evaluation across parallel clients.
 
@@ -809,7 +851,7 @@ class default():
         return df_sum
 
 
-    def get_evaluator(self, code=''):
+    def OLD_get_evaluator(self, code=''):
         if code == '':
             code = self.codes[0]
         evaluation = inspector.inspector(self.path)
@@ -817,6 +859,13 @@ class default():
         evaluation.code = code
         return evaluation
         #return evaluators.base(code=code, path=self.path)
+
+    def get_evaluator(self, code=''):
+        if code == '':
+            code = self.codes[0]
+        return evaluators.dbmsbenchmarker(code=code, path=self.path)
+
+
 
 
 
@@ -845,60 +894,3 @@ class benchbase(default):
         return evaluators.benchbase(code=code, path=self.path)
 
 
-    def get_performance_single(self, evaluation=None):
-        """
-        Reads the performance metrics and returns them without any aggregation across clients.
-
-        This function retrieves benchmarking data from the given evaluation object,
-        sorts it by experiment run and client, and returns the resulting DataFrame.
-
-        :param evaluation: The evaluation object containing benchmarking data.
-        :type evaluation: object
-        :return: A DataFrame containing unaggregated performance metrics per client.
-        :rtype: pandas.DataFrame
-        """
-        if evaluation is None:
-            evaluation = self.get_evaluator()
-        df = evaluation.get_df_benchmarking()
-        if not df.empty:
-            df = df.sort_values(['code', 'experiment_run', 'client'])
-        else:
-            print(evaluation.code, "is empty")
-        return df
-
-        
-    def get_performance(self, evaluation):
-        """
-        Reads and aggregates the performance metrics across clients.
-
-        This function retrieves benchmarking data from the given evaluation object,
-        sorts it by experiment run and client, and performs aggregation by client.
-        It sums throughput and error counts, calculates the mean average latency, 
-        and determines the maximum 99th percentile latency per client.
-
-        :param evaluation: The evaluation object containing benchmarking data.
-        :type evaluation: object
-        :return: A DataFrame with aggregated performance metrics per client.
-        :rtype: pandas.DataFrame
-        """
-        df = self.get_performance_single(evaluation)
-        df = evaluation.benchmarking_set_datatypes(df)
-        df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
-        #print(df_aggregated)
-        return df_aggregated
-        #print(evaluation.code, df)
-        #if not df.empty:
-        #    if not 'Goodput (requests/second)' in df.columns:
-        #        print(evaluation.code, "has missing performance")
-        #        #print(evaluation.code, df)
-        #        return pd.DataFrame()
-        #    result = df.groupby(['code', 'experiment_run', 'client']).agg({
-        #        'Goodput (requests/second)': 'sum',
-        #        'num_errors': 'sum',
-        #        'Latency Distribution.Average Latency (microseconds)': 'mean',
-        #        'Latency Distribution.99th Percentile Latency (microseconds)': 'max',
-        #    }).reset_index()
-        #else:
-        #    print(evaluation.code, "has empty performance")
-        #    result = pd.DataFrame()
-        return result

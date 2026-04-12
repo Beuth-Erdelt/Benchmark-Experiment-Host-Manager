@@ -81,7 +81,7 @@ class tpch(dbmsbenchmarker):
             script=None
             #detached=False
             ):
-        dbmsbenchmarker.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        dbmsbenchmarker.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
         self.SF = SF
         if script is None:
             script = 'SF'+str(SF)+'-index'
