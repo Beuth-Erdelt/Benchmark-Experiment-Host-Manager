@@ -1615,8 +1615,14 @@ class default():
                                         print("{:30s}: still being removed".format(config.configuration))
                                         self.wait(30)
                                     print("{:30s}: starts again".format(config.configuration))
+                                    # reset number of clients per experiment
+                                    #print("{:30s}: reset pod counter".format(config.configuration))
+                                    #redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
+                                    #self.cluster.set_pod_counter(queue=redisQueue, value=0)
+                                    # find next sequence of benchmarks
                                     config.benchmark_list = config.benchmark_list_template.copy()
                                     config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
+                                    self.client = 0
                                     # wait for PV to be gone completely
                                     #self.wait(60)
                                     config.reset_sut()
