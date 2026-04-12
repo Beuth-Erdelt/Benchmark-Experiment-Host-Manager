@@ -354,7 +354,7 @@ class default():
                 result[c['name']] = {
                     'code': c['parameter']['code'],
                     'experiment_run': c['parameter']['numExperiment'],
-                    'client': c['parameter']['client'],
+                    'client': int(c['parameter']['client']),
                     'dockerimage': c['parameter']['dockerimage'],
                     'name': c['name'],
                     'time_load': c['timeLoad'],
@@ -409,7 +409,7 @@ class default():
                     'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
                     'pods': c['parameter']['parallelism'],
                     'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
-                    'client': c['parameter']['client'],
+                    'client': int(c['parameter']['client']),
                     'datadisk': c['hostsystem']['datadisk'],
                 }
             df = pd.DataFrame(result).T
@@ -656,7 +656,7 @@ class default():
         df_monitoring = self.show_summary_monitoring_table(evaluation, type)
         if len(df_monitoring) > 0:
             df = df_monitoring.copy()  # avoid modifying original
-            df['client'] = df.index.str.rsplit('-', n=1).str[-1]
+            df['client'] = int(df.index.str.rsplit('-', n=1).str[-1])
             agg_dict = {
                 'CPU [CPUs]': 'sum',
                 'Max RAM [Gb]': 'sum',
