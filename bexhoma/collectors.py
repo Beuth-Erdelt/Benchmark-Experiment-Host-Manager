@@ -30,6 +30,7 @@ import json
 import re
 import numpy as np
 from scipy.stats import gmean
+import pprint
 
 from dbmsbenchmarker import parameter, inspector
 
@@ -405,8 +406,36 @@ class default():
                     'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
                     'pods': c['parameter']['parallelism'],
                     'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
-                    'datadisk': c['hostsystem']['datadisk'],
+                    'num_worker': int(c['parameter']['num_worker']),
+                    #'tenant_per': int(c['parameter']['tenant_per']),
+                    #'num_tenants': int(c['parameter']['num_tenants']),
+                    #'multi_tenant_volume': int(c['parameter']['multi_tenant_volume']),
+                    #'datadisk': c['hostsystem']['datadisk'],
                 }
+                #df['type']=workload['tenant_per']
+                #df['num_tenants']=workload['num_tenants']
+                #df['vol_tenants']=workload['multi_tenant_volume']
+                for key, hostdata in c['hostsystem'].items():
+                    if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                        result[c['name']][f'host_{key}'] = hostdata
+                if 'loading_parameters' in c['parameter']['connection_parameter']:
+                    for key, hostdata in c['parameter']['connection_parameter']['loading_parameters'].items():
+                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                            result[c['name']][f'loading_parameters_{key}'] = hostdata
+                if 'benchmarking_parameters' in c['parameter']['connection_parameter']:
+                    for key, hostdata in c['parameter']['connection_parameter']['benchmarking_parameters'].items():
+                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                            result[c['name']][f'benchmarking_parameters_{key}'] = hostdata
+                if 'sut_parameters' in c['parameter']['connection_parameter']:
+                    for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
+                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                            result[c['name']][f'sut_parameters_{key}'] = hostdata
+                if 'args' in c['hostsystem']:
+                    for key, arg in enumerate(c['hostsystem']['args']):
+                        if "=" in arg:
+                            key = arg.split("=")[0]
+                            value = arg.split("=")[1]
+                            result[c['name']][f'arg_{key}'] = value
             df = pd.DataFrame(result).T
             return df
 
@@ -452,6 +481,7 @@ class default():
                     'pods': c['parameter']['parallelism'],
                     'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
                     'client': int(c['parameter']['client']),
+                    'num_worker': int(c['parameter']['num_worker']),
                     'datadisk': c['hostsystem']['datadisk'],
                 }
             df = pd.DataFrame(result).T
