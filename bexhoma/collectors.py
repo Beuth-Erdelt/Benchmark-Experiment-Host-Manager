@@ -1007,7 +1007,11 @@ class default():
             # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
             #print(df)
             #print(df_connections)
-            result = df.combine_first(df_connections)
+            #result = df.combine_first(df_connections).reindex(columns=df.columns)
+            # 1. Spalten finden, die NUR in df_connections existieren
+            neue_spalten = [c for c in df_connections.columns if c not in df.columns]
+            # 2. Diese Spalten rechts an df hängen
+            result = pd.concat([df, df_connections[neue_spalten]], axis=1)
             #print(result.index)
             # 3. Spalten aus dem Index zurückholen
             result = result.reset_index()
@@ -1016,8 +1020,12 @@ class default():
             return result
         else:
             print("combine on index")
-            result = df.combine_first(df_connections)
-            result = result.sort_values(['code', 'experiment_run', 'client'])
+            #result = df.combine_first(df_connections).reindex(columns=df.columns)
+            # 1. Spalten finden, die NUR in df_connections existieren
+            neue_spalten = [c for c in df_connections.columns if c not in df.columns]
+            # 2. Diese Spalten rechts an df hängen
+            result = pd.concat([df, df_connections[neue_spalten]], axis=1)
+            #result = result.sort_values(['code', 'experiment_run', 'client'])
             return result
         #for code in self.codes:
         #    evaluation = self.get_evaluator(code)
