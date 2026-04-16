@@ -161,6 +161,7 @@ class default():
         df = self.get_performance_single(evaluation)
         df = evaluation.benchmarking_set_datatypes(df)
         df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
+        df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
         #print(df_aggregated)
         return df_aggregated
 
@@ -308,6 +309,67 @@ class default():
         df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
+    def get_performance_aggregated_per_connection(self, type="stream"):
+        """
+        Loops over multiple experiments and combines their aggregated performance results into a single DataFrame.
+
+        For each experiment code, this function:
+        - Initializes a benchmarking evaluator
+        - Retrieves the corresponding workload configuration
+        - Extracts aggregated performance metrics per client
+        - Annotates the results with workload metadata (`type` and `num_tenants`)
+        - Concatenates the results into a single DataFrame
+
+        :return: A combined DataFrame containing aggregated performance metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            workload = self.get_workload(code)
+            df = self.get_performance(evaluation)
+            if df.empty:
+                continue
+            #print(df)
+            #df['type']=workload['tenant_per']
+            #df['num_tenants']=workload['num_tenants']
+            #df['vol_tenants']=workload['multi_tenant_volume']
+            #df['code']=code
+            df['code'] = df['code'].astype(str)
+            df = df.drop(columns=['pod'])
+            #print(df)
+            df_performance = pd.concat([df_performance, df])
+        #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
+        return df_performance
+
+    def get_performance_per_pod(self):
+        """
+        Loops over multiple experiments and combines their unaggregated performance results into a single DataFrame.
+
+        For each experiment code, this function:
+        - Initializes a benchmarking evaluator
+        - Retrieves the corresponding workload configuration
+        - Extracts unaggregated performance metrics per client
+        - Annotates the results with workload metadata (`type` and `num_tenants`)
+        - Concatenates the results into a single DataFrame
+
+        :return: A combined DataFrame containing unaggregated performance metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            workload = self.get_workload(code)
+            df = self.get_performance_single(evaluation)
+            #df['type']=workload['tenant_per']
+            #df['num_tenants']=workload['num_tenants']
+            #df['vol_tenants']=workload['multi_tenant_volume']
+            #df['code']=code
+            #print(df)
+            df_performance.index = evaluation.code + '-' + df_performance.index.astype(str)
+            df_performance = pd.concat([df_performance, df])
+        #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
+        return df_performance
 
     def get_performance_all_single(self):
         """
@@ -394,12 +456,13 @@ class default():
             result = dict()
             for c in connections_sorted:
                 #pprint.pp(c)
-                result[c['name']] = {
+                connection_id = c['parameter']['code']+"-"+c['name']
+                result[connection_id] = {
                     'code': c['parameter']['code'],
                     'experiment_run': c['parameter']['numExperiment'],
                     'client': int(c['parameter']['client']),
                     'dockerimage': c['parameter']['dockerimage'],
-                    'name': c['name'],
+                    'connection': c['name'],
                     'time_load': c['timeLoad'],
                     'time_ingest': c['timeIngesting'],
                     'time_check': c['timeIndex'],
@@ -417,25 +480,25 @@ class default():
                 #df['vol_tenants']=workload['multi_tenant_volume']
                 for key, hostdata in c['hostsystem'].items():
                     if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                        result[c['name']][f'host_{key}'] = hostdata
+                        result[connection_id][f'host_{key}'] = hostdata
                 if 'loading_parameters' in c['parameter']['connection_parameter']:
                     for key, hostdata in c['parameter']['connection_parameter']['loading_parameters'].items():
                         if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[c['name']][f'loading_parameters_{key}'] = hostdata
+                            result[connection_id][f'loading_parameters_{key}'] = hostdata
                 if 'benchmarking_parameters' in c['parameter']['connection_parameter']:
                     for key, hostdata in c['parameter']['connection_parameter']['benchmarking_parameters'].items():
                         if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[c['name']][f'benchmarking_parameters_{key}'] = hostdata
+                            result[connection_id][f'benchmarking_parameters_{key}'] = hostdata
                 if 'sut_parameters' in c['parameter']['connection_parameter']:
                     for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
                         if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[c['name']][f'sut_parameters_{key}'] = hostdata
+                            result[connection_id][f'sut_parameters_{key}'] = hostdata
                 if 'args' in c['hostsystem']:
                     for key, arg in enumerate(c['hostsystem']['args']):
                         if "=" in arg:
                             key = arg.split("=")[0]
                             value = arg.split("=")[1]
-                            result[c['name']][f'arg_{key}'] = value
+                            result[connection_id][f'arg_{key}'] = value
             df = pd.DataFrame(result).T
             return df
 
@@ -450,58 +513,8 @@ class default():
         else:
             #evaluation = self.get_evaluator()
             df_connection = self.get_connections_of_experiment()
-        with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
-            connections = ast.literal_eval(inf.read())
-            pretty_connections = json.dumps(connections, indent=2)
-            #print(pretty_connections)
-            connections_sorted = sorted(connections, key=lambda c: c['name'])
-            result = dict()
-            for c in connections_sorted:
-                #pprint.pp(c)
-                result[c['name']] = {
-                    'code': c['parameter']['code'],
-                    'experiment_run': c['parameter']['numExperiment'],
-                    'client': int(c['parameter']['client']),
-                    'dockerimage': c['parameter']['dockerimage'],
-                    'name': c['name'],
-                    'time_load': c['timeLoad'],
-                    'time_ingest': c['timeIngesting'],
-                    'time_check': c['timeIndex'],
-                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
-                    'pods': c['parameter']['parallelism'],
-                    'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
-                    'num_worker': int(c['parameter']['num_worker']),
-                    #'tenant_per': int(c['parameter']['tenant_per']),
-                    #'num_tenants': int(c['parameter']['num_tenants']),
-                    #'multi_tenant_volume': int(c['parameter']['multi_tenant_volume']),
-                    #'datadisk': c['hostsystem']['datadisk'],
-                }
-                #df['type']=workload['tenant_per']
-                #df['num_tenants']=workload['num_tenants']
-                #df['vol_tenants']=workload['multi_tenant_volume']
-                for key, hostdata in c['hostsystem'].items():
-                    if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                        result[c['name']][f'host_{key}'] = hostdata
-                if 'loading_parameters' in c['parameter']['connection_parameter']:
-                    for key, hostdata in c['parameter']['connection_parameter']['loading_parameters'].items():
-                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[c['name']][f'loading_parameters_{key}'] = hostdata
-                if 'benchmarking_parameters' in c['parameter']['connection_parameter']:
-                    for key, hostdata in c['parameter']['connection_parameter']['benchmarking_parameters'].items():
-                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[c['name']][f'benchmarking_parameters_{key}'] = hostdata
-                if 'sut_parameters' in c['parameter']['connection_parameter']:
-                    for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
-                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[c['name']][f'sut_parameters_{key}'] = hostdata
-                if 'args' in c['hostsystem']:
-                    for key, arg in enumerate(c['hostsystem']['args']):
-                        if "=" in arg:
-                            key = arg.split("=")[0]
-                            value = arg.split("=")[1]
-                            result[c['name']][f'arg_{key}'] = value
-            df = pd.DataFrame(result).T
-            return df
+            return df_connection
+
 
 
     def get_loading_time_max(self, evaluation=None):
@@ -703,7 +716,9 @@ class default():
                 raise ValueError(f"Unknown processing method: {method}")
             df_cleaned = pd.DataFrame(processed)
             df_cleaned.columns = [col_name]
+            #df_cleaned.index = evaluation.code + '-' + df_cleaned.index.astype(str)
             results.append(df_cleaned)
+            #print(results)
         # Combine all dataframes horizontally (join on index)
         summary_df = pd.concat(results, axis=1).round(2)
         #summary_df = summary_df.reindex(index=evaluators.natural_sort(summary_df.index))
@@ -980,12 +995,37 @@ class default():
                  enriched with workload metadata.
         :rtype: pandas.DataFrame
         """
-        for code in self.codes:
-            evaluation = self.get_evaluator(code)
-            df_connections = self.get_connections(evaluation)
-            df = df.combine_first(df_connections)#, lsuffix='_left', rsuffix='_right')
-        df = df.sort_values(['code', 'experiment_run', 'client'])
-        return df
+        df_connections = self.get_connections()
+        # 1. Spalten in den Index schieben (in beiden DFs)
+        cols = ['code', 'connection']
+        check = all(set(cols).issubset(d.columns) for d in [df, df_connections])
+        if check:
+            print("combine on columns")
+            df = df.rename_axis('connection_pod').reset_index()
+            df = df.set_index(cols)
+            df_connections = df_connections.set_index(cols)
+            # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
+            #print(df)
+            #print(df_connections)
+            result = df.combine_first(df_connections)
+            #print(result.index)
+            # 3. Spalten aus dem Index zurückholen
+            result = result.reset_index()
+            result = result.set_index('connection_pod')
+            result = result.sort_values(['code', 'experiment_run', 'client'])
+            return result
+        else:
+            print("combine on index")
+            result = df.combine_first(df_connections)
+            result = result.sort_values(['code', 'experiment_run', 'client'])
+            return result
+        #for code in self.codes:
+        #    evaluation = self.get_evaluator(code)
+        #    df_connections = self.get_connections(evaluation)
+        #    df = df.combine_first(df_connections)#, lsuffix='_left', rsuffix='_right')
+        #    print(df_connections)
+        #df = df.sort_values(['code', 'experiment_run', 'client'])
+        #return df
 
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
@@ -1018,6 +1058,7 @@ class default():
             df_long = pd.merge(df_long, df_connections, left_on='series', right_index=True, how='left')
             #print(df_long)
             #df_long.drop(columns=['series'], inplace=True)
+            #print(df_long)
             df_performance = pd.concat([df_performance, df_long])
         df_sum = (
             df_performance
@@ -1025,6 +1066,8 @@ class default():
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)
+        #print(df_performance.head())
+        #print(df_sum.head())
         return df_sum
 
 
