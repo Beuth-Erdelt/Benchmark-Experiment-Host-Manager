@@ -30,6 +30,7 @@
     ./Example-custom.md
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
+    ./Collectors.md
     ./Tool.md
     ./Concept.md
     ./Config.md
