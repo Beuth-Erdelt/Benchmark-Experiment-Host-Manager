@@ -447,6 +447,50 @@ class default():
 
 
     def get_connections_of_experiment(self, evaluation=None):
+        def add_connection_to_result(c, connection_id, result):
+            result[connection_id] = {
+                'code': c['parameter']['code'],
+                'experiment_run': c['parameter']['numExperiment'],
+                'client': int(c['parameter']['client']),
+                'dockerimage': c['parameter']['dockerimage'],
+                'connection': c['name'],
+                'phase': c['phase'],
+                'time_load': c['timeLoad'],
+                'time_ingest': c['timeIngesting'],
+                'time_check': c['timeIndex'],
+                'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+                'pods': c['parameter']['parallelism'],
+                'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
+                'num_worker': int(c['parameter']['num_worker']),
+                #'tenant_per': int(c['parameter']['tenant_per']),
+                #'num_tenants': int(c['parameter']['num_tenants']),
+                #'multi_tenant_volume': int(c['parameter']['multi_tenant_volume']),
+                #'datadisk': c['hostsystem']['datadisk'],
+            }
+            #df['type']=workload['tenant_per']
+            #df['num_tenants']=workload['num_tenants']
+            #df['vol_tenants']=workload['multi_tenant_volume']
+            for key, hostdata in c['hostsystem'].items():
+                if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                    result[connection_id][f'host_{key}'] = hostdata
+            if 'loading_parameters' in c['parameter']['connection_parameter']:
+                for key, hostdata in c['parameter']['connection_parameter']['loading_parameters'].items():
+                    if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                        result[connection_id][f'loading_parameters_{key}'] = hostdata
+            if 'benchmarking_parameters' in c['parameter']['connection_parameter']:
+                for key, hostdata in c['parameter']['connection_parameter']['benchmarking_parameters'].items():
+                    if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                        result[connection_id][f'benchmarking_parameters_{key}'] = hostdata
+            if 'sut_parameters' in c['parameter']['connection_parameter']:
+                for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
+                    if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                        result[connection_id][f'sut_parameters_{key}'] = hostdata
+            if 'args' in c['hostsystem']:
+                for key, arg in enumerate(c['hostsystem']['args']):
+                    if "=" in arg:
+                        key = arg.split("=")[0]
+                        value = arg.split("=")[1]
+                        result[connection_id][f'arg_{key}'] = value
         if evaluation is None:
             evaluation = self.get_evaluator()
         with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
@@ -459,51 +503,18 @@ class default():
                 #pprint.pp(c)
                 if 'orig_name' in c:
                     # go from pod identifier to connection identifier
-                    connection_id = c['parameter']['code']+"-"+c['orig_name']
+                    c['phase'] = c['orig_name']
+                    connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=connection)
+                    add_connection_to_result(c, connection_id, result)
                 else:
-                    connection_id = c['parameter']['code']+"-"+c['name']
-                result[connection_id] = {
-                    'code': c['parameter']['code'],
-                    'experiment_run': c['parameter']['numExperiment'],
-                    'client': int(c['parameter']['client']),
-                    'dockerimage': c['parameter']['dockerimage'],
-                    'connection': c['name'],
-                    'time_load': c['timeLoad'],
-                    'time_ingest': c['timeIngesting'],
-                    'time_check': c['timeIndex'],
-                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
-                    'pods': c['parameter']['parallelism'],
-                    'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
-                    'num_worker': int(c['parameter']['num_worker']),
-                    #'tenant_per': int(c['parameter']['tenant_per']),
-                    #'num_tenants': int(c['parameter']['num_tenants']),
-                    #'multi_tenant_volume': int(c['parameter']['multi_tenant_volume']),
-                    #'datadisk': c['hostsystem']['datadisk'],
-                }
-                #df['type']=workload['tenant_per']
-                #df['num_tenants']=workload['num_tenants']
-                #df['vol_tenants']=workload['multi_tenant_volume']
-                for key, hostdata in c['hostsystem'].items():
-                    if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                        result[connection_id][f'host_{key}'] = hostdata
-                if 'loading_parameters' in c['parameter']['connection_parameter']:
-                    for key, hostdata in c['parameter']['connection_parameter']['loading_parameters'].items():
-                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[connection_id][f'loading_parameters_{key}'] = hostdata
-                if 'benchmarking_parameters' in c['parameter']['connection_parameter']:
-                    for key, hostdata in c['parameter']['connection_parameter']['benchmarking_parameters'].items():
-                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[connection_id][f'benchmarking_parameters_{key}'] = hostdata
-                if 'sut_parameters' in c['parameter']['connection_parameter']:
-                    for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
-                        if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
-                            result[connection_id][f'sut_parameters_{key}'] = hostdata
-                if 'args' in c['hostsystem']:
-                    for key, arg in enumerate(c['hostsystem']['args']):
-                        if "=" in arg:
-                            key = arg.split("=")[0]
-                            value = arg.split("=")[1]
-                            result[connection_id][f'arg_{key}'] = value
+                    # simulate having connection (per pod)
+                    clients = int(c['parameter']['parallelism'])
+                    name = c['name']
+                    for i in range(1, clients+1):
+                        c['name'] = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
+                        c['phase'] = "{code}-{phase}".format(code=c['parameter']['code'], phase=name)
+                        connection_id = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
+                        add_connection_to_result(c, connection_id, result)
             df = pd.DataFrame(result).T
             return df
 
