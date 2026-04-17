@@ -171,9 +171,40 @@ wait_process "benchbase"
 
 
 
+###########################################
+################## TPC-H ##################
+###########################################
 
 
+nohup python tpch.py -tr \
+  -rr 64Gi -lr 64Gi \
+  -sf 3 \
+  --dbms PostgreSQL \
+  -ii -ic -is \
+  -nlp 8 -nbp 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 30Gi -rsr \
+  -nc 2 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_1.log &
 
+wait_process "tpch"
+
+nohup python tpch.py -tr \
+  -rr 64Gi -lr 64Gi \
+  -sf 6 \
+  --dbms PostgreSQL \
+  -ii -ic -is \
+  -nlp 8 -nbp 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 30Gi -rsr \
+  -nc 2 \
+  -m -mc -ma \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_2.log &
+
+wait_process "tpch"
 
 
 

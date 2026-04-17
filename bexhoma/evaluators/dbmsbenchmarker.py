@@ -37,6 +37,7 @@ from dbmsbenchmarker import parameter, inspector
 from datetime import datetime
 import glob
 from pathlib import Path
+from scipy.stats import gmean
 
 from .base import natural_sort
 from .logger import logger
@@ -190,19 +191,25 @@ class dbmsbenchmarker(logger):
         # aggregate per parallel pods per dbms - not valid for model=container?
         #benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
         #benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
-        benchmark_start = df_time.groupby(['connection_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
-        benchmark_end = df_time.groupby(['connection_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
-        df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
+        #print(df_time)
+        benchmark_start = df_time.groupby(['connection_name', 'orig_name', 'SF', 'num_experiment', 'num_client'])['benchmark_start'].min()
+        benchmark_end = df_time.groupby(['connection_name', 'orig_name', 'SF', 'num_experiment', 'num_client'])['benchmark_end'].max()
+        duration = benchmark_end - benchmark_start
+        df_benchmark = duration.to_frame(name='duration')
+        #df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
         df_benchmark.columns = ['time [s]']
-        benchmark_count = df_time.groupby(['connection_name', 'SF', 'num_experiment', 'num_client']).count()
+        benchmark_count = df_time.groupby(['connection_name', 'orig_name', 'SF', 'num_experiment', 'num_client']).count()
         df_benchmark['count'] = benchmark_count['benchmark_end']
-        df_benchmark['SF2'] = df_benchmark.index.map(lambda x: x[1])
+        df_benchmark['connection'] = df_benchmark.index.get_level_values('orig_name')
+        df_benchmark['SF2'] = df_benchmark.index.get_level_values('SF')
+        #df_benchmark['connection'] = df_benchmark.index.map(lambda x: x[1])
+        #df_benchmark['SF2'] = df_benchmark.index.map(lambda x: x[2])
         df_benchmark['num_of_queries'] = num_of_queries
         df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF2']).round(2)
         index_names = list(df_benchmark.index.names)
-        index_names[0] = "DBMS"
+        index_names[0] = "connection_pod"
         df_benchmark.rename_axis(index_names, inplace=True)
-        df_benchmark = df_benchmark.reset_index(level=['SF', 'num_experiment', 'num_client'])
+        df_benchmark = df_benchmark.reset_index(level=['orig_name', 'SF', 'num_experiment', 'num_client'])
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
         df.rename(columns={'num_experiment': 'experiment_run'}, inplace=True)
@@ -213,3 +220,59 @@ class dbmsbenchmarker(logger):
         return df
     def benchmarking_set_datatypes(self, df):
         return df
+    def benchmarking_aggregate_by_parallel_pods(self, df):
+        """
+        Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
+        All result lines belonging to pods being run in parallel will be aggregated.
+
+        :param df: DataFrame of results 
+        :return: DataFrame of results
+        """
+        if self.evaluation is None:
+            self.get_inspector()
+        global query_properties
+        query_properties = self.evaluation.get_experiment_query_properties()
+        num_of_queries = 0
+        df_stats = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        if not df_stats is None:
+            df_stats = df_stats.sort_index().T.round(2)
+            df_stats.index = df_stats.index.map(map_index_to_queryname)
+            num_of_queries = len(df_stats.index)
+        #num_of_queries=22
+        #df=df_performance.copy()
+        column = "connection"
+        df_aggregated = pd.DataFrame()
+        for key, grp in df.groupby(column):
+            #print(key, len(grp.index))
+            #print(grp.columns)
+            aggregate = {
+                'total_timer_execution':gmean,
+                'Power@Size [~Q/h]':gmean,
+                'code':'max',
+                'orig_name':'max',
+                'SF':'max',
+                'experiment_run':'max',
+                'time [s]':'max',
+                'count':'count',
+                'client':'max',
+                'Throughput@Size':'max',
+                'num_of_queries':'sum',
+            }
+            dict_grp = dict()
+            dict_grp['connection'] = key
+            #dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
+            #dict_grp['client'] = grp['client'][0]
+            #dict_grp['pod'] = grp['pod'][0]
+            #print(dict_grp)
+            dict_grp = {**dict_grp, **grp.agg(aggregate)}
+            df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
+            #df_grp = df_grp.T
+            #df_grp.set_index('connection', inplace=True)
+            #print(df_grp)
+            df_aggregated = pd.concat([df_aggregated, df_grp])
+        df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
+        df_aggregated['pod'] = "-"
+        #df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600.*df_aggregated['count']/df_aggregated['time [s]']*df_aggregated['SF']).round(2)
+        df_aggregated
+        return df_aggregated

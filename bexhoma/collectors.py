@@ -366,7 +366,8 @@ class default():
             #df['vol_tenants']=workload['multi_tenant_volume']
             #df['code']=code
             #print(df)
-            df_performance.index = evaluation.code + '-' + df_performance.index.astype(str)
+            df.index = evaluation.code + '-' + df.index.astype(str)
+            #print(df)
             df_performance = pd.concat([df_performance, df])
         #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
@@ -456,7 +457,11 @@ class default():
             result = dict()
             for c in connections_sorted:
                 #pprint.pp(c)
-                connection_id = c['parameter']['code']+"-"+c['name']
+                if 'orig_name' in c:
+                    # go from pod identifier to connection identifier
+                    connection_id = c['parameter']['code']+"-"+c['orig_name']
+                else:
+                    connection_id = c['parameter']['code']+"-"+c['name']
                 result[connection_id] = {
                     'code': c['parameter']['code'],
                     'experiment_run': c['parameter']['numExperiment'],
@@ -1009,9 +1014,11 @@ class default():
             #print(df_connections)
             #result = df.combine_first(df_connections).reindex(columns=df.columns)
             # 1. Spalten finden, die NUR in df_connections existieren
-            neue_spalten = [c for c in df_connections.columns if c not in df.columns]
+            cols_to_use = [c for c in df_connections.columns if c not in df.columns]
             # 2. Diese Spalten rechts an df hängen
-            result = pd.concat([df, df_connections[neue_spalten]], axis=1)
+            print(f"df Duplikate: {df.index.duplicated().any()}")
+            print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
+            result = pd.concat([df, df_connections[cols_to_use]], axis=1)
             #print(result.index)
             # 3. Spalten aus dem Index zurückholen
             result = result.reset_index()
@@ -1022,9 +1029,10 @@ class default():
             print("combine on index")
             #result = df.combine_first(df_connections).reindex(columns=df.columns)
             # 1. Spalten finden, die NUR in df_connections existieren
-            neue_spalten = [c for c in df_connections.columns if c not in df.columns]
+            cols_to_use = [c for c in df_connections.columns if c not in df.columns]
             # 2. Diese Spalten rechts an df hängen
-            result = pd.concat([df, df_connections[neue_spalten]], axis=1)
+            result = df.join(df_connections[cols_to_use], how='inner')
+            #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
             #result = result.sort_values(['code', 'experiment_run', 'client'])
             return result
         #for code in self.codes:
