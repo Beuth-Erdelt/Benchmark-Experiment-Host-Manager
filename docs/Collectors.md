@@ -11,11 +11,12 @@
 * There is an experiment having a code, say `1775855486`.
 * The experiment inspects a SUT, say `PostgreSQL-A`. This is called a `configuration`.
 * The experiment is run several times, say twice. The indicator of the run is called `experiment_run`.
-* Each run can have several phases as a sequence. The number of the phase is called `client`. The state of the configuration in a phase is called a `connection`.
+* Each run can have several phases as a sequence. The number of the phase is called `client`.
 * Each client can have several `pods`, that are run in parallel. A pod represents a driver.
-* Performance metrics are collected per driver pod.  
-    The naming of an instance is `<sut>-<experiment_run>-<client>-<pod>`. It is unique (only) per experiment.
+* The state of the configuration in a phase as seen by a pod is called a `connection`.  
+    The naming of an instance of a `connection` is `<sut>-<experiment_run>-<client>-<pod>`. It is unique (only) per experiment.
     The naming  `<code>-<sut>-<experiment_run>-<client>-<pod>` is a unique identifier.
+* Performance metrics are collected per `connection` (driver pod).
 * Monitoring metrics are collected per phase. They are automatically aggregated across parallel pods.  
     The naming of an instance is `<sut>-<experiment_run>-<client>`. It is unique (only) per experiment.
     The naming  `<code>-<sut>-<experiment_run>-<client>` is a unique identifier.

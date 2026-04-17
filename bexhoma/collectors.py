@@ -114,7 +114,7 @@ class default():
             return workload_properties
 
 
-    def get_monitored_phases(self, code=''):
+    def get_monitored_components(self, code=''):
         if not self.with_monitoring:
             return pd.DataFrame()
         monitoring_components  = self.get_workload(code=code)['monitoring_components']
@@ -162,6 +162,9 @@ class default():
         df = evaluation.benchmarking_set_datatypes(df)
         df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
         df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
+        df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
+        df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
+        df_aggregated.drop('connection', axis=1, inplace=True)
         #print(df_aggregated)
         return df_aggregated
 
@@ -309,7 +312,7 @@ class default():
         df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
-    def get_performance_aggregated_per_connection(self, type="stream"):
+    def get_performance_aggregated_per_phase(self, type="stream"):
         """
         Loops over multiple experiments and combines their aggregated performance results into a single DataFrame.
 
@@ -342,7 +345,7 @@ class default():
         #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
-    def get_performance_per_pod(self):
+    def get_performance_per_connection(self):
         """
         Loops over multiple experiments and combines their unaggregated performance results into a single DataFrame.
 
@@ -366,6 +369,9 @@ class default():
             #df['vol_tenants']=workload['multi_tenant_volume']
             #df['code']=code
             #print(df)
+            df['phase'] = df['code'].astype(str) + "-" + df['phase'].astype(str)
+            df['connection'] = df['code'].astype(str) + "-" + df['connection'].astype(str)
+            df['configuration'] = df['code'].astype(str) + "-" + df['configuration'].astype(str)
             df.index = evaluation.code + '-' + df.index.astype(str)
             #print(df)
             df_performance = pd.concat([df_performance, df])
@@ -450,11 +456,11 @@ class default():
         def add_connection_to_result(c, connection_id, result):
             result[connection_id] = {
                 'code': c['parameter']['code'],
+                'connection': c['name'],
+                'phase': c['phase'],
                 'experiment_run': c['parameter']['numExperiment'],
                 'client': int(c['parameter']['client']),
                 'dockerimage': c['parameter']['dockerimage'],
-                'connection': c['name'],
-                'phase': c['phase'],
                 'time_load': c['timeLoad'],
                 'time_ingest': c['timeIngesting'],
                 'time_check': c['timeIndex'],
@@ -462,10 +468,10 @@ class default():
                 'pods': c['parameter']['parallelism'],
                 'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
                 'num_worker': int(c['parameter']['num_worker']),
-                #'tenant_per': int(c['parameter']['tenant_per']),
-                #'num_tenants': int(c['parameter']['num_tenants']),
-                #'multi_tenant_volume': int(c['parameter']['multi_tenant_volume']),
-                #'datadisk': c['hostsystem']['datadisk'],
+                'type_tenants': c['parameter']['tenant_per'] if 'tenant_per' in c['parameter'] else 'None',
+                'num_tenants': int(c['parameter']['num_tenants']) if 'num_tenants' in c['parameter'] else 0,
+                'vol_tenants': c['parameter']['multi_tenant_volume'] if 'multi_tenant_volume' in c['parameter'] else 'False',
+                'datadisk': c['hostsystem']['datadisk'],
             }
             #df['type']=workload['tenant_per']
             #df['num_tenants']=workload['num_tenants']
@@ -533,7 +539,7 @@ class default():
 
 
 
-    def get_loading_time_max(self, evaluation=None):
+    def OLD_get_loading_time_max(self, evaluation=None):
         """
         Collects information about the loading processes from the experiment configuration.
 
@@ -603,13 +609,13 @@ class default():
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
             df = self.get_loading_time_max(evaluation)
-            df['type']=workload['tenant_per']
+            df['type_tenants']=workload['tenant_per']
             df['num_tenants']=workload['num_tenants']
             df['vol_tenants']=workload['multi_tenant_volume']
             df['code']=code
             #print(df)
             df_performance = pd.concat([df_performance, df])
-        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
+        df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type_tenants'])
         return df_performance
 
 
@@ -935,7 +941,7 @@ class default():
         df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
-    def get_monitoring_aggregated_per_connection(self, type="stream"):
+    def get_monitoring_aggregated_per_phase(self, type="stream"):
         """
         Retrieves non-aggregated monitoring metrics for multiple experiments and combines them into a single DataFrame.
 
@@ -1012,31 +1018,32 @@ class default():
         :rtype: pandas.DataFrame
         """
         df_connections = self.get_connections()
-        # 1. Spalten in den Index schieben (in beiden DFs)
+        intersection = df.index.intersection(df_connections['phase'])
+        if not intersection.empty:
+            phase_dropped = False
+            # index of df is per phase
+            print("combine on index and column 'phase'")
+            if 'phase' in df.columns:
+                #print("drop duplicate column 'phase'")
+                df.drop('phase', axis=1, inplace=True)
+                phase_dropped = True
+            #df_phases = df_connections.drop_duplicates(subset=['phase'], keep='first')
+            #result = df.merge(df_phases, left_index=True, right_on='phase', how='inner').set_index('phase')
+            cols_to_use = [c for c in df_connections.columns if c not in df.columns or c == 'phase']
+            #print(cols_to_use)
+            result = df.merge(
+                df_connections[cols_to_use].drop_duplicates('phase'),
+                left_index=True,
+                right_on='phase',
+                how='inner'
+            ).set_index('phase').copy()
+            #if phase_dropped:
+            result['phase'] = result.index
+            return result
         cols = ['code', 'connection']
         check = all(set(cols).issubset(d.columns) for d in [df, df_connections])
-        if check:
-            print("combine on columns")
-            df = df.rename_axis('connection_pod').reset_index()
-            df = df.set_index(cols)
-            df_connections = df_connections.set_index(cols)
-            # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
-            #print(df)
-            #print(df_connections)
-            #result = df.combine_first(df_connections).reindex(columns=df.columns)
-            # 1. Spalten finden, die NUR in df_connections existieren
-            cols_to_use = [c for c in df_connections.columns if c not in df.columns]
-            # 2. Diese Spalten rechts an df hängen
-            print(f"df Duplikate: {df.index.duplicated().any()}")
-            print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
-            result = pd.concat([df, df_connections[cols_to_use]], axis=1)
-            #print(result.index)
-            # 3. Spalten aus dem Index zurückholen
-            result = result.reset_index()
-            result = result.set_index('connection_pod')
-            result = result.sort_values(['code', 'experiment_run', 'client'])
-            return result
-        else:
+        intersection = df.index.intersection(df_connections.index)
+        if not intersection.empty:
             print("combine on index")
             #result = df.combine_first(df_connections).reindex(columns=df.columns)
             # 1. Spalten finden, die NUR in df_connections existieren
@@ -1046,6 +1053,29 @@ class default():
             #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
             #result = result.sort_values(['code', 'experiment_run', 'client'])
             return result
+        elif check:
+            print("combine on columns")
+            #df = df.rename_axis('phase').reset_index()
+            #df = df.set_index(cols)
+            #df_connections = df_connections.set_index(cols)
+            # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
+            #print(df)
+            #print(df_connections)
+            #result = df.combine_first(df_connections).reindex(columns=df.columns)
+            # 1. Spalten finden, die NUR in df_connections existieren
+            cols_to_use = [c for c in df_connections.columns if c not in df.columns]
+            # 2. Diese Spalten rechts an df hängen
+            #print(f"df Duplikate: {df.index.duplicated().any()}")
+            #print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
+            result = pd.concat([df, df_connections[cols_to_use]], axis=1)
+            #print(result.index)
+            # 3. Spalten aus dem Index zurückholen
+            #result = result.reset_index()
+            #result = result.set_index('phase')
+            #result = result.sort_values(['code', 'experiment_run', 'client'])
+            return result
+        else:
+            print("combine failed!")            
         #for code in self.codes:
         #    evaluation = self.get_evaluator(code)
         #    df_connections = self.get_connections(evaluation)
@@ -1071,6 +1101,9 @@ class default():
                 value_name="value"       # column name for the numbers
             )
             #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
+            df_long['metric'] = metric
+            df_long['component'] = component
+            df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
             if workload['tenant_per'] == 'container':
                 # 1 time series per tenant
                 #df_long[["tenant", "client"]] = df_long["series"].str.rsplit("-", n=2, expand=True).iloc[:, 1:]
@@ -1079,17 +1112,17 @@ class default():
                 # 1 time series for all tenants (it is 1 DBMS)
                 df_long['tenant'] = "0"
                 #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
-            df_long['type'] = workload['tenant_per']
+            df_long['type_tenants'] = workload['tenant_per']
             df_long['num_tenants'] = workload['num_tenants']
             df_long['vol_tenants'] = workload['multi_tenant_volume']
-            df_long = pd.merge(df_long, df_connections, left_on='series', right_index=True, how='left')
+            #df_long = pd.merge(df_long, df_connections, left_on='series', right_index=True, how='left')
             #print(df_long)
             #df_long.drop(columns=['series'], inplace=True)
             #print(df_long)
             df_performance = pd.concat([df_performance, df_long])
         df_sum = (
             df_performance
-            .groupby(["timestamp", "code", "experiment_run", "client", "type", 'vol_tenants', "num_tenants"], as_index=False)["value"]
+            .groupby(["timestamp", "code", "connection", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)

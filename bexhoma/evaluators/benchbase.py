@@ -95,6 +95,7 @@ class benchbase(logger):
             #    efficiency = 0
             header = {
                 'connection': connection_name,
+                'phase': connection_name,
                 'configuration': configuration_name,
                 'experiment_run': experiment_run,
                 'code': code,
@@ -146,6 +147,7 @@ class benchbase(logger):
         """
         df_typed = df.astype({
             'connection':'str',
+            'phase':'str',
             'configuration':'str',
             'experiment_run':'int',
             'duration':'int',
@@ -234,6 +236,7 @@ class benchbase(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key
+            dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]

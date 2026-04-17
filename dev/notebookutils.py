@@ -32,7 +32,7 @@ def sanitize_filename(title, max_length=100):
 def plot_bars(df, y, title, estimator, b_plot_save, filename_prefix):
     df_plot = df.copy()
     #df_plot = df_plot[df_plot['client']=='1']
-    df_plot = df_plot.sort_values(['num_tenants','type'])
+    df_plot = df_plot.sort_values(['num_tenants','type_tenants'])
     # Hatch styles for each type
     hatch_map = {
         'container': '/',
@@ -47,7 +47,7 @@ def plot_bars(df, y, title, estimator, b_plot_save, filename_prefix):
         data=df_plot,
         x='num_tenants',
         y=y,
-        hue='type',
+        hue='type_tenants',
         estimator=estimator,
         palette='Set2',
         hue_order=hue_order
@@ -67,13 +67,13 @@ def plot_bars(df, y, title, estimator, b_plot_save, filename_prefix):
     xticks = ax.get_xticks()
     bar_width = ax.patches[0].get_width()
     # Create a mapping from (num_tenants, type) to hatch
-    grouped = df_plot.groupby(['num_tenants', 'type']).agg({y: estimator}).reset_index()
+    grouped = df_plot.groupby(['num_tenants', 'type_tenants']).agg({y: estimator}).reset_index()
     #print(grouped)
-    grouped_dict = {(row['num_tenants'], row['type']): hatch_map[row['type']] for _, row in grouped.iterrows()}
+    grouped_dict = {(row['num_tenants'], row['type_tenants']): hatch_map[row['type_tenants']] for _, row in grouped.iterrows()}
     bars = sorted(ax.patches, key=lambda bar: bar.get_x() if bar.get_height() > 0 else 10000)
     for bar, (_, row) in zip(bars, grouped.iterrows()):
-        bar.my_id = (row['num_tenants'], row['type'])  # or anything else like an index or uuid
-        bar.set_hatch(hatch_map[row['type']]) #grouped_dict[(bar.my_id)])
+        bar.my_id = (row['num_tenants'], row['type_tenants'])  # or anything else like an index or uuid
+        bar.set_hatch(hatch_map[row['type_tenants']]) #grouped_dict[(bar.my_id)])
         bar.set_edgecolor('black')
         bar.set_linewidth(1)
     handles, labels = ax.get_legend_handles_labels()
@@ -112,14 +112,14 @@ def plot_boxplots(df, y, title, b_plot_save, filename_prefix):
         data=df,
         x='num_tenants',
         y=y,#'Goodput (requests/second)',
-        hue='type',
+        hue='type_tenants',
         palette='Set2',  # consistent colors per type
         hue_order=hue_order
     )
     # Add vertical separator lines between groups
     # Get the number of unique num_tenants and type
     num_groups = df['num_tenants'].nunique()
-    num_types = df['type'].nunique()
+    num_types = df['type_tenants'].nunique()
     
     # Extract hue order
     hue_order = ax.get_legend_handles_labels()[1]
@@ -188,7 +188,7 @@ def plot_lines(df, y, title, b_plot_save, filename_prefix):
         data=df.reset_index(),
         x="timestamp",
         y=y,
-        hue="type",
+        hue="type_tenants",
         hue_order=hue_order,
         style="num_tenants",          # different line styles per type
         markers=False,          # markers at points
