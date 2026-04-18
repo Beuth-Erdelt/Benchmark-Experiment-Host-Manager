@@ -2990,6 +2990,7 @@ scrape_configs:
         #c['docker_alias'] = self.docker['docker_alias']
         c['active'] = True
         c['name'] = connection
+        c['configuration'] = self.configuration
         c['docker'] = self.docker
         c['script'] = self.script
         c['info'] = info
