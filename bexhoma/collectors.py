@@ -37,6 +37,12 @@ from dbmsbenchmarker import parameter, inspector
 from bexhoma import evaluators
 
 
+def get_non_constant(df):
+    def is_not_constant(s):
+        return s.nunique(dropna=False) > 1
+    df = df.loc[:, df.apply(is_not_constant)]
+    return df
+
 def map_index_to_queryname(numQuery):
     """
     Maps a query index string (e.g., 'q1', 'q2', etc.) to a human-readable query title 
@@ -453,10 +459,24 @@ class default():
 
 
     def get_connections_of_experiment(self, evaluation=None):
+        """
+        Returns info about all connections in the collection.
+        Makes a loop over all codes and calls get_connections_of_experiment(evaluation).
+        If evaluation is given, calls get_connections_of_experiment(evaluation).
+        Important columns:
+        df[['phase', 'code', 'connection', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants', 'vol_tenants']]
+        Code is added to phase and connection.
+
+        :param evaluation: The evaluation object containing the experiment code.
+        :type evaluation: object
+        :return: A DataFrame listing connection infos.
+        :rtype: pandas.DataFrame
+        """
         def add_connection_to_result(c, connection_id, result):
             result[connection_id] = {
                 'code': c['parameter']['code'],
                 'connection': c['name'],
+                'configuration': c['configuration'] if 'configuration' in c else '',
                 'phase': c['phase'],
                 'experiment_run': c['parameter']['numExperiment'],
                 'client': int(c['parameter']['client']),
@@ -525,6 +545,19 @@ class default():
             return df
 
     def get_connections(self, evaluation=None):
+        """
+        Returns info about all connections in the collection.
+        Makes a loop over all codes and calls get_connections_of_experiment(evaluation).
+        If evaluation is given, calls get_connections_of_experiment(evaluation).
+        Important columns:
+        df[['phase', 'code', 'connection', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants', 'vol_tenants']]
+        Code is added to phase and connection.
+
+        :param evaluation: The evaluation object containing the experiment code.
+        :type evaluation: object
+        :return: A DataFrame listing connection infos.
+        :rtype: pandas.DataFrame
+        """
         if evaluation is None:
             df_connections = pd.DataFrame()
             for code in self.codes:
@@ -534,7 +567,7 @@ class default():
             return df_connections
         else:
             #evaluation = self.get_evaluator()
-            df_connection = self.get_connections_of_experiment()
+            df_connection = self.get_connections_of_experiment(evaluation)
             return df_connection
 
 
@@ -943,19 +976,12 @@ class default():
 
     def get_monitoring_aggregated_per_phase(self, type="stream"):
         """
-        Retrieves non-aggregated monitoring metrics for multiple experiments and combines them into a single DataFrame.
-
-        For each experiment code, this function:
-        - Initializes the evaluation object,
-        - Retrieves workload metadata,
-        - Collects detailed monitoring metrics for the specified component type without aggregation across clients,
-        - Adds workload-related metadata columns ('type' and 'num_tenants'),
-        - Concatenates the results into a single DataFrame.
+        Retrieves aggregated monitoring metrics for multiple experiments and combines them into a single DataFrame.
+        Drops column "connection" if exists, since it is not sensible anymore.
 
         :param type: The component type to filter monitoring metrics (default is "stream").
         :type type: str, optional
-        :return: A DataFrame containing detailed (non-aggregated) monitoring metrics for all experiments,
-                 enriched with workload metadata.
+        :return: A DataFrame containing detailed (aggregated) monitoring metrics for all experiments
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:
@@ -963,22 +989,15 @@ class default():
         df_performance = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
-            workload = self.get_workload(code)
+            #workload = self.get_workload(code)
             df_monitoring = self.show_summary_monitoring_table(evaluation, type)
             if len(df_monitoring) > 0:
                 df = df_monitoring.copy()  # avoid modifying original
-                #df_connections = self.get_connections(evaluation)
-                #df = df.join(df_connections)
-                #df['client'] = df.index.str.rsplit('-', n=1).str[-1]
-                #df['type'] = workload['tenant_per']
-                #df['num_tenants'] = workload['num_tenants']
-                #df['vol_tenants']=workload['multi_tenant_volume']
-                #df['code']=code
                 df_performance = pd.concat([df_performance, df])
-        #df_performance = df_performance.sort_values(['code', 'experiment_run', 'client'])
+        df_performance.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_performance
 
-    def get_monitoring_timeseries_per_connection(self, code, metric='pg_locks_count', component="stream"):
+    def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="stream"):
         """
         Retrieves a single monitoring metric as a time series DataFrame for a given experiment code and component.
 
@@ -1039,8 +1058,9 @@ class default():
             ).set_index('phase').copy()
             #if phase_dropped:
             result['phase'] = result.index
+            result.drop('connection', axis=1, inplace=True, errors='ignore')
             return result
-        cols = ['code', 'connection']
+        cols = ['phase']
         check = all(set(cols).issubset(d.columns) for d in [df, df_connections])
         intersection = df.index.intersection(df_connections.index)
         if not intersection.empty:
@@ -1056,18 +1076,25 @@ class default():
         elif check:
             print("combine on columns")
             #df = df.rename_axis('phase').reset_index()
-            #df = df.set_index(cols)
-            #df_connections = df_connections.set_index(cols)
+            indexname = df.index.name
+            df_connections = df_connections.drop_duplicates(subset='phase', keep='first')
+            df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
+            df = df.set_index('phase', drop=False)
+            df_connections = df_connections.set_index('phase', drop=False)
+            #df_connections = df_connections.drop_duplicates('phase'),
+            #print(df.head())
+            #print(df_connections.head())
             # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
             #print(df)
             #print(df_connections)
-            #result = df.combine_first(df_connections).reindex(columns=df.columns)
+            result = df.combine_first(df_connections)#.reindex(columns=df.columns)
+            result.index.name = indexname
             # 1. Spalten finden, die NUR in df_connections existieren
-            cols_to_use = [c for c in df_connections.columns if c not in df.columns]
+            #cols_to_use = [c for c in df_connections.columns if c not in df.columns]
             # 2. Diese Spalten rechts an df hängen
             #print(f"df Duplikate: {df.index.duplicated().any()}")
             #print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
-            result = pd.concat([df, df_connections[cols_to_use]], axis=1)
+            #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
             #print(result.index)
             # 3. Spalten aus dem Index zurückholen
             #result = result.reset_index()
@@ -1122,7 +1149,7 @@ class default():
             df_performance = pd.concat([df_performance, df_long])
         df_sum = (
             df_performance
-            .groupby(["timestamp", "code", "connection", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            .groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)

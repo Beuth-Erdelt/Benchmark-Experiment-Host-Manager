@@ -126,6 +126,7 @@ class logger(base):
         if not df_collected is None and not df_collected.empty:
             df_collected['index'] = df_collected.groupby('connection')['connection'].cumcount() + 1#df_collected.index.map(str)
             df_collected['connection_pod'] = df_collected['connection']+"-"+df_collected['index'].astype(str)
+            df_collected['phase'] = df_collected['connection']#+"-"+df_collected['index'].astype(str)
             #df_collected['connection_pod'] = df_collected.groupby('connection')['connection'].cumcount() + 1#.transform('count')
             #print(df_collected)
             df_collected.drop('index', axis=1, inplace=True)
