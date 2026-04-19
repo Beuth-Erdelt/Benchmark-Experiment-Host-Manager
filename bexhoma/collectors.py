@@ -119,7 +119,6 @@ class default():
                 workload_properties['tenant_per'] = 'None'
             return workload_properties
 
-
     def get_monitored_components(self, code=''):
         if not self.with_monitoring:
             return pd.DataFrame()
@@ -150,7 +149,7 @@ class default():
         return df
 
         
-    def get_performance(self, evaluation):
+    def OLD_get_performance(self, evaluation):
         """
         Reads and aggregates the performance metrics across clients.
 
@@ -287,7 +286,7 @@ class default():
         return result
 
 
-    def get_performance_all(self):
+    def OLD_get_performance_all(self):
         """
         Loops over multiple experiments and combines their aggregated performance results into a single DataFrame.
 
@@ -336,20 +335,88 @@ class default():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
-            df = self.get_performance(evaluation)
-            if df.empty:
+            df = self.get_performance_single(evaluation)
+            df = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
+            #print(df_aggregated)
+            df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
+            df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
+            df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
+            df_aggregated.drop('connection', axis=1, inplace=True)
+            #df = self.get_performance(evaluation)
+            if df_aggregated.empty:
                 continue
             #print(df)
             #df['type']=workload['tenant_per']
             #df['num_tenants']=workload['num_tenants']
             #df['vol_tenants']=workload['multi_tenant_volume']
             #df['code']=code
-            df['code'] = df['code'].astype(str)
-            df = df.drop(columns=['pod'])
+            df_aggregated['code'] = df_aggregated['code'].astype(str)
+            df_aggregated = df_aggregated.drop(columns=['pod'])
             #print(df)
-            df_performance = pd.concat([df_performance, df])
+            df_performance = pd.concat([df_performance, df_aggregated])
         #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
+
+    def get_performance_aggregated_per_phase_multitenant(self, type="stream"):
+        """
+        Loops over multiple experiments and combines their aggregated performance results into a single DataFrame.
+
+        For each experiment code, this function:
+        - Initializes a benchmarking evaluator
+        - Retrieves the corresponding workload configuration
+        - Extracts aggregated performance metrics per client
+        - Annotates the results with workload metadata (`type` and `num_tenants`)
+        - Concatenates the results into a single DataFrame
+
+        :return: A combined DataFrame containing aggregated performance metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            workload = self.get_workload(code)
+            df = self.get_performance_single(evaluation)
+            df = evaluation.benchmarking_set_datatypes(df)
+            df['type_tenants'] = workload['tenant_per']
+            df['num_tenants'] = workload['num_tenants']
+            df['vol_tenants'] = workload['multi_tenant_volume']
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants'])
+            #df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
+            df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
+            df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
+            #df_aggregated.drop('connection', axis=1, inplace=True)
+            #df = self.get_performance(evaluation)
+            if df_aggregated.empty:
+                continue
+            #print(df)
+            df_aggregated['type_tenants'] = workload['tenant_per']
+            df_aggregated['num_tenants'] = workload['num_tenants']
+            df_aggregated['vol_tenants'] = workload['multi_tenant_volume']
+            #df['code']=code
+            df_aggregated['code'] = df_aggregated['code'].astype(str)
+            df_aggregated = df_aggregated.drop(columns=['pod', 'connection', 'phase'], errors='ignore')
+            #print(df)
+            df_performance = pd.concat([df_performance, df_aggregated])
+        #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
+        return df_performance
+
+    def get_monitoring_aggregated_per_phase_multitenant(self, type="stream"):
+        df = self.get_monitoring_aggregated_per_phase(type)
+        df_metadata = self.add_metadata(df)
+        agg_dict = df.columns
+        # Filter aggregation dictionary to only include columns present in df
+        filtered_agg_dict = {col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum' for col in agg_dict if col in df.columns}
+        if 'Total I/O Wait Time [s]' in filtered_agg_dict:
+            filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
+        #print(filtered_agg_dict)
+        # Apply groupby with filtered aggregation
+        cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)#.reset_index()
+        df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
+        df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
+        #df_metadata = self.add_metadata(df_metadata)
+        return df_metadata
 
     def get_performance_per_connection(self):
         """
@@ -384,7 +451,7 @@ class default():
         #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
-    def get_performance_all_single(self):
+    def OLD_get_performance_all_single(self):
         """
         Loops over multiple experiments and combines their unaggregated performance results into a single DataFrame.
 
@@ -488,9 +555,9 @@ class default():
                 'pods': c['parameter']['parallelism'],
                 'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
                 'num_worker': int(c['parameter']['num_worker']),
-                'type_tenants': c['parameter']['tenant_per'] if 'tenant_per' in c['parameter'] else 'None',
-                'num_tenants': int(c['parameter']['num_tenants']) if 'num_tenants' in c['parameter'] else 0,
-                'vol_tenants': c['parameter']['multi_tenant_volume'] if 'multi_tenant_volume' in c['parameter'] else 'False',
+                'type_tenants': c['parameter']['TENANT_BY'] if 'TENANT_BY' in c['parameter'] else 'None',
+                'num_tenants': int(c['parameter']['TENANT_NUM']) if 'TENANT_NUM' in c['parameter'] else 0,
+                'vol_tenants': c['parameter']['TENANT_VOL'] if 'TENANT_VOL' in c['parameter'] else 'False',
                 'datadisk': c['hostsystem']['datadisk'],
             }
             #df['type']=workload['tenant_per']
@@ -620,7 +687,7 @@ class default():
             return df
 
 
-    def get_loading_time_max_all(self):
+    def OLD_get_loading_time_max_all(self):
         """
         Collects loading process information for a list of experiments and combines the results into a single DataFrame.
 
@@ -802,7 +869,7 @@ class default():
         return df
 
 
-    def get_monitoring(self, evaluation, type="stream"):
+    def OLD_get_monitoring(self, evaluation, type="stream"):
         """
         Retrieves and aggregates monitoring metrics for a specified component type, grouped by client.
 
@@ -901,7 +968,7 @@ class default():
             return result
 
 
-    def get_monitoring_all(self, type="stream"):
+    def OLD_get_monitoring_all(self, type="stream"):
         """
         Aggregates monitoring metrics across multiple experiments for a specified component type.
 
@@ -937,7 +1004,7 @@ class default():
         return df_performance
 
 
-    def get_monitoring_single_all(self, type="stream"):
+    def OLD_get_monitoring_single_all(self, type="stream"):
         """
         Retrieves non-aggregated monitoring metrics for multiple experiments and combines them into a single DataFrame.
 
@@ -1060,8 +1127,22 @@ class default():
             result['phase'] = result.index
             result.drop('connection', axis=1, inplace=True, errors='ignore')
             return result
-        cols = ['phase']
-        check = all(set(cols).issubset(d.columns) for d in [df, df_connections])
+        cols_phase = ['phase']
+        cols_multi_tenant = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        check_phase = all(set(cols_phase).issubset(d.columns) for d in [df, df_connections])
+        check_multi_tenant = all(set(cols_multi_tenant).issubset(d.columns) for d in [df, df_connections])
+        #df_connections = df_connections.drop_duplicates(subset=cols, keep='first')
+        #df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
+        #df = df.set_index(cols, drop=False)
+        #df_connections = df_connections.set_index(cols, drop=False)
+        #df_connections = df_connections.drop_duplicates('phase'),
+        #print(df.head())
+        #print(df_connections.head())
+        # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
+        #print(df)
+        #print(df_connections)
+        #result = df.combine_first(df_connections)#.reindex(columns=df.columns)
+        #result
         intersection = df.index.intersection(df_connections.index)
         if not intersection.empty:
             print("combine on index")
@@ -1073,14 +1154,14 @@ class default():
             #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
             #result = result.sort_values(['code', 'experiment_run', 'client'])
             return result
-        elif check:
-            print("combine on columns")
+        elif check_phase:
+            print("combine on columns " + " ".join(cols_phase))
             #df = df.rename_axis('phase').reset_index()
             indexname = df.index.name
-            df_connections = df_connections.drop_duplicates(subset='phase', keep='first')
+            df_connections = df_connections.drop_duplicates(subset=cols_phase, keep='first')
             df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
-            df = df.set_index('phase', drop=False)
-            df_connections = df_connections.set_index('phase', drop=False)
+            df = df.set_index(cols_phase, drop=False)
+            df_connections = df_connections.set_index(cols_phase, drop=False)
             #df_connections = df_connections.drop_duplicates('phase'),
             #print(df.head())
             #print(df_connections.head())
@@ -1089,6 +1170,45 @@ class default():
             #print(df_connections)
             result = df.combine_first(df_connections)#.reindex(columns=df.columns)
             result.index.name = indexname
+            # 1. Spalten finden, die NUR in df_connections existieren
+            #cols_to_use = [c for c in df_connections.columns if c not in df.columns]
+            # 2. Diese Spalten rechts an df hängen
+            #print(f"df Duplikate: {df.index.duplicated().any()}")
+            #print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
+            #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
+            #print(result.index)
+            # 3. Spalten aus dem Index zurückholen
+            #result = result.reset_index()
+            #result = result.set_index('phase')
+            #result = result.sort_values(['code', 'experiment_run', 'client'])
+            return result
+        elif check_multi_tenant:
+            print("combine on columns " + " ".join(cols_multi_tenant))
+            #df = df.rename_axis('phase').reset_index()
+            indexname = df.index.name
+            df_connections = df_connections.drop_duplicates(subset=cols_multi_tenant, keep='first')
+            df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
+            df = df.set_index(cols_multi_tenant, drop=False)
+            df_connections = df_connections.set_index(cols_multi_tenant, drop=False)
+            df.index = pd.MultiIndex.from_tuples(
+                [tuple(map(str, t)) for t in df.index], 
+                names=df.index.names
+            )
+            df_connections.index = pd.MultiIndex.from_tuples(
+                [tuple(map(str, t)) for t in df_connections.index], 
+                names=df_connections.index.names
+            )
+            #print(df.index)
+            #print(df_connections.index)
+            #df_connections = df_connections.drop_duplicates('phase'),
+            #print(df.head())
+            #print(df_connections.head())
+            # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
+            #print(df)
+            #print(df_connections)
+            result = df.combine_first(df_connections)#.reindex(columns=df.columns)
+            result.index = ['_'.join(map(str, i)) for i in result.index]
+            #result.index.name = indexname
             # 1. Spalten finden, die NUR in df_connections existieren
             #cols_to_use = [c for c in df_connections.columns if c not in df.columns]
             # 2. Diese Spalten rechts an df hängen
@@ -1131,25 +1251,60 @@ class default():
             df_long['metric'] = metric
             df_long['component'] = component
             df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
+            #if workload['tenant_per'] == 'container':
+            #    # 1 time series per tenant
+            #    pass
+            #else:
+            #    # 1 time series for all tenants (it is 1 DBMS)
+            #    df_long['tenant'] = "0"
+            #df_long['type_tenants'] = workload['tenant_per']
+            #df_long['num_tenants'] = workload['num_tenants']
+            #df_long['vol_tenants'] = workload['multi_tenant_volume']
+            df_performance = pd.concat([df_performance, df_long])
+        df_sum = (
+            df_performance
+            #.groupby(["timestamp", "code", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            .groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            .sum()
+        )
+        #df_sum.drop(columns=['timestamp'], inplace=True)
+        #print(df_performance.head())
+        #print(df_sum.head())
+        return df_sum
+
+    def get_monitoring_timeseries_all_multitenant(self, metric='pg_locks_count', component="stream"):
+        if not self.with_monitoring:
+            return pd.DataFrame()
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            workload = self.get_workload(code)
+            df_connections = self.get_connections(evaluation)
+            df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
+            df_monitoring.index.name="timestamp"
+            df_long = df_monitoring.reset_index().melt(
+                id_vars="timestamp",     # keep timestamp
+                var_name="series",       # column name for former column headers
+                value_name="value"       # column name for the numbers
+            )
+            #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
+            df_long['metric'] = metric
+            df_long['component'] = component
+            df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
             if workload['tenant_per'] == 'container':
                 # 1 time series per tenant
-                #df_long[["tenant", "client"]] = df_long["series"].str.rsplit("-", n=2, expand=True).iloc[:, 1:]
                 pass
             else:
                 # 1 time series for all tenants (it is 1 DBMS)
                 df_long['tenant'] = "0"
-                #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             df_long['type_tenants'] = workload['tenant_per']
             df_long['num_tenants'] = workload['num_tenants']
             df_long['vol_tenants'] = workload['multi_tenant_volume']
-            #df_long = pd.merge(df_long, df_connections, left_on='series', right_index=True, how='left')
-            #print(df_long)
-            #df_long.drop(columns=['series'], inplace=True)
-            #print(df_long)
             df_performance = pd.concat([df_performance, df_long])
         df_sum = (
             df_performance
-            .groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            .groupby(["timestamp", "code", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            #.groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)

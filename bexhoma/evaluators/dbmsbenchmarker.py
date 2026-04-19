@@ -220,7 +220,7 @@ class dbmsbenchmarker(logger):
         return df
     def benchmarking_set_datatypes(self, df):
         return df
-    def benchmarking_aggregate_by_parallel_pods(self, df):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["connection"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.

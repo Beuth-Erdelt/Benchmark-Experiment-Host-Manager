@@ -185,7 +185,7 @@ class benchbase(logger):
             'child': 'int',
         })
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["connection"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
@@ -193,12 +193,13 @@ class benchbase(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = "connection"
+        #column = "connection"
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(column):
+        for key, grp in df.groupby(columns):
             #print(key, len(grp.index))
             #print(grp.columns)
             aggregate = {
+                'connection':'max',
                 'client':'max',
                 'code':'max',
                 'pod':'sum',
@@ -235,7 +236,7 @@ class benchbase(logger):
             }
             #print(grp.agg(aggregate))
             dict_grp = dict()
-            dict_grp['connection'] = key
+            #dict_grp['connection'] = key
             dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
@@ -243,7 +244,10 @@ class benchbase(logger):
             #dict_grp['pod'] = grp['pod'][0]
             #print(dict_grp)
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
+            #print(key)
+            key_index = "_".join(map(str, key))
+            #print(key_index)
+            df_grp = pd.DataFrame(dict_grp, index=[key_index])#columns=list(dict_grp.keys()))
             #df_grp = df_grp.T
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)
