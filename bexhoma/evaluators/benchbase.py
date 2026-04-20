@@ -96,7 +96,7 @@ class benchbase(logger):
             header = {
                 'connection': connection_name,
                 'phase': connection_name,
-                'configuration': configuration_name,
+                'configuration': configuration_name + '-' + child,
                 'experiment_run': experiment_run,
                 'code': code,
                 'client': client,

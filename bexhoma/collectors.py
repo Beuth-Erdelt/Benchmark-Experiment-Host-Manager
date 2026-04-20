@@ -337,7 +337,7 @@ class default():
             workload = self.get_workload(code)
             df = self.get_performance_single(evaluation)
             df = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])
             #print(df_aggregated)
             df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
@@ -596,8 +596,9 @@ class default():
                 #pprint.pp(c)
                 if 'orig_name' in c:
                     # go from pod identifier to connection identifier
-                    c['phase'] = c['orig_name']
-                    connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=connection)
+                    name = c['orig_name']
+                    c['phase'] = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
+                    connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
                     add_connection_to_result(c, connection_id, result)
                 else:
                     # simulate having connection (per pod)
@@ -1234,6 +1235,7 @@ class default():
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
         if not self.with_monitoring:
+            #print("no monitoring")
             return pd.DataFrame()
         df_performance = pd.DataFrame()
         for code in self.codes:
@@ -1242,6 +1244,8 @@ class default():
             df_connections = self.get_connections(evaluation)
             df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
             df_monitoring.index.name="timestamp"
+            #print(df_monitoring.head())
+            #print(df_connections.head())
             df_long = df_monitoring.reset_index().melt(
                 id_vars="timestamp",     # keep timestamp
                 var_name="series",       # column name for former column headers
@@ -1250,7 +1254,10 @@ class default():
             #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             df_long['metric'] = metric
             df_long['component'] = component
+            #print(df_long['series'].head())
+            #print(df_connections['phase'].head())
             df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
+            #print(df_long.head())
             #if workload['tenant_per'] == 'container':
             #    # 1 time series per tenant
             #    pass
@@ -1261,10 +1268,12 @@ class default():
             #df_long['num_tenants'] = workload['num_tenants']
             #df_long['vol_tenants'] = workload['multi_tenant_volume']
             df_performance = pd.concat([df_performance, df_long])
+        #print(df_performance)
         df_sum = (
             df_performance
             #.groupby(["timestamp", "code", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
             .groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            #.groupby(["timestamp", "code", "phase", "experiment_run", "client", "metric", "component"], as_index=False)["value"]
             .sum()
         )
         #df_sum.drop(columns=['timestamp'], inplace=True)

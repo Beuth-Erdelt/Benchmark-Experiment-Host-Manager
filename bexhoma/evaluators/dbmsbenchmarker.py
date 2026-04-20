@@ -38,6 +38,7 @@ from datetime import datetime
 import glob
 from pathlib import Path
 from scipy.stats import gmean
+import numpy as np
 
 from .base import natural_sort
 from .logger import logger
@@ -166,21 +167,25 @@ class dbmsbenchmarker(logger):
         df = (df/1000.0).sort_index()
         df.columns = ['Geo Times [s]']
         df_geo_mean_runtime = df.copy()
+        #print(df_geo_mean_runtime.index)
         df = pd.concat([df_power, df_geo_mean_runtime], axis=1)
+        #print(df)
         df_merged_time = pd.DataFrame()
         for connection_nr, connection in self.evaluation.benchmarks.dbms.items():
             df_time = pd.DataFrame()
             c = connection.connectiondata
             connection_name = c['name']
             orig_name = c['orig_name']
+            configuration = c['configuration'] if 'configuration' in c else '-'
             eva = self.evaluation.get_experiment_connection_properties(c['name'])
             df_time.index = [connection_name]
-            df_time['orig_name'] = orig_name
-            df_time['connection_name'] = connection_name
+            df_time['phase'] = orig_name #self.evaluation.code + '-' + orig_name
+            df_time['connection'] = connection_name #self.evaluation.code + '-' + connection_name
+            df_time['configuration'] = configuration
             df_time['SF'] = float(c['parameter']['connection_parameter']['loading_parameters']['SF'])
             df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
-            df_time['num_experiment'] = int(c['parameter']['numExperiment'])
-            df_time['num_client'] = int(c['parameter']['client'])
+            df_time['experiment_run'] = int(c['parameter']['numExperiment'])
+            df_time['client'] = int(c['parameter']['client'])
             df_time['code'] = int(c['parameter']['code'])
             df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
             if not 'time_end' in eva['times']['total'][c['name']]:
@@ -192,31 +197,38 @@ class dbmsbenchmarker(logger):
         #benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
         #benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
         #print(df_time)
-        benchmark_start = df_time.groupby(['connection_name', 'orig_name', 'SF', 'num_experiment', 'num_client'])['benchmark_start'].min()
-        benchmark_end = df_time.groupby(['connection_name', 'orig_name', 'SF', 'num_experiment', 'num_client'])['benchmark_end'].max()
+        benchmark_start = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_start'].min()
+        benchmark_end = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_end'].max()
         duration = benchmark_end - benchmark_start
         df_benchmark = duration.to_frame(name='duration')
         #df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
         df_benchmark.columns = ['time [s]']
-        benchmark_count = df_time.groupby(['connection_name', 'orig_name', 'SF', 'num_experiment', 'num_client']).count()
-        df_benchmark['count'] = benchmark_count['benchmark_end']
-        df_benchmark['connection'] = df_benchmark.index.get_level_values('orig_name')
+        benchmark_count = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client']).count()
+        df_benchmark['pod_count'] = benchmark_count['benchmark_end']
+        #df_benchmark['connection'] = df_benchmark.index.get_level_values('connection')
+        #df_benchmark['configuration'] = df_benchmark.index.get_level_values('configuration')
+        #df_benchmark['phase'] = df_benchmark.index.get_level_values('phase')
         df_benchmark['SF2'] = df_benchmark.index.get_level_values('SF')
         #df_benchmark['connection'] = df_benchmark.index.map(lambda x: x[1])
         #df_benchmark['SF2'] = df_benchmark.index.map(lambda x: x[2])
         df_benchmark['num_of_queries'] = num_of_queries
-        df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF2']).round(2)
+        df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['pod_count']/df_benchmark['time [s]']*df_benchmark['SF2']).round(2)
         index_names = list(df_benchmark.index.names)
-        index_names[0] = "connection_pod"
-        df_benchmark.rename_axis(index_names, inplace=True)
-        df_benchmark = df_benchmark.reset_index(level=['orig_name', 'SF', 'num_experiment', 'num_client'])
+        #index_names[0] = "connection_pod"
+        #df_benchmark.rename_axis(index_names, inplace=True)
+        #print(df_benchmark)
+        df_benchmark = df_benchmark.reset_index(level=['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])
+        df_benchmark = df_benchmark.set_index("connection", drop=False)
+        #print(df.index)
+        #print(df_benchmark.index)
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
-        df.rename(columns={'num_experiment': 'experiment_run'}, inplace=True)
-        df.rename(columns={'num_client': 'client'}, inplace=True)
+        #df.rename(columns={'num_experiment': 'experiment_run'}, inplace=True)
+        #df.rename(columns={'num_client': 'client'}, inplace=True)
         df['Power@Size [~Q/h]'] = df['SF']*3600./df['total_timer_execution']
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
+        #print(df)
         return df
     def benchmarking_set_datatypes(self, df):
         return df
@@ -228,6 +240,10 @@ class dbmsbenchmarker(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
+        def safe_gmean(x):
+            if len(x) == 0: return np.nan
+            res = gmean(x)
+            return float(res) if np.isscalar(res) or res.size == 1 else float(res[0])
         if self.evaluation is None:
             self.get_inspector()
         global query_properties
@@ -246,22 +262,24 @@ class dbmsbenchmarker(logger):
             #print(key, len(grp.index))
             #print(grp.columns)
             aggregate = {
-                'total_timer_execution':gmean,
-                'Power@Size [~Q/h]':gmean,
+                'total_timer_execution':safe_gmean,#'mean',#lambda x: float(gmean(x)),
+                'Power@Size [~Q/h]':safe_gmean,#'mean',#lambda x: float(gmean(x)),
                 'code':'max',
-                'orig_name':'max',
+                'pod_count':'count',
+                #'orig_name':'max',
                 'SF':'max',
                 'experiment_run':'max',
                 'time [s]':'max',
-                'count':'count',
+                #'count':'count',
                 'client':'max',
                 'Throughput@Size':'max',
                 'num_of_queries':'sum',
             }
             dict_grp = dict()
             dict_grp['connection'] = key
-            #dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
+            dict_grp['phase'] = grp['phase'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             #print(dict_grp)
