@@ -1524,10 +1524,12 @@ class default():
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                                 print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
                                 config.set_benchmarking_parameters(**benchmarking_parameters)
-                            if config.num_experiment_to_apply > 1:
-                                connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
-                            else:
-                                connection=config.configuration+'-'+client
+                            # we now always add the experiment number to the connection name
+                            #if config.num_experiment_to_apply > 1:
+                            #    connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                            #else:
+                            #    connection = config.configuration+'-'+client
+                            connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                             print("{:30s}: start benchmarking".format(connection))
                             config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                             #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
