@@ -78,6 +78,7 @@ class ycsb(logger):
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
             operations = re.findall('YCSB_OPERATIONS (.+?)\n', stdout)[0]
+            child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
             batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
             if len(batchsize)>0:
                 # information found
@@ -103,8 +104,10 @@ class ycsb(logger):
             #print(result)
             #return
             # test len of values, because of [ WARN]
+            phase = connection_name
+            connection = connection_name + '-' + child
             list_columns = [value[0]+"."+value[1] for value in result if len(value) > 1]
-            list_values = [code, connection_name, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions]
+            list_values = [code, phase, connection, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions, child]
             list_measures = [value[2] for value in result if len(value) > 1]
             #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
             #print(list_columns)
@@ -115,16 +118,17 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['code', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize', 'exceptions']
+            columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize', 'exceptions', 'child']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns
-            df.index.name = connection_name
+            df.index.name = connection
             # number of inserts must be integer - otherwise conversion will fail
             #if '[INSERT].Return=OK' in columns and df['[INSERT].Return=OK'] == 'NaN':
             #    df['[INSERT].Return=OK'] = 0
             #print(df.T)
             #exit()
+            #print(df.T)
             return df
         except Exception as e:
             print(e)
@@ -282,7 +286,7 @@ class ycsb(logger):
             print(e)
             #print(list_columns)
             return df
-    def benchmarking_aggregate_by_parallel_pods(self, df):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["connection"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
@@ -290,9 +294,9 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = ["connection","experiment_run"]
+        #column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(column):
+        for key, grp in df.groupby(columns):
             #print(key, len(grp.index))
             #print(grp)
             aggregate = {
@@ -433,6 +437,7 @@ class ycsb(logger):
             #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
+            dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             #dict_grp['client'] = grp['client'][0]

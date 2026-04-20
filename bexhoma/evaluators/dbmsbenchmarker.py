@@ -256,12 +256,13 @@ class dbmsbenchmarker(logger):
             num_of_queries = len(df_stats.index)
         #num_of_queries=22
         #df=df_performance.copy()
-        column = "connection"
+        #column = "connection"
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(column):
+        for key, grp in df.groupby(columns):
             #print(key, len(grp.index))
             #print(grp.columns)
             aggregate = {
+                'connection':'max',
                 'total_timer_execution':safe_gmean,#'mean',#lambda x: float(gmean(x)),
                 'Power@Size [~Q/h]':safe_gmean,#'mean',#lambda x: float(gmean(x)),
                 'code':'max',
@@ -276,7 +277,7 @@ class dbmsbenchmarker(logger):
                 'num_of_queries':'sum',
             }
             dict_grp = dict()
-            dict_grp['connection'] = key
+            #dict_grp['connection'] = key
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
@@ -284,7 +285,10 @@ class dbmsbenchmarker(logger):
             #dict_grp['pod'] = grp['pod'][0]
             #print(dict_grp)
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
+            key_index = "_".join(map(str, key))
+            #print(key_index)
+            df_grp = pd.DataFrame(dict_grp, index=[key_index])#columns=list(dict_grp.keys()))
+            #df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
             #df_grp = df_grp.T
             #df_grp.set_index('connection', inplace=True)
             #print(df_grp)

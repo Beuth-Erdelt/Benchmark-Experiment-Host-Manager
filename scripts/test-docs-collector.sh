@@ -19,7 +19,7 @@
 source ./scripts/testfunctions.sh
 
 # Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_SUT="cl-worker38"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
@@ -267,7 +267,59 @@ nohup python tpch.py -tr \
 wait_process "tpch"
 
 
+###########################################
+################## YCSB ###################
+###########################################
 
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 3 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 2 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 15Gi -rsr \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_1.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1800
+wait_process "ycsb"
+
+
+#### YCSB Monitoring (Example-YCSB.md)
+nohup python ycsb.py -ms 1 -tr \
+  -sf 3 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 3 \
+  -ne 1 \
+  -nc 2 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 15Gi -rsr \
+  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_2.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1800
+wait_process "ycsb"
+
+#find /data/benchmarks/ -name "*.pickle" -type f -delete
 
 
 

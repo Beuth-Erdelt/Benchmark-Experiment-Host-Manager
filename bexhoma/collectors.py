@@ -69,7 +69,7 @@ def map_index_to_queryname(numQuery):
 
 
 
-class default():
+class base():
     """
     :Date: 2025-07-22
     :Version: 0.8.10
@@ -99,6 +99,8 @@ class default():
         code = codes[0]
         evaluate = self.get_evaluator(code)
         self.df_metrics = self.get_metrics(evaluate)
+    def get_metrics_metadata(self):
+        return self.df_metrics
     def get_workload(self, code=''):
         """
         Returns the workload data of an experiment given by its code.
@@ -596,8 +598,9 @@ class default():
                 #pprint.pp(c)
                 if 'orig_name' in c:
                     # go from pod identifier to connection identifier
-                    name = c['orig_name']
-                    c['phase'] = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
+                    #name = c['orig_name']
+                    name = c['name']
+                    c['phase'] = "{code}-{connection}".format(code=c['parameter']['code'], connection=c['orig_name'])
                     connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
                     add_connection_to_result(c, connection_id, result)
                 else:
@@ -1344,11 +1347,11 @@ class default():
 
 """
 ############################################################################
-Benchbase
+DBMSBenchmarker
 ############################################################################
 """
 
-class benchbase(default):
+class dbmsbenchmarker(base):
     """
     Class for evaluating Benchbase experiments.
     """
@@ -1356,12 +1359,64 @@ class benchbase(default):
             path,
             codes
             ):
-        default.__init__(self, path, codes)
+        base.__init__(self, path, codes)
+
+
+    def get_evaluator(self, code=''):
+        if code == '':
+            code = self.codes[0]
+        return evaluators.dbmsbenchmarker(code=code, path=self.path)
+
+
+
+
+"""
+############################################################################
+Benchbase
+############################################################################
+"""
+
+class benchbase(base):
+    """
+    Class for evaluating Benchbase experiments.
+    """
+    def __init__(self,
+            path,
+            codes
+            ):
+        base.__init__(self, path, codes)
 
 
     def get_evaluator(self, code=''):
         if code == '':
             code = self.codes[0]
         return evaluators.benchbase(code=code, path=self.path)
+
+
+
+
+
+
+"""
+############################################################################
+YCSB
+############################################################################
+"""
+
+class ycsb(base):
+    """
+    Class for evaluating Benchbase experiments.
+    """
+    def __init__(self,
+            path,
+            codes
+            ):
+        base.__init__(self, path, codes)
+
+
+    def get_evaluator(self, code=''):
+        if code == '':
+            code = self.codes[0]
+        return evaluators.ycsb(code=code, path=self.path)
 
 

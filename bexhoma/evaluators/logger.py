@@ -124,13 +124,14 @@ class logger(base):
                     else:
                         df_collected = df.copy()
         if not df_collected is None and not df_collected.empty:
-            df_collected['index'] = df_collected.groupby('connection')['connection'].cumcount() + 1#df_collected.index.map(str)
-            df_collected['connection_pod'] = df_collected['connection']+"-"+df_collected['index'].astype(str)
-            df_collected['phase'] = df_collected['connection']#+"-"+df_collected['index'].astype(str)
+            #df_collected['index'] = df_collected.groupby('connection')['connection'].cumcount() + 1#df_collected.index.map(str)
+            #df_collected['connection_pod'] = df_collected['connection'] #+"-"+df_collected['index'].astype(str)
+            #df_collected['phase'] = df_collected['phase']##+"-"+df_collected['index'].astype(str)
             #df_collected['connection_pod'] = df_collected.groupby('connection')['connection'].cumcount() + 1#.transform('count')
             #print(df_collected)
-            df_collected.drop('index', axis=1, inplace=True)
-            df_collected.set_index('connection_pod', inplace=True)
+            #df_collected.drop('index', axis=1, inplace=True)
+            df_collected.set_index('connection', inplace=True, drop=False)
+            #df_collected.set_index('connection_pod', inplace=True)
             filename_df = path+"/"+filename_result
             #print(filename_df)
             #print(df_collected.info())

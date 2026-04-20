@@ -94,9 +94,9 @@ class benchbase(logger):
             #else:
             #    efficiency = 0
             header = {
-                'connection': connection_name,
+                'connection': connection_name + '-' + child,
                 'phase': connection_name,
-                'configuration': configuration_name + '-' + child,
+                'configuration': configuration_name,
                 'experiment_run': experiment_run,
                 'code': code,
                 'client': client,
