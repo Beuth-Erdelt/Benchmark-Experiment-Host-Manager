@@ -286,13 +286,11 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 2 \
   -ne 1 \
   -nc 2 \
-  -m -mc \
+  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 15Gi -rsr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_1.log &
 
-#### Wait so that next experiment receives a different code
-#sleep 1800
 wait_process "ycsb"
 
 
@@ -310,20 +308,59 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 3 \
   -ne 1 \
   -nc 2 \
-  -m -mc \
+  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 15Gi -rsr \
   run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_2.log &
 
-#### Wait so that next experiment receives a different code
-#sleep 1800
 wait_process "ycsb"
 
+
+
+###########################################
+################ HammerDB #################
+###########################################
+
+
+
+#### HammerDB Monitoring (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -xlat \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nc 2 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log &
+
+
+wait_process "hammerdb"
+
+#### HammerDB Monitoring (Example-HammerDB.md)
+nohup python hammerdb.py -ms 1 -tr \
+  -sf 16 \
+  -xlat \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nc 2 \
+  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log &
+
+
+wait_process "hammerdb"
+
+
+
+
 #find /data/benchmarks/ -name "*.pickle" -type f -delete
-
-
-
-
 
 
 ###########################################

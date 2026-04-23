@@ -49,7 +49,7 @@ import math
 from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
-from .default import default
+from .base import base
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -63,7 +63,7 @@ YCSB
 ############################################################################
 """
 
-class ycsb(default):
+class ycsb(base):
     """
     Class for defining an YCSB experiment.
     This sets

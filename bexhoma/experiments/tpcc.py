@@ -49,7 +49,7 @@ import math
 from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
-from .default import default
+from .base import base
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -62,7 +62,7 @@ TPC-C
 ############################################################################
 """
 
-class tpcc(default):
+class tpcc(base):
     """
     Class for defining an TPC-C experiment (in the HammerDB version).
     This sets
@@ -80,7 +80,7 @@ class tpcc(default):
             timeout = 7200,
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.SF = SF
         self.set_experiment(volume='tpcc')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')

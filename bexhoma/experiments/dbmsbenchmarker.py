@@ -49,7 +49,7 @@ import math
 from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
-from .default import default
+from .base import base
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -64,7 +64,7 @@ DBMSBenchmarker
 
 
 
-class dbmsbenchmarker(default):
+class dbmsbenchmarker(base):
     """
     Class for defining an DBMSBenchmarker experiment.
     This
@@ -80,7 +80,7 @@ class dbmsbenchmarker(default):
             timeout = 7200,
             #detached=False
             ):
-        default.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
+        base.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
         self.evaluator = evaluators.dbmsbenchmarker(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
                          pod_dashboard=''):

@@ -16,19 +16,19 @@
 * Each client can have several `pods`, that are run in parallel. A pod represents a driver.
 * The state of the configuration in a phase as seen by a pod is called a `connection`.  
     The naming of an instance of a `connection` is `<sut>-<experiment_run>-<client>-<pod>`. It is unique (only) per experiment.
-    The naming  `<code>-<configuration>-<experiment_run>-<client>-<pod>` is a unique identifier.
-    Example: `1775855486-PostgreSQL-A-1-2-3`
+    The naming  `<code>-<configuration>-<experiment_run>-<client>-<pod>` is a unique identifier.  
+    Example: `1775855486-PostgreSQL-A-1-2-3` - first execution run of experiment, second client in sequence of clients, third pod of parallel running pods
 * Performance metrics are collected per `connection` (driver pod).
 * Monitoring metrics are collected per phase. They are automatically aggregated across parallel pods by Prometheus.  
     The naming of an instance is `<configuration>-<experiment_run>-<client>`. It is unique (only) per experiment.
-    The naming  `<code>-<configuration>-<experiment_run>-<client>` is a unique identifier.
-    Example: `1775855486-PostgreSQL-A-1-2`
+    The naming  `<code>-<configuration>-<experiment_run>-<client>` is a unique identifier.  
+    Example: `1775855486-PostgreSQL-A-1-2` - first execution run of experiment, second client in sequence of clients
 
 ### Aggregation
 * Aggregation is complicated. Some metrics are aggregated via count, sum, max or average. Others cannot be aggregated sensibly, like experiment code or latency percentiles.
 * There are helper functions to aggregated pods that are certainly run in parallel.  
   So `<configuration>-<experiment_run>-<client>-<pod>` are aggregated to `<configuration>-<experiment_run>-<client>`.
-* An exception is multi-tenancy.
+* An exception is multi-tenancy. Here, a single service provider can be represented by several configurations (container instances) [1]. To assess the performance a service provider can offer, we have to aggregate across different configurations.
 
 ## Class `collector`
 

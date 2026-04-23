@@ -1420,3 +1420,28 @@ class ycsb(base):
         return evaluators.ycsb(code=code, path=self.path)
 
 
+
+
+"""
+############################################################################
+HammerDB
+############################################################################
+"""
+
+class tpcc(base):
+    """
+    Class for evaluating Benchbase experiments.
+    """
+    def __init__(self,
+            path,
+            codes
+            ):
+        base.__init__(self, path, codes)
+
+
+    def get_evaluator(self, code=''):
+        if code == '':
+            code = self.codes[0]
+        return evaluators.tpcc(code=code, path=self.path)
+
+
