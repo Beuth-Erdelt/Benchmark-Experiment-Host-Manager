@@ -82,3 +82,59 @@ class dbmsbenchmarker(base):
         if code == '':
             code = self.codes[0]
         return evaluators.dbmsbenchmarker(code=code, path=self.path)
+
+    def get_total_warnings(self, query_titles=False):
+        #print("\n### Warnings (result mismatch)\n")
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = evaluation.get_total_warnings(query_titles)
+            df.index = evaluation.code + '-' + df.index.astype(str)
+            df_performance = pd.concat([df_performance, df])
+        return df_performance
+            # num_warnings = df.sum().sum()
+            # if num_warnings > 0:
+            #     # set readable names
+            #     df.index = df.index.map(map_index_to_queryname)
+            #     # remove only False rows
+            #     df = df[~(df == False).all(axis=1)]
+            #     #print(df)
+            #     print(df.to_markdown(index=True, floatfmt=".2f"))
+            # else:
+            #     print("No warnings")
+    def get_total_errors(self, query_titles=False):
+        #print("\n### Errors (failed queries)\n")
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = evaluation.get_total_warnings(query_titles)
+            df.index = evaluation.code + '-' + df.index.astype(str)
+            df_performance = pd.concat([df_performance, df])
+        return df_performance
+            # eva = collect.get_evaluator()
+            # eva.get_df_loading()
+            # eva.path_base
+            # df = eva.evaluation.get_total_errors().T
+            # num_errors = df.sum().sum()
+            # if num_errors > 0:
+            #     df_errors = df.copy()
+            #     df_errors = df_errors[~(df_errors == False).all(axis=1)]
+            #     list_error_queries = list(df_errors.index)
+            #     # set readable names
+            #     df.index = df.index.map(map_index_to_queryname)
+            #     # remove only False rows
+            #     df = df[~(df == False).all(axis=1)]
+            #     #print(df)
+            #     print(df.to_markdown(index=True, floatfmt=".2f"))
+            #     for error in list_error_queries:
+            #         numQuery = error[1:]        # remove the leading "Q""
+            #         list_errors = evaluate.get_error(numQuery)
+            #         list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
+            #         #print(list_errors)
+            #         print("* "+map_index_to_queryname(error))
+            #         #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+            #         #print(df_error)
+            #         for k,v in list_errors.items():
+            #             print("  * {}: {}".format(k,v))
+            # else:
+            #     print("No errors")

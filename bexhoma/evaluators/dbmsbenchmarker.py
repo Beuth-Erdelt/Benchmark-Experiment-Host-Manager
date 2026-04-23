@@ -79,6 +79,7 @@ class dbmsbenchmarker(logger):
         self.evaluation = None
         self.path_base = path
         super().__init__(code, path, True, True)
+        self.get_inspector()
     def get_inspector(self):
         self.evaluation = inspector.inspector(self.path_base)
         self.evaluation.load_experiment(code=self.code, silent=True)
@@ -298,3 +299,17 @@ class dbmsbenchmarker(logger):
         #df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600.*df_aggregated['count']/df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated
         return df_aggregated
+    def get_total_warnings(self, query_titles=False):
+        global query_properties
+        df = self.evaluation.get_total_warnings().T
+        if query_titles:
+            query_properties = self.evaluation.get_experiment_query_properties()
+            df.index = df.index.map(map_index_to_queryname)
+        return df.T
+    def get_total_errors(self, query_titles=False):
+        global query_properties
+        df = self.evaluation.get_total_errors().T
+        if query_titles:
+            query_properties = self.evaluation.get_experiment_query_properties()
+            df.index = df.index.map(map_index_to_queryname)
+        return df.T
