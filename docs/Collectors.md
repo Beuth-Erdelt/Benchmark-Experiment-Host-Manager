@@ -4,9 +4,6 @@
 
 ## Introductory Remarks
 
-### Missing
-* connection and configuration also in monitoring and connection df
-
 ### Naming
 * There is an experiment having a code, say `1775855486`.
 * The experiment inspects a SUT. This is called a `configuration`.  
@@ -39,7 +36,7 @@
 * Dataframe of connection infos `collect.get_connections()`
     * Index is name of connection
 
-### Monitoring Metrics
+## Monitoring Metrics
 
 * Dataframe of available metrics `collect.get_metrics_metadata()`
     * Index is key of metric
@@ -59,7 +56,7 @@
     * Index just enumerates
     * Metrics aggregated per code, experiment_run and client and across tenants
 
-### Performance Metrics - Benchmarking Phases
+## Performance Metrics - Benchmarking Phases
 
 * Dataframe of performance for one experiment `collect.get_performance_per_connection()`
     * Index is name of connection
@@ -68,7 +65,19 @@
     * Index is name of phase
     * Performance aggregated per code, experiment_run and client
 
-### Performance Metrics - Loading Phases
+### DBMSBenchmarker
+
+* Dataframe of latencies (in ms) per query and connection `get_query_latencies()`
+    * Index is name of connection
+    * Query number can optionally be translated into the title of the query
+* Dataframe of errors per query and connection `get_total_errors()`
+    * Index is name of connection
+    * Query number can optionally be translated into the title of the query
+* Dataframe of warnings per query and connection `get_total_warnings()`
+    * Index is name of connection
+    * Query number can optionally be translated into the title of the query
+
+## Performance Metrics - Loading Phases
 
 * Dataframe of loading metrics `collect.get_loading_time_max_all()`
     * Index is name of connection

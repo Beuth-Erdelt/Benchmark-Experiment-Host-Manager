@@ -138,3 +138,12 @@ class dbmsbenchmarker(base):
             #             print("  * {}: {}".format(k,v))
             # else:
             #     print("No errors")
+    def get_query_latencies(self, query_titles=False):
+        #print("\n### Latency of Timer Execution [ms]")
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = evaluation.get_query_latencies(query_titles)
+            df.index = evaluation.code + '-' + df.index.astype(str)
+            df_performance = pd.concat([df_performance, df])
+        return df_performance

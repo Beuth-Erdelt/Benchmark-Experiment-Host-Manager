@@ -313,3 +313,13 @@ class dbmsbenchmarker(logger):
             query_properties = self.evaluation.get_experiment_query_properties()
             df.index = df.index.map(map_index_to_queryname)
         return df.T
+    def get_query_latencies(self, query_titles=False):
+        global query_properties
+        num_of_queries = 0
+        df = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').T
+        if query_titles:
+            if not df is None:
+                query_properties = self.evaluation.get_experiment_query_properties()
+                df = df.round(2)
+                df.index = df.index.map(map_index_to_queryname)
+        return df.T
