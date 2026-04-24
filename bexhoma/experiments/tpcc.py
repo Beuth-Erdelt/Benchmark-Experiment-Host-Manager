@@ -159,7 +159,7 @@ class tpcc(base):
                 self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
             if extra_latency:
                 self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
-        default.prepare_testbed(self, parameter)
+        base.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.

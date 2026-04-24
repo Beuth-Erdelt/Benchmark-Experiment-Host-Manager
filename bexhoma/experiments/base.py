@@ -97,7 +97,7 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     return d, value.strip()
 
 
-class default():
+class base():
     """
     Class for defining an experiment.
     Settings are set generally.
@@ -1043,7 +1043,7 @@ class default():
         """
         Let the dashboard pod build the evaluations.
         """
-        self.cluster.logger.debug('default.evaluate_results()')
+        self.cluster.logger.debug('base.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
         self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
@@ -1220,7 +1220,7 @@ class default():
         workflow = {}
         for configuration in self.configurations:
             workflow[configuration.configuration] = [configuration.benchmark_list_template for i in range(configuration.num_experiment_to_apply)]
-        self.cluster.logger.debug('default.get_workflow_list({})'.format(workflow))
+        self.cluster.logger.debug('base.get_workflow_list({})'.format(workflow))
         #print(workflow)
         return workflow
     def store_workflow_results(self):
@@ -1907,7 +1907,7 @@ class default():
         :param jobname: Name of the job to clean
         :param config: Configuration object
         """
-        self.cluster.logger.debug('default.end_benchmarking({})'.format(jobname))
+        self.cluster.logger.debug('base.end_benchmarking({})'.format(jobname))
         # mark pod with new end time and duration
         job_labels = self.cluster.get_jobs_labels(app=self.cluster.appname, component='benchmarker', experiment=self.code)
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
@@ -2151,7 +2151,7 @@ class default():
 
         :param jobname: Name of the job to clean
         """
-        self.cluster.logger.debug('default.end_loading({})'.format(jobname))
+        self.cluster.logger.debug('base.end_loading({})'.format(jobname))
         self.evaluator.end_loading(jobname)
     def show_summary_header(self):
         print("\n## Show Summary")
@@ -2257,7 +2257,7 @@ class default():
         """
         Show a summary of an experiment of type dbmsbenchmarker.
         """
-        self.cluster.logger.debug('default.show_summary()')
+        self.cluster.logger.debug('base.show_summary()')
         connections_sorted, monitoring_applications = self.show_summary_header()
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2600,7 +2600,7 @@ Simple IoT example experiment
 """
 
 
-class iot(default):
+class iot(base):
     """
     Class for defining an TSBS experiment.
     This sets
@@ -2618,7 +2618,7 @@ class iot(default):
             timeout = 7200,
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.set_experiment(volume='iot')
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/iot')
@@ -2657,7 +2657,7 @@ TSBS
 """
 
 
-class tsbs(default):
+class tsbs(base):
     """
     Class for defining an TSBS experiment.
     This sets
@@ -2675,7 +2675,7 @@ class tsbs(default):
             timeout = 7200,
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.set_experiment(volume='tsbs')
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tsbs')
@@ -2714,7 +2714,7 @@ Example
 ############################################################################
 """
 
-class example(default):
+class example(base):
     """
     Class for defining a custom example experiment.
     This sets
@@ -2731,7 +2731,7 @@ class example(default):
             script=None
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         if script is None:
             script = 'empty'
         self.set_experiment(volume='example')
@@ -2753,7 +2753,7 @@ TPCx-AI
 ############################################################################
 """
 
-class tpcxai(default):
+class tpcxai(base):
     """
     Class for defining an TPCx-AI experiment.
     This sets
@@ -2772,7 +2772,7 @@ class tpcxai(default):
             script=None
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpcxai')

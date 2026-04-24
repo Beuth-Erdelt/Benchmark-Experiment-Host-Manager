@@ -81,7 +81,7 @@ class ycsb(base):
             timeout = 7200,
             #detached=False
             ):
-        default.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
         self.SF = SF
         self.set_experiment(volume='ycsb')
         self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
@@ -169,7 +169,7 @@ class ycsb(base):
             self.workload['info'] = self.workload['info']+"\nFactors for loading are {}.".format(num_loading_target_factors)
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
-        default.prepare_testbed(self, parameter)
+        base.prepare_testbed(self, parameter)
     def test_results(self):
         """
         Run test script locally.
