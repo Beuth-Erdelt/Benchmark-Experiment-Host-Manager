@@ -1,24 +1,16 @@
 """
-:Date: 2025-07-22
-:Version: 0.8.10
-:Authors: Patrick K. Erdelt
+Base collector class for aggregating results from multiple bexhoma experiments.
 
-    Classes for collecting and aggregating results from several experiments.
+Provides :func:`get_non_constant` and :class:`base`, which handles reading
+workload and connection configurations, collecting performance metrics per
+client and per phase, and aggregating monitoring time-series data across
+experiment codes — including multi-tenant variants. Subclasses override
+:meth:`base.get_evaluator` to supply the benchmark-specific evaluator.
 
-    Copyright (C) 2020  Patrick K. Erdelt
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -38,13 +30,17 @@ from bexhoma import evaluators
 
 
 def get_non_constant(df):
+    """
+    Filters a DataFrame to keep only columns whose values vary across rows.
+
+    :param df: Input DataFrame.
+    :type df: pandas.DataFrame
+    :return: DataFrame containing only non-constant columns.
+    :rtype: pandas.DataFrame
+    """
     def is_not_constant(s):
         return s.nunique(dropna=False) > 1
-    df = df.loc[:, df.apply(is_not_constant)]
-    return df
-
-
-
+    return df.loc[:, df.apply(is_not_constant)]
 
 
 class base():
@@ -53,7 +49,10 @@ class base():
     :Version: 0.8.10
     :Authors: Patrick K. Erdelt
 
-        Class for collecting and aggregating results from several experiments.
+        Base class for collecting and aggregating results from several experiments.
+
+        Subclasses override :meth:`get_evaluator` to return a benchmark-specific
+        evaluator. All data retrieval and aggregation methods are defined here.
 
         Copyright (C) 2020  Patrick K. Erdelt
 
@@ -71,52 +70,74 @@ class base():
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
     def __init__(self, path, codes):
+        """
+        :param path: Base filesystem path that contains the experiment directories.
+        :type path: str
+        :param codes: List of experiment codes to collect results for.
+        :type codes: list[str]
+        """
         self.path = path
         self.codes = codes
         self.with_monitoring = True
-        code = codes[0]
-        evaluate = self.get_evaluator(code)
-        self.df_metrics = self.get_metrics(evaluate)
+        evaluation = self.get_evaluator(codes[0])
+        self.df_metrics = self.get_metrics(evaluation)
+
     def get_metrics_metadata(self):
+        """
+        Returns the metrics metadata DataFrame built during initialisation.
+
+        :return: DataFrame listing monitored hardware metrics and their metadata.
+        :rtype: pandas.DataFrame
+        """
         return self.df_metrics
+
     def get_workload(self, code=''):
         """
-        Returns the workload data of an experiment given by its code.
+        Returns the workload configuration of an experiment.
 
-        This function reads the 'queries.config' file associated with the specified experiment code,
-        parses its contents, and returns the workload properties as a dictionary.
+        Reads the ``queries.config`` file for the given experiment code and
+        returns its contents as a dictionary.  The ``tenant_per`` key is
+        normalised to the string ``'None'`` when absent or empty.
 
-        :param code: The unique identifier of the experiment.
+        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
-        :return: A dictionary containing the workload properties.
+        :return: Workload properties dictionary.
         :rtype: dict
         """
         if code == '':
             code = self.codes[0]
-        with open(self.path+"/"+code+"/queries.config",'r') as inp:
+        with open(self.path + "/" + code + "/queries.config", 'r') as inp:
             workload_properties = ast.literal_eval(inp.read())
             if 'tenant_per' not in workload_properties or workload_properties['tenant_per'] == '':
                 workload_properties['tenant_per'] = 'None'
             return workload_properties
 
     def get_monitored_components(self, code=''):
+        """
+        Returns a DataFrame of monitored components defined in the workload configuration.
+
+        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
+        :type code: str
+        :return: DataFrame indexed by component key with a ``description`` column,
+                 or an empty DataFrame when monitoring is disabled.
+        :rtype: pandas.DataFrame
+        """
         if not self.with_monitoring:
             return pd.DataFrame()
-        monitoring_components  = self.get_workload(code=code)['monitoring_components']
-        #print(monitoring_components)
-        df = pd.DataFrame.from_dict(monitoring_components, orient='index', columns=['description'])
-        return df
+        monitoring_components = self.get_workload(code=code)['monitoring_components']
+        return pd.DataFrame.from_dict(monitoring_components, orient='index', columns=['description'])
 
     def get_performance_single(self, evaluation=None):
         """
-        Reads the performance metrics and returns them without any aggregation across clients.
+        Returns unaggregated benchmarking performance metrics per client.
 
-        This function retrieves benchmarking data from the given evaluation object,
-        sorts it by experiment run and client, and returns the resulting DataFrame.
+        Retrieves the benchmarking DataFrame from the evaluator, sorts it by
+        experiment run and client, and returns the result without further aggregation.
 
-        :param evaluation: The evaluation object containing benchmarking data.
+        :param evaluation: Evaluator instance. Defaults to the first code's evaluator.
         :type evaluation: object
-        :return: A DataFrame containing unaggregated performance metrics per client.
+        :return: DataFrame of per-client performance metrics sorted by
+                 ``code``, ``experiment_run``, and ``client``.
         :rtype: pandas.DataFrame
         """
         if evaluation is None:
@@ -126,61 +147,52 @@ class base():
             df = df.sort_values(['code', 'experiment_run', 'client'])
         else:
             print(evaluation.code, "is empty")
-        return df        
+        return df
 
     def get_performance_aggregated_per_phase(self, type="stream"):
         """
-        Loops over multiple experiments and combines their aggregated performance results into a single DataFrame.
+        Combines aggregated performance results from all experiment codes into one DataFrame.
 
-        For each experiment code, this function:
-        - Initializes a benchmarking evaluator
-        - Retrieves the corresponding workload configuration
-        - Extracts aggregated performance metrics per client
-        - Annotates the results with workload metadata (`type` and `num_tenants`)
-        - Concatenates the results into a single DataFrame
+        For each code:
 
-        :return: A combined DataFrame containing aggregated performance metrics for all experiments.
+        - initialises the evaluator and reads the workload configuration,
+        - retrieves and types the per-client performance data,
+        - aggregates across parallel pods grouped by phase,
+        - prefixes ``phase``, ``configuration``, and the DataFrame index with the experiment code.
+
+        :param type: Component type passed to the aggregation call (currently unused in this method).
+        :type type: str
+        :return: Combined DataFrame of aggregated performance metrics for all experiments.
         :rtype: pandas.DataFrame
         """
         df_performance = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
-            workload = self.get_workload(code)
             df = self.get_performance_single(evaluation)
             df = evaluation.benchmarking_set_datatypes(df)
             df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])
-            #print(df_aggregated)
             df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
             df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
             df_aggregated.drop('connection', axis=1, inplace=True)
-            #df = self.get_performance(evaluation)
             if df_aggregated.empty:
                 continue
-            #print(df)
-            #df['type']=workload['tenant_per']
-            #df['num_tenants']=workload['num_tenants']
-            #df['vol_tenants']=workload['multi_tenant_volume']
-            #df['code']=code
             df_aggregated['code'] = df_aggregated['code'].astype(str)
             df_aggregated = df_aggregated.drop(columns=['pod'])
-            #print(df)
             df_performance = pd.concat([df_performance, df_aggregated])
-        #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
     def get_performance_aggregated_per_phase_multitenant(self, type="stream"):
         """
-        Loops over multiple experiments and combines their aggregated performance results into a single DataFrame.
+        Combines aggregated multi-tenant performance results from all experiment codes into one DataFrame.
 
-        For each experiment code, this function:
-        - Initializes a benchmarking evaluator
-        - Retrieves the corresponding workload configuration
-        - Extracts aggregated performance metrics per client
-        - Annotates the results with workload metadata (`type` and `num_tenants`)
-        - Concatenates the results into a single DataFrame
+        Extends :meth:`get_performance_aggregated_per_phase` by annotating each row with
+        tenant metadata (``type_tenants``, ``num_tenants``, ``vol_tenants``) read from the
+        workload configuration before aggregation.
 
-        :return: A combined DataFrame containing aggregated performance metrics for all experiments.
+        :param type: Component type passed to the aggregation call (currently unused in this method).
+        :type type: str
+        :return: Combined DataFrame of aggregated multi-tenant performance metrics.
         :rtype: pandas.DataFrame
         """
         df_performance = pd.DataFrame()
@@ -192,108 +204,105 @@ class base():
             df['type_tenants'] = workload['tenant_per']
             df['num_tenants'] = workload['num_tenants']
             df['vol_tenants'] = workload['multi_tenant_volume']
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants'])
-            #df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(
+                df, columns=['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+            )
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
             df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
-            #df_aggregated.drop('connection', axis=1, inplace=True)
-            #df = self.get_performance(evaluation)
             if df_aggregated.empty:
                 continue
-            #print(df)
             df_aggregated['type_tenants'] = workload['tenant_per']
             df_aggregated['num_tenants'] = workload['num_tenants']
             df_aggregated['vol_tenants'] = workload['multi_tenant_volume']
-            #df['code']=code
             df_aggregated['code'] = df_aggregated['code'].astype(str)
             df_aggregated = df_aggregated.drop(columns=['pod', 'connection', 'phase'], errors='ignore')
-            #print(df)
             df_performance = pd.concat([df_performance, df_aggregated])
-        #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
     def get_monitoring_aggregated_per_phase_multitenant(self, type="stream"):
+        """
+        Combines aggregated multi-tenant monitoring metrics from all experiment codes into one DataFrame.
+
+        Calls :meth:`get_monitoring_aggregated_per_phase` to collect the raw monitoring data,
+        enriches it with connection metadata via :meth:`add_metadata`, then groups by
+        ``(code, experiment_run, client, type_tenants, num_tenants)`` and reduces each
+        metric column using ``'max'`` for ratio metrics and ``'sum'`` for counter metrics.
+        ``'Total I/O Wait Time [s]'`` is always reduced with ``'max'``.
+
+        :param type: Component type forwarded to :meth:`get_monitoring_aggregated_per_phase`.
+        :type type: str
+        :return: DataFrame of grouped multi-tenant monitoring metrics indexed by the
+                 underscore-joined group key.
+        :rtype: pandas.DataFrame
+        """
         df = self.get_monitoring_aggregated_per_phase(type)
         df_metadata = self.add_metadata(df)
         agg_dict = df.columns
-        # Filter aggregation dictionary to only include columns present in df
-        filtered_agg_dict = {col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum' for col in agg_dict if col in df.columns}
+        filtered_agg_dict = {
+            col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum'
+            for col in agg_dict if col in df.columns
+        }
         if 'Total I/O Wait Time [s]' in filtered_agg_dict:
             filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
-        #print(filtered_agg_dict)
-        # Apply groupby with filtered aggregation
         cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
-        df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)#.reset_index()
+        df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
-        #df_metadata = self.add_metadata(df_metadata)
         return df_metadata
 
     def get_performance_per_connection(self):
         """
-        Loops over multiple experiments and combines their unaggregated performance results into a single DataFrame.
+        Combines unaggregated performance results per connection from all experiment codes.
 
-        For each experiment code, this function:
-        - Initializes a benchmarking evaluator
-        - Retrieves the corresponding workload configuration
-        - Extracts unaggregated performance metrics per client
-        - Annotates the results with workload metadata (`type` and `num_tenants`)
-        - Concatenates the results into a single DataFrame
+        For each code, retrieves the per-client performance data and prefixes the
+        ``phase``, ``connection``, ``configuration``, and DataFrame index with the
+        experiment code before concatenating.
 
-        :return: A combined DataFrame containing unaggregated performance metrics for all experiments.
+        :return: Combined DataFrame of unaggregated performance metrics for all experiments.
         :rtype: pandas.DataFrame
         """
         df_performance = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
-            workload = self.get_workload(code)
             df = self.get_performance_single(evaluation)
-            #df['type']=workload['tenant_per']
-            #df['num_tenants']=workload['num_tenants']
-            #df['vol_tenants']=workload['multi_tenant_volume']
-            #df['code']=code
-            #print(df)
             df['phase'] = df['code'].astype(str) + "-" + df['phase'].astype(str)
             df['connection'] = df['code'].astype(str) + "-" + df['connection'].astype(str)
             df['configuration'] = df['code'].astype(str) + "-" + df['configuration'].astype(str)
             df.index = evaluation.code + '-' + df.index.astype(str)
-            #print(df)
             df_performance = pd.concat([df_performance, df])
-        #df_performance = df_performance.sort_values(['num_tenants', 'vol_tenants', 'type'])
         return df_performance
 
     def get_metrics(self, evaluation=None):
         """
-        Returns information about hardware metrics that were collected during the experiment.
+        Returns metadata for the hardware metrics collected during the experiment.
 
-        This function reads the `connections.config` file associated with the given evaluation,
-        extracts and organizes the monitored hardware metrics, and returns them in a structured DataFrame.
+        Reads ``connections.config`` for the given evaluation and extracts the
+        monitoring metric definitions.  The returned DataFrame has one row per
+        metric and the following columns:
 
-        The resulting DataFrame includes, for each metric:
-        - `title`: A descriptive name
-        - `active`: Whether the metric was active during monitoring
-        - `type`: The type/category of the metric (e.g., 'cluster')
-        - `metric`: The raw metric name or identifier
+        - ``title``: human-readable metric name,
+        - ``active``: whether the metric was active (defaults to ``'True'``),
+        - ``type``: metric category, e.g. ``'cluster'`` (default),
+        - ``metric``: raw metric identifier.
 
-        :param evaluation: The evaluation object containing the experiment code.
+        Sets ``self.with_monitoring = False`` and returns an empty DataFrame when
+        no ``'metrics'`` key is found in the first connection's monitoring block.
+
+        :param evaluation: Evaluator instance. Defaults to the first code's evaluator.
         :type evaluation: object
-        :return: A DataFrame listing hardware metrics and their metadata.
+        :return: DataFrame of metric metadata indexed by metric key.
         :rtype: pandas.DataFrame
         """
         if evaluation is None:
             evaluation = self.get_evaluator()
-        with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
+        with open(self.path + "/" + evaluation.code + "/connections.config", 'r') as inf:
             connections = ast.literal_eval(inf.read())
-            pretty_connections = json.dumps(connections, indent=2)
-            #print(pretty_connections)
             connections_sorted = sorted(connections, key=lambda c: c['name'])
             result = dict()
             for c in connections_sorted:
-                if not 'metrics' in c['monitoring']:
-                    # no monitoring
+                if 'metrics' not in c['monitoring']:
                     self.with_monitoring = False
                     return pd.DataFrame()
-                #print(c)
                 for m, metric in c['monitoring']['metrics'].items():
                     if m in result:
                         continue
@@ -303,22 +312,25 @@ class base():
                         'type': metric['type'] if 'type' in metric else 'cluster',
                         'metric': metric['metric'] if 'metric' in metric else '',
                     }
-            df = pd.DataFrame(result).T
-            return df
-
+            return pd.DataFrame(result).T
 
     def get_connections_of_experiment(self, evaluation=None):
         """
-        Returns info about all connections in the collection.
-        Makes a loop over all codes and calls get_connections_of_experiment(evaluation).
-        If evaluation is given, calls get_connections_of_experiment(evaluation).
-        Important columns:
-        df[['phase', 'code', 'connection', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants', 'vol_tenants']]
-        Code is added to phase and connection.
+        Returns connection metadata for a single experiment.
 
-        :param evaluation: The evaluation object containing the experiment code.
+        Reads ``connections.config`` and builds a row per pod/client with the
+        following key columns: ``phase``, ``code``, ``connection``, ``configuration``,
+        ``experiment_run``, ``client``, ``type_tenants``, ``num_tenants``,
+        ``vol_tenants``, plus flattened host-system, loading-parameter,
+        benchmarking-parameter, and SUT-parameter fields.
+
+        When a connection entry carries ``orig_name``, the entry represents an
+        individual pod; otherwise a synthetic row is generated for each parallel
+        client.
+
+        :param evaluation: Evaluator instance. Defaults to the first code's evaluator.
         :type evaluation: object
-        :return: A DataFrame listing connection infos.
+        :return: DataFrame of connection metadata, one row per pod/client.
         :rtype: pandas.DataFrame
         """
         def add_connection_to_result(c, connection_id, result):
@@ -333,7 +345,8 @@ class base():
                 'time_load': c['timeLoad'],
                 'time_ingest': c['timeIngesting'],
                 'time_check': c['timeIndex'],
-                'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'] if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+                'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
+                    if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
                 'pods': c['parameter']['parallelism'],
                 'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
                 'num_worker': int(c['parameter']['num_worker']),
@@ -342,9 +355,6 @@ class base():
                 'vol_tenants': c['parameter']['TENANT_VOL'] if 'TENANT_VOL' in c['parameter'] else 'False',
                 'datadisk': c['hostsystem']['datadisk'],
             }
-            #df['type']=workload['tenant_per']
-            #df['num_tenants']=workload['num_tenants']
-            #df['vol_tenants']=workload['multi_tenant_volume']
             for key, hostdata in c['hostsystem'].items():
                 if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
                     result[connection_id][f'host_{key}'] = hostdata
@@ -366,47 +376,47 @@ class base():
                         key = arg.split("=")[0]
                         value = arg.split("=")[1]
                         result[connection_id][f'arg_{key}'] = value
+
         if evaluation is None:
             evaluation = self.get_evaluator()
-        with open(self.path+"/"+evaluation.code+"/connections.config",'r') as inf:
+        with open(self.path + "/" + evaluation.code + "/connections.config", 'r') as inf:
             connections = ast.literal_eval(inf.read())
-            pretty_connections = json.dumps(connections, indent=2)
-            #print(pretty_connections)
             connections_sorted = sorted(connections, key=lambda c: c['name'])
             result = dict()
             for c in connections_sorted:
-                #pprint.pp(c)
                 if 'orig_name' in c:
-                    # go from pod identifier to connection identifier
-                    #name = c['orig_name']
+                    # entry represents an individual pod — use the pod name as connection id
                     name = c['name']
                     c['phase'] = "{code}-{connection}".format(code=c['parameter']['code'], connection=c['orig_name'])
                     connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
                     add_connection_to_result(c, connection_id, result)
                 else:
-                    # simulate having connection (per pod)
+                    # no per-pod entries — synthesise one row per parallel client
                     clients = int(c['parameter']['parallelism'])
                     name = c['name']
-                    for i in range(1, clients+1):
+                    for i in range(1, clients + 1):
                         c['name'] = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
                         c['phase'] = "{code}-{phase}".format(code=c['parameter']['code'], phase=name)
                         connection_id = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
                         add_connection_to_result(c, connection_id, result)
-            df = pd.DataFrame(result).T
-            return df
+            return pd.DataFrame(result).T
 
     def get_connections(self, evaluation=None):
         """
-        Returns info about all connections in the collection.
-        Makes a loop over all codes and calls get_connections_of_experiment(evaluation).
-        If evaluation is given, calls get_connections_of_experiment(evaluation).
-        Important columns:
-        df[['phase', 'code', 'connection', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants', 'vol_tenants']]
-        Code is added to phase and connection.
+        Returns connection metadata for all experiments in the collection.
 
-        :param evaluation: The evaluation object containing the experiment code.
-        :type evaluation: object
-        :return: A DataFrame listing connection infos.
+        When called without arguments, iterates over ``self.codes`` and concatenates
+        the result of :meth:`get_connections_of_experiment` for each code.  When an
+        ``evaluation`` is provided, returns only the connections for that experiment.
+
+        Key columns in the returned DataFrame:
+        ``phase``, ``code``, ``connection``, ``configuration``,
+        ``experiment_run``, ``client``, ``type_tenants``, ``num_tenants``,
+        ``vol_tenants``.
+
+        :param evaluation: Evaluator instance. If provided, only that experiment is queried.
+        :type evaluation: object, optional
+        :return: DataFrame of connection metadata.
         :rtype: pandas.DataFrame
         """
         if evaluation is None:
@@ -417,44 +427,35 @@ class base():
                 df_connections = pd.concat([df_connections, df_connection])
             return df_connections
         else:
-            #evaluation = self.get_evaluator()
-            df_connection = self.get_connections_of_experiment(evaluation)
-            return df_connection
-
+            return self.get_connections_of_experiment(evaluation)
 
     def show_summary_monitoring_table(self, evaluation, type='stream'):
         """
-        Collects hardware and application monitoring metrics for a specified component without aggregation.
+        Collects all active monitoring metrics for a given component without aggregation.
 
-        This function retrieves multiple monitoring metrics from the evaluation object related to
-        CPU usage, memory, PostgreSQL activity, cache statistics, and background writer performance.
-        Each metric is processed (e.g., max-min differences, means, or max values) and combined into a single DataFrame.
+        Iterates over ``self.df_metrics``, skipping inactive metrics, and fetches the
+        time-series data for each metric via the evaluator.  Counter metrics are reduced
+        by ``max - min``; ratio metrics by ``max``; all others by ``mean``.
+        Results are combined column-wise into a summary DataFrame.
 
-        :param evaluate: The evaluation object containing monitoring data and methods to retrieve metrics.
-        :type evaluate: object
-        :param component: The component name for which to retrieve metrics (e.g., 'database', 'worker').
-        :type component: str
-        :return: A DataFrame combining all monitored metrics indexed by monitored entities.
+        :param evaluation: Evaluator instance providing the monitoring data.
+        :type evaluation: object
+        :param type: Component name to retrieve metrics for (e.g. ``'stream'``, ``'database'``).
+        :type type: str
+        :return: Summary DataFrame of monitoring metrics rounded to two decimal places,
+                 or an empty DataFrame when monitoring is disabled.
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:
             return pd.DataFrame()
-        #scale = 1
         results = []
         for idx, row in self.df_metrics.iterrows():
             if row["active"] == False:
                 continue
             metric_name = idx
             method = 'diff' if row["metric"] == 'counter' else 'mean'
-            #method = 'diff' if row["metric"] == 'counter' else 'max' if row["metric"] == 'ratio' else 'mean'
             col_name = row["title"]
-            #print(idx, row["title"], method)
-            #scale = metric[3] if len(metric) > 3 else 1
             df = evaluation.get_monitoring_metric(metric=metric_name, component=type)
-            # Apply scaling if needed
-            #if scale != 1:
-            #    df = df * scale
-            # Process dataframe according to method
             if method == 'diff':
                 processed = df.max().sort_index() - df.min().sort_index()
             elif method == 'max':
@@ -465,74 +466,68 @@ class base():
                 raise ValueError(f"Unknown processing method: {method}")
             df_cleaned = pd.DataFrame(processed)
             df_cleaned.columns = [col_name]
-            #df_cleaned.index = evaluation.code + '-' + df_cleaned.index.astype(str)
             results.append(df_cleaned)
-            #print(results)
-        # Combine all dataframes horizontally (join on index)
-        summary_df = pd.concat(results, axis=1).round(2)
-        #summary_df = summary_df.reindex(index=evaluators.natural_sort(summary_df.index))
-        return summary_df
+        return pd.concat(results, axis=1).round(2)
 
     def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="stream"):
         """
-        Retrieves a single monitoring metric as a time series DataFrame for a given experiment code and component.
+        Returns a single monitoring metric as a wide-format time-series DataFrame.
 
-        The function initializes the evaluation object for the specified experiment,
-        then fetches the time series data for the specified metric and component.
+        Rows are timestamps; columns are monitored component instances (e.g. pods).
 
-        :param code: The experiment identifier code.
+        :param code: Experiment identifier.
         :type code: str
-        :param metric: The name of the monitoring metric to retrieve (default is 'pg_locks_count').
-        :type metric: str, optional
-        :param component: The component name to filter metrics (default is 'stream').
-        :type component: str, optional
-        :return: A DataFrame containing the time series of the requested metric indexed by timestamps or monitoring targets.
+        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :type metric: str
+        :param component: Component name to filter metrics (default ``'stream'``).
+        :type component: str
+        :return: Wide-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluate = self.get_evaluator(code)
-        df = evaluate.get_monitoring_metric(metric=metric, component=component)
-        return df
-
+        return evaluate.get_monitoring_metric(metric=metric, component=component)
 
     def get_monitoring_aggregated_per_phase(self, type="stream"):
         """
-        Retrieves aggregated monitoring metrics for multiple experiments and combines them into a single DataFrame.
-        Drops column "connection" if exists, since it is not sensible anymore.
+        Combines aggregated monitoring metrics from all experiment codes into one DataFrame.
 
-        :param type: The component type to filter monitoring metrics (default is "stream").
-        :type type: str, optional
-        :return: A DataFrame containing detailed (aggregated) monitoring metrics for all experiments
+        For each code, calls :meth:`show_summary_monitoring_table` and concatenates the
+        results.  The ``connection`` column is dropped from the combined result because
+        it is no longer meaningful across experiments.
+
+        :param type: Component type to filter monitoring metrics (default ``'stream'``).
+        :type type: str
+        :return: Combined DataFrame of aggregated monitoring metrics for all experiments,
+                 or an empty DataFrame when monitoring is disabled.
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:
             return pd.DataFrame()
-        df_performance = pd.DataFrame()
+        df_monitoring_all = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
-            #workload = self.get_workload(code)
             df_monitoring = self.show_summary_monitoring_table(evaluation, type)
             if len(df_monitoring) > 0:
-                df = df_monitoring.copy()  # avoid modifying original
-                df_performance = pd.concat([df_performance, df])
-        df_performance.drop('connection', axis=1, inplace=True, errors='ignore')
-        return df_performance
+                df_monitoring_all = pd.concat([df_monitoring_all, df_monitoring.copy()])
+        df_monitoring_all.drop('connection', axis=1, inplace=True, errors='ignore')
+        return df_monitoring_all
 
     def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="stream"):
         """
-        Retrieves a single monitoring metric as a time series DataFrame for a given experiment code and component.
+        Returns a single monitoring metric as a transposed time-series DataFrame.
 
-        The function initializes the evaluation object for the specified experiment,
-        then fetches the time series data for the specified metric and component.
+        Compared to :meth:`get_monitoring_timeseries_single`, the result is transposed so
+        that rows are monitored component instances and columns are timestamps.
 
-        :param code: The experiment identifier code.
+        :param code: Experiment identifier.
         :type code: str
-        :param metric: The name of the monitoring metric to retrieve (default is 'pg_locks_count').
-        :type metric: str, optional
-        :param component: The component name to filter metrics (default is 'stream').
-        :type component: str, optional
-        :return: A DataFrame containing the time series of the requested metric indexed by timestamps or monitoring targets.
+        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :type metric: str
+        :param component: Component name to filter metrics (default ``'stream'``).
+        :type component: str
+        :return: Transposed time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:
@@ -543,242 +538,200 @@ class base():
 
     def add_metadata(self, df):
         """
-        Retrieves non-aggregated monitoring metrics for multiple experiments and combines them into a single DataFrame.
+        Joins connection metadata from :meth:`get_connections` onto a monitoring DataFrame.
 
-        For each experiment code, this function:
-        - Initializes the evaluation object,
-        - Retrieves workload metadata,
-        - Collects detailed monitoring metrics for the specified component type without aggregation across clients,
-        - Adds workload-related metadata columns ('type' and 'num_tenants'),
-        - Concatenates the results into a single DataFrame.
+        Attempts to merge ``df`` with the connection metadata using one of several
+        strategies, tried in order:
 
-        :param type: The component type to filter monitoring metrics (default is "stream").
-        :type type: str, optional
-        :return: A DataFrame containing detailed (non-aggregated) monitoring metrics for all experiments,
-                 enriched with workload metadata.
+        1. **Index × phase column** — when ``df``'s index intersects
+           ``df_connections['phase']``.
+        2. **Shared index** — when both DataFrames share common index values.
+        3. **Phase column join** — when both DataFrames have a ``phase`` column.
+        4. **Multi-tenant key join** — when both DataFrames have
+           ``(code, experiment_run, client, type_tenants, num_tenants)`` columns.
+
+        If none of the strategies match, a warning is printed and ``None`` is returned.
+
+        :param df: Monitoring DataFrame to enrich with connection metadata.
+        :type df: pandas.DataFrame
+        :return: Enriched DataFrame with connection metadata columns added.
         :rtype: pandas.DataFrame
         """
         df_connections = self.get_connections()
         intersection = df.index.intersection(df_connections['phase'])
         if not intersection.empty:
-            phase_dropped = False
-            # index of df is per phase
             print("combine on index and column 'phase'")
             if 'phase' in df.columns:
-                #print("drop duplicate column 'phase'")
                 df.drop('phase', axis=1, inplace=True)
-                phase_dropped = True
-            #df_phases = df_connections.drop_duplicates(subset=['phase'], keep='first')
-            #result = df.merge(df_phases, left_index=True, right_on='phase', how='inner').set_index('phase')
             cols_to_use = [c for c in df_connections.columns if c not in df.columns or c == 'phase']
-            #print(cols_to_use)
             result = df.merge(
                 df_connections[cols_to_use].drop_duplicates('phase'),
                 left_index=True,
                 right_on='phase',
                 how='inner'
             ).set_index('phase').copy()
-            #if phase_dropped:
             result['phase'] = result.index
             result.drop('connection', axis=1, inplace=True, errors='ignore')
             return result
+
         cols_phase = ['phase']
         cols_multi_tenant = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
         check_phase = all(set(cols_phase).issubset(d.columns) for d in [df, df_connections])
         check_multi_tenant = all(set(cols_multi_tenant).issubset(d.columns) for d in [df, df_connections])
-        #df_connections = df_connections.drop_duplicates(subset=cols, keep='first')
-        #df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
-        #df = df.set_index(cols, drop=False)
-        #df_connections = df_connections.set_index(cols, drop=False)
-        #df_connections = df_connections.drop_duplicates('phase'),
-        #print(df.head())
-        #print(df_connections.head())
-        # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
-        #print(df)
-        #print(df_connections)
-        #result = df.combine_first(df_connections)#.reindex(columns=df.columns)
-        #result
+
         intersection = df.index.intersection(df_connections.index)
         if not intersection.empty:
             print("combine on index")
-            #result = df.combine_first(df_connections).reindex(columns=df.columns)
-            # 1. Spalten finden, die NUR in df_connections existieren
             cols_to_use = [c for c in df_connections.columns if c not in df.columns]
-            # 2. Diese Spalten rechts an df hängen
-            result = df.join(df_connections[cols_to_use], how='inner')
-            #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
-            #result = result.sort_values(['code', 'experiment_run', 'client'])
-            return result
+            return df.join(df_connections[cols_to_use], how='inner')
+
         elif check_phase:
             print("combine on columns " + " ".join(cols_phase))
-            #df = df.rename_axis('phase').reset_index()
             indexname = df.index.name
             df_connections = df_connections.drop_duplicates(subset=cols_phase, keep='first')
             df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
             df = df.set_index(cols_phase, drop=False)
             df_connections = df_connections.set_index(cols_phase, drop=False)
-            #df_connections = df_connections.drop_duplicates('phase'),
-            #print(df.head())
-            #print(df_connections.head())
-            # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
-            #print(df)
-            #print(df_connections)
-            result = df.combine_first(df_connections)#.reindex(columns=df.columns)
+            result = df.combine_first(df_connections)
             result.index.name = indexname
-            # 1. Spalten finden, die NUR in df_connections existieren
-            #cols_to_use = [c for c in df_connections.columns if c not in df.columns]
-            # 2. Diese Spalten rechts an df hängen
-            #print(f"df Duplikate: {df.index.duplicated().any()}")
-            #print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
-            #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
-            #print(result.index)
-            # 3. Spalten aus dem Index zurückholen
-            #result = result.reset_index()
-            #result = result.set_index('phase')
-            #result = result.sort_values(['code', 'experiment_run', 'client'])
             return result
+
         elif check_multi_tenant:
             print("combine on columns " + " ".join(cols_multi_tenant))
-            #df = df.rename_axis('phase').reset_index()
             indexname = df.index.name
             df_connections = df_connections.drop_duplicates(subset=cols_multi_tenant, keep='first')
             df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
             df = df.set_index(cols_multi_tenant, drop=False)
             df_connections = df_connections.set_index(cols_multi_tenant, drop=False)
+            # normalise index tuples to strings for consistent matching
             df.index = pd.MultiIndex.from_tuples(
-                [tuple(map(str, t)) for t in df.index], 
+                [tuple(map(str, t)) for t in df.index],
                 names=df.index.names
             )
             df_connections.index = pd.MultiIndex.from_tuples(
-                [tuple(map(str, t)) for t in df_connections.index], 
+                [tuple(map(str, t)) for t in df_connections.index],
                 names=df_connections.index.names
             )
-            #print(df.index)
-            #print(df_connections.index)
-            #df_connections = df_connections.drop_duplicates('phase'),
-            #print(df.head())
-            #print(df_connections.head())
-            # 2. Kombinieren (df hat Vorrang, df_connections füllt NaN auf)
-            #print(df)
-            #print(df_connections)
-            result = df.combine_first(df_connections)#.reindex(columns=df.columns)
+            result = df.combine_first(df_connections)
             result.index = ['_'.join(map(str, i)) for i in result.index]
-            #result.index.name = indexname
-            # 1. Spalten finden, die NUR in df_connections existieren
-            #cols_to_use = [c for c in df_connections.columns if c not in df.columns]
-            # 2. Diese Spalten rechts an df hängen
-            #print(f"df Duplikate: {df.index.duplicated().any()}")
-            #print(f"df_connections Duplikate: {df_connections.index.duplicated().any()}")
-            #result = pd.concat([df, df_connections[cols_to_use]], axis=1)
-            #print(result.index)
-            # 3. Spalten aus dem Index zurückholen
-            #result = result.reset_index()
-            #result = result.set_index('phase')
-            #result = result.sort_values(['code', 'experiment_run', 'client'])
             return result
-        else:
-            print("combine failed!")            
-        #for code in self.codes:
-        #    evaluation = self.get_evaluator(code)
-        #    df_connections = self.get_connections(evaluation)
-        #    df = df.combine_first(df_connections)#, lsuffix='_left', rsuffix='_right')
-        #    print(df_connections)
-        #df = df.sort_values(['code', 'experiment_run', 'client'])
-        #return df
 
+        else:
+            print("combine failed!")
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
+        """
+        Collects long-format time-series data for a given metric across all experiment codes.
+
+        For each code, fetches the wide-format time series, melts it to long format,
+        merges connection metadata, and concatenates the results.  The final DataFrame
+        is grouped by ``(timestamp, code, phase, experiment_run, client, type_tenants,
+        vol_tenants, num_tenants, metric, component)`` and summed.
+
+        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :type metric: str
+        :param component: Component name used as a label column (default ``'stream'``).
+        :type component: str
+        :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
+        :rtype: pandas.DataFrame
+        """
         if not self.with_monitoring:
-            #print("no monitoring")
             return pd.DataFrame()
-        df_performance = pd.DataFrame()
+        df_timeseries = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
-            workload = self.get_workload(code)
             df_connections = self.get_connections(evaluation)
             df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
-            df_monitoring.index.name="timestamp"
-            #print(df_monitoring.head())
-            #print(df_connections.head())
+            df_monitoring.index.name = "timestamp"
             df_long = df_monitoring.reset_index().melt(
-                id_vars="timestamp",     # keep timestamp
-                var_name="series",       # column name for former column headers
-                value_name="value"       # column name for the numbers
+                id_vars="timestamp",
+                var_name="series",
+                value_name="value"
             )
-            #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             df_long['metric'] = metric
             df_long['component'] = component
-            #print(df_long['series'].head())
-            #print(df_connections['phase'].head())
             df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
-            #print(df_long.head())
-            #if workload['tenant_per'] == 'container':
-            #    # 1 time series per tenant
-            #    pass
-            #else:
-            #    # 1 time series for all tenants (it is 1 DBMS)
-            #    df_long['tenant'] = "0"
-            #df_long['type_tenants'] = workload['tenant_per']
-            #df_long['num_tenants'] = workload['num_tenants']
-            #df_long['vol_tenants'] = workload['multi_tenant_volume']
-            df_performance = pd.concat([df_performance, df_long])
-        #print(df_performance)
+            df_timeseries = pd.concat([df_timeseries, df_long])
         df_sum = (
-            df_performance
-            #.groupby(["timestamp", "code", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
-            .groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
-            #.groupby(["timestamp", "code", "phase", "experiment_run", "client", "metric", "component"], as_index=False)["value"]
+            df_timeseries
+            .groupby(
+                ["timestamp", "code", "phase", "experiment_run", "client",
+                 "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"],
+                as_index=False
+            )["value"]
             .sum()
         )
-        #df_sum.drop(columns=['timestamp'], inplace=True)
-        #print(df_performance.head())
-        #print(df_sum.head())
         return df_sum
 
     def get_monitoring_timeseries_all_multitenant(self, metric='pg_locks_count', component="stream"):
+        """
+        Collects long-format multi-tenant time-series data for a given metric across all experiment codes.
+
+        Behaves like :meth:`get_monitoring_timeseries_all` but additionally annotates each
+        row with tenant metadata (``type_tenants``, ``num_tenants``, ``vol_tenants``) from
+        the workload configuration.  For non-container tenancy, the ``tenant`` column is
+        set to ``"0"`` to indicate a single shared DBMS.
+
+        The final DataFrame is grouped by ``(timestamp, code, experiment_run, client,
+        type_tenants, vol_tenants, num_tenants, metric, component)`` and summed.
+
+        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :type metric: str
+        :param component: Component name used as a label column (default ``'stream'``).
+        :type component: str
+        :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
+        :rtype: pandas.DataFrame
+        """
         if not self.with_monitoring:
             return pd.DataFrame()
-        df_performance = pd.DataFrame()
+        df_timeseries = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
             df_connections = self.get_connections(evaluation)
             df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
-            df_monitoring.index.name="timestamp"
+            df_monitoring.index.name = "timestamp"
             df_long = df_monitoring.reset_index().melt(
-                id_vars="timestamp",     # keep timestamp
-                var_name="series",       # column name for former column headers
-                value_name="value"       # column name for the numbers
+                id_vars="timestamp",
+                var_name="series",
+                value_name="value"
             )
-            #df_long['client'] = df_long['series'].str.rsplit('-', n=1).str[-1]
             df_long['metric'] = metric
             df_long['component'] = component
             df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
             if workload['tenant_per'] == 'container':
-                # 1 time series per tenant
+                # one time series per container tenant
                 pass
             else:
-                # 1 time series for all tenants (it is 1 DBMS)
+                # one shared DBMS — collapse tenant dimension
                 df_long['tenant'] = "0"
             df_long['type_tenants'] = workload['tenant_per']
             df_long['num_tenants'] = workload['num_tenants']
             df_long['vol_tenants'] = workload['multi_tenant_volume']
-            df_performance = pd.concat([df_performance, df_long])
+            df_timeseries = pd.concat([df_timeseries, df_long])
         df_sum = (
-            df_performance
-            .groupby(["timestamp", "code", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
-            #.groupby(["timestamp", "code", "phase", "experiment_run", "client", "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"], as_index=False)["value"]
+            df_timeseries
+            .groupby(
+                ["timestamp", "code", "experiment_run", "client",
+                 "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"],
+                as_index=False
+            )["value"]
             .sum()
         )
-        #df_sum.drop(columns=['timestamp'], inplace=True)
-        #print(df_performance.head())
-        #print(df_sum.head())
         return df_sum
 
-
     def get_evaluator(self, code=''):
+        """
+        Returns a benchmarking evaluator for the given experiment code.
+
+        Subclasses override this method to return the appropriate evaluator type.
+        The base implementation returns a :class:`evaluators.dbmsbenchmarker` instance.
+
+        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
+        :type code: str
+        :return: Evaluator instance for the specified experiment.
+        :rtype: evaluators.dbmsbenchmarker
+        """
         if code == '':
             code = self.codes[0]
         return evaluators.dbmsbenchmarker(code=code, path=self.path)
-
-

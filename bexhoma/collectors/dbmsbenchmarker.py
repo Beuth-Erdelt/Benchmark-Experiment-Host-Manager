@@ -1,24 +1,14 @@
 """
-:Date: 2025-07-22
-:Version: 0.8.10
-:Authors: Patrick K. Erdelt
+Collector for DBMSBenchmarker experiments.
 
-    Classes for collecting and aggregating results from several experiments.
+Provides :func:`map_index_to_queryname` and :class:`dbmsbenchmarker`, which
+extends :class:`base` with query-level aggregation methods for warnings,
+errors, and execution latencies across multiple experiment codes.
 
-    Copyright (C) 2020  Patrick K. Erdelt
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -37,46 +27,39 @@ from dbmsbenchmarker import parameter, inspector
 from bexhoma import evaluators
 from .base import base
 
+
 def map_index_to_queryname(numQuery):
     """
-    Maps a query index string (e.g., 'q1', 'q2', etc.) to a human-readable query title 
-    from the global `query_properties` dictionary.
+    Maps a query index string (e.g., ``'q1'``) to a human-readable title from the
+    global ``query_properties`` dictionary.
 
-    If the title is not found in `query_properties`, the input string is returned as-is.
+    If the title cannot be resolved, the original input string is returned unchanged.
 
-    Parameters
-    ----------
-    numQuery : str
-        A string representing the query index, typically starting with a letter followed by a number (e.g., 'q1').
-
-    Returns
-    -------
-    str
-        The title of the query if available in `query_properties`, otherwise the original input string.
+    :param numQuery: A query index string, typically a letter followed by a number (e.g., ``'q1'``).
+    :type numQuery: str
+    :return: The query title from ``query_properties``, or ``numQuery`` if not found.
+    :rtype: str
     """
     global query_properties
-    if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+    if (
+        numQuery[1:] in query_properties
+        and 'config' in query_properties[numQuery[1:]]
+        and 'title' in query_properties[numQuery[1:]]['config']
+    ):
         return query_properties[numQuery[1:]]['config']['title']
-    else:
-        return numQuery
+    return numQuery
 
-
-"""
-############################################################################
-DBMSBenchmarker
-############################################################################
-"""
 
 class dbmsbenchmarker(base):
     """
-    Class for evaluating Benchbase experiments.
-    """
-    def __init__(self,
-            path,
-            codes
-            ):
-        base.__init__(self, path, codes)
+    Collector for DBMSBenchmarker experiments.
 
+    Extends :class:`base` with query-level aggregation methods for warnings,
+    errors, and latencies. Overrides :meth:`get_evaluator` to return a
+    :class:`evaluators.dbmsbenchmarker` instance.
+    """
+    def __init__(self, path, codes):
+        base.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
         if code == '':
@@ -84,66 +67,61 @@ class dbmsbenchmarker(base):
         return evaluators.dbmsbenchmarker(code=code, path=self.path)
 
     def get_total_warnings(self, query_titles=False):
-        #print("\n### Warnings (result mismatch)\n")
-        df_performance = pd.DataFrame()
+        """
+        Aggregates warning counts (result mismatches) across all experiment codes.
+
+        For each code, retrieves the per-query warning DataFrame from the evaluator
+        and prefixes its index with the experiment code before concatenating.
+
+        :param query_titles: If ``True``, use human-readable query titles as index labels.
+        :type query_titles: bool
+        :return: A combined DataFrame of warning counts for all experiments.
+        :rtype: pandas.DataFrame
+        """
+        df_result = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_total_warnings(query_titles)
             df.index = evaluation.code + '-' + df.index.astype(str)
-            df_performance = pd.concat([df_performance, df])
-        return df_performance
-            # num_warnings = df.sum().sum()
-            # if num_warnings > 0:
-            #     # set readable names
-            #     df.index = df.index.map(map_index_to_queryname)
-            #     # remove only False rows
-            #     df = df[~(df == False).all(axis=1)]
-            #     #print(df)
-            #     print(df.to_markdown(index=True, floatfmt=".2f"))
-            # else:
-            #     print("No warnings")
+            df_result = pd.concat([df_result, df])
+        return df_result
+
     def get_total_errors(self, query_titles=False):
-        #print("\n### Errors (failed queries)\n")
-        df_performance = pd.DataFrame()
+        """
+        Aggregates error counts (failed queries) across all experiment codes.
+
+        For each code, retrieves the per-query error DataFrame from the evaluator
+        and prefixes its index with the experiment code before concatenating.
+
+        :param query_titles: If ``True``, use human-readable query titles as index labels.
+        :type query_titles: bool
+        :return: A combined DataFrame of error counts for all experiments.
+        :rtype: pandas.DataFrame
+        """
+        df_result = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_total_warnings(query_titles)
             df.index = evaluation.code + '-' + df.index.astype(str)
-            df_performance = pd.concat([df_performance, df])
-        return df_performance
-            # eva = collect.get_evaluator()
-            # eva.get_df_loading()
-            # eva.path_base
-            # df = eva.evaluation.get_total_errors().T
-            # num_errors = df.sum().sum()
-            # if num_errors > 0:
-            #     df_errors = df.copy()
-            #     df_errors = df_errors[~(df_errors == False).all(axis=1)]
-            #     list_error_queries = list(df_errors.index)
-            #     # set readable names
-            #     df.index = df.index.map(map_index_to_queryname)
-            #     # remove only False rows
-            #     df = df[~(df == False).all(axis=1)]
-            #     #print(df)
-            #     print(df.to_markdown(index=True, floatfmt=".2f"))
-            #     for error in list_error_queries:
-            #         numQuery = error[1:]        # remove the leading "Q""
-            #         list_errors = evaluate.get_error(numQuery)
-            #         list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
-            #         #print(list_errors)
-            #         print("* "+map_index_to_queryname(error))
-            #         #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
-            #         #print(df_error)
-            #         for k,v in list_errors.items():
-            #             print("  * {}: {}".format(k,v))
-            # else:
-            #     print("No errors")
+            df_result = pd.concat([df_result, df])
+        return df_result
+
     def get_query_latencies(self, query_titles=False):
-        #print("\n### Latency of Timer Execution [ms]")
-        df_performance = pd.DataFrame()
+        """
+        Aggregates query latency metrics across all experiment codes.
+
+        For each code, retrieves the per-query latency DataFrame from the evaluator
+        and prefixes its index with the experiment code before concatenating.
+
+        :param query_titles: If ``True``, use human-readable query titles as index labels.
+        :type query_titles: bool
+        :return: A combined DataFrame of query latencies for all experiments.
+        :rtype: pandas.DataFrame
+        """
+        df_result = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_query_latencies(query_titles)
             df.index = evaluation.code + '-' + df.index.astype(str)
-            df_performance = pd.concat([df_performance, df])
-        return df_performance
+            df_result = pd.concat([df_result, df])
+        return df_result
