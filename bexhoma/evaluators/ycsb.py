@@ -286,7 +286,7 @@ class ycsb(logger):
             print(e)
             #print(list_columns)
             return df
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["connection"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
@@ -296,7 +296,8 @@ class ycsb(logger):
         """
         #column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(columns):
+        #for key, grp in df.groupby(columns):
+        for key, grp in df.groupby([df[col] for col in columns]):
             #print(key, len(grp.index))
             #print(grp)
             aggregate = {
@@ -498,7 +499,7 @@ class ycsb(logger):
             '[INSERT].Return=OK':'int',
         })
         return df_typed
-    def loading_aggregate_by_parallel_pods(self, df):
+    def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
         Transforms a pandas DataFrame collection of loading results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
@@ -506,9 +507,10 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = ["connection","experiment_run"]
+        #column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(column):
+        #for key, grp in df.groupby(column):
+        for key, grp in df.groupby([df[col] for col in columns]):
             #print(key, len(grp.index))
             #print(grp)
             aggregate = {
