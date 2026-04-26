@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
-
-# apt-get -y install fio jq sysbench bsdextrautils
-
+# Runs fio storage benchmarks and writes results to a timestamped output directory.
+#
+# Usage: hardware-benchmark.sh [test_dir [duration [size [blocksize]]]]
+# Requires: fio, jq, sysbench, bsdextrautils
+#   Install: apt-get install -y fio jq sysbench bsdextrautils
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
 
 set -euo pipefail
 

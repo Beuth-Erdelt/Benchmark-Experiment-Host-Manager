@@ -1,18 +1,14 @@
 #!/bin/bash
-######################################################################################
-# Bash Script for Bexhoma Test Runs - Basic Runs for the Test Cases Doc File
-######################################################################################
+# Shared helper functions and default variable values sourced by all bexhoma test scripts.
 #
-# This scripts starts a sequence of experiments with varying parameters.
-# Each experiment waits until previous tests have been completed.
-# Logs are written to a log folder.
-# At the end, logs are cleaned and the summaries are extracted and stored in separate files.
+# Provides wait helpers, log-extraction utilities, and default node assignments
+# (BEXHOMA_NODE_SUT, BEXHOMA_NODE_LOAD, BEXHOMA_NODE_BENCHMARK). Source this
+# file at the top of every test script with: source ./scripts/testfunctions.sh
 #
 # Author: Patrick K. Erdelt
-# Email: patrick.erdelt@bht-berlin.de
-# Date: 2024-10-01
-# Version: 1.0
-######################################################################################
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
 
 
 # some default values

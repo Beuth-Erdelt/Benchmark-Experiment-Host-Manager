@@ -1,3 +1,12 @@
+# Builds and pushes bexhoma Docker images for the current installed package version.
+#
+# Reads the version from the installed bexhoma package, then builds and pushes
+# the evaluator and benchmarker Docker images to the bexhoma Docker Hub repository.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
 
 $dbmsbenchmarker = "v0.14.20"
 $version = (pip show bexhoma | Select-String "Version" | ForEach-Object { ($_ -split " ")[1] })

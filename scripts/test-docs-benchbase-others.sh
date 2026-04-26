@@ -1,18 +1,13 @@
 #!/bin/bash
-######################################################################################
-# Bash Script for Bexhoma Test Runs - Compare PostgreSQL with and without PGBouncer
-######################################################################################
+# Generates documentation summaries for Benchbase experiments on additional DBMS.
 #
-# This scripts starts a sequence of experiments with varying parameters.
-# Each experiment waits until previous tests have been completed.
-# Logs are written to a log folder.
-# At the end, logs are cleaned and the summaries are extracted and stored in separate files.
+# Runs a parameterised sequence of bexhoma experiments, waits for each to
+# complete, writes logs, and extracts summaries into separate files.
 #
 # Author: Patrick K. Erdelt
-# Email: patrick.erdelt@bht-berlin.de
-# Date: 2024-10-01
-# Version: 1.0
-######################################################################################
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
 
 
 # Import functions from testfunctions.sh

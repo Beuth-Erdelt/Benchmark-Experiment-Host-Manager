@@ -1,5 +1,17 @@
 
 
+#!/bin/bash
+# Library of functions for building and pushing bexhoma Docker images.
+#
+# Defines build_and_push_* helpers that build images for the evaluator and
+# benchmarker components and push them to the bexhoma Docker Hub repository.
+# Intended to be sourced or called directly from the project root.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
 ###########
 build_and_push_dbmsbenchmarker() {
   local dbmsbenchmarker="$1"

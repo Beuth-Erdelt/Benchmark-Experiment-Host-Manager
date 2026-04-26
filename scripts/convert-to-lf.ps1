@@ -1,3 +1,13 @@
+# Converts line endings to LF (Unix-style) in documentation, log, and image files.
+#
+# Processes .md, .txt, Dockerfile*, .sh, and .py files under docs/, logs_tests/,
+# and images/, rewriting each file in UTF-8 without BOM with LF line endings.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
 $paths = @(
     "docs",
     "logs_tests",
