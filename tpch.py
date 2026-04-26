@@ -1,18 +1,15 @@
 """
-:Date: 2023-01-25
-:Version: 1.0
-:Authors: Patrick K. Erdelt
+CLI entry point for TPC-H benchmarks in a Kubernetes cluster.
 
-Performs a TPC-H experiment.
-Data is generated and stored in a distributed filesystem (Ceph).
-Last character in each line of generated data is removed.
-Data is then loaded from filesystem.
-Loading pods are synched.
-Different numbers of parallel loaders can be compared.
-It can verified that all databases contain the same data, using short profiling (only keys).
-Monitoring is activated.
-Optionally we set some indexes and constraints after import.
-Nodes can be fixed.
+Generates TPC-H data on a distributed filesystem (Ceph), loads it into
+one or more DBMS with parallel, synchronised loaders, and runs queries.
+Supports monitoring, data verification, optional index and constraint
+creation, and fixed node assignment.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2023 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 from bexhoma import *
 from dbmsbenchmarker import *

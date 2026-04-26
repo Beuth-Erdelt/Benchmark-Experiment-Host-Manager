@@ -1,26 +1,15 @@
 """
-:Date: 2022-10-01
-:Version: 0.6.0
-:Authors: Patrick K. Erdelt
+Kubernetes cluster management for bexhoma experiments.
 
-    Module to manage testbeds.
-    Historically this supported different implementations based on IaaS.
-    All methods will be deprecated except for Kubernetes (K8s), so the structure will change in future.
+Provides :class:`testbed` (abstract base), :class:`kubernetes` for managing
+experiment deployments on Kubernetes, and :class:`aws` for AWS-specific
+Kubernetes clusters. Support for other IaaS providers has been removed;
+only the Kubernetes path is actively maintained.
 
-    Copyright (C) 2020  Patrick K. Erdelt
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of the
-    License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 import time
 import kubernetes.client as kubernetes_client

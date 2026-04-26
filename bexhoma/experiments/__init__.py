@@ -1,5 +1,14 @@
 """
-The experiment module
+Public API of the bexhoma.experiments package.
+
+Exports :class:`base`, :class:`dbmsbenchmarker`, :class:`tpch`,
+:class:`tpcds`, :class:`benchbase`, :class:`tpcc`, and :class:`ycsb`
+experiment classes.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 from .base import base
 from .dbmsbenchmarker import dbmsbenchmarker

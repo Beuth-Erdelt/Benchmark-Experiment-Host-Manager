@@ -1,9 +1,13 @@
 """
-:Date: 2023-08-04
-:Version: 1.0
-:Authors: Patrick K. Erdelt
+CLI entry point for custom SQL query experiments in a Kubernetes cluster.
 
-Performs experiment by running custom SQL queries.
+Runs user-defined SQL queries via DBMSBenchmarker. Serves as a starting
+point for custom bexhoma experiments.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2023 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 from bexhoma import *
 from dbmsbenchmarker import *

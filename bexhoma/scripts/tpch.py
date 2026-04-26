@@ -1,13 +1,15 @@
 """
-:Date: 2021-02-12
-:Version: 0.1
-:Authors: Patrick Erdelt
+CLI entry point for TPC-H benchmarks in a Kubernetes cluster.
 
-Perform TPC-H inspired benchmarks in a Kubernetes cluster.
-This either profiles the imported data in several DBMS and compares some statistics, or runs the TPC-H queries.
-Optionally monitoring is actived.
-User can choose to detach the componenten of the benchmarking system, so that as much as possible is run inside a Kubernetes (K8s) cluster.
-User can also choose some parameters like number of runs per query and configuration and request some resources.
+Profiles imported data across multiple DBMS or runs TPC-H queries via
+DBMSBenchmarker. Supports optional monitoring, detached execution mode,
+and configurable parameters such as the number of query runs and resource
+requests.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2021 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 from bexhoma import *
 from dbmsbenchmarker import *
