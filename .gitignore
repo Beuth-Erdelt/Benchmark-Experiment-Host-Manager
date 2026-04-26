@@ -22,3 +22,4 @@ experiments/*/*/*/filled_*
 **/initdatabases.sql
 local/*
 logs_multitenant/*
+.vscode/
