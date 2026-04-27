@@ -70,6 +70,7 @@ class tpcc(logger):
             timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
             allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
+            child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
             #client = "1"
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
@@ -140,15 +141,17 @@ class tpcc(logger):
                 efficiency = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
             else:
                 efficiency = 0
+            connection = connection_name + '-' + child
+            phase = connection_name
             # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
             # if latencies are logged
             list_latencies = list(extracted_data.values())
             #print(list_latencies)
-            result_list = [(connection_name, configuration_name, experiment_run, client, pod_name, pod_count, code, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
+            result_list = [(connection, phase, configuration_name, experiment_run, client, pod_name, pod_count, code, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
             #print(result_list)
             df = pd.DataFrame(result_list)
             #print(list(extracted_data.keys()))
-            column_names = ['connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
+            column_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             column_names.extend(list(extracted_data.keys()))
             #print(column_names)
             df.columns = column_names
@@ -261,8 +264,9 @@ class tpcc(logger):
             #print(grp)
             if 'CALLS' in grp:
                 aggregate = {
-                    'code':'max',
+                    'connection':'max',
                     'client':'max',
+                    'code':'max',
                     'pod':'sum',
                     'pod_count':'count',
                     'iterations':'max',
@@ -311,9 +315,9 @@ class tpcc(logger):
                 }
             #print(grp.agg(aggregate))
             dict_grp = dict()
-            dict_grp['connection'] = key[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
+            dict_grp['phase'] = grp['phase'].iloc[0]
             #dict_grp['client'] = grp['client'][0]
             #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
