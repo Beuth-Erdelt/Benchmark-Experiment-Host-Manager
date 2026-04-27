@@ -245,7 +245,7 @@ class tpcc(logger):
                 'dbms':'str',
             })
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
@@ -253,9 +253,10 @@ class tpcc(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        column = ["connection","run"]
+        #column = ["connection","run"]
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(column):
+        #for key, grp in df.groupby(column):
+        for key, grp in df.groupby([df[col] for col in columns]):
             #print(key, len(grp.index))
             #print(grp)
             if 'CALLS' in grp:

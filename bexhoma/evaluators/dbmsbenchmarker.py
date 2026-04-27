@@ -223,7 +223,7 @@ class dbmsbenchmarker(logger):
         return df
     def benchmarking_set_datatypes(self, df):
         return df
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["connection"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
@@ -249,7 +249,8 @@ class dbmsbenchmarker(logger):
         #df=df_performance.copy()
         #column = "connection"
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby(columns):
+        #for key, grp in df.groupby(columns):
+        for key, grp in df.groupby([df[col] for col in columns]):
             #print(key, len(grp.index))
             #print(grp.columns)
             aggregate = {

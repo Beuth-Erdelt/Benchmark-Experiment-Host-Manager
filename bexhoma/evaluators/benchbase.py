@@ -175,7 +175,7 @@ class benchbase(logger):
             'child': 'int',
         })
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["connection"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
         Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
         All result lines belonging to pods being run in parallel will be aggregated.
