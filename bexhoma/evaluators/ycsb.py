@@ -762,6 +762,20 @@ class ycsb(logger):
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
+    def get_loading_per_connection(self):
+        return self.get_df_loading()
+        workload_properties = self.get_workload()
+        #print(workload_properties['defaultParameters']['SF'])
+        df = self.get_connections_of_experiment()
+        df['SF'] = int(workload_properties['defaultParameters']['SF'])
+        #sf = 1
+        df_load = df['time_load'].copy()
+        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
+        #print(df_tpx)
+        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
+        return df
+
 
 
 

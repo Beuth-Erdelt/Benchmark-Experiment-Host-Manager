@@ -450,7 +450,3 @@ class benchbase(logger):
         #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         return df_total
-
-
-
-

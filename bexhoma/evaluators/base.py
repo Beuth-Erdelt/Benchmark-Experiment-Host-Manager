@@ -304,4 +304,118 @@ class base:
                         print("* TEST passed: {} contains no 0 or NaN".format(title))
                     return True
             return False
+    def get_workload(self):
+        """
+        Returns the workload configuration of an experiment.
+
+        Reads the ``queries.config`` file for the given experiment code and
+        returns its contents as a dictionary.  The ``tenant_per`` key is
+        normalised to the string ``'None'`` when absent or empty.
+
+        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
+        :type code: str
+        :return: Workload properties dictionary.
+        :rtype: dict
+        """
+        with open(self.path + "/" + "/queries.config", 'r') as inp:
+            workload_properties = ast.literal_eval(inp.read())
+            return workload_properties
+    def add_connection_to_result(self, c, connection_id, result):
+        result[connection_id] = {
+            'code': c['parameter']['code'],
+            'connection': c['name'],
+            'configuration': c['configuration'] if 'configuration' in c else '',
+            'phase': c['phase'],
+            'experiment_run': c['parameter']['numExperiment'],
+            'client': int(c['parameter']['client']),
+            #'SF': c['defaultParameters']['SF'],
+            'dockerimage': c['parameter']['dockerimage'],
+            'time_load': float(c['timeLoad']),
+            'time_ingest': float(c['timeIngesting']),
+            'time_check': float(c['timeIndex']),
+            'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
+                if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+            'pods': c['parameter']['parallelism'],
+            'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
+            'num_worker': int(c['parameter']['num_worker']),
+            'type_tenants': c['parameter']['TENANT_BY'] if 'TENANT_BY' in c['parameter'] else 'None',
+            'num_tenants': int(c['parameter']['TENANT_NUM']) if 'TENANT_NUM' in c['parameter'] else 0,
+            'vol_tenants': c['parameter']['TENANT_VOL'] if 'TENANT_VOL' in c['parameter'] else 'False',
+            'datadisk': c['hostsystem']['datadisk'],
+        }
+        for key, hostdata in c['hostsystem'].items():
+            if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                result[connection_id][f'host_{key}'] = hostdata
+        if 'loading_parameters' in c['parameter']['connection_parameter']:
+            for key, hostdata in c['parameter']['connection_parameter']['loading_parameters'].items():
+                if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                    result[connection_id][f'loading_parameters_{key}'] = hostdata
+        if 'benchmarking_parameters' in c['parameter']['connection_parameter']:
+            for key, hostdata in c['parameter']['connection_parameter']['benchmarking_parameters'].items():
+                if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                    result[connection_id][f'benchmarking_parameters_{key}'] = hostdata
+        if 'sut_parameters' in c['parameter']['connection_parameter']:
+            for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
+                if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
+                    result[connection_id][f'sut_parameters_{key}'] = hostdata
+        if 'args' in c['hostsystem']:
+            for key, arg in enumerate(c['hostsystem']['args']):
+                if "=" in arg:
+                    key = arg.split("=")[0]
+                    value = arg.split("=")[1]
+                    result[connection_id][f'arg_{key}'] = value
+    def get_connections_of_experiment(self):
+        """
+        Returns connection metadata for a single experiment.
+
+        Reads ``connections.config`` and builds a row per pod/client with the
+        following key columns: ``phase``, ``code``, ``connection``, ``configuration``,
+        ``experiment_run``, ``client``, ``type_tenants``, ``num_tenants``,
+        ``vol_tenants``, plus flattened host-system, loading-parameter,
+        benchmarking-parameter, and SUT-parameter fields.
+
+        When a connection entry carries ``orig_name``, the entry represents an
+        individual pod; otherwise a synthetic row is generated for each parallel
+        client.
+
+        :param evaluation: Evaluator instance. Defaults to the first code's evaluator.
+        :type evaluation: object
+        :return: DataFrame of connection metadata, one row per pod/client.
+        :rtype: pandas.DataFrame
+        """
+        with open(self.path + "/" +  "/connections.config", 'r') as inf:
+            connections = ast.literal_eval(inf.read())
+            connections_sorted = sorted(connections, key=lambda c: c['name'])
+            result = dict()
+            for c in connections_sorted:
+                if 'orig_name' in c:
+                    # entry represents an individual pod — use the pod name as connection id
+                    name = c['name']
+                    c['phase'] = "{code}-{connection}".format(code=c['parameter']['code'], connection=c['orig_name'])
+                    connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
+                    #add_connection_to_result(c, connection_id, result)
+                    self.add_connection_to_result(c, connection_id, result)
+                else:
+                    # no per-pod entries — synthesise one row per parallel client
+                    clients = int(c['parameter']['parallelism'])
+                    name = c['name']
+                    for i in range(1, clients + 1):
+                        c['name'] = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
+                        c['phase'] = "{code}-{phase}".format(code=c['parameter']['code'], phase=name)
+                        connection_id = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
+                        #add_connection_to_result(c, connection_id, result)
+                        self.add_connection_to_result(c, connection_id, result)
+            return pd.DataFrame(result).T
+    def get_loading_per_connection(self):
+        workload_properties = self.get_workload()
+        #print(workload_properties['defaultParameters']['SF'])
+        df = self.get_connections_of_experiment()
+        df['SF'] = int(workload_properties['defaultParameters']['SF'])
+        #sf = 1
+        df_load = df['time_load'].copy()
+        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
+        #print(df_tpx)
+        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
+        return df
 

@@ -64,6 +64,8 @@
 * Dataframe of performance aggregated per parallel client `collect.get_performance_aggregated_per_phase()`
     * Index is name of phase
     * Performance aggregated per code, experiment_run and client
+* Dataframe `get_loading_per_connection()`
+
 
 ### DBMSBenchmarker
 
