@@ -342,7 +342,7 @@ class base():
                 df_connections = pd.concat([df_connections, df_connection])
             return df_connections
         else:
-            return self.get_connections_of_experiment(evaluation)
+            return evaluation.get_connections_of_experiment()
 
     def show_summary_monitoring_table(self, evaluation, type='stream'):
         """
@@ -490,9 +490,11 @@ class base():
             return result
 
         cols_phase = ['phase']
-        cols_multi_tenant = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        cols_multi_tenant = ['code', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        cols_loading = ['code', 'configuration', 'experiment_run']
         check_phase = all(set(cols_phase).issubset(d.columns) for d in [df, df_connections])
         check_multi_tenant = all(set(cols_multi_tenant).issubset(d.columns) for d in [df, df_connections])
+        check_loading = all(set(cols_loading).issubset(d.columns) for d in [df, df_connections])
 
         intersection = df.index.intersection(df_connections.index)
         if not intersection.empty:
@@ -528,7 +530,30 @@ class base():
                 names=df_connections.index.names
             )
             result = df.combine_first(df_connections)
-            result.index = ['_'.join(map(str, i)) for i in result.index]
+            result.index = ['-'.join(map(str, i)) for i in result.index]
+            return result
+
+        elif check_loading:
+            print("combine on columns " + " ".join(cols_loading))
+            indexname = df.index.name
+            df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
+            df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
+            df = df.set_index(cols_loading, drop=False)
+            df_connections = df_connections.set_index(cols_loading, drop=False)
+            # normalise index tuples to strings for consistent matching
+            df.index = pd.MultiIndex.from_tuples(
+                [tuple(map(str, t)) for t in df.index],
+                names=df.index.names
+            )
+            df_connections.index = pd.MultiIndex.from_tuples(
+                [tuple(map(str, t)) for t in df_connections.index],
+                names=df_connections.index.names
+            )
+            result = df.combine_first(df_connections)
+            result.index = ['-'.join(map(str, i)) for i in result.index]
+            #result.index.name = indexname
+            # no pod_count means there has not been a logged loading phase
+            result = result.dropna(subset=['pod_count'])
             return result
 
         else:
@@ -650,6 +675,19 @@ class base():
         if code == '':
             code = self.codes[0]
         return evaluators.dbmsbenchmarker(code=code, path=self.path)
+
+    def get_loading_per_pod(self):
+        df_all = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = evaluation.get_loading_per_pod()
+            if len(df) > 0:
+                df_all = pd.concat([df_all, df.copy()])
+        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
+        df_all.drop('connection', axis=1, inplace=True, errors='ignore')
+        df_all.drop('phase', axis=1, inplace=True, errors='ignore')
+        df_all.drop('client', axis=1, inplace=True, errors='ignore')
+        return df_all
 
     def get_loading_per_connection(self):
         df_all = pd.DataFrame()

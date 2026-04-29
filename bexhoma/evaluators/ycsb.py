@@ -108,7 +108,7 @@ class ycsb(logger):
             #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
-            columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'sf', 'workload', 'operations', 'batchsize', 'exceptions', 'child']
+            columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'SF', 'workload', 'operations', 'batchsize', 'exceptions', 'child']
             columns.extend(list_columns)
             #print(columns)
             df.columns = columns
@@ -143,7 +143,7 @@ class ycsb(logger):
                 'pod_count':'int',
                 'threads':'int',
                 'target':'int',
-                'sf':'int',
+                'SF':'int',
                 'workload':'str',
                 'operations':'int',
                 'exceptions':'int',
@@ -297,7 +297,7 @@ class ycsb(logger):
                 'pod_count':'count',
                 'threads':'sum',
                 'target':'sum',
-                'sf':'max',
+                'SF':'max',
                 'workload':'max',
                 'operations':'sum',
                 'exceptions':'sum',
@@ -459,7 +459,7 @@ class ycsb(logger):
             'pod_count':'int',
             'threads':'int',
             'target':'int',
-            'sf':'int',
+            'SF':'int',
             'workload':'str',
             'operations':'int',
             'exceptions':'int',
@@ -510,7 +510,7 @@ class ycsb(logger):
                 'pod_count':'count',
                 'threads':'sum',
                 'target':'sum',
-                'sf':'max',
+                'SF':'max',
                 'workload':'max',
                 'operations':'sum',
                 'exceptions':'sum',
@@ -762,7 +762,51 @@ class ycsb(logger):
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
+
     def get_loading_per_connection(self):
+        df = self.get_df_loading()
+        df_connections = self.get_connections_of_experiment()
+        #print(df, df_connections)
+        cols_loading = ['code', 'configuration', 'experiment_run']
+        check_loading = all(set(cols_loading).issubset(d.columns) for d in [df, df_connections])
+        #print("combine on columns " + " ".join(cols_loading))
+        indexname = df.index.name
+        df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
+        df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
+        df = df.set_index(cols_loading, drop=False)
+        df_connections = df_connections.set_index(cols_loading, drop=False)
+        # normalise index tuples to strings for consistent matching
+        df.index = pd.MultiIndex.from_tuples(
+            [tuple(map(str, t)) for t in df.index],
+            names=df.index.names
+        )
+        df_connections.index = pd.MultiIndex.from_tuples(
+            [tuple(map(str, t)) for t in df_connections.index],
+            names=df_connections.index.names
+        )
+        result = df.combine_first(df_connections)
+        result.index = ['-'.join(map(str, i)) for i in result.index]
+        #result.index.name = indexname
+        # no pod_count means there has not been a logged loading phase
+        result = result.dropna(subset=['pod_count'])
+        workload_properties = self.get_workload()
+        #print(workload_properties['defaultParameters']['SF'])
+        result['SF'] = int(workload_properties['defaultParameters']['SF'])
+        return result
+        #return df_ycsb
+        # workload_properties = self.get_workload()
+        # #print(workload_properties['defaultParameters']['SF'])
+        # df = self.get_connections_of_experiment()
+        # df['SF'] = int(workload_properties['defaultParameters']['SF'])
+        # #sf = 1
+        # df_load = df['time_load'].copy()
+        # df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
+        # #print(df_tpx)
+        # df['Throughput [SF/h]'] = df_tpx#['time_load']
+        # df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
+        # return df
+
+    def get_loading_per_pod(self):
         return self.get_df_loading()
         workload_properties = self.get_workload()
         #print(workload_properties['defaultParameters']['SF'])
@@ -774,6 +818,7 @@ class ycsb(logger):
         #print(df_tpx)
         df['Throughput [SF/h]'] = df_tpx#['time_load']
         df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
+        df.index.name = 'pod'
         return df
 
 

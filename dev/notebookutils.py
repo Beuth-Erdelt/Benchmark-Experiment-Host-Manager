@@ -5,7 +5,7 @@ import numpy as np
 import os
 import zipfile
 
-def zip_all_results():
+def zip_all_results(path, codes):
     # Set the base directory containing the folders
     base_dir = path # "/path/to/your/folders"  # CHANGE THIS to your actual directory
     # List all folder names in the directory
