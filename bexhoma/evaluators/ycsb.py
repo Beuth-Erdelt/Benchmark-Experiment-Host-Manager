@@ -770,6 +770,8 @@ class ycsb(logger):
         cols_loading = ['code', 'configuration', 'experiment_run']
         check_loading = all(set(cols_loading).issubset(d.columns) for d in [df, df_connections])
         #print("combine on columns " + " ".join(cols_loading))
+        df = self.loading_set_datatypes(df)
+        df = self.loading_aggregate_by_parallel_pods(df)
         indexname = df.index.name
         df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
         df_connections.drop('connection', axis=1, inplace=True, errors='ignore')

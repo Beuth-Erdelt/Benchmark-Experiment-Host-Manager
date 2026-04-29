@@ -244,7 +244,7 @@ class base():
         }
         if 'Total I/O Wait Time [s]' in filtered_agg_dict:
             filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
-        cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        cols = ['code', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
         df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
@@ -553,7 +553,8 @@ class base():
             result.index = ['-'.join(map(str, i)) for i in result.index]
             #result.index.name = indexname
             # no pod_count means there has not been a logged loading phase
-            result = result.dropna(subset=['pod_count'])
+            if 'pod_count' in result.columns:
+                result = result.dropna(subset=['pod_count'])
             return result
 
         else:
@@ -700,6 +701,16 @@ class base():
         return df_all
 
     def get_loading_per_run(self):
+        df_all = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = evaluation.get_loading_per_run()
+            if len(df) > 0:
+                df_all = pd.concat([df_all, df.copy()])
+        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
+        return df_all
+
+    def TEST_get_loading_per_run(self):
         df_all = self.get_loading_per_connection()
         # Gruppiert nach 'Kategorie' und berechnet das Maximum für alle anderen Spalten
         df = df_all.groupby(['code', 'configuration', 'experiment_run']).max()

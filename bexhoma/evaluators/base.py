@@ -418,4 +418,19 @@ class base:
         df['Throughput [SF/h]'] = df_tpx#['time_load']
         df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
         return df
-
+    def get_loading_per_run(self):
+        df = self.get_loading_per_connection()
+        df = df.groupby(['code', 'configuration', 'experiment_run']).max()
+        df = df.reset_index()
+        df.index = df['code'].astype(str) + "-" + \
+                   df['configuration'].astype(str) + "-" + \
+                   df['experiment_run'].astype(str)
+        #df.index = df.index.map(lambda x: '-'.join(map(str, x)))
+        df_load = df['time_load'].copy()
+        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
+        #print(df_tpx)
+        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df.drop('phase', axis=1, inplace=True, errors='ignore')
+        df.drop('client', axis=1, inplace=True, errors='ignore')
+        return df

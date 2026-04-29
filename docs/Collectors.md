@@ -35,6 +35,7 @@
 * Add connection infos to monitoring or performance dataframes with `collect.add_metadata(df)`
 * Dataframe of connection infos `collect.get_connections()`
     * Index is name of connection
+* `collector.get_non_constant(df)`: removes all columns from the Dataframe that are constant for all rows. This is supposed to help to find parameters and results that vary across experiment runs.
 
 ## Monitoring Metrics
 
@@ -47,24 +48,36 @@
     * Metrics aggregated per code, experiment_run, client, type_tenants, num_tenants
     * Aggregation is given by type of metric (count: max-min, others: mean)
 * Dataframe of time series for a metric in the phase an experiment `collect.get_monitoring_timeseries_per_phase(code, metric, component)`
-    * Index is name of connection
+    * Index is name of phase
     * Unstacked (wide format)
 * Dataframe of time series for a metric in all experiments `collect.get_monitoring_timeseries_all(metric)`
     * Index just enumerates
     * Stacked (long format)
-* **Open**: Dataframe of aggregated metrics per connection and across tenants `collect.get_monitoring_all()`
-    * Index just enumerates
-    * Metrics aggregated per code, experiment_run and client and across tenants
+* Dataframe of aggregated metrics per connection and across tenants `collect.get_monitoring_aggregated_per_phase_multitenant()`
+    * Index is name of phase
+    * Metrics aggregated per code, experiment_run, client, type_tenants, num_tenants, and across tenants
+    * Aggregation is given by type of metric (count: max-min, others: mean)
+
+## Performance Metrics - Loading Phases
+
+* Dataframe of loading performance `collect.get_loading_per_run()`
+    * Index is name of connection
+    * Performance aggregated for per loading phase
+* Dataframe of performance for one experiment `collect.get_loading_per_pod()`
+    * Index is name of connection
+    * Performance of each single pod (driver)
 
 ## Performance Metrics - Benchmarking Phases
 
-* Dataframe of performance for one experiment `collect.get_performance_per_connection()`
+* Dataframe of execution performance `collect.get_performance_per_connection()`
     * Index is name of connection
     * Performance of each single pod (driver)
 * Dataframe of performance aggregated per parallel client `collect.get_performance_aggregated_per_phase()`
     * Index is name of phase
     * Performance aggregated per code, experiment_run and client
-* Dataframe `get_loading_per_connection()`
+* Dataframe of performance aggregated per parallel client `collect.get_performance_aggregated_per_phase_multitenant()`
+    * Index is name of phase
+    * Performance aggregated per code, experiment_run and client, and across tenants
 
 
 ### DBMSBenchmarker
