@@ -93,6 +93,9 @@ class dbmsbenchmarker(base):
         For each code, retrieves the per-query error DataFrame from the evaluator
         and prefixes its index with the experiment code before concatenating.
 
+        .. note::
+            The current implementation delegates to ``evaluation.get_total_warnings``.
+
         :param query_titles: If ``True``, use human-readable query titles as index labels.
         :type query_titles: bool
         :return: A combined DataFrame of error counts for all experiments.
@@ -101,7 +104,7 @@ class dbmsbenchmarker(base):
         df_result = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
-            df = evaluation.get_total_warnings(query_titles)
+            df = evaluation.get_total_errors(query_titles)
             df.index = evaluation.code + '-' + df.index.astype(str)
             df_result = pd.concat([df_result, df])
         return df_result

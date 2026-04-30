@@ -45,29 +45,13 @@ def get_non_constant(df):
 
 class base():
     """
+    Base class for collecting and aggregating results from several experiments.
+
+    Subclasses override :meth:`get_evaluator` to return a benchmark-specific
+    evaluator. All data retrieval and aggregation methods are defined here.
+
     :Date: 2025-07-22
     :Version: 0.8.10
-    :Authors: Patrick K. Erdelt
-
-        Base class for collecting and aggregating results from several experiments.
-
-        Subclasses override :meth:`get_evaluator` to return a benchmark-specific
-        evaluator. All data retrieval and aggregation methods are defined here.
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
     def __init__(self, path, codes):
         """
@@ -237,10 +221,10 @@ class base():
         """
         df = self.get_monitoring_aggregated_per_phase(type)
         df_metadata = self.add_metadata(df)
-        agg_dict = df.columns
+        metric_cols = df.columns
         filtered_agg_dict = {
             col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum'
-            for col in agg_dict if col in df.columns
+            for col in metric_cols if col in df.columns
         }
         if 'Total I/O Wait Time [s]' in filtered_agg_dict:
             filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
@@ -338,7 +322,6 @@ class base():
             for code in self.codes:
                 evaluation = self.get_evaluator(code)
                 df_connection = evaluation.get_connections_of_experiment()
-                #df_connection = self.get_connections_of_experiment(evaluation)
                 df_connections = pd.concat([df_connections, df_connection])
             return df_connections
         else:
@@ -551,7 +534,6 @@ class base():
             )
             result = df.combine_first(df_connections)
             result.index = ['-'.join(map(str, i)) for i in result.index]
-            #result.index.name = indexname
             # no pod_count means there has not been a logged loading phase
             if 'pod_count' in result.columns:
                 result = result.dropna(subset=['pod_count'])
@@ -678,61 +660,102 @@ class base():
         return evaluators.dbmsbenchmarker(code=code, path=self.path)
 
     def get_loading_per_pod(self):
+        """
+        Combines loading metrics per pod from all experiment codes into one DataFrame.
+
+        Concatenates the per-pod loading DataFrames returned by each evaluator.
+        The ``connection``, ``phase``, and ``client`` columns are dropped from the result
+        because they are not meaningful across experiments.
+
+        :return: Combined DataFrame of per-pod loading metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
         df_all = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_pod()
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
-        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
         df_all.drop('connection', axis=1, inplace=True, errors='ignore')
         df_all.drop('phase', axis=1, inplace=True, errors='ignore')
         df_all.drop('client', axis=1, inplace=True, errors='ignore')
         return df_all
 
     def get_loading_per_connection(self):
+        """
+        Combines loading metrics per connection from all experiment codes into one DataFrame.
+
+        Concatenates the per-connection loading DataFrames returned by each evaluator.
+
+        :return: Combined DataFrame of per-connection loading metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
         df_all = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_connection()
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
-        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_all
 
     def get_loading_per_run(self):
+        """
+        Combines loading metrics per run from all experiment codes into one DataFrame.
+
+        Concatenates the per-run loading DataFrames returned by each evaluator.
+
+        :return: Combined DataFrame of per-run loading metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
         df_all = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run()
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
-        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_all
 
     def get_loading_per_run_multitenant(self):
+        """
+        Combines multi-tenant loading metrics per run from all experiment codes into one DataFrame.
+
+        Concatenates the per-run multi-tenant loading DataFrames returned by each evaluator.
+
+        :return: Combined DataFrame of per-run multi-tenant loading metrics for all experiments.
+        :rtype: pandas.DataFrame
+        """
         df_all = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run_multitenant()
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
-        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_all
 
     def TEST_get_loading_per_run(self):
+        """
+        Experimental: computes per-run loading throughput in SF/h from per-connection data.
+
+        Groups the per-connection loading result by ``(code, configuration, experiment_run)``,
+        takes the column-wise maximum, then derives ``Throughput [SF/h]`` as
+        ``SF * 3600 / time_load``.  The ``connection``, ``phase``, and ``client`` columns
+        are dropped from the result.
+
+        :return: DataFrame indexed by ``code-configuration-experiment_run`` with a
+                 ``Throughput [SF/h]`` column added.
+        :rtype: pandas.DataFrame
+        """
         df_all = self.get_loading_per_connection()
-        # Gruppiert nach 'Kategorie' und berechnet das Maximum für alle anderen Spalten
         df = df_all.groupby(['code', 'configuration', 'experiment_run']).max()
         df = df.reset_index()
-        df.index = df['code'].astype(str) + "-" + \
-                   df['configuration'].astype(str) + "-" + \
-                   df['experiment_run'].astype(str)
-        #df.index = df.index.map(lambda x: '-'.join(map(str, x)))
+        df.index = (
+            df['code'].astype(str) + "-"
+            + df['configuration'].astype(str) + "-"
+            + df['experiment_run'].astype(str)
+        )
         df_load = df['time_load'].copy()
-        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-        #print(df_tpx)
-        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df_tpx = (df['SF'] * 3600.0) / df_load.sort_index()
+        df['Throughput [SF/h]'] = df_tpx
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
