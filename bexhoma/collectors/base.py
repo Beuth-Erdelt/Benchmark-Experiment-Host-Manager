@@ -656,8 +656,8 @@ class base():
                 ["timestamp", "code", "experiment_run", "client",
                  "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"],
                 as_index=False
-            )["value"]
-            .sum()
+            )
+            .agg(value=("value", "sum"), configuration=("configuration", "max"))
         )
         return df_sum
 
@@ -705,6 +705,16 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run()
+            if len(df) > 0:
+                df_all = pd.concat([df_all, df.copy()])
+        #df_all.drop('connection', axis=1, inplace=True, errors='ignore')
+        return df_all
+
+    def get_loading_per_run_multitenant(self):
+        df_all = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = evaluation.get_loading_per_run_multitenant()
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         #df_all.drop('connection', axis=1, inplace=True, errors='ignore')

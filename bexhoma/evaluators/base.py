@@ -434,3 +434,19 @@ class base:
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
         return df
+    def get_loading_per_run_multitenant(self):
+        df = self.get_loading_per_connection()
+        df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants"]).max()
+        df = df.reset_index()
+        df.index = df['code'].astype(str) + "-" + \
+                   df['configuration'].astype(str) + "-" + \
+                   df['experiment_run'].astype(str)
+        #df.index = df.index.map(lambda x: '-'.join(map(str, x)))
+        df_load = df['time_load'].copy()
+        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
+        #print(df_tpx)
+        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df.drop('phase', axis=1, inplace=True, errors='ignore')
+        df.drop('client', axis=1, inplace=True, errors='ignore')
+        return df
