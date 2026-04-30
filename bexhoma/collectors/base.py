@@ -228,7 +228,8 @@ class base():
         }
         if 'Total I/O Wait Time [s]' in filtered_agg_dict:
             filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
-        cols = ['code', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        #cols = ['code', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
         df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
@@ -473,7 +474,7 @@ class base():
             return result
 
         cols_phase = ['phase']
-        cols_multi_tenant = ['code', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+        cols_multi_tenant = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
         cols_loading = ['code', 'configuration', 'experiment_run']
         check_phase = all(set(cols_phase).issubset(d.columns) for d in [df, df_connections])
         check_multi_tenant = all(set(cols_multi_tenant).issubset(d.columns) for d in [df, df_connections])
