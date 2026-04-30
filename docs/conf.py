@@ -24,7 +24,7 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx_mdinclude',
-    #'myst_parser',
+    'myst_parser',
     #'m2r2',
 ]
 
