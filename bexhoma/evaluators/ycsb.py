@@ -759,6 +759,7 @@ class ycsb(logger):
         #configuration = 'configuration'
         df = self.get_df_benchmarking()
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
+        #print(list_logs)
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
