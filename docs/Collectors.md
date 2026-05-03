@@ -96,6 +96,7 @@ Multi-tenancy adds a further dimension: a single service provider may map to sev
 | `get_loading_per_pod()` | Per-pod loading metrics, all codes | connection name |
 | `get_loading_per_connection()` | Per-connection loading metrics, all codes | connection name |
 | `get_loading_per_run()` | Loading metrics aggregated per experiment run | connection name |
+| `get_loading_per_run_multitenant()` | Loading metrics per run with tenant metadata | connection name |
 
 ### Utility
 
@@ -186,17 +187,21 @@ Loading metrics aggregated at connection level across all codes.
 **`get_loading_per_run()`**  
 Loading metrics further aggregated per experiment run (one row per `code-configuration-experiment_run`).
 
+**`get_loading_per_run_multitenant()`**  
+Same as above but fetches the multi-tenant variant from the evaluator, which includes tenant metadata columns.
+
 ---
 
 ### Utility
 
 **`add_metadata(df)`**  
-Enriches a monitoring DataFrame with connection metadata by attempting four join strategies in order:
+Enriches a monitoring DataFrame with connection metadata by attempting five join strategies in order:
 
 1. Index vs. `phase` column
 2. Shared index values
 3. `phase` column join
-4. Multi-tenant key join on `(code, experiment_run, client, type_tenants, num_tenants)`
+4. Multi-tenant key join on `(code, configuration, experiment_run, client, type_tenants, num_tenants)`
+5. Loading key join on `(code, configuration, experiment_run)`
 
 **`collectors.get_non_constant(df)`**  
 Standalone function. Drops all columns whose values are identical across every row — useful after `get_connections()` to surface the parameters that actually vary across experiment runs.
@@ -221,6 +226,14 @@ evaluate.get_benchmark_logs_timeseries_df_single(metric, configuration, client, 
 
 `metric` is typically `"throughput"` or `"latency"`.
 
+The collector adds two time-series methods that span all experiment codes:
+
+**`get_benchmark_timeseries_per_phase(metric='throughput')`**  
+Wide-format DataFrame: index is second, each column represents one `(code, configuration, client, experiment_run)` phase, labelled `{code}-{configuration}-{client}-{experiment_run}`. Phases with different time ranges produce NaN for missing seconds.
+
+**`get_benchmark_timeseries_all(metric='throughput')`**  
+Long-format DataFrame with columns `second`, `code`, `configuration`, `client`, `experiment_run`, `metric`, `value`, plus connection metadata columns (e.g. `type_tenants`, `num_tenants`, `vol_tenants`). One row per second per phase.
+
 ### `collectors.tpcc`
 
 For [HammerDB](https://hammerdb.com/) TPC-C experiments.
@@ -235,11 +248,35 @@ Loading and benchmarking are both instrumented. The evaluator additionally expos
 
 ```python
 evaluate = collect.get_evaluator(code)
+
+# Loading — summary
 evaluate.get_loading_per_connection()
 evaluate.get_loading_per_pod()
+
+# Benchmarking — time series (per configuration, client, experiment_run)
 evaluate.get_benchmark_logs_timeseries_df_aggregated(metric, configuration, client, experiment_run)
 evaluate.get_benchmark_logs_timeseries_df_single(metric, configuration, client, experiment_run)
+
+# Loading — time series (per configuration, experiment_run; no client dimension)
+evaluate.get_loading_logs_timeseries_df_aggregated(metric, configuration, experiment_run)
+evaluate.get_loading_logs_timeseries_df_single(metric, configuration, experiment_run)
 ```
+
+`metric` defaults to `"current_ops_per_sec"` for all time-series methods. Both loading variants reuse the same log parser as the benchmarking variants; the only difference is that the pod list is drawn from `get_df_loading()` instead of `get_df_benchmarking()`, and there is no `client` filter.
+
+The collector adds four time-series methods that span all experiment codes:
+
+**`get_benchmark_timeseries_per_phase(metric='current_ops_per_sec')`**  
+Wide-format DataFrame: index is second, each column represents one `(code, configuration, client, experiment_run)` benchmarking phase, labelled `{code}-{configuration}-{client}-{experiment_run}`.
+
+**`get_benchmark_timeseries_all(metric='current_ops_per_sec')`**  
+Long-format DataFrame with columns `second`, `code`, `configuration`, `client`, `experiment_run`, `metric`, `value`, plus connection metadata columns. One row per second per benchmarking phase.
+
+**`get_loading_timeseries_per_phase(metric='current_ops_per_sec')`**  
+Wide-format DataFrame for the loading phase: index is second, each column represents one `(code, configuration, experiment_run)` loading phase, labelled `{code}-{configuration}-{experiment_run}`. No `client` dimension.
+
+**`get_loading_timeseries_all(metric='current_ops_per_sec')`**  
+Long-format DataFrame for the loading phase with columns `second`, `code`, `configuration`, `experiment_run`, `metric`, `value`, plus connection metadata columns (excluding `client`). One row per second per loading phase.
 
 ### `collectors.dbmsbenchmarker`
 
