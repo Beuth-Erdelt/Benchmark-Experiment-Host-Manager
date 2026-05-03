@@ -156,7 +156,7 @@ class benchbase(base):
                 self.workload['info'] = self.workload['info']+" There is a reconnect for each transaction."
             if SD:
                 self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
-        default.prepare_testbed(self, parameter)
+        base.prepare_testbed(self, parameter)
     def log_to_df(self, filename):
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
