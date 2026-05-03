@@ -624,7 +624,11 @@ class ycsb(logger):
                 if parsed_data:
                     results.append(parsed_data)
         return results
-    def benchmark_logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True):
+    def benchmark_logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True, filetype="benchmarker"):
+        return self.logs_to_timeseries_df(list_logs=list_logs, metric=metric, aggregate=aggregate, filetype="benchmarker")
+    def loading_logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True, filetype="benchmarker"):
+        return self.logs_to_timeseries_df(list_logs=list_logs, metric=metric, aggregate=aggregate, filetype="loading")
+    def logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True, filetype="benchmarker"):
         #column = "current_ops_per_sec"
         #column = "READ_Avg"
         column = metric
@@ -664,7 +668,7 @@ class ycsb(logger):
             df_total = pd.DataFrame()
         num_logs = 0
         for file_logs in list_logs:
-            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            pattern = 'bexhoma-{}-*-{}.log'.format(filetype, file_logs)
             #print("Scan for files in "+self.path+'/'+self.code)
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
@@ -763,6 +767,56 @@ class ycsb(logger):
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
+
+    def get_loading_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", experiment_run='1'):
+        """
+        Returns a DataFrame of time series of a metric for the loading phase, aggregated over all pods per second.
+
+        Uses :meth:`get_df_loading` to retrieve the pod list and
+        :meth:`benchmark_logs_to_timeseries_df` to parse and aggregate the log files.
+        Restricts to a configuration and an experiment run.
+        Aggregation follows the same strategy as for the benchmarking phase:
+        percentiles and maximum by max, minimum by min, average by average,
+        ``'current_ops_per_sec'`` and all others by sum.
+
+        :param metric: Metric to retrieve (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-64-8-196608'``).
+        :type configuration: str
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: DataFrame indexed by second with one column for the aggregated metric
+                 plus an ``'avg'`` column, or an empty DataFrame when no files are found.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_loading()
+        list_logs = df[
+            (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))
+        ]['pod'].tolist()
+        return self.loading_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
+
+    def get_loading_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", experiment_run='1'):
+        """
+        Returns a list of DataFrames of time series of a metric for the loading phase, one per pod.
+
+        Uses :meth:`get_df_loading` to retrieve the pod list and
+        :meth:`benchmark_logs_to_timeseries_df` to parse the log files without aggregation.
+        Restricts to a configuration and an experiment run.
+
+        :param metric: Metric to retrieve (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-64-8-196608'``).
+        :type configuration: str
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: List of DataFrames, one per pod, each indexed by second with one metric column.
+        :rtype: list[pandas.DataFrame]
+        """
+        df = self.get_df_loading()
+        list_logs = df[
+            (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))
+        ]['pod'].tolist()
+        return self.loading_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
 
     def get_loading_per_connection(self):
         df = self.get_df_loading()
