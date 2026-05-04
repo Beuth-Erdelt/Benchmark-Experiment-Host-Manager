@@ -33,6 +33,9 @@ If you encounter any issues, please report them to our [Github issue tracker](ht
 
 ## Installation
 
+We recommend:
+* to also Jupyter install for notebooks `conda install -c conda-forge jupyter`
+
 1. Download the repository: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager
 1. Install the package `pip install bexhoma`
     * This will require Java and some buildtools
@@ -161,3 +164,9 @@ If you use Bexhoma in work contributing to a scientific publication, we kindly a
 > In: Nambiar, R., Poess, M. (eds) Performance Evaluation and Benchmarking. TPCTC 2023.
 > Lecture Notes in Computer Science, vol 14247. Springer, Cham.
 > https://doi.org/10.1007/978-3-031-68031-1_9
+
+[5] [Benchmarking Multi-Tenant Architectures in PostgreSQL](https://doi.org/10.48786/edbt.2026.46)
+> Erdelt, P.K., and Rabl T. (2026)
+> In: Proceedings 29th International Conference on Extending Database Technology, EDBT 2026
+> OpenProceedings.org
+> https://doi.org/10.48786/edbt.2026.46

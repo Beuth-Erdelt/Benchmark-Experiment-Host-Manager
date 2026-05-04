@@ -1,11 +1,13 @@
 """
-:Date: 2023-02-12
-:Version: 0.1
-:Authors: Patrick K. Erdelt
+CLI entry point for Benchbase TPC-C benchmarks in a Kubernetes cluster.
 
-Perform TPC-C inspired benchmarks based on Benchbase in a Kubernetes cluster.
-Optionally monitoring is actived.
-User can also choose some parameters like number of warehouses and request some resources.
+Runs TPC-C workloads via Benchbase. Supports optional monitoring and
+configurable parameters such as number of warehouses and resource requests.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2023 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
 """
 from bexhoma import *
 from dbmsbenchmarker import *

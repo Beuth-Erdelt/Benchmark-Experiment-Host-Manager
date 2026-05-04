@@ -1,0 +1,290 @@
+#!/bin/bash
+# Generates documentation summaries for Benchbase experiments on additional DBMS.
+#
+# Runs a parameterised sequence of bexhoma experiments, waits for each to
+# complete, writes logs, and extracts summaries into separate files.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
+
+# Import functions from testfunctions.sh
+source ./scripts/testfunctions.sh
+
+# Config nodes and paths
+BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+# Check for file
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
+
+# Check for directories
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
+
+
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+echo "Passed: $LOG_DIR/ found."
+
+echo "Checks passed. Proceeding..."
+
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################
+################# Benchbase Others #################
+####################################################
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 16 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 16 \
+  -nbf 16 \
+  -tb 1024 \
+  -b twitter \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -ms 1 -tr \
+  -rr 128Gi -lr 128Gi \
+  -sf 1600 \
+  -sd 20 \
+  -dbms PostgreSQL \
+  -nbp 1,2,4,8 \
+  -nbt 160 \
+  -nbf 16 \
+  -tb 1024 \
+  -b twitter \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -m -mc \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -ms 1 -tr \
+  -sf 10 \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nbp 1 \
+  -nbt 100 \
+  -nbf 16 \
+  -tb 1024 \
+  -b chbenchmark \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -ms 1 -tr \
+  -rr 128Gi -lr 128Gi \
+  -sf 100 \
+  -sd 20 \
+  -dbms PostgreSQL \
+  -nbp 1,2,5,10 \
+  -nbt 100 \
+  -nbf 16 \
+  -tb 1024 \
+  -b chbenchmark \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload c \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload a \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload b \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload d \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload e \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+
+#### Benchbase Scale (Example-Benchbase-Others.md)
+nohup python benchbase.py -tr \
+  -sf 1000 \
+  -sd 5 \
+  --benchmark ycsb \
+  --workload f \
+  -dbms PostgreSQL \
+  -nlt 64 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -nbf 16 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 1200
+wait_process "benchbase"
+
+
+
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+clean_logs

@@ -20,15 +20,7 @@ References:
 
 <img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/twitter.png" alt="drawing" width="600"/>
 
-> The Twitter workload is inspired by the popular micro-blogging
-website. In order to provide a realistic benchmark, we obtained
-an anonymized snapshot of the Twitter social graph from August
-2009 that contains 51 million users and almost 2 billion â€œfollowsâ€
-relationships [...]. We created a synthetic workload generator that
-is based on an approximation of the queries/transactions needed to
-support the application functionalities as we observe them by using the web site, along with information derived from a data set
-of 200,000 tweets. Although we do not claim that this is a precise
-representation of Twitterâ€™s system, it still reflects its important characteristics, such as heavily skewed many-to-many relationships. [1]
+> The Twitter workload is inspired by the popular micro-blogging website. In order to provide a realistic benchmark, we obtained an anonymized snapshot of the Twitter social graph from August 2009 that contains 51 million users and almost 2 billion follows relationships [...]. We created a synthetic workload generator that is based on an approximation of the queries/transactions needed to support the application functionalities as we observe them by using the web site, along with information derived from a data set of 200,000 tweets. Although we do not claim that this is a precise representation of Twitter's system, it still reflects its important characteristics, such as heavily skewed many-to-many relationships. [1]
 
 1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
 1. Image Benchbase Twitter Benchmark: https://github.com/cmu-db/benchbase/wiki/Twitter

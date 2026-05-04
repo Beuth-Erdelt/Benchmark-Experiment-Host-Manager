@@ -4,7 +4,14 @@
 
 In a multi-tenant architecture, it is assumed that each tenant maintains an isolated dataset and interacts exclusively with this dataset.
 Several strategies exist to achieve this separation, including the schema-per-tenant, database-per-tenant, and container-per-tenant approaches.
-In the following sections, we present an evaluation of these strategies using bexhoma to compare their performance characteristics.
+In the following sections, we present an evaluation of these strategies using bexhoma to compare their performance characteristics, c.f. [1].
+
+
+[1] [Benchmarking Multi-Tenant Architectures in PostgreSQL](https://doi.org/10.48786/edbt.2026.46)
+> Erdelt, P.K., and Rabl T. (2026)
+> In: Proceedings 29th International Conference on Extending Database Technology, EDBT 2026
+> OpenProceedings.org
+> https://doi.org/10.48786/edbt.2026.46
 
 ## Background
 

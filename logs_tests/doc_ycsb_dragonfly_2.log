@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1774190846
-Experiment                    : starts at 2026-03-22 15:47:27.494514 (495291.4606939)
+Experiment                    : has code 1775818177
+Experiment                    : starts at 2026-04-10 12:49:37.967346 (79203.046854894)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -13,7 +13,7 @@ Batch size is ''.
 Target is based on multiples of '16384'.
 Factors for loading are [12].
 Factors for benchmarking are [4].
-Experiment uses bexhoma version 0.9.4.
+Experiment uses bexhoma version 0.9.5.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['Dragonfly'].
@@ -26,16 +26,12 @@ Benchmarking is tested with [128] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-Dragonfly-64-8-196608         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
-Dragonfly-64-8-196608         : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-- waiting 30s -               : done
 Dragonfly-64-8-196608         : will start now
 Dragonfly-64-8-196608         : deployments ['sut']
 Dragonfly-64-8-196608         : stateful sets ['worker']
 Dragonfly-64-8-196608         : pvcs ['sut']
-Dragonfly-64-8-196608         : name of SUT pods = bexhoma-sut-dragonfly-64-8-196608-1774190846
-Dragonfly-64-8-196608         : name of SUT service = bexhoma-sut-dragonfly-64-8-196608-1774190846
+Dragonfly-64-8-196608         : name of SUT pods = bexhoma-sut-dragonfly-64-8-196608-1775818177
+Dragonfly-64-8-196608         : name of SUT service = bexhoma-sut-dragonfly-64-8-196608-1775818177
 Dragonfly-64-8-196608         : name of worker pods = bx-w-dragonfly-ycsb-1
 Dragonfly-64-8-196608         : name of worker service headless = bx-w-dragonfly-ycsb-1
 - waiting 30s -               : done
@@ -54,18 +50,28 @@ Dragonfly-64-8-196608         : found worker endpoint (cAdvisor) for monitoring 
 - waiting 30s -               : done
 Dragonfly-64-8-196608         : worker pods found: ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
 Dragonfly-64-8-196608         : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
+Dragonfly-64-8-196608         : found 2 / 3 running workers (component worker)
+Dragonfly-64-8-196608         : waits for health check of workers to succeed
+- waiting 30s -               : done
+Dragonfly-64-8-196608         : worker pods found: ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
+Dragonfly-64-8-196608         : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
+Dragonfly-64-8-196608         : found 2 / 3 running workers (component worker)
+Dragonfly-64-8-196608         : waits for health check of workers to succeed
+- waiting 30s -               : done
+Dragonfly-64-8-196608         : worker pods found: ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
+Dragonfly-64-8-196608         : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
 Dragonfly-64-8-196608         : found 3 / 3 running workers (component worker)
 Dragonfly-64-8-196608         : is not loaded yet
-Dragonfly-64-8-196608         : connect to pod bexhoma-sut-dragonfly-64-8-196608-1774190846-7d46d77486-gxnpk to load scripts
+Dragonfly-64-8-196608         : connect to pod bexhoma-sut-dragonfly-64-8-196608-1775818177-544bb6c4c6-g5q57 to load scripts
 Dragonfly-64-8-196608         : start asynch loading scripts of type loaded
 Dragonfly-64-8-196608         : is loading
 - waiting 30s -               : done
 Dragonfly-64-8-196608         : showing loader times
 Dragonfly-64-8-196608         : generator times (start/end per pod and container) []
-Dragonfly-64-8-196608         : loader times (start/end per pod and container) [(1774190992, 1774191003), (1774190991, 1774191003), (1774190991, 1774191003), (1774190991, 1774191003), (1774190992, 1774191003), (1774190992, 1774191003), (1774190991, 1774191003), (1774190992, 1774191004)]
-Dragonfly-64-8-196608         : total times (start/end per pod and container) [(1774190992, 1774191003), (1774190991, 1774191003), (1774190991, 1774191003), (1774190991, 1774191003), (1774190992, 1774191003), (1774190992, 1774191003), (1774190991, 1774191003), (1774190992, 1774191004)]
-Dragonfly-64-8-196608         : loader timespan (first to last [s]) = 13
-Dragonfly-64-8-196608         : connect to pod bexhoma-sut-dragonfly-64-8-196608-1774190846-7d46d77486-gxnpk to load scripts
+Dragonfly-64-8-196608         : loader times (start/end per pod and container) [(1775818316, 1775818327), (1775818316, 1775818328), (1775818316, 1775818327), (1775818316, 1775818327), (1775818317, 1775818328), (1775818316, 1775818328), (1775818316, 1775818328), (1775818316, 1775818327)]
+Dragonfly-64-8-196608         : total times (start/end per pod and container) [(1775818316, 1775818327), (1775818316, 1775818328), (1775818316, 1775818327), (1775818316, 1775818327), (1775818317, 1775818328), (1775818316, 1775818328), (1775818316, 1775818328), (1775818316, 1775818327)]
+Dragonfly-64-8-196608         : loader timespan (first to last [s]) = 12
+Dragonfly-64-8-196608         : connect to pod bexhoma-sut-dragonfly-64-8-196608-1775818177-544bb6c4c6-g5q57 to load scripts
 Dragonfly-64-8-196608         : start asynch loading scripts of type indexed
 Dragonfly-64-8-196608         : is loading
 - waiting 30s -               : done
@@ -82,14 +88,14 @@ Dragonfly-64-8-196608-1       : needs monitoring (common metrics) for deployment
 Dragonfly-64-8-196608-1       : needs monitoring (custom metrics) for stateful set worker
 Dragonfly-64-8-196608         : need application metrics for worker
 Dragonfly-64-8-196608         : load application metrics of type dragonfly
-Dragonfly-64-8-196608         : benchmarking results in folder D:\data\benchmarks/1774190846
+Dragonfly-64-8-196608         : benchmarking results in folder /data/benchmarks/1775818177
 - waiting 10s -               : done
-Dragonfly-64-8-196608         : benchmarking is waiting for job bexhoma-benchmarker-dragonfly-64-8-196608-1774190846-1-1-hcr6g: found
+Dragonfly-64-8-196608         : benchmarking is waiting for job bexhoma-benchmarker-dragonfly-64-8-196608-1775818177-1-1-4qzg8: found
 Dragonfly-64-8-196608-1       : needs monitoring (common metrics) for deployment sut
 Dragonfly-64-8-196608-1       : needs monitoring (custom metrics) for stateful set worker
 Dragonfly-64-8-196608-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonfly-ycsb-1-(.*)", pod=~"(.*)bx-w-dragonfly-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Dragonfly-64-8-196608-1       : collecting metrics of data injector at connection Dragonfly-64-8-196608-1
-Dragonfly-64-8-196608-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dragonfly-64-8-196608-1774190846(.*)", pod=~"(.*)dragonfly-64-8-196608-1774190846(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Dragonfly-64-8-196608-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dragonfly-64-8-196608-1775818177(.*)", pod=~"(.*)dragonfly-64-8-196608-1775818177(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Dragonfly-64-8-196608         : has running benchmarks
 - waiting 30s -               : done
@@ -99,38 +105,29 @@ Dragonfly-64-8-196608         : has running benchmarks
 - waiting 30s -               : done
 Dragonfly-64-8-196608         : has running benchmarks
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'dc220b6b-8777-4474-b90a-7cc65724f24e', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sun, 22 Mar 2026 14:54:37 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
-- waiting 2s -                : done
 Dragonfly-64-8-196608         : has running benchmarks
-timing_benchmarker [(1774191102, 1774191258)]
+timing_benchmarker [(1775818395, 1775818551)]
 Dragonfly-64-8-196608-1       : showing benchmarker times
-Dragonfly-64-8-196608-1       : benchmarker timespan job from 1774191098 to 1774191283
-Dragonfly-64-8-196608-1       : benchmarker timespan pods from 1774191102 to 1774191258
+Dragonfly-64-8-196608-1       : benchmarker timespan job from 1775818394 to 1775818567
+Dragonfly-64-8-196608-1       : benchmarker timespan pods from 1775818395 to 1775818551
 Dragonfly-64-8-196608-1       : benchmarker timespan (start to end single container [s]) = 156
-Dragonfly-64-8-196608-1       : benchmarker times (start/end per pod and container) = [(1774191102, 1774191258)]
-Dragonfly-64-8-196608-1       : found and updated times {'benchmarker': [(1774191102, 1774191258)]}
+Dragonfly-64-8-196608-1       : benchmarker times (start/end per pod and container) = [(1775818395, 1775818551)]
+Dragonfly-64-8-196608-1       : found and updated times {'benchmarker': [(1775818395, 1775818551)]}
 Dragonfly-64-8-196608-1       : needs monitoring (common metrics) for deployment sut
 Dragonfly-64-8-196608-1       : needs monitoring (custom metrics) for stateful set worker
 Dragonfly-64-8-196608-1       : collecting execution metrics of worker at connection Dragonfly-64-8-196608-1
 Dragonfly-64-8-196608-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonfly-ycsb-1-(.*)", pod=~"(.*)bx-w-dragonfly-ycsb-1-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Dragonfly-64-8-196608-1       : collecting metrics of benchmarker at connection Dragonfly-64-8-196608-1
-Dragonfly-64-8-196608-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dragonfly-64-8-196608-1774190846(.*)", pod=~"(.*)dragonfly-64-8-196608-1774190846(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Dragonfly-64-8-196608-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)dragonfly-64-8-196608-1775818177(.*)", pod=~"(.*)dragonfly-64-8-196608-1775818177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Dragonfly-64-8-196608         : can be stopped
-Dragonfly-64-8-196608         : had 0 restarts at worker bexhoma-sut-dragonfly-64-8-196608-1774190846-7d46d77486-gxnpk
+Dragonfly-64-8-196608         : had 0 restarts at worker bexhoma-sut-dragonfly-64-8-196608-1775818177-544bb6c4c6-g5q57
 Dragonfly-64-8-196608         : worker pods found: ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
 Dragonfly-64-8-196608         : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-1-0', 'bx-w-dragonfly-ycsb-1-1', 'bx-w-dragonfly-ycsb-1-2']
 Dragonfly-64-8-196608         : had 0 restarts at worker bx-w-dragonfly-ycsb-1-0
 Dragonfly-64-8-196608         : had 0 restarts at worker bx-w-dragonfly-ycsb-1-1
 Dragonfly-64-8-196608         : had 0 restarts at worker bx-w-dragonfly-ycsb-1-2
-Experiment                    : ends at 2026-03-22 15:55:29.543102 (495773.5088945) - 482.05s total
+Experiment                    : ends at 2026-04-10 12:56:49.134635 (79634.214147791) - 431.17s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -141,8 +138,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 483s 
-* Code: 1774190846
+* Duration: 432s 
+* Code: 1775818177
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -153,7 +150,7 @@ YCSB SF=1
   * Target is based on multiples of '16384'.
   * Factors for loading are [12].
   * Factors for benchmarking are [4].
-  * Experiment uses bexhoma version 0.9.4.
+  * Experiment uses bexhoma version 0.9.5.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Dragonfly'].
@@ -173,50 +170,54 @@ YCSB SF=1
   * Cores:64
   * host:5.15.0-164-generic
   * node:cl-worker14
-  * disk:150092
+  * disk:150970
+  * datadisk:1
   * cpu_list:0-63
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
+    * RAM:1081965441024
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:5.15.0-1099-nvidia
+    * node:cl-worker27
+    * disk:1316851
+    * datadisk:1
+    * cpu_list:0-255
+  * worker 1
+    * RAM:540591206400
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-107-generic
+    * node:cl-worker24
+    * disk:150006
+    * datadisk:1
+    * cpu_list:0-95
+  * worker 2
     * RAM:2164173209600
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-90-generic
     * node:cl-worker36
-    * disk:563532
+    * disk:1166493
+    * datadisk:1
     * cpu_list:0-223
-  * worker 1
-    * RAM:540590817280
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-90-generic
-    * node:cl-worker23
-    * disk:1243559
-    * cpu_list:0-95
-  * worker 2
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-90-generic
-    * node:cl-worker37
-    * disk:471258
-    * cpu_list:0-127
   * eval_parameters
-    * code:1774190846
+    * code:1775818177
     * BEXHOMA_WORKERS:3
 
 ### Loading
 
 | DBMS                  |   experiment_run |   threads |    target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------------------|-----------------:|----------:|----------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Dragonfly-64-8-196608 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 |                        87951.16 |                11775.00 |           1000000.00 |                              1297.25 |
+| Dragonfly-64-8-196608 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 |                        90554.34 |                11468.00 |           1000000.00 |                              1271.38 |
 
 ### Execution
 
 | DBMS                    |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| Dragonfly-64-8-196608-1 |             1.00 |    128.00 | 65536.00 |        1.00 |         0.00 |                        64158.09 |               155865.00 |         5002355.00 |                             432.00 |           4997645.00 |                               419.00 |
+| Dragonfly-64-8-196608-1 |             1.00 |    128.00 | 65536.00 |        1.00 |         0.00 |                        64242.58 |               155660.00 |         4999513.00 |                             423.00 |           5000487.00 |                               411.00 |
 
 ### Workflow
 
@@ -234,7 +235,7 @@ YCSB SF=1
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |        66.00 |      0.91 |           0.85 |                  0.85 |
+| Dragonfly-64-8-196608-1 |        21.55 |      0.50 |           0.59 |                  0.59 |
 
 ### Loading phase: component loader
 
@@ -246,13 +247,13 @@ YCSB SF=1
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |       453.56 |      3.90 |           1.64 |                  1.64 |
+| Dragonfly-64-8-196608-1 |       586.50 |      4.50 |           1.64 |                  1.64 |
 
 ### Execution phase: component benchmarker
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| Dragonfly-64-8-196608-1 |       659.18 |      4.97 |           0.29 |                  0.29 |
+| Dragonfly-64-8-196608-1 |       541.39 |      4.98 |           0.29 |                  0.29 |
 
 ### Application Metrics
 
@@ -260,13 +261,13 @@ YCSB SF=1
 
 | DBMS                    |   Replies Sent [count] |   Memory Usage [Gi] |   Processed Commands [per second] |   Network Input [MB/sec] |   Replica Lag [records] |
 |:------------------------|-----------------------:|--------------------:|----------------------------------:|-------------------------:|------------------------:|
-| Dragonfly-64-8-196608-1 |             2001600.00 |                1.52 |                           8800.16 |                     5.52 |                    0.00 |
+| Dragonfly-64-8-196608-1 |             1813887.00 |                1.25 |                           6826.00 |                     4.14 |                    0.00 |
 
 #### Execution phase: component worker
 
 | DBMS                    |   Replies Sent [count] |   Memory Usage [Gi] |   Processed Commands [per second] |   Network Input [MB/sec] |   Replica Lag [records] |
 |:------------------------|-----------------------:|--------------------:|----------------------------------:|-------------------------:|------------------------:|
-| Dragonfly-64-8-196608-1 |             9250041.00 |                1.52 |                          31710.06 |                     3.33 |                    0.00 |
+| Dragonfly-64-8-196608-1 |             8877746.00 |                1.52 |                          31142.68 |                     3.11 |                    0.00 |
 
 ### Tests
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

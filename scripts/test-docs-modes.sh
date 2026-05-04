@@ -1,0 +1,303 @@
+#!/bin/bash
+# Generates documentation summaries for bexhoma start/load mode experiments.
+#
+# Runs a parameterised sequence of bexhoma experiments, waits for each to
+# complete, writes logs, and extracts summaries into separate files.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
+
+# Import functions from testfunctions.sh
+source ./scripts/testfunctions.sh
+
+# Config nodes and paths
+BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+# Check for file
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
+
+# Check for directories
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
+
+
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+echo "Passed: $LOG_DIR/ found."
+
+echo "Checks passed. Proceeding..."
+
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################
+#################### YCSB Modes ####################
+####################################################
+
+
+
+
+nohup python ycsb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  --workload c \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_ycsb_start_postgresql.log &
+
+wait_process "ycsb"
+kubectl get all -l app=bexhoma,usecase=ycsb
+kubectl delete all -l app=bexhoma,usecase=ycsb
+
+nohup python ycsb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  --workload c \
+  -m -mc \
+  -nlp 8 -nlt 64 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_ycsb_load_postgresql.log &
+
+wait_process "ycsb"
+kubectl get all -l app=bexhoma,usecase=ycsb
+kubectl delete all -l app=bexhoma,usecase=ycsb
+
+nohup python ycsb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  --workload c \
+  -m -mc \
+  -nlp 8 -nlt 64 -nbp 8 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_ycsb_run_postgresql.log &
+
+wait_process "ycsb"
+kubectl get all -l app=bexhoma,usecase=ycsb
+kubectl delete all -l app=bexhoma,usecase=ycsb
+
+
+
+
+
+
+####################################################
+################## Benchbase Modes #################
+####################################################
+
+
+
+
+nohup python benchbase.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_benchbase_start_postgresql.log &
+
+wait_process "benchbase"
+kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
+kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
+
+nohup python benchbase.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 8 -nlt 64 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_benchbase_load_postgresql.log &
+
+wait_process "benchbase"
+kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
+kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
+
+nohup python benchbase.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 1 -nlt 64 -nbp 8 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql.log &
+
+wait_process "benchbase"
+kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
+kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
+
+
+
+
+
+
+
+
+####################################################
+################### HammerDB Modes #################
+####################################################
+
+
+
+
+nohup python hammerdb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_hammerdb_start_postgresql.log &
+
+wait_process "hammerdb"
+kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
+kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
+
+nohup python hammerdb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_hammerdb_load_postgresql.log &
+
+wait_process "hammerdb"
+kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
+kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
+
+nohup python hammerdb.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_hammerdb_run_postgresql.log &
+
+wait_process "hammerdb"
+kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
+kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
+
+
+
+
+
+
+####################################################
+##################### TPC-H Modes ##################
+####################################################
+
+
+
+
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_tpch_start_postgresql.log &
+
+wait_process "tpch"
+kubectl get all -l app=bexhoma,usecase=tpc-h
+kubectl delete all -l app=bexhoma,usecase=tpc-h
+
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_tpch_load_postgresql.log &
+
+wait_process "tpch"
+kubectl get all -l app=bexhoma,usecase=tpc-h
+kubectl delete all -l app=bexhoma,usecase=tpc-h
+
+nohup python tpch.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql.log &
+
+wait_process "tpch"
+kubectl get all -l app=bexhoma,usecase=tpc-h
+kubectl delete all -l app=bexhoma,usecase=tpc-h
+
+
+
+
+
+
+
+####################################################
+#################### TPC-DS Modes ##################
+####################################################
+
+
+
+
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT \
+  start </dev/null &>$LOG_DIR/test_tpcds_start_postgresql.log &
+
+wait_process "tpcds"
+kubectl get all -l app=bexhoma,usecase=tpc-ds
+kubectl delete all -l app=bexhoma,usecase=tpc-ds
+
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
+  load </dev/null &>$LOG_DIR/test_tpcds_load_postgresql.log &
+
+wait_process "tpcds"
+kubectl get all -l app=bexhoma,usecase=tpc-ds
+kubectl delete all -l app=bexhoma,usecase=tpc-ds
+
+nohup python tpcds.py -ms 1 -tr \
+  --dbms PostgreSQL \
+  -m -mc \
+  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/test_tpcds_run_postgresql.log &
+
+wait_process "tpcds"
+kubectl get all -l app=bexhoma,usecase=tpc-ds
+kubectl delete all -l app=bexhoma,usecase=tpc-ds
+
+
+
+
+
+
+
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+clean_logs

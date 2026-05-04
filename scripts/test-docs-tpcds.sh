@@ -1,0 +1,274 @@
+#!/bin/bash
+# Generates documentation summaries for TPC-DS experiments.
+#
+# Runs a parameterised sequence of bexhoma experiments, waits for each to
+# complete, writes logs, and extracts summaries into separate files.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
+
+# Import functions from testfunctions.sh
+source ./scripts/testfunctions.sh
+
+# Config nodes and paths
+BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+# Check for file
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
+
+# Check for directories
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
+
+
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+echo "Passed: $LOG_DIR/ found."
+
+echo "Checks passed. Proceeding..."
+
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+############# Generate Docs ###############
+###########################################
+
+
+
+
+
+
+
+###########################################
+################# TPC-DS ##################
+###########################################
+
+
+#### TCP-DS Compare (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -rr 64Gi -lr 64Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -t 1200 \
+  -ii -ic -is \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 7200
+wait_process "tpcds"
+
+
+#### TCP-DS Monitoring (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -rr 64Gi -lr 64Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 3 \
+  -t 1200 \
+  -ii -ic -is \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monitoring.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+#### TCP-DS Throughput (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_throughput.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
+sleep 30
+
+
+#### TCP-DS Persistent Storage (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -t 1200 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+# does not work
+#nohup python tpcds.py -ms 1 -dt -tr \
+#  -dbms PostgreSQL \
+#  -nlp 8 \
+#  -nlt 8 \
+#  -sf 0.1 \
+#  -ii -ic -is \
+#  -nc 2 \
+#  -rst shared -rss 5Gi -rsr \
+#  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+#  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_fractional.log &
+#wait_process "tpcds"
+
+
+###########################################
+############# TPC-DS MonetDB ##############
+###########################################
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-30
+sleep 30
+
+
+#### TCP-DS Power 30 (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 \
+  -m -mc \
+  -sf 30 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1 \
+  -dbms MonetDB \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi -rsr \
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1800
+wait_process "tpcds"
+
+
+#### TCP-DS Power 30 (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 \
+  -m -mc \
+  -sf 30 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 2 -ne 1,1 \
+  -dbms MonetDB \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 4800
+wait_process "tpcds"
+
+
+#### TCP-DS Throughput 30 (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 \
+  -m -mc \
+  -sf 30 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1,1,3 \
+  -dbms MonetDB \
+  -rr 1024Gi -lr 1024Gi \
+  -t 14400 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 4800
+wait_process "tpcds"
+
+
+
+
+
+
+
+###########################################
+############ Profiling MonetDB ############
+###########################################
+
+
+#### TCP-H Profiling (Example-TPC-DS.md)
+nohup python tpcds.py -ms 1 -dt -tr \
+  -dbms MonetDB \
+  -rr 64Gi -lr 64Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -ii -ic -is \
+  -ne 1,1 \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared -rss 50Gi \
+  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpcds"
+
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+clean_logs

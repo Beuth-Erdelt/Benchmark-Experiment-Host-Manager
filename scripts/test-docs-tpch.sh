@@ -1,0 +1,244 @@
+#!/bin/bash
+# Generates documentation summaries for TPC-H experiments.
+#
+# Runs a parameterised sequence of bexhoma experiments, waits for each to
+# complete, writes logs, and extracts summaries into separate files.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
+
+# Import functions from testfunctions.sh
+source ./scripts/testfunctions.sh
+
+# Config nodes and paths
+BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_LOAD="cl-worker19"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+
+# Check for file
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
+
+# Check for directories
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
+
+
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+echo "Passed: $LOG_DIR/ found."
+
+echo "Checks passed. Proceeding..."
+
+# Wait for all previous jobs to complete
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+############# Generate Docs ###############
+###########################################
+
+
+
+
+
+
+
+###########################################
+################# TPC-H ###################
+###########################################
+
+
+#### TCP-H Compare (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -rr 64Gi -lr 64Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
+
+
+#### Wait so that next experiment receives a different code
+wait_process "tpch"
+
+
+#### TCP-H Monitoring (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -rr 64Gi -lr 64Gi \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 10 \
+  -ii -ic -is \
+  -m -mc \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+
+#### TCP-H Throughput (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  -nc 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-postgresql-tpch-1
+sleep 30
+
+
+#### TCP-H Persistent Storage (Example-TPC-H.md)
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 1 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 600
+wait_process "tpch"
+
+
+nohup python tpch.py -ms 1 -dt -tr \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 8 \
+  -sf 0.1 \
+  -ii -ic -is \
+  -nc 2 \
+  -rst shared -rss 5Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run </dev/null &>$LOG_DIR/doc_tpch_testcase_fractional.log &
+
+wait_process "tpch"
+
+
+###########################################
+############# TPC-H MonetDB ###############
+###########################################
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpch-100
+sleep 30
+
+
+#### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -rr 256Gi -lr 256Gi \
+  -t 3600 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 1800
+wait_process "tpch"
+
+
+#### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 2 -ne 1,1 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -rr 256Gi -lr 256Gi \
+  -t 3600 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
+
+
+#### Wait so that next experiment receives a different code
+#sleep 4800
+wait_process "tpch"
+
+
+#### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
+nohup python tpch.py -ms 1 \
+  -m -mc \
+  -sf 100 \
+  -ii -ic -is \
+  -nlp 8 -nlt 8 \
+  -nc 1 -ne 1,1,3 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -dbms MonetDB \
+  -rr 256Gi -lr 256Gi \
+  -t 3600 -dt \
+  -rst shared -rss 1000Gi \
+  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
+
+#### Wait so that next experiment receives a different code
+#sleep 4800
+wait_process "tpch"
+
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+clean_logs
