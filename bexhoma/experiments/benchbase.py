@@ -235,6 +235,17 @@ class benchbase(base):
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
         #####################
+        #print("NEW evaluator")
+        #df = self.evaluator.get_loading_per_run()
+        #print("\n### Loading")
+        #print("\n#### Per Run\n")
+        #print(df.to_markdown(index=True, floatfmt=".2f"))
+        #####################
+        #df = self.evaluator.get_df_benchmarking()
+        #print("\n### Execution")
+        #print("\n#### Per Connection\n")
+        #print(df.to_markdown(index=True, floatfmt=".2f"))
+        #####################
         warehouses = 0
         df = self.evaluator.get_df_benchmarking()
         df_aggregated_reduced = pd.DataFrame()
