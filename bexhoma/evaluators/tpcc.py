@@ -15,8 +15,6 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-# Some nice output
-#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
@@ -33,11 +31,17 @@ from .logger import logger
 
 class tpcc(logger):
     """
-    Class for evaluating an TPC-C experiment (in the HammerDB version).
-    Constructor sets
+    Evaluator for a HammerDB TPC-C experiment.
 
-      1. `path`: path to result folders
-      1. `code`: Id of the experiment (name of result folder)
+    Parses per-pod log files to extract NOPM, TPM, and optional latency statistics
+    (CALLS, MIN, AVG, MAX, TOTAL, P99, P95, P50, SD, RATIO) and assembles them into
+    DataFrames.  Aggregation over parallel pods follows the same pattern as the other
+    logger-based evaluators.
+
+    :param code: Experiment identifier — also the name of the result sub-folder.
+    :param path: Root path that contains the result folders.
+    :param include_loading: Whether loading-phase results are expected.
+    :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
     def log_to_df(self, filename):
         """
@@ -56,7 +60,6 @@ class tpcc(logger):
             # extract "wz4bp" from "./1672716717/bexhoma-benchmarker-mariadb-bht-10-9-4-1672716717-1-1-wz4bp.log"
             #print(filename, filename.rindex("-"))
             pod_name = filename[filename.rindex("-")+1:-len(".log")]
-            #print("pod_name:", pod_name)
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
@@ -71,7 +74,6 @@ class tpcc(logger):
             allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
-            #client = "1"
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
                 # log is incomplete
@@ -85,15 +87,9 @@ class tpcc(logger):
             num_errors = len(errors)
             #print("connection_name:", connection_name)
             results = re.findall("Vuser 1:TEST RESULT : System achieved (.+?) NOPM from (.+?) (.+?) TPM", stdout)
-            #print(results)
             vusers = re.findall("Vuser 1:(.+?) Active", stdout)
-            #print(vusers)
             result_tupels = list(zip(results, vusers))
-            # Find the section that starts with 'SUMMARY OF 250 ACTIVE VIRTUAL USERS'
-            #start_index = stdout.find('SUMMARY OF 250 ACTIVE VIRTUAL USERS')
-            # Extract the text from that point onward
-            #if start_index != -1:
-            # Create a dictionary to store the results latencies
+            # Create a dictionary to store the latency results
             extracted_data = {}
             # Find the section that starts with 'SUMMARY OF <number> ACTIVE VIRTUAL USERS'
             pattern = r'SUMMARY OF (\d+) ACTIVE VIRTUAL USERS'
@@ -112,31 +108,19 @@ class tpcc(logger):
                 end_index = relevant_text.find('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
                 if end_index != -1:
                     relevant_text = relevant_text[:end_index]
-                # Regex pattern to match the labels and numbers (e.g., CALLS: 5426322, MIN: 2.990ms)
+                # Match label-number pairs (e.g., "CALLS: 5426322", "MIN: 2.990ms")
                 pattern = r'(\w+):\s*([\d\.]+)'
-                # Find all label-number pairs in the relevant text
                 matches = re.findall(pattern, relevant_text)
-                # Convert matches into dictionary form
                 for label, value in matches:
-                    #print(label)
-                    # only take first occurence
+                    # only take first occurrence; suffix time labels with " [ms]"
                     if not label in extracted_data and not label + " [ms]" in extracted_data:
-                        # If the value ends with 'ms', strip it and convert it to float
                         if 'ms' in value or label in ['MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50']:
                             label = label + " [ms]"
                             extracted_data[label] = float(value.replace('ms', '').strip())
                         else:
                             extracted_data[label] = float(value.strip())
-                # Output the dictionary
-                #print(extracted_data)
-            else:
-                pass
-                #print("No latencies found.")
-            #for (result, vuser) in result_tupels:
-            #    print(result, vuser)
-            #print(result)
-            # compute efficiency, only valid for keying time
-            #print(result_tupels[0][0][0], result_tupels[0][1])
+            # compute efficiency — only valid when keying time is enabled
+
             if keyandthink == "true":
                 efficiency = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
             else:
@@ -146,17 +130,12 @@ class tpcc(logger):
             # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
             # if latencies are logged
             list_latencies = list(extracted_data.values())
-            #print(list_latencies)
-            result_list = [(connection, phase, configuration_name, experiment_run, client, pod_name, pod_count, code, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]#.extend(list_latencies)
-            #print(result_list)
+            result_list = [(connection, phase, configuration_name, experiment_run, client, pod_name, pod_count, code, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]
             df = pd.DataFrame(result_list)
-            #print(list(extracted_data.keys()))
             column_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             column_names.extend(list(extracted_data.keys()))
-            #print(column_names)
             df.columns = column_names
             df.index.name = connection_name
-            #print(df)
             return df
         except Exception as e:
             print(e)
@@ -170,18 +149,12 @@ class tpcc(logger):
         :return: exit code of test script
         """
         try:
-            #path = self.cluster.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+'/{}'.format(self.code)
-            #path = '../benchmarks/1669163583'
             directory = os.fsencode(self.path)
             for file in os.listdir(directory):
                 filename = os.fsdecode(file)
-                if filename.endswith(".pickle"): 
+                if filename.endswith(".pickle"):
                     df = pd.read_pickle(self.path+"/"+filename)
-                    #print(df)
-                    #print(df.index.name)
-                    list_vusers = list(df['vusers'])
-                    #print(list_vusers)
-                    #print("vusers", " ".join(list_vusers))
+                    list(df['vusers'])
             return super().test_results()
         except Exception as e:
             print(e)
@@ -256,12 +229,8 @@ class tpcc(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        #column = ["connection","run"]
         df_aggregated = pd.DataFrame()
-        #for key, grp in df.groupby(column):
         for key, grp in df.groupby([df[col] for col in columns]):
-            #print(key, len(grp.index))
-            #print(grp)
             if 'CALLS' in grp:
                 aggregate = {
                     'connection':'max',
@@ -276,10 +245,7 @@ class tpcc(logger):
                     'errors':'sum',
                     'vusers_loading':'max',
                     'vusers':'sum',
-                    #'vusers':'max',
-                    #'NOPM':'sum',
                     'NOPM':'mean',
-                    #'TPM':'sum',
                     'TPM':'mean',
                     'efficiency':'min',
                     'dbms':'max',
@@ -305,37 +271,23 @@ class tpcc(logger):
                     'errors':'sum',
                     'vusers_loading':'max',
                     'vusers':'sum',
-                    #'vusers':'max',
-                    #'NOPM':'sum',
                     'NOPM':'mean',
-                    #'TPM':'sum',
                     'TPM':'mean',
                     'efficiency':'min',
                     'dbms':'max',
                 }
-            #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
-            #dict_grp['client'] = grp['client'][0]
-            #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key[0]])#columns=list(dict_grp.keys()))
-            #df_grp = df_grp.T
-            #df_grp.set_index('connection', inplace=True)
-            #print(df_grp)
+            df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
-        #print(df_aggregated['sf'], df_aggregated['vusers'], df_aggregated['NOPM'])
-        #print(df_aggregated['sf']*10 == df_aggregated['vusers'])
-        #print(df_aggregated['efficiency'])
-        df_aggregated['efficiency'] = 0.  # Default all rows to 0
-        mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']  # Condition
-        #print(mask, df_aggregated.loc[mask])
+        df_aggregated['efficiency'] = 0.
+        mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']
         df_aggregated.loc[mask, 'efficiency'] = (
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
-        #print(df_aggregated['efficiency'])
         return df_aggregated
 
 

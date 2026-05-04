@@ -16,8 +16,6 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-# Some nice output
-#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
@@ -34,11 +32,18 @@ from .logger import logger
 
 class benchbase(logger):
     """
-    Class for evaluating a Benchbase experiment.
-    Constructor sets
+    Evaluator for a Benchbase experiment.
 
-      1. `path`: path to result folders
-      1. `code`: Id of the experiment (name of result folder)
+    Parses per-pod log files to extract throughput, goodput, and latency
+    distribution results produced by the Benchbase benchmarking tool.
+    Also provides time-series access to per-second throughput metrics via
+    :meth:`get_benchmark_logs_timeseries_df_aggregated` and
+    :meth:`get_benchmark_logs_timeseries_df_single`.
+
+    :param code: Experiment identifier — also the name of the result sub-folder.
+    :param path: Root path that contains the result folders.
+    :param include_loading: Whether loading-phase results are expected.
+    :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
     def log_to_df(self, filename):
         """
@@ -70,19 +75,12 @@ class benchbase(logger):
             profile = re.findall('BENCHBASE_PROFILE (.+?)\n', stdout)[0]
             target = re.findall('BENCHBASE_TARGET (.+?)\n', stdout)[0]
             time = re.findall('BENCHBASE_TIME (.+?)\n', stdout)[0]
-            #terminals = re.findall('BENCHBASE_TERMINALS (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
             keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
-            #errors = re.findall('Exception in thread ', stdout)
             errors = re.findall('error code', stdout)
-            #print(errors)
             num_errors = len(errors)
-            #if keyandthink == "true":
-            #    efficiency = round(100.*/1.286, 2)
-            #else:
-            #    efficiency = 0
             header = {
                 'connection': connection_name + '-' + child,
                 'phase': connection_name,
@@ -96,7 +94,6 @@ class benchbase(logger):
                 'profile': profile,
                 'target': target,
                 'time': time,
-                #'terminals': terminals,
                 'batchsize': batchsize,
                 'sf': int(sf),
                 'num_errors': num_errors,
@@ -183,11 +180,8 @@ class benchbase(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        #column = "connection"
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(columns):
-            #print(key, len(grp.index))
-            #print(grp.columns)
             aggregate = {
                 'connection':'max',
                 'client':'max',
@@ -199,7 +193,6 @@ class benchbase(logger):
                 'profile':'max',
                 'target':'sum',
                 'time':'max',
-                #'terminals':'sum',
                 'batchsize':'mean',
                 'sf':'max',
                 'num_errors':'sum',
@@ -224,26 +217,14 @@ class benchbase(logger):
                 'efficiency': 'sum',
                 'child': 'count',
             }
-            #print(grp.agg(aggregate))
             dict_grp = dict()
-            #dict_grp['connection'] = key
             dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
-            #dict_grp['client'] = grp['client'][0]
-            #dict_grp['pod'] = grp['pod'][0]
-            #print(dict_grp)
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            #print(key)
             key_index = "_".join(map(str, key))
-            #print(key_index)
-            df_grp = pd.DataFrame(dict_grp, index=[key_index])#columns=list(dict_grp.keys()))
-            #df_grp = df_grp.T
-            #df_grp.set_index('connection', inplace=True)
-            #print(df_grp)
+            df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
-        #print(df_aggregated)
-        #mask = df_aggregated['sf'] * 10 == df_aggregated['terminals']  # Condition
         mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
         #df_masked = df_aggregated[~mask]
         #print(mask, df_aggregated.loc[mask])
@@ -299,8 +280,25 @@ class benchbase(logger):
                     results.append(parsed_data)
         return results
     def benchmark_logs_to_timeseries_df(self, list_logs, metric="throughput", aggregate=True):
-        #column = "current_ops_per_sec"
-        #column = "READ_Avg"
+        """
+        Parses Benchbase log files for the given pod IDs and assembles a time-series DataFrame.
+
+        Each pod ID in ``list_logs`` is resolved to matching log files via a glob pattern.
+        When ``aggregate`` is ``True`` the per-second metric values from all pods are
+        combined into a single DataFrame: percentile/max metrics use the element-wise
+        maximum, minimum metrics use the element-wise minimum, and all others are summed.
+        When ``aggregate`` is ``False`` a list of per-pod DataFrames is returned instead.
+
+        :param list_logs: Pod IDs (short suffixes) used to locate matching log files.
+        :type list_logs: list[str]
+        :param metric: Metric column to extract (default ``'throughput'``).
+        :type metric: str
+        :param aggregate: Whether to aggregate all pod DataFrames into one.
+        :type aggregate: bool
+        :return: Aggregated DataFrame indexed by ``'second'`` (with an ``'avg'`` column
+                 appended) when ``aggregate`` is ``True``, or a list of per-pod DataFrames.
+        :rtype: pandas.DataFrame or list[pandas.DataFrame]
+        """
         column = metric
         remove_first = 0
         remove_last = 0
@@ -332,28 +330,6 @@ class benchbase(logger):
             # Use glob to find files matching the pattern
             matching_files = glob.glob(os.path.abspath(os.path.normpath(os.path.join(directory, pattern))))
             return matching_files
-        def safe_glob(pattern, recursive=True, return_paths=False):
-            try:
-                # Normalize and absolute path
-                pattern = os.path.abspath(os.path.normpath(pattern))
-                #print(f"[safe_glob] Using pattern: {pattern}")
-
-                # Run glob
-                matches = glob.glob(pattern, recursive=recursive)
-                #print(f"[safe_glob] Found {len(matches)} file(s)")
-
-                # Print found files
-                #for m in matches:
-                #    print(f" - {m}")
-
-                # Optional: return Path objects
-                if return_paths:
-                    return [Path(m) for m in matches]
-                return matches
-
-            except Exception as e:
-                print(f"[safe_glob] ERROR: {e}")
-                return []
         if not aggregate:
             df_total = []
         else:
@@ -361,41 +337,13 @@ class benchbase(logger):
         num_logs = 0
         for file_logs in list_logs:
             pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
-            #pattern = "*.log"
-            #pattern = "bexhoma-benchmarker-*-qhrlt.dbmsbenchmarker.log"
-            #print("Scan for files like {pattern} in {path}".format(pattern=pattern, path=self.path))
-            #print(f'Current Working Directory: {os.getcwd()}')
-            #print(safe_glob(os.path.join(self.path, pattern)))
-            #matching_files = glob.glob(os.path.abspath(os.path.normpath(os.path.join(self.path, pattern))))#find_matching_files(self.path, pattern)
             matching_files = find_matching_files(self.path, pattern)
-            #matching_files = safe_glob(os.path.join(self.path, pattern))
             for file in matching_files:
                 num_logs = num_logs + 1
-                #print("Extract data from log file "+file)
                 parsed_results = self.parse_benchbase_log_file(file)
-                #print(parsed_results)
-                """data = []
-                for result in parsed_results:
-                    #print(result)
-                    if not column in result:
-                        result_metrics = flatten_dict(result['metrics'])
-                        #print(result_metrics)
-                        d = {
-                            'sec': result['sec'],
-                            column: result_metrics[column]
-                        }
-                    else:
-                        d = {
-                            'sec': result['sec'],
-                            column: result[column]
-                        }
-                    data.append(d)"""
-                #data.pop()  # remove the last measure as it is not reliable
-                #print(data)
                 df = pd.DataFrame(parsed_results)
                 df = df.set_index('second')
-                #df.fillna(0) # we need NaN for missing values (e.g., average computation)
-                df = df.groupby(df.index).last() # in case of duplicate indexes (i.e., times)
+                df = df.groupby(df.index).last()  # collapse duplicate timestamps
                 if remove_first > 0:
                     df = df.iloc[remove_first:]
                 if remove_last > 0:
@@ -411,42 +359,57 @@ class benchbase(logger):
                         elif "Min" in metric:
                             df_total[column] = df_total[column].combine(df[column], lambda x, y: x if (x < y and pd.notna(x) and pd.notna(y)) or (pd.notna(x) and not pd.notna(y)) else y)
                         else:
-                            # compute average or sum
-                            #print(df_total)
-                            #print(df)
                             df_total = df_total.add(df, fill_value=0)
         if aggregate:
-            #if not metric == "current_ops_per_sec" and not "9" in metric and not "Max" in metric and not "Min" in metric:
-            #    df_total = df_total / num_logs
-            #print(df_total[column])
             df_total['avg'] = int(df_total[column].mean())
         return df_total
     def get_benchmark_logs_timeseries_df_aggregated(self, metric="throughput", configuration="", client='1', experiment_run='1'):
-        #code = "1737365651"
-        #code = "1737110896"
-        #path = "/home/perdelt/benchmarks"
-        #evaluation = evaluator.ycsb(code=code, path=path)
-        client = str(client)#'49'
-        #configuration = 'configuration'
+        """
+        Returns a DataFrame of time series of a metric for the benchmarking phase,
+        aggregated over all pods per second.
+
+        Retrieves pod IDs from :meth:`get_df_benchmarking` filtered by the given
+        ``configuration``, ``client``, and ``experiment_run``, then delegates to
+        :meth:`benchmark_logs_to_timeseries_df` with ``aggregate=True``.
+
+        :param metric: Metric column to extract (default ``'throughput'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-64-8-65536'``).
+        :type configuration: str
+        :param client: Client number (default ``'1'``).
+        :type client: str or int
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: DataFrame indexed by ``'second'`` with the metric and an ``'avg'`` column.
+        :rtype: pandas.DataFrame
+        """
+        client = str(client)
         df = self.get_df_benchmarking()
-        #print(df)
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
-        #list_logs = df[df['client'] == client]['pod'].tolist()
-        #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
         return df_total
     def get_benchmark_logs_timeseries_df_single(self, metric="throughput", configuration="", client='1', experiment_run='1'):
-        #code = "1737365651"
-        #code = "1737110896"
-        #path = "/home/perdelt/benchmarks"
-        #evaluation = evaluator.ycsb(code=code, path=path)
-        client = str(client)#'49'
-        #configuration = 'configuration'
+        """
+        Returns a list of DataFrames of time series of a metric for the benchmarking
+        phase, one per pod.
+
+        Retrieves pod IDs from :meth:`get_df_benchmarking` filtered by the given
+        ``configuration``, ``client``, and ``experiment_run``, then delegates to
+        :meth:`benchmark_logs_to_timeseries_df` with ``aggregate=False``.
+
+        :param metric: Metric column to extract (default ``'throughput'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-64-8-65536'``).
+        :type configuration: str
+        :param client: Client number (default ``'1'``).
+        :type client: str or int
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: List of DataFrames, one per pod, each indexed by ``'second'``.
+        :rtype: list[pandas.DataFrame]
+        """
+        client = str(client)
         df = self.get_df_benchmarking()
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
-        #list_logs = df[df['client'] == client]['pod'].tolist()
-        #list_logs = df[df['client'] == client]['pod_count'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         return df_total

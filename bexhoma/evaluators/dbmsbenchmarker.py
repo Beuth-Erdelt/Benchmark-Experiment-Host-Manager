@@ -16,8 +16,6 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-# Some nice output
-#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
@@ -59,52 +57,41 @@ def map_index_to_queryname(numQuery):
 
 class dbmsbenchmarker(logger):
     """
-    Class for evaluating a DBMSBenchmarker experiment.
-    Constructor sets
+    Evaluator for a DBMSBenchmarker experiment.
 
-      1. `path`: path to result folders
-      1. `code`: Id of the experiment (name of result folder)
+    Wraps a :class:`dbmsbenchmarker.inspector.inspector` instance and exposes
+    loading times, per-query latency statistics, throughput metrics, warning and
+    error counts, and aggregation over parallel pods.
+
+    :param code: Experiment identifier — also the name of the result sub-folder.
+    :param path: Root path that contains the result folders.
+    :param include_loading: Unused; loading is always enabled for this evaluator.
+    :param include_benchmarking: Unused; benchmarking is always enabled.
     """
     def __init__(self, code, path, include_loading=False, include_benchmarking=True):
+        """
+        Initialises the inspector before delegating to the parent constructor.
+
+        :param code: Experiment identifier.
+        :param path: Root path that contains the result folders.
+        :param include_loading: Ignored; always ``True``.
+        :param include_benchmarking: Ignored; always ``True``.
+        """
         self.evaluation = None
         self.path_base = path
         super().__init__(code, path, True, True)
         self.get_inspector()
     def get_inspector(self):
+        """
+        Loads the DBMSBenchmarker inspector for this experiment.
+
+        Creates an :class:`inspector.inspector` rooted at ``self.path_base``,
+        loads the experiment identified by ``self.code``, and stores the result
+        in ``self.evaluation``.
+        """
         self.evaluation = inspector.inspector(self.path_base)
         self.evaluation.load_experiment(code=self.code, silent=True)
         self.evaluation.code = self.code
-    def OLD_get_df_benchmarking(self):
-        """
-        Returns the DataFrame that containts all information about the benchmarking phase.
-
-        :return: DataFrame of benchmarking results
-        """
-        filename = "bexhoma-benchmarker.all.df.pickle"
-        filename_full = self.path+"/"+filename
-        if os.path.isfile(filename_full):
-            df = pd.read_pickle(filename_full)
-        else:
-            self.evaluate_results()
-            if os.path.isfile(filename_full):
-                df = pd.read_pickle(filename_full)
-            else:
-                df = pd.DataFrame()
-        #df#.sort_values(["configuration", "pod"])
-        return df
-    def OLD_get_df_loading(self):
-        """
-        Returns the DataFrame that containts all information about the loading phase.
-
-        :return: DataFrame of loading results
-        """
-        filename = "bexhoma-loading.all.df.pickle"
-        if os.path.isfile(self.path+"/"+filename):
-            df = pd.read_pickle(self.path+"/"+filename)
-        else:
-            df = pd.DataFrame()
-        #df#.sort_values(["configuration", "pod"])
-        return df
     def get_df_loading(self):
         """
         Returns the DataFrame that containts all information about the loading phase.
@@ -184,44 +171,36 @@ class dbmsbenchmarker(logger):
             df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
             df_merged_time = pd.concat([df_merged_time, df_time])
         df_time = df_merged_time.sort_index()
-        # aggregate per parallel pods per dbms - not valid for model=container?
-        #benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).min('benchmark_start')
-        #benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).max('benchmark_end')
-        #print(df_time)
         benchmark_start = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_start'].min()
         benchmark_end = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_end'].max()
         duration = benchmark_end - benchmark_start
         df_benchmark = duration.to_frame(name='duration')
-        #df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
         df_benchmark.columns = ['time [s]']
         benchmark_count = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client']).count()
         df_benchmark['pod_count'] = benchmark_count['benchmark_end']
-        #df_benchmark['connection'] = df_benchmark.index.get_level_values('connection')
-        #df_benchmark['configuration'] = df_benchmark.index.get_level_values('configuration')
-        #df_benchmark['phase'] = df_benchmark.index.get_level_values('phase')
         df_benchmark['SF2'] = df_benchmark.index.get_level_values('SF')
-        #df_benchmark['connection'] = df_benchmark.index.map(lambda x: x[1])
-        #df_benchmark['SF2'] = df_benchmark.index.map(lambda x: x[2])
         df_benchmark['num_of_queries'] = num_of_queries
         df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['pod_count']/df_benchmark['time [s]']*df_benchmark['SF2']).round(2)
-        index_names = list(df_benchmark.index.names)
-        #index_names[0] = "connection_pod"
-        #df_benchmark.rename_axis(index_names, inplace=True)
-        #print(df_benchmark)
         df_benchmark = df_benchmark.reset_index(level=['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])
         df_benchmark = df_benchmark.set_index("connection", drop=False)
-        #print(df.index)
-        #print(df_benchmark.index)
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
-        #df.rename(columns={'num_experiment': 'experiment_run'}, inplace=True)
-        #df.rename(columns={'num_client': 'client'}, inplace=True)
         df['Power@Size [~Q/h]'] = df['SF']*3600./df['total_timer_execution']
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
-        #print(df)
         return df
     def benchmarking_set_datatypes(self, df):
+        """
+        Returns the DataFrame unchanged.
+
+        DBMSBenchmarker results are already typed by the inspector; no conversion
+        is needed.
+
+        :param df: DataFrame of results.
+        :type df: pandas.DataFrame
+        :return: The same DataFrame, unmodified.
+        :rtype: pandas.DataFrame
+        """
         return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
@@ -249,48 +228,41 @@ class dbmsbenchmarker(logger):
         #df=df_performance.copy()
         #column = "connection"
         df_aggregated = pd.DataFrame()
-        #for key, grp in df.groupby(columns):
         for key, grp in df.groupby([df[col] for col in columns]):
-            #print(key, len(grp.index))
-            #print(grp.columns)
             aggregate = {
                 'connection':'max',
-                'total_timer_execution':safe_gmean,#'mean',#lambda x: float(gmean(x)),
-                'Power@Size [~Q/h]':safe_gmean,#'mean',#lambda x: float(gmean(x)),
+                'total_timer_execution':safe_gmean,
+                'Power@Size [~Q/h]':safe_gmean,
                 'code':'max',
                 'pod_count':'count',
-                #'orig_name':'max',
                 'SF':'max',
                 'experiment_run':'max',
                 'time [s]':'max',
-                #'count':'count',
                 'client':'max',
                 'Throughput@Size':'max',
                 'num_of_queries':'sum',
             }
             dict_grp = dict()
-            #dict_grp['connection'] = key
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
-            #dict_grp['client'] = grp['client'][0]
-            #dict_grp['pod'] = grp['pod'][0]
-            #print(dict_grp)
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             key_index = "_".join(map(str, key))
-            #print(key_index)
-            df_grp = pd.DataFrame(dict_grp, index=[key_index])#columns=list(dict_grp.keys()))
-            #df_grp = pd.DataFrame(dict_grp, index=[key])#columns=list(dict_grp.keys()))
-            #df_grp = df_grp.T
-            #df_grp.set_index('connection', inplace=True)
-            #print(df_grp)
+            df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"
-        #df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600.*df_aggregated['count']/df_aggregated['time [s]']*df_aggregated['SF']).round(2)
-        df_aggregated
         return df_aggregated
     def get_total_warnings(self, query_titles=False):
+        """
+        Returns the per-query warning counts for this experiment.
+
+        :param query_titles: When ``True``, replaces query index labels with
+                             human-readable titles from ``queries.config``.
+        :type query_titles: bool
+        :return: DataFrame of warning counts with queries as columns and DBMS as rows.
+        :rtype: pandas.DataFrame
+        """
         global query_properties
         df = self.evaluation.get_total_warnings().T
         if query_titles:
@@ -298,6 +270,15 @@ class dbmsbenchmarker(logger):
             df.index = df.index.map(map_index_to_queryname)
         return df.T
     def get_total_errors(self, query_titles=False):
+        """
+        Returns the per-query error counts for this experiment.
+
+        :param query_titles: When ``True``, replaces query index labels with
+                             human-readable titles from ``queries.config``.
+        :type query_titles: bool
+        :return: DataFrame of error counts with queries as columns and DBMS as rows.
+        :rtype: pandas.DataFrame
+        """
         global query_properties
         df = self.evaluation.get_total_errors().T
         if query_titles:
@@ -305,8 +286,16 @@ class dbmsbenchmarker(logger):
             df.index = df.index.map(map_index_to_queryname)
         return df.T
     def get_query_latencies(self, query_titles=False):
+        """
+        Returns the mean execution latency per query and DBMS.
+
+        :param query_titles: When ``True``, replaces query index labels with
+                             human-readable titles from ``queries.config``.
+        :type query_titles: bool
+        :return: DataFrame of mean latencies (ms) with queries as columns and DBMS as rows.
+        :rtype: pandas.DataFrame
+        """
         global query_properties
-        num_of_queries = 0
         df = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').T
         if query_titles:
             if not df is None:

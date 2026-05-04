@@ -16,8 +16,6 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-# Some nice output
-#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
@@ -34,11 +32,18 @@ from .logger import logger
 
 class ycsb(logger):
     """
-    Class for evaluating an YCSB experiment.
-    Constructor sets
+    Evaluator for a YCSB experiment.
 
-      1. `path`: path to result folders
-      1. `code`: Id of the experiment (name of result folder)
+    Parses per-pod log files to extract operation counts, throughput, and per-operation
+    latency statistics produced by the Yahoo Cloud Serving Benchmark (YCSB) tool.
+    Provides time-series access to per-second throughput for both the benchmarking and
+    loading phases via :meth:`get_benchmark_logs_timeseries_df_aggregated`,
+    :meth:`get_loading_logs_timeseries_df_aggregated`, and their ``*_single`` variants.
+
+    :param code: Experiment identifier — also the name of the result sub-folder.
+    :param path: Root path that contains the result folders.
+    :param include_loading: Ignored; loading is always enabled for this evaluator.
+    :param include_benchmarking: Ignored; benchmarking is always enabled.
     """
     def __init__(self, code, path, include_loading=False, include_benchmarking=True):
         super().__init__(code, path, True, True)
@@ -51,7 +56,6 @@ class ycsb(logger):
         """
         # test for known errors
         logger.log_to_df(self, filename)
-        #print("Exceptions", filename)
         # extract status and result fields
         try:
             with open(filename) as f:
@@ -81,10 +85,8 @@ class ycsb(logger):
                 exceptions = len(exceptions)
             else:
                 exceptions = 0
-            #workload = "A"
             pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
             result = []
-            #for line in s.split("\n"):
             for line in lines:
                 line = line.strip('\n')
                 cells = line.split(", ")
@@ -99,13 +101,7 @@ class ycsb(logger):
             list_columns = [value[0]+"."+value[1] for value in result if len(value) > 1]
             list_values = [code, phase, connection, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions, child]
             list_measures = [value[2] for value in result if len(value) > 1]
-            #list_values = [connection_name, configuration_name, experiment_run, pod_name].append([value[2] for value in result])
-            #print(list_columns)
-            #print(list_values)
-            #print(list_measures)
-            #exit()
             list_values.extend(list_measures)
-            #print(list_values)
             df = pd.DataFrame(list_values)
             df = df.T
             columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'SF', 'workload', 'operations', 'batchsize', 'exceptions', 'child']
@@ -113,16 +109,9 @@ class ycsb(logger):
             #print(columns)
             df.columns = columns
             df.index.name = connection
-            # number of inserts must be integer - otherwise conversion will fail
-            #if '[INSERT].Return=OK' in columns and df['[INSERT].Return=OK'] == 'NaN':
-            #    df['[INSERT].Return=OK'] = 0
-            #print(df.T)
-            #exit()
-            #print(df.T)
             return df
         except Exception as e:
             print(e)
-            #print(list_columns)
             return pd.DataFrame()
     def benchmarking_set_datatypes(self, df):
         """
@@ -284,12 +273,8 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        #column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
-        #for key, grp in df.groupby(columns):
         for key, grp in df.groupby([df[col] for col in columns]):
-            #print(key, len(grp.index))
-            #print(grp)
             aggregate = {
                 'code':'max',
                 'client':'max',
@@ -303,15 +288,6 @@ class ycsb(logger):
                 'exceptions':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
-                #'[TOTAL_GCS_PS_Scavenge].Count':'sum',
-                #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'max',
-                #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'max',
-                #'[TOTAL_GCS_PS_MarkSweep].Count':'sum',
-                #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'max',
-                #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'max',
-                #'[TOTAL_GCs].Count':'sum',
-                #'[TOTAL_GC_TIME].Time(ms)':'max',
-                #'[TOTAL_GC_TIME_%].Time(%)':'max',
             }
             if '[CLEANUP].Operations' in grp.columns:
                 aggregate = {**aggregate, **{
@@ -425,19 +401,13 @@ class ycsb(logger):
                     '[READ-MODIFY-WRITE-FAILED].95thPercentileLatency(us)':'max',
                     '[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)':'max',
                 }}
-            #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
-            #dict_grp['client'] = grp['client'][0]
-            #dict_grp['pod'] = grp['pod'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key[0]])#columns=list(dict_grp.keys()))
-            #df_grp = df_grp.T
-            #df_grp.set_index('connection', inplace=True)
-            #print(df_grp)
+            df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
     def loading_set_datatypes(self, df):
@@ -447,7 +417,6 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        #df = evaluation.get_df_loading()
         df.fillna(0, inplace=True)
         df_typed = df.astype({
             'code':'str',
@@ -465,15 +434,6 @@ class ycsb(logger):
             'exceptions':'int',
             '[OVERALL].RunTime(ms)':'float',
             '[OVERALL].Throughput(ops/sec)':'float',
-            #'[TOTAL_GCS_PS_Scavenge].Count':'int',
-            #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
-            #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
-            #'[TOTAL_GCS_PS_MarkSweep].Count':'float',
-            #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
-            #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
-            #'[TOTAL_GCs].Count':'int',
-            #'[TOTAL_GC_TIME].Time(ms)':'float',
-            #'[TOTAL_GC_TIME_%].Time(%)':'float',
             '[CLEANUP].Operations':'int',
             '[CLEANUP].AverageLatency(us)':'float',
             '[CLEANUP].MinLatency(us)':'float',
@@ -497,12 +457,8 @@ class ycsb(logger):
         :param df: DataFrame of results 
         :return: DataFrame of results
         """
-        #column = ["connection","experiment_run"]
         df_aggregated = pd.DataFrame()
-        #for key, grp in df.groupby(column):
         for key, grp in df.groupby([df[col] for col in columns]):
-            #print(key, len(grp.index))
-            #print(grp)
             aggregate = {
                 'code':'max',
                 'client':'max',
@@ -516,15 +472,6 @@ class ycsb(logger):
                 'exceptions':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
-                #'[TOTAL_GCS_PS_Scavenge].Count':'sum',
-                #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'max',
-                #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'max',
-                #'[TOTAL_GCS_PS_MarkSweep].Count':'sum',
-                #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'max',
-                #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'max',
-                #'[TOTAL_GCs].Count':'sum',
-                #'[TOTAL_GC_TIME].Time(ms)':'max',
-                #'[TOTAL_GC_TIME_%].Time(%)':'max',
                 '[CLEANUP].Operations':'sum',
                 '[CLEANUP].AverageLatency(us)':'mean',
                 '[CLEANUP].MinLatency(us)':'min',
@@ -539,21 +486,12 @@ class ycsb(logger):
                 '[INSERT].99thPercentileLatency(us)':'mean',
                 '[INSERT].Return=OK':'sum',
             }
-            #print(grp.agg(aggregate))
             dict_grp = dict()
             dict_grp['connection'] = key[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
-            #dict_grp['client'] = grp['client'][0]
-            #dict_grp['pod'] = grp['pod'][0]
-            #dict_grp['pod_count'] = grp['pod_count'][0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            #print(dict_grp)
-            df_grp = pd.DataFrame(dict_grp, index=[key[0]])#columns=list(dict_grp.keys()))
-            #print(df_grp)
-            #df_grp = df_grp.T
-            #df_grp.set_index('connection', inplace=True)
-            #print(df_grp)
+            df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
     def get_df_loading(self):
@@ -625,12 +563,60 @@ class ycsb(logger):
                     results.append(parsed_data)
         return results
     def benchmark_logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True, filetype="benchmarker"):
+        """
+        Parses benchmarker log files for the given pod IDs and assembles a time-series DataFrame.
+
+        Delegates to :meth:`logs_to_timeseries_df` with ``filetype='benchmarker'``.
+
+        :param list_logs: Pod IDs used to locate matching log files.
+        :type list_logs: list[str]
+        :param metric: Metric to extract (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param aggregate: Whether to aggregate all pod DataFrames into one.
+        :type aggregate: bool
+        :return: Aggregated DataFrame or list of per-pod DataFrames.
+        :rtype: pandas.DataFrame or list[pandas.DataFrame]
+        """
         return self.logs_to_timeseries_df(list_logs=list_logs, metric=metric, aggregate=aggregate, filetype="benchmarker")
     def loading_logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True, filetype="benchmarker"):
+        """
+        Parses loader log files for the given pod IDs and assembles a time-series DataFrame.
+
+        Delegates to :meth:`logs_to_timeseries_df` with ``filetype='loading'``.
+
+        :param list_logs: Pod IDs used to locate matching log files.
+        :type list_logs: list[str]
+        :param metric: Metric to extract (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param aggregate: Whether to aggregate all pod DataFrames into one.
+        :type aggregate: bool
+        :return: Aggregated DataFrame or list of per-pod DataFrames.
+        :rtype: pandas.DataFrame or list[pandas.DataFrame]
+        """
         return self.logs_to_timeseries_df(list_logs=list_logs, metric=metric, aggregate=aggregate, filetype="loading")
     def logs_to_timeseries_df(self, list_logs, metric="current_ops_per_sec", aggregate=True, filetype="benchmarker"):
-        #column = "current_ops_per_sec"
-        #column = "READ_Avg"
+        """
+        Parses YCSB log files for the given pod IDs and assembles a time-series DataFrame.
+
+        Each pod ID in ``list_logs`` is resolved to matching log files via a glob pattern
+        that uses ``filetype`` to distinguish benchmarker from loading logs.
+        When ``aggregate`` is ``True`` the per-second values from all pods are combined:
+        percentile/max metrics use element-wise maximum, minimum metrics use element-wise
+        minimum, and all others are summed.  When ``aggregate`` is ``False`` a list of
+        per-pod DataFrames is returned instead.
+
+        :param list_logs: Pod IDs used to locate matching log files.
+        :type list_logs: list[str]
+        :param metric: Metric column to extract (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param aggregate: Whether to aggregate all pod DataFrames into one.
+        :type aggregate: bool
+        :param filetype: Log file prefix: ``'benchmarker'`` or ``'loading'``.
+        :type filetype: str
+        :return: Aggregated DataFrame indexed by ``'sec'`` (with an ``'avg'`` column
+                 appended) when ``aggregate`` is ``True``, or a list of per-pod DataFrames.
+        :rtype: pandas.DataFrame or list[pandas.DataFrame]
+        """
         column = metric
         remove_first = 0
         remove_last = 0
@@ -669,15 +655,12 @@ class ycsb(logger):
         num_logs = 0
         for file_logs in list_logs:
             pattern = 'bexhoma-{}-*-{}.log'.format(filetype, file_logs)
-            #print("Scan for files in "+self.path+'/'+self.code)
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1
-                #print("Extract data from log file "+file)
                 parsed_results = self.parse_ycsb_log_file(file)
                 data = []
                 for result in parsed_results:
-                    #print(result)
                     if not column in result:
                         result_metrics = flatten_dict(result['metrics'])
                         #print(result_metrics)
@@ -692,11 +675,9 @@ class ycsb(logger):
                         }
                     data.append(d)
                 data.pop()  # remove the last measure as it is not reliable
-                #print(data)
                 df = pd.DataFrame(data)
                 df = df.set_index('sec')
-                #df.fillna(0) # we need NaN for missing values (e.g., average computation)
-                df = df.groupby(df.index).last() # in case of duplicate indexes (i.e., times)
+                df = df.groupby(df.index).last()  # collapse duplicate timestamps
                 if remove_first > 0:
                     df = df.iloc[remove_first:]
                 if remove_last > 0:
@@ -713,7 +694,6 @@ class ycsb(logger):
                         elif "Min" in metric:
                             df_total[column] = df_total[column].combine(df[column], lambda x, y: x if (x < y and pd.notna(x) and pd.notna(y)) or (pd.notna(x) and not pd.notna(y)) else y)
                         else:
-                            # compute average or sum
                             df_total = df_total.add(df, fill_value=0)
         if aggregate:
             if not metric == "current_ops_per_sec" and not "9" in metric and not "Max" in metric and not "Min" in metric:
@@ -819,12 +799,22 @@ class ycsb(logger):
         return self.loading_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
 
     def get_loading_per_connection(self):
+        """
+        Returns loading metrics for each individual connection, merged with connection
+        metadata and enriched with the scale factor.
+
+        Combines the aggregated loading DataFrame (from :meth:`get_df_loading`) with
+        connection metadata (from :meth:`get_connections_of_experiment`) on
+        ``(code, configuration, experiment_run)``, then normalises the index.
+        Rows for which no loading log was recorded (missing ``pod_count``) are dropped.
+
+        :return: DataFrame with one row per loading run, indexed as
+                 ``{code}-{configuration}-{experiment_run}``.
+        :rtype: pandas.DataFrame
+        """
         df = self.get_df_loading()
         df_connections = self.get_connections_of_experiment()
-        #print(df, df_connections)
         cols_loading = ['code', 'configuration', 'experiment_run']
-        check_loading = all(set(cols_loading).issubset(d.columns) for d in [df, df_connections])
-        #print("combine on columns " + " ".join(cols_loading))
         df = self.loading_set_datatypes(df)
         df = self.loading_aggregate_by_parallel_pods(df)
         indexname = df.index.name
@@ -844,39 +834,20 @@ class ycsb(logger):
         result = df.combine_first(df_connections)
         result.index = ['-'.join(map(str, i)) for i in result.index]
         #result.index.name = indexname
-        # no pod_count means there has not been a logged loading phase
+        # rows without pod_count have no recorded loading phase
         result = result.dropna(subset=['pod_count'])
         workload_properties = self.get_workload()
-        #print(workload_properties['defaultParameters']['SF'])
         result['SF'] = int(workload_properties['defaultParameters']['SF'])
         return result
-        #return df_ycsb
-        # workload_properties = self.get_workload()
-        # #print(workload_properties['defaultParameters']['SF'])
-        # df = self.get_connections_of_experiment()
-        # df['SF'] = int(workload_properties['defaultParameters']['SF'])
-        # #sf = 1
-        # df_load = df['time_load'].copy()
-        # df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-        # #print(df_tpx)
-        # df['Throughput [SF/h]'] = df_tpx#['time_load']
-        # df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
-        # return df
 
     def get_loading_per_pod(self):
+        """
+        Returns the raw loading DataFrame with one row per pod.
+
+        :return: DataFrame from :meth:`get_df_loading` — one row per loading pod.
+        :rtype: pandas.DataFrame
+        """
         return self.get_df_loading()
-        workload_properties = self.get_workload()
-        #print(workload_properties['defaultParameters']['SF'])
-        df = self.get_connections_of_experiment()
-        df['SF'] = int(workload_properties['defaultParameters']['SF'])
-        #sf = 1
-        df_load = df['time_load'].copy()
-        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-        #print(df_tpx)
-        df['Throughput [SF/h]'] = df_tpx#['time_load']
-        df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
-        df.index.name = 'pod'
-        return df
 
 
 

@@ -17,8 +17,6 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-# Some nice output
-#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
@@ -33,8 +31,13 @@ from .base import base, natural_sort
 
 class logger(base):
     """
-    Basis class for evaluating an experiment.
-    The transforms log files into DataFrames.
+    Evaluator base that reads benchmark log files into DataFrames.
+
+    Extends :class:`base` by implementing :meth:`end_benchmarking` and
+    :meth:`end_loading` to parse pod log files, pickle the resulting DataFrames,
+    and collect them into a single combined pickle per phase.
+    All benchmark-specific evaluators (``benchbase``, ``ycsb``, ``tpcc``,
+    ``dbmsbenchmarker``) inherit from this class.
     """
     def end_benchmarking(self, jobname):
         """
@@ -49,19 +52,11 @@ class logger(base):
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
-                #print(filename)
                 df = self.log_to_df(path+"/"+filename)
-                #print(df)
-                if df.empty:
-                    # dbmsbenchmarker never returns a non-empty dataframe
-                    #print("Error in "+filename)
-                    #print(self.workflow_errors)
-                    pass
-                else:
+                if not df.empty:
                     filename_df = path+"/"+filename+".df.pickle"
                     f = open(filename_df, "wb")
                     pickle.dump(df, f)
-                    #print("WRITTEN", filename_df, df.T)
                     f.close()
     def end_loading(self, jobname):
         """
@@ -76,10 +71,8 @@ class logger(base):
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".sensor.log"):
-                #print(filename)
                 path_and_filename = path+"/"+filename
                 df = self.log_to_df(path_and_filename)
-                #print(df)
                 if df.empty and path_and_filename in self.workflow_errors:
                     # there has been an error
                     print("Error in "+filename)
@@ -115,21 +108,11 @@ class logger(base):
                     else:
                         df_collected = df.copy()
         if not df_collected is None and not df_collected.empty:
-            #df_collected['index'] = df_collected.groupby('connection')['connection'].cumcount() + 1#df_collected.index.map(str)
-            #df_collected['connection_pod'] = df_collected['connection'] #+"-"+df_collected['index'].astype(str)
-            #df_collected['phase'] = df_collected['phase']##+"-"+df_collected['index'].astype(str)
-            #df_collected['connection_pod'] = df_collected.groupby('connection')['connection'].cumcount() + 1#.transform('count')
-            #print(df_collected)
-            #df_collected.drop('index', axis=1, inplace=True)
             df_collected.set_index('connection', inplace=True, drop=False)
-            #df_collected.set_index('connection_pod', inplace=True)
             filename_df = path+"/"+filename_result
-            #print(filename_df)
-            #print(df_collected.info())
             f = open(filename_df, "wb")
             pickle.dump(df_collected, f)
             f.close()
-            #self.cluster.logger.debug(df_collected)
     def evaluate_results(self, pod_dashboard=''):
         """
         Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
@@ -173,6 +156,32 @@ class logger(base):
         #df#.sort_values(["configuration", "pod"])
         return df
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
+        """
+        Plots one or more line (or other) charts from a DataFrame.
+
+        When ``plot_by`` is ``None``, a single chart is produced with one line
+        per value in ``column``.  When ``plot_by`` is given, a grid of sub-plots
+        is created — one per group defined by ``plot_by`` — with lines split by
+        ``column`` within each sub-plot.
+
+        :param df: DataFrame containing the data to plot.
+        :type df: pandas.DataFrame
+        :param column: Column whose unique values define individual lines.
+        :type column: str
+        :param x: Column to use as the x-axis.
+        :type x: str
+        :param y: Column to use as the y-axis.
+        :type y: str
+        :param plot_by: Optional column whose values define separate sub-plots.
+        :type plot_by: str or None
+        :param kind: Plot kind passed to ``DataFrame.plot`` (e.g. ``'line'``, ``'bar'``).
+        :type kind: str
+        :param dict_colors: Optional colour mapping for the ``kind`` keyword.
+        :type dict_colors: dict or None
+        :param figsize: Figure size as ``(width, height)`` in inches.
+        :type figsize: tuple
+        :return: Matplotlib axes object (single axes when ``plot_by`` is ``None``).
+        """
         if plot_by is None:
             fig, ax = plt.subplots()
             for key, grp in df.groupby(column):
@@ -180,23 +189,16 @@ class logger(base):
                 ax = grp.plot(ax=ax, kind=kind, x=x, y=y, title=y, label=labels, figsize=figsize)
                 ax.set_ylim(0,df[y].max())
             plt.legend(loc='best')
-            #plt.show()
             return ax
         else:
             row=0
             col=0
             groups = df.groupby(plot_by)
-            #print(len(groups))
             rows = (len(groups)+1)//2
-            #print(rows, "rows")
             fig, axes = plt.subplots(nrows=rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0],figsize[1]*rows))
-            #print(axes)
-            for key1, grp in groups:#df3.groupby(col1):
-                #print(len(axs))
+            for key1, grp in groups:
                 for key2, grp2 in grp.groupby(column):
-                    #print(grp2)
                     labels = "{} {}, {} {}".format(key1, plot_by, key2, column)
-                    #print(row,col)
                     if not dict_colors is None and len(dict_colors):
                         ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2), color=dict_colors)
                     else:
@@ -225,24 +227,16 @@ class logger(base):
         # Tree of elements of the workflow
         configs = dict()
         for index, row in df.iterrows():
-            #print(row['experiment_run'], row['configuration'])
             if row['configuration'] not in configs:
                 configs[row['configuration']] = dict()
-                #configs[row['configuration']]
             if row['experiment_run'] not in configs[row['configuration']]:
                 configs[row['configuration']][row['experiment_run']] = dict()
             if row['client'] not in configs[row['configuration']][row['experiment_run']]:
                 configs[row['configuration']][row['experiment_run']][row['client']] = dict()
                 configs[row['configuration']][row['experiment_run']][row['client']]['pods'] = dict()
                 configs[row['configuration']][row['experiment_run']][row['client']]['result_count'] = 0
-                #configs[row['configuration']][row['experiment_run']][row['client']]['run'] = dict()
             configs[row['configuration']][row['experiment_run']][row['client']]['pods'][row['pod']] = True
             configs[row['configuration']][row['experiment_run']][row['client']]['result_count'] = configs[row['configuration']][row['experiment_run']][row['client']]['result_count'] + 1
-            #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']] = dict()
-            #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']]['vusers'] = row['vusers']
-        #print(configs)
-        #pretty_configs = json.dumps(configs, indent=2)
-        #print(pretty_configs)
         # Flat version of workflow
         workflow = dict()
         for index, row in configs.items():
@@ -252,9 +246,6 @@ class logger(base):
                 for j, w in v.items():
                     l.append(len(w['pods']))
                 workflow[index].append(l)
-        #print(workflow)
-        #pretty_workflow = json.dumps(workflow, indent=2)
-        #print(pretty_workflow)
         return workflow
     def test_results(self):
         """
@@ -266,13 +257,7 @@ class logger(base):
         try:
             if self.include_benchmarking:
                 df = self.get_df_benchmarking()
-                if not df.empty:
-                    #print("Benchmarking", df)
-                    pass
                 self.workflow = self.reconstruct_workflow(df)
-                if not len(self.workflow) == 0:
-                    #print("Workflow", self.workflow)
-                    pass
             if self.include_loading:
                 df = self.get_df_loading()
                 if not df.empty:
