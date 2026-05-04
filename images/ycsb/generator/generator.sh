@@ -23,7 +23,7 @@ then
     benchmark_start_epoch=$(date -u -d "$BEXHOMA_TIME_NOW" +%s)
     echo "that is $benchmark_start_epoch"
 
-    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
+    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1
     echo "now is $current_epoch"
     current_epoch=$(date -u +%s)
     echo "that is $current_epoch"
@@ -47,7 +47,6 @@ fi
 
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-# redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$BEXHOMA_CHILD" ]
 then
@@ -68,12 +67,10 @@ fi
 ######################## Generate workflow ########################
 # for parallel benchmarking pods
 OPERATIONS_TOTAL=$(($YCSB_OPERATIONS*$BEXHOMA_NUM_PODS))
-# for loading phase
+# each loading pod receives a contiguous slice of the key space
 ROW_PART=$(($YCSB_ROWS/$BEXHOMA_NUM_PODS))
 ROW_START=$(($YCSB_ROWS/$BEXHOMA_NUM_PODS*($BEXHOMA_CHILD-1)))
-# for benchmarking phase - workload E, we again insert 5% new rows
-#ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
-# assume 100% of operations are INSERTs
+# all operations are INSERTs during loading; track the insert range for post-load benchmarks
 ROWS_TO_INSERT=$OPERATIONS_TOTAL
 ROW_PART_AFTER_LOADING=$(($ROWS_TO_INSERT/$BEXHOMA_NUM_PODS))
 ROW_START_AFTER_LOADING=$(($ROWS_TO_INSERT/$BEXHOMA_NUM_PODS*($BEXHOMA_CHILD-1)+$YCSB_ROWS))
@@ -157,7 +154,6 @@ redis.port=$BEXHOMA_PORT
 redis.passwd=$BEXHOMA_PASSWORD
 " > db.properties
 else
-#    echo "BEXHOMA_DRIVER has a different value or is empty"
     echo "db.driver=$BEXHOMA_DRIVER
 db.url=$BEXHOMA_URL
 db.user=$BEXHOMA_USER
@@ -197,37 +193,7 @@ sed -i "s/YCSB_STATUS_INTERVAL/$YCSB_STATUS_INTERVAL/" $FILENAME
 sed -i "s/YCSB_MEASUREMENT_TYPE/$YCSB_MEASUREMENT_TYPE/" $FILENAME
 sed -i "s/YCSB_INSERTORDER/$YCSB_INSERTORDER/" $FILENAME
 
-echo "# Yahoo! Cloud System Benchmark
-# Workload A: Update heavy workload
-#   Application example: Session store recording recent actions
-#                        
-#   Read/update ratio: 50/50
-#   Request distribution: zipfian
-
-recordcount=$YCSB_ROWS
-operationcount=$YCSB_OPERATIONS
-workload=site.ycsb.workloads.CoreWorkload
-
-readallfields=true
-
-readproportion=0.5
-updateproportion=0.5
-scanproportion=0
-insertproportion=0
-
-requestdistribution=zipfian
-
-insertstart=$ROW_START
-insertcount=$ROW_PART
-
-threadcount=$YCSB_THREADCOUNT
-target=$YCSB_TARGET
-" > workload_test
-
-#cat workload_test
 cat $FILENAME
-
-# echo "$BEXHOMA_CHILD" > /tmp/ycsb/BEXHOMA_CHILD
 
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS
