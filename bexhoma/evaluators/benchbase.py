@@ -14,6 +14,8 @@ import pandas as pd
 import os
 import re
 import matplotlib.pyplot as plt
+
+from bexhoma import evaluators
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
 import pickle
@@ -413,3 +415,50 @@ class benchbase(logger):
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
         return df_total
+    def get_summary_benchmark_per_connection(self):
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            #print("\n### Execution")
+            #print("\n#### Per Pod\n")
+            #warehouses = int(df['sf'].max())
+            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            #print(df_plot)
+            df_plot_filtered = pd.DataFrame()
+            for col in columns:
+                if col in df_plot.columns:
+                    df_plot_filtered[col] = df_plot.loc[:,col]
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            #print(df_plot_filtered.to_markdown(index=True, floatfmt=".2f"))
+            return df_plot_filtered
+    def get_summary_benchmark_per_phase(self):
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            #print("\n#### Aggregated Parallel\n")
+            #if self.workload['tenant_per'] == "container":
+            #    # we want to aggregate containers of DBMS running in parallel
+            #    #print(type(df_plot))
+            #    df_plot['connection'] = df_plot['experiment_run'].astype(str)+"-"+df_plot['client'].astype(str)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
+            #print(df_aggregated)
+            #print(df_aggregated.T)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
+            #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
+            columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            #print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
+            return df_aggregated_reduced
+    def get_summary_loading_per_run(self):
+        df = self.get_loading_per_run()
+        return df
