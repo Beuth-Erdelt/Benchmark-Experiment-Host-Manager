@@ -15,11 +15,9 @@ import time
 import kubernetes.client as kubernetes_client
 import kubernetes.config as kubernetes_config
 from kubernetes.client.rest import ApiException
-#from kubernetes import client, config
 import subprocess
 import traceback
 import os
-import time
 import psutil
 import logging
 import socket
@@ -35,97 +33,104 @@ from .__version__ import __version__
 
 import platform
 
+
 def to_unc(path: str) -> str:
     """
-    Convert a local Windows drive path (D:/..., D:\\..., etc.)
-    into a UNC administrative share.
-    On Linux/macOS, returns the normalized path unchanged.
-    UNC input is returned unchanged.
+    Convert a local Windows drive path to a UNC administrative share path.
 
-    Works on: Windows (all versions), Linux, macOS.
+    ``D:/foo`` and ``D:\\foo`` become ``\\\\localhost\\D$\\foo``.
+    On Linux/macOS the normalized path is returned unchanged.
+    A path that is already UNC is returned unchanged.
     """
-    # Looks like:
-    # \\localhost\D$\...
-
-    # Normalize path (handles forward/back slashes, etc.)
     p = Path(path)
 
-    # Non-Windows → return as-is (string form)
     if platform.system() != "Windows":
         return str(p)
 
-    # If path is already UNC → return unchanged
     if str(p).startswith("\\\\"):
         return str(p)
 
-    # Windows drive path? Example: D:\something
-    drive = p.drive  # e.g. "D:"
+    drive = p.drive
     if drive:
-        # Extract drive letter without ":"
         drive_letter = drive.rstrip(":").upper()
-
-        # Remaining path without drive:
         rel = p.relative_to(drive + "\\")
-
-        # Build UNC path: \\localhost\D$\rest\of\path
         unc = f"\\\\localhost\\{drive_letter}$\\{rel.as_posix()}"
-        # UNC must use backslashes
         return unc.replace("/", "\\")
 
-    # If no drive and not UNC (rare), just return normalized
     return str(p)
+
 
 class testbed():
     """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
+    Abstract base class for managing bexhoma experiments on a Kubernetes cluster.
 
-        Class to manage experiments in a Kubernetes cluster.
+    Provides Kubernetes API wrappers (pod/job/service/PVC queries and deletions),
+    cluster component lifecycle methods (dashboard, message queue, monitoring, SUT),
+    and experiment bookkeeping (code, result folder, experiment list).
 
-        TODO:
-
-        * Remove instance / volume references from IaaS
-        * Documentation for purpose and position
-        * Documentation for "copy log and init" mechanisms 
-        * Clearify if `OLD_` can be reused
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    Subclasses: :class:`kubernetes` (concrete K8s cluster), :class:`aws`
+    (K8s on AWS with EKS nodegroup scaling).
     """
-    def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
+
+    def __init__(
+        self,
+        clusterconfig='cluster.config',
+        experiments_configfolder='experiments/',
+        yamlfolder='k8s/',
+        context=None,
+        code=None,
+        instance=None,
+        volume=None,
+        docker=None,
+        script=None,
+        queryfile=None,
+    ):
+        """
+        Initialise the testbed.
+
+        :param clusterconfig: Path to the cluster configuration file.
+        :param experiments_configfolder: Folder containing experiment sub-folders.
+        :param yamlfolder: Folder containing Kubernetes manifest templates.
+        :param context: kubectl context name.  ``None`` means use the current context.
+        :param code: Unique identifier of an existing experiment to resume.
+        :param instance: Instance key in ``config['instances']`` (legacy IaaS).
+        :param volume: Volume key in ``config['volumes']``.
+        :param docker: Docker image key in ``config['dockers']``.
+        :param script: Init-script key within the chosen volume.
+        :param queryfile: Path to the DBMSBenchmarker query config file.
+        """
         self.logger = logging.getLogger('bexhoma')
         self.clusterconfig = clusterconfig
         self.appname = 'bexhoma'
         self.namespace = 'bexhoma'
+
         with open(clusterconfig) as f:
-            configfile=f.read()
-            self.config = eval(configfile)
+            config_text = f.read()
+            self.config = eval(config_text)
+
+        # Kubernetes API clients — initialised by cluster_access()
+        self.v1core = None
+        self.v1apps = None
+        self.v1batches = None
+
+        # Context metadata defaults; overwritten below if a context is found
+        self.yamlfolder = yamlfolder
+        self.contextdata = {}
+        self.host = 'localhost'
+        self.port = None
+
         if context is None:
-            # use current context
             try:
                 context = kubernetes_config.list_kube_config_contexts()[1]['name']
                 self.contextdata = self.config['credentials']['k8s']['context'][context]
                 self.host = 'localhost'
                 self.port = self.contextdata['port']
-                # k8s:
                 self.namespace = self.contextdata['namespace']
                 self.appname = self.config['credentials']['k8s']['appname']
                 self.yamlfolder = yamlfolder
-            except:
+            except Exception:
                 print("WARN: No Kubernetes context found")
+
         self.context = context
         self.experiments = []
         self.benchmark = None
@@ -135,165 +140,192 @@ class testbed():
         self.timeLoading = 0
         self.resources = {}
         self.ddl_parameters = {}
-        self.connectionmanagement = {}
-        self.connectionmanagement['numProcesses'] = None
-        self.connectionmanagement['runsPerConnection'] = None
-        self.connectionmanagement['timeout'] = None
-        self.connectionmanagement['singleConnection'] = False
+        self.connectionmanagement = {
+            'numProcesses': None,
+            'runsPerConnection': None,
+            'timeout': None,
+            'singleConnection': False,
+        }
         self.querymanagement = {}
         self.workload = {}
         self.monitoring_active = True
         self.monitor_app_active = True
         self.monitor_cluster_active = False
-        self.monitor_cluster_exists = False                                                     # True, if there are cAdvisors and a Prometheus server independent from bexhoma
-        # experiment:
+        # True if cAdvisors and Prometheus run independently of bexhoma
+        self.monitor_cluster_exists = False
+
+        # Experiment selection state — populated by set_experiment()
+        self.bChangeInstance = False
+        self.i = None
+        self.v = None
+        self.volume = None
+        self.d = None
+        self.docker = None
+        self.s = None
+        self.initscript = None
+
         self.set_experiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.set_experiment(instance, volume, docker, script)
         self.set_code(code)
         self.cluster_access()
+
     def cluster_access(self):
         """
-        provide access to an K8s cluster by initializing connection handlers.
+        Initialise Kubernetes API clients using the configured context.
+
+        Sets ``self.v1core``, ``self.v1apps``, and ``self.v1batches``.
+        Prints a warning if the cluster cannot be reached.
         """
         self.logger.debug('testbed.cluster_access({})'.format(self.context))
         try:
             kubernetes_config.load_kube_config(context=self.context)
-            self.v1core = kubernetes_client.CoreV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
-            #self.v1beta = kubernetes_client.ExtensionsV1beta1Api(api_client=config.new_client_from_config(context=self.context))
-            self.v1apps = kubernetes_client.AppsV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
-            self.v1batches = kubernetes_client.BatchV1Api(api_client=kubernetes_config.new_client_from_config(context=self.context))
-        except:
+            self.v1core = kubernetes_client.CoreV1Api(
+                api_client=kubernetes_config.new_client_from_config(context=self.context)
+            )
+            self.v1apps = kubernetes_client.AppsV1Api(
+                api_client=kubernetes_config.new_client_from_config(context=self.context)
+            )
+            self.v1batches = kubernetes_client.BatchV1Api(
+                api_client=kubernetes_config.new_client_from_config(context=self.context)
+            )
+        except Exception:
             print("WARN: Could not connect to Kubernetes")
+
     def set_code(self, code):
         """
-        Sets the unique identifier of an experiment.
-        Use case: We start a cluster (without experiment), then define an experiment, which creates an identifier.
-        This identifier will be set in the cluster as the default experiment.
+        Set the unique identifier of the current experiment.
 
-        :param code: Unique identifier of an experiment
+        If ``code`` is not ``None`` and an ``experiments.config`` file exists in
+        the result folder, the stored experiment list is loaded from it.
+
+        :param code: Unique experiment identifier string.
         """
         self.code = code
         if self.code is not None:
             resultfolder = self.config['benchmarker']['resultfolder']
-            resultfolder += '/'+str(self.code)
-            # store experiment list
-            filename = resultfolder+'/experiments.config'
+            resultfolder += '/' + str(self.code)
+            filename = resultfolder + '/experiments.config'
             if os.path.isfile(filename):
                 print("experiments found")
                 with open(filename, 'r') as f:
                     self.experiments = ast.literal_eval(f.read())
-    # the following can be overwritten by experiment
+
     def set_queryfile(self, queryfile):
         """
-        Sets the name of a query file of an experiment.
-        This is for the benchmarker component (dbmsbenchmarker).
+        Set the query config file for the DBMSBenchmarker benchmarker component.
 
-        :param code: Unique identifier of an experiment
+        :param queryfile: Path to the DBMSBenchmarker query configuration file.
         """
         self.queryfile = queryfile
+
     def set_experiments_configfolder(self, experiments_configfolder):
         """
-        Sets the configuration folder for the experiments.
-        Bexhoma expects subfolders for experiment types, for example tpch.
-        In there, bexhoma looks for query.config files (for dbmsbenchmarker) and subfolders containing the schema per dbms.
+        Set the folder that contains experiment configuration sub-folders.
 
-        :param experiments_configfolder: Relative path to an experiment folder
+        Bexhoma expects sub-folders named by experiment type (e.g. ``tpch``),
+        each containing a ``queries.config`` file and per-DBMS DDL schema folders.
+
+        :param experiments_configfolder: Relative path to the experiments folder.
         """
         self.experiments_configfolder = experiments_configfolder
+
     def set_workload(self, **kwargs):
         """
-        Sets mata data about the experiments for example name and description.
+        Set workload metadata for the experiment (e.g. ``name``, ``description``).
 
-        :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
+        :param kwargs: Arbitrary key/value pairs stored in ``self.workload``.
         """
         self.workload = kwargs
+
     def set_querymanagement(self, **kwargs):
         """
-        Sets query management data for the experiments.
-        This is for the benchmarker component (dbmsbenchmarker).
+        Set DBMSBenchmarker query-management parameters.
 
-        :param kwargs: Dict of meta data, example 'numRun' => 3
+        :param kwargs: Key/value pairs forwarded to DBMSBenchmarker (e.g. ``numRun=3``).
         """
         self.querymanagement = kwargs
-    # the following can be overwritten by experiment and configuration
+
     def set_connectionmanagement(self, **kwargs):
         """
-        Sets connection management data for the experiments.
-        This is for the benchmarker component (dbmsbenchmarker).
-        Can be overwritten by experiment and configuration.
+        Set DBMSBenchmarker connection-management parameters.
 
-        :param kwargs: Dict of meta data, example 'timout' => 60
+        Can be overridden per experiment or per DBMS configuration.
+
+        :param kwargs: Key/value pairs (e.g. ``timeout=60``, ``numProcesses=4``).
         """
         self.connectionmanagement = kwargs
+
     def set_resources(self, **kwargs):
         """
-        Sets resources for the experiments.
-        This is for the SUT component.
-        Can be overwritten by experiment and configuration.
+        Set Kubernetes resource requests/limits for the SUT component.
 
-        :param kwargs: Dict of meta data, example 'requests' => {'cpu' => 4}
+        Can be overridden per experiment or per DBMS configuration.
+
+        :param kwargs: Key/value pairs (e.g. ``requests={'cpu': 4, 'memory': '16Gi'}``).
         """
         self.resources = kwargs
+
     def set_ddl_parameters(self, **kwargs):
         """
-        Sets DDL parameters for the experiments.
-        This substitutes placeholders in DDL script.
-        Can be overwritten by experiment and configuration.
+        Set DDL template substitution parameters.
 
-        :param kwargs: Dict of meta data, example 'index' => 'btree'
+        Values replace placeholders in DDL scripts executed during loading.
+        Can be overridden per experiment or per DBMS configuration.
+
+        :param kwargs: Key/value pairs (e.g. ``index='btree'``).
         """
         self.ddl_parameters = kwargs
+
     def log_experiment(self, experiment):
         """
-        Function to log current step of experiment.
-        This is supposed to be written on disk for comprehension and repetition.
-        This should be reworked and yield a YAML format for example.
-        Moreover this should respect "new" workflows with detached parallel loaders for example.
+        Append a step record to the experiment log and persist it to disk.
 
-        :param experiment: Dict that stores parameters of current experiment stept
+        The record is enriched with cluster-level metadata and appended to
+        ``self.experiments``.  The list is written to ``experiments.config`` in
+        the benchmark result folder.
+
+        .. note::
+            This method should be updated to produce YAML output and to handle
+            detached parallel-loader workflows.
+
+        :param experiment: Dict describing the current experiment step.
         """
         self.logger.debug('testbed.log_experiment()')
-        # TODO: update to new structure
         experiment['clusterconfig'] = self.clusterconfig
         experiment['experiments_configfolder'] = self.experiments_configfolder
         experiment['yamlfolder'] = self.yamlfolder
         experiment['queryfile'] = self.queryfile
         experiment['clustertype'] = "K8s"
         self.experiments.append(experiment)
-        # store experiment list
         if self.benchmark is not None and self.benchmark.path is not None:
-            filename = self.benchmark.path+'/experiments.config'
+            filename = self.benchmark.path + '/experiments.config'
             with open(filename, 'w') as f:
                 f.write(str(self.experiments))
+
     def set_experiments(self, instances=None, volumes=None, dockers=None):
         """
-        Assigns dicts containing information about instances, volumes and dbms (docker images).
-        This typically comes from a cluster.config.
+        Store the top-level experiment catalog from the cluster configuration.
 
-        :param instances: Dict of instances (DEPRECATED, was for IaaS?)
-        :param volumes: Dict of volumes, that carry data
-        :param dockers: Dict of docker images and meta data about how to usw
+        :param instances: Dict of IaaS instance specs (legacy, was for IaaS scaling).
+        :param volumes: Dict of volume definitions carrying dataset metadata.
+        :param dockers: Dict of Docker image descriptors and usage metadata.
         """
         self.logger.debug('testbed.set_experiments()')
-        """ Read experiment details from cluster config"""
         self.instance = None
         self.instances = instances
         self.volumes = volumes
         self.dockers = dockers
+
     def set_experiment(self, instance=None, volume=None, docker=None, script=None):
         """
-        Sets a specific setting for an experiment.
-        In particular this sets instance, volume and dbms (docker image) and name of a list of DDL scrips.
-        This typically comes from a cluster.config.
+        Select a specific instance/volume/docker/script combination for the experiment.
 
-        :param instances: Dict of instances (DEPRECATED, was for IaaS?)
-        :param volumes: Dict of volumes, that carry data
-        :param dockers: Dict of docker images and meta data about how to usw
-        :param script: Name of list of DDL scripts, that are run when start_loading() is called
+        :param instance: Instance key within ``self.instances`` (legacy IaaS).
+        :param volume: Volume key within ``self.volumes``.
+        :param docker: Docker image key within ``self.dockers``.
+        :param script: Init-script key within the selected volume's ``initscripts``.
         """
         self.logger.debug('testbed.set_experiment()')
-        # Will be deprecated
-        #return self.setExperiment(instance, volume, docker, script)
         self.bChangeInstance = True
         if instance is not None:
             self.i = instance
@@ -306,70 +338,61 @@ class testbed():
         if script is not None:
             self.s = script
             self.initscript = self.volumes[self.v]['initscripts'][self.s]
+
     def wait(self, sec, silent=False):
         """
-        Function for waiting some time and inform via output about this
+        Sleep for ``sec`` seconds, optionally printing progress messages.
 
-        :param sec: Number of seconds to wait
-        :param silent: True means we do not output anything about this waiting
+        :param sec: Number of seconds to wait.
+        :param silent: If ``True``, suppress all output.
         """
-        #if not silent:
-        #    print("Waiting "+str(sec)+"s...", end="", flush=True)
-        #intervals = int(sec)
-        #time.sleep(intervals)
-        #if not silent:
-        #    print("done")
         intervals = int(sec)
-        for x in [1]:
-            if not silent:
-                print("{:30s}: ".format("- waiting {}s -".format(sec)), end="", flush=True)
-                #print('wait {}s'.format(intervals), end='\r')
-            time.sleep(intervals)
+        if not silent:
+            print("{:30s}: ".format("- waiting {}s -".format(sec)), end="", flush=True)
+        time.sleep(intervals)
         if not silent:
             print("done")
-        #if not silent:
-        #    print("")
+
     def delay(self, sec, silent=False):
         """
-        Function for waiting some time and inform via output about this.
-        Synonymous for wait()
+        Sleep for ``sec`` seconds.  Synonym for :meth:`wait`.
 
-        :param sec: Number of seconds to wait
-        :param silent: True means we do not output anything about this waiting
+        :param sec: Number of seconds to wait.
+        :param silent: If ``True``, suppress all output.
         """
         self.wait(sec, silent)
+
     def delete_deployment(self, deployment):
         """
-        Delete a deployment given by name.
+        Delete a Kubernetes Deployment by name.
 
-        :param deployment: Name of the deployment to be deleted.
+        :param deployment: Name of the Deployment to delete.
         """
         self.logger.debug('testbed.delete_deployment()')
-        self.kubectl('delete deployment '+deployment)
+        self.kubectl('delete deployment ' + deployment)
+
     def get_deployments(self, app='', component='', experiment='', configuration=''):
         """
-        Return all deployments matching a set of labels (component/ experiment/ configuration)
+        Return names of Deployments matching the given label selectors.
 
-        :param app: app the deployment belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value (e.g. ``sut``, ``monitoring``).
+        :param experiment: ``experiment`` label value (experiment code).
+        :param configuration: ``configuration`` label value (DBMS config name).
+        :return: List of Deployment names.
         """
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        #print(label)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
         self.logger.debug('testbed.get_deployments({})'.format(label))
-        try: 
-            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        try:
+            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
@@ -380,36 +403,34 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
+
     def get_pods(self, app='', component='', experiment='', configuration='', status=''):
         """
-        Return all pods matching a set of labels (component/ experiment/ configuration)
+        Return names of Pods matching the given label selectors and optional phase.
 
-        :param app: app the pod belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param status: Status of the pod
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param status: Pod phase to filter by (e.g. ``Running``, ``Succeeded``).
+        :return: List of Pod names.
         """
         self.logger.debug('testbed.get_pods()')
-        # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        if len(status)>0:
-            field_selector = 'status.phase='+status
-        else:
-            field_selector = ''
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        field_selector = 'status.phase=' + status if len(status) > 0 else ''
         self.logger.debug('get_pods label({})'.format(label))
-        try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label, field_selector=field_selector)
-            #pprint(api_response)
+        try:
+            api_response = self.v1core.list_namespaced_pod(
+                self.namespace, label_selector=label, field_selector=field_selector
+            )
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
@@ -419,32 +440,34 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.get_pods(app=app, component=component, experiment=experiment, configuration=configuration, status=status)
+            return self.get_pods(
+                app=app, component=component, experiment=experiment,
+                configuration=configuration, status=status
+            )
+
     def get_stateful_sets(self, app='', component='', experiment='', configuration=''):
         """
-        Return all stateful sets matching a set of labels (component/ experiment/ configuration)
+        Return names of StatefulSets matching the given label selectors.
 
-        :param app: app the set belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :return: List of StatefulSet names.
         """
         self.logger.debug('testbed.get_stateful_sets()')
-        # kubectl get pods --selector='job-name=bexhoma-client,app=bexhoma-client'
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        self.logger.debug('get_stateful_sets'+label)
-        try: 
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        self.logger.debug('get_stateful_sets' + label)
+        try:
             api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
-            #pprint(api_response)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
@@ -454,27 +477,29 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_stateful_sets(
+                app=app, component=component, experiment=experiment, configuration=configuration
+            )
+
     def get_nodes(self, app='', nodegroup_type='', nodegroup_name=''):
         """
-        Get all nodes of a cluster.
+        Return node objects matching the given label selectors.
 
-        :param app: Name of the pod
-        :param nodegroup_type: Type of the nodegroup, e.g. sut
-        :param nodegroup_name: Name of the nodegroup, e.g. sut_high_memory
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param nodegroup_type: ``type`` label value (e.g. ``sut``).
+        :param nodegroup_name: ``name`` label value (e.g. ``sut_high_memory``).
+        :return: List of Kubernetes node objects.
         """
         self.logger.debug('testbed.get_nodes()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(nodegroup_type)>0:
-            label += ',type='+nodegroup_type
-        if len(nodegroup_name)>0:
-            label += ',name='+nodegroup_name
+        label = 'app=' + app
+        if len(nodegroup_type) > 0:
+            label += ',type=' + nodegroup_type
+        if len(nodegroup_name) > 0:
+            label += ',name=' + nodegroup_name
         try:
             api_response = self.v1core.list_node(label_selector=label)
-            #pprint(api_response)
             if len(api_response.items) > 0:
                 return api_response.items
             else:
@@ -484,20 +509,23 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.get_nodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+            return self.get_nodes(
+                app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name
+            )
+
     def get_pod_status(self, pod, app=''):
         """
-        Return status of a pod given by name
+        Return the phase of a named Pod.
 
-        :param app: app the set belongs to
-        :param pod: Name of the pod the status of which should be returned
+        :param pod: Pod name to look up.
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :return: Phase string (e.g. ``Running``, ``Succeeded``) or ``""`` if not found.
         """
         self.logger.debug('testbed.get_pod_status()')
         try:
             if len(app) == 0:
                 app = self.appname
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app='+app)
-            #pprint(api_response)
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app=' + app)
             if len(api_response.items) > 0:
                 for item in api_response.items:
                     if item.metadata.name == pod:
@@ -511,50 +539,51 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_pod_status(pod=pod, app=app)
+
     def is_pod_ready(self, pod):
+        """
+        Return whether a Pod's ``Ready`` condition is ``True``.
+
+        :param pod: Name of the Pod to check.
+        :return: ``True`` if the Pod is ready, ``False`` otherwise.
+        """
         self.logger.debug('testbed.is_pod_ready()')
         try:
-            api_response = self.v1core.read_namespaced_pod(name=pod, namespace=self.namespace) # not available, label_selector='app='+app)
-            #pprint(api_response)
-            # Find the "Ready" condition
-            #if len(api_response.status) > 0:
+            api_response = self.v1core.read_namespaced_pod(name=pod, namespace=self.namespace)
             for condition in api_response.status.conditions:
                 if condition.type == "Ready":
-                    #print("We found", pod, "is healthy =", condition.status == "True")
                     return condition.status == "True"
-            return False  # If there's no "Ready" condition
+            return False
         except ApiException as e:
             print("Exception when calling CoreV1Api->read_namespaced_pod for is_pod_ready: %s\n" % e)
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
             return self.is_pod_ready(pod=pod)
-            #print(f"Error fetching pod status: {e}")
-            #return False
+
     def get_pods_labels(self, app='', component='', experiment='', configuration=''):
         """
-        Return all labels of pods matching a set of labels (component/ experiment/ configuration)
+        Return a dict mapping Pod name to label dict for Pods matching the given selectors.
 
-        :param app: app the set belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :return: Dict ``{pod_name: labels_dict}``.
         """
         self.logger.debug('testbed.get_pods_labels()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
         pod_labels = {}
         try:
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
-            #pprint(api_response)
             if len(api_response.items) > 0:
                 for item in api_response.items:
                     pod_labels[item.metadata.name] = item.metadata.labels
@@ -564,31 +593,33 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.get_pods_labels(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_pods_labels(
+                app=app, component=component, experiment=experiment, configuration=configuration
+            )
+
     def get_services(self, app='', component='', experiment='', configuration=''):
         """
-        Return all services matching a set of labels (component/ experiment/ configuration)
+        Return names of Services matching the given label selectors.
 
-        :param app: app the service belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :return: List of Service names.
         """
         self.logger.debug('testbed.get_services()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
         self.logger.debug('get_services({})'.format(label))
-        try: 
-            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        try:
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
@@ -597,31 +628,33 @@ class testbed():
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_services(
+                app=app, component=component, experiment=experiment, configuration=configuration
+            )
+
     def get_ports_of_service(self, app='', component='', experiment='', configuration=''):
         """
-        Return all ports of a services matching a set of labels (component/ experiment/ configuration)
+        Return the port numbers exposed by the first Service matching the given selectors.
 
-        :param app: app the service belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :return: List of port number strings from the first matched Service.
         """
         self.logger.debug('testbed.get_ports_of_service()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        self.logger.debug('get_ports_of_service'+label)
-        try: 
-            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        self.logger.debug('get_ports_of_service' + label)
+        try:
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 return [str(p.port) for p in api_response.items[0].spec.ports]
             else:
@@ -630,91 +663,98 @@ class testbed():
             print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.get_ports_of_service(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_ports_of_service(
+                app=app, component=component, experiment=experiment, configuration=configuration
+            )
+
     def get_pvc(self, app='', component='', experiment='', configuration='', pvc=''):
         """
-        Return all persistent volume claims matching a set of labels (component/ experiment/ configuration)
+        Return names of PersistentVolumeClaims matching the given selectors.
 
-        :param app: app the pvc belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param pvc: Name of the pvc
+        If ``pvc`` is provided, only the entry with that exact name is returned.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param pvc: Optional PVC name to filter by.
+        :return: List of PVC names.
         """
         self.logger.debug('testbed.get_pvc()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
         self.logger.debug('get_pvc({})'.format(label))
-        try: 
-            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        try:
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(
+                self.namespace, label_selector=label
+            )
             if len(pvc) > 0:
                 return [p.metadata.name for p in api_response.items if p.metadata.name == pvc]
             else:
                 return [p.metadata.name for p in api_response.items]
-            #if len(api_response.items) > 0:
-            #    return [p.metadata.name for p in api_response.items]
-            #else:
-            #    return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.get_pvc(app=app, component=component, experiment=experiment, configuration=configuration)
+            return self.get_pvc(
+                app=app, component=component, experiment=experiment, configuration=configuration
+            )
+
     def does_pvc_exist(self, name):
         """
-        Tests if a PVC with a given name exists.
+        Return whether a PVC with the given name exists in the namespace.
 
-        :param name: name of the PVC to test
+        :param name: Name of the PVC to check.
+        :return: ``True`` if the PVC exists, ``False`` if not found (HTTP 404).
         """
         self.logger.debug('testbed.does_pvc_exist()')
-        try: 
-            api_response = self.v1core.read_namespaced_persistent_volume_claim(namespace=self.namespace, name=name)
-            #print("does_pvc_exist", api_response)
+        try:
+            self.v1core.read_namespaced_persistent_volume_claim(
+                namespace=self.namespace, name=name
+            )
             return True
         except ApiException as e:
-            #print(e)
             if e.status == 404:
-                # not found
                 return False
             else:
                 print("Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: %s\n" % e)
                 self.cluster_access()
                 self.wait(2)
                 return self.does_pvc_exist(name=name)
+
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
-        Return all labels of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
+        Return label dicts of PVCs matching the given selectors.
 
-        :param app: app the pvc belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param pvc: Name of the PVC
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param pvc: Optional PVC name to filter by.
+        :return: List of label dicts.
         """
         self.logger.debug('testbed.get_pvc_labels()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        self.logger.debug('get_pvc'+label)
-        try: 
-            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        self.logger.debug('get_pvc' + label)
+        try:
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(
+                self.namespace, label_selector=label
+            )
             if len(api_response.items) > 0:
                 if len(pvc) > 0:
                     return [p.metadata.labels for p in api_response.items if p.metadata.name == pvc]
@@ -726,32 +766,37 @@ class testbed():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.get_pvc_labels(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+            return self.get_pvc_labels(
+                app=app, component=component, experiment=experiment,
+                configuration=configuration, pvc=pvc
+            )
+
     def get_pvc_specs(self, app='', component='', experiment='', configuration='', pvc=''):
         """
-        Return all specs of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
+        Return spec objects of PVCs matching the given selectors.
 
-        :param app: app the pvc belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param pvc: Name of the PVC
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param pvc: Optional PVC name to filter by.
+        :return: List of PVC spec objects.
         """
         self.logger.debug('testbed.get_pvc_specs()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        self.logger.debug('get_pvc'+label)
-        try: 
-            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        self.logger.debug('get_pvc' + label)
+        try:
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(
+                self.namespace, label_selector=label
+            )
             if len(api_response.items) > 0:
                 if len(pvc) > 0:
                     return [p.spec for p in api_response.items if p.metadata.name == pvc]
@@ -763,32 +808,40 @@ class testbed():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.get_pvc_specs(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+            return self.get_pvc_specs(
+                app=app, component=component, experiment=experiment,
+                configuration=configuration, pvc=pvc
+            )
+
     def get_pvc_status(self, app='', component='', experiment='', configuration='', pvc=''):
         """
-        Return status of persistent volume claims matching a set of labels (component/ experiment/ configuration) or name
+        Return status objects of PVCs matching the given selectors.
 
-        :param app: app the pvc belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param pvc: Name of the PVC
+        When ``pvc`` is given, returns the ``status`` of the matching PVC;
+        otherwise returns the ``spec`` of all matched PVCs.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param pvc: Optional PVC name to filter by (returns ``status`` for match).
+        :return: List of PVC status or spec objects.
         """
         self.logger.debug('testbed.get_pvc_status()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        self.logger.debug('get_pvc'+label)
-        try: 
-            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)#'app='+self.appname)
-            #pprint(api_response)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        self.logger.debug('get_pvc' + label)
+        try:
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(
+                self.namespace, label_selector=label
+            )
             if len(api_response.items) > 0:
                 if len(pvc) > 0:
                     return [p.status for p in api_response.items if p.metadata.name == pvc]
@@ -800,20 +853,23 @@ class testbed():
             print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            return self.get_pvc_status(app=app, component=component, experiment=experiment, configuration=configuration, pvc=pvc)
+            return self.get_pvc_status(
+                app=app, component=component, experiment=experiment,
+                configuration=configuration, pvc=pvc
+            )
+
     def get_statefulset_pods(self, stateful_set=''):
         """
-        Return all pods belonging to a given stateful set.
+        Return names of Pods belonging to a given StatefulSet.
 
-        :param stateful_set: name of the stateful set
-        :return: list of pod names
+        :param stateful_set: Name of the StatefulSet.
+        :return: List of Pod names.
         """
         self.logger.debug('testbed.get_statefulset_pods()')
         label = f"statefulset.kubernetes.io/pod-name={stateful_set}"
-        self.logger.debug('get_statefulset_pods'+label)
-        try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
-            #pprint(api_response)
+        self.logger.debug('get_statefulset_pods' + label)
+        try:
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
@@ -823,75 +879,79 @@ class testbed():
             self.cluster_access()
             self.wait(2)
             return self.get_statefulset_pods(stateful_set=stateful_set)
+
     def delete_stateful_set(self, name):
         """
-        Delete a stateful set given by name
+        Delete a StatefulSet by name.
 
-        :param name: name of the stateful set to be deleted
+        :param name: Name of the StatefulSet to delete.
         """
         self.logger.debug('testbed.delete_stateful_set({})'.format(name))
         body = kubernetes_client.V1DeleteOptions()
-        try: 
-            api_response = self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
-            #pprint(api_response)
+        try:
+            self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
         except ApiException as e:
             print("Exception when calling AppsV1Api->delete_namespaced_stateful_set: %s\n" % e)
             self.cluster_access()
             self.wait(2)
             return self.delete_stateful_set(name=name)
+
     def delete_pod(self, name):
         """
-        Delete a pod given by name
+        Delete a Pod by name.  A 404 (already gone) is silently ignored.
 
-        :param name: name of the pod to be deleted
+        :param name: Name of the Pod to delete.
         """
         self.logger.debug('testbed.delete_pod({})'.format(name))
         body = kubernetes_client.V1DeleteOptions()
-        try: 
-            api_response = self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
-            #pprint(api_response)
+        try:
+            self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
                 return self.delete_pod(name=name)
+
     def delete_pvc(self, name):
         """
-        Delete a persistent volume claim given by name
+        Delete a PersistentVolumeClaim by name.
 
-        :param name: name of the pvc to be deleted
+        :param name: Name of the PVC to delete.
+        :return: ``True`` if deleted successfully, ``False`` on error.
         """
         self.logger.debug('testbed.delete_pvc({})'.format(name))
         body = kubernetes_client.V1DeleteOptions()
-        try: 
-            api_response = self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
-            #pprint(api_response)
+        try:
+            self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
             return True
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: %s\n" % e)
             self.cluster_access()
             self.wait(2)
             return False
-            #return self.delete_pvc(name=name)
+
     def delete_service(self, name):
         """
-        Delete a service given by name
+        Delete a Service by name.
 
-        :param name: name of the service to be deleted
+        :param name: Name of the Service to delete.
         """
         self.logger.debug('testbed.delete_service({})'.format(name))
         body = kubernetes_client.V1DeleteOptions()
-        try: 
-            api_response = self.v1core.delete_namespaced_service(name, self.namespace, body=body)
-            #pprint(api_response)
+        try:
+            self.v1core.delete_namespaced_service(name, self.namespace, body=body)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
             self.cluster_access()
             self.wait(2)
             return self.delete_service(name=name)
+
     def OLD_startPortforwarding(self, service='', app='', component='sut'):
+        """
+        .. deprecated::
+            Legacy port-forwarding helper.  Not used in the current Kubernetes flow.
+        """
         self.logger.debug('testbed.startPortforwarding()')
         ports = self.get_ports_of_service(app=app, component=component)
         if len(service) == 0:
@@ -900,90 +960,96 @@ class testbed():
             service = 'bexhoma-service'
         self.getInfo(component='sut')
         if len(self.deployments) > 0:
-            forward = ['kubectl', '--context {context}'.format(context=self.context), 'port-forward', 'service/'+service] #bexhoma-service']#, '9091', '9300']#, '9400']
-            #forward = ['kubectl', 'port-forward', 'pod/'+self.activepod]#, '9091', '9300']#, '9400']
+            forward = [
+                'kubectl',
+                '--context {context}'.format(context=self.context),
+                'port-forward',
+                'service/' + service,
+            ]
             forward.extend(ports)
-            #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', '9091', '9300']#, '9400']
-            #forward = ['kubectl', 'port-forward', 'service/service-dbmsbenchmarker', portstring]
-            #forward = ['kubectl', 'port-forward', 'deployment/'+self.deployments[0], portstring]
             your_command = " ".join(forward)
-            #print(your_command)
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
+
     def OLD_getChildProcesses(self):
+        """
+        .. deprecated::
+            Legacy helper for enumerating child processes.  Not used.
+        """
         self.logger.debug('testbed.getChildProcesses()')
         current_process = psutil.Process()
         children = current_process.children(recursive=False)
-        #for child in children:
-        #    print('Child pid is {} {}'.format(child.pid, child.name))
-        #    print(child.cmdline())
+
     def OLD_stopPortforwarding(self):
+        """
+        .. deprecated::
+            Legacy helper for stopping kubectl port-forward processes.  Not used.
+        """
         self.logger.debug('testbed.stopPortforwarding()')
-        children = [p for p in psutil.process_iter(attrs=['pid', 'name']) if 'kubectl' in p.info['name']]
+        children = [
+            p for p in psutil.process_iter(attrs=['pid', 'name'])
+            if 'kubectl' in p.info['name']
+        ]
         for child in children:
             try:
-                #print('Child pid is {} {}'.format(child.pid, child.name))
-                self.logger.debug('testbed.stopPortforwarding() - Child {} {}'.format(child.pid, child.name))
+                self.logger.debug(
+                    'testbed.stopPortforwarding() - Child {} {}'.format(child.pid, child.name)
+                )
                 command = child.cmdline()
-                #print(command)
                 if len(command) > 0 and command[3] == 'port-forward':
-                    self.logger.debug('testbed.stopPortforwarding() - Found child {}'.format(child.name))
+                    self.logger.debug(
+                        'testbed.stopPortforwarding() - Found child {}'.format(child.name)
+                    )
                     child.terminate()
             except Exception as e:
                 print(e)
+
     def create_object_from_file(self, filename_source):
         """
-        Runs an kubectl command in the current context.
+        Apply a Kubernetes manifest file via ``kubectl create``.
 
-        :param command: An eksctl command
-        :return: stdout of the kubectl command
+        The manifest is copied to the experiment result folder with the
+        ``BEXHOMA_PACKAGE_VERSION`` placeholder substituted, then applied.
+
+        :param filename_source: Path to the source manifest template file.
         """
-        #filename_replaced = filename
-        # Original filename and result folder from config
         filename = Path(filename_source)
         path = Path(self.config['benchmarker']['resultfolder']) / self.code
-        # Make resultfolder relative and normalize slashes
-        #if resultfolder.is_absolute():
-        #    # On Windows, remove drive letter; on Linux, remove root '/'
-        #    safe_resultfolder = Path(*resultfolder.parts[1:])
-        #else:
-        #    safe_resultfolder = resultfolder
-        # Use forward slashes when needed
-        safe_resultfolder_str = path.as_posix()
-        # Construct new path keeping filename
         filename_replaced = path / filename.name
         if os.path.isfile(filename_source):
             with open(filename_source, "r") as template:
                 data = template.read()
                 data = data.replace("BEXHOMA_PACKAGE_VERSION", __version__)
-                #print(data)
                 with open(filename_replaced, "w") as template_filled:
                     template_filled.write(data)
-                #print(filename_replaced)
-                self.kubectl('create -f '+filename_replaced.as_posix())
-                self.logger.debug(f"Copied manifest from {filename_source} to {filename_replaced.as_posix()} and run it")
+            self.kubectl('create -f ' + filename_replaced.as_posix())
+            self.logger.debug(
+                f"Copied manifest from {filename_source} to {filename_replaced.as_posix()} and run it"
+            )
         else:
             print(f"Manifest not found: {filename_source}")
             exit()
+
     def kubectl(self, command):
         """
-        Runs an kubectl command in the current context.
+        Run a ``kubectl`` command in the configured context.
 
-        :param command: An eksctl command
-        :return: stdout of the kubectl command
+        Decodes output using UTF-8, Latin-1, or CP-1252 (in that order).
+        On an ``Unauthorized`` response the access token is refreshed and the
+        command is retried once.
+
+        :param command: kubectl subcommand string (without ``kubectl --context ...`` prefix).
+        :return: Decoded stdout string, or ``None`` on failure.
         """
         def run_with_fallback(fullcommand):
             encodings = ["utf-8", "latin1", "cp1252"]
             try:
-                # Run once, capture raw bytes
                 raw = subprocess.check_output(fullcommand, shell=True, stderr=subprocess.STDOUT)
             except subprocess.CalledProcessError as e:
-                # Command ran but failed (non-zero exit code)
                 print("Command failed!")
                 print(f"Return code: {e.returncode}")
                 print(f"Command: {e.cmd}")
                 if e.output:
                     print("Raw output (bytes):", e.output)
-                    # Try to decode output even on error
                     for enc in encodings:
                         try:
                             print(f"Decoded with {enc}:")
@@ -998,67 +1064,72 @@ class testbed():
                         return run_with_fallback(fullcommand)
                 return None
             except Exception as e:
-                # Any other unexpected error (e.g. command not found)
                 print("Unexpected error while running subprocess!")
                 print("Exception type:", type(e).__name__)
                 print("Exception message:", str(e))
                 print("Traceback:")
                 traceback.print_exc()
                 return None
-            # Try decoding with fallback encodings
             for enc in encodings:
                 try:
                     return raw.decode(enc)
                 except UnicodeDecodeError:
                     continue
-            # If nothing worked
             print("Failed to decode output with any known encoding")
             return None
-        fullcommand = 'kubectl --context {context} {command}'.format(context=self.context, command=command)
+
+        fullcommand = 'kubectl --context {context} {command}'.format(
+            context=self.context, command=command
+        )
         self.logger.debug('testbed.kubectl({})'.format(fullcommand))
-        #print(fullcommand)
-        # Try reading the output with fallback encodings
-        result = run_with_fallback(fullcommand)
-        #try:
-        #    result = subprocess.check_output(fullcommand, shell=True, encoding='utf-8')
-        #except UnicodeDecodeError:
-        #    # Fallback to Latin-1 or Windows-1252
-        #    result = subprocess.check_output(fullcommand, shell=True, encoding='latin1')
-        #print(result)
-        return result
-        #return os.popen(fullcommand).read()# os.system(fullcommand)
+        return run_with_fallback(fullcommand)
+
     def execute_command_in_pod(self, command, pod='', container='', params=''):
         """
-        Runs an shell command remotely inside a container of a pod.
+        Execute a shell command inside a container of a running Pod.
 
-        :param command: A shell command
-        :param pod: The name of the pod
-        :param container: The name of the container in the pod
-        :param params: Optional parameters, currently ignored
-        :return: stdout of the shell command
+        Retries automatically on transient ``error dialing backend`` failures.
+
+        :param command: Shell command string.
+        :param pod: Name of the target Pod.
+        :param container: Container name within the Pod (optional for single-container pods).
+        :param params: Unused; reserved for future use.
+        :return: Tuple ``("", stdout_str, stderr_str)``.
         """
         if len(pod) == 0:
-            self.logger.debug('testbed.execute_command_in_pod({}): empty pod name given for command'.format(command))
+            self.logger.debug(
+                'testbed.execute_command_in_pod({}): empty pod name given for command'.format(command)
+            )
             return "", "", ""
-            #pod = self.activepod
-        command_clean = command.replace('"','\\"')
+        command_clean = command.replace('"', '\\"')
         if len(container) > 0:
-            fullcommand = 'kubectl --context {context} exec {pod} --container={container} -- sh -c "{command}"'.format(context=self.context, pod=pod, container=container, command=command_clean)
+            fullcommand = (
+                'kubectl --context {context} exec {pod} --container={container} -- sh -c "{command}"'
+                .format(context=self.context, pod=pod, container=container, command=command_clean)
+            )
         else:
-            fullcommand = 'kubectl --context {context} exec {pod} -- sh -c "{command}"'.format(context=self.context, pod=pod, command=command_clean)
-            #fullcommand = 'kubectl exec '+self.activepod+' --container=dbms -- bash -c "'+command_clean+'"'
-        #print(fullcommand)
+            fullcommand = (
+                'kubectl --context {context} exec {pod} -- sh -c "{command}"'
+                .format(context=self.context, pod=pod, command=command_clean)
+            )
         self.logger.debug('testbed.execute_command_in_pod({})'.format(fullcommand))
-        proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(
+            fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, shell=True
+        )
         stdout, stderr = proc.communicate()
         try:
-            #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
             str_stdout = stdout.decode('utf-8')
             str_stderr = stderr.decode('utf-8')
-            if 'Error from server: error dialing backend' in str_stdout or 'Error from server: error dialing backend' in str_stderr:
+            if (
+                'Error from server: error dialing backend' in str_stdout
+                or 'Error from server: error dialing backend' in str_stderr
+            ):
                 print("Connection error found")
                 self.wait(5)
-                return self.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+                return self.execute_command_in_pod(
+                    command=command, pod=pod, container=container, params=params
+                )
             else:
                 return "", str_stdout, str_stderr
         except Exception as e:
@@ -1066,30 +1137,60 @@ class testbed():
             print(stdout, stderr)
             str_stdout = stdout.decode('utf-8')
             str_stderr = stderr.decode('utf-8')
-            if 'Error from server: error dialing backend' in str_stdout or 'Error from server: error dialing backend' in str_stderr:
+            if (
+                'Error from server: error dialing backend' in str_stdout
+                or 'Error from server: error dialing backend' in str_stderr
+            ):
                 print("Connection error found")
                 self.wait(5)
-                return self.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
+                return self.execute_command_in_pod(
+                    command=command, pod=pod, container=container, params=params
+                )
             else:
                 return "", stdout, stderr
         return "", "", ""
+
     def file_upload(self, filename_remote, filename_local, pod, container="dashboard"):
+        """
+        Upload a local file into a Pod container using ``kubectl cp``.
+
+        On Windows the local path is converted to a UNC path first.
+
+        :param filename_remote: Destination path inside the container.
+        :param filename_local: Source path on the local machine.
+        :param pod: Target Pod name.
+        :param container: Target container name.  Defaults to ``dashboard``.
+        :return: Output of the kubectl command.
+        """
         filename_local = to_unc(filename_local)
         cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
         return self.kubectl(cmd)
+
     def file_download(self, filename_remote, filename_local, pod, container="dashboard"):
+        """
+        Download a file from a Pod container to the local machine using ``kubectl cp``.
+
+        On Windows the local destination path is converted to a UNC path first.
+
+        :param filename_remote: Source path inside the container.
+        :param filename_local: Destination path on the local machine.
+        :param pod: Source Pod name.
+        :param container: Source container name.  Defaults to ``dashboard``.
+        :return: Output of the kubectl command.
+        """
         filename_local = to_unc(filename_local)
         cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
         return self.kubectl(cmd)
+
     def check_DBMS_connection(self, ip, port):
         """
-        Check if DBMS is open for connections.
-        Tries to open a socket to ip:port.
-        Returns True if this is possible.
+        Test whether a TCP connection to ``ip:port`` can be established.
 
-        :param ip: IP of the host to connect to
-        :param port: Port of the server on the host to connect to
-        :return: True, iff connecting is possible
+        Used to probe DBMS readiness before starting a benchmark.
+
+        :param ip: Hostname or IP address to connect to.
+        :param port: TCP port number.
+        :return: ``True`` if the connection succeeded, ``False`` otherwise.
         """
         found = False
         s = socket.socket()
@@ -1098,154 +1199,180 @@ class testbed():
             s.connect((ip, port))
             found = True
             print("Somebody is answering at %s:%d" % (ip, port))
-        except Exception as e:
+        except Exception:
             print("Nobody is answering yet at %s:%d" % (ip, port))
         finally:
             s.close()
         return found
+
     def OLD__getTimediff(self):
+        """
+        .. deprecated::
+            Legacy helper for measuring clock skew between local host and a remote pod.
+            Not used in the current flow.
+        """
         print("getTimediff")
-        cmd = {}
         command = 'date +"%s"'
-        fullcommand = 'kubectl exec '+cluster.activepod+' --container=dbms -- bash -c "'+command+'"'
-        #stdin, stdout, stderr = self.execute_command_in_pod(command=command, pod=self.activepod, container='dbms')
-        #gpus = stdout#os.popen(fullcommand).read()
+        fullcommand = 'kubectl exec ' + cluster.activepod + ' --container=dbms -- bash -c "' + command + '"'
         timestamp_remote = os.popen(fullcommand).read()
         timestamp_local = os.popen(command).read()
-        #print(timestamp_remote)
-        #print(timestamp_local)
-        return int(timestamp_remote)-int(timestamp_local)
+        return int(timestamp_remote) - int(timestamp_local)
+
     def OLD_continueBenchmarks(self, connection=None, query=None):
-        #experiments_configfolder='experiments/gdelt'
-        #self.getInfo(component='sut')
-        #self.deployment = self.get_deployments()[0]
+        """
+        .. deprecated::
+            Legacy method for resuming a DBMSBenchmarker run from a saved result folder.
+            Not used in the current experiment flow.
+        """
         self.connection = connection
         self.resultfolder = self.config['benchmarker']['resultfolder']
-        resultfolder = self.resultfolder+ '/'+str(self.code)
-        connectionfile = resultfolder+'/connections.config'
-        queryfile = resultfolder+'/queries.config'
+        resultfolder = self.resultfolder + '/' + str(self.code)
+        connectionfile = resultfolder + '/connections.config'
+        queryfile = resultfolder + '/queries.config'
         self.benchmark = benchmarker.benchmarker(
             fixedConnection=connection,
             fixedQuery=query,
             result_path=resultfolder,
             batch=True,
             working='connection'
-            )
+        )
         self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
-        #self.stopPortforwarding()
-        #self.startPortforwarding()
-        self.benchmark.continueBenchmarks(overwrite = False)
+        self.benchmark.continueBenchmarks(overwrite=False)
         self.code = self.benchmark.code
-        # prepare reporting
         self.copyInits()
         self.copyLog()
         self.downloadLog()
         self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
         evaluator.evaluator(self.benchmark, load=False, force=True)
-        #self.benchmark.reporter.append(benchmarker.reporter.barer(self.benchmark))
-        #self.benchmark.reporter.append(benchmarker.reporter.ploter(self.benchmark))
-        #self.benchmark.reporter.append(benchmarker.reporter.boxploter(self.benchmark))
-        #self.benchmark.reporter.append(benchmarker.reporter.tps(self.benchmark))
-        #self.benchmark.reporter.append(benchmarker.reporter.hister(self.benchmark))
-        #self.benchmark.reporter.append(benchmarker.reporter.latexer(self.benchmark, 'pagePerQuery'))
         return self.code
+
     def OLD_runReporting(self):
+        """
+        .. deprecated::
+            Legacy reporting trigger.  Not used in the current experiment flow.
+        """
         evaluator.evaluator(self.benchmark, load=False, force=True)
         self.benchmark.generateReportsAll()
+
     def OLD_copyLog(self):
+        """
+        .. deprecated::
+            Legacy helper for copying the DBMS log file inside a pod.  Not used.
+        """
         print("copyLog")
         if len(self.docker['logfile']):
-            cmd = {}
-            cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-            stdin, stdout, stderr = self.execute_command_in_pod(cmd['prepare_log'], container='dbms')
-            cmd['save_log'] = 'cp '+self.docker['logfile']+' /data/'+str(self.code)+'/'+self.connection+'.log'
-            stdin, stdout, stderr = self.execute_command_in_pod(cmd['save_log'], container='dbms')
+            cmd_prepare = 'mkdir /data/' + str(self.code)
+            self.execute_command_in_pod(cmd_prepare, container='dbms')
+            cmd_save = (
+                'cp ' + self.docker['logfile']
+                + ' /data/' + str(self.code) + '/' + self.connection + '.log'
+            )
+            self.execute_command_in_pod(cmd_save, container='dbms')
+
     def OLD_copyInits(self):
+        """
+        .. deprecated::
+            Legacy helper for copying init-script logs inside a pod.  Not used.
+        """
         print("copyInits")
-        cmd = {}
-        cmd['prepare_log'] = 'mkdir /data/'+str(self.code)
-        stdin, stdout, stderr = self.execute_command_in_pod(cmd['prepare_log'], container='dbms')
-        scriptfolder = '/data/{experiment}/{docker}/'.format(experiment=self.experiments_configfolder, docker=self.d)
-        i = 0
-        for script in self.initscript:
-            cmd['copy_init_scripts'] = 'cp {scriptname}'.format(scriptname=scriptfolder+script, namespace=self.namespace)+' /data/'+str(self.code)+'/'+self.connection+'_init_'+str(i)+'.log'
-            stdin, stdout, stderr = self.execute_command_in_pod(cmd['copy_init_scripts'], container='dbms')
-            i = i + 1
+        cmd_prepare = 'mkdir /data/' + str(self.code)
+        self.execute_command_in_pod(cmd_prepare, container='dbms')
+        scriptfolder = '/data/{experiment}/{docker}/'.format(
+            experiment=self.experiments_configfolder, docker=self.d
+        )
+        for idx, script in enumerate(self.initscript):
+            cmd_copy = (
+                'cp {src}'.format(src=scriptfolder + script)
+                + ' /data/' + str(self.code) + '/' + self.connection + '_init_' + str(idx) + '.log'
+            )
+            self.execute_command_in_pod(cmd_copy, container='dbms')
+
     def pod_description(self, pod, container=''):
-        container = ''  # never sensitive to container
+        """
+        Return the ``kubectl describe pod`` output for a given Pod.
+
+        The ``container`` parameter is accepted for API compatibility but is not
+        forwarded to kubectl (describe is not container-sensitive).
+
+        :param pod: Name of the Pod to describe.
+        :param container: Ignored; kept for API compatibility.
+        :return: kubectl output string.
+        """
+        container = ''  # describe pod is not container-sensitive
         if len(container) > 0:
-            fullcommand = 'describe pod '+pod+' --container='+container
+            fullcommand = 'describe pod ' + pod + ' --container=' + container
         else:
-            fullcommand = 'describe pod '+pod
-        #print(fullcommand)
-        output = self.kubectl(fullcommand)
-        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        #stdout, stderr = proc.communicate()
-        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-        return output
+            fullcommand = 'describe pod ' + pod
+        return self.kubectl(fullcommand)
+
     def pod_log(self, pod, container=''):
+        """
+        Return the ``kubectl logs`` output for a given Pod or container.
+
+        :param pod: Name of the Pod.
+        :param container: Container name within the Pod (optional).
+        :return: kubectl output string.
+        """
         if len(container) > 0:
-            fullcommand = 'logs '+pod+' --container='+container
+            fullcommand = 'logs ' + pod + ' --container=' + container
         else:
-            fullcommand = 'logs '+pod
-        #print(fullcommand)
-        output = self.kubectl(fullcommand)
-        #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        #stdout, stderr = proc.communicate()
-        #print(stdout.decode('utf-8'), stderr.decode('utf-8'))
-        #return "", stdout.decode('utf-8'), stderr.decode('utf-8')
-        return output
+            fullcommand = 'logs ' + pod
+        return self.kubectl(fullcommand)
+
     def get_pod_containers(self, pod):
         """
-        Return all containers and initcontainers of a pod
+        Return the names of all containers and init-containers in a Pod.
 
-        :param pod: name of the pod
-        :return: list of names of (init)containers
+        :param pod: Name of the Pod.
+        :return: List of container name strings (regular containers + init containers).
         """
-        fullcommand = 'get pods '+pod+' -o jsonpath="{.spec.containers[*].name}"'
-        #print(fullcommand)
+        fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.containers[*].name}"'
         output = self.kubectl(fullcommand)
-        #print("get_pod_containers", output)
         containers = output.split(" ")
-        #fullcommand = "get pods "+pod+" -o jsonpath='{.spec.initContainers[*].name}'"
-        fullcommand = 'get pods '+pod+' -o jsonpath="{.spec.initContainers[*].name}"'
-        #print(fullcommand)
+        fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.initContainers[*].name}"'
         output = self.kubectl(fullcommand)
-        #print("get_pod_containers", output)
-        initContainers = output.split(" ")
-        self.logger.debug("Pod {} has container {}".format(pod, containers + initContainers))
-        return containers + initContainers
+        init_containers = output.split(" ")
+        self.logger.debug("Pod {} has container {}".format(pod, containers + init_containers))
+        return containers + init_containers
+
     def OLD_downloadLog(self):
+        """
+        .. deprecated::
+            Legacy helper for downloading pod logs via ``kubectl cp``.  Not used.
+        """
         print("downloadLog")
-        self.kubectl('cp --container dbms '+self.activepod+':/data/'+str(self.code)+'/ '+self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")+"/"+str(self.code))
+        self.kubectl(
+            'cp --container dbms ' + self.activepod
+            + ':/data/' + str(self.code) + '/ '
+            + self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+            + "/" + str(self.code)
+        )
+
     def get_jobs(self, app='', component='', experiment='', configuration='', client=''):
         """
-        Return all jobs matching a set of labels (component/ experiment/ configuration)
+        Return names of Jobs matching the given label selectors.
 
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED?
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param client: ``client`` label value (legacy, may be unused).
+        :return: List of Job names, or ``None`` on a 404 error.
         """
-        #print("getJobs")
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        if len(client)>0:
-            label += ',client='+client
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        if len(client) > 0:
+            label += ',client=' + client
         self.logger.debug('getJobs({})'.format(label))
-        try: 
-            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
-            #pprint(api_response)
+        try:
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
@@ -1255,37 +1382,38 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.get_jobs(
+                    app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
+
     def get_jobs_labels(self, app='', component='', experiment='', configuration='', client=''):
         """
-        Return all jobs matching a set of labels (component/ experiment/ configuration)
+        Return a dict mapping Job name to label dict for Jobs matching the given selectors.
 
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED?
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param client: ``client`` label value (legacy).
+        :return: Dict ``{job_name: labels_dict}``, or ``[]`` if no Jobs found.
         """
-        #print("getJobs")
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        if len(client)>0:
-            label += ',client='+client
-        self.logger.debug('get_jobs_labels '+label)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        if len(client) > 0:
+            label += ',client=' + client
+        self.logger.debug('get_jobs_labels ' + label)
         job_labels = {}
         try:
-            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)#'app='+appname)
-            #pprint(api_response)
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 for item in api_response.items:
                     job_labels[item.metadata.name] = item.metadata.labels
@@ -1297,53 +1425,64 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.get_jobs_labels(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.get_jobs_labels(
+                    app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
+
     def get_job_status(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """
-        Return status of a jobs given by name or matching a set of labels (component/ experiment/ configuration)
+        Return the completion status of a Job.
 
-        :param jobname: Name of the job we want to know the status of
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED?
+        If ``jobname`` is empty, the first Job matching the given selectors is used.
+        Returns ``True`` if the completion count has been reached, ``0`` if
+        in-progress or on error, ``"no job"`` if no matching Job was found.
+
+        :param jobname: Name of the Job (optional).
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param client: ``client`` label value (legacy).
+        :return: ``True``, ``0``, or ``"no job"``.
         """
-        #print("getJobStatus")
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        if len(client)>0:
-            label += ',client='+client
-        self.logger.debug('getJobStatus '+label)
-        try: 
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        if len(client) > 0:
+            label += ',client=' + client
+        self.logger.debug('getJobStatus ' + label)
+        try:
             if len(jobname) == 0:
-                jobs = self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                jobs = self.get_jobs(
+                    app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
                 if len(jobs) == 0:
                     return "no job"
                 jobname = jobs[0]
-            api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)#, label_selector='app='+cluster.appname)
-            #pprint(api_response)
+            api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)
             self.logger.debug("api_response.spec.completions {}".format(api_response.spec.completions))
             self.logger.debug("api_response.status.succeeded {}".format(api_response.status.succeeded))
-            # returns number of completed pods (!)
-            #return api_response.status.succeeded
-            # we want status of job (!)
-            #self.logger.debug("api_response.status.succeeded = {}".format(api_response.status.succeeded))
-            #self.logger.debug("api_response.status.conditions = {}".format(api_response.status.conditions))
-            if api_response.status.succeeded is not None and api_response.spec.completions <= api_response.status.succeeded:
+            if (
+                api_response.status.succeeded is not None
+                and api_response.spec.completions <= api_response.status.succeeded
+            ):
                 self.logger.debug("Number of completions reached")
                 return True
-            if api_response.status.succeeded is not None and api_response.status.succeeded > 0 and api_response.status.conditions is not None and len(api_response.status.conditions) > 0:
+            if (
+                api_response.status.succeeded is not None
+                and api_response.status.succeeded > 0
+                and api_response.status.conditions is not None
+                and len(api_response.status.conditions) > 0
+            ):
                 self.logger.debug(api_response.status.conditions[0].type)
                 return api_response.status.conditions[0].type == 'Complete'
             else:
@@ -1353,545 +1492,541 @@ class testbed():
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.get_job_status(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.get_job_status(
+                    jobname=jobname, app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
             else:
                 return 0
+
     def delete_job(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """
-        Delete a job given by name or matching a set of labels (component/ experiment/ configuration)
+        Delete a Job by name or by matching label selectors.
 
-        :param jobname: Name of the job we want to delete
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED?
+        If ``jobname`` is empty, the first Job matching the given selectors is deleted.
+
+        :param jobname: Name of the Job to delete (optional).
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param client: ``client`` label value (legacy).
+        :return: ``True`` on success, or ``None`` if the Job was not found.
         """
         self.logger.debug('testbed.delete_job()')
-        try: 
+        try:
             if len(jobname) == 0:
-                jobs = self.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                jobs = self.get_jobs(
+                    app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
                 jobname = jobs[0]
             self.logger.debug('testbed.delete_job({})'.format(jobname))
-            api_response = self.v1batches.delete_namespaced_job(jobname, self.namespace)#, label_selector='app='+cluster.appname)
-            #pprint(api_response)
-            #pprint(api_response.status.succeeded)
+            self.v1batches.delete_namespaced_job(jobname, self.namespace)
             return True
         except ApiException as e:
             print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.delete_job(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.delete_job(
+                    jobname=jobname, app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
+
     def delete_job_pods(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """
-        Delete all pods of a job given by name or matching a set of labels (component/ experiment/ configuration)
+        Delete all Pods of a Job identified by name or by matching label selectors.
 
-        :param jobname: Name of the job we want to delete the pods of
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED?
+        If ``jobname`` is empty, all Pods matching the given selectors are deleted
+        individually by recursing with their names.
+
+        :param jobname: Pod or Job name (optional).
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param client: ``client`` label value (legacy).
         """
         self.logger.debug('testbed.delete_job_pods()')
         body = kubernetes_client.V1DeleteOptions()
-        try: 
+        try:
             if len(jobname) == 0:
-                pods = self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                pods = self.get_job_pods(
+                    app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
                 if len(pods) > 0:
                     for pod in pods:
-                        self.delete_job_pods(jobname=pod, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                        self.delete_job_pods(
+                            jobname=pod, app=app, component=component, experiment=experiment,
+                            configuration=configuration, client=client
+                        )
                     return
-                #jobname = pods[0]
             self.logger.debug('testbed.delete_job_pods({})'.format(jobname))
-            api_response = self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
-            #pprint(api_response)
+            self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
         except ApiException as e:
             print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.delete_job_pods(jobname=jobname, app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.delete_job_pods(
+                    jobname=jobname, app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
+
     def get_job_pods(self, app='', component='', experiment='', configuration='', client=''):
         """
-        Return all pods of a jobs matching a set of labels (component/ experiment/ configuration)
+        Return names of Pods belonging to Jobs matching the given label selectors.
 
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: DEPRECATED?
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param component: ``component`` label value.
+        :param experiment: ``experiment`` label value.
+        :param configuration: ``configuration`` label value.
+        :param client: ``client`` label value (legacy).
+        :return: List of Pod names, or ``None`` on a 404 error.
         """
-        #print("getJobPods")
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(component)>0:
-            label += ',component='+component
-        if len(experiment)>0:
-            label += ',experiment='+experiment
-        if len(configuration)>0:
-            label += ',configuration='+configuration
-        if len(client)>0:
-            label += ',client='+client
-        self.logger.debug('getJobPods '+label)
-        try: 
-            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)#'app='+appname)
-            #pprint(api_response)
+        label = 'app=' + app
+        if len(component) > 0:
+            label += ',component=' + component
+        if len(experiment) > 0:
+            label += ',experiment=' + experiment
+        if len(configuration) > 0:
+            label += ',configuration=' + configuration
+        if len(client) > 0:
+            label += ',client=' + client
+        self.logger.debug('getJobPods ' + label)
+        try:
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             if len(api_response.items) > 0:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
             print("Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: %s\n" % e)
-            #if int(e) == 401:
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            # try again, if not failed due to "not found"
             if not e.status == 404:
-                return self.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration, client=client)
+                return self.get_job_pods(
+                    app=app, component=component, experiment=experiment,
+                    configuration=configuration, client=client
+                )
+
     def create_dashboard_name(self, app='', component='dashboard'):
         """
-        Creates a suitable name for the dashboard component.
+        Build a canonical name string for the dashboard component.
 
-        :param app: app the dashboard belongs to
-        :param component: Component name, should be 'dashboard' typically
+        :param app: App name.  Defaults to ``self.appname``.
+        :param component: Component label.  Defaults to ``dashboard``.
+        :return: Name string in the format ``<app>_<component>``.
         """
         if len(app) == 0:
             app = self.appname
         name = "{app}_{component}".format(app=app, component=component)
-        #print(name)
         self.logger.debug('testbed.create_dashboard_name({})'.format(name))
         return name
+
     def create_messagequeue_name(self, app='', component='messagequeue'):
         """
-        Creates a suitable name for the message queue component.
+        Build a canonical name string for the message-queue component.
 
-        :param app: app the messagequeue belongs to
-        :param component: Component name, should be 'messagequeue' typically
+        :param app: App name.  Defaults to ``self.appname``.
+        :param component: Component label.  Defaults to ``messagequeue``.
+        :return: Name string in the format ``<app>_<component>``.
         """
         if len(app) == 0:
             app = self.appname
         name = "{app}_{component}".format(app=app, component=component)
-        #print(name)
         self.logger.debug('testbed.create_messagequeue({})'.format(name))
         return name
+
     def dashboard_is_running(self):
         """
-        Returns True, iff dashboard is running.
+        Return whether the dashboard Pod exists and is in the ``Running`` phase.
 
-        :return: True, iff dashboard is running
+        :return: ``True`` if the dashboard is running.
         """
-        app = self.appname
-        component = 'dashboard'
-        pod_dashboard = self.get_dashboard_pod_name(app=app, component=component)
+        pod_dashboard = self.get_dashboard_pod_name(app=self.appname, component='dashboard')
         if len(pod_dashboard) > 0:
-            # dashboard exists
             self.logger.debug('testbed.dashboard_is_running()=exists')
-            #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_dashboard)
-            #print("{:30s}: {} in pod {}".format("Dashboard", status, pod_dashboard))
             if status == "Running":
                 self.logger.debug('testbed.dashboard_is_running() is running')
                 return True
         return False
+
     def start_dashboard(self, app='', component='dashboard'):
         """
-        Starts the dashboard component and its service, if there is no such pod.
-        Manifest is expected in 'deploymenttemplate-bexhoma-dashboard.yml'.
+        Start the dashboard Deployment and its Service if not already running.
 
-        :param app: app the dashboard belongs to
-        :param component: Component name, should be 'dashboard' typically
+        Manifest template: ``deploymenttemplate-bexhoma-dashboard.yml``.
+
+        :param app: App name passed to :meth:`create_dashboard_name`.
+        :param component: Component label.  Defaults to ``dashboard``.
         """
         if len(self.get_dashboard_pod_name()):
-            # there already is a dashboard pod
             print("{:30s}: is running".format("Dashboard"))
             return
-        else:
-            print("{:30s}: is starting...".format("Dashboard"), end="", flush=True)
-            deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
-            name = self.create_dashboard_name(app, component)
-            self.logger.debug('testbed.start_dashboard({})'.format(deployment))
-            self.create_object_from_file(self.yamlfolder+deployment)
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
-            while (not self.dashboard_is_running()):
-               self.wait(10, silent=True)
-            print("done")
-            return
+        print("{:30s}: is starting...".format("Dashboard"), end="", flush=True)
+        deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
+        self.create_dashboard_name(app, component)
+        self.logger.debug('testbed.start_dashboard({})'.format(deployment))
+        self.create_object_from_file(self.yamlfolder + deployment)
+        while not self.dashboard_is_running():
+            self.wait(10, silent=True)
+        print("done")
+
     def test_if_monitoring_healthy(self):
         """
-        Tests if query_range?query=node_memory_MemTotal_bytes&start=1&end=2&step=1 at service_monitoring returns status code of 200.
-        This is for testing if Prometheus is up and running.
+        Probe Prometheus by issuing a ``query_range`` request from inside the dashboard pod.
 
-        :return: True if Prometheus returns status code 200
+        Queries ``sum(node_memory_MemTotal_bytes)`` over a 5-minute window ending
+        4 minutes ago.  Returns ``True`` if Prometheus responds with HTTP 200.
+
+        :return: ``True`` if Prometheus is reachable and healthy.
         """
         self.logger.debug('testbed.test_if_monitoring_healthy()')
-        config_K8s = self.config['credentials']['k8s']
-        if 'service_monitoring' in config_K8s['monitor']:
-            url = config_K8s['monitor']['service_monitoring'].format(namespace=self.contextdata['namespace'], service="monitoring")
+        config_k8s = self.config['credentials']['k8s']
+        if 'service_monitoring' in config_k8s['monitor']:
+            url = config_k8s['monitor']['service_monitoring'].format(
+                namespace=self.contextdata['namespace'], service="monitoring"
+            )
             query = "sum(node_memory_MemTotal_bytes)"
             safe_query = urllib.parse.quote_plus(query)
             try:
-                #code= urllib.request.urlopen(url+"query_range?query="+safe_query+"&start=1&end=2&step=1").getcode()
-                # curl -ILs www.welt.de | head -n 1|cut -d$' ' -f2
                 pod_dashboard = self.get_dashboard_pod_name()
                 self.logger.debug('Inside pod {}'.format(pod_dashboard))
                 now = datetime.utcnow()
-                start = now - timedelta(seconds=300) # 5 minutes ago
-                end = now - timedelta(seconds=240) # 4 minutes ago
-                cmd = {}
-                query_url = "{url}query_range?query={safe_query}&start={start}&end={end}&step=60".format(url=url, safe_query=safe_query, start=int(start.timestamp()), end=int(end.timestamp()))
+                start = now - timedelta(seconds=300)
+                end = now - timedelta(seconds=240)
+                query_url = (
+                    "{url}query_range?query={safe_query}&start={start}&end={end}&step=60"
+                    .format(
+                        url=url, safe_query=safe_query,
+                        start=int(start.timestamp()), end=int(end.timestamp()),
+                    )
+                )
                 self.logger.debug('Test URL {}'.format(query_url))
-                command = "curl -L --max-time 10 -is '{}' | head -n 1 | cut -d ' ' -f2".format(query_url)
-                #command = "curl -is '{}' | head -n 1|cut -d$' ' -f2".format(url+"query_range?query="+safe_query+"&start=1&end=2&step=1")
+                command = "curl -L --max-time 10 -is '{}' | head -n 1 | cut -d ' ' -f2".format(
+                    query_url
+                )
                 self.logger.debug('Command {}'.format(command))
-                #fullcommand = 'kubectl exec '+self.pod_sut+' --container=dbms -- bash -c "'+command+'"'
-                #cores = os.popen(fullcommand).read()
-                stdin, stdout, stderr = self.execute_command_in_pod(pod=pod_dashboard, command=command, container="dashboard")
-                #print("Return", stdout, stderr)
-                status = stdout#os.popen(fullcommand).read()
+                _, stdout, _ = self.execute_command_in_pod(
+                    pod=pod_dashboard, command=command, container="dashboard"
+                )
+                status = stdout
                 self.logger.debug('Status {}'.format(status))
-                if len(status)>0:
-                    #return int(status)
-                    #print(int(status))
-                    if int(status) == 200:
-                        return True
-                    else:
-                        return False
-                else:
-                    return False
-                #except Exception as e:
-                #    logging.error(e)
-                #    return 0
-                # curl -I http://www.example.org
-                #if code == 200:
-                #    #print("{:30s}: is running".format("Prometheus"))
-                #    return True
-                #else:
-                #    #print("{:30s}: is not running".format("Prometheus"))
-                #    return False
+                if len(status) > 0:
+                    return int(status) == 200
+                return False
             except Exception as e:
-                #print("{:30s}: is not running".format("Prometheus"))
                 print(e)
                 return False
+
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
-        Starts the monitoring component and its service.
-        Manifest for node exporters is expected in 'deamonsettemplate-monitoring.yml'.
+        Start cluster-level monitoring (Prometheus + node exporters) if not healthy.
 
-        :param app: app monitoring belongs to
-        :param component: Component name, should be 'monitoring' typically
+        Waits up to 100 seconds for an existing Prometheus to become healthy before
+        deploying the daemonset.  Manifest template: ``daemonsettemplate-monitoring.yml``.
+
+        :param app: App name (unused; kept for API consistency).
+        :param component: Component label.  Defaults to ``monitoring``.
         """
         self.monitor_cluster_active = True
         self.monitor_cluster_exists = self.test_if_monitoring_healthy()
         if self.monitor_cluster_exists:
             return
-        if not self.monitor_cluster_exists:
-            # give it 10 tries, one every 10 seconds
-            for tries in range(10):
-                self.wait(10, silent=True)
-                self.monitor_cluster_exists = self.test_if_monitoring_healthy()
-                if self.monitor_cluster_exists:
-                    return
+        # Give an existing Prometheus up to 100 s to become healthy before deploying
+        for _ in range(10):
+            self.wait(10, silent=True)
+            self.monitor_cluster_exists = self.test_if_monitoring_healthy()
+            if self.monitor_cluster_exists:
+                return
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
         if len(endpoints) > 0:
-            # monitoring exists
             self.logger.debug('testbed.start_monitoring_cluster()=exists')
             print("{:30s}: is running".format("Cluster monitoring"))
             return
-        else:
-            self.logger.debug('testbed.start_monitoring_cluster()=deploy')
-            deployment = 'daemonsettemplate-monitoring.yml'
-            self.create_object_from_file(self.yamlfolder+deployment)
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
-            print("{:30s}: starting...".format("Cluster monitoring"))
-            while (not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default"))):
-               self.wait(10, silent=True)
-            print("done")
-            return
+        self.logger.debug('testbed.start_monitoring_cluster()=deploy')
+        deployment = 'daemonsettemplate-monitoring.yml'
+        self.create_object_from_file(self.yamlfolder + deployment)
+        print("{:30s}: starting...".format("Cluster monitoring"))
+        while not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")):
+            self.wait(10, silent=True)
+        print("done")
+
     def messagequeue_is_running(self, component='messagequeue'):
         """
-        Returns True, iff message queue is running.
+        Return whether the message-queue Pod exists and is in the ``Running`` phase.
 
-        :return: True, iff message queue is running
+        :param component: Component label to query.  Defaults to ``messagequeue``.
+        :return: ``True`` if the message queue is running.
         """
         pods_messagequeue = self.get_pods(component=component)
         if len(pods_messagequeue) > 0:
-            # message queue exists
             pod_messagequeue = pods_messagequeue[0]
             self.logger.debug('testbed.messagequeue_is_running()=exists')
-            #pod_dashboard = pods_dashboard[0]
             status = self.get_pod_status(pod_messagequeue)
-            #print("{:30s}: {} in pod {}".format("Message Queue", status, pod_messagequeue))
             if status == "Running":
                 self.logger.debug('testbed.messagequeue_is_running() is running')
                 return True
         return False
+
     def start_messagequeue(self, app='', component='messagequeue'):
         """
-        Starts the message queue.
-        Manifest is expected in 'deploymenttemplate-bexhoma-messagequeue.yml'
+        Start the message-queue Deployment if not already running.
 
-        :param app: app the messagequeue belongs to
-        :param component: Component name, should be 'messagequeue' typically
+        Manifest template: ``deploymenttemplate-bexhoma-messagequeue.yml``.
+
+        :param app: App name passed to :meth:`create_messagequeue_name`.
+        :param component: Component label.  Defaults to ``messagequeue``.
         """
         pods_messagequeue = self.get_pods(component=component)
         if len(pods_messagequeue) > 0:
-            # message queue exists
             self.logger.debug('testbed.start_messagequeue()=exists')
             print("{:30s}: is running".format("Message Queue"))
             return
-        else:
-            print("{:30s}: is starting...".format("Message Queue"), end="", flush=True)
-            deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
-            name = self.create_messagequeue_name(app, component)
-            self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
-            self.create_object_from_file(self.yamlfolder+deployment)
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
-            while (not self.messagequeue_is_running()):
-               self.wait(10, silent=True)
-            print("done")
-            return
+        print("{:30s}: is starting...".format("Message Queue"), end="", flush=True)
+        deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
+        self.create_messagequeue_name(app, component)
+        self.logger.debug('testbed.start_messagequeue({})'.format(deployment))
+        self.create_object_from_file(self.yamlfolder + deployment)
+        while not self.messagequeue_is_running():
+            self.wait(10, silent=True)
+        print("done")
+
     def start_datadir(self):
         """
-        Starts the data directory in a shared filesystem.
-        This is where data generator pods can store generated data and where loading pods can read the data from. 
-        Manifest is expected in 'pvc-bexhoma-data.yml'
+        Provision the shared data-source PVC if it does not exist.
+
+        The PVC is used by data-generator pods for writing and by loader pods
+        for reading.  Manifest template: ``pvc-bexhoma-data.yml``.
         """
         app = self.appname
-        # get data directory
         pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
         if len(pvcs) > 0:
             print("{:30s}: is running".format("Data Directory"))
             return
-        else:
-            print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
-            deployment = 'pvc-bexhoma-data.yml'
-            self.create_object_from_file(self.yamlfolder+deployment)
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
-            while (not len(self.get_pvc(app=app, component='data-source', experiment='', configuration=''))):
-               self.wait(10, silent=True)
-            print("done")
-            return
+        print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
+        deployment = 'pvc-bexhoma-data.yml'
+        self.create_object_from_file(self.yamlfolder + deployment)
+        while not len(self.get_pvc(app=app, component='data-source', experiment='', configuration='')):
+            self.wait(10, silent=True)
+        print("done")
+
     def start_resultdir(self):
         """
-        Starts the result directory in a shared filesystem.
-        This is where benchmark execution pods can store result data and where the evaluation pods can read results from.
-        Also collected metrics will be stored there.
-        Manifest is expected in 'pvc-bexhoma-results.yml'
+        Provision the shared results PVC if it does not exist.
+
+        Benchmarker pods write results here; the evaluator pod reads from here.
+        Collected metrics are also stored here.
+        Manifest template: ``pvc-bexhoma-results.yml``.
         """
         app = self.appname
-        # get result directory
         pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
         if len(pvcs) > 0:
             print("{:30s}: is running".format("Result Directory"))
             return
-        else:
-            print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
-            deployment = 'pvc-bexhoma-results.yml'
-            self.create_object_from_file(self.yamlfolder+deployment)
-            #self.kubectl('create -f '+self.yamlfolder+deployment)
-            while (not len(self.get_pvc(app=app, component='results', experiment='', configuration=''))):
-               self.wait(10, silent=True)
-            print("done")
-            return
+        print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
+        deployment = 'pvc-bexhoma-results.yml'
+        self.create_object_from_file(self.yamlfolder + deployment)
+        while not len(self.get_pvc(app=app, component='results', experiment='', configuration='')):
+            self.wait(10, silent=True)
+        print("done")
+
     def get_dashboard_pod_name(self, app='', component='dashboard'):
         """
-        Returns the name of the dashboard pod.
+        Return the name of the dashboard Pod, or ``""`` if none exists.
 
-        :param app: app the dashboard belongs to
-        :param component: Component name, should be 'dashboard' typically
-        :return: name of the dashboard pod
+        :param app: App name (passed to :meth:`get_pods`; unused if empty).
+        :param component: Component label.  Defaults to ``dashboard``.
+        :return: Pod name string, or ``""`` if no dashboard Pod was found.
         """
         pods_dashboard = self.get_pods(component=component)
         if len(pods_dashboard) > 0:
-            # dashboard exists
             self.logger.debug('testbed.get_dashboard_pod_name()=exists')
             return pods_dashboard[0]
-        else:
-            self.logger.debug('testbed.get_dashboard_pod_name()=not exists')
-            return ""
+        self.logger.debug('testbed.get_dashboard_pod_name()=not exists')
+        return ""
+
     def restart_dashboard(self, app='', component='dashboard'):
         """
-        Stops the dashboard component and its service.
+        Force-restart the dashboard by deleting its Pod (Kubernetes will recreate it).
 
-        :param app: app the dashboard belongs to
-        :param component: Component name, should be 'dashboard' typically
+        :param app: App name (passed to :meth:`get_dashboard_pod_name`).
+        :param component: Component label.  Defaults to ``dashboard``.
         """
         self.logger.debug('testbed.restart_dashboard()')
         pod_dashboard = self.get_dashboard_pod_name(app=app, component=component)
         if len(pod_dashboard) > 0:
             self.delete_pod(pod_dashboard)
+
     def stop_dashboard(self, app='', component='dashboard'):
         """
-        Stops the dashboard component and its service.
+        Stop the dashboard Deployment and its Service.
 
-        :param app: app the dashboard belongs to
-        :param component: Component name, should be 'dashboard' typically
+        :param app: ``app`` label value.  Defaults to ``self.appname`` via sub-calls.
+        :param component: ``component`` label value.  Defaults to ``dashboard``.
         """
         self.logger.debug('testbed.stop_dashboard()')
-        deployments = self.get_deployments(app=app, component=component)
-        for deployment in deployments:
+        for deployment in self.get_deployments(app=app, component=component):
             self.delete_deployment(deployment)
-        services = self.get_services(app=app, component=component)
-        for service in services:
+        for service in self.get_services(app=app, component=component):
             self.delete_service(service)
+
     def stop_maintaining(self, experiment='', configuration=''):
         """
-        Stops all maintaining components (jobs and their pods) in the cluster.
-        Can be limited to a specific experiment or dbms configuration.
+        Stop all maintaining Jobs and their Pods in the cluster.
 
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param experiment: Filter by experiment code (optional).
+        :param configuration: Filter by DBMS configuration name (optional).
         """
-        # all jobs of configuration - benchmarker
         app = self.appname
         component = 'maintaining'
         jobs = self.get_jobs(app, component, experiment, configuration)
-        # status per job
         for job in jobs:
             success = self.get_job_status(job)
             self.logger.debug("Job and status {} {}".format(job, success))
             self.delete_job(job)
-        # all pods to these jobs - automatically stopped?
-        #self.get_job_pods(app, component, experiment, configuration)
         pods = self.get_job_pods(app, component, experiment, configuration)
-        for p in pods:
-            status = self.get_pod_status(p)
-            print(p, status)
-            #if status == "Running":
-            self.delete_pod(p)
+        for pod in pods:
+            status = self.get_pod_status(pod)
+            print(pod, status)
+            self.delete_pod(pod)
+
     def stop_loading(self, experiment='', configuration=''):
         """
-        Stops all loading components (jobs and their pods) in the cluster.
-        Can be limited to a specific experiment or dbms configuration.
+        Stop all loading Jobs and their Pods in the cluster.
 
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param experiment: Filter by experiment code (optional).
+        :param configuration: Filter by DBMS configuration name (optional).
         """
         app = self.appname
         component = 'loading'
         jobs = self.get_jobs(app, component, experiment, configuration)
-        # status per job
         for job in jobs:
             success = self.get_job_status(job)
             print(job, success)
             self.delete_job(job)
-        # all pods to these jobs - automatically stopped?
-        #self.get_job_pods(app, component, experiment, configuration)
         pods = self.get_job_pods(app, component, experiment, configuration)
-        for p in pods:
-            status = self.get_pod_status(p)
-            print(p, status)
-            #if status == "Running":
-            self.delete_pod(p)
+        for pod in pods:
+            status = self.get_pod_status(pod)
+            print(pod, status)
+            self.delete_pod(pod)
+
     def stop_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
         """
-        Stops all monitoring components (deployments and their pods) in the cluster and their service.
-        Can be limited to a specific experiment or dbms configuration.
+        Stop all monitoring Deployments and their Services in the cluster.
 
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param app: ``app`` label value.
+        :param component: Component label.  Defaults to ``monitoring``.
+        :param experiment: Filter by experiment code (optional).
+        :param configuration: Filter by DBMS configuration name (optional).
         """
-        deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
-        for deployment in deployments:
+        for deployment in self.get_deployments(
+            app=app, component=component, experiment=experiment, configuration=configuration
+        ):
             self.delete_deployment(deployment)
-        services = self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
-        for service in services:
+        for service in self.get_services(
+            app=app, component=component, experiment=experiment, configuration=configuration
+        ):
             self.delete_service(service)
+
     def stop_sut(self, app='', component='sut', experiment='', configuration=''):
         """
-        Stops all sut components (deployments and their pods, stateful sets and services) in the cluster.
-        Can be limited to a specific experiment or dbms configuration.
+        Stop all SUT Deployments, StatefulSets, and Services in the cluster.
 
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        When ``component='sut'``, worker and pool sub-components are recursively stopped.
+
+        :param app: ``app`` label value.
+        :param component: Component label.  Defaults to ``sut``.
+        :param experiment: Filter by experiment code (optional).
+        :param configuration: Filter by DBMS configuration name (optional).
         """
-        deployments = self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
-        for deployment in deployments:
+        for deployment in self.get_deployments(
+            app=app, component=component, experiment=experiment, configuration=configuration
+        ):
             self.delete_deployment(deployment)
-        services = self.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
-        for service in services:
+        for service in self.get_services(
+            app=app, component=component, experiment=experiment, configuration=configuration
+        ):
             self.delete_service(service)
-        stateful_sets = self.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
-        for stateful_set in stateful_sets:
+        for stateful_set in self.get_stateful_sets(
+            app=app, component=component, experiment=experiment, configuration=configuration
+        ):
             self.delete_stateful_set(stateful_set)
         if component == 'sut':
             self.stop_sut(app=app, component='worker', experiment=experiment, configuration=configuration)
             self.stop_sut(app=app, component='pool', experiment=experiment, configuration=configuration)
+
     def stop_benchmarker(self, experiment='', configuration=''):
         """
-        Stops all benchmarking components (jobs and their pods) in the cluster.
-        Can be limited to a specific experiment or dbms configuration.
+        Stop all benchmarker Jobs and their Pods in the cluster.
 
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param experiment: Filter by experiment code (optional).
+        :param configuration: Filter by DBMS configuration name (optional).
         """
         app = self.appname
         component = 'benchmarker'
         jobs = self.get_jobs(app, component, experiment, configuration)
-        # status per job
         for job in jobs:
             success = self.get_job_status(job)
             print(job, success)
             self.delete_job(job)
-        # all pods to these jobs
-        self.get_job_pods(app, component, experiment, configuration)
         pods = self.get_job_pods(app, component, experiment, configuration)
-        for p in pods:
-            status = self.get_pod_status(p)
-            print(p, status)
-            self.delete_pod(p)
+        for pod in pods:
+            status = self.get_pod_status(pod)
+            print(pod, status)
+            self.delete_pod(pod)
+
     def connect_dashboard(self):
         """
-        Connects to the dashboard component.
-        This means the output ports of the dashboard component are forwarded to localhost.
-        Expect results be available under port 8050 (dashboard) and 8888 (Jupyter).
+        Forward the dashboard Pod's ports (8050 and 8888) to localhost.
+
+        Port 8050 is the DBMSBenchmarker result dashboard; port 8888 is Jupyter.
         """
         print("connect_dashboard")
         pod_dashboard = self.get_dashboard_pod_name(component='dashboard')
         if len(pod_dashboard) > 0:
-            #pod_dashboard = pods_dashboard[0]
-            cmd = {}
-            fullcommand = 'port-forward pod/{pod} 8050:8050 8888:8888 --address 0.0.0.0'.format(pod=pod_dashboard)
+            fullcommand = 'port-forward pod/{pod} 8050:8050 8888:8888 --address 0.0.0.0'.format(
+                pod=pod_dashboard
+            )
             self.kubectl(fullcommand)
-            #print(fullcommand)
-            #proc = subprocess.Popen(fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            #stdout, stderr = proc.communicate()
+
     def connect_master(self, experiment='', configuration=''):
         """
-        Connects to the master node of a sut component.
-        This means the output ports of the component are forwarded to localhost.
-        Must be limited to a specific experiment or dbms configuration.
+        Forward the SUT master service port to localhost.
 
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
+        :param experiment: Filter by experiment code (optional).
+        :param configuration: Filter by DBMS configuration name (optional).
         """
         print("connect_master")
         if experiment is None:
             experiment = ''
         if configuration is None:
             configuration = ''
-        pods_master = self.get_services(component='sut', experiment=experiment, configuration=configuration)
+        pods_master = self.get_services(
+            component='sut', experiment=experiment, configuration=configuration
+        )
         if len(pods_master) > 0:
             pod_master = pods_master[0]
             print("Connect to {}".format(pod_master))
-            cmd = {}
-            fullcommand = 'port-forward svc/{pod} {port} --address 0.0.0.0'.format(pod=pod_master, port=self.port)
+            fullcommand = 'port-forward svc/{pod} {port} --address 0.0.0.0'.format(
+                pod=pod_master, port=self.port
+            )
             self.kubectl(fullcommand)
+
     def add_to_messagequeue(self, queue, data):
         """
-        Add data to (Redis) message queue.
+        Push ``data`` onto the tail of a Redis list (message queue).
 
-        :param queue: Name of the queue
-        :param data: Data to be added to queue
+        :param queue: Redis key (queue name).
+        :param data: Value to push onto the queue.
         """
         pods_messagequeue = self.get_pods(component='messagequeue')
         if len(pods_messagequeue) > 0:
@@ -1899,14 +2034,15 @@ class testbed():
         else:
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
-        redisCommand = 'redis-cli rpush {redisQueue} {data} '.format(redisQueue=queue, data=data)
-        self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
+        redis_command = 'redis-cli rpush {queue} {data} '.format(queue=queue, data=data)
+        self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+
     def set_pod_counter(self, queue, value=0):
         """
-        Add data to (Redis) message queue.
+        Set a Redis key to an integer value (used as a pod-count synchronisation counter).
 
-        :param queue: Name of the queue
-        :param data: Data to be added to queue
+        :param queue: Redis key to set.
+        :param value: Integer value to assign.  Defaults to ``0``.
         """
         pods_messagequeue = self.get_pods(component='messagequeue')
         if len(pods_messagequeue) > 0:
@@ -1914,28 +2050,27 @@ class testbed():
         else:
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
-        redisCommand = 'redis-cli set {redisQueue} {value} '.format(redisQueue=queue, value=value)
-        self.execute_command_in_pod(command=redisCommand, pod=pod_messagequeue)
+        redis_command = 'redis-cli set {queue} {value} '.format(queue=queue, value=value)
+        self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+
     def get_service_endpoints(self, service_name="bexhoma-service-monitoring-default"):
         """
-        Returns a list of all endpoints of a service as a list.
-        This is in particular interesting for headless services.
-        It is used to find all nodes in a cluster, if monitoring of cluster is active.
+        Return IP addresses of all endpoints for a named Service.
 
-        :param service_name: Name of the service
-        :return: List of IPs of endpoints
+        Particularly useful for headless Services (e.g. to enumerate monitoring nodes).
+
+        :param service_name: Name of the Service to query.
+        :return: List of endpoint IP strings, or ``[]`` on error.
         """
-        #kubectl get endpoints -o jsonpath="{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\n'}{end}"
-        #service_name = "bexhoma-service-monitoring-default"
         self.logger.debug("get_service_endpoints({})".format(service_name))
-        endpoints = self.kubectl("get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},{.subsets[*].addresses[*].ip}{'\\n'}{end}\"")
+        endpoints_raw = self.kubectl(
+            "get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},"
+            "{.subsets[*].addresses[*].ip}{'\\n'}{end}\""
+        )
         try:
-            endpoints_of_service = endpoints.split("\n")
-            for service in endpoints_of_service:
-                if service.startswith(service_name):
-                    #print(service)
-                    endpoints_string = service[service.find(",")+1:]
-                    #print(endpoints_string)
+            for service_line in endpoints_raw.split("\n"):
+                if service_line.startswith(service_name):
+                    endpoints_string = service_line[service_line.find(",") + 1:]
                     endpoints_list = endpoints_string.split(" ")
                     self.logger.debug("endpoints: {}".format(endpoints_list))
                     return endpoints_list
@@ -1944,261 +2079,282 @@ class testbed():
         return []
 
 
-
-# kubectl delete pvc,pods,services,deployments,jobs -l app=bexhoma-client
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class kubernetes(testbed):
     """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
+    Concrete Kubernetes cluster manager for bexhoma experiments.
 
-        Class for containing specific Kubernetes (K8s) methods.
-        This class can be overloaded to define specific implementations of Kubernetes, for example AWS.
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    Extends :class:`testbed` with pod/job log persistence.  Can be further
+    subclassed to support cloud-specific behaviour (see :class:`aws`).
     """
-    def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
-        """
-        Construct a new 'kubernetes' object.
 
-        :param clusterconfig: Filename of the configuration of this cluster
-        :param experiments_configfolder: Folder where to find experiment files
-        :param context: Name of the context to use - important for kubectl to choose the cluster
-        :param code: Unique identifier of the experiments
+    def __init__(
+        self,
+        clusterconfig='cluster.config',
+        experiments_configfolder='experiments/',
+        yamlfolder='k8s/',
+        context=None,
+        code=None,
+        instance=None,
+        volume=None,
+        docker=None,
+        script=None,
+        queryfile=None,
+    ):
         """
-        # list of configurations (connections, docker)
-        # per configuration: sut+service
-        # per configuration: monitoring+service
-        # per configuration: list of benchmarker
+        Construct a new :class:`kubernetes` cluster manager.
+
+        :param clusterconfig: Path to the cluster configuration file.
+        :param experiments_configfolder: Folder containing experiment sub-folders.
+        :param yamlfolder: Folder containing Kubernetes manifest templates.
+        :param context: kubectl context name.  ``None`` means use the current context.
+        :param code: Unique experiment identifier to resume.
+        :param instance: Instance key (legacy IaaS).
+        :param volume: Volume key in ``config['volumes']``.
+        :param docker: Docker image key in ``config['dockers']``.
+        :param script: Init-script key within the chosen volume.
+        :param queryfile: Path to the DBMSBenchmarker query config file.
+        """
         self.code = code
-        testbed.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
+        testbed.__init__(
+            self,
+            clusterconfig=clusterconfig,
+            experiments_configfolder=experiments_configfolder,
+            context=context,
+            yamlfolder=yamlfolder,
+            code=self.code,
+            instance=instance,
+            volume=volume,
+            docker=docker,
+            script=script,
+            queryfile=queryfile,
+        )
         self.max_sut = None
         self.experiments = []
+
     def add_experiment(self, experiment):
         """
-        Add an experiment to this cluster.
+        Append an experiment object to this cluster's experiment list.
 
-        :param experiment: Experiment object
+        :param experiment: Experiment object to add.
         """
         self.experiments.append(experiment)
+
     def store_pod_description(self, pod_name, container='', number=None):
         """
-        Store the describe result of a pod in a local file in the experiment result folder.
-        Optionally the name of a container can be given (mandatory, if pod has multiple containers).
-        If file containing pod log is already present, we do nothing (no update).
+        Fetch and persist ``kubectl describe pod`` output to the result folder.
 
-        :param pod_name: Name of the pod
-        :param container: Name of the container
+        The file is not overwritten if it already exists.  Up to 10 retries are
+        attempted in case of transient kubectl failures.
+
+        :param pod_name: Name of the Pod to describe.
+        :param container: Container name (accepted but not forwarded — describe is
+            not container-sensitive).
+        :param number: Optional index suffix appended to the filename.
         """
-        container = ''  # never sensitive to container
-        # write pod log
+        container = ''  # describe pod is not container-sensitive
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if not number is None:
+        if number is not None:
             if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.{number}.describe".format(path=resultfolder, code=self.code, pod=pod_name, container=container, number=number)
+                filename_log = "{path}/{code}/{pod}.{container}.{number}.describe".format(
+                    path=resultfolder, code=self.code, pod=pod_name,
+                    container=container, number=number
+                )
             else:
-                filename_log = "{path}/{code}/{pod}.{number}.describe".format(path=resultfolder, code=self.code, pod=pod_name, number=number)
+                filename_log = "{path}/{code}/{pod}.{number}.describe".format(
+                    path=resultfolder, code=self.code, pod=pod_name, number=number
+                )
         else:
             if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.describe".format(path=resultfolder, code=self.code, pod=pod_name, container=container)
+                filename_log = "{path}/{code}/{pod}.{container}.describe".format(
+                    path=resultfolder, code=self.code, pod=pod_name, container=container
+                )
             else:
-                filename_log = "{path}/{code}/{pod}.describe".format(path=resultfolder, code=self.code, pod=pod_name)
-        # do not overwrite
+                filename_log = "{path}/{code}/{pod}.describe".format(
+                    path=resultfolder, code=self.code, pod=pod_name
+                )
         if not os.path.isfile(filename_log):
-            # max 10 tries to receive the describe (timeout might occure)
-            tries = 1
-            while tries<10:
+            attempt = 1
+            while attempt < 10:
                 stdout = self.pod_description(pod_name, container)
                 if len(stdout) > 0:
-                    f = open(filename_log, "w")
-                    f.write(stdout)
-                    f.close()
+                    with open(filename_log, "w") as f:
+                        f.write(stdout)
                     return
                 else:
-                    tries = tries + 1
+                    attempt += 1
+
     def pod_description_exists(self, pod_name, container=''):
         """
-        Returns, if describe result of pod already exists on local disk.
+        Return whether a cached ``describe`` file exists in the result folder.
 
-        :param pod_name: Name of the pod
-        :param container: Name of the container
-        :return: stdout of the eksctl command
-        :return: does log of pod exist?
+        :param pod_name: Name of the Pod.
+        :param container: Container name (not used in path construction).
+        :return: ``True`` if the ``.describe`` file exists on disk.
         """
-        container = ''  # never sensitive to container
-        # look for pod log
+        container = ''  # describe pod is not container-sensitive
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         if len(container) > 0:
-            filename_log = "{path}/{code}/{pod}.{container}.describe".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+            filename_log = "{path}/{code}/{pod}.{container}.describe".format(
+                path=resultfolder, code=self.code, pod=pod_name, container=container
+            )
         else:
-            filename_log = "{path}/{code}/{pod}.describe".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+            filename_log = "{path}/{code}/{pod}.describe".format(
+                path=resultfolder, code=self.code, pod=pod_name
+            )
         return os.path.isfile(filename_log)
+
     def store_pod_log(self, pod_name, container='', number=None):
         """
-        Store the log of a pod in a local file in the experiment result folder.
-        Optionally the name of a container can be given (mandatory, if pod has multiple containers).
-        If file containing pod log is already present, we do nothing (no update).
+        Fetch and persist ``kubectl logs`` output to the result folder.
 
-        :param pod_name: Name of the pod
-        :param container: Name of the container
+        The file is not overwritten if it already exists.  Up to 10 retries are
+        attempted in case of transient kubectl failures.
+
+        :param pod_name: Name of the Pod.
+        :param container: Container name within the Pod (optional).
+        :param number: Optional index suffix appended to the filename.
         """
-        # write pod log
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if not number is None:
+        if number is not None:
             if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.{number}.log".format(path=resultfolder, code=self.code, pod=pod_name, container=container, number=number)
+                filename_log = "{path}/{code}/{pod}.{container}.{number}.log".format(
+                    path=resultfolder, code=self.code, pod=pod_name,
+                    container=container, number=number
+                )
             else:
-                filename_log = "{path}/{code}/{pod}.{number}.log".format(path=resultfolder, code=self.code, pod=pod_name, number=number)
+                filename_log = "{path}/{code}/{pod}.{number}.log".format(
+                    path=resultfolder, code=self.code, pod=pod_name, number=number
+                )
         else:
             if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.log".format(path=resultfolder, code=self.code, pod=pod_name, container=container)
+                filename_log = "{path}/{code}/{pod}.{container}.log".format(
+                    path=resultfolder, code=self.code, pod=pod_name, container=container
+                )
             else:
-                filename_log = "{path}/{code}/{pod}.log".format(path=resultfolder, code=self.code, pod=pod_name)
-        # do not overwrite
+                filename_log = "{path}/{code}/{pod}.log".format(
+                    path=resultfolder, code=self.code, pod=pod_name
+                )
         if not os.path.isfile(filename_log):
-            # max 10 tries to receive the log (timeout might occure)
-            tries = 1
-            while tries<10:
-                self.logger.debug("{:30s}: (try #{}) stores pod log into {}".format("Bexhoma", tries, filename_log))
+            attempt = 1
+            while attempt < 10:
+                self.logger.debug("{:30s}: (try #{}) stores pod log into {}".format(
+                    "Bexhoma", attempt, filename_log
+                ))
                 stdout = self.pod_log(pod_name, container)
                 if stdout is None:
                     print("{:30s}: no data error for log {}".format("Bexhoma", filename_log))
-                    tries = tries + 1
+                    attempt += 1
                 elif len(stdout) > 0:
-                    f = open(filename_log, "w", encoding='utf-8')
-                    f.write(stdout)
-                    f.close()
+                    with open(filename_log, "w", encoding='utf-8') as f:
+                        f.write(stdout)
                     return
                 else:
-                    tries = tries + 1
+                    attempt += 1
+
     def pod_log_exists(self, pod_name, container=''):
         """
-        Returns, if log of pod already exists on local disk.
+        Return whether a cached log file exists in the result folder.
 
-        :param pod_name: Name of the pod
-        :param container: Name of the container
-        :return: stdout of the eksctl command
-        :return: does log of pod exist?
+        :param pod_name: Name of the Pod.
+        :param container: Container name within the Pod (optional).
+        :return: ``True`` if the ``.log`` file exists on disk.
         """
-        # look for pod log
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         if len(container) > 0:
-            filename_log = "{path}/{code}/{pod}.{container}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name, container=container)
+            filename_log = "{path}/{code}/{pod}.{container}.log".format(
+                path=resultfolder, code=self.code, pod=pod_name, container=container
+            )
         else:
-            filename_log = "{path}/{code}/{pod}.log".format(path=self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", ""), code=self.code, pod=pod_name)
+            filename_log = "{path}/{code}/{pod}.log".format(
+                path=resultfolder, code=self.code, pod=pod_name
+            )
         return os.path.isfile(filename_log)
-
-
-
-
 
 
 class aws(kubernetes):
     """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
+    AWS EKS extension of the Kubernetes cluster manager.
 
-        Class for containing Kubernetes methods specific to AWS.
-        This adds handling of nodegroups for elasticity.
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    Adds ``eksctl``-based nodegroup scaling and AWS-specific node label handling.
     """
-    def __init__(self, clusterconfig='cluster.config', experiments_configfolder='experiments/', yamlfolder='k8s/', context=None, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
-        """
-        Construct a new 'aws' kubernetes object.
 
-        :param clusterconfig: Filename of the configuration of this cluster
-        :param experiments_configfolder: Folder where to find experiment files
-        :param context: Name of the context to use - important for kubectl to choose the cluster
-        :param code: Unique identifier of the experiments
+    def __init__(
+        self,
+        clusterconfig='cluster.config',
+        experiments_configfolder='experiments/',
+        yamlfolder='k8s/',
+        context=None,
+        code=None,
+        instance=None,
+        volume=None,
+        docker=None,
+        script=None,
+        queryfile=None,
+    ):
+        """
+        Construct a new :class:`aws` cluster manager.
+
+        :param clusterconfig: Path to the cluster configuration file.
+        :param experiments_configfolder: Folder containing experiment sub-folders.
+        :param yamlfolder: Folder containing Kubernetes manifest templates.
+        :param context: kubectl context name (also used as the EKS cluster name).
+        :param code: Unique experiment identifier to resume.
+        :param instance: Instance key (legacy IaaS).
+        :param volume: Volume key in ``config['volumes']``.
+        :param docker: Docker image key in ``config['dockers']``.
+        :param script: Init-script key within the chosen volume.
+        :param queryfile: Path to the DBMSBenchmarker query config file.
         """
         self.code = code
-        kubernetes.__init__(self, clusterconfig=clusterconfig, experiments_configfolder=experiments_configfolder, context=context, yamlfolder=yamlfolder, code=self.code, instance=instance, volume=volume, docker=docker, script=script, queryfile=queryfile)
-        self.cluster = self.context#data['cluster']
+        kubernetes.__init__(
+            self,
+            clusterconfig=clusterconfig,
+            experiments_configfolder=experiments_configfolder,
+            context=context,
+            yamlfolder=yamlfolder,
+            code=self.code,
+            instance=instance,
+            volume=volume,
+            docker=docker,
+            script=script,
+            queryfile=queryfile,
+        )
+        # context doubles as the EKS cluster name for eksctl commands
+        self.cluster = self.context
+
     def eksctl(self, command):
         """
-        Runs an eksctl command.
+        Run an ``eksctl`` command and return its stdout.
 
-        :param command: An eksctl command
-        :return: stdout of the eksctl command
+        :param command: eksctl subcommand string (without the ``eksctl`` prefix).
+        :return: stdout of the eksctl command.
         """
-        #fullcommand = 'eksctl --context {context} {command}'.format(context=self.context, command=command)
         fullcommand = 'eksctl {command}'.format(command=command)
         self.logger.debug('aws.eksctl({})'.format(fullcommand))
-        return os.popen(fullcommand).read()# os.system(fullcommand)
+        return os.popen(fullcommand).read()
+
     def get_nodes(self, app='', nodegroup_type='', nodegroup_name=''):
         """
-        Get all nodes of a cluster.
-        This overwrites the cluster method with the AWS specific nodegroup-name label. 
+        Return node objects matching the given selectors.
 
-        :param app: Name of the pod
-        :param nodegroup_type: Type of the nodegroup, e.g. sut
-        :param nodegroup_name: Name of the nodegroup, e.g. sut_high_memory
+        Overrides :meth:`testbed.get_nodes` to use the EKS-specific
+        ``alpha.eksctl.io/nodegroup-name`` label instead of the generic ``name`` label.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :param nodegroup_type: ``type`` label value.
+        :param nodegroup_name: EKS nodegroup name (``alpha.eksctl.io/nodegroup-name``).
+        :return: List of Kubernetes node objects.
         """
         self.logger.debug('aws.get_nodes()')
-        label = ''
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
-        label += 'app='+app
-        if len(nodegroup_type)>0:
-            label += ',type='+nodegroup_type
-        if len(nodegroup_name)>0:
-            label += ',alpha.eksctl.io/nodegroup-name='+nodegroup_name
+        label = 'app=' + app
+        if len(nodegroup_type) > 0:
+            label += ',type=' + nodegroup_type
+        if len(nodegroup_name) > 0:
+            label += ',alpha.eksctl.io/nodegroup-name=' + nodegroup_name
         try:
             api_response = self.v1core.list_node(label_selector=label)
-            #pprint(api_response)
             if len(api_response.items) > 0:
                 return api_response.items
             else:
@@ -2208,44 +2364,103 @@ class aws(kubernetes):
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            return self.get_nodes(app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+            return self.get_nodes(
+                app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name
+            )
+
     def scale_nodegroups(self, nodegroup_names, size=None):
-        print("aws.scale_nodegroups({nodegroup_names}, {size})".format(nodegroup_names=nodegroup_names, size=size))
+        """
+        Scale multiple EKS nodegroups.
+
+        :param nodegroup_names: Dict mapping nodegroup name to default target size.
+        :param size: If given, overrides the default size for every nodegroup.
+        """
+        print("aws.scale_nodegroups({nodegroup_names}, {size})".format(
+            nodegroup_names=nodegroup_names, size=size
+        ))
         for nodegroup_name, size_default in nodegroup_names.items():
             if size is not None:
                 size_default = size
             self.scale_nodegroup(nodegroup_name, size_default)
+
     def scale_nodegroup(self, nodegroup_name, size):
-        print("aws.scale_nodegroup({nodegroup_name}, {size})".format(nodegroup_name=nodegroup_name, size=size))
+        """
+        Scale a single EKS nodegroup to the requested number of nodes.
+
+        No-ops if the nodegroup is already at the target size.
+
+        :param nodegroup_name: EKS nodegroup name.
+        :param size: Desired number of nodes.
+        :return: eksctl output, or ``None`` if already at the target size.
+        """
+        print("aws.scale_nodegroup({nodegroup_name}, {size})".format(
+            nodegroup_name=nodegroup_name, size=size
+        ))
         if not self.check_nodegroup(nodegroup_name=nodegroup_name, num_nodes_aux_planned=size):
-            #fullcommand = "eksctl scale nodegroup --cluster=Test-2 --nodes=0 --nodes-min=0 --name=Kleine_Gruppe"
-            command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(cluster=self.cluster, size=size, nodegroup_name=nodegroup_name)
+            command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(
+                cluster=self.cluster, size=size, nodegroup_name=nodegroup_name
+            )
             return self.eksctl(command)
-        #if not self.check_nodegroup(nodegroup_type, num_nodes_aux_planned):
-        #    command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup}".format(cluster=self.cluster, size=size, nodegroup=nodegroup)
-        #    return self.eksctl(command)
-        #else:
-        #    return ""
+
     def get_nodegroup_size(self, nodegroup_type='', nodegroup_name=''):
-        resp = self.get_nodes(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
-        num_nodes_aux_actual = len(resp)
-        self.logger.debug('aws.get_nodegroup_size({},{}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_actual))
-        return num_nodes_aux_actual
+        """
+        Return the current number of ready nodes in an EKS nodegroup.
+
+        :param nodegroup_type: ``type`` label value.
+        :param nodegroup_name: EKS nodegroup name.
+        :return: Number of nodes currently in the nodegroup.
+        """
+        nodes = self.get_nodes(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
+        num_nodes = len(nodes)
+        self.logger.debug('aws.get_nodegroup_size({},{}) = {}'.format(
+            nodegroup_type, nodegroup_name, num_nodes
+        ))
+        return num_nodes
+
     def check_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
-        num_nodes_aux_actual = self.get_nodegroup_size(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
-        self.logger.debug('aws.check_nodegroup({}, {}, {}) = {}'.format(nodegroup_type, nodegroup_name, num_nodes_aux_planned, num_nodes_aux_actual))
-        return num_nodes_aux_planned == num_nodes_aux_actual
+        """
+        Return whether a nodegroup is at the expected size.
+
+        :param nodegroup_type: ``type`` label value.
+        :param nodegroup_name: EKS nodegroup name.
+        :param num_nodes_aux_planned: Expected node count.
+        :return: ``True`` if actual count equals ``num_nodes_aux_planned``.
+        """
+        num_nodes_actual = self.get_nodegroup_size(
+            nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name
+        )
+        self.logger.debug('aws.check_nodegroup({}, {}, {}) = {}'.format(
+            nodegroup_type, nodegroup_name, num_nodes_aux_planned, num_nodes_actual
+        ))
+        return num_nodes_aux_planned == num_nodes_actual
+
     def wait_for_nodegroups(self, nodegroup_names, size=None):
+        """
+        Block until all listed EKS nodegroups reach their target sizes.
+
+        :param nodegroup_names: Dict mapping nodegroup name to default target size.
+        :param size: If given, overrides the default size for every nodegroup.
+        """
         print("aws.wait_for_nodegroups({nodegroup_names})".format(nodegroup_names=nodegroup_names))
         for nodegroup_name, size_default in nodegroup_names.items():
             if size is not None:
                 size_default = size
             self.wait_for_nodegroup(nodegroup_name=nodegroup_name, num_nodes_aux_planned=size_default)
+
     def wait_for_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
-        while (not self.check_nodegroup(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name, num_nodes_aux_planned=num_nodes_aux_planned)):
-           self.wait(30)
+        """
+        Block until a single EKS nodegroup reaches the target size, polling every 30 s.
+
+        :param nodegroup_type: ``type`` label value.
+        :param nodegroup_name: EKS nodegroup name.
+        :param num_nodes_aux_planned: Desired node count.
+        :return: ``True`` once the nodegroup is at the target size.
+        """
+        while not self.check_nodegroup(
+            nodegroup_type=nodegroup_type,
+            nodegroup_name=nodegroup_name,
+            num_nodes_aux_planned=num_nodes_aux_planned,
+        ):
+            self.wait(30)
         print("Nodegroup {},{} ready".format(nodegroup_type, nodegroup_name))
         return True
-
-
-
