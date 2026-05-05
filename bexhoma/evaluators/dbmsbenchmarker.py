@@ -80,6 +80,7 @@ class dbmsbenchmarker(logger):
         self.evaluation = None
         self.path_base = path
         super().__init__(code, path, True, True)
+        print(self.path_base)
         self.get_inspector()
     def get_inspector(self):
         """
@@ -89,9 +90,13 @@ class dbmsbenchmarker(logger):
         loads the experiment identified by ``self.code``, and stores the result
         in ``self.evaluation``.
         """
-        self.evaluation = inspector.inspector(self.path_base)
-        self.evaluation.load_experiment(code=self.code, silent=True)
-        self.evaluation.code = self.code
+        try:
+            self.evaluation = inspector.inspector(self.path_base)
+            self.evaluation.load_experiment(code=self.code, silent=True)
+            self.evaluation.code = self.code
+        except Exception as e:
+            # it fails silently - experiment not completed
+            pass
     def get_df_loading(self):
         """
         Returns the DataFrame that containts all information about the loading phase.

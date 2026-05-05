@@ -54,7 +54,7 @@ def manage():
     if args.mode == 'stop':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         if args.experiment is None:
-            experiment = experiments.default(cluster=cluster, code=cluster.code)
+            experiment = experiments.base(cluster=cluster, code=cluster.code)
             if connection is None:
                 connection = ''
             cluster.stop_sut(configuration=connection)
@@ -65,7 +65,7 @@ def manage():
             #cluster.kubectl('delete all -l experiment='+cluster.code)
             # kubectl delete all -l experiment=1742207308
         else:
-            experiment = experiments.default(cluster=cluster, code=args.experiment)
+            experiment = experiments.base(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
             experiment.stop_maintaining()
@@ -89,7 +89,7 @@ def manage():
                     case 'benchbase':
                         experiment = experiments.benchbase(cluster=cluster, code=code)
                     case _:
-                        experiment = experiments.default(cluster=cluster, code=code)
+                        experiment = experiments.base(cluster=cluster, code=code)
                 # regenerate results - only for debugging
                 #experiment.evaluate_results()
                 #experiment.store_workflow_results()

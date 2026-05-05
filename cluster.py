@@ -47,7 +47,7 @@ if __name__ == '__main__':
     if args.mode == 'stop':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)
         if args.experiment is None:
-            experiment = experiments.default(cluster=cluster, code=cluster.code)
+            experiment = experiments.base(cluster=cluster, code=cluster.code)
             if connection is None:
                 connection = ''
             cluster.stop_sut(configuration=connection)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
             cluster.stop_benchmarker(configuration=connection)
             cluster.kubectl('delete all -l experiment='+cluster.code)
         else:
-            experiment = experiments.default(cluster=cluster, code=args.experiment)
+            experiment = experiments.base(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
             experiment.stop_maintaining()
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                     case 'benchbase':
                         experiment = experiments.benchbase(cluster=cluster, code=code)
                     case _:
-                        experiment = experiments.default(cluster=cluster, code=code)
+                        experiment = experiments.base(cluster=cluster, code=code)
                 experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.kubernetes(clusterconfig, context=args.context)

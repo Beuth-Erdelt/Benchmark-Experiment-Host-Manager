@@ -23,10 +23,9 @@ FROM eclipse-temurin:11
 #RUN apk add --no-cache redis
 #COPY ./tpc-ds-tool.zip /tmp/
 #RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-RUN apt-get update
-RUN apt-get install -y make
-RUN apt-get install -y gcc
-RUN apt-get install -y build-essential
+RUN apt-get update && \
+    apt-get install -y make gcc build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
 
