@@ -2,7 +2,7 @@
 # Dockerfile for Bexhoma - Generator TPC-DS
 ######################################################################################
 #
-# This Dockerfile builds an image for a Bexhoma component "generator".
+# This Dockerfile builds an image for a Bexhoma generator for TPC-DS data.
 #
 # Base Image: eclipse-temurin:11
 #
@@ -10,57 +10,88 @@
 # Email: patrick.erdelt@bht-berlin.de
 # Date: 2025-05-18
 # Version: 1.0
-# Description: This container runs a driver for a benchmark. Data is generated and loaded.
-# The configuration is given by environment variables.
-# A redis queue is consulted for further details.
-# Redis client is installed.
-# TPC-DS generator is copied from external folder.
+# Description: This container generates TPC-DS .dat files (pipe-delimited) using the
+# pre-compiled dsdgen binary. In multi-pod mode each pod generates its share
+# (dsdgen -parallel <N> -child <i>). customer.dat is converted from ISO-8859-1 to
+# UTF-8 when TRANSFORM_RAW_DATA=1. The child index is obtained from a Redis queue.
+# redis-cli is built from source.
 ######################################################################################
 FROM eclipse-temurin:11
 
-# FROM alpine:3.16.2
-#RUN apk add --no-cache bash
-#RUN apk add --no-cache redis
-#COPY ./tpc-ds-tool.zip /tmp/
-#RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-RUN apt-get update && \
-    apt-get install -y make gcc build-essential && \
-    rm -rf /var/lib/apt/lists/*
+######################################################################################
+# Install build dependencies
+######################################################################################
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        make \
+        gcc \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
+######################################################################################
+# Build Redis CLI from source
+######################################################################################
+RUN wget -q http://download.redis.io/redis-stable.tar.gz \
+    && tar xvzf redis-stable.tar.gz \
+    && cd redis-stable \
+    && make redis-cli \
+    && cp src/redis-cli /usr/local/bin/ \
+    && chmod 755 /usr/local/bin/redis-cli \
+    && cd / \
+    && rm -rf redis-stable redis-stable.tar.gz
 
+######################################################################################
+# Copy TPC-DS generator files
+######################################################################################
 COPY ./tpc_eula.txt ./tpc_eula.txt
 COPY ./tpcds.idx /tmp/tpcds.idx
 COPY ./dsdgen /tmp/dsdgen
-RUN ["chmod", "+x", "/tmp/dsdgen"]
+RUN chmod +x /tmp/dsdgen
 
 COPY ./generator.sh /tmp/generator.sh
-RUN ["chmod", "+x", "/tmp/generator.sh"]
+RUN chmod +x /tmp/generator.sh
 
+######################################################################################
+# Environment variables — runtime configuration
+######################################################################################
+# Scaling and parallelism
 ENV SF=1
 ENV BEXHOMA_NUM_PODS=4
 ENV BEXHOMA_CHILD=1
 ENV BEXHOMA_RNGSEED=123
-ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
-ENV BEXHOMA_HOST="www.example.com"
-ENV BEXHOMA_PORT 3306
-ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
-ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
-ENV BEXHOMA_CONNECTION="mysql"
-ENV BEXHOMA_EXPERIMENT="12345"
-ENV BEXHOMA_EXPERIMENT_RUN=1
-ENV BEXHOMA_USER root
-ENV BEXHOMA_PASSWORD root
-ENV BEXHOMA_DATABASE demo
+
+# Data storage
 ENV STORE_RAW_DATA=0
 ENV STORE_RAW_DATA_RECREATE=0
 ENV TRANSFORM_RAW_DATA=1
-ENV BEXHOMA_SYNCH_GENERATE 0
 
+# Target DBMS connection (declared for compatibility; not used during generation)
+ENV BEXHOMA_URL=jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_HOST=www.example.com
+ENV BEXHOMA_PORT=3306
+ENV BEXHOMA_JAR=mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER=com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_USER=root
+ENV BEXHOMA_PASSWORD=root
+ENV BEXHOMA_DATABASE=demo
+
+# Bexhoma experiment identity
+ENV BEXHOMA_CONNECTION=mysql
+ENV BEXHOMA_EXPERIMENT=12345
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_CONFIGURATION=""
+ENV BEXHOMA_CLIENT=1
+
+# Pod synchronisation
+ENV BEXHOMA_SYNCH_GENERATE=0
+
+######################################################################################
+# Working directory and data folder
+######################################################################################
 WORKDIR /tmp
 RUN mkdir -p /tmp/tpcds
 
+######################################################################################
+# Entrypoint
+######################################################################################
 CMD ["/bin/bash", "-c", "/tmp/generator.sh"]
-
-#CMD ["/bin/bash", "-c", "/tmp/dsdgen -dir /tmp/ -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -verbose -RNGSEED $RNGSEED; while true; do sleep 2; done"]
-#CMD ["/bin/bash", "-c", "while true; do sleep 2; done"]
