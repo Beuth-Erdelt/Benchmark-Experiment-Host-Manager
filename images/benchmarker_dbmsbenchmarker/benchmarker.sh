@@ -18,10 +18,8 @@ echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 # usage: docker run --rm --network host -e DBMSBENCHMARKER_TESTRUN=1 bexhoma/benchmarker_dbmsbenchmarker:v0.14.6
 if test "$DBMSBENCHMARKER_TESTRUN" != "0"
 then
-	#ls -lh ./jars/
-	#python ./benchmark.py --help
-	python ./benchmark.py -f tpc-ds -e yes -b run
-	exit 0
+    python ./benchmark.py -f tpc-ds -e yes -b run
+    exit 0
 fi
 
 ######################## Wait for synched starting time ########################
@@ -32,7 +30,7 @@ then
     benchmark_start_epoch=$(date -u -d "$BEXHOMA_TIME_NOW" +%s)
     echo "that is $benchmark_start_epoch"
 
-    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
+    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1
     echo "now is $current_epoch"
     current_epoch=$(date -u +%s)
     echo "that is $current_epoch"
@@ -59,7 +57,6 @@ mkdir -p /results/$BEXHOMA_EXPERIMENT
 
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-# redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$BEXHOMA_CHILD" ]
 then
@@ -69,34 +66,35 @@ else
     echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
-######################## Multi-Tenant parameters ########################
+######################## Adjust parameters for multi-tenant mode ########################
+# Save originals so the pod-counting sync below uses the full pod count,
+# then restore them afterwards for the actual benchmark invocation.
 BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
 BEXHOMA_CHILD_TMP=$BEXHOMA_CHILD
 if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
     echo "BEXHOMA_TENANT_BY is schema"
-    #BEXHOMA_NUM_PODS=1
-	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
-	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+    BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
     BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+    echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+    echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     echo "BEXHOMA_TENANT_BY is database"
-    #BEXHOMA_NUM_PODS=1
-	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
-	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
+    BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
     BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+    echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
+    echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 else
     echo "BEXHOMA_TENANT_BY is not set"
 fi
 
-######################## Multi-Tenant parameters ########################
+######################## Restore original pod count for synchronisation ########################
+# Pod counting must use the total number of pods across all tenants.
 BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 
 ######################## Wait until all pods of job are ready ########################
@@ -128,46 +126,43 @@ while : ; do
     fi
 done
 
-######################## Wait until all pods of experiment are ready ########################
+######################## Wait until all pods of experiment are ready (container tenancy) ########################
 if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
-	echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
-	# add this pod to counter
-	redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
-	# wait for number of pods to be as expected
-	while : ; do
-		PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
-		echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
-		if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
-		then
-			echo "PODS_RUNNING contains a number."
-		else
-			echo "PODS_RUNNING does not contain a number."
-			exit 0
-		fi
-		if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
-		then
-			echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
-			break
-		elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
-		then
-			echo "Too many pods! Restart occured?"
-			exit 0
-		else
-			echo "We have to wait"
-			sleep 1
-		fi
-	done
+    echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    # add this pod to counter
+    redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    # wait for number of pods to be as expected
+    while : ; do
+        PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
+        echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
+        if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+        then
+            echo "PODS_RUNNING contains a number."
+        else
+            echo "PODS_RUNNING does not contain a number."
+            exit 0
+        fi
+        if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS_TOTAL
+        then
+            echo "OK, found $BEXHOMA_NUM_PODS_TOTAL ready pods."
+            break
+        elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS_TOTAL
+        then
+            echo "Too many pods! Restart occured?"
+            exit 0
+        else
+            echo "We have to wait"
+            sleep 1
+        fi
+    done
 fi
 
-######################## Show more parameters ########################
+######################## Restore per-tenant pod parameters for benchmark run ########################
 BEXHOMA_CHILD=$BEXHOMA_CHILD_TMP
 BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
-
-#BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
-#echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS
@@ -175,7 +170,7 @@ echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 echo "Start at $bexhoma_start_epoch epoch seconds"
 
-######################## Dev mode ###################
+######################## Dev mode ########################
 if test $DBMSBENCHMARKER_DEV -gt 0
 then
     # dev environment
@@ -184,8 +179,9 @@ then
     git status
 fi
 
-######################## Convert parameters ###################
-# values come from Python, will be set as string ENV and must be converted
+######################## Convert Python boolean strings to shell integers ########################
+# DBMSBENCHMARKER_SHUFFLE_QUERIES and DBMSBENCHMARKER_RECREATE_PARAMETER are set as
+# Python booleans ('True'/'False') and must be converted for use as integer flags.
 if test "$DBMSBENCHMARKER_SHUFFLE_QUERIES" == "True"
 then
     DBMSBENCHMARKER_SHUFFLE_QUERIES=1
@@ -207,8 +203,24 @@ echo "DBMSBENCHMARKER_RECREATE_PARAMETER $DBMSBENCHMARKER_RECREATE_PARAMETER"
 ######################## Show all jars ########################
 ls jars -lh
 
-######################## Execute workload ###################
-# run dbmsbenchmarker
+######################## Execute workload ########################
+# Run DBMSBenchmarker.
+# -f / -r  config and result folder (one subfolder per connection)
+# -cs -sf  create subfolder per DBMS connection
+# -ms      max number of connection subfolders
+# -c       name of the DBMS connection to benchmark
+# -ca      alias for the DBMS connection
+# -cf      per-connection config file
+# -rcp     force parameter recreation (otherwise all streams share the same parameters)
+# -sid     stream ID for parallel execution
+# -ssh     shuffle query order based on stream ID
+# -mps     monitor per stream (not per query)
+# -fixdb   override the database name
+# -fixs    override the schema name
+# -d / -vq / -vr / -vp / -vs  verbose output flags (verbose mode only)
+# -db      debug mode flag (dev mode only)
+# -sl      sleep seconds before benchmarking (disabled: handled by BEXHOMA_TIME_START)
+# -st      start time for operating (disabled: handled by shell sleep above)
 if test $DBMSBENCHMARKER_VERBOSE -gt 0
 then
     python ./benchmark.py run -b -w connection \
@@ -232,8 +244,6 @@ then
         -fixdb "${BEXHOMA_DATABASE:-""}" \
         -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
-        #-sl $DBMSBENCHMARKER_SLEEP \
-        #-st "$BEXHOMA_TIME_START" \
 else
     python ./benchmark.py run -b -w connection \
         -f /results/$DBMSBENCHMARKER_CODE \
@@ -251,43 +261,26 @@ else
         -fixdb "${BEXHOMA_DATABASE:-""}" \
         -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
-        #-sl $DBMSBENCHMARKER_SLEEP \
-        #-st "$BEXHOMA_TIME_START" \
 fi
-# -f   config folder
-# -r   result folder
-# -mps monitor per stream
-# -cs -sf subfolder per dbms (connection)
-# -ms  max number of subfolders
-# -sl  sleep seconds before start benchmarking
-# -st  start time for operating
-# -c   name of dbms (connection) to benchmark
-# -ca  alias for dbms (connection) to benchmark
-# -cf  config of dbms (connection)
-# -rcp force recreation of parameter - otherwise all instances of an experiment use the same parameters
-# -sid id of a stream in parallel execution of streams
-# -ssh shuffle query execution based on id of stream
 
-######################## End time measurement ###################
+######################## End time measurement ########################
 SECONDS_END=$SECONDS
 echo "End $SECONDS_END seconds"
 
 DURATION=$((SECONDS_END-SECONDS_START))
 echo "Duration $DURATION seconds"
 
-
-######################## Find duration output of DBMSBenchmarker ###################
-# default end time is now
+######################## Extract precise benchmark duration from DBMSBenchmarker log ########################
+# Default end time is wall-clock now; refine using the duration reported by DBMSBenchmarker.
 bexhoma_end_epoch_computed=$(date -u +%s)
-# better: read pure benchmarking time from log of dbmsbenchmarker and compute end of benchmarking
 DBMSBenchmarker_duration_seconds=$(sed -n 's/DBMSBenchmarker duration.*: //p' /tmp/dbmsbenchmarker.log)
-# remove " [s]" at the end
+# Strip the trailing " [s]" unit suffix
 DBMSBenchmarker_duration=${DBMSBenchmarker_duration_seconds::-4}
 bexhoma_end_epoch_computed=$((bexhoma_start_epoch+DBMSBenchmarker_duration))
 echo "Computed end at $bexhoma_end_epoch_computed epoch seconds"
 echo "because of DBMSBenchmarker_duration:$DBMSBenchmarker_duration"
 
-######################## Show timing information ###################
+######################## Show timing information ########################
 echo "Benchmarking done"
 
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
@@ -302,8 +295,6 @@ bexhoma_end_epoch=$(date -u +%s)
 echo "End at $bexhoma_start_epoch epoch seconds"
 echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch_computed"
-#echo "BEXHOMA_START:$SECONDS_START"
-#echo "BEXHOMA_END:$SECONDS_END"
 
-######################## Exit successfully ###################
+######################## Exit successfully ########################
 exit 0
