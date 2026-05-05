@@ -22,13 +22,10 @@ echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
 echo "HAMMERDB_VUSERS $HAMMERDB_VUSERS"
 
-######################## Generate workflow file ########################
-######################## Workflow: MySQL ###################
+######################## Generate workflow file (MySQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "mysql" ]; then
-    #USER=root
-    #PASSWORD=root
-	echo "puts \"SETTING CONFIGURATION\"
+    echo "puts \"SETTING CONFIGURATION\"
 global complete
 proc wait_to_complete {} {
 global complete
@@ -55,13 +52,10 @@ wait_to_complete
 vwait forever" > load.tcl
 fi
 
-######################## Generate workflow file ########################
-######################## Workflow: MariaDB ###################
+######################## Generate workflow file (MariaDB) ########################
 
 if [ "$HAMMERDB_TYPE" = "mariadb" ]; then
-    USER=root
-    PASSWORD=root
-	echo "puts \"SETTING CONFIGURATION\"
+    echo "puts \"SETTING CONFIGURATION\"
 global complete
 proc wait_to_complete {} {
 global complete
@@ -83,8 +77,7 @@ wait_to_complete
 vwait forever" > load.tcl
 fi
 
-######################## Generate workflow file ########################
-######################## Workflow: PostgreSQL ###################
+######################## Generate workflow file (PostgreSQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "postgresql" ]; then
     echo "puts \"SETTING CONFIGURATION\"
@@ -111,8 +104,7 @@ wait_to_complete
 vwait forever" > load.tcl
 fi
 
-######################## Generate workflow file ########################
-######################## Workflow: Citus ###################
+######################## Generate workflow file (Citus) ########################
 
 if [ "$HAMMERDB_TYPE" = "citus" ]; then
     echo "puts \"SETTING CONFIGURATION\"
@@ -139,7 +131,6 @@ buildschema
 wait_to_complete
 vwait forever" > load.tcl
 fi
-
 
 ######################## Show workflow file ########################
 cat load.tcl
@@ -176,4 +167,3 @@ echo "BEXHOMA_END:$bexhoma_end_epoch"
 
 ######################## Exit successfully ###################
 exit 0
-
