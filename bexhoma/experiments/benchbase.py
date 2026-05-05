@@ -232,10 +232,6 @@ class benchbase(base):
     def show_summary(self):
         #print('benchbase.show_summary()')
         connections_sorted, monitoring_applications = self.show_summary_header()
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        #####################
-        print("NEW evaluator")
         #####################
         df = self.evaluator.get_df_benchmarking()
         if self.benchmarking_is_active():
@@ -266,85 +262,6 @@ class benchbase(base):
             df_aggregated_reduced = df.copy()
         else:
             df_aggregated_reduced = pd.DataFrame()
-        #####################
-        """
-        warehouses = 0
-        df = self.evaluator.get_df_benchmarking()
-        df_aggregated_reduced = pd.DataFrame()
-        if not df.empty:
-            print("\n### Execution")
-            print("\n#### Per Pod\n")
-            warehouses = int(df['sf'].max())
-            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
-            df.fillna(0, inplace=True)
-            df_plot = self.evaluator.benchmarking_set_datatypes(df)
-            #print(df_plot)
-            df_plot_filtered = pd.DataFrame()
-            for col in columns:
-                if col in df_plot.columns:
-                    df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
-            print(df_plot_filtered.to_markdown(index=True, floatfmt=".2f"))
-            print("\n#### Aggregated Parallel\n")
-            if self.workload['tenant_per'] == "container":
-                # we want to aggregate containers of DBMS running in parallel
-                #print(type(df_plot))
-                df_plot['connection'] = df_plot['experiment_run'].astype(str)+"-"+df_plot['client'].astype(str)
-            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
-            #print(df_aggregated)
-            #print(df_aggregated.T)
-            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
-            #columns = ["[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)","[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)","[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)","[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)"]
-            columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
-            for col in columns:
-                if col in df_aggregated.columns:
-                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
-            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
-        #print("\nWarehouses:", warehouses)
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Workflow")
-            workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-        #####################
-        if self.loading_is_active():
-            print("\n### Loading\n")
-            #connections_sorted = sorted(connections, key=lambda c: c['name']) 
-            result = dict()
-            for c in connections_sorted:
-                result[c['name']] = {
-                    'time_load': c['timeIngesting'],
-                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS'],
-                    #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
-                    'pods': c['parameter']['parallelism'],
-                }
-                #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
-            df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
-            #print(df)
-            #df = df.T.pivot(columns='terminals', index='target', values='time_load')
-            df_connections = df.copy().T
-            #print(df_connections)
-            df_tpx = (warehouses*3600.0)/df_connections.sort_index()
-            #print(df_tpx)
-            #df_loading_tpx = df_tpx['time_load']
-            #df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
-            df_connections['Throughput [SF/h]'] = df_tpx['time_load']
-            df_connections = df_connections.reindex(index=evaluators.natural_sort(df_connections.index))
-            df_connections = df_connections.rename_axis(index="DBMS")
-            print(df_connections.to_markdown(index=True, floatfmt=".2f"))
-            #pd.DataFrame(df_tpx['time_load']).plot.bar(title="Imported warehouses [1/h]")
-        """
         #####################
         test_results_monitoring = self.show_summary_monitoring()
         if len(monitoring_applications) > 0:

@@ -276,6 +276,26 @@ df_ts = ev.get_benchmark_logs_timeseries_df_aggregated(
 
 Like the aggregated variant but returns a list of per-pod DataFrames instead.
 
+### `get_summary_benchmark_per_connection()`
+
+Returns benchmarking results with one row per pod, filtered to the key display
+columns (experiment run, terminals, target, client, child, time, errors,
+throughput, goodput, efficiency, and latency percentiles), sorted by
+`(experiment_run, client, child)`.  Used by `show_summary()`.
+
+### `get_summary_benchmark_per_phase()`
+
+Returns benchmarking results aggregated over parallel pods (via
+`benchmarking_aggregate_by_parallel_pods`), one row per phase, filtered to the
+same display columns as the per-connection view plus `pod_count`.
+Used by `show_summary()`.
+
+### `get_summary_loading_per_run()`
+
+Delegates to :class:`base`'s `get_loading_per_run()`.  Returns one row per
+`(code, configuration, experiment_run)` with `time_load` and
+`Throughput [SF/h]`.  Used by `show_summary()`.
+
 ---
 
 ## Class `tpcc`
