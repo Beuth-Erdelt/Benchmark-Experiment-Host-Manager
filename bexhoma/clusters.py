@@ -104,7 +104,7 @@ class kubernetes():
 
         with open(clusterconfig) as f:
             config_text = f.read()
-            self.config = eval(config_text)
+            self.config = ast.literal_eval(config_text)
 
         # Kubernetes API clients — initialised by cluster_access()
         self.v1core = None
@@ -154,14 +154,14 @@ class kubernetes():
 
         self.max_sut = None
 
-        # Experiment selection state — populated by set_experiment()
-        self.bChangeInstance = False
-        self.i = None
-        self.v = None
+        # Experiment selection keys — populated by set_experiment()
+        self.change_instance = False
+        self.instance_key = None
+        self.volume_key = None
         self.volume = None
-        self.d = None
+        self.docker_key = None
         self.docker = None
-        self.s = None
+        self.script_key = None
         self.initscript = None
 
         self.set_experiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
@@ -177,7 +177,7 @@ class kubernetes():
         Sets ``self.v1core``, ``self.v1apps``, and ``self.v1batches``.
         Prints a warning if the cluster cannot be reached.
         """
-        self.logger.debug('kubernetes.cluster_access({})'.format(self.context))
+        self.logger.debug(f'kubernetes.cluster_access({self.context})')
         try:
             kubernetes_config.load_kube_config(context=self.context)
             self.v1core = kubernetes_client.CoreV1Api(
@@ -327,18 +327,18 @@ class kubernetes():
         :param script: Init-script key within the selected volume's ``initscripts``.
         """
         self.logger.debug('kubernetes.set_experiment()')
-        self.bChangeInstance = True
+        self.change_instance = True
         if instance is not None:
-            self.i = instance
+            self.instance_key = instance
         if volume is not None:
-            self.v = volume
-            self.volume = self.volumes[self.v]['id']
+            self.volume_key = volume
+            self.volume = self.volumes[self.volume_key]['id']
         if docker is not None:
-            self.d = docker
-            self.docker = self.dockers[self.d]
+            self.docker_key = docker
+            self.docker = self.dockers[self.docker_key]
         if script is not None:
-            self.s = script
-            self.initscript = self.volumes[self.v]['initscripts'][self.s]
+            self.script_key = script
+            self.initscript = self.volumes[self.volume_key]['initscripts'][self.script_key]
 
     def wait(self, sec, silent=False):
         """
@@ -349,7 +349,7 @@ class kubernetes():
         """
         intervals = int(sec)
         if not silent:
-            print("{:30s}: ".format("- waiting {}s -".format(sec)), end="", flush=True)
+            print(f"{'- waiting ' + str(sec) + 's -':30s}: ", end="", flush=True)
         time.sleep(intervals)
         if not silent:
             print("done")
@@ -382,24 +382,24 @@ class kubernetes():
         :param configuration: ``configuration`` label value (DBMS config name).
         :return: List of Deployment names.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        self.logger.debug('kubernetes.get_deployments({})'.format(label))
+        self.logger.debug(f'kubernetes.get_deployments({label})')
         try:
             api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling v1beta->list_namespaced_deployment: %s\n" % e)
+            print(f"Exception when calling v1beta->list_namespaced_deployment: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -417,27 +417,27 @@ class kubernetes():
         :return: List of Pod names.
         """
         self.logger.debug('kubernetes.get_pods()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        field_selector = 'status.phase=' + status if len(status) > 0 else ''
-        self.logger.debug('get_pods label({})'.format(label))
+        field_selector = 'status.phase=' + status if status else ''
+        self.logger.debug(f'get_pods label({label})')
         try:
             api_response = self.v1core.list_namespaced_pod(
                 self.namespace, label_selector=label, field_selector=field_selector
             )
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for get_pods: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_pod for get_pods: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -457,24 +457,24 @@ class kubernetes():
         :return: List of StatefulSet names.
         """
         self.logger.debug('kubernetes.get_stateful_sets()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
         self.logger.debug('get_stateful_sets' + label)
         try:
             api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling AppsV1Api->list_namespaced_stateful_set: %s\n" % e)
+            print(f"Exception when calling AppsV1Api->list_namespaced_stateful_set: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -492,21 +492,21 @@ class kubernetes():
         :return: List of Kubernetes node objects.
         """
         self.logger.debug('kubernetes.get_nodes()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(nodegroup_type) > 0:
+        if nodegroup_type:
             label += ',type=' + nodegroup_type
-        if len(nodegroup_name) > 0:
+        if nodegroup_name:
             label += ',name=' + nodegroup_name
         try:
             api_response = self.v1core.list_node(label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return api_response.items
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_node for get_nodes: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_node for get_nodes: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -524,10 +524,10 @@ class kubernetes():
         """
         self.logger.debug('kubernetes.get_pod_status()')
         try:
-            if len(app) == 0:
+            if not app:
                 app = self.appname
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app=' + app)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 for item in api_response.items:
                     if item.metadata.name == pod:
                         return item.status.phase
@@ -535,7 +535,7 @@ class kubernetes():
             else:
                 return ""
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for get_pod_status: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_pod for get_pod_status: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -556,7 +556,7 @@ class kubernetes():
                     return condition.status == "True"
             return False
         except ApiException as e:
-            print("Exception when calling CoreV1Api->read_namespaced_pod for is_pod_ready: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->read_namespaced_pod for is_pod_ready: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -573,24 +573,24 @@ class kubernetes():
         :return: Dict ``{pod_name: labels_dict}``.
         """
         self.logger.debug('kubernetes.get_pods_labels()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
         pod_labels = {}
         try:
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 for item in api_response.items:
                     pod_labels[item.metadata.name] = item.metadata.labels
             return pod_labels
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for get_pods_labels: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_pod for get_pods_labels: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -609,24 +609,24 @@ class kubernetes():
         :return: List of Service names.
         """
         self.logger.debug('kubernetes.get_services()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        self.logger.debug('get_services({})'.format(label))
+        self.logger.debug(f'get_services({label})')
         try:
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_service: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_services(
@@ -644,24 +644,24 @@ class kubernetes():
         :return: List of port number strings from the first matched Service.
         """
         self.logger.debug('kubernetes.get_ports_of_service()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
         self.logger.debug('get_ports_of_service' + label)
         try:
             api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [str(p.port) for p in api_response.items[0].spec.ports]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_service: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_ports_of_service(
@@ -682,26 +682,26 @@ class kubernetes():
         :return: List of PVC names.
         """
         self.logger.debug('kubernetes.get_pvc()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        self.logger.debug('get_pvc({})'.format(label))
+        self.logger.debug(f'get_pvc({label})')
         try:
             api_response = self.v1core.list_namespaced_persistent_volume_claim(
                 self.namespace, label_selector=label
             )
-            if len(pvc) > 0:
+            if pvc:
                 return [p.metadata.name for p in api_response.items if p.metadata.name == pvc]
             else:
                 return [p.metadata.name for p in api_response.items]
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_pvc(
@@ -725,7 +725,7 @@ class kubernetes():
             if e.status == 404:
                 return False
             else:
-                print("Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: %s\n" % e)
+                print(f"Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: {e}\n")
                 self.cluster_access()
                 self.wait(2)
                 return self.does_pvc_exist(name=name)
@@ -742,29 +742,29 @@ class kubernetes():
         :return: List of label dicts.
         """
         self.logger.debug('kubernetes.get_pvc_labels()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
         self.logger.debug('get_pvc' + label)
         try:
             api_response = self.v1core.list_namespaced_persistent_volume_claim(
                 self.namespace, label_selector=label
             )
-            if len(api_response.items) > 0:
-                if len(pvc) > 0:
+            if api_response.items:
+                if pvc:
                     return [p.metadata.labels for p in api_response.items if p.metadata.name == pvc]
                 else:
                     return [p.metadata.labels for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_pvc_labels(
@@ -784,29 +784,29 @@ class kubernetes():
         :return: List of PVC spec objects.
         """
         self.logger.debug('kubernetes.get_pvc_specs()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
         self.logger.debug('get_pvc' + label)
         try:
             api_response = self.v1core.list_namespaced_persistent_volume_claim(
                 self.namespace, label_selector=label
             )
-            if len(api_response.items) > 0:
-                if len(pvc) > 0:
+            if api_response.items:
+                if pvc:
                     return [p.spec for p in api_response.items if p.metadata.name == pvc]
                 else:
                     return [p.spec for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_pvc_specs(
@@ -829,29 +829,29 @@ class kubernetes():
         :return: List of PVC status or spec objects.
         """
         self.logger.debug('kubernetes.get_pvc_status()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
         self.logger.debug('get_pvc' + label)
         try:
             api_response = self.v1core.list_namespaced_persistent_volume_claim(
                 self.namespace, label_selector=label
             )
-            if len(api_response.items) > 0:
-                if len(pvc) > 0:
+            if api_response.items:
+                if pvc:
                     return [p.status for p in api_response.items if p.metadata.name == pvc]
                 else:
                     return [p.spec for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_pvc_status(
@@ -871,12 +871,12 @@ class kubernetes():
         self.logger.debug('get_statefulset_pods' + label)
         try:
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_pod: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_statefulset_pods(stateful_set=stateful_set)
@@ -887,12 +887,12 @@ class kubernetes():
 
         :param name: Name of the StatefulSet to delete.
         """
-        self.logger.debug('kubernetes.delete_stateful_set({})'.format(name))
+        self.logger.debug(f'kubernetes.delete_stateful_set({name})')
         body = kubernetes_client.V1DeleteOptions()
         try:
             self.v1apps.delete_namespaced_stateful_set(name, self.namespace, body=body)
         except ApiException as e:
-            print("Exception when calling AppsV1Api->delete_namespaced_stateful_set: %s\n" % e)
+            print(f"Exception when calling AppsV1Api->delete_namespaced_stateful_set: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.delete_stateful_set(name=name)
@@ -903,15 +903,15 @@ class kubernetes():
 
         :param name: Name of the Pod to delete.
         """
-        self.logger.debug('kubernetes.delete_pod({})'.format(name))
+        self.logger.debug(f'kubernetes.delete_pod({name})')
         body = kubernetes_client.V1DeleteOptions()
         try:
             self.v1core.delete_namespaced_pod(name, self.namespace, body=body)
         except ApiException as e:
-            print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}\n")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.delete_pod(name=name)
 
     def delete_pvc(self, name):
@@ -921,13 +921,13 @@ class kubernetes():
         :param name: Name of the PVC to delete.
         :return: ``True`` if deleted successfully, ``False`` on error.
         """
-        self.logger.debug('kubernetes.delete_pvc({})'.format(name))
+        self.logger.debug(f'kubernetes.delete_pvc({name})')
         body = kubernetes_client.V1DeleteOptions()
         try:
             self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
             return True
         except ApiException as e:
-            print("Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
             return False
@@ -938,12 +938,12 @@ class kubernetes():
 
         :param name: Name of the Service to delete.
         """
-        self.logger.debug('kubernetes.delete_service({})'.format(name))
+        self.logger.debug(f'kubernetes.delete_service({name})')
         body = kubernetes_client.V1DeleteOptions()
         try:
             self.v1core.delete_namespaced_service(name, self.namespace, body=body)
         except ApiException as e:
-            print("Exception when calling CoreV1Api->delete_namespaced_service: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->delete_namespaced_service: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.delete_service(name=name)
@@ -955,15 +955,15 @@ class kubernetes():
         """
         self.logger.debug('kubernetes.startPortforwarding()')
         ports = self.get_ports_of_service(app=app, component=component)
-        if len(service) == 0:
+        if not service:
             service = self.service
-        if len(service) == 0:
+        if not service:
             service = 'bexhoma-service'
         self.getInfo(component='sut')
-        if len(self.deployments) > 0:
+        if self.deployments:
             forward = [
                 'kubectl',
-                '--context {context}'.format(context=self.context),
+                f'--context {self.context}',
                 'port-forward',
                 'service/' + service,
             ]
@@ -993,12 +993,12 @@ class kubernetes():
         for child in children:
             try:
                 self.logger.debug(
-                    'kubernetes.stopPortforwarding() - Child {} {}'.format(child.pid, child.name)
+                    f'kubernetes.stopPortforwarding() - Child {child.pid} {child.name}'
                 )
                 command = child.cmdline()
-                if len(command) > 0 and command[3] == 'port-forward':
+                if command and command[3] == 'port-forward':
                     self.logger.debug(
-                        'kubernetes.stopPortforwarding() - Found child {}'.format(child.name)
+                        f'kubernetes.stopPortforwarding() - Found child {child.name}'
                     )
                     child.terminate()
             except Exception as e:
@@ -1079,10 +1079,8 @@ class kubernetes():
             print("Failed to decode output with any known encoding")
             return None
 
-        fullcommand = 'kubectl --context {context} {command}'.format(
-            context=self.context, command=command
-        )
-        self.logger.debug('kubernetes.kubectl({})'.format(fullcommand))
+        fullcommand = f'kubectl --context {self.context} {command}'
+        self.logger.debug(f'kubernetes.kubectl({fullcommand})')
         return run_with_fallback(fullcommand)
 
     def execute_command_in_pod(self, command, pod='', container='', params=''):
@@ -1097,23 +1095,21 @@ class kubernetes():
         :param params: Unused; reserved for future use.
         :return: Tuple ``("", stdout_str, stderr_str)``.
         """
-        if len(pod) == 0:
+        if not pod:
             self.logger.debug(
-                'kubernetes.execute_command_in_pod({}): empty pod name given for command'.format(command)
+                f'kubernetes.execute_command_in_pod({command}): empty pod name given for command'
             )
             return "", "", ""
         command_clean = command.replace('"', '\\"')
-        if len(container) > 0:
+        if container:
             fullcommand = (
-                'kubectl --context {context} exec {pod} --container={container} -- sh -c "{command}"'
-                .format(context=self.context, pod=pod, container=container, command=command_clean)
+                f'kubectl --context {self.context} exec {pod} --container={container} -- sh -c "{command_clean}"'
             )
         else:
             fullcommand = (
-                'kubectl --context {context} exec {pod} -- sh -c "{command}"'
-                .format(context=self.context, pod=pod, command=command_clean)
+                f'kubectl --context {self.context} exec {pod} -- sh -c "{command_clean}"'
             )
-        self.logger.debug('kubernetes.execute_command_in_pod({})'.format(fullcommand))
+        self.logger.debug(f'kubernetes.execute_command_in_pod({fullcommand})')
         proc = subprocess.Popen(
             fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, shell=True
@@ -1149,7 +1145,6 @@ class kubernetes():
                 )
             else:
                 return "", stdout, stderr
-        return "", "", ""
 
     def file_upload(self, filename_remote, filename_local, pod, container="dashboard"):
         """
@@ -1199,9 +1194,9 @@ class kubernetes():
         try:
             s.connect((ip, port))
             found = True
-            print("Somebody is answering at %s:%d" % (ip, port))
+            print(f"Somebody is answering at {ip}:{port}")
         except Exception:
-            print("Nobody is answering yet at %s:%d" % (ip, port))
+            print(f"Nobody is answering yet at {ip}:{port}")
         finally:
             s.close()
         return found
@@ -1278,13 +1273,11 @@ class kubernetes():
         print("copyInits")
         cmd_prepare = 'mkdir /data/' + str(self.code)
         self.execute_command_in_pod(cmd_prepare, container='dbms')
-        scriptfolder = '/data/{experiment}/{docker}/'.format(
-            experiment=self.experiments_configfolder, docker=self.d
-        )
+        scriptfolder = f'/data/{self.experiments_configfolder}/{self.docker_key}/'
         for idx, script in enumerate(self.initscript):
             cmd_copy = (
-                'cp {src}'.format(src=scriptfolder + script)
-                + ' /data/' + str(self.code) + '/' + self.connection + '_init_' + str(idx) + '.log'
+                f'cp {scriptfolder + script}'
+                + f' /data/{self.code}/{self.connection}_init_{idx}.log'
             )
             self.execute_command_in_pod(cmd_copy, container='dbms')
 
@@ -1300,7 +1293,7 @@ class kubernetes():
         :return: kubectl output string.
         """
         container = ''  # describe pod is not container-sensitive
-        if len(container) > 0:
+        if container:
             fullcommand = 'describe pod ' + pod + ' --container=' + container
         else:
             fullcommand = 'describe pod ' + pod
@@ -1314,7 +1307,7 @@ class kubernetes():
         :param container: Container name within the Pod (optional).
         :return: kubectl output string.
         """
-        if len(container) > 0:
+        if container:
             fullcommand = 'logs ' + pod + ' --container=' + container
         else:
             fullcommand = 'logs ' + pod
@@ -1333,7 +1326,7 @@ class kubernetes():
         fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.initContainers[*].name}"'
         output = self.kubectl(fullcommand)
         init_containers = output.split(" ")
-        self.logger.debug("Pod {} has container {}".format(pod, containers + init_containers))
+        self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
         return containers + init_containers
 
     def OLD_downloadLog(self):
@@ -1360,30 +1353,30 @@ class kubernetes():
         :param client: ``client`` label value (legacy, may be unused).
         :return: List of Job names, or ``None`` on a 404 error.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        if len(client) > 0:
+        if client:
             label += ',client=' + client
-        self.logger.debug('getJobs({})'.format(label))
+        self.logger.debug(f'getJobs({label})')
         try:
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+            print(f"Exception when calling BatchV1Api->list_namespaced_job: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.get_jobs(
                     app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
@@ -1400,33 +1393,33 @@ class kubernetes():
         :param client: ``client`` label value (legacy).
         :return: Dict ``{job_name: labels_dict}``, or ``[]`` if no Jobs found.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        if len(client) > 0:
+        if client:
             label += ',client=' + client
         self.logger.debug('get_jobs_labels ' + label)
         job_labels = {}
         try:
             api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 for item in api_response.items:
                     job_labels[item.metadata.name] = item.metadata.labels
                 return job_labels
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling BatchV1Api->list_namespaced_job: %s\n" % e)
+            print(f"Exception when calling BatchV1Api->list_namespaced_job: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.get_jobs_labels(
                     app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
@@ -1448,30 +1441,30 @@ class kubernetes():
         :param client: ``client`` label value (legacy).
         :return: ``True``, ``0``, or ``"no job"``.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        if len(client) > 0:
+        if client:
             label += ',client=' + client
         self.logger.debug('getJobStatus ' + label)
         try:
-            if len(jobname) == 0:
+            if not jobname:
                 jobs = self.get_jobs(
                     app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
                 )
-                if len(jobs) == 0:
+                if not jobs:
                     return "no job"
                 jobname = jobs[0]
             api_response = self.v1batches.read_namespaced_job_status(jobname, self.namespace)
-            self.logger.debug("api_response.spec.completions {}".format(api_response.spec.completions))
-            self.logger.debug("api_response.status.succeeded {}".format(api_response.status.succeeded))
+            self.logger.debug(f"api_response.spec.completions {api_response.spec.completions}")
+            self.logger.debug(f"api_response.status.succeeded {api_response.status.succeeded}")
             if (
                 api_response.status.succeeded is not None
                 and api_response.spec.completions <= api_response.status.succeeded
@@ -1482,18 +1475,18 @@ class kubernetes():
                 api_response.status.succeeded is not None
                 and api_response.status.succeeded > 0
                 and api_response.status.conditions is not None
-                and len(api_response.status.conditions) > 0
+                and api_response.status.conditions
             ):
                 self.logger.debug(api_response.status.conditions[0].type)
                 return api_response.status.conditions[0].type == 'Complete'
             else:
                 return 0
         except ApiException as e:
-            print("Exception when calling BatchV1Api->read_namespaced_job_status: %s\n" % e)
+            print(f"Exception when calling BatchV1Api->read_namespaced_job_status: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.get_job_status(
                     jobname=jobname, app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
@@ -1517,20 +1510,20 @@ class kubernetes():
         """
         self.logger.debug('kubernetes.delete_job()')
         try:
-            if len(jobname) == 0:
+            if not jobname:
                 jobs = self.get_jobs(
                     app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
                 )
                 jobname = jobs[0]
-            self.logger.debug('kubernetes.delete_job({})'.format(jobname))
+            self.logger.debug(f'kubernetes.delete_job({jobname})')
             self.v1batches.delete_namespaced_job(jobname, self.namespace)
             return True
         except ApiException as e:
-            print("Exception when calling BatchV1Api->delete_namespaced_job: %s\n" % e)
+            print(f"Exception when calling BatchV1Api->delete_namespaced_job: {e}\n")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.delete_job(
                     jobname=jobname, app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
@@ -1553,25 +1546,25 @@ class kubernetes():
         self.logger.debug('kubernetes.delete_job_pods()')
         body = kubernetes_client.V1DeleteOptions()
         try:
-            if len(jobname) == 0:
+            if not jobname:
                 pods = self.get_job_pods(
                     app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
                 )
-                if len(pods) > 0:
+                if pods:
                     for pod in pods:
                         self.delete_job_pods(
                             jobname=pod, app=app, component=component, experiment=experiment,
                             configuration=configuration, client=client
                         )
                     return
-            self.logger.debug('kubernetes.delete_job_pods({})'.format(jobname))
+            self.logger.debug(f'kubernetes.delete_job_pods({jobname})')
             self.v1core.delete_namespaced_pod(jobname, self.namespace, body=body)
         except ApiException as e:
-            print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}\n")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.delete_job_pods(
                     jobname=jobname, app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
@@ -1588,30 +1581,30 @@ class kubernetes():
         :param client: ``client`` label value (legacy).
         :return: List of Pod names, or ``None`` on a 404 error.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(component) > 0:
+        if component:
             label += ',component=' + component
-        if len(experiment) > 0:
+        if experiment:
             label += ',experiment=' + experiment
-        if len(configuration) > 0:
+        if configuration:
             label += ',configuration=' + configuration
-        if len(client) > 0:
+        if client:
             label += ',client=' + client
         self.logger.debug('getJobPods ' + label)
         try:
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return [p.metadata.name for p in api_response.items]
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
-            if not e.status == 404:
+            if e.status != 404:
                 return self.get_job_pods(
                     app=app, component=component, experiment=experiment,
                     configuration=configuration, client=client
@@ -1625,10 +1618,10 @@ class kubernetes():
         :param component: Component label.  Defaults to ``dashboard``.
         :return: Name string in the format ``<app>_<component>``.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
-        name = "{app}_{component}".format(app=app, component=component)
-        self.logger.debug('kubernetes.create_dashboard_name({})'.format(name))
+        name = f"{app}_{component}"
+        self.logger.debug(f'kubernetes.create_dashboard_name({name})')
         return name
 
     def create_messagequeue_name(self, app='', component='messagequeue'):
@@ -1639,10 +1632,10 @@ class kubernetes():
         :param component: Component label.  Defaults to ``messagequeue``.
         :return: Name string in the format ``<app>_<component>``.
         """
-        if len(app) == 0:
+        if not app:
             app = self.appname
-        name = "{app}_{component}".format(app=app, component=component)
-        self.logger.debug('kubernetes.create_messagequeue({})'.format(name))
+        name = f"{app}_{component}"
+        self.logger.debug(f'kubernetes.create_messagequeue({name})')
         return name
 
     def dashboard_is_running(self):
@@ -1652,7 +1645,7 @@ class kubernetes():
         :return: ``True`` if the dashboard is running.
         """
         pod_dashboard = self.get_dashboard_pod_name(app=self.appname, component='dashboard')
-        if len(pod_dashboard) > 0:
+        if pod_dashboard:
             self.logger.debug('kubernetes.dashboard_is_running()=exists')
             status = self.get_pod_status(pod_dashboard)
             if status == "Running":
@@ -1670,12 +1663,12 @@ class kubernetes():
         :param component: Component label.  Defaults to ``dashboard``.
         """
         if len(self.get_dashboard_pod_name()):
-            print("{:30s}: is running".format("Dashboard"))
+            print(f"{'Dashboard':30s}: is running")
             return
-        print("{:30s}: is starting...".format("Dashboard"), end="", flush=True)
+        print(f"{'Dashboard':30s}: is starting...", end="", flush=True)
         deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
         self.create_dashboard_name(app, component)
-        self.logger.debug('kubernetes.start_dashboard({})'.format(deployment))
+        self.logger.debug(f'kubernetes.start_dashboard({deployment})')
         self.create_object_from_file(self.yamlfolder + deployment)
         while not self.dashboard_is_running():
             self.wait(10, silent=True)
@@ -1700,28 +1693,23 @@ class kubernetes():
             safe_query = urllib.parse.quote_plus(query)
             try:
                 pod_dashboard = self.get_dashboard_pod_name()
-                self.logger.debug('Inside pod {}'.format(pod_dashboard))
+                self.logger.debug(f'Inside pod {pod_dashboard}')
                 now = datetime.utcnow()
                 start = now - timedelta(seconds=300)
                 end = now - timedelta(seconds=240)
                 query_url = (
-                    "{url}query_range?query={safe_query}&start={start}&end={end}&step=60"
-                    .format(
-                        url=url, safe_query=safe_query,
-                        start=int(start.timestamp()), end=int(end.timestamp()),
-                    )
+                    f"{url}query_range?query={safe_query}"
+                    f"&start={int(start.timestamp())}&end={int(end.timestamp())}&step=60"
                 )
-                self.logger.debug('Test URL {}'.format(query_url))
-                command = "curl -L --max-time 10 -is '{}' | head -n 1 | cut -d ' ' -f2".format(
-                    query_url
-                )
-                self.logger.debug('Command {}'.format(command))
+                self.logger.debug(f'Test URL {query_url}')
+                command = f"curl -L --max-time 10 -is '{query_url}' | head -n 1 | cut -d ' ' -f2"
+                self.logger.debug(f'Command {command}')
                 _, stdout, _ = self.execute_command_in_pod(
                     pod=pod_dashboard, command=command, container="dashboard"
                 )
                 status = stdout
-                self.logger.debug('Status {}'.format(status))
-                if len(status) > 0:
+                self.logger.debug(f'Status {status}')
+                if status:
                     return int(status) == 200
                 return False
             except Exception as e:
@@ -1749,14 +1737,14 @@ class kubernetes():
             if self.monitor_cluster_exists:
                 return
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-        if len(endpoints) > 0:
+        if endpoints:
             self.logger.debug('kubernetes.start_monitoring_cluster()=exists')
-            print("{:30s}: is running".format("Cluster monitoring"))
+            print(f"{'Cluster monitoring':30s}: is running")
             return
         self.logger.debug('kubernetes.start_monitoring_cluster()=deploy')
         deployment = 'daemonsettemplate-monitoring.yml'
         self.create_object_from_file(self.yamlfolder + deployment)
-        print("{:30s}: starting...".format("Cluster monitoring"))
+        print(f"{'Cluster monitoring':30s}: starting...")
         while not len(self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")):
             self.wait(10, silent=True)
         print("done")
@@ -1769,7 +1757,7 @@ class kubernetes():
         :return: ``True`` if the message queue is running.
         """
         pods_messagequeue = self.get_pods(component=component)
-        if len(pods_messagequeue) > 0:
+        if pods_messagequeue:
             pod_messagequeue = pods_messagequeue[0]
             self.logger.debug('kubernetes.messagequeue_is_running()=exists')
             status = self.get_pod_status(pod_messagequeue)
@@ -1788,14 +1776,14 @@ class kubernetes():
         :param component: Component label.  Defaults to ``messagequeue``.
         """
         pods_messagequeue = self.get_pods(component=component)
-        if len(pods_messagequeue) > 0:
+        if pods_messagequeue:
             self.logger.debug('kubernetes.start_messagequeue()=exists')
-            print("{:30s}: is running".format("Message Queue"))
+            print(f"{'Message Queue':30s}: is running")
             return
-        print("{:30s}: is starting...".format("Message Queue"), end="", flush=True)
+        print(f"{'Message Queue':30s}: is starting...", end="", flush=True)
         deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
         self.create_messagequeue_name(app, component)
-        self.logger.debug('kubernetes.start_messagequeue({})'.format(deployment))
+        self.logger.debug(f'kubernetes.start_messagequeue({deployment})')
         self.create_object_from_file(self.yamlfolder + deployment)
         while not self.messagequeue_is_running():
             self.wait(10, silent=True)
@@ -1810,10 +1798,10 @@ class kubernetes():
         """
         app = self.appname
         pvcs = self.get_pvc(app=app, component='data-source', experiment='', configuration='')
-        if len(pvcs) > 0:
-            print("{:30s}: is running".format("Data Directory"))
+        if pvcs:
+            print(f"{'Data Directory':30s}: is running")
             return
-        print("{:30s}: is starting...".format("Data Directory"), end="", flush=True)
+        print(f"{'Data Directory':30s}: is starting...", end="", flush=True)
         deployment = 'pvc-bexhoma-data.yml'
         self.create_object_from_file(self.yamlfolder + deployment)
         while not len(self.get_pvc(app=app, component='data-source', experiment='', configuration='')):
@@ -1830,10 +1818,10 @@ class kubernetes():
         """
         app = self.appname
         pvcs = self.get_pvc(app=app, component='results', experiment='', configuration='')
-        if len(pvcs) > 0:
-            print("{:30s}: is running".format("Result Directory"))
+        if pvcs:
+            print(f"{'Result Directory':30s}: is running")
             return
-        print("{:30s}: is starting...".format("Result Directory"), end="", flush=True)
+        print(f"{'Result Directory':30s}: is starting...", end="", flush=True)
         deployment = 'pvc-bexhoma-results.yml'
         self.create_object_from_file(self.yamlfolder + deployment)
         while not len(self.get_pvc(app=app, component='results', experiment='', configuration='')):
@@ -1849,7 +1837,7 @@ class kubernetes():
         :return: Pod name string, or ``""`` if no dashboard Pod was found.
         """
         pods_dashboard = self.get_pods(component=component)
-        if len(pods_dashboard) > 0:
+        if pods_dashboard:
             self.logger.debug('kubernetes.get_dashboard_pod_name()=exists')
             return pods_dashboard[0]
         self.logger.debug('kubernetes.get_dashboard_pod_name()=not exists')
@@ -1864,7 +1852,7 @@ class kubernetes():
         """
         self.logger.debug('kubernetes.restart_dashboard()')
         pod_dashboard = self.get_dashboard_pod_name(app=app, component=component)
-        if len(pod_dashboard) > 0:
+        if pod_dashboard:
             self.delete_pod(pod_dashboard)
 
     def stop_dashboard(self, app='', component='dashboard'):
@@ -1892,7 +1880,7 @@ class kubernetes():
         jobs = self.get_jobs(app, component, experiment, configuration)
         for job in jobs:
             success = self.get_job_status(job)
-            self.logger.debug("Job and status {} {}".format(job, success))
+            self.logger.debug(f"Job and status {job} {success}")
             self.delete_job(job)
         pods = self.get_job_pods(app, component, experiment, configuration)
         for pod in pods:
@@ -1993,10 +1981,8 @@ class kubernetes():
         """
         print("connect_dashboard")
         pod_dashboard = self.get_dashboard_pod_name(component='dashboard')
-        if len(pod_dashboard) > 0:
-            fullcommand = 'port-forward pod/{pod} 8050:8050 8888:8888 --address 0.0.0.0'.format(
-                pod=pod_dashboard
-            )
+        if pod_dashboard:
+            fullcommand = f'port-forward pod/{pod_dashboard} 8050:8050 8888:8888 --address 0.0.0.0'
             self.kubectl(fullcommand)
 
     def connect_master(self, experiment='', configuration=''):
@@ -2014,12 +2000,10 @@ class kubernetes():
         pods_master = self.get_services(
             component='sut', experiment=experiment, configuration=configuration
         )
-        if len(pods_master) > 0:
+        if pods_master:
             pod_master = pods_master[0]
-            print("Connect to {}".format(pod_master))
-            fullcommand = 'port-forward svc/{pod} {port} --address 0.0.0.0'.format(
-                pod=pod_master, port=self.port
-            )
+            print(f"Connect to {pod_master}")
+            fullcommand = f'port-forward svc/{pod_master} {self.port} --address 0.0.0.0'
             self.kubectl(fullcommand)
 
     def add_to_messagequeue(self, queue, data):
@@ -2030,12 +2014,12 @@ class kubernetes():
         :param data: Value to push onto the queue.
         """
         pods_messagequeue = self.get_pods(component='messagequeue')
-        if len(pods_messagequeue) > 0:
+        if pods_messagequeue:
             pod_messagequeue = pods_messagequeue[0]
         else:
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
-        self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
-        redis_command = 'redis-cli rpush {queue} {data} '.format(queue=queue, data=data)
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        redis_command = f'redis-cli rpush {queue} {data} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
     def set_pod_counter(self, queue, value=0):
@@ -2046,12 +2030,12 @@ class kubernetes():
         :param value: Integer value to assign.  Defaults to ``0``.
         """
         pods_messagequeue = self.get_pods(component='messagequeue')
-        if len(pods_messagequeue) > 0:
+        if pods_messagequeue:
             pod_messagequeue = pods_messagequeue[0]
         else:
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
-        self.logger.debug("I am using messagequeue {}".format(pod_messagequeue))
-        redis_command = 'redis-cli set {queue} {value} '.format(queue=queue, value=value)
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        redis_command = f'redis-cli set {queue} {value} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
     def get_service_endpoints(self, service_name="bexhoma-service-monitoring-default"):
@@ -2063,7 +2047,7 @@ class kubernetes():
         :param service_name: Name of the Service to query.
         :return: List of endpoint IP strings, or ``[]`` on error.
         """
-        self.logger.debug("get_service_endpoints({})".format(service_name))
+        self.logger.debug(f"get_service_endpoints({service_name})")
         endpoints_raw = self.kubectl(
             "get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},"
             "{.subsets[*].addresses[*].ip}{'\\n'}{end}\""
@@ -2073,10 +2057,10 @@ class kubernetes():
                 if service_line.startswith(service_name):
                     endpoints_string = service_line[service_line.find(",") + 1:]
                     endpoints_list = endpoints_string.split(" ")
-                    self.logger.debug("endpoints: {}".format(endpoints_list))
+                    self.logger.debug(f"endpoints: {endpoints_list}")
                     return endpoints_list
         except Exception as e:
-            print("Exception when calling get_service_endpoints: %s\n" % e)
+            print(f"Exception when calling get_service_endpoints: {e}\n")
         return []
 
 
@@ -2096,36 +2080,20 @@ class kubernetes():
         attempted in case of transient kubectl failures.
 
         :param pod_name: Name of the Pod to describe.
-        :param container: Container name (accepted but not forwarded — describe is
-            not container-sensitive).
+        :param container: Accepted for API compatibility but ignored — ``kubectl describe``
+            is not container-sensitive.
         :param number: Optional index suffix appended to the filename.
         """
-        container = ''  # describe pod is not container-sensitive
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         if number is not None:
-            if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.{number}.describe".format(
-                    path=resultfolder, code=self.code, pod=pod_name,
-                    container=container, number=number
-                )
-            else:
-                filename_log = "{path}/{code}/{pod}.{number}.describe".format(
-                    path=resultfolder, code=self.code, pod=pod_name, number=number
-                )
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe"
         else:
-            if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.describe".format(
-                    path=resultfolder, code=self.code, pod=pod_name, container=container
-                )
-            else:
-                filename_log = "{path}/{code}/{pod}.describe".format(
-                    path=resultfolder, code=self.code, pod=pod_name
-                )
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
                 stdout = self.pod_description(pod_name, container)
-                if len(stdout) > 0:
+                if stdout:
                     with open(filename_log, "w") as f:
                         f.write(stdout)
                     return
@@ -2137,19 +2105,12 @@ class kubernetes():
         Return whether a cached ``describe`` file exists in the result folder.
 
         :param pod_name: Name of the Pod.
-        :param container: Container name (not used in path construction).
+        :param container: Accepted for API compatibility but ignored — ``kubectl describe``
+            is not container-sensitive.
         :return: ``True`` if the ``.describe`` file exists on disk.
         """
-        container = ''  # describe pod is not container-sensitive
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if len(container) > 0:
-            filename_log = "{path}/{code}/{pod}.{container}.describe".format(
-                path=resultfolder, code=self.code, pod=pod_name, container=container
-            )
-        else:
-            filename_log = "{path}/{code}/{pod}.describe".format(
-                path=resultfolder, code=self.code, pod=pod_name
-            )
+        filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe"
         return os.path.isfile(filename_log)
 
     def store_pod_log(self, pod_name, container='', number=None):
@@ -2165,35 +2126,24 @@ class kubernetes():
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         if number is not None:
-            if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.{number}.log".format(
-                    path=resultfolder, code=self.code, pod=pod_name,
-                    container=container, number=number
-                )
+            if container:
+                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.{number}.log"
             else:
-                filename_log = "{path}/{code}/{pod}.{number}.log".format(
-                    path=resultfolder, code=self.code, pod=pod_name, number=number
-                )
+                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.log"
         else:
-            if len(container) > 0:
-                filename_log = "{path}/{code}/{pod}.{container}.log".format(
-                    path=resultfolder, code=self.code, pod=pod_name, container=container
-                )
+            if container:
+                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.log"
             else:
-                filename_log = "{path}/{code}/{pod}.log".format(
-                    path=resultfolder, code=self.code, pod=pod_name
-                )
+                filename_log = f"{resultfolder}/{self.code}/{pod_name}.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
-                self.logger.debug("{:30s}: (try #{}) stores pod log into {}".format(
-                    "Bexhoma", attempt, filename_log
-                ))
+                self.logger.debug(f"{'Bexhoma':30s}: (try #{attempt}) stores pod log into {filename_log}")
                 stdout = self.pod_log(pod_name, container)
                 if stdout is None:
-                    print("{:30s}: no data error for log {}".format("Bexhoma", filename_log))
+                    print(f"{'Bexhoma':30s}: no data error for log {filename_log}")
                     attempt += 1
-                elif len(stdout) > 0:
+                elif stdout:
                     with open(filename_log, "w", encoding='utf-8') as f:
                         f.write(stdout)
                     return
@@ -2209,14 +2159,10 @@ class kubernetes():
         :return: ``True`` if the ``.log`` file exists on disk.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if len(container) > 0:
-            filename_log = "{path}/{code}/{pod}.{container}.log".format(
-                path=resultfolder, code=self.code, pod=pod_name, container=container
-            )
+        if container:
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.log"
         else:
-            filename_log = "{path}/{code}/{pod}.log".format(
-                path=resultfolder, code=self.code, pod=pod_name
-            )
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.log"
         return os.path.isfile(filename_log)
 
 
@@ -2278,9 +2224,9 @@ class aws(kubernetes):
         :param command: eksctl subcommand string (without the ``eksctl`` prefix).
         :return: stdout of the eksctl command.
         """
-        fullcommand = 'eksctl {command}'.format(command=command)
-        self.logger.debug('aws.eksctl({})'.format(fullcommand))
-        return os.popen(fullcommand).read()
+        fullcommand = f'eksctl {command}'
+        self.logger.debug(f'aws.eksctl({fullcommand})')
+        return subprocess.run(fullcommand, shell=True, capture_output=True, text=True).stdout
 
     def get_nodes(self, app='', nodegroup_type='', nodegroup_name=''):
         """
@@ -2295,21 +2241,21 @@ class aws(kubernetes):
         :return: List of Kubernetes node objects.
         """
         self.logger.debug('aws.get_nodes()')
-        if len(app) == 0:
+        if not app:
             app = self.appname
         label = 'app=' + app
-        if len(nodegroup_type) > 0:
+        if nodegroup_type:
             label += ',type=' + nodegroup_type
-        if len(nodegroup_name) > 0:
+        if nodegroup_name:
             label += ',alpha.eksctl.io/nodegroup-name=' + nodegroup_name
         try:
             api_response = self.v1core.list_node(label_selector=label)
-            if len(api_response.items) > 0:
+            if api_response.items:
                 return api_response.items
             else:
                 return []
         except ApiException as e:
-            print("Exception when calling CoreV1Api->list_node for get_nodes: %s\n" % e)
+            print(f"Exception when calling CoreV1Api->list_node for get_nodes: {e}\n")
             print("Create new access token")
             self.cluster_access()
             self.wait(2)
@@ -2324,9 +2270,7 @@ class aws(kubernetes):
         :param nodegroup_names: Dict mapping nodegroup name to default target size.
         :param size: If given, overrides the default size for every nodegroup.
         """
-        print("aws.scale_nodegroups({nodegroup_names}, {size})".format(
-            nodegroup_names=nodegroup_names, size=size
-        ))
+        print(f"aws.scale_nodegroups({nodegroup_names}, {size})")
         for nodegroup_name, size_default in nodegroup_names.items():
             if size is not None:
                 size_default = size
@@ -2342,13 +2286,9 @@ class aws(kubernetes):
         :param size: Desired number of nodes.
         :return: eksctl output, or ``None`` if already at the target size.
         """
-        print("aws.scale_nodegroup({nodegroup_name}, {size})".format(
-            nodegroup_name=nodegroup_name, size=size
-        ))
+        print(f"aws.scale_nodegroup({nodegroup_name}, {size})")
         if not self.check_nodegroup(nodegroup_name=nodegroup_name, num_nodes_aux_planned=size):
-            command = "scale nodegroup --cluster={cluster} --nodes={size} --name={nodegroup_name}".format(
-                cluster=self.cluster, size=size, nodegroup_name=nodegroup_name
-            )
+            command = f"scale nodegroup --cluster={self.cluster} --nodes={size} --name={nodegroup_name}"
             return self.eksctl(command)
 
     def get_nodegroup_size(self, nodegroup_type='', nodegroup_name=''):
@@ -2361,9 +2301,7 @@ class aws(kubernetes):
         """
         nodes = self.get_nodes(nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name)
         num_nodes = len(nodes)
-        self.logger.debug('aws.get_nodegroup_size({},{}) = {}'.format(
-            nodegroup_type, nodegroup_name, num_nodes
-        ))
+        self.logger.debug(f'aws.get_nodegroup_size({nodegroup_type},{nodegroup_name}) = {num_nodes}')
         return num_nodes
 
     def check_nodegroup(self, nodegroup_type='', nodegroup_name='', num_nodes_aux_planned=0):
@@ -2378,9 +2316,7 @@ class aws(kubernetes):
         num_nodes_actual = self.get_nodegroup_size(
             nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name
         )
-        self.logger.debug('aws.check_nodegroup({}, {}, {}) = {}'.format(
-            nodegroup_type, nodegroup_name, num_nodes_aux_planned, num_nodes_actual
-        ))
+        self.logger.debug(f'aws.check_nodegroup({nodegroup_type}, {nodegroup_name}, {num_nodes_aux_planned}) = {num_nodes_actual}')
         return num_nodes_aux_planned == num_nodes_actual
 
     def wait_for_nodegroups(self, nodegroup_names, size=None):
@@ -2390,7 +2326,7 @@ class aws(kubernetes):
         :param nodegroup_names: Dict mapping nodegroup name to default target size.
         :param size: If given, overrides the default size for every nodegroup.
         """
-        print("aws.wait_for_nodegroups({nodegroup_names})".format(nodegroup_names=nodegroup_names))
+        print(f"aws.wait_for_nodegroups({nodegroup_names})")
         for nodegroup_name, size_default in nodegroup_names.items():
             if size is not None:
                 size_default = size
@@ -2411,5 +2347,5 @@ class aws(kubernetes):
             num_nodes_aux_planned=num_nodes_aux_planned,
         ):
             self.wait(30)
-        print("Nodegroup {},{} ready".format(nodegroup_type, nodegroup_name))
+        print(f"Nodegroup {nodegroup_type},{nodegroup_name} ready")
         return True

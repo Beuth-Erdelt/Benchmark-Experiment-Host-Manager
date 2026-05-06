@@ -520,10 +520,10 @@ class default():
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "prepareExperiment"
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.v
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
+        experiment['docker'] = {self.docker_key: self.docker.copy()}
+        experiment['volume'] = self.volume_key
+        experiment['initscript'] = {self.script_key: self.initscript.copy()}
+        experiment['instance'] = self.instance_key
         self.log_experiment(experiment)
         """
         if delay > 0:
@@ -552,10 +552,10 @@ class default():
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "startExperiment"
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.v
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
+        experiment['docker'] = {self.docker_key: self.docker.copy()}
+        experiment['volume'] = self.volume_key
+        experiment['initscript'] = {self.script_key: self.initscript.copy()}
+        experiment['instance'] = self.instance_key
         self.log_experiment(experiment)
         """
         if delay > 0:
@@ -851,10 +851,10 @@ class default():
             experiment = {}
             experiment['delay'] = delay
             experiment['step'] = "startExperiment"
-            experiment['docker'] = {self.d: self.docker.copy()}
-            experiment['volume'] = self.v
-            experiment['initscript'] = {self.s: self.initscript.copy()}
-            experiment['instance'] = self.i
+            experiment['docker'] = {self.docker_key: self.docker.copy()}
+            experiment['volume'] = self.volume_key
+            experiment['initscript'] = {self.script_key: self.initscript.copy()}
+            experiment['instance'] = self.instance_key
             self.log_experiment(experiment)
             """
             if delay > 0:
