@@ -19,26 +19,11 @@
 FROM eclipse-temurin:11
 
 ######################################################################################
-# Install build dependencies
+# Install Redis client for message queue interaction
 ######################################################################################
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        make \
-        gcc \
-        wget \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    redis-tools \
     && rm -rf /var/lib/apt/lists/*
-
-######################################################################################
-# Build Redis CLI from source
-######################################################################################
-RUN wget -q http://download.redis.io/redis-stable.tar.gz \
-    && tar xvzf redis-stable.tar.gz \
-    && cd redis-stable \
-    && make redis-cli \
-    && cp src/redis-cli /usr/local/bin/ \
-    && chmod 755 /usr/local/bin/redis-cli \
-    && cd / \
-    && rm -rf redis-stable redis-stable.tar.gz
 
 ######################################################################################
 # Copy TPC-DS generator files
