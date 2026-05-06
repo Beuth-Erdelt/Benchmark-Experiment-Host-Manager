@@ -3,12 +3,11 @@
 ## Overview
 
 `clusters.py` is the Kubernetes cluster-management layer for Bexhoma.
-It provides three public classes:
+It provides two public classes:
 
 | Class | Role |
 |---|---|
-| `testbed` | Abstract base: Kubernetes API wrappers, cluster component lifecycle, experiment bookkeeping |
-| `kubernetes` | Concrete K8s cluster manager; adds pod/job log persistence to `testbed` |
+| `kubernetes` | K8s cluster manager: API wrappers, component lifecycle, experiment bookkeeping, pod/job log persistence |
 | `aws` | Extends `kubernetes` with EKS nodegroup scaling via `eksctl` |
 
 Module-level helper: `to_unc(path)` — converts Windows drive paths to UNC
@@ -19,12 +18,10 @@ administrative share paths for `kubectl cp` on Windows.
 ## Class hierarchy
 
 ```
-testbed
-└── kubernetes
-    └── aws
+kubernetes
+└── aws
 ```
 
-`testbed` and `kubernetes` accept identical constructor signatures.
 `aws` adds `self.cluster = self.context` (used as the EKS cluster name for `eksctl`).
 
 ---
@@ -79,8 +76,8 @@ relied upon in new code:
 
 Do **not** rename any public class, attribute, or method — they are referenced
 by name from `configurations.py`, experiment notebooks, and external scripts.
-Internal (local variable) names may be changed freely; the refactor in v0.9.6
-already did this.
+`testbed` no longer exists; it was merged into `kubernetes` in v0.9.6.
+Internal (local variable) names may be changed freely.
 
 ---
 
