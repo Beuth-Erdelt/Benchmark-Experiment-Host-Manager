@@ -354,15 +354,6 @@ class Kubernetes():
         if not silent:
             print("done")
 
-    def delay(self, sec, silent=False):
-        """
-        Sleep for ``sec`` seconds.  Synonym for :meth:`wait`.
-
-        :param sec: Number of seconds to wait.
-        :param silent: If ``True``, suppress all output.
-        """
-        self.wait(sec, silent)
-
     def delete_deployment(self, deployment):
         """
         Delete a Kubernetes Deployment by name.
@@ -708,14 +699,14 @@ class Kubernetes():
                 app=app, component=component, experiment=experiment, configuration=configuration
             )
 
-    def does_pvc_exist(self, name):
+    def pvc_exists(self, name):
         """
         Return whether a PVC with the given name exists in the namespace.
 
         :param name: Name of the PVC to check.
         :return: ``True`` if the PVC exists, ``False`` if not found (HTTP 404).
         """
-        self.logger.debug('Kubernetes.does_pvc_exist()')
+        self.logger.debug('Kubernetes.pvc_exists()')
         try:
             self.v1core.read_namespaced_persistent_volume_claim(
                 namespace=self.namespace, name=name
@@ -728,7 +719,7 @@ class Kubernetes():
                 print(f"Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: {e}\n")
                 self.cluster_access()
                 self.wait(2)
-                return self.does_pvc_exist(name=name)
+                return self.pvc_exists(name=name)
 
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
@@ -859,16 +850,16 @@ class Kubernetes():
                 configuration=configuration, pvc=pvc
             )
 
-    def get_statefulset_pods(self, stateful_set=''):
+    def get_stateful_set_pods(self, stateful_set=''):
         """
         Return names of Pods belonging to a given StatefulSet.
 
         :param stateful_set: Name of the StatefulSet.
         :return: List of Pod names.
         """
-        self.logger.debug('Kubernetes.get_statefulset_pods()')
+        self.logger.debug('Kubernetes.get_stateful_set_pods()')
         label = f"statefulset.kubernetes.io/pod-name={stateful_set}"
-        self.logger.debug('get_statefulset_pods' + label)
+        self.logger.debug('get_stateful_set_pods' + label)
         try:
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
             if api_response.items:
@@ -879,7 +870,7 @@ class Kubernetes():
             print(f"Exception when calling CoreV1Api->list_namespaced_pod: {e}\n")
             self.cluster_access()
             self.wait(2)
-            return self.get_statefulset_pods(stateful_set=stateful_set)
+            return self.get_stateful_set_pods(stateful_set=stateful_set)
 
     def delete_stateful_set(self, name):
         """
@@ -948,7 +939,7 @@ class Kubernetes():
             self.wait(2)
             return self.delete_service(name=name)
 
-    def OLD_startPortforwarding(self, service='', app='', component='sut'):
+    def _old_start_port_forwarding(self, service='', app='', component='sut'):
         """
         .. deprecated::
             Legacy port-forwarding helper.  Not used in the current Kubernetes flow.
@@ -971,7 +962,7 @@ class Kubernetes():
             your_command = " ".join(forward)
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
 
-    def OLD_getChildProcesses(self):
+    def _old_get_child_processes(self):
         """
         .. deprecated::
             Legacy helper for enumerating child processes.  Not used.
@@ -980,7 +971,7 @@ class Kubernetes():
         current_process = psutil.Process()
         children = current_process.children(recursive=False)
 
-    def OLD_stopPortforwarding(self):
+    def _old_stop_port_forwarding(self):
         """
         .. deprecated::
             Legacy helper for stopping kubectl port-forward processes.  Not used.
@@ -1146,7 +1137,7 @@ class Kubernetes():
             else:
                 return "", stdout, stderr
 
-    def file_upload(self, filename_remote, filename_local, pod, container="dashboard"):
+    def upload_file(self, filename_remote, filename_local, pod, container="dashboard"):
         """
         Upload a local file into a Pod container using ``kubectl cp``.
 
@@ -1162,7 +1153,7 @@ class Kubernetes():
         cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
         return self.kubectl(cmd)
 
-    def file_download(self, filename_remote, filename_local, pod, container="dashboard"):
+    def download_file(self, filename_remote, filename_local, pod, container="dashboard"):
         """
         Download a file from a Pod container to the local machine using ``kubectl cp``.
 
@@ -1178,7 +1169,7 @@ class Kubernetes():
         cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
         return self.kubectl(cmd)
 
-    def check_DBMS_connection(self, ip, port):
+    def check_dbms_connection(self, ip, port):
         """
         Test whether a TCP connection to ``ip:port`` can be established.
 
@@ -1201,7 +1192,7 @@ class Kubernetes():
             s.close()
         return found
 
-    def OLD__getTimediff(self):
+    def _old_get_timediff(self):
         """
         .. deprecated::
             Legacy helper for measuring clock skew between local host and a remote pod.
@@ -1214,7 +1205,7 @@ class Kubernetes():
         timestamp_local = os.popen(command).read()
         return int(timestamp_remote) - int(timestamp_local)
 
-    def OLD_continueBenchmarks(self, connection=None, query=None):
+    def _old_continue_benchmarks(self, connection=None, query=None):
         """
         .. deprecated::
             Legacy method for resuming a DBMSBenchmarker run from a saved result folder.
@@ -1242,7 +1233,7 @@ class Kubernetes():
         evaluator.evaluator(self.benchmark, load=False, force=True)
         return self.code
 
-    def OLD_runReporting(self):
+    def _old_run_reporting(self):
         """
         .. deprecated::
             Legacy reporting trigger.  Not used in the current experiment flow.
@@ -1250,7 +1241,7 @@ class Kubernetes():
         evaluator.evaluator(self.benchmark, load=False, force=True)
         self.benchmark.generateReportsAll()
 
-    def OLD_copyLog(self):
+    def _old_copy_log(self):
         """
         .. deprecated::
             Legacy helper for copying the DBMS log file inside a pod.  Not used.
@@ -1265,7 +1256,7 @@ class Kubernetes():
             )
             self.execute_command_in_pod(cmd_save, container='dbms')
 
-    def OLD_copyInits(self):
+    def _old_copy_inits(self):
         """
         .. deprecated::
             Legacy helper for copying init-script logs inside a pod.  Not used.
@@ -1329,7 +1320,7 @@ class Kubernetes():
         self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
         return containers + init_containers
 
-    def OLD_downloadLog(self):
+    def _old_download_log(self):
         """
         .. deprecated::
             Legacy helper for downloading pod logs via ``kubectl cp``.  Not used.
@@ -1610,7 +1601,7 @@ class Kubernetes():
                     configuration=configuration, client=client
                 )
 
-    def create_dashboard_name(self, app='', component='dashboard'):
+    def get_dashboard_name(self, app='', component='dashboard'):
         """
         Build a canonical name string for the dashboard component.
 
@@ -1621,10 +1612,10 @@ class Kubernetes():
         if not app:
             app = self.appname
         name = f"{app}_{component}"
-        self.logger.debug(f'Kubernetes.create_dashboard_name({name})')
+        self.logger.debug(f'Kubernetes.get_dashboard_name({name})')
         return name
 
-    def create_messagequeue_name(self, app='', component='messagequeue'):
+    def get_messagequeue_name(self, app='', component='messagequeue'):
         """
         Build a canonical name string for the message-queue component.
 
@@ -1638,7 +1629,7 @@ class Kubernetes():
         self.logger.debug(f'Kubernetes.create_messagequeue({name})')
         return name
 
-    def dashboard_is_running(self):
+    def is_dashboard_running(self):
         """
         Return whether the dashboard Pod exists and is in the ``Running`` phase.
 
@@ -1646,10 +1637,10 @@ class Kubernetes():
         """
         pod_dashboard = self.get_dashboard_pod_name(app=self.appname, component='dashboard')
         if pod_dashboard:
-            self.logger.debug('Kubernetes.dashboard_is_running()=exists')
+            self.logger.debug('Kubernetes.is_dashboard_running()=exists')
             status = self.get_pod_status(pod_dashboard)
             if status == "Running":
-                self.logger.debug('Kubernetes.dashboard_is_running() is running')
+                self.logger.debug('Kubernetes.is_dashboard_running() is running')
                 return True
         return False
 
@@ -1659,7 +1650,7 @@ class Kubernetes():
 
         Manifest template: ``deploymenttemplate-bexhoma-dashboard.yml``.
 
-        :param app: App name passed to :meth:`create_dashboard_name`.
+        :param app: App name passed to :meth:`get_dashboard_name`.
         :param component: Component label.  Defaults to ``dashboard``.
         """
         if len(self.get_dashboard_pod_name()):
@@ -1667,14 +1658,14 @@ class Kubernetes():
             return
         print(f"{'Dashboard':30s}: is starting...", end="", flush=True)
         deployment = 'deploymenttemplate-bexhoma-dashboard.yml'
-        self.create_dashboard_name(app, component)
+        self.get_dashboard_name(app, component)
         self.logger.debug(f'Kubernetes.start_dashboard({deployment})')
         self.create_object_from_file(self.yamlfolder + deployment)
-        while not self.dashboard_is_running():
+        while not self.is_dashboard_running():
             self.wait(10, silent=True)
         print("done")
 
-    def test_if_monitoring_healthy(self):
+    def is_monitoring_healthy(self):
         """
         Probe Prometheus by issuing a ``query_range`` request from inside the dashboard pod.
 
@@ -1683,7 +1674,7 @@ class Kubernetes():
 
         :return: ``True`` if Prometheus is reachable and healthy.
         """
-        self.logger.debug('Kubernetes.test_if_monitoring_healthy()')
+        self.logger.debug('Kubernetes.is_monitoring_healthy()')
         config_k8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_k8s['monitor']:
             url = config_k8s['monitor']['service_monitoring'].format(
@@ -1727,13 +1718,13 @@ class Kubernetes():
         :param component: Component label.  Defaults to ``monitoring``.
         """
         self.monitor_cluster_active = True
-        self.monitor_cluster_exists = self.test_if_monitoring_healthy()
+        self.monitor_cluster_exists = self.is_monitoring_healthy()
         if self.monitor_cluster_exists:
             return
         # Give an existing Prometheus up to 100 s to become healthy before deploying
         for _ in range(10):
             self.wait(10, silent=True)
-            self.monitor_cluster_exists = self.test_if_monitoring_healthy()
+            self.monitor_cluster_exists = self.is_monitoring_healthy()
             if self.monitor_cluster_exists:
                 return
         endpoints = self.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
@@ -1749,7 +1740,7 @@ class Kubernetes():
             self.wait(10, silent=True)
         print("done")
 
-    def messagequeue_is_running(self, component='messagequeue'):
+    def is_messagequeue_running(self, component='messagequeue'):
         """
         Return whether the message-queue Pod exists and is in the ``Running`` phase.
 
@@ -1759,10 +1750,10 @@ class Kubernetes():
         pods_messagequeue = self.get_pods(component=component)
         if pods_messagequeue:
             pod_messagequeue = pods_messagequeue[0]
-            self.logger.debug('Kubernetes.messagequeue_is_running()=exists')
+            self.logger.debug('Kubernetes.is_messagequeue_running()=exists')
             status = self.get_pod_status(pod_messagequeue)
             if status == "Running":
-                self.logger.debug('Kubernetes.messagequeue_is_running() is running')
+                self.logger.debug('Kubernetes.is_messagequeue_running() is running')
                 return True
         return False
 
@@ -1772,7 +1763,7 @@ class Kubernetes():
 
         Manifest template: ``deploymenttemplate-bexhoma-messagequeue.yml``.
 
-        :param app: App name passed to :meth:`create_messagequeue_name`.
+        :param app: App name passed to :meth:`get_messagequeue_name`.
         :param component: Component label.  Defaults to ``messagequeue``.
         """
         pods_messagequeue = self.get_pods(component=component)
@@ -1782,10 +1773,10 @@ class Kubernetes():
             return
         print(f"{'Message Queue':30s}: is starting...", end="", flush=True)
         deployment = 'deploymenttemplate-bexhoma-messagequeue.yml'
-        self.create_messagequeue_name(app, component)
+        self.get_messagequeue_name(app, component)
         self.logger.debug(f'Kubernetes.start_messagequeue({deployment})')
         self.create_object_from_file(self.yamlfolder + deployment)
-        while not self.messagequeue_is_running():
+        while not self.is_messagequeue_running():
             self.wait(10, silent=True)
         print("done")
 
@@ -1973,26 +1964,26 @@ class Kubernetes():
             print(pod, status)
             self.delete_pod(pod)
 
-    def connect_dashboard(self):
+    def forward_dashboard_ports(self):
         """
         Forward the dashboard Pod's ports (8050 and 8888) to localhost.
 
         Port 8050 is the DBMSBenchmarker result dashboard; port 8888 is Jupyter.
         """
-        print("connect_dashboard")
+        print("forward_dashboard_ports")
         pod_dashboard = self.get_dashboard_pod_name(component='dashboard')
         if pod_dashboard:
             fullcommand = f'port-forward pod/{pod_dashboard} 8050:8050 8888:8888 --address 0.0.0.0'
             self.kubectl(fullcommand)
 
-    def connect_master(self, experiment='', configuration=''):
+    def forward_sut_port(self, experiment='', configuration=''):
         """
         Forward the SUT master service port to localhost.
 
         :param experiment: Filter by experiment code (optional).
         :param configuration: Filter by DBMS configuration name (optional).
         """
-        print("connect_master")
+        print("forward_sut_port")
         if experiment is None:
             experiment = ''
         if configuration is None:

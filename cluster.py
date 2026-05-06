@@ -84,7 +84,7 @@ if __name__ == '__main__':
                 experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
-        cluster.connect_dashboard()
+        cluster.forward_dashboard_ports()
     elif args.mode == 'localdashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         import sys
@@ -127,7 +127,7 @@ if __name__ == '__main__':
         subprocess.Popen(cmd)
     elif args.mode == 'master':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
-        cluster.connect_master(experiment=args.experiment, configuration=connection)
+        cluster.forward_sut_port(experiment=args.experiment, configuration=connection)
     elif args.mode == 'status':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         app = cluster.appname
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             status = cluster.get_pod_status(dashboard_name)
             print("Dashboard: {}".format(status))
             # get cluster monitoring Prometheus
-            monitoring_running = cluster.test_if_monitoring_healthy()
+            monitoring_running = cluster.is_monitoring_healthy()
             if monitoring_running:
                 print("Cluster Prometheus: {}".format("Running"))
             else:

@@ -772,7 +772,7 @@ if __name__ == '__main__':
                         :return: list of endpoints
                         """
                         #pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
-                        pods_worker = cluster.get_statefulset_pods(self.statefulset_name)
+                        pods_worker = cluster.get_stateful_set_pods(self.statefulset_name)
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
                         #print("****************", pods_worker)
                         return pods_worker
