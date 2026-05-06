@@ -7,8 +7,8 @@ It provides two public classes:
 
 | Class | Role |
 |---|---|
-| `kubernetes` | K8s cluster manager: API wrappers, component lifecycle, experiment bookkeeping, pod/job log persistence |
-| `aws` | Extends `kubernetes` with EKS nodegroup scaling via `eksctl` |
+| `Kubernetes` | K8s cluster manager: API wrappers, component lifecycle, experiment bookkeeping, pod/job log persistence |
+| `AWS` | Extends `Kubernetes` with EKS nodegroup scaling via `eksctl` |
 
 Module-level helper: `to_unc(path)` — converts Windows drive paths to UNC
 administrative share paths for `kubectl cp` on Windows.
@@ -18,11 +18,11 @@ administrative share paths for `kubectl cp` on Windows.
 ## Class hierarchy
 
 ```
-kubernetes
-└── aws
+Kubernetes
+└── AWS
 ```
 
-`aws` adds `self.cluster = self.context` (used as the EKS cluster name for `eksctl`).
+`AWS` adds `self.cluster = self.context` (used as the EKS cluster name for `eksctl`).
 
 ---
 
@@ -41,7 +41,7 @@ All instance attributes are declared in `testbed.__init__`.  Key groups:
 | Monitoring flags | `monitoring_active`, `monitor_app_active`, `monitor_cluster_active`, `monitor_cluster_exists` |
 | Experiment bookkeeping | `code`, `experiments`, `benchmark`, `queryfile`, `timeLoading` |
 
-`kubernetes.__init__` calls `testbed.__init__` and adds `max_sut` and resets `experiments`.
+`Kubernetes.__init__` adds `max_sut` and resets `experiments`.
 
 ---
 
@@ -76,7 +76,7 @@ relied upon in new code:
 
 Do **not** rename any public class, attribute, or method — they are referenced
 by name from `configurations.py`, experiment notebooks, and external scripts.
-`testbed` no longer exists; it was merged into `kubernetes` in v0.9.6.
+`testbed` no longer exists; it was merged into `Kubernetes` in v0.9.6.
 Internal (local variable) names may be changed freely.
 
 ---

@@ -142,7 +142,7 @@ if __name__ == '__main__':
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.aws(context=args.context)
+        cluster = clusters.AWS(context=args.context)
         # scale up
         node_sizes = {
             'auxiliary': 1,
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)
     cluster_name = cluster.contextdata['clustername']
     # limit number of sut
     if args.max_sut is not None:
