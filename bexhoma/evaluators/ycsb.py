@@ -24,6 +24,7 @@ from dbmsbenchmarker import monitor
 from datetime import datetime
 import glob
 from pathlib import Path
+from bexhoma import evaluators
 
 from .base import natural_sort
 from .logger import logger
@@ -849,6 +850,131 @@ class ycsb(logger):
         """
         return self.get_df_loading()
 
+        return df_total
+    def get_summary_benchmark_per_connection(self):
+        """
+        Returns benchmarking results with one row per pod, filtered to the key
+        display columns.
+
+        Applies :meth:`benchmarking_set_datatypes` and selects the columns used
+        for the per-connection summary table (experiment run, terminals, target,
+        client, child, time, errors, throughput, goodput, efficiency, and
+        latency percentiles), then sorts by ``(experiment_run, client, child)``.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
+                 if there are no benchmarking results.
+        :rtype: pandas.DataFrame or None
+        """
+        df = self.get_df_benchmarking()
+        if not df.empty:
+            columns = [
+            'experiment_run', 'client', 'child',"threads","target","pod_count","exceptions",
+            "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
+            "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
+            "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
+            "[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)",
+            "[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)",
+            "[READ-MODIFY-WRITE].Operations","[READ-MODIFY-WRITE].99thPercentileLatency(us)","[READ-MODIFY-WRITE].99thPercentileLatency(us)",
+            "[INSERT-FAILED].Operations","[INSERT-FAILED].99thPercentileLatency(us)","[INSERT-FAILED].99thPercentileLatency(us)",
+            "[READ-FAILED].Operations","[READ-FAILED].99thPercentileLatency(us)","[READ-FAILED].99thPercentileLatency(us)",
+            "[UPDATE-FAILED].Operations","[UPDATE-FAILED].99thPercentileLatency(us)","[UPDATE-FAILED].99thPercentileLatency(us)",
+            "[SCAN-FAILED].Operations","[SCAN-FAILED].99thPercentileLatency(us)","[SCAN-FAILED].99thPercentileLatency(us)",
+            "[READ-MODIFY-WRITE-FAILED].Operations","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)",
+            ]
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_plot_filtered = pd.DataFrame()
+            for col in columns:
+                if col in df_plot.columns:
+                    df_plot_filtered[col] = df_plot.loc[:,col]
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            return df_plot_filtered
+    def get_summary_benchmark_per_phase(self):
+        """
+        Returns benchmarking results aggregated over parallel pods, one row per phase.
+
+        Applies :meth:`benchmarking_set_datatypes`, aggregates via
+        :meth:`benchmarking_aggregate_by_parallel_pods`, and selects the columns
+        used for the per-phase summary table (experiment run, terminals, target,
+        pod count, time, errors, throughput, goodput, efficiency, and latency
+        percentiles), sorted by ``(experiment_run, target, pod_count)``.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per phase, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions"]].copy()
+            columns = [
+            "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
+            "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
+            "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
+            "[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)",
+            "[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)",
+            "[READ-MODIFY-WRITE].Operations","[READ-MODIFY-WRITE].99thPercentileLatency(us)","[READ-MODIFY-WRITE].99thPercentileLatency(us)",
+            "[INSERT-FAILED].Operations","[INSERT-FAILED].99thPercentileLatency(us)","[INSERT-FAILED].99thPercentileLatency(us)",
+            "[READ-FAILED].Operations","[READ-FAILED].99thPercentileLatency(us)","[READ-FAILED].99thPercentileLatency(us)",
+            "[UPDATE-FAILED].Operations","[UPDATE-FAILED].99thPercentileLatency(us)","[UPDATE-FAILED].99thPercentileLatency(us)",
+            "[SCAN-FAILED].Operations","[SCAN-FAILED].99thPercentileLatency(us)","[SCAN-FAILED].99thPercentileLatency(us)",
+            "[READ-MODIFY-WRITE-FAILED].Operations","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)",
+            ]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            return df_aggregated_reduced
+    def get_summary_loading_per_connection(self):
+        """
+        Returns loading metrics aggregated per experiment run.
+
+        Delegates to :meth:`get_df_loading` (defined in :class:`base`),
+        which reduces the per-connection loading DataFrame to one row per
+        ``(code, configuration, experiment_run)`` and adds a
+        ``'Throughput [SF/h]'`` column.
+
+        :return: DataFrame with one row per experiment run.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_loading()
+        if not df.empty:
+            columns = ['experiment_run','connection', "threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
+            df.fillna(0, inplace=True)
+            df_plot = self.loading_set_datatypes(df)
+            df_plot_filtered = pd.DataFrame()
+            for col in columns:
+                if col in df_plot.columns:
+                    df_plot_filtered[col] = df_plot.loc[:,col]
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run'])
+            return df_plot_filtered
+
+
+    def get_summary_loading_per_run(self):
+        """
+        Returns loading metrics aggregated per experiment run.
+
+        Delegates to :meth:`get_df_loading` (defined in :class:`base`),
+        which reduces the per-connection loading DataFrame to one row per
+        ``(code, configuration, experiment_run)`` and adds a
+        ``'Throughput [SF/h]'`` column.
+
+        :return: DataFrame with one row per experiment run.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_loading()
+        if not df.empty:
+            df_plot = self.loading_set_datatypes(df)
+            df_aggregated = self.loading_aggregate_by_parallel_pods(df_plot)
+            df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
+            df_plot_filtered = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+            return df_plot_filtered
 
 
 
