@@ -116,3 +116,55 @@ class dbmsbenchmarker(base):
         self.experimentfile_download(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentfile_upload(filename='')
+    def show_summary(self):
+        #print('dbmsbenchmarker.show_summary()')
+        connections_sorted, monitoring_applications = self.show_summary_header()
+        #####################
+        df = self.evaluator.get_df_benchmarking()
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = self.workload['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual\n")
+                for c in workflow_actual:
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned\n")
+                for c in workflow_planned:
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
+        if self.loading_is_active():
+            print("\n### Loading")
+            print("\n#### Per Run\n")
+            df = self.evaluator.get_summary_loading_per_run()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+        if self.benchmarking_is_active():
+            print("\n### Execution")
+            print("\n#### Per Connection\n")
+            df = self.evaluator.get_summary_benchmark_per_connection()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            print("\n#### Per Phase\n")
+            df = self.evaluator.get_summary_benchmark_per_phase()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            df_aggregated_reduced = df.copy()
+        else:
+            df_aggregated_reduced = pd.DataFrame()
+        #####################
+        test_results_monitoring = self.show_summary_monitoring()
+        if len(monitoring_applications) > 0:
+            print("\n### Application Metrics")
+            #print(monitoring_applications)#df_monitoring_app)
+            for title, metrics in monitoring_applications.items():
+                print("\n#### "+title+"\n")
+                print(metrics.to_markdown(index=True, floatfmt=".2f"))
+        print("\n### Tests")
+        self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
+        if len(test_results_monitoring) > 0:
+            print(test_results_monitoring)
+        if self.benchmarking_is_active():
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("* TEST passed: Workflow as planned")
+            else:
+                print("* TEST failed: Workflow not as planned")
+
+
