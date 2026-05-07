@@ -317,7 +317,7 @@ class logger(base):
             df = pd.read_csv(self.path+"/"+filename).T
             #print(df)
             df = df.reindex(index=natural_sort(df.index))
-            df.index = self.code + '-' + df.index.astype(str)
+            #df.index = self.code + '-' + df.index.astype(str)
             return df.T
         else:
             return pd.DataFrame()

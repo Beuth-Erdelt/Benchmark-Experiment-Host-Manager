@@ -355,6 +355,7 @@ class base():
             method = 'diff' if row["metric"] == 'counter' else 'mean'
             col_name = row["title"]
             df = evaluation.get_monitoring_metric(metric=metric_name, component=type)
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if method == 'diff':
                 processed = df.max().sort_index() - df.min().sort_index()
             elif method == 'max':
@@ -386,7 +387,9 @@ class base():
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluate = self.get_evaluator(code)
-        return evaluate.get_monitoring_metric(metric=metric, component=component)
+        df = evaluate.get_monitoring_metric(metric=metric, component=component)
+        df.index = self.code + '-' + df.index.astype(str)
+        return df
 
     def get_monitoring_aggregated_per_phase(self, type="stream"):
         """
@@ -433,6 +436,7 @@ class base():
             return pd.DataFrame()
         evaluate = self.get_evaluator(code)
         df = evaluate.get_monitoring_metric(metric=metric, component=component)
+        df.index = evaluation.code + '-' + df.index.astype(str)
         return df.T
 
     def add_metadata(self, df):
