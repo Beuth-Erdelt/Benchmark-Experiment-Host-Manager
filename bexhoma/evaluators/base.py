@@ -422,8 +422,8 @@ class base:
         df = self.get_loading_per_connection()
         df = df.groupby(['code', 'configuration', 'experiment_run']).max()
         df = df.reset_index()
-        df.index = df['code'].astype(str) + "-" + \
-                   df['configuration'].astype(str) + "-" + \
+        #df.index = df['code'].astype(str) + "-" + \
+        df.index = df['configuration'].astype(str) + "-" + \
                    df['experiment_run'].astype(str)
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()

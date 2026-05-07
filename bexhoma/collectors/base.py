@@ -436,7 +436,7 @@ class base():
             return pd.DataFrame()
         evaluate = self.get_evaluator(code)
         df = evaluate.get_monitoring_metric(metric=metric, component=component)
-        df.index = evaluation.code + '-' + df.index.astype(str)
+        df.index = code + '-' + df.index.astype(str)
         return df.T
 
     def add_metadata(self, df):
@@ -679,6 +679,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_pod()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         df_all.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -699,6 +700,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_connection()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         return df_all
@@ -716,6 +718,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         return df_all
@@ -733,6 +736,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run_multitenant()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         return df_all
