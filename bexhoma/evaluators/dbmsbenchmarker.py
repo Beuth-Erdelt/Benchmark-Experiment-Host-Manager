@@ -366,3 +366,17 @@ class dbmsbenchmarker(logger):
             #        df_plot_filtered[col] = df_plot.loc[:,col]
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
             return df
+    def get_summary_loading_per_run(self):
+        """
+        Returns loading metrics aggregated per experiment run.
+
+        Delegates to :meth:`get_loading_per_run` (defined in :class:`base`),
+        which reduces the per-connection loading DataFrame to one row per
+        ``(code, configuration, experiment_run)`` and adds a
+        ``'Throughput [SF/h]'`` column.
+
+        :return: DataFrame with one row per experiment run.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_loading_per_run()
+        return df

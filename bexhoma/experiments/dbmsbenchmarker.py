@@ -125,7 +125,7 @@ class dbmsbenchmarker(base):
             print("\n### Workflow")
             #df = self.evaluator.get_summary_benchmark_per_phase()
             df = self.evaluator.get_summary_benchmark_per_connection()
-            print(df)
+            #print(df)
             """
             workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df)
             #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
@@ -174,10 +174,28 @@ class dbmsbenchmarker(base):
                 print("\n#### "+title+"\n")
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
         print("\n### Tests")
-        self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
+        #self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
         if len(test_results_monitoring) > 0:
             print(test_results_monitoring)
         if self.benchmarking_is_active():
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("* TEST passed: Workflow as planned")
+            else:
+                print("* TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+            self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
+            #self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+            #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+            self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
+            if num_errors == 0:
+                print("* TEST passed: No SQL errors")
+            else:
+                print("* TEST failed: SQL errors")
+            if num_warnings == 0:
+                print("* TEST passed: No SQL warnings")
+            else:
+                print("* TEST failed: SQL warnings (result mismatch)")
             if self.test_workflow(workflow_actual, workflow_planned):
                 print("* TEST passed: Workflow as planned")
             else:
