@@ -154,7 +154,9 @@ class dbmsbenchmarker(logger):
         df = pd.concat([df_power, df_geo_mean_runtime], axis=1)
         #print(df)
         df_merged_time = pd.DataFrame()
+        num_pod = 0
         for connection_nr, connection in self.evaluation.benchmarks.dbms.items():
+            num_pod = num_pod + 1
             df_time = pd.DataFrame()
             c = connection.connectiondata
             connection_name = c['name']
@@ -170,6 +172,7 @@ class dbmsbenchmarker(logger):
             df_time['experiment_run'] = int(c['parameter']['numExperiment'])
             df_time['client'] = int(c['parameter']['client'])
             df_time['code'] = int(c['parameter']['code'])
+            df_time['pod'] = num_pod
             df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
             if not 'time_end' in eva['times']['total'][c['name']]:
                 return pd.DataFrame()
@@ -188,6 +191,7 @@ class dbmsbenchmarker(logger):
         df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['pod_count']/df_benchmark['time [s]']*df_benchmark['SF2']).round(2)
         df_benchmark = df_benchmark.reset_index(level=['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])
         df_benchmark = df_benchmark.set_index("connection", drop=False)
+        df_benchmark['pod'] = df_benchmark['connection'] #num_pod # df_time['pod']
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
         df['Power@Size [~Q/h]'] = df['SF']*3600./df['total_timer_execution']
@@ -308,3 +312,57 @@ class dbmsbenchmarker(logger):
                 df = df.round(2)
                 df.index = df.index.map(map_index_to_queryname)
         return df.T
+    def get_summary_benchmark_per_phase(self):
+        """
+        Returns benchmarking results aggregated over parallel pods, one row per phase.
+
+        Applies :meth:`benchmarking_set_datatypes`, aggregates via
+        :meth:`benchmarking_aggregate_by_parallel_pods`, and selects the columns
+        used for the per-phase summary table (experiment run, terminals, target,
+        pod count, time, errors, throughput, goodput, efficiency, and latency
+        percentiles), sorted by ``(experiment_run, target, pod_count)``.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per phase, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated.copy() #df_aggregated[['experiment_run',"pod_count"]].copy()
+            #columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            #for col in columns:
+            #    if col in df_aggregated.columns:
+            #        df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            #df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            #df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            return df_aggregated_reduced
+    def get_summary_benchmark_per_connection(self):
+        """
+        Returns benchmarking results with one row per pod, filtered to the key
+        display columns.
+
+        Applies :meth:`benchmarking_set_datatypes` and selects the columns used
+        for the per-connection summary table (experiment run, terminals, target,
+        client, child, time, errors, throughput, goodput, efficiency, and
+        latency percentiles), then sorts by ``(experiment_run, client, child)``.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
+                 if there are no benchmarking results.
+        :rtype: pandas.DataFrame or None
+        """
+        df = self.get_df_benchmarking()
+        if not df.empty:
+            #columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            #df.fillna(0, inplace=True)
+            #df_plot = self.benchmarking_set_datatypes(df)
+            #df_plot_filtered = pd.DataFrame()
+            #for col in columns:
+            #    if col in df_plot.columns:
+            #        df_plot_filtered[col] = df_plot.loc[:,col]
+            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            return df

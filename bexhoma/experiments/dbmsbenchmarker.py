@@ -123,6 +123,22 @@ class dbmsbenchmarker(base):
         df = self.evaluator.get_df_benchmarking()
         if self.benchmarking_is_active():
             print("\n### Workflow")
+            #df = self.evaluator.get_summary_benchmark_per_phase()
+            df = self.evaluator.get_summary_benchmark_per_connection()
+            print(df)
+            """
+            workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df)
+            #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
+            workflow_planned = self.workload['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual\n")
+                for c in workflow_actual:
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned\n")
+                for c in workflow_planned:
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
+            """
             workflow_actual = self.evaluator.reconstruct_workflow(df)
             workflow_planned = self.workload['workflow_planned']
             if len(workflow_actual) > 0:

@@ -211,21 +211,22 @@ class base:
             #print(row['experiment_run'], row['configuration'])
             # strip experiment run number
             #configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
-            client_name_pattern = "{}-{}".format(row['num_experiment'], row['num_client'])
-            if row['orig_name'].endswith(client_name_pattern):
-                configuration_name = row['orig_name'][:-len(client_name_pattern)-1]
-            else:
-                configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
+            client_name_pattern = "{}-{}".format(row['experiment_run'], row['client'])
+            #if row['orig_name'].endswith(client_name_pattern):
+            #    configuration_name = row['orig_name'][:-len(client_name_pattern)-1]
+            #else:
+            #    configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
+            configuration_name = row['configuration']
             if configuration_name not in configs:
                 configs[configuration_name] = dict()
-            if row['num_experiment'] not in configs[configuration_name]:
-                configs[configuration_name][row['num_experiment']] = dict()
-            if row['num_client'] not in configs[configuration_name][row['num_experiment']]:
-                configs[configuration_name][row['num_experiment']][row['num_client']] = dict()
-                configs[configuration_name][row['num_experiment']][row['num_client']]['pods'] = dict()
-                configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] = 0
-            configs[configuration_name][row['num_experiment']][row['num_client']]['pods'][row['pods']] = True
-            configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] = configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] + 1
+            if row['experiment_run'] not in configs[configuration_name]:
+                configs[configuration_name][row['experiment_run']] = dict()
+            if row['client'] not in configs[configuration_name][row['experiment_run']]:
+                configs[configuration_name][row['experiment_run']][row['client']] = dict()
+                #configs[configuration_name][row['experiment_run']][row['client']]['pods'] = dict()
+                configs[configuration_name][row['experiment_run']][row['client']]['result_count'] = 0
+            #configs[configuration_name][row['experiment_run']][row['client']]['pods'][row['pods']] = True
+            configs[configuration_name][row['experiment_run']][row['client']]['result_count'] = configs[configuration_name][row['experiment_run']][row['client']]['result_count'] + 1
         # Flat version of workflow
         workflow = dict()
         for index, row in configs.items():
