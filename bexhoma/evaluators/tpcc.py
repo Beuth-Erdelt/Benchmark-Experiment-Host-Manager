@@ -289,5 +289,96 @@ class tpcc(logger):
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
+        return df_total
+    def get_summary_benchmark_per_connection(self):
+        """
+        Returns benchmarking results with one row per pod, filtered to the key
+        display columns.
+
+        Applies :meth:`benchmarking_set_datatypes` and selects the columns used
+        for the per-connection summary table (experiment run, terminals, target,
+        client, child, time, errors, throughput, goodput, efficiency, and
+        latency percentiles), then sorts by ``(experiment_run, client, child)``.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
+                 if there are no benchmarking results.
+        :rtype: pandas.DataFrame or None
+        """
+        df = self.get_df_benchmarking()
+        if not df.empty:
+            if "P95 [ms]" in df:
+                # we have latencies
+                #aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                columns = ['experiment_run',"vusers","client", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+            else:
+                #aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                columns = ['experiment_run',"vusers","client", "NOPM", "TPM", "efficiency", "duration", "errors"]
+            #columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            #df_plot_filtered = df_plot.copy()
+            df_plot_filtered = pd.DataFrame()
+            for col in columns:
+                if col in df_plot.columns:
+                    df_plot_filtered[col] = df_plot.loc[:,col]
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client'])
+            return df_plot_filtered
+    def get_summary_benchmark_per_phase(self):
+        """
+        Returns benchmarking results aggregated over parallel pods, one row per phase.
+
+        Applies :meth:`benchmarking_set_datatypes`, aggregates via
+        :meth:`benchmarking_aggregate_by_parallel_pods`, and selects the columns
+        used for the per-phase summary table (experiment run, terminals, target,
+        pod count, time, errors, throughput, goodput, efficiency, and latency
+        percentiles), sorted by ``(experiment_run, target, pod_count)``.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per phase, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
+            if "P95 [ms]" in df_aggregated:
+                # we have latencies
+                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+            else:
+                aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
+            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            #print(df_aggregated_reduced)
+            #df_aggregated_reduced.index.names = ["DBMS"]
+            #df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
+            #columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            #for col in columns:
+            #    if col in df_aggregated.columns:
+            #        df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            #df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            return df_aggregated_reduced
+    def get_summary_loading_per_run(self):
+        """
+        Returns loading metrics aggregated per experiment run.
+
+        Delegates to :meth:`get_loading_per_run` (defined in :class:`base`),
+        which reduces the per-connection loading DataFrame to one row per
+        ``(code, configuration, experiment_run)`` and adds a
+        ``'Throughput [SF/h]'`` column.
+
+        :return: DataFrame with one row per experiment run.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_loading_per_run()
+        # remember: this can be added (for future use): 'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_NUM_VU'],
+        return df
 
 
