@@ -8,8 +8,9 @@ arguments to it::
     bexhoma tpcds load [args...]
     bexhoma ycsb  run  [args...]
 
-The script is looked up as ``<project_root>/<name>.py``.  In an editable
-install the project root is three directories above this file.
+The script is located by walking up from the current working directory
+until a file named ``<name>.py`` is found.  This works regardless of
+whether the package is installed in editable or regular mode.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2024 Patrick K. Erdelt
@@ -19,7 +20,25 @@ import subprocess
 import sys
 from pathlib import Path
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+
+def _find_script(name: str) -> Path | None:
+    """
+    Walk up from the current directory until ``<name>.py`` is found.
+
+    :param name: Script base name (without ``.py``).
+    :type name: str
+    :return: Absolute path to the script, or ``None`` if not found.
+    :rtype: pathlib.Path or None
+    """
+    candidate = Path.cwd()
+    while True:
+        script = candidate / f"{name}.py"
+        if script.exists():
+            return script
+        parent = candidate.parent
+        if parent == candidate:
+            return None
+        candidate = parent
 
 
 def main():
@@ -27,8 +46,9 @@ def main():
     Entry point for the ``bexhoma`` console script.
 
     Reads the first positional argument as a script name, locates
-    ``<project_root>/<name>.py``, and delegates to it via subprocess,
-    forwarding all remaining arguments unchanged.
+    ``<name>.py`` by walking up from the current working directory,
+    and delegates to it via subprocess, forwarding all remaining
+    arguments unchanged.
 
     :raises SystemExit: mirrors the exit code of the delegated script.
     """
@@ -39,10 +59,10 @@ def main():
 
     script_name = sys.argv[1]
     remaining_args = sys.argv[2:]
-    script_path = _PROJECT_ROOT / f"{script_name}.py"
+    script_path = _find_script(script_name)
 
-    if not script_path.exists():
-        print(f"bexhoma: script not found: {script_path}")
+    if script_path is None:
+        print(f"bexhoma: '{script_name}.py' not found in {Path.cwd()} or any parent directory")
         sys.exit(1)
 
     result = subprocess.run([sys.executable, str(script_path)] + remaining_args)
