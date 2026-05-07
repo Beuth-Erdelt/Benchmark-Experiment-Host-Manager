@@ -183,6 +183,7 @@ class dbmsbenchmarker(logger):
         benchmark_end = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_end'].max()
         duration = benchmark_end - benchmark_start
         df_benchmark = duration.to_frame(name='duration')
+        df_benchmark = df_benchmark.round(2)
         df_benchmark.columns = ['time [s]']
         benchmark_count = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client']).count()
         df_benchmark['pod_count'] = benchmark_count['benchmark_end']
@@ -195,6 +196,7 @@ class dbmsbenchmarker(logger):
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
         df['Power@Size [~Q/h]'] = df['SF']*3600./df['total_timer_execution']
+        df.drop('total_timer_execution', axis=1, inplace=True)
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
         return df
@@ -240,7 +242,7 @@ class dbmsbenchmarker(logger):
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
                 'connection':'max',
-                'total_timer_execution':safe_gmean,
+                'Geo Times [s]':safe_gmean,
                 'Power@Size [~Q/h]':safe_gmean,
                 'code':'max',
                 'pod_count':'count',
