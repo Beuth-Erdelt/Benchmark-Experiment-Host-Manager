@@ -270,10 +270,14 @@ class logger(base):
     def transform_monitoring_results(self, component="loading"):
         """
         Creates combined metrics.csv.
-        For example
+
+        For example::
+
             query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-1.csv
             query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-2.csv
-        are combined to
+
+        are combined to::
+
             query_datagenerator_metric_total_cpu_util.csv
         """
         connections_sorted = self.get_connection_config()
