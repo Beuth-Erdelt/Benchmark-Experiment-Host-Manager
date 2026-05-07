@@ -63,7 +63,7 @@ class base:
         :param include_loading: Are there results about the loading phase?
         :param include_benchmarking: Are there results about the benchmarking phase?
         """
-        self.path = (path+"/"+code)#.replace("\\", "/").replace("C:", "")
+        self.path = path + "/" + code
         self.code = code
         self.include_loading = include_loading
         self.include_benchmarking = include_benchmarking
@@ -200,22 +200,8 @@ class base:
         :param df: DataFrame of benchmarking results - time format (pods already aggregated)
         :return: Dict of connections
         """
-        # Tree of elements of the workflow
-        def remove_after_last_dash(s):
-            index = s.rfind('-')
-            if index != -1:
-                return s[:index]
-            return s  # return the original string if "-" is not found
         configs = dict()
         for index, row in df.iterrows():
-            #print(row['experiment_run'], row['configuration'])
-            # strip experiment run number
-            #configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
-            client_name_pattern = "{}-{}".format(row['experiment_run'], row['client'])
-            #if row['orig_name'].endswith(client_name_pattern):
-            #    configuration_name = row['orig_name'][:-len(client_name_pattern)-1]
-            #else:
-            #    configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
             configuration_name = row['configuration']
             if configuration_name not in configs:
                 configs[configuration_name] = dict()
@@ -223,9 +209,7 @@ class base:
                 configs[configuration_name][row['experiment_run']] = dict()
             if row['client'] not in configs[configuration_name][row['experiment_run']]:
                 configs[configuration_name][row['experiment_run']][row['client']] = dict()
-                #configs[configuration_name][row['experiment_run']][row['client']]['pods'] = dict()
                 configs[configuration_name][row['experiment_run']][row['client']]['result_count'] = 0
-            #configs[configuration_name][row['experiment_run']][row['client']]['pods'][row['pods']] = True
             configs[configuration_name][row['experiment_run']][row['client']]['result_count'] = configs[configuration_name][row['experiment_run']][row['client']]['result_count'] + 1
         # Flat version of workflow
         workflow = dict()
@@ -314,7 +298,6 @@ class base:
             'phase': c['phase'],
             'experiment_run': c['parameter']['numExperiment'],
             'client': int(c['parameter']['client']),
-            #'SF': c['defaultParameters']['SF'],
             'dockerimage': c['parameter']['dockerimage'],
             'time_load': float(c['timeLoad']),
             'time_preload': float(c['timeSchema']),

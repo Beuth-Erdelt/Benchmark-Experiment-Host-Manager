@@ -57,8 +57,6 @@ class tpcc(logger):
             with open(filename) as f:
                 lines = f.readlines()
             stdout = "".join(lines)
-            # extract "wz4bp" from "./1672716717/bexhoma-benchmarker-mariadb-bht-10-9-4-1672716717-1-1-wz4bp.log"
-            #print(filename, filename.rindex("-"))
             pod_name = filename[filename.rindex("-")+1:-len(".log")]
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
@@ -85,7 +83,6 @@ class tpcc(logger):
                 # something went wrong
                 print(filename, "something went wrong")
             num_errors = len(errors)
-            #print("connection_name:", connection_name)
             results = re.findall("Vuser 1:TEST RESULT : System achieved (.+?) NOPM from (.+?) (.+?) TPM", stdout)
             vusers = re.findall("Vuser 1:(.+?) Active", stdout)
             result_tupels = list(zip(results, vusers))
@@ -289,7 +286,6 @@ class tpcc(logger):
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
-        return df_total
     def get_summary_benchmark_per_connection(self):
         """
         Returns benchmarking results with one row per pod, filtered to the key
@@ -308,15 +304,11 @@ class tpcc(logger):
         if not df.empty:
             if "P95 [ms]" in df:
                 # we have latencies
-                #aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
                 columns = ['experiment_run',"vusers","client", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                #aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
                 columns = ['experiment_run',"vusers","client", "NOPM", "TPM", "efficiency", "duration", "errors"]
-            #columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
-            #df_plot_filtered = df_plot.copy()
             df_plot_filtered = pd.DataFrame()
             for col in columns:
                 if col in df_plot.columns:
@@ -355,14 +347,6 @@ class tpcc(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            #print(df_aggregated_reduced)
-            #df_aggregated_reduced.index.names = ["DBMS"]
-            #df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
-            #columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
-            #for col in columns:
-            #    if col in df_aggregated.columns:
-            #        df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            #df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
             return df_aggregated_reduced
     def get_summary_loading_per_run(self):

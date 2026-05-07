@@ -99,10 +99,8 @@ class logger(base):
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith(filename_source_start) and filename.endswith(filename_source_end):
-                #print(filename)
                 df = pd.read_pickle(path+"/"+filename)
                 if not df.empty:
-                    #df['configuration'] = df.index.name
                     if df_collected is not None:
                         df_collected = pd.concat([df_collected, df])
                     else:
@@ -115,8 +113,11 @@ class logger(base):
             f.close()
     def evaluate_results(self, pod_dashboard=''):
         """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
+        Parses all pod log files and persists the results as pickled DataFrames.
+
+        Calls :meth:`transform_all_logs_benchmarking` and :meth:`_collect_dfs` for the
+        benchmarking phase when ``include_benchmarking`` is set, and analogously
+        for the loading phase.
         """
         if self.include_benchmarking:
             self.transform_all_logs_benchmarking()
@@ -140,7 +141,6 @@ class logger(base):
                 df = pd.read_pickle(filename_full)
             else:
                 df = pd.DataFrame()
-        #df#.sort_values(["configuration", "pod"])
         return df
     def get_df_loading(self):
         """
@@ -153,7 +153,6 @@ class logger(base):
             df = pd.read_pickle(self.path+"/"+filename)
         else:
             df = pd.DataFrame()
-        #df#.sort_values(["configuration", "pod"])
         return df
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
         """
@@ -261,7 +260,6 @@ class logger(base):
             if self.include_loading:
                 df = self.get_df_loading()
                 if not df.empty:
-                    #print("Loading", df)
                     pass
             return 0
         except Exception as e:
@@ -291,17 +289,14 @@ class logger(base):
                 else:
                     connectionname = connection['name']
                 filename = "query_{component}_metric_{metric}_{connection}.csv".format(component=component, metric=m, connection=connectionname)
-                #print(self.path++"/"+filename)
                 df = monitor.metrics.loadMetricsDataframe(self.path+"/"+filename)
                 if df is None:
                     continue
-                #print(df)
                 df.columns=[connectionname]
                 if df_all is None:
                     df_all = df
                 else:
                     df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            #print(df_all)
             filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
             #print(self.path+filename)
             monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
@@ -312,12 +307,9 @@ class logger(base):
         :return: DataFrame of monitoring metrics
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
-        #print("Looking for {}".format(filename))
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
-            #print(df)
             df = df.reindex(index=natural_sort(df.index))
-            #df.index = self.code + '-' + df.index.astype(str)
             return df.T
         else:
             return pd.DataFrame()

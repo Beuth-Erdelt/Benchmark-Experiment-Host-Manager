@@ -109,19 +109,16 @@ class benchbase(logger):
                 if len(log) > 0:
                     result = json.loads(log[0])
                     df = pd.json_normalize(result)
-                    #self.cluster.logger.debug(df)
                     df = pd.concat([df_header, df], axis=1)
                     df.index.name = connection_name
-                    #print(df, keyandthink)
                     if keyandthink == "true" and bench == "tpcc":
                         df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
-                    #print(df)
                     return df
                 else:
                     print("no results found in log file {}".format(filename))
                     return df_header
             else:
-                return df_header#pd.DataFrame()
+                return df_header
         except Exception as e:
             print(e)
             print(traceback.format_exc())
@@ -247,32 +244,21 @@ class benchbase(logger):
         datetime_first_measure = 0
         def parse_string(log):
             nonlocal datetime_first_measure
-            #log = re.sub(r'Avg=�', 'Avg=0', log)
             try:
                 # Extract the date and time
                 pattern = r'\[INFO\s*\]\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)\s*\[([\w-]+)\].*?Throughput:\s*([\d\.]+) txn/sec'
-                #print(pattern)
-                #print(log)
                 match = re.match(pattern, log)
                 date_time, thread_id, throughput = match.groups()
-                #print(date_time, thread_id, throughput)
-                #print("----match")
                 fmt = '%Y-%m-%d %H:%M:%S,%f'
                 dt = datetime.strptime(date_time, fmt)
                 if datetime_first_measure == 0:
                     datetime_first_measure = dt
-                #print(datetime_first_measure, dt)
                 second = int((dt - datetime_first_measure).total_seconds())
                 return {
-                    #"date_time": date_time,
-                    "second": second, #date_time,
-                    #"thread_id": thread_id,
+                    "second": second,
                     "throughput": float(throughput),
                 }
-            except Exception as e:
-                # Log or handle any parsing errors (optional)
-                #print("----no match")
-                #print(e)
+            except Exception:
                 return None
         results = []
         with open(file_path, 'r') as file:

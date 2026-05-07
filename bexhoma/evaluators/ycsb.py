@@ -139,15 +139,6 @@ class ycsb(logger):
                 'exceptions':'int',
                 '[OVERALL].RunTime(ms)':'float',
                 '[OVERALL].Throughput(ops/sec)':'float',
-                #'[TOTAL_GCS_PS_Scavenge].Count':'int',
-                #'[TOTAL_GC_TIME_PS_Scavenge].Time(ms)':'float',
-                #'[TOTAL_GC_TIME_%_PS_Scavenge].Time(%)':'float',
-                #'[TOTAL_GCS_PS_MarkSweep].Count':'int',
-                #'[TOTAL_GC_TIME_PS_MarkSweep].Time(ms)':'float',
-                #'[TOTAL_GC_TIME_%_PS_MarkSweep].Time(%)':'float',
-                #'[TOTAL_GCs].Count':'int',
-                #'[TOTAL_GC_TIME].Time(ms)':'float',
-                #'[TOTAL_GC_TIME_%].Time(%)':'float',
             })
             if '[CLEANUP].Operations'in df_typed.columns:
                 df_typed = df_typed.astype({
@@ -264,7 +255,6 @@ class ycsb(logger):
             return df_typed
         except Exception as e:
             print(e)
-            #print(list_columns)
             return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
@@ -720,12 +710,9 @@ class ycsb(logger):
         :return: Dataframe, index is number of second, column is (constant) value of aggregated metric
         """
         client = str(client)
-        #configuration = 'configuration'
         df = self.get_df_benchmarking()
-        #print(df)
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
-        #print("get_benchmark_logs_timeseries_df_aggregated", df_total)
         return df_total
     def get_benchmark_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         """
@@ -741,12 +728,9 @@ class ycsb(logger):
         :return: List of dataframes, index is number of second, column is value of aggregated metric
         """
         client = str(client)
-        #configuration = 'configuration'
         df = self.get_df_benchmarking()
         list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].tolist()
-        #print(list_logs)
         df_total = self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
-        #print("get_benchmark_logs_timeseries_df_single", df_total)
         return df_total
 
     def get_loading_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", experiment_run='1'):
@@ -849,8 +833,6 @@ class ycsb(logger):
         :rtype: pandas.DataFrame
         """
         return self.get_df_loading()
-
-        return df_total
     def get_summary_benchmark_per_connection(self):
         """
         Returns benchmarking results with one row per pod, filtered to the key

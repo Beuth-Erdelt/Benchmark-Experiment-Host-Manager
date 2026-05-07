@@ -5,6 +5,7 @@ Exports the collector classes (:class:`base`, :class:`benchbase`,
 :class:`dbmsbenchmarker`, :class:`tpcc`, :class:`ycsb`) and the utility
 functions :func:`get_non_constant` and :func:`map_index_to_queryname`.
 
+Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.

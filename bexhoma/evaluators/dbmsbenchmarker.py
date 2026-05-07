@@ -33,26 +33,24 @@ from .logger import logger
 
 def map_index_to_queryname(numQuery):
     """
-    Maps a query index string (e.g., 'q1', 'q2', etc.) to a human-readable query title 
-    from the global `query_properties` dictionary.
+    Maps a query index string (e.g., ``'q1'``) to a human-readable title from the
+    global ``query_properties`` dictionary.
 
-    If the title is not found in `query_properties`, the input string is returned as-is.
+    If the title cannot be resolved, the original input string is returned unchanged.
 
-    Parameters
-    ----------
-    numQuery : str
-        A string representing the query index, typically starting with a letter followed by a number (e.g., 'q1').
-
-    Returns
-    -------
-    str
-        The title of the query if available in `query_properties`, otherwise the original input string.
+    :param numQuery: A query index string, typically a letter followed by a number (e.g., ``'q1'``).
+    :type numQuery: str
+    :return: The query title from ``query_properties``, or ``numQuery`` if not found.
+    :rtype: str
     """
     global query_properties
-    if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
+    if (
+        numQuery[1:] in query_properties
+        and 'config' in query_properties[numQuery[1:]]
+        and 'title' in query_properties[numQuery[1:]]['config']
+    ):
         return query_properties[numQuery[1:]]['config']['title']
-    else:
-        return numQuery
+    return numQuery
 
 
 class dbmsbenchmarker(logger):
@@ -120,7 +118,6 @@ class dbmsbenchmarker(logger):
         df = pd.DataFrame(times)
         df = df.reindex(sorted(df.columns), axis=1)
         df = df.round(2).T
-        #df.index.names = ["DBMS"]
         df = df.rename_axis(index="DBMS")
         return df
     def get_df_benchmarking(self):
@@ -149,9 +146,7 @@ class dbmsbenchmarker(logger):
         df = (df/1000.0).sort_index()
         df.columns = ['Geo Times [s]']
         df_geo_mean_runtime = df.copy()
-        #print(df_geo_mean_runtime.index)
         df = pd.concat([df_power, df_geo_mean_runtime], axis=1)
-        #print(df)
         df_merged_time = pd.DataFrame()
         num_pod = 0
         for connection_nr, connection in self.evaluation.benchmarks.dbms.items():
@@ -235,9 +230,6 @@ class dbmsbenchmarker(logger):
             df_stats = df_stats.sort_index().T.round(2)
             df_stats.index = df_stats.index.map(map_index_to_queryname)
             num_of_queries = len(df_stats.index)
-        #num_of_queries=22
-        #df=df_performance.copy()
-        #column = "connection"
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
@@ -336,13 +328,7 @@ class dbmsbenchmarker(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated.copy() #df_aggregated[['experiment_run',"pod_count"]].copy()
-            #columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
-            #for col in columns:
-            #    if col in df_aggregated.columns:
-            #        df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            #df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
-            #df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            df_aggregated_reduced = df_aggregated.copy()
             return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
         """
@@ -360,14 +346,6 @@ class dbmsbenchmarker(logger):
         """
         df = self.get_df_benchmarking()
         if not df.empty:
-            #columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
-            #df.fillna(0, inplace=True)
-            #df_plot = self.benchmarking_set_datatypes(df)
-            #df_plot_filtered = pd.DataFrame()
-            #for col in columns:
-            #    if col in df_plot.columns:
-            #        df_plot_filtered[col] = df_plot.loc[:,col]
-            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
             return df
     def get_summary_loading_per_run(self):
         """
