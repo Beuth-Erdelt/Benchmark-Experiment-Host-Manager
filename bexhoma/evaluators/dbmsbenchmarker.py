@@ -80,7 +80,6 @@ class dbmsbenchmarker(logger):
         self.evaluation = None
         self.path_base = path
         super().__init__(code, path, True, True)
-        print(self.path_base)
         self.get_inspector()
     def get_inspector(self):
         """
@@ -199,6 +198,7 @@ class dbmsbenchmarker(logger):
         df.drop('total_timer_execution', axis=1, inplace=True)
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
+        df = df[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df
     def benchmarking_set_datatypes(self, df):
         """
@@ -263,6 +263,7 @@ class dbmsbenchmarker(logger):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"
+        df_aggregated = df_aggregated[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df_aggregated
     def get_total_warnings(self, query_titles=False):
         """

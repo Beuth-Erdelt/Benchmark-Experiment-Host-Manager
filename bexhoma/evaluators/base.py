@@ -317,8 +317,10 @@ class base:
             #'SF': c['defaultParameters']['SF'],
             'dockerimage': c['parameter']['dockerimage'],
             'time_load': float(c['timeLoad']),
+            'time_preload': float(c['timeSchema']),
+            'time_generate': float(c['timeGenerate']),
             'time_ingest': float(c['timeIngesting']),
-            'time_check': float(c['timeIndex']),
+            'time_postload': float(c['timeIndex']),
             'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
                 if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
@@ -404,7 +406,7 @@ class base:
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx
-        df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
+        df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_preload','time_generate','time_ingest','time_postload','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
         return df
     def get_loading_per_run(self):
         """
