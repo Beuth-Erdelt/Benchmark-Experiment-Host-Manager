@@ -1,3 +1,4 @@
+#!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
 Functional test for collectors.tpcc / HammerDB (Collector-HammerDB.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
