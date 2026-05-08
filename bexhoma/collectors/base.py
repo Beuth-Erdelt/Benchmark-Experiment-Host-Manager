@@ -407,6 +407,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df_monitoring = self.show_summary_monitoring_table(evaluation, type)
+            df_monitoring.index = code + '-' + df_monitoring.index.astype(str)
             if len(df_monitoring) > 0:
                 df_monitoring_all = pd.concat([df_monitoring_all, df_monitoring.copy()])
         df_monitoring_all.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -431,9 +432,9 @@ class base():
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluation = self.get_evaluator(code)
-        df = evaluation.get_monitoring_metric(metric=metric, component=component)
+        df = evaluation.get_monitoring_metric(metric=metric, component=component).T
         df.index = code + '-' + df.index.astype(str)
-        return df.T
+        return df
 
     def add_metadata(self, df):
         """

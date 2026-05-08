@@ -21,7 +21,7 @@ HEADER_COLS = ["phase", "code", "configuration", "experiment_run",
 TS_COLS     = ["timestamp", "phase", "value", "code", "metric", "component"]
 TS_MT_COLS  = ["timestamp", "configuration", "value", "type_tenants"]
 LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
-PERF_COLS   = ["total_timer_execution", "Power@Size [~Q/h]",
+PERF_COLS   = ["Power@Size [~Q/h]",
                "Throughput@Size", "num_of_queries"]
 
 failures = []
@@ -46,7 +46,8 @@ def check_df(df, label, required_cols=None):
             failures.append(f"{label}: missing columns {missing}")
             ok = False
     if ok:
-        print(df.head())
+        #print(df.head())
+        pass
     return ok
 
 

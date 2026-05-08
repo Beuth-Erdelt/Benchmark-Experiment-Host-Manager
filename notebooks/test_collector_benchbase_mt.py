@@ -47,7 +47,8 @@ def check_df(df, label, required_cols=None):
             failures.append(f"{label}: missing columns {missing}")
             ok = False
     if ok:
-        print(df.head())
+        #print(df.head())
+        pass
     return ok
 
 
