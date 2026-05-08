@@ -383,9 +383,9 @@ class base():
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluation = self.get_evaluator(code)
-        df = evaluation.get_monitoring_metric(metric=metric, component=component)
+        df = evaluation.get_monitoring_metric(metric=metric, component=component).T
         df.index = code + '-' + df.index.astype(str)
-        return df
+        return df.T
 
     def get_monitoring_aggregated_per_phase(self, type="stream"):
         """
@@ -460,7 +460,7 @@ class base():
         df_connections = self.get_connections()
         intersection = df.index.intersection(df_connections['phase'])
         if not intersection.empty:
-            print("combine on index and column 'phase'")
+            print("add_metadata: combine on index and column 'phase'")
             if 'phase' in df.columns:
                 df.drop('phase', axis=1, inplace=True)
             cols_to_use = [c for c in df_connections.columns if c not in df.columns or c == 'phase']
@@ -483,12 +483,12 @@ class base():
 
         intersection = df.index.intersection(df_connections.index)
         if not intersection.empty:
-            print("combine on index")
+            print("add_metadata: combine on index")
             cols_to_use = [c for c in df_connections.columns if c not in df.columns]
             return df.join(df_connections[cols_to_use], how='inner')
 
         elif check_phase:
-            print("combine on columns " + " ".join(cols_phase))
+            print("add_metadata: combine on columns " + " ".join(cols_phase))
             indexname = df.index.name
             df_connections = df_connections.drop_duplicates(subset=cols_phase, keep='first')
             df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -499,7 +499,7 @@ class base():
             return result
 
         elif check_multi_tenant:
-            print("combine on columns " + " ".join(cols_multi_tenant))
+            print("add_metadata: combine on columns " + " ".join(cols_multi_tenant))
             indexname = df.index.name
             df_connections = df_connections.drop_duplicates(subset=cols_multi_tenant, keep='first')
             df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -519,7 +519,7 @@ class base():
             return result
 
         elif check_loading:
-            print("combine on columns " + " ".join(cols_loading))
+            print("add_metadata: combine on columns " + " ".join(cols_loading))
             indexname = df.index.name
             df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
             df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -542,7 +542,7 @@ class base():
             return result
 
         else:
-            print("combine failed!")
+            print("add_metadata: combine failed!")
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
         """
