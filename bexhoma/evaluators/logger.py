@@ -41,76 +41,76 @@ class logger(base):
     """
     def end_benchmarking(self, jobname):
         """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-        The results are stored in a pandas DataFrame.
+        Parses all benchmarker log files for a job and caches results as pickle files.
 
-        :param jobname: Name of the job to clean
+        Scans the result folder for files matching
+        ``bexhoma-benchmarker-<jobname>*.dbmsbenchmarker.log``, calls
+        :meth:`log_to_df` on each, and writes non-empty results to a
+        ``<filename>.df.pickle`` side-car file.
+
+        :param jobname: Job name used to filter matching log files.
+        :type jobname: str
         """
-        path = self.path
-        directory = os.fsencode(path)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
-                df = self.log_to_df(path+"/"+filename)
+            if filename.startswith("bexhoma-benchmarker-" + jobname) and filename.endswith(".dbmsbenchmarker.log"):
+                df = self.log_to_df(self.path + "/" + filename)
                 if not df.empty:
-                    filename_df = path+"/"+filename+".df.pickle"
-                    f = open(filename_df, "wb")
-                    pickle.dump(df, f)
-                    f.close()
+                    with open(self.path + "/" + filename + ".df.pickle", "wb") as f:
+                        pickle.dump(df, f)
     def end_loading(self, jobname):
         """
-        Ends a loading job.
-        This is for storing or cleaning measures.
-        The results are stored in a pandas DataFrame.
+        Parses all loader sensor log files for a job and caches results as pickle files.
 
-        :param jobname: Name of the job to clean
+        Scans the result folder for files matching
+        ``bexhoma-loading-<jobname>*.sensor.log``, calls :meth:`log_to_df` on
+        each, prints a message when errors are detected, and writes non-empty
+        results to a ``<filename>.df.pickle`` side-car file.
+
+        :param jobname: Job name used to filter matching log files.
+        :type jobname: str
         """
-        path = self.path
-        directory = os.fsencode(path)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".sensor.log"):
-                path_and_filename = path+"/"+filename
-                df = self.log_to_df(path_and_filename)
-                if df.empty and path_and_filename in self.workflow_errors:
-                    # there has been an error
-                    print("Error in "+filename)
+            if filename.startswith("bexhoma-loading-" + jobname) and filename.endswith(".sensor.log"):
+                full_path = self.path + "/" + filename
+                df = self.log_to_df(full_path)
+                if df.empty and full_path in self.workflow_errors:
+                    print("Error in " + filename)
                     print(self.workflow_errors)
                 elif not df.empty:
-                    # there is no resulting df in log file
-                    filename_df = path+"/"+filename+".df.pickle"
-                    f = open(filename_df, "wb")
-                    pickle.dump(df, f)
-                    f.close()
+                    with open(self.path + "/" + filename + ".df.pickle", "wb") as f:
+                        pickle.dump(df, f)
     def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end=''):
         """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
-        Source files are identifies by a pattern "filename_source_start*filename_source_end"
+        Collects all per-pod pickle DataFrames for one phase and writes a combined pickle.
 
-        :param filename_result: Name of the pickled result file 
-        :param filename_source_start: Begin of name pattern for source files
-        :param filename_source_end: End of name pattern for source files
+        Scans the result folder for files matching
+        ``<filename_source_start>*<filename_source_end>``, concatenates their
+        DataFrames, sets ``connection`` as the index, and writes the result to
+        ``<filename_result>``.
+
+        :param filename_result: Name of the combined output pickle file.
+        :type filename_result: str
+        :param filename_source_start: Filename prefix used to match source pickle files.
+        :type filename_source_start: str
+        :param filename_source_end: Filename suffix used to match source pickle files.
+        :type filename_source_end: str
         """
         df_collected = None
-        path = self.path
-        directory = os.fsencode(path)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith(filename_source_start) and filename.endswith(filename_source_end):
-                df = pd.read_pickle(path+"/"+filename)
+                df = pd.read_pickle(self.path + "/" + filename)
                 if not df.empty:
-                    if df_collected is not None:
-                        df_collected = pd.concat([df_collected, df])
-                    else:
-                        df_collected = df.copy()
-        if not df_collected is None and not df_collected.empty:
+                    df_collected = df.copy() if df_collected is None else pd.concat([df_collected, df])
+        if df_collected is not None and not df_collected.empty:
             df_collected.set_index('connection', inplace=True, drop=False)
-            filename_df = path+"/"+filename_result
-            f = open(filename_df, "wb")
-            pickle.dump(df_collected, f)
-            f.close()
+            with open(self.path + "/" + filename_result, "wb") as f:
+                pickle.dump(df_collected, f)
     def evaluate_results(self, pod_dashboard=''):
         """
         Parses all pod log files and persists the results as pickled DataFrames.
@@ -127,33 +127,35 @@ class logger(base):
             self._collect_dfs(filename_result="bexhoma-loading.all.df.pickle" , filename_source_start="bexhoma-loading", filename_source_end=".log.df.pickle")
     def get_df_benchmarking(self):
         """
-        Returns the DataFrame that containts all information about the benchmarking phase.
+        Returns the DataFrame containing all benchmarking-phase results.
 
-        :return: DataFrame of benchmarking results
+        Reads from the combined pickle file, triggering :meth:`evaluate_results`
+        to generate it on first access if it does not yet exist.
+
+        :return: DataFrame of benchmarking results, or empty DataFrame when unavailable.
+        :rtype: pandas.DataFrame
         """
-        filename = "bexhoma-benchmarker.all.df.pickle"
-        filename_full = self.path+"/"+filename
-        if os.path.isfile(filename_full):
-            df = pd.read_pickle(filename_full)
-        else:
-            self.evaluate_results()
-            if os.path.isfile(filename_full):
-                df = pd.read_pickle(filename_full)
-            else:
-                df = pd.DataFrame()
-        return df
+        pickle_path = self.path + "/bexhoma-benchmarker.all.df.pickle"
+        if os.path.isfile(pickle_path):
+            return pd.read_pickle(pickle_path)
+        self.evaluate_results()
+        if os.path.isfile(pickle_path):
+            return pd.read_pickle(pickle_path)
+        return pd.DataFrame()
+
     def get_df_loading(self):
         """
-        Returns the DataFrame that containts all information about the loading phase.
+        Returns the DataFrame containing all loading-phase results.
 
-        :return: DataFrame of loading results
+        Reads from the combined pickle file if it exists.
+
+        :return: DataFrame of loading results, or empty DataFrame when unavailable.
+        :rtype: pandas.DataFrame
         """
-        filename = "bexhoma-loading.all.df.pickle"
-        if os.path.isfile(self.path+"/"+filename):
-            df = pd.read_pickle(self.path+"/"+filename)
-        else:
-            df = pd.DataFrame()
-        return df
+        pickle_path = self.path + "/bexhoma-loading.all.df.pickle"
+        if os.path.isfile(pickle_path):
+            return pd.read_pickle(pickle_path)
+        return pd.DataFrame()
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
         """
         Plots one or more line (or other) charts from a DataFrame.
@@ -190,121 +192,123 @@ class logger(base):
             plt.legend(loc='best')
             return ax
         else:
-            row=0
-            col=0
+            row_idx = 0
+            col_idx = 0
             groups = df.groupby(plot_by)
-            rows = (len(groups)+1)//2
-            fig, axes = plt.subplots(nrows=rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0],figsize[1]*rows))
+            num_rows = (len(groups) + 1) // 2
+            fig, axes = plt.subplots(nrows=num_rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0], figsize[1] * num_rows))
             for key1, grp in groups:
                 for key2, grp2 in grp.groupby(column):
                     labels = "{} {}, {} {}".format(key1, plot_by, key2, column)
-                    if not dict_colors is None and len(dict_colors):
-                        ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2), color=dict_colors)
+                    if dict_colors is not None and len(dict_colors):
+                        ax = grp2.plot(ax=axes[row_idx, col_idx], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(num_rows, 2), color=dict_colors)
                     else:
-                        ax = grp2.plot(ax=axes[row,col], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(rows,2))
+                        ax = grp2.plot(ax=axes[row_idx, col_idx], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(num_rows, 2))
                     ax.set_ylim(0, df[y].max())
-                col = col + 1
-                if col > 1:
-                    row = row + 1
-                    col = 0
+                col_idx += 1
+                if col_idx > 1:
+                    row_idx += 1
+                    col_idx = 0
             plt.legend(loc='best')
             plt.tight_layout()
             plt.show()
     def reconstruct_workflow(self, df):
         """
-        Constructs the workflow out of the results (reverse engineer workflow).
-        This for example looks like this:
-        {'MySQL-24-4-1024': [[1, 2], [1, 2]], 'MySQL-24-4-2048': [[1, 2], [1, 2]], 'PostgreSQL-24-4-1024': [[1, 2], [1, 2]], 'PostgreSQL-24-4-2048': [[1, 2], [1, 2]]}
+        Reconstructs the experiment workflow structure from a benchmarking results DataFrame.
 
-        * 4 configurations
-        * each 2 experiment runs
-        * consisting of [1,2] benchmarker (first 1 pod, then 2 pods in parallel)
+        Extends the base implementation by tracking individual pod names, so each
+        client entry records the number of distinct pods that contributed results.
 
-        :param df: DataFrame of benchmarking results 
-        :return: Dict of connections
+        :param df: Benchmarking DataFrame with columns ``configuration``,
+                   ``experiment_run``, ``client``, and ``pod``.
+        :type df: pandas.DataFrame
+        :return: Workflow dict mapping configuration name to per-run pod counts per client.
+        :rtype: dict
         """
-        # Tree of elements of the workflow
         configs = dict()
-        for index, row in df.iterrows():
-            if row['configuration'] not in configs:
-                configs[row['configuration']] = dict()
-            if row['experiment_run'] not in configs[row['configuration']]:
-                configs[row['configuration']][row['experiment_run']] = dict()
-            if row['client'] not in configs[row['configuration']][row['experiment_run']]:
-                configs[row['configuration']][row['experiment_run']][row['client']] = dict()
-                configs[row['configuration']][row['experiment_run']][row['client']]['pods'] = dict()
-                configs[row['configuration']][row['experiment_run']][row['client']]['result_count'] = 0
-            configs[row['configuration']][row['experiment_run']][row['client']]['pods'][row['pod']] = True
-            configs[row['configuration']][row['experiment_run']][row['client']]['result_count'] = configs[row['configuration']][row['experiment_run']][row['client']]['result_count'] + 1
-        # Flat version of workflow
+        for _, row in df.iterrows():
+            config_name = row['configuration']
+            if config_name not in configs:
+                configs[config_name] = dict()
+            if row['experiment_run'] not in configs[config_name]:
+                configs[config_name][row['experiment_run']] = dict()
+            if row['client'] not in configs[config_name][row['experiment_run']]:
+                configs[config_name][row['experiment_run']][row['client']] = {
+                    'pods': dict(),
+                    'result_count': 0,
+                }
+            configs[config_name][row['experiment_run']][row['client']]['pods'][row['pod']] = True
+            configs[config_name][row['experiment_run']][row['client']]['result_count'] += 1
         workflow = dict()
-        for index, row in configs.items():
-            workflow[index] = []
-            for i, v in row.items():
-                l = []
-                for j, w in v.items():
-                    l.append(len(w['pods']))
-                workflow[index].append(l)
+        for config_name, run_dict in configs.items():
+            workflow[config_name] = []
+            for _run_num, client_dict in run_dict.items():
+                pod_counts = [len(client_data['pods']) for client_data in client_dict.values()]
+                workflow[config_name].append(pod_counts)
         return workflow
     def test_results(self):
         """
-        Run test script locally.
-        Extract exit code.
+        Validates results by loading and reconstructing the workflow.
 
-        :return: exit code of test script
+        :return: ``0`` on success, ``1`` if an exception is raised.
+        :rtype: int
         """
         try:
             if self.include_benchmarking:
                 df = self.get_df_benchmarking()
                 self.workflow = self.reconstruct_workflow(df)
             if self.include_loading:
-                df = self.get_df_loading()
-                if not df.empty:
-                    pass
+                self.get_df_loading()
             return 0
-        except Exception as e:
-            print(e)
+        except Exception as exc:
+            print(exc)
             return 1
     def transform_monitoring_results(self, component="loading"):
         """
-        Creates combined metrics.csv.
+        Combines per-connection monitoring CSV files into a single wide-format CSV.
 
-        For example::
+        For example, per-connection files like::
 
             query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-1.csv
             query_datagenerator_metric_total_cpu_util_MonetDB-NIL-1-2.csv
 
-        are combined to::
+        are merged into::
 
             query_datagenerator_metric_total_cpu_util.csv
+
+        :param component: Component label used in the metric filename prefix
+                          (e.g. ``'loading'``, ``'stream'``).
+        :type component: str
         """
         connections_sorted = self.get_connection_config()
-        list_metrics = self.get_monitoring_metrics()
-        #print(c['name'], list_metrics)
-        for m in list_metrics:
+        metric_keys = self.get_monitoring_metrics()
+        for metric_key in metric_keys:
             df_all = None
             for connection in connections_sorted:
-                if 'orig_name' in connection:
-                    connectionname = connection['orig_name']
-                else:
-                    connectionname = connection['name']
-                filename = "query_{component}_metric_{metric}_{connection}.csv".format(component=component, metric=m, connection=connectionname)
-                df = monitor.metrics.loadMetricsDataframe(self.path+"/"+filename)
+                conn_name = connection['orig_name'] if 'orig_name' in connection else connection['name']
+                filename = "query_{component}_metric_{metric}_{connection}.csv".format(
+                    component=component, metric=metric_key, connection=conn_name
+                )
+                df = monitor.metrics.loadMetricsDataframe(self.path + "/" + filename)
                 if df is None:
                     continue
-                df.columns=[connectionname]
-                if df_all is None:
-                    df_all = df
-                else:
-                    df_all = df_all.merge(df, how='outer', left_index=True,right_index=True)
-            filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=m)
-            #print(self.path+filename)
-            monitor.metrics.saveMetricsDataframe(self.path+"/"+filename, df_all)
+                df.columns = [conn_name]
+                df_all = df if df_all is None else df_all.merge(df, how='outer', left_index=True, right_index=True)
+            out_filename = "query_{component}_metric_{metric}.csv".format(component=component, metric=metric_key)
+            monitor.metrics.saveMetricsDataframe(self.path + "/" + out_filename, df_all)
     def get_monitoring_metric(self, metric, component="loading"):
         """
-        Returns DataFrame containing metrics measured from a specific component.
+        Returns a wide-format DataFrame of a single monitoring metric for a component.
 
-        :return: DataFrame of monitoring metrics
+        Reads the pre-combined CSV produced by :meth:`transform_monitoring_results`
+        and returns it transposed so that rows are timestamps and columns are connections.
+
+        :param metric: Metric key (e.g. ``'cpu_throttled_seconds_total'``).
+        :type metric: str
+        :param component: Component label used in the metric filename prefix.
+        :type component: str
+        :return: Wide-format DataFrame, or empty DataFrame if the file does not exist.
+        :rtype: pandas.DataFrame
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
         if os.path.isfile(self.path+"/"+filename):
@@ -315,28 +319,28 @@ class logger(base):
             return pd.DataFrame()
     def get_monitoring_metrics(self):
         """
-        Returns list of names of metrics using during monitoring.
+        Returns the list of metric keys defined in the first connection's monitoring block.
 
-        :return: List of monitoring metrics
+        :return: List of metric key strings, or empty list when no metrics are configured.
+        :rtype: list[str]
         """
         connections_sorted = self.get_connection_config()
-        for c in connections_sorted:
-            if 'monitoring' in c and 'metrics' in c['monitoring']:
-                list_metrics = list(c['monitoring']['metrics'].keys())
-            else:
-                list_metrics = []
-            break
-        return list_metrics
+        for conn in connections_sorted:
+            if 'monitoring' in conn and 'metrics' in conn['monitoring']:
+                return list(conn['monitoring']['metrics'].keys())
+            return []
+        return []
+
     def get_connection_config(self):
         """
-        Returns connection.config as Python dict.
-        Items are sorted by connection name.
+        Returns the parsed ``connections.config`` as a list of connection dicts,
+        sorted by connection name.
 
-        :return: Python dict of all connection informations
+        :return: List of connection configuration dicts.
+        :rtype: list[dict]
         """
-        with open(self.path+"/connections.config",'r') as inf:
-            connections = ast.literal_eval(inf.read())
-        connections_sorted = sorted(connections, key=lambda c: c['name']) 
-        return connections_sorted
+        with open(self.path + "/connections.config", 'r') as f:
+            connections = ast.literal_eval(f.read())
+        return sorted(connections, key=lambda conn: conn['name'])
 
 

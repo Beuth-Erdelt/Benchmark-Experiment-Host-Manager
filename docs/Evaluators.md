@@ -134,9 +134,10 @@ Returns a DataFrame of connection/pod metadata read from `connections.config`.
 One row per pod (when `orig_name` is present) or per client (otherwise).
 
 Key columns: `phase`, `code`, `connection`, `configuration`, `experiment_run`,
-`client`, `pods`, `time_load`, `time_ingest`, `time_check`, `type_tenants`,
-`num_tenants`, `vol_tenants`, plus flattened `host_*`, `loading_parameters_*`,
-`benchmarking_parameters_*`, `sut_parameters_*`, and `arg_*` fields.
+`client`, `pods`, `time_load`, `time_preload`, `time_generate`, `time_ingest`,
+`time_postload`, `type_tenants`, `num_tenants`, `vol_tenants`, plus flattened
+`host_*`, `loading_parameters_*`, `benchmarking_parameters_*`, `sut_parameters_*`,
+and `arg_*` fields.
 
 ### `get_workload()`
 
@@ -443,12 +444,10 @@ from the inspector's connection data.  Index is the DBMS name.
 
 Returns a combined DataFrame of throughput and timing metrics:
 
-* `total_timer_execution` — geometric-mean execution time (s)
-* `Power@Size [~Q/h]` — power metric
+* `Power@Size [~Q/h]` — power metric (derived from geometric-mean execution time)
 * `Throughput@Size` — throughput metric
-* `time [s]` — wall-clock benchmark duration
+* `time [s]` — wall-clock benchmark duration (derived from `benchmark_start`/`benchmark_end` timestamps)
 * `pod_count` — number of parallel pods
-* `benchmark_start`, `benchmark_end` — timestamps
 
 ### `benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])`
 

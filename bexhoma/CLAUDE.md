@@ -26,22 +26,21 @@ Kubernetes
 
 ---
 
-## Constructor attributes (testbed)
+## Constructor attributes
 
-All instance attributes are declared in `testbed.__init__`.  Key groups:
+All instance attributes are declared in `Kubernetes.__init__`.  Key groups:
 
 | Group | Attributes |
 |---|---|
 | Kubernetes API clients | `v1core`, `v1apps`, `v1batches` (set by `cluster_access()`) |
 | Context / network | `context`, `contextdata`, `host`, `port`, `namespace`, `appname` |
-| Config | `config` (dict, loaded via `eval()` from the cluster config file) |
+| Config | `config` (dict, loaded via `ast.literal_eval()` from the cluster config file) |
 | Folder paths | `yamlfolder`, `experiments_configfolder`, `resultfolder` |
-| Experiment selection | `i`, `v`, `volume`, `d`, `docker`, `s`, `initscript`, `bChangeInstance` |
+| Experiment selection | `change_instance`, `instance_key`, `volume_key`, `volume`, `docker_key`, `docker`, `script_key`, `initscript` |
+| Experiment catalog | `instance`, `instances`, `volumes`, `dockers` (set by `set_experiments()`) |
 | Workload params | `resources`, `ddl_parameters`, `connectionmanagement`, `querymanagement`, `workload` |
 | Monitoring flags | `monitoring_active`, `monitor_app_active`, `monitor_cluster_active`, `monitor_cluster_exists` |
-| Experiment bookkeeping | `code`, `experiments`, `benchmark`, `queryfile`, `timeLoading` |
-
-`Kubernetes.__init__` adds `max_sut` and resets `experiments`.
+| Experiment bookkeeping | `code`, `experiments`, `benchmark`, `queryfile`, `timeLoading`, `max_sut` |
 
 ---
 
@@ -83,7 +82,7 @@ Internal (local variable) names may be changed freely.
 
 ## Style conventions
 
-- Every class and method carries a NumPy-style `:param` / `:return:` docstring.
+- Every class and method carries a Sphinx-style `:param` / `:type` / `:return:` / `:rtype:` docstring.
 - Logger calls use `self.logger.debug(...)` — no `print()` for debug output.
 - `print()` is reserved for user-visible status lines (component start/stop).
 - Label-selector construction follows the pattern `label = 'app=' + app; if len(x): label += ',x=' + x`.

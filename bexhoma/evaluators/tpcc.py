@@ -45,10 +45,17 @@ class tpcc(logger):
     """
     def log_to_df(self, filename):
         """
-        Transforms a log file in text format into a pandas DataFrame.
+        Parses a HammerDB TPC-C pod log file into a DataFrame.
 
-        :param filename: Name of the log file 
-        :return: DataFrame of results
+        Extracts NOPM, TPM, vuser counts, and — when HammerDB time-profile output
+        is present — latency statistics (CALLS, MIN, AVG, MAX, TOTAL, P99, P95,
+        P50, SD, RATIO) for the ``NEWORD`` procedure.
+
+        :param filename: Absolute path to the HammerDB log file.
+        :type filename: str
+        :return: DataFrame with one row per TPC-C result iteration,
+                 or empty on parse failure.
+        :rtype: pandas.DataFrame
         """
         # test for known errors
         logger.log_to_df(self, filename)
@@ -85,53 +92,46 @@ class tpcc(logger):
             num_errors = len(errors)
             results = re.findall("Vuser 1:TEST RESULT : System achieved (.+?) NOPM from (.+?) (.+?) TPM", stdout)
             vusers = re.findall("Vuser 1:(.+?) Active", stdout)
-            result_tupels = list(zip(results, vusers))
-            # Create a dictionary to store the latency results
+            result_tuples = list(zip(results, vusers))
             extracted_data = {}
-            # Find the section that starts with 'SUMMARY OF <number> ACTIVE VIRTUAL USERS'
-            pattern = r'SUMMARY OF (\d+) ACTIVE VIRTUAL USERS'
-            # Search for the pattern in the text
-            match = re.search(pattern, stdout)
-            # If a match is found, extract the relevant section
-            if match:
-                start_index = match.start()
-                relevant_text = stdout[start_index:]
-                match = re.search('>>>>> PROC: NEWORD', relevant_text)
-                # If a match is found, extract the relevant section
-                start_index = match.start()
-                relevant_text = relevant_text[start_index:]
-                # Optional: If you want to stop after the "SUMMARY OF 250 ACTIVE VIRTUAL USERS" section, 
-                # you can cut off the text after this part by looking for the next occurrence of '>>>>> PROC'
-                end_index = relevant_text.find('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
-                if end_index != -1:
-                    relevant_text = relevant_text[:end_index]
-                # Match label-number pairs (e.g., "CALLS: 5426322", "MIN: 2.990ms")
-                pattern = r'(\w+):\s*([\d\.]+)'
-                matches = re.findall(pattern, relevant_text)
-                for label, value in matches:
-                    # only take first occurrence; suffix time labels with " [ms]"
-                    if not label in extracted_data and not label + " [ms]" in extracted_data:
+            summary_match = re.search(r'SUMMARY OF (\d+) ACTIVE VIRTUAL USERS', stdout)
+            if summary_match:
+                relevant_text = stdout[summary_match.start():]
+                neword_match = re.search('>>>>> PROC: NEWORD', relevant_text)
+                if neword_match:
+                    relevant_text = relevant_text[neword_match.start():]
+                    separator = '+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'
+                    end_index = relevant_text.find(separator)
+                    if end_index != -1:
+                        relevant_text = relevant_text[:end_index]
+                    # match label-number pairs, e.g. "CALLS: 5426322", "MIN: 2.990ms"
+                    for label, value in re.findall(r'(\w+):\s*([\d\.]+)', relevant_text):
+                        if label in extracted_data or label + " [ms]" in extracted_data:
+                            continue
                         if 'ms' in value or label in ['MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50']:
-                            label = label + " [ms]"
-                            extracted_data[label] = float(value.replace('ms', '').strip())
+                            extracted_data[label + " [ms]"] = float(value.replace('ms', '').strip())
                         else:
                             extracted_data[label] = float(value.strip())
-            # compute efficiency — only valid when keying time is enabled
-
+            # efficiency is only meaningful when key-and-think time is enabled
             if keyandthink == "true":
-                efficiency = round(100.*float(result_tupels[0][0][0])/float(result_tupels[0][1])/1.286, 2)
+                efficiency = round(100. * float(result_tuples[0][0][0]) / float(result_tuples[0][1]) / 1.286, 2)
             else:
                 efficiency = 0
             connection = connection_name + '-' + child
             phase = connection_name
-            # this finds ['CALLS', 'MIN', 'AVG', 'MAX', 'TOTAL', 'P99', 'P95', 'P50', 'SD', 'RATIO']
-            # if latencies are logged
-            list_latencies = list(extracted_data.values())
-            result_list = [(connection, phase, configuration_name, experiment_run, client, pod_name, pod_count, code, iterations, duration, rampup, sf, i, num_errors, vusers_loading, vuser, efficiency, result[0], result[1], result[2]) + tuple(list_latencies) for i, (result, vuser) in enumerate(result_tupels)]
-            df = pd.DataFrame(result_list)
-            column_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run', 'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
-            column_names.extend(list(extracted_data.keys()))
-            df.columns = column_names
+            latency_values = list(extracted_data.values())
+            rows = [
+                (connection, phase, configuration_name, experiment_run, client, pod_name, pod_count,
+                 code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
+                 vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
+                for run_idx, (result, vuser) in enumerate(result_tuples)
+            ]
+            df = pd.DataFrame(rows)
+            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'pod',
+                         'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
+                         'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
+            col_names.extend(list(extracted_data.keys()))
+            df.columns = col_names
             df.index.name = connection_name
             return df
         except Exception as e:
@@ -140,10 +140,10 @@ class tpcc(logger):
             return pd.DataFrame()
     def test_results(self):
         """
-        Run test script locally.
-        Extract exit code.
+        Validates results by reading all pickle files and delegating to the parent check.
 
-        :return: exit code of test script
+        :return: ``0`` on success, ``1`` if an exception is raised.
+        :rtype: int
         """
         try:
             directory = os.fsencode(self.path)
@@ -159,12 +159,15 @@ class tpcc(logger):
             return 1
     def benchmarking_set_datatypes(self, df):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
+        Casts all TPC-C benchmarking result columns to their appropriate data types.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        Handles two variants: with latency statistics (``CALLS`` present) and without.
+
+        :param df: DataFrame of raw TPC-C benchmarking results.
+        :type df: pandas.DataFrame
+        :return: DataFrame with columns cast to correct types.
+        :rtype: pandas.DataFrame
         """
-        # {'CALLS': 5426322.0, 'MIN': 2.99, 'AVG': 48.146, 'MAX': 22834.486, 'TOTAL': 261256185.492, 'P99': 975.119, 'P95': 279.771, 'P50': 5.818, 'SD': 201562.961, 'RATIO': 82.539}
         if 'CALLS' in df:
             df_typed = df.astype({
                 'connection':'str',
@@ -220,11 +223,18 @@ class tpcc(logger):
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
-        All result lines belonging to pods being run in parallel will be aggregated.
+        Aggregates parallel-pod TPC-C result rows into one row per phase.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        Groups by ``columns`` and applies per-metric aggregation (sum for vusers/NOPM/TPM
+        means, max for latency percentiles, etc.). Also recomputes efficiency for runs
+        where vusers equal 10× the scale factor.
+
+        :param df: Typed TPC-C benchmarking DataFrame.
+        :type df: pandas.DataFrame
+        :param columns: Grouping columns (default ``['phase']``).
+        :type columns: list[str]
+        :return: Aggregated DataFrame with one row per group.
+        :rtype: pandas.DataFrame
         """
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
@@ -280,9 +290,10 @@ class tpcc(logger):
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
+        # efficiency is only valid when vusers == 10 × SF (standard TPC-C convention)
         df_aggregated['efficiency'] = 0.
-        mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']
-        df_aggregated.loc[mask, 'efficiency'] = (
+        tpcc_mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']
+        df_aggregated.loc[tpcc_mask, 'efficiency'] = (
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
@@ -361,8 +372,6 @@ class tpcc(logger):
         :return: DataFrame with one row per experiment run.
         :rtype: pandas.DataFrame
         """
-        df = self.get_loading_per_run()
-        # remember: this can be added (for future use): 'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_NUM_VU'],
-        return df
+        return self.get_loading_per_run()
 
 

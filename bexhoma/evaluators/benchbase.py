@@ -49,10 +49,16 @@ class benchbase(logger):
     """
     def log_to_df(self, filename):
         """
-        Transforms a log file in text format into a pandas DataFrame.
+        Parses a Benchbase pod log file into a single-row DataFrame.
 
-        :param filename: Name of the log file 
-        :return: DataFrame of results
+        Extracts connection metadata, benchmark parameters, and the JSON result block
+        embedded between ``####BEXHOMA####`` markers. Returns an empty DataFrame when
+        the log is incomplete (e.g. the start time has already passed).
+
+        :param filename: Absolute path to the log file.
+        :type filename: str
+        :return: Single-row DataFrame of benchmarking results, or empty on failure.
+        :rtype: pandas.DataFrame
         """
         # test for known errors
         logger.log_to_df(self, filename)
@@ -126,10 +132,12 @@ class benchbase(logger):
             return df_header
     def benchmarking_set_datatypes(self, df):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
+        Casts all benchmarking result columns to their appropriate data types.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        :param df: DataFrame of raw benchmarking results.
+        :type df: pandas.DataFrame
+        :return: DataFrame with columns cast to correct types.
+        :rtype: pandas.DataFrame
         """
         df_typed = df.astype({
             'connection':'str',
@@ -173,11 +181,19 @@ class benchbase(logger):
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
-        All result lines belonging to pods being run in parallel will be aggregated.
+        Aggregates parallel-pod result rows into one row per phase.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        Groups the typed benchmarking DataFrame by ``columns`` and applies
+        per-metric aggregation functions (sum for throughput, max for latency
+        percentiles, etc.). Also recomputes the efficiency metric for TPC-C runs
+        where vusers equal 10× the scale factor.
+
+        :param df: Typed benchmarking DataFrame (output of :meth:`benchmarking_set_datatypes`).
+        :type df: pandas.DataFrame
+        :param columns: Grouping columns (default ``['phase']``).
+        :type columns: list[str]
+        :return: Aggregated DataFrame with one row per group.
+        :rtype: pandas.DataFrame
         """
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(columns):
@@ -224,22 +240,24 @@ class benchbase(logger):
             key_index = "_".join(map(str, key))
             df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
-        mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
-        #df_masked = df_aggregated[~mask]
-        #print(mask, df_aggregated.loc[mask])
-        df_aggregated['efficiency'] = 0.  # Default all rows to 0
-        df_aggregated.loc[mask, 'efficiency'] = (
+        # efficiency is only valid for TPC-C runs where vusers == 10 × SF
+        tpcc_mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
+        df_aggregated['efficiency'] = 0.
+        df_aggregated.loc[tpcc_mask, 'efficiency'] = (
             0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
     def parse_benchbase_log_file(self, file_path):
         """
-        Scans the lines of a Benchbase log file.
-        Extracts relevant performance infos for time series analysis.
-        Each line starting with a time stamp is converted into a dict containing measurements (Throughput: txn/sec)
+        Parses a Benchbase log file into a list of per-second throughput records.
 
-        :param file_path: Full path of log file
-        :return: List of dicts of measures, one entry per line
+        Each ``[INFO]`` log line that contains a ``Throughput:`` entry is converted
+        into a dict with keys ``second`` (elapsed time) and ``throughput``.
+
+        :param file_path: Absolute path to the Benchbase log file.
+        :type file_path: str
+        :return: List of ``{'second': int, 'throughput': float}`` dicts.
+        :rtype: list[dict]
         """
         datetime_first_measure = 0
         def parse_string(log):
@@ -290,34 +308,8 @@ class benchbase(logger):
         column = metric
         remove_first = 0
         remove_last = 0
-        def flatten_dict(d, parent_key='', sep='_'):
-            """
-            Flattens a nested dictionary so that nested keys are concatenated with a separator.
-
-            :param d: Dictionary to flatten.
-            :param parent_key: String to prepend to the keys (used during recursion).
-            :param sep: Separator for concatenating keys.
-            :return: Flattened dictionary.
-            """
-            items = []
-            for k, v in d.items():
-                new_key = f"{parent_key}{sep}{k}" if parent_key else k  # Concatenate parent and child keys
-                if isinstance(v, dict):  # If value is a dictionary, recurse
-                    items.extend(flatten_dict(v, new_key, sep=sep).items())
-                else:  # Otherwise, add the key-value pair
-                    items.append((new_key, v))
-            return dict(items)
         def find_matching_files(directory, pattern):
-            """
-            Finds files in the specified directory that match the given pattern.
-
-            :param directory: The path to the directory where the search is performed.
-            :param pattern: The file pattern to match (e.g., "*.txt" for all text files).
-            :return: A list of file paths that match the pattern.
-            """
-            # Use glob to find files matching the pattern
-            matching_files = glob.glob(os.path.abspath(os.path.normpath(os.path.join(directory, pattern))))
-            return matching_files
+            return glob.glob(os.path.abspath(os.path.normpath(os.path.join(directory, pattern))))
         if not aggregate:
             df_total = []
         else:

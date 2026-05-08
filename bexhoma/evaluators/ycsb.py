@@ -47,22 +47,31 @@ class ycsb(logger):
     :param include_benchmarking: Ignored; benchmarking is always enabled.
     """
     def __init__(self, code, path, include_loading=False, include_benchmarking=True):
+        """
+        :param code: Experiment identifier — also the name of the result sub-folder.
+        :param path: Root path that contains the result folders.
+        :param include_loading: Ignored; loading is always enabled for this evaluator.
+        :param include_benchmarking: Ignored; benchmarking is always enabled.
+        """
         super().__init__(code, path, True, True)
     def log_to_df(self, filename):
         """
-        Transforms a log file in text format into a pandas DataFrame.
+        Parses a YCSB pod log file into a single-row DataFrame.
 
-        :param filename: Name of the log file 
-        :return: DataFrame of results
+        Extracts connection metadata, benchmark parameters, and per-operation
+        metrics (throughput, latency percentiles) from the YCSB summary output.
+
+        :param filename: Absolute path to the YCSB log file.
+        :type filename: str
+        :return: Single-row DataFrame of YCSB results, or empty on parse failure.
+        :rtype: pandas.DataFrame
         """
-        # test for known errors
         logger.log_to_df(self, filename)
-        # extract status and result fields
         try:
             with open(filename) as f:
                 lines = f.readlines()
             stdout = "".join(lines)
-            pod_name = filename[filename.rindex("-")+1:-len(".log")]
+            pod_name = filename[filename.rindex("-") + 1:-len(".log")]
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
@@ -74,52 +83,47 @@ class ycsb(logger):
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
             operations = re.findall('YCSB_OPERATIONS (.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
-            batchsize = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
-            if len(batchsize)>0:
-                # information found
-                batchsize = int(batchsize[0])
-            else:
-                batchsize = -1
-            exceptions = re.findall('site.ycsb.DBException:(.+?)\n', stdout)
-            if len(exceptions)>0:
-                # information found
-                exceptions = len(exceptions)
-            else:
-                exceptions = 0
+            batchsize_matches = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
+            batchsize = int(batchsize_matches[0]) if batchsize_matches else -1
+            exception_matches = re.findall('site.ycsb.DBException:(.+?)\n', stdout)
+            exceptions = len(exception_matches)
             pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
-            result = []
+            # collect lines starting with "[" — YCSB summary rows; skip "[ WARN]" lines
+            parsed_rows = []
             for line in lines:
                 line = line.strip('\n')
                 cells = line.split(", ")
-                #print(cells)
-                if len(cells[0]) and cells[0][0] == "[":
-                    result.append(line.split(", "))
-            #print(result)
-            #return
-            # test len of values, because of [ WARN]
+                if cells[0] and cells[0][0] == "[":
+                    parsed_rows.append(line.split(", "))
             phase = connection_name
             connection = connection_name + '-' + child
-            list_columns = [value[0]+"."+value[1] for value in result if len(value) > 1]
-            list_values = [code, phase, connection, configuration_name, experiment_run, client, pod_name, pod_count, threads, target, sf, workload, operations, batchsize, exceptions, child]
-            list_measures = [value[2] for value in result if len(value) > 1]
-            list_values.extend(list_measures)
-            df = pd.DataFrame(list_values)
-            df = df.T
-            columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client', 'pod', 'pod_count', 'threads', 'target', 'SF', 'workload', 'operations', 'batchsize', 'exceptions', 'child']
-            columns.extend(list_columns)
-            #print(columns)
+            col_names = [value[0] + "." + value[1] for value in parsed_rows if len(value) > 1]
+            measure_values = [value[2] for value in parsed_rows if len(value) > 1]
+            row_values = [code, phase, connection, configuration_name, experiment_run, client,
+                          pod_name, pod_count, threads, target, sf, workload, operations,
+                          batchsize, exceptions, child]
+            row_values.extend(measure_values)
+            df = pd.DataFrame(row_values).T
+            columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client',
+                       'pod', 'pod_count', 'threads', 'target', 'SF', 'workload', 'operations',
+                       'batchsize', 'exceptions', 'child']
+            columns.extend(col_names)
             df.columns = columns
             df.index.name = connection
             return df
-        except Exception as e:
-            print(e)
+        except Exception as exc:
+            print(exc)
             return pd.DataFrame()
     def benchmarking_set_datatypes(self, df):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to suitable data types.
+        Casts all YCSB benchmarking result columns to their appropriate data types.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        Only casts operation-specific columns when they are present in the DataFrame.
+
+        :param df: DataFrame of raw YCSB benchmarking results.
+        :type df: pandas.DataFrame
+        :return: DataFrame with columns cast to correct types, or original ``df`` on error.
+        :rtype: pandas.DataFrame
         """
         try:
             df.fillna(0, inplace=True)
@@ -253,16 +257,22 @@ class ycsb(logger):
                     '[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)':'float',
                 })
             return df_typed
-        except Exception as e:
-            print(e)
+        except Exception as exc:
+            print(exc)
             return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
-        All result lines belonging to pods being run in parallel will be aggregated.
+        Aggregates parallel-pod YCSB benchmarking rows into one row per phase.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        Groups by ``columns`` and sums counts/throughput, takes mean for average
+        latencies, and max for percentile/max latencies.
+
+        :param df: Typed YCSB benchmarking DataFrame.
+        :type df: pandas.DataFrame
+        :param columns: Grouping columns (default ``['phase']``).
+        :type columns: list[str]
+        :return: Aggregated DataFrame with one row per group.
+        :rtype: pandas.DataFrame
         """
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
@@ -403,10 +413,12 @@ class ycsb(logger):
         return df_aggregated
     def loading_set_datatypes(self, df):
         """
-        Transforms a pandas DataFrame collection of loading results to suitable data types.
+        Casts all YCSB loading result columns to their appropriate data types.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        :param df: DataFrame of raw YCSB loading results.
+        :type df: pandas.DataFrame
+        :return: DataFrame with columns cast to correct types.
+        :rtype: pandas.DataFrame
         """
         df.fillna(0, inplace=True)
         df_typed = df.astype({
@@ -442,11 +454,14 @@ class ycsb(logger):
         return df_typed
     def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Transforms a pandas DataFrame collection of loading results to a new DataFrame.
-        All result lines belonging to pods being run in parallel will be aggregated.
+        Aggregates parallel-pod YCSB loading rows into one row per phase.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        :param df: Typed YCSB loading DataFrame.
+        :type df: pandas.DataFrame
+        :param columns: Grouping columns (default ``['phase']``).
+        :type columns: list[str]
+        :return: Aggregated DataFrame with one row per group.
+        :rtype: pandas.DataFrame
         """
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
@@ -487,17 +502,15 @@ class ycsb(logger):
         return df_aggregated
     def get_df_loading(self):
         """
-        Returns the DataFrame that containts all information about the loading phase.
+        Returns the DataFrame containing all loading-phase results.
 
-        :return: DataFrame of loading results
+        :return: DataFrame of loading results, or empty DataFrame when unavailable.
+        :rtype: pandas.DataFrame
         """
-        filename = "bexhoma-loading.all.df.pickle"
-        if os.path.isfile(self.path+"/"+filename):
-            df = pd.read_pickle(self.path+"/"+filename)
-        else:
-            df = pd.DataFrame()
-        #df#.sort_values(["configuration", "pod"])
-        return df
+        pickle_path = self.path + "/bexhoma-loading.all.df.pickle"
+        if os.path.isfile(pickle_path):
+            return pd.read_pickle(pickle_path)
+        return pd.DataFrame()
     def parse_ycsb_log_file(self, file_path):
         """
         Scans the lines of a YCSB log file.
@@ -611,34 +624,20 @@ class ycsb(logger):
         column = metric
         remove_first = 0
         remove_last = 0
-        def flatten_dict(d, parent_key='', sep='_'):
-            """
-            Flattens a nested dictionary so that nested keys are concatenated with a separator.
 
-            :param d: Dictionary to flatten.
-            :param parent_key: String to prepend to the keys (used during recursion).
-            :param sep: Separator for concatenating keys.
-            :return: Flattened dictionary.
-            """
+        def flatten_dict(d, parent_key='', sep='_'):
+            """Recursively flatten a nested dict, joining keys with ``sep``."""
             items = []
             for k, v in d.items():
-                new_key = f"{parent_key}{sep}{k}" if parent_key else k  # Concatenate parent and child keys
-                if isinstance(v, dict):  # If value is a dictionary, recurse
+                new_key = f"{parent_key}{sep}{k}" if parent_key else k
+                if isinstance(v, dict):
                     items.extend(flatten_dict(v, new_key, sep=sep).items())
-                else:  # Otherwise, add the key-value pair
+                else:
                     items.append((new_key, v))
             return dict(items)
-        def find_matching_files(directory, pattern):
-            """
-            Finds files in the specified directory that match the given pattern.
 
-            :param directory: The path to the directory where the search is performed.
-            :param pattern: The file pattern to match (e.g., "*.txt" for all text files).
-            :return: A list of file paths that match the pattern.
-            """
-            # Use glob to find files matching the pattern
-            matching_files = glob.glob(os.path.join(directory, pattern))
-            return matching_files
+        def find_matching_files(directory, pattern):
+            return glob.glob(os.path.join(directory, pattern))
         if not aggregate:
             df_total = []
         else:
@@ -665,10 +664,10 @@ class ycsb(logger):
                             column: result[column]
                         }
                     data.append(d)
-                data.pop()  # remove the last measure as it is not reliable
+                data.pop()  # last measurement is partial; discard it
                 df = pd.DataFrame(data)
                 df = df.set_index('sec')
-                df = df.groupby(df.index).last()  # collapse duplicate timestamps
+                df = df.groupby(df.index).last()
                 if remove_first > 0:
                     df = df.iloc[remove_first:]
                 if remove_last > 0:
@@ -693,21 +692,21 @@ class ycsb(logger):
         return df_total
     def get_benchmark_logs_timeseries_df_aggregated(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         """
-        Returns a dataframes of time series of a metric, aggregated all pods per second.
-        Gets result from self.get_df_benchmarking().
-        This is all raw data as a time series.
-        Restricts to a configuration, a client and an experiment run.
-        Aggregates given metrics per second (!) over all pods.
-        Percentiles and maximum are aggregated by max.
-        Minimum is aggregated by min.
-        Average is aggregated by average.
-        Aggregation is summation otherwise.
+        Returns a DataFrame of per-second benchmarking time-series, aggregated across pods.
 
-        :param metric: Metric like 'current_ops_per_sec'
-        :param configuration: Name of configuration like 'PostgreSQL-64-8-196608'
-        :param client: Number of client like 1
-        :param experiment_run: Numer of experiment run like 1
-        :return: Dataframe, index is number of second, column is (constant) value of aggregated metric
+        Retrieves pod IDs from :meth:`get_df_benchmarking` and delegates to
+        :meth:`benchmark_logs_to_timeseries_df` with ``aggregate=True``.
+
+        :param metric: YCSB metric to retrieve (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-64-8-196608'``).
+        :type configuration: str
+        :param client: Client number (default ``'1'``).
+        :type client: str or int
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: DataFrame indexed by second with one metric column and an ``'avg'`` column.
+        :rtype: pandas.DataFrame
         """
         client = str(client)
         df = self.get_df_benchmarking()
@@ -716,16 +715,18 @@ class ycsb(logger):
         return df_total
     def get_benchmark_logs_timeseries_df_single(self, metric="current_ops_per_sec", configuration="", client='1', experiment_run='1'):
         """
-        Returns list of dataframes of time series of a metric, one for each pod.
-        Gets result from self.get_df_benchmarking().
-        This is all raw data as a time series.
-        Restricts to a configuration, a client and an experiment run.
+        Returns a list of per-pod benchmarking time-series DataFrames (one per pod).
 
-        :param metric: Metric like 'current_ops_per_sec'
-        :param configuration: Name of configuration like 'PostgreSQL-64-8-196608'
-        :param client: Number of client like 1
-        :param experiment_run: Numer of experiment run like 1
-        :return: List of dataframes, index is number of second, column is value of aggregated metric
+        :param metric: YCSB metric to retrieve (default ``'current_ops_per_sec'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-64-8-196608'``).
+        :type configuration: str
+        :param client: Client number (default ``'1'``).
+        :type client: str or int
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: List of DataFrames, one per pod, each indexed by second.
+        :rtype: list[pandas.DataFrame]
         """
         client = str(client)
         df = self.get_df_benchmarking()

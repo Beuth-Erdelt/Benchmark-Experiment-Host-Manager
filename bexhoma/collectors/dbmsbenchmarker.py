@@ -59,9 +59,23 @@ class dbmsbenchmarker(base):
     :class:`evaluators.dbmsbenchmarker` instance.
     """
     def __init__(self, path, codes):
+        """
+        :param path: Base filesystem path that contains the experiment directories.
+        :type path: str
+        :param codes: List of experiment codes to collect results for.
+        :type codes: list[str]
+        """
         base.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
+        """
+        Returns a :class:`evaluators.dbmsbenchmarker` instance for the given experiment code.
+
+        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
+        :type code: str
+        :return: DBMSBenchmarker evaluator for the specified experiment.
+        :rtype: evaluators.dbmsbenchmarker
+        """
         if code == '':
             code = self.codes[0]
         return evaluators.dbmsbenchmarker(code=code, path=self.path)

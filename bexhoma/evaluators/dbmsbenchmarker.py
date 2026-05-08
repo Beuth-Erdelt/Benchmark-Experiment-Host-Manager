@@ -96,104 +96,103 @@ class dbmsbenchmarker(logger):
             pass
     def get_df_loading(self):
         """
-        Returns the DataFrame that containts all information about the loading phase.
+        Returns the DataFrame containing all loading-phase timing results.
 
-        :return: DataFrame of loading results
+        Reads loading time fields (``timeGenerate``, ``timeIngesting``, ``timeSchema``,
+        ``timeIndex``, ``timeLoad``) from the inspector's connection data.
+
+        :return: DataFrame with one row per DBMS connection indexed as ``"DBMS"``.
+        :rtype: pandas.DataFrame
         """
         if self.evaluation is None:
             self.get_inspector()
-        times = {}
-        for c, connection in self.evaluation.benchmarks.dbms.items():
-            times[c]={}
-            if 'timeGenerate' in connection.connectiondata:
-                times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
-            if 'timeIngesting' in connection.connectiondata:
-                times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
-            if 'timeSchema' in connection.connectiondata:
-                times[c]['timeSchema'] = connection.connectiondata['timeSchema']
-            if 'timeIndex' in connection.connectiondata:
-                times[c]['timeIndex'] = connection.connectiondata['timeIndex']
-            if 'timeLoad' in connection.connectiondata:
-                times[c]['timeLoad'] = connection.connectiondata['timeLoad']
-        df = pd.DataFrame(times)
+        loading_times = {}
+        for conn_name, connection in self.evaluation.benchmarks.dbms.items():
+            loading_times[conn_name] = {}
+            for time_key in ('timeGenerate', 'timeIngesting', 'timeSchema', 'timeIndex', 'timeLoad'):
+                if time_key in connection.connectiondata:
+                    loading_times[conn_name][time_key] = connection.connectiondata[time_key]
+        df = pd.DataFrame(loading_times)
         df = df.reindex(sorted(df.columns), axis=1)
         df = df.round(2).T
         df = df.rename_axis(index="DBMS")
         return df
     def get_df_benchmarking(self):
         """
-        Returns the DataFrame that containts all information about the benchmarking phase.
+        Returns the DataFrame containing all benchmarking-phase results.
 
-        :return: DataFrame of benchmarking results
+        Combines per-query latency statistics, geo-mean execution times, and per-connection
+        timing data from the DBMSBenchmarker inspector into a single DataFrame.
+
+        :return: DataFrame with one row per connection/pod, or empty DataFrame on failure.
+        :rtype: pandas.DataFrame
         """
         if self.evaluation is None:
             self.get_inspector()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
-        df = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-        if not df is None:
-            df = df.sort_index().T.round(2)
-            df.index = df.index.map(map_index_to_queryname)
-            num_of_queries = len(df.index)
+        df_stats = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        if df_stats is not None:
+            df_stats = df_stats.sort_index().T.round(2)
+            df_stats.index = df_stats.index.map(map_index_to_queryname)
+            num_of_queries = len(df_stats.index)
         df = self.evaluation.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index().astype('float')
+        df = (df / 1000.0).sort_index().astype('float')
         if df.empty:
             return pd.DataFrame()
-        df['Power@Size [~Q/h]'] = float(parameter.defaultParameters['SF'])*3600./df
+        df['Power@Size [~Q/h]'] = float(parameter.defaultParameters['SF']) * 3600. / df
         df_power = df.copy()
         df = self.evaluation.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-        df = (df/1000.0).sort_index()
+        df = (df / 1000.0).sort_index()
         df.columns = ['Geo Times [s]']
         df_geo_mean_runtime = df.copy()
         df = pd.concat([df_power, df_geo_mean_runtime], axis=1)
-        df_merged_time = pd.DataFrame()
-        num_pod = 0
-        for connection_nr, connection in self.evaluation.benchmarks.dbms.items():
-            num_pod = num_pod + 1
-            df_time = pd.DataFrame()
-            c = connection.connectiondata
-            connection_name = c['name']
-            orig_name = c['orig_name']
-            configuration = c['configuration'] if 'configuration' in c else '-'
-            eva = self.evaluation.get_experiment_connection_properties(c['name'])
-            df_time.index = [connection_name]
-            df_time['phase'] = orig_name #self.evaluation.code + '-' + orig_name
-            df_time['connection'] = connection_name #self.evaluation.code + '-' + connection_name
-            df_time['configuration'] = configuration
-            df_time['SF'] = float(c['parameter']['connection_parameter']['loading_parameters']['SF'])
-            df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
-            df_time['experiment_run'] = int(c['parameter']['numExperiment'])
-            df_time['client'] = int(c['parameter']['client'])
-            df_time['code'] = int(c['parameter']['code'])
-            df_time['pod'] = num_pod
-            df_time['benchmark_start'] = eva['times']['total'][c['name']]['time_start']
-            if not 'time_end' in eva['times']['total'][c['name']]:
+        df_timing_rows = pd.DataFrame()
+        for pod_idx, (_conn_nr, connection) in enumerate(self.evaluation.benchmarks.dbms.items(), start=1):
+            connection_data = connection.connectiondata
+            conn_name = connection_data['name']
+            orig_name = connection_data['orig_name']
+            configuration = connection_data.get('configuration', '-')
+            connection_props = self.evaluation.get_experiment_connection_properties(conn_name)
+            df_row = pd.DataFrame(index=[conn_name])
+            df_row['phase'] = orig_name
+            df_row['connection'] = conn_name
+            df_row['configuration'] = configuration
+            df_row['SF'] = float(connection_data['parameter']['connection_parameter']['loading_parameters']['SF'])
+            df_row['pods'] = int(connection_data['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+            df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
+            df_row['client'] = int(connection_data['parameter']['client'])
+            df_row['code'] = int(connection_data['parameter']['code'])
+            df_row['pod'] = pod_idx
+            df_row['benchmark_start'] = connection_props['times']['total'][conn_name]['time_start']
+            if 'time_end' not in connection_props['times']['total'][conn_name]:
                 return pd.DataFrame()
-            df_time['benchmark_end'] = eva['times']['total'][c['name']]['time_end']
-            df_merged_time = pd.concat([df_merged_time, df_time])
-        df_time = df_merged_time.sort_index()
-        benchmark_start = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_start'].min()
-        benchmark_end = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])['benchmark_end'].max()
-        duration = benchmark_end - benchmark_start
-        df_benchmark = duration.to_frame(name='duration')
-        df_benchmark = df_benchmark.round(2)
-        df_benchmark.columns = ['time [s]']
-        benchmark_count = df_time.groupby(['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client']).count()
-        df_benchmark['pod_count'] = benchmark_count['benchmark_end']
+            df_row['benchmark_end'] = connection_props['times']['total'][conn_name]['time_end']
+            df_timing_rows = pd.concat([df_timing_rows, df_row])
+        df_timing = df_timing_rows.sort_index()
+        group_keys = ['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client']
+        benchmark_start = df_timing.groupby(group_keys)['benchmark_start'].min()
+        benchmark_end = df_timing.groupby(group_keys)['benchmark_end'].max()
+        df_benchmark = (benchmark_end - benchmark_start).to_frame(name='time [s]').round(2)
+        df_benchmark['pod_count'] = df_timing.groupby(group_keys)['benchmark_end'].count()
         df_benchmark['SF2'] = df_benchmark.index.get_level_values('SF')
         df_benchmark['num_of_queries'] = num_of_queries
-        df_benchmark['Throughput@Size'] = (num_of_queries*3600.*df_benchmark['pod_count']/df_benchmark['time [s]']*df_benchmark['SF2']).round(2)
-        df_benchmark = df_benchmark.reset_index(level=['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client'])
+        df_benchmark['Throughput@Size'] = (
+            num_of_queries * 3600. * df_benchmark['pod_count'] / df_benchmark['time [s]'] * df_benchmark['SF2']
+        ).round(2)
+        df_benchmark = df_benchmark.reset_index(level=group_keys)
         df_benchmark = df_benchmark.set_index("connection", drop=False)
-        df_benchmark['pod'] = df_benchmark['connection'] #num_pod # df_time['pod']
+        df_benchmark['pod'] = df_benchmark['connection']
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
-        df['Power@Size [~Q/h]'] = df['SF']*3600./df['total_timer_execution']
+        df['Power@Size [~Q/h]'] = df['SF'] * 3600. / df['total_timer_execution']
         df.drop('total_timer_execution', axis=1, inplace=True)
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
-        df = df[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
+        df = df[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client',
+                  'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
+                  'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df
     def benchmarking_set_datatypes(self, df):
         """
@@ -210,14 +209,23 @@ class dbmsbenchmarker(logger):
         return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Transforms a pandas DataFrame collection of benchmarking results to a new DataFrame.
-        All result lines belonging to pods being run in parallel will be aggregated.
+        Aggregates parallel-pod DBMSBenchmarker result rows into one row per phase.
 
-        :param df: DataFrame of results 
-        :return: DataFrame of results
+        Groups by ``columns`` and applies geo-mean for timing/power metrics and
+        max/sum for count metrics. Recomputes ``Throughput@Size`` from the aggregated
+        values.
+
+        :param df: Benchmarking DataFrame (output of :meth:`get_df_benchmarking`).
+        :type df: pandas.DataFrame
+        :param columns: Grouping columns (default ``['phase']``).
+        :type columns: list[str]
+        :return: Aggregated DataFrame with one row per group.
+        :rtype: pandas.DataFrame
         """
         def safe_gmean(x):
-            if len(x) == 0: return np.nan
+            """Return the geometric mean of ``x``, or NaN for empty input."""
+            if len(x) == 0:
+                return np.nan
             res = gmean(x)
             return float(res) if np.isscalar(res) or res.size == 1 else float(res[0])
         if self.evaluation is None:
@@ -231,27 +239,28 @@ class dbmsbenchmarker(logger):
             df_stats.index = df_stats.index.map(map_index_to_queryname)
             num_of_queries = len(df_stats.index)
         df_aggregated = pd.DataFrame()
-        for key, grp in df.groupby([df[col] for col in columns]):
+        for group_key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
-                'connection':'max',
-                'Geo Times [s]':safe_gmean,
-                'Power@Size [~Q/h]':safe_gmean,
-                'code':'max',
-                'pod_count':'count',
-                'SF':'max',
-                'experiment_run':'max',
-                'time [s]':'max',
-                'client':'max',
-                'Throughput@Size':'max',
-                'num_of_queries':'sum',
+                'connection': 'max',
+                'Geo Times [s]': safe_gmean,
+                'Power@Size [~Q/h]': safe_gmean,
+                'code': 'max',
+                'pod_count': 'count',
+                'SF': 'max',
+                'experiment_run': 'max',
+                'time [s]': 'max',
+                'client': 'max',
+                'Throughput@Size': 'max',
+                'num_of_queries': 'sum',
             }
-            dict_grp = dict()
-            dict_grp['configuration'] = grp['configuration'].iloc[0]
-            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
-            dict_grp['phase'] = grp['phase'].iloc[0]
+            dict_grp = {
+                'configuration': grp['configuration'].iloc[0],
+                'experiment_run': grp['experiment_run'].iloc[0],
+                'phase': grp['phase'].iloc[0],
+            }
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            key_index = "_".join(map(str, key))
-            df_grp = pd.DataFrame(dict_grp, index=[key_index])
+            group_key_str = "_".join(map(str, group_key))
+            df_grp = pd.DataFrame(dict_grp, index=[group_key_str])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"

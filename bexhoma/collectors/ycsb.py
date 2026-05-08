@@ -36,9 +36,23 @@ class ycsb(base):
     All data collection and aggregation methods are inherited from :class:`base`.
     """
     def __init__(self, path, codes):
+        """
+        :param path: Base filesystem path that contains the experiment directories.
+        :type path: str
+        :param codes: List of experiment codes to collect results for.
+        :type codes: list[str]
+        """
         base.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
+        """
+        Returns a :class:`evaluators.ycsb` instance for the given experiment code.
+
+        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
+        :type code: str
+        :return: YCSB evaluator for the specified experiment.
+        :rtype: evaluators.ycsb
+        """
         if code == '':
             code = self.codes[0]
         return evaluators.ycsb(code=code, path=self.path)
