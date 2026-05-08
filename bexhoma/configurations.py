@@ -520,10 +520,10 @@ class default():
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "prepareExperiment"
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.v
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
+        experiment['docker'] = {self.docker_key: self.docker.copy()}
+        experiment['volume'] = self.volume_key
+        experiment['initscript'] = {self.script_key: self.initscript.copy()}
+        experiment['instance'] = self.instance_key
         self.log_experiment(experiment)
         """
         if delay > 0:
@@ -539,11 +539,11 @@ class default():
             print(status)
             self.wait(10)
             status = self.get_pod_status(pods[0])
-        dbmsactive = self.check_DBMS_connection(self.host, self.port)
+        dbmsactive = self.check_dbms_connection(self.host, self.port)
         while not dbmsactive:
             self.startPortforwarding()
             self.wait(10)
-            dbmsactive = self.check_DBMS_connection(self.host, self.port)
+            dbmsactive = self.check_dbms_connection(self.host, self.port)
         self.wait(10)
         print("load_data")
         self.load_data()
@@ -552,10 +552,10 @@ class default():
         experiment = {}
         experiment['delay'] = delay
         experiment['step'] = "startExperiment"
-        experiment['docker'] = {self.d: self.docker.copy()}
-        experiment['volume'] = self.v
-        experiment['initscript'] = {self.s: self.initscript.copy()}
-        experiment['instance'] = self.i
+        experiment['docker'] = {self.docker_key: self.docker.copy()}
+        experiment['volume'] = self.volume_key
+        experiment['initscript'] = {self.script_key: self.initscript.copy()}
+        experiment['instance'] = self.instance_key
         self.log_experiment(experiment)
         """
         if delay > 0:
@@ -830,7 +830,7 @@ class default():
             subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
             # wait for port to be connected
             self.wait(2)
-            dbmsactive = self.check_DBMS_connection(self.experiment.cluster.host, self.experiment.cluster.port)
+            dbmsactive = self.check_dbms_connection(self.experiment.cluster.host, self.experiment.cluster.port)
             if not dbmsactive:
                 # not answering
                 self.experiment.cluster.stopPortforwarding()
@@ -838,7 +838,7 @@ class default():
             """
             #while not dbmsactive:
             #    self.wait(10)
-            #    dbmsactive = self.check_DBMS_connection(self.experiment.cluster.host, self.experiment.cluster.port)
+            #    dbmsactive = self.check_dbms_connection(self.experiment.cluster.host, self.experiment.cluster.port)
             #self.wait(10)
             self.check_load_data()
             if not self.loading_started:
@@ -851,10 +851,10 @@ class default():
             experiment = {}
             experiment['delay'] = delay
             experiment['step'] = "startExperiment"
-            experiment['docker'] = {self.d: self.docker.copy()}
-            experiment['volume'] = self.v
-            experiment['initscript'] = {self.s: self.initscript.copy()}
-            experiment['instance'] = self.i
+            experiment['docker'] = {self.docker_key: self.docker.copy()}
+            experiment['volume'] = self.volume_key
+            experiment['initscript'] = {self.script_key: self.initscript.copy()}
+            experiment['instance'] = self.instance_key
             self.log_experiment(experiment)
             """
             if delay > 0:
@@ -1875,7 +1875,7 @@ scrape_configs:
                         remove_old_pvcs = not self.loading_finished and self.experiment.args_dict['request_storage_remove'] and self.num_experiment_to_apply_done == 0
                         old_pvc_exist = False
                         for statefulset_name_pvc in list_of_workers_pvcs:
-                            pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                            pvc_exists = self.experiment.cluster.pvc_exists(statefulset_name_pvc)
                             if pvc_exists > 0:
                                 print("{:30s}: storage {} exists".format(configuration, statefulset_name_pvc))
                                 old_pvc_exist = True
@@ -1886,11 +1886,11 @@ scrape_configs:
                         if old_pvc_exist and remove_old_pvcs:
                             self.wait(10)
                             for statefulset_name_pvc in list_of_workers_pvcs:
-                                pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                                pvc_exists = self.experiment.cluster.pvc_exists(statefulset_name_pvc)
                                 while pvc_exists:
                                     print("{:30s}: storage {} still exists".format(configuration, statefulset_name_pvc))
                                     self.wait(10)
-                                    pvc_exists = self.experiment.cluster.does_pvc_exist(statefulset_name_pvc)
+                                    pvc_exists = self.experiment.cluster.pvc_exists(statefulset_name_pvc)
                                 print("{:30s}: storage {} is gone".format(configuration, statefulset_name_pvc))
                         #result[key]['spec']['volumeClaimTemplates'][0]['metadata']['name'] = name_worker
                         #self.service = dep['metadata']['name']
@@ -2459,7 +2459,7 @@ scrape_configs:
         cmd = {}
         cmd['check_gpus'] = 'nvidia-smi'
         stdin, stdout, stderr = self.execute_command_in_pod_sut(cmd['check_gpus'])
-    def check_DBMS_connection(self, ip, port):
+    def check_dbms_connection(self, ip, port):
         """
         Check if DBMS is open for connections.
         Tries to open a socket to ip:port.
@@ -2469,7 +2469,7 @@ scrape_configs:
         :param port: Port of the server on the host to connect to
         :return: True, iff connecting is possible
         """
-        self.logger.debug('configuration.check_DBMS_connection()')
+        self.logger.debug('configuration.check_dbms_connection()')
         found = False
         s = socket.socket()
         s.settimeout(10)
@@ -3192,7 +3192,7 @@ scrape_configs:
         self.logger.debug(stderr)
         # upload connections infos again, metrics has overwritten it
         filename = 'connections.config'
-        stdout = self.experimentfile_upload(filename)
+        stdout = self.experimentupload_file(filename)
         self.logger.debug(stdout)
     def run_benchmarker_pod(self,
         connection=None,
@@ -3366,20 +3366,20 @@ scrape_configs:
             stdin, stdout, stderr = self.experiment.cluster.execute_command_in_pod(command=cmd['prepare_log'], pod=pod_dashboard, container="dashboard")
             # copy queries.config
             filename = 'queries.config'
-            self.experimentfile_upload(filename)
+            self.experimentupload_file(filename)
             # copy connection's config
             filename = c['name']+'.config'
-            self.experimentfile_upload(filename)
+            self.experimentupload_file(filename)
             # copy twice to be more sure it worked
             # copy connection's config
             filename = c['name']+'.config'
-            self.experimentfile_upload(filename)
+            self.experimentupload_file(filename)
             # copy connections.config
             filename = 'connections.config'
-            self.experimentfile_upload(filename)
+            self.experimentupload_file(filename)
             # copy protocol.json
             filename = 'protocol.json'
-            self.experimentfile_upload(filename)
+            self.experimentupload_file(filename)
         # put list of clients to message queue
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
         for i in range(1, parallelism+1):
@@ -3520,7 +3520,7 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    stdout = self.experimentfile_upload(filename)
+                    stdout = self.experimentupload_file(filename)
                     #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
@@ -3566,10 +3566,10 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    stdout = self.experimentfile_upload(filename)
+                    stdout = self.experimentupload_file(filename)
                     #filename_source = self.path+"/"+filename
                     #filename_remote = '/results/'+str(self.code)+'/'+filename
-                    #self.experiment.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
+                    #self.experiment.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=pod_dashboard)
                     #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
@@ -3610,7 +3610,7 @@ scrape_configs:
                     self.logger.debug(stderr)
                     # upload connections infos again, metrics has overwritten it
                     filename = 'connections.config'
-                    stdout = self.experimentfile_upload(filename)
+                    stdout = self.experimentupload_file(filename)
                     #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                     #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                     self.logger.debug(stdout)
@@ -3651,7 +3651,7 @@ scrape_configs:
                         self.logger.debug(stderr)
                         # upload connections infos again, metrics has overwritten it
                         filename = 'connections.config'
-                        stdout = self.experimentfile_upload(filename)
+                        stdout = self.experimentupload_file(filename)
                         #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         #stdout = self.experiment.cluster.kubectl(cmd['upload_connection_file'])
                         self.logger.debug(stdout)
@@ -3680,8 +3680,8 @@ scrape_configs:
         if self.pod_sut == '':
             self.check_sut()
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
-    def experimentfile_upload(self, filename):
-        return self.experiment.experimentfile_upload(filename)
+    def experimentupload_file(self, filename):
+        return self.experiment.experimentupload_file(filename)
     def experimentfile_download(self, filename):
         return self.experiment.experimentfile_download(filename)
     def copyLog(self):
@@ -3734,8 +3734,8 @@ scrape_configs:
                             filename_in_container = scriptfolder+filename_target
                             with open(filename_in_resultfolder, "w") as initscript_filled:
                                 initscript_filled.write(data)
-                            #self.experiment.experimentfile_upload(filename=filename) # does not work, because it changes filename
-                            self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+                            #self.experiment.experimentupload_file(filename=filename) # does not work, because it changes filename
+                            self.experiment.cluster.upload_file(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
                             stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
                             #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
             return
@@ -3754,7 +3754,7 @@ scrape_configs:
                     script_create_database += f'CREATE DATABASE tenant_{tenant};\n'
             with open(filename_in_resultfolder, "w") as initscript_filled:
                 initscript_filled.write(script_create_database)
-            self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+            self.experiment.cluster.upload_file(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
             stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
             #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_in_resultfolder, pod_name=self.pod_sut, to_name=filename_in_container))
         if len(self.ddl_parameters):
@@ -3770,7 +3770,7 @@ scrape_configs:
                             initscript_filled.write(data)
                         filename_in_container = scriptfolder+script
                         filename_in_resultfolder = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
-                        self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+                        self.experiment.cluster.upload_file(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
                         stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
                         #self.experiment.cluster.kubectl('cp --container dbms {from_name} {to_name}'.format(from_name=self.experiment.cluster.experiments_configfolder+'/'+filename_filled, to_name=self.pod_sut+':'+scriptfolder+script))
                         filename_source = self.experiment.cluster.experiments_configfolder+'/'+filename_filled
@@ -3790,7 +3790,7 @@ scrape_configs:
                 if os.path.isfile(filename_source):
                     #self.experiment.cluster.kubectl('cp --container dbms {from_name} {pod_name}:{to_name}'.format(from_name=filename_source, pod_name=self.pod_sut, to_name=filename_in_container))
                     shutil.copy(filename_source, filename_in_resultfolder)
-                    self.experiment.cluster.file_upload(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
+                    self.experiment.cluster.upload_file(filename_remote=filename_in_container, filename_local=filename_in_resultfolder, pod=self.pod_sut, container="dbms")
                     stdin, stdout, stderr = self.execute_command_in_pod_sut("sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
     def attach_worker(self):
         """

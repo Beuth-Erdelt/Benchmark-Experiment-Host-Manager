@@ -2,7 +2,8 @@
 # Dockerfile for Bexhoma - Benchmarker Benchbase
 ######################################################################################
 #
-# This Dockerfile builds an image for a Bexhoma component "benchmarker".
+# This Dockerfile builds an image for a Bexhoma benchmarker running workloads
+# against an already-loaded DBMS using Benchbase.
 #
 # Base Image: benchbase.azurecr.io/benchbase
 #
@@ -10,10 +11,11 @@
 # Email: patrick.erdelt@bht-berlin.de
 # Date: 2025-05-18
 # Version: 1.0
-# Description: This container runs a driver for a benchmark.
-# The configuration is given by environment variables.
-# A redis queue is consulted for further details.
-# Redis client is installed.
+# Description: Runs the Benchbase execute phase against a target DBMS.
+#   Configuration is supplied via environment variables substituted into a bundled
+#   XML config template at startup.
+#   A Redis message queue is consulted for pod-assignment details.
+#   redis-tools is installed for queue interaction.
 ######################################################################################
 FROM benchbase.azurecr.io/benchbase
 
@@ -21,50 +23,71 @@ USER root
 WORKDIR /benchbase
 VOLUME /benchbase/results
 
+######################################################################################
+# Bundle Benchbase XML config templates for all supported profiles
+######################################################################################
 COPY ./config /tmp/config/
 RUN chown -R containeruser:containergroup /tmp/config/
 
+######################################################################################
+# Environment variables — runtime configuration
+######################################################################################
+# Scaling and parallelism
 ENV SF=1
 ENV BEXHOMA_NUM_PODS=4
 ENV BEXHOMA_CHILD=1
 ENV BEXHOMA_RNGSEED=123
-ENV BEXHOMA_URL jdbc:mysql://localhost:3306/ycsb
+
+# Target DBMS connection (substituted into the XML config template via sed)
 ENV BEXHOMA_HOST="www.example.com"
-ENV BEXHOMA_PORT 3306
-ENV BEXHOMA_JAR mysql-connector-j-8.0.31.jar
-ENV BEXHOMA_DRIVER com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_PORT=3306
+ENV BEXHOMA_USER=root
+ENV BEXHOMA_PASSWORD=root
+ENV BEXHOMA_DATABASE=demo
+ENV BEXHOMA_SCHEMA=""
+ENV BEXHOMA_URL=jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_JAR=mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER=com.mysql.cj.jdbc.Driver
+
+# Bexhoma experiment identity
+ENV BEXHOMA_DBMS=""
+ENV BEXHOMA_CONFIGURATION=""
 ENV BEXHOMA_CONNECTION="mysql"
 ENV BEXHOMA_EXPERIMENT="12345"
 ENV BEXHOMA_EXPERIMENT_RUN=1
-ENV BEXHOMA_USER root
-ENV BEXHOMA_PASSWORD root
-ENV BEXHOMA_DATABASE demo
-ENV BEXHOMA_TIME_START 0
-ENV BEXHOMA_TIME_NOW 0
-ENV BENCHBASE_BENCH tpcc
-ENV BENCHBASE_PROFILE postgres
-ENV BENCHBASE_TARGET 100
-ENV BENCHBASE_TIME 60
-ENV BENCHBASE_TERMINALS 1
-ENV BENCHBASE_BATCHSIZE 128
-ENV BENCHBASE_ISOLATION "TRANSACTION_SERIALIZABLE"
-ENV BENCHBASE_STATUS_INTERVAL=
+ENV BEXHOMA_CLIENT=1
+
+# Multi-tenancy: controls per-pod schema/database derivation and cross-container sync
+ENV BEXHOMA_TENANT_BY=""
+ENV BEXHOMA_TENANT_NUM=""
+ENV BEXHOMA_NUM_PODS_TOTAL=""
+
+# Pod synchronisation
+ENV BEXHOMA_TIME_START=0
+ENV BEXHOMA_TIME_NOW=0
+
+# Benchbase workload parameters (substituted into the XML config template via sed)
+ENV BENCHBASE_BENCH=tpcc
+ENV BENCHBASE_PROFILE=postgres
+ENV BENCHBASE_TARGET=100
+ENV BENCHBASE_TIME=60
+ENV BENCHBASE_TERMINALS=1
+ENV BENCHBASE_BATCHSIZE=128
+ENV BENCHBASE_ISOLATION="TRANSACTION_SERIALIZABLE"
+ENV BENCHBASE_STATUS_INTERVAL=""
 ENV BENCHBASE_NEWCONNPERTXN=false
 ENV BENCHBASE_KEY_AND_THINK=false
-ENV BENCHBASE_YCSB_WEIGHTS=100,0,0,0,0,0
 ENV BENCHBASE_YCSB_WORKLOAD=a
+ENV BENCHBASE_YCSB_WEIGHTS=100,0,0,0,0,0
 
-# we do not have 'make'
-#RUN cd /tmp; wget http://download.redis.io/redis-stable.tar.gz; tar xvzf redis-stable.tar.gz; cd redis-stable; make; cp src/redis-cli /usr/local/bin/; chmod 755 /usr/local/bin/redis-cli
-# we use apt instead
-RUN apt update
-RUN apt install redis-tools -y
+######################################################################################
+# Install Redis client for message queue interaction
+######################################################################################
+RUN apt-get update && apt-get install -y --no-install-recommends redis-tools && rm -rf /var/lib/apt/lists/*
 
-# for debugging: make container sleep
-#CMD ["/bin/bash", "-c", "sleep 3600"]
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-
+######################################################################################
+# Copy entrypoint script
+######################################################################################
 COPY ./benchmarker.sh /benchbase/benchmarker.sh
 RUN ["chmod", "+x", "/benchbase/benchmarker.sh"]
 RUN chown -R containeruser:containergroup /benchbase/benchmarker.sh

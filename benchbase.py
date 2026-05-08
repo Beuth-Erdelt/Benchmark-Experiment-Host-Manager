@@ -10,11 +10,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
+from bexhoma.cli_args import make_base_parser
 from dbmsbenchmarker import *
-#import experiments
 import logging
 import urllib3
-import logging
 import argparse
 import types
 
@@ -28,76 +27,27 @@ if __name__ == '__main__':
     User can also choose some parameters like number of warehouses and request some resources.
     """
     # argparse
-    parser = argparse.ArgumentParser(description=description)
+    parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load'])
-    parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'Citus', 'PGBouncer', 'CedarDB'], default=[], nargs='*')
-    parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
-    parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
-    parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
-    parser.add_argument('-cx', '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
-    parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
-    #parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
-    parser.add_argument('-m',  '--monitoring', help='activates monitoring for sut', action='store_true')
-    parser.add_argument('-ma', '--monitoring-app', help='activates application monitoring', action='store_true', default=False)
-    parser.add_argument('-mc', '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
-    parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
-    #parser.add_argument('-dt', '--datatransfer', help='activates datatransfer', action='store_true', default=False)
-    #parser.add_argument('-md', '--monitoring-delay', help='time to wait [s] before execution of the runs of a query', default=10)
-    #parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
-    parser.add_argument('-nc', '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne', '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
-    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=1)
-    parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
-    parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
-    parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
-    parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
-    #parser.add_argument('-nlf', '--num-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
-    parser.add_argument('-nsr', '--num-sut-replicas', help='number of sut pods per configuration', default=1)
-    parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
-    parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
-    parser.add_argument('-nbf', '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
-    parser.add_argument('-npp', '--num-pooling-pods', help='comma separated list of  number of pooling pods per configuration', default="1")
-    parser.add_argument('-npi', '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
-    parser.add_argument('-npo', '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
-    parser.add_argument('-wl',  '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f', 'c2'], default='a')
-    #parser.add_argument('-nvu', '--num-virtual-users', help='comma separated list of number of virtual users for Benchbase benchmarking', default="1")
-    parser.add_argument('-sf', '--scaling-factor', help='scaling factor (SF) = number of warehouses', default=1)
-    #parser.add_argument('-su', '--scaling-users', help='comma separated list of number of users for loading', default="1")
-    parser.add_argument('-sd', '--scaling-duration', help='scaling factor = duration in minutes', default=5)
-    parser.add_argument('-slg', '--scaling-logging', help='logging status every x seconds', default=0)
-    parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
+    parser.add_argument('-dbms', '--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'Citus', 'PGBouncer', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-nsr',   '--num-sut-replicas', help='number of sut pods per configuration', default=1)
+    parser.add_argument('-nbf',   '--num-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1")
+    parser.add_argument('-npp',   '--num-pooling-pods', help='comma separated list of number of pooling pods per configuration', default="1")
+    parser.add_argument('-npi',   '--num-pooling-in', help='comma separated list of max connections into a connection pooler', default="")
+    parser.add_argument('-npo',   '--num-pooling-out', help='comma separated list of max connections out of a connection pooler', default="")
+    parser.add_argument('-wl',    '--workload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f', 'c2'], default='a')
+    parser.add_argument('-sd',    '--scaling-duration', help='scaling factor = duration in minutes', default=5)
+    parser.add_argument('-slg',   '--scaling-logging', help='logging status every x seconds', default=0)
+    parser.add_argument('-xkey',  '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
     parser.add_argument('-xconn', '--extra-new-connection', help='new connection for every transaction', action='store_true', default=False)
-    parser.add_argument('-xbatch', '--extra-batchsize', help='size of batch for inserts', default=128)
-    parser.add_argument('-t', '--timeout', help='timeout for a run of a query', default=600)
-    parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
-    parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
-    parser.add_argument('-rr', '--request-ram', help='request ram', default='16Gi')
-    parser.add_argument('-rc', '--request-cpu', help='request cpus', default='4')
-    parser.add_argument('-rct', '--request-cpu-type', help='request node having node label cpu=', default='')
-    parser.add_argument('-rg', '--request-gpu', help='request number of gpus', default=1)
-    parser.add_argument('-rgt', '--request-gpu-type', help='request node having node label gpu=', default='a100')
-    parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared', 'ramdisk'])
-    parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
-    parser.add_argument('-rsr', '--request-storage-remove', help='remove existing persistent storage at experiment start', action='store_true', default=False)
-    parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
-    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node', default=None)
-    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node', default=None)
-    parser.add_argument('-mtn', '--multi-tenant-num', help='number of tenant', default=0)
-    parser.add_argument('-mtb', '--multi-tenant-by', help='one tenant per (schema, database, container)', default='')
-    parser.add_argument('-mtv', '--multi-tenant-volume', help='one volume per tenant per (for per-database)', action='store_true', default=False)
-    parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
-    #parser.add_argument('-nti', '--num-time', help='time per benchmark in seconds', default="60")
-    parser.add_argument('-b', '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb'])
-    #parser.add_argument('-nt', '--num-target', help='total number of loaders per configuration', default="1024")
-    #parser.add_argument('-ltf', '--list-target-factors', help='comma separated list of factors of 1024 ops as target - default range(1,9)', default="1,2,3,4,5,6,7,8")
-    parser.add_argument('-tb', '--target-base', help='ops as target, base for factors - default 1024 = 2**10', default="1024")
-    parser.add_argument("--set", dest="sets", action="append", default=[], help="Selector assignment, e.g. deployment[sut].container[dbms].max_worker_processes=128")
+    parser.add_argument('-xbatch','--extra-batchsize', help='size of batch for inserts', default=128)
+    parser.add_argument('-b',     '--benchmark', help='type of benchmark', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb'])
+    parser.add_argument('-tb',    '--target-base', help='ops as target, base for factors - default 1024 = 2**10', default="1024")
+    parser.set_defaults(num_worker=1)
     # evaluate args
     args = parser.parse_args()
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
-    #logging.basicConfig(level=logging.DEBUG)
     if args.debug:
         logger_bexhoma = logging.getLogger('bexhoma')
         logger_bexhoma.setLevel(logging.DEBUG)
@@ -159,7 +109,7 @@ if __name__ == '__main__':
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.aws(context=args.context)
+        cluster = clusters.AWS(context=args.context)
         # scale up
         node_sizes = {
             'auxiliary': 1,
@@ -168,7 +118,7 @@ if __name__ == '__main__':
         }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)
     cluster_name = cluster.contextdata['clustername']
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
@@ -772,7 +722,7 @@ if __name__ == '__main__':
                         :return: list of endpoints
                         """
                         #pods_worker = ['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']
-                        pods_worker = cluster.get_statefulset_pods(self.statefulset_name)
+                        pods_worker = cluster.get_stateful_set_pods(self.statefulset_name)
                         #pods_worker = self.experiment.cluster.get_pods(app='', component='', configuration='yb-tserver', experiment='')
                         #print("****************", pods_worker)
                         return pods_worker

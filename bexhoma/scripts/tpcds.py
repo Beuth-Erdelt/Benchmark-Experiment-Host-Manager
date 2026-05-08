@@ -75,7 +75,7 @@ def do_benchmark():
 	datatransfer = args.datatransfer
 	code = args.experiment
 	# set cluster
-	cluster = clusters.kubernetes(context=args.context)
+	cluster = clusters.Kubernetes(context=args.context)
 	cluster_name = cluster.contextdata['clustername']
 	if args.max_sut is not None:
 		cluster.max_sut = int(args.max_sut)

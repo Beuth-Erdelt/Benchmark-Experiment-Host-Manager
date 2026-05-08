@@ -17,8 +17,6 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-# Some nice output
-#from IPython.display import display, Markdown
 import pickle
 import json
 import traceback
@@ -28,33 +26,42 @@ from datetime import datetime
 import glob
 from pathlib import Path
 
-def natural_sort(l): 
+def natural_sort(l):
+    """
+    Sorts a list of strings in natural (human) order so that embedded
+    digit runs are compared numerically rather than lexicographically.
+
+    :param l: List of strings to sort.
+    :type l: list[str]
+    :return: Sorted list.
+    :rtype: list[str]
+    """
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
     return sorted(l, key=alphanum_key)
 
 class base:
     """
-    Basis class for evaluating an experiment.
-    Constructor sets
+    Base evaluator for a single bexhoma experiment.
 
-      1. `path`: path to result folders
-      1. `code`: Id of the experiment (name of result folder)
-      1. `include_loading`: Bool if loading is included
-      1. `include_benchmarking`: Bool if benchmarking is included
-      1. `workflow`: Dict for storing actual workload (set later)
-      1. `workflow_errors`: Dict for storing errors during workflow (set later)
+    Loads the experiment result folder identified by ``code`` inside ``path``,
+    provides helpers for scanning log files and reconstructing the workflow,
+    and exposes connection/loading metadata.  All benchmark-specific evaluators
+    inherit from this class (via :class:`logger`).
+
+    :param code: Experiment identifier — also the name of the result sub-folder.
+    :param path: Root path that contains the result folders.
+    :param include_loading: Whether loading-phase results are expected.
+    :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
     def __init__(self, code, path, include_loading=False, include_benchmarking=True):
         """
-        Initializes object by setting code and path to result folder.
-
-        :param path: path to result folders
-        :param code: Id of the experiment (name of result folder)
-        :param include_loading: Are there results about the loading phase?
-        :param include_benchmarking: Are there results about the benchmarking phase?
+        :param code: Experiment identifier — also the name of the result sub-folder.
+        :param path: Root path that contains the result folders.
+        :param include_loading: Whether loading-phase results are expected.
+        :param include_benchmarking: Whether benchmarking-phase results are expected.
         """
-        self.path = (path+"/"+code)#.replace("\\", "/").replace("C:", "")
+        self.path = path + "/" + code
         self.code = code
         self.include_loading = include_loading
         self.include_benchmarking = include_benchmarking
@@ -62,127 +69,96 @@ class base:
         self.workflow_errors = dict()
     def log_to_df(self, filename):
         """
-        Transforms a log file in text format into a pandas DataFrame.
+        Scans a pod log file for known errors and records them in ``self.workflow_errors``.
 
-        :param filename: Name of the log file 
-        :return: DataFrame of results
+        Returns an empty DataFrame; subclasses override this method to also parse
+        benchmark results out of the log.
+
+        :param filename: Absolute path to the log file.
+        :type filename: str
+        :return: Empty DataFrame (subclasses return populated DataFrames).
+        :rtype: pandas.DataFrame
         """
         self.workflow_errors[filename] = dict()
-        # test for known errors
         try:
             with open(filename) as f:
                 lines = f.readlines()
             stdout = "".join(lines)
             def test_for_known_errors(text, error_message):
-                error = re.findall('(.+?)'+error_message, text)
-                #print(type(error), len(error))
-                if len(error) > 0:
-                    self.workflow_errors[filename][error_message] = list()
-                    for e in error:
-                        self.workflow_errors[filename][error_message].append(e)
-                        #print(i)
-            error_message = 'Temporary failure in name resolution'
-            test_for_known_errors(stdout, error_message)
-            #print(errors)
-            #exit()
-        except Exception as e:
+                matches = re.findall('(.+?)' + error_message, text)
+                if matches:
+                    self.workflow_errors[filename][error_message] = matches
+            test_for_known_errors(stdout, 'Temporary failure in name resolution')
+        except Exception:
             pass
-        if len(self.workflow_errors[filename]) == 0:
-            # no errors found
+        if not self.workflow_errors[filename]:
             del self.workflow_errors[filename]
         return pd.DataFrame()
     def transform_all_logs_benchmarking(self):
         """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
+        Iterates over all benchmarker log files and calls :meth:`end_benchmarking` for each.
         """
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
-                #print("filename:", filename)
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                #print("pod_name:", pod_name)
                 jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
-                #print("jobname:", jobname)
                 self.end_benchmarking(jobname)
     def transform_all_logs_loading(self):
         """
-        Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
+        Iterates over all loader sensor log files and calls :meth:`end_loading` for each.
         """
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
-                #print("filename:", filename)
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                #print("pod_name:", pod_name)
                 jobname = filename[len("bexhoma-loading-"):-len("-"+pod_name+".sensor.log")]
-                #print("jobname:", jobname)
                 self.end_loading(jobname)
     def end_benchmarking(self, jobname):
         """
-        Ends a benchmarker job.
-        This is for storing or cleaning measures.
-        The results are stored in a pandas DataFrame.
+        Processes all benchmarker log files for a given job name.
 
-        :param jobname: Name of the job to clean
+        Scans the result folder for files matching
+        ``bexhoma-benchmarker-<jobname>*.dbmsbenchmarker.log`` and calls
+        :meth:`log_to_df` on each one.
+
+        :param jobname: Job name used to filter matching log files.
+        :type jobname: str
         """
-        path = self.path
-        directory = os.fsencode(path)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-benchmarker-"+jobname) and filename.endswith(".dbmsbenchmarker.log"):
-                #print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                #print(df)
-                """
-                if df.empty:
-                    print("Error in "+filename)
-                    print(self.workflow_errors)
-                else:
-                    filename_df = path+"/"+filename+".df.pickle"
-                    f = open(filename_df, "wb")
-                    pickle.dump(df, f)
-                    f.close()
-                """
+            if filename.startswith("bexhoma-benchmarker-" + jobname) and filename.endswith(".dbmsbenchmarker.log"):
+                self.log_to_df(self.path + "/" + filename)
+
     def end_loading(self, jobname):
         """
-        Ends a loading job.
-        This is for storing or cleaning measures.
-        The results are stored in a pandas DataFrame.
+        Processes all loader sensor log files for a given job name.
 
-        :param jobname: Name of the job to clean
+        Scans the result folder for files matching
+        ``bexhoma-loading-<jobname>*.sensor.log`` and calls
+        :meth:`log_to_df` on each one.
+
+        :param jobname: Job name used to filter matching log files.
+        :type jobname: str
         """
-        path = self.path
-        directory = os.fsencode(path)
+        directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
-            if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".sensor.log"):
-                #print(filename)
-                df = self.log_to_df(path+"/"+filename)
-                #print(df)
-                """
-                if df.empty:
-                    print("Error in "+filename)
-                    print(self.workflow_errors)
-                else:
-                    filename_df = path+"/"+filename+".df.pickle"
-                    f = open(filename_df, "wb")
-                    pickle.dump(df, f)
-                    f.close()
-                """
+            if filename.startswith("bexhoma-loading-" + jobname) and filename.endswith(".sensor.log"):
+                self.log_to_df(self.path + "/" + filename)
     def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end=''):
         """
-        This method does nothing and must be overloaded.
-        In principle: Collects all pandas DataFrames from the same phase (loading or benchmarking) and combines them into a single DataFrame.
-        This DataFrame is stored as a pickled file.
-        Source files are identifies by a pattern "filename_source_start*filename_source_end"
+        No-op base implementation; overridden by :class:`logger` to collect pickled DataFrames.
 
-        :param filename_result: Name of the pickled result file 
-        :param filename_source_start: Begin of name pattern for source files
-        :param filename_source_end: End of name pattern for source files
+        :param filename_result: Name of the combined pickle file to write.
+        :type filename_result: str
+        :param filename_source_start: Filename prefix used to match source pickle files.
+        :type filename_source_start: str
+        :param filename_source_end: Filename suffix used to match source pickle files.
+        :type filename_source_end: str
         """
         pass
     def evaluate_results(self, pod_dashboard=''):
@@ -200,127 +176,125 @@ class base:
             self._collect_dfs(filename_result="bexhoma-loading.all.df.pickle" , filename_source_start="bexhoma-loading", filename_source_end=".log.df.pickle")
     def get_df_benchmarking(self):
         """
-        Returns the DataFrame that containts all information about the benchmarking phase.
+        Returns the DataFrame containing all benchmarking-phase results.
 
-        :return: DataFrame of benchmarking results
+        :return: Empty DataFrame; overridden by subclasses.
+        :rtype: pandas.DataFrame
         """
         return pd.DataFrame()
+
     def get_df_loading(self):
         """
-        Returns the DataFrame that containts all information about the loading phase.
+        Returns the DataFrame containing all loading-phase results.
 
-        :return: DataFrame of loading results
+        :return: Empty DataFrame; overridden by subclasses.
+        :rtype: pandas.DataFrame
         """
         return pd.DataFrame()
     def reconstruct_workflow(self, df):
         """
-        Constructs the workflow out of the results (reverse engineer workflow).
-        This for example looks like this:
-        {'MySQL-24-4-1024': [[1, 2], [1, 2]], 'MySQL-24-4-2048': [[1, 2], [1, 2]], 'PostgreSQL-24-4-1024': [[1, 2], [1, 2]], 'PostgreSQL-24-4-2048': [[1, 2], [1, 2]]}
+        Reconstructs the experiment workflow structure from a benchmarking results DataFrame.
 
-        * 4 configurations
-        * each 2 experiment runs
-        * consisting of [1,2] benchmarker (first 1 pod, then 2 pods in parallel)
+        Returns a nested dict mapping each configuration name to a list of runs, where each
+        run is a list of result counts per client — for example::
 
-        :param df: DataFrame of benchmarking results - time format (pods already aggregated)
-        :return: Dict of connections
+            {'MySQL-24-4-1024': [[1, 2], [1, 2]]}
+
+        means 2 experiment runs, each consisting of client 1 (1 result) then client 2
+        (2 results, i.e. 2 pods in parallel).
+
+        :param df: Benchmarking DataFrame with columns ``configuration``, ``experiment_run``,
+                   and ``client`` (pods already aggregated).
+        :type df: pandas.DataFrame
+        :return: Workflow dict mapping configuration name to per-run client result counts.
+        :rtype: dict
         """
-        # Tree of elements of the workflow
-        #workflow = dict()
-        #return workflow
-        # Tree of elements of the workflow
-        #print(df)
-        def remove_after_last_dash(s):
-            index = s.rfind('-')
-            if index != -1:
-                return s[:index]
-            return s  # return the original string if "-" is not found
         configs = dict()
-        for index, row in df.iterrows():
-            #print(row['experiment_run'], row['configuration'])
-            # strip experiment run number
-            #configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
-            client_name_pattern = "{}-{}".format(row['num_experiment'], row['num_client'])
-            if row['orig_name'].endswith(client_name_pattern):
-                configuration_name = row['orig_name'][:-len(client_name_pattern)-1]
-            else:
-                configuration_name = remove_after_last_dash(row['orig_name']) # row['configuration']
-            if configuration_name not in configs:
-                configs[configuration_name] = dict()
-                #configs[row['configuration']]
-            if row['num_experiment'] not in configs[configuration_name]:
-                configs[configuration_name][row['num_experiment']] = dict()
-            if row['num_client'] not in configs[configuration_name][row['num_experiment']]:
-                configs[configuration_name][row['num_experiment']][row['num_client']] = dict()
-                configs[configuration_name][row['num_experiment']][row['num_client']]['pods'] = dict()
-                configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] = 0
-                #configs[row['configuration']][row['experiment_run']][row['client']]['run'] = dict()
-            configs[configuration_name][row['num_experiment']][row['num_client']]['pods'][row['pods']] = True
-            configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] = configs[configuration_name][row['num_experiment']][row['num_client']]['result_count'] + 1
-            #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']] = dict()
-            #configs[row['configuration']][row['experiment_run']][row['client']]['run'][row['run']]['vusers'] = row['vusers']
-        #print(configs)
-        #pretty_configs = json.dumps(configs, indent=2)
-        #print(pretty_configs)
-        # Flat version of workflow
+        for _, row in df.iterrows():
+            config_name = row['configuration']
+            if config_name not in configs:
+                configs[config_name] = dict()
+            if row['experiment_run'] not in configs[config_name]:
+                configs[config_name][row['experiment_run']] = dict()
+            if row['client'] not in configs[config_name][row['experiment_run']]:
+                configs[config_name][row['experiment_run']][row['client']] = {'result_count': 0}
+            configs[config_name][row['experiment_run']][row['client']]['result_count'] += 1
         workflow = dict()
-        for index, row in configs.items():
-            workflow[index] = []
-            for i, v in row.items():
-                l = []
-                for j, w in v.items():
-                    #l.append(len(w['pods']))
-                    l.append(w['result_count'])
-                workflow[index].append(l)
-        #print(workflow)
-        #pretty_workflow = json.dumps(workflow, indent=2)
-        #print(pretty_workflow)
+        for config_name, run_dict in configs.items():
+            workflow[config_name] = []
+            for _run_num, client_dict in run_dict.items():
+                client_counts = [client_data['result_count'] for client_data in client_dict.values()]
+                workflow[config_name].append(client_counts)
         return workflow
     def test_results(self):
         """
-        Run test script locally.
-        Extract exit code.
+        Validates results locally and returns an exit code.
 
-        :return: exit code of test script
+        :return: ``0`` on success; subclasses return ``1`` on failure.
+        :rtype: int
         """
         return 0
     def test_results_column(self, df, test_column, silent=False, title=''):
-            #test_column = 'x'
-            if len(title) > 0:
-                title = f"{title} {test_column}"
+        """
+        Checks whether a column in a DataFrame contains any zero or NaN values.
+
+        :param df: DataFrame to check.
+        :type df: pandas.DataFrame
+        :param test_column: Column name to inspect.
+        :type test_column: str
+        :param silent: When ``True``, suppresses printed output.
+        :type silent: bool
+        :param title: Optional label prefix for the printed message.
+        :type title: str
+        :return: ``True`` if the column is fully populated with non-zero values,
+                 ``False`` otherwise.
+        :rtype: bool
+        """
+        if len(title) > 0:
+            title = f"{title} {test_column}"
+        else:
+            title = test_column
+        if not df is None and not df.empty:
+            contains_zero_or_nan = df[test_column].isin([0]) | df[test_column].isna()
+            if contains_zero_or_nan.any():
+                if not silent:
+                    print("* TEST failed: {} contains 0 or NaN".format(title))
+                return False
             else:
-                title = test_column
-            if not df is None and not df.empty:
-                # Check if test_column contains 0 or NaN
-                contains_zero_or_nan = df[test_column].isin([0]) | df[test_column].isna()
-                # Print result (True for rows where 0 or NaN is found)
-                #print(contains_zero_or_nan)
-                if contains_zero_or_nan.any():
-                    if not silent:
-                        print("* TEST failed: {} contains 0 or NaN".format(title))
-                    return False
-                else:
-                    if not silent:
-                        print("* TEST passed: {} contains no 0 or NaN".format(title))
-                    return True
-            return False
+                if not silent:
+                    print("* TEST passed: {} contains no 0 or NaN".format(title))
+                return True
+        return False
     def get_workload(self):
         """
         Returns the workload configuration of an experiment.
 
-        Reads the ``queries.config`` file for the given experiment code and
-        returns its contents as a dictionary.  The ``tenant_per`` key is
-        normalised to the string ``'None'`` when absent or empty.
+        Reads the ``queries.config`` file from the experiment result folder and
+        returns its contents as a Python dictionary.
 
-        :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
-        :type code: str
         :return: Workload properties dictionary.
         :rtype: dict
         """
-        with open(self.path + "/" + "/queries.config", 'r') as inp:
-            workload_properties = ast.literal_eval(inp.read())
-            return workload_properties
+        with open(self.path + "/queries.config", 'r') as f:
+            return ast.literal_eval(f.read())
     def add_connection_to_result(self, c, connection_id, result):
+        """
+        Appends a flattened connection entry to ``result`` keyed by ``connection_id``.
+
+        Extracts scalar fields from the connection config dict ``c`` — including
+        host-system, loading-parameter, benchmarking-parameter, SUT-parameter, and
+        ``args`` sections — and stores them with prefixed keys
+        (``host_*``, ``loading_parameters_*``, ``benchmarking_parameters_*``,
+        ``sut_parameters_*``, ``arg_*``).  Non-scalar values (lists and dicts) are
+        skipped.
+
+        :param c: Single connection entry from ``connections.config``.
+        :type c: dict
+        :param connection_id: Key to use when inserting into ``result``.
+        :type connection_id: str
+        :param result: Accumulator dict that maps connection IDs to metadata rows.
+        :type result: dict
+        """
         result[connection_id] = {
             'code': c['parameter']['code'],
             'connection': c['name'],
@@ -328,11 +302,12 @@ class base:
             'phase': c['phase'],
             'experiment_run': c['parameter']['numExperiment'],
             'client': int(c['parameter']['client']),
-            #'SF': c['defaultParameters']['SF'],
             'dockerimage': c['parameter']['dockerimage'],
             'time_load': float(c['timeLoad']),
+            'time_preload': float(c['timeSchema']),
+            'time_generate': float(c['timeGenerate']),
             'time_ingest': float(c['timeIngesting']),
-            'time_check': float(c['timeIndex']),
+            'time_postload': float(c['timeIndex']),
             'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
                 if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
@@ -359,11 +334,10 @@ class base:
                 if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
                     result[connection_id][f'sut_parameters_{key}'] = hostdata
         if 'args' in c['hostsystem']:
-            for key, arg in enumerate(c['hostsystem']['args']):
+            for arg in c['hostsystem']['args']:
                 if "=" in arg:
-                    key = arg.split("=")[0]
-                    value = arg.split("=")[1]
-                    result[connection_id][f'arg_{key}'] = value
+                    arg_key, arg_value = arg.split("=", 1)
+                    result[connection_id][f'arg_{arg_key}'] = arg_value
     def get_connections_of_experiment(self):
         """
         Returns connection metadata for a single experiment.
@@ -378,74 +352,94 @@ class base:
         individual pod; otherwise a synthetic row is generated for each parallel
         client.
 
-        :param evaluation: Evaluator instance. Defaults to the first code's evaluator.
-        :type evaluation: object
         :return: DataFrame of connection metadata, one row per pod/client.
         :rtype: pandas.DataFrame
         """
-        with open(self.path + "/" +  "/connections.config", 'r') as inf:
-            connections = ast.literal_eval(inf.read())
-            connections_sorted = sorted(connections, key=lambda c: c['name'])
-            result = dict()
-            for c in connections_sorted:
-                if 'orig_name' in c:
-                    # entry represents an individual pod — use the pod name as connection id
-                    name = c['name']
-                    c['phase'] = "{code}-{connection}".format(code=c['parameter']['code'], connection=c['orig_name'])
-                    connection_id = "{code}-{connection}".format(code=c['parameter']['code'], connection=name)
-                    #add_connection_to_result(c, connection_id, result)
-                    self.add_connection_to_result(c, connection_id, result)
-                else:
-                    # no per-pod entries — synthesise one row per parallel client
-                    clients = int(c['parameter']['parallelism'])
-                    name = c['name']
-                    for i in range(1, clients + 1):
-                        c['name'] = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
-                        c['phase'] = "{code}-{phase}".format(code=c['parameter']['code'], phase=name)
-                        connection_id = "{code}-{phase}-{client}".format(code=c['parameter']['code'], phase=name, client=i)
-                        #add_connection_to_result(c, connection_id, result)
-                        self.add_connection_to_result(c, connection_id, result)
-            return pd.DataFrame(result).T
+        with open(self.path + "/connections.config", 'r') as f:
+            connections = ast.literal_eval(f.read())
+        connections_sorted = sorted(connections, key=lambda conn: conn['name'])
+        result = dict()
+        for conn in connections_sorted:
+            if 'orig_name' in conn:
+                # entry represents an individual pod — use the pod name as connection id
+                name = conn['name']
+                conn['phase'] = "{code}-{connection}".format(code=conn['parameter']['code'], connection=conn['orig_name'])
+                connection_id = "{code}-{connection}".format(code=conn['parameter']['code'], connection=name)
+                self.add_connection_to_result(conn, connection_id, result)
+            else:
+                # no per-pod entries — synthesise one row per parallel client
+                num_clients = int(conn['parameter']['parallelism'])
+                name = conn['name']
+                for client_idx in range(1, num_clients + 1):
+                    conn['name'] = "{code}-{phase}-{client}".format(code=conn['parameter']['code'], phase=name, client=client_idx)
+                    conn['phase'] = "{code}-{phase}".format(code=conn['parameter']['code'], phase=name)
+                    connection_id = "{code}-{phase}-{client}".format(code=conn['parameter']['code'], phase=name, client=client_idx)
+                    self.add_connection_to_result(conn, connection_id, result)
+        return pd.DataFrame(result).T
     def get_loading_per_connection(self):
+        """
+        Returns loading metrics for each individual connection (pod/client), enriched
+        with the scale factor and a ``'Throughput [SF/h]'`` derived column.
+
+        :return: DataFrame with one row per connection.
+        :rtype: pandas.DataFrame
+        """
         workload_properties = self.get_workload()
-        #print(workload_properties['defaultParameters']['SF'])
         df = self.get_connections_of_experiment()
         df['SF'] = int(workload_properties['defaultParameters']['SF'])
-        #sf = 1
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-        #print(df_tpx)
-        df['Throughput [SF/h]'] = df_tpx#['time_load']
-        df = df[['code','SF','configuration','connection','phase','experiment_run','client','time_load','time_ingest','time_check','pods', 'type_tenants', 'num_tenants', 'vol_tenants','Throughput [SF/h]']].copy()
-        return df
+        df['Throughput [SF/h]'] = df_tpx
+        selected_cols = [
+            'code', 'SF', 'configuration', 'connection', 'phase',
+            'experiment_run', 'client', 'time_load', 'time_preload',
+            'time_generate', 'time_ingest', 'time_postload', 'pods',
+            'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
+        ]
+        return df[selected_cols].copy()
     def get_loading_per_run(self):
+        """
+        Returns loading metrics aggregated per ``(code, configuration, experiment_run)``.
+
+        Takes the per-connection DataFrame from :meth:`get_loading_per_connection` and
+        reduces it to one row per experiment run by taking the max across connections,
+        then recomputes ``'Throughput [SF/h]'`` from the aggregated load time.
+
+        :return: DataFrame with one row per experiment run.
+        :rtype: pandas.DataFrame
+        """
         df = self.get_loading_per_connection()
         df = df.groupby(['code', 'configuration', 'experiment_run']).max()
         df = df.reset_index()
-        df.index = df['code'].astype(str) + "-" + \
-                   df['configuration'].astype(str) + "-" + \
-                   df['experiment_run'].astype(str)
-        #df.index = df.index.map(lambda x: '-'.join(map(str, x)))
+        df.index = df['configuration'].astype(str) + "-" + df['experiment_run'].astype(str)
         df_load = df['time_load'].copy()
-        df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-        #print(df_tpx)
-        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df_tpx = (df['SF'] * 3600.0) / df_load.sort_index()
+        df['Throughput [SF/h]'] = df_tpx
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
         return df
     def get_loading_per_run_multitenant(self):
+        """
+        Returns loading metrics aggregated per ``(code, experiment_run, type_tenants,
+        vol_tenants, num_tenants)`` for multi-tenant experiments.
+
+        Takes the per-connection DataFrame from :meth:`get_loading_per_connection` and
+        reduces it by taking the max within each tenancy group, then recomputes
+        ``'Throughput [SF/h]'`` from the aggregated load time.
+
+        :return: DataFrame with one row per tenant group per experiment run.
+        :rtype: pandas.DataFrame
+        """
         df = self.get_loading_per_connection()
         df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants"]).max()
         df = df.reset_index()
         df.index = df['code'].astype(str) + "-" + \
                    df['configuration'].astype(str) + "-" + \
                    df['experiment_run'].astype(str)
-        #df.index = df.index.map(lambda x: '-'.join(map(str, x)))
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-        #print(df_tpx)
-        df['Throughput [SF/h]'] = df_tpx#['time_load']
+        df['Throughput [SF/h]'] = df_tpx
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')

@@ -116,3 +116,136 @@ class dbmsbenchmarker(base):
         self.experimentfile_download(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentfile_upload(filename='')
+    def show_summary(self):
+        #print('dbmsbenchmarker.show_summary()')
+        connections_sorted, monitoring_applications = self.show_summary_header()
+        #####################
+        df = self.evaluator.get_df_benchmarking()
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            #df = self.evaluator.get_summary_benchmark_per_phase()
+            df = self.evaluator.get_summary_benchmark_per_connection()
+            #print(df)
+            """
+            workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df)
+            #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
+            workflow_planned = self.workload['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual\n")
+                for c in workflow_actual:
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned\n")
+                for c in workflow_planned:
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
+            """
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = self.workload['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual\n")
+                for c in workflow_actual:
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned\n")
+                for c in workflow_planned:
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
+        if self.loading_is_active():
+            print("\n### Loading")
+            print("\n#### Per Run\n")
+            df = self.evaluator.get_summary_loading_per_run()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+        if self.benchmarking_is_active():
+            print("\n### Execution")
+            print("\n#### Per Connection\n")
+            df = self.evaluator.get_summary_benchmark_per_connection()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            print("\n#### Per Phase\n")
+            df = self.evaluator.get_summary_benchmark_per_phase()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            df_aggregated_reduced = df.copy()
+            print("\n### Latency of Timer Execution [ms]")
+            num_of_queries = 0
+            df = self.evaluator.get_query_latencies(query_titles=True)
+            if not df is None:
+                df = df.sort_index().T.round(2)
+                #df.index = df.index.map(map_index_to_queryname)
+                #print(df)
+                df.index.names = ["DBMS"]
+                print(df.to_markdown(index=True, floatfmt=".2f"))
+                num_of_queries = len(df.index)
+            print("\n### Errors (failed queries)\n")
+            df = self.evaluator.get_total_errors(query_titles=True)
+            num_errors = df.sum().sum()
+            if num_errors > 0:
+                df_errors = df.copy()
+                df_errors = df_errors[~(df_errors == False).all(axis=1)]
+                list_error_queries = list(df_errors.index)
+                # set readable names
+                #df.index = df.index.map(map_index_to_queryname)
+                # remove only False rows
+                df = df[~(df == False).all(axis=1)]
+                #print(df)
+                print(df.to_markdown(index=True, floatfmt=".2f"))
+                for error in list_error_queries:
+                    numQuery = error[1:]        # remove the leading "Q""
+                    list_errors = self.evaluator.evaluation.get_error(numQuery)
+                    list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
+                    #print(list_errors)
+                    print("* "+error)
+                    #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
+                    #print(df_error)
+                    for k,v in list_errors.items():
+                        print("  * {}: {}".format(k,v))
+            else:
+                print("No errors")
+            print("\n### Warnings (result mismatch)\n")
+            df = self.evaluator.get_total_warnings(query_titles=True)
+            num_warnings = df.sum().sum()
+            if num_warnings > 0:
+                # set readable names
+                #df.index = df.index.map(map_index_to_queryname)
+                # remove only False rows
+                df = df[~(df == False).all(axis=1)]
+                #print(df)
+                print(df.to_markdown(index=True, floatfmt=".2f"))
+            else:
+                print("No warnings")
+        else:
+            df_aggregated_reduced = pd.DataFrame()
+        #####################
+        test_results_monitoring = self.show_summary_monitoring()
+        if len(monitoring_applications) > 0:
+            print("\n### Application Metrics")
+            #print(monitoring_applications)#df_monitoring_app)
+            for title, metrics in monitoring_applications.items():
+                print("\n#### "+title+"\n")
+                print(metrics.to_markdown(index=True, floatfmt=".2f"))
+        print("\n### Tests")
+        #self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
+        if len(test_results_monitoring) > 0:
+            print(test_results_monitoring)
+        if self.benchmarking_is_active():
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("* TEST passed: Workflow as planned")
+            else:
+                print("* TEST failed: Workflow not as planned")
+        if self.benchmarking_is_active():
+            self.evaluator.test_results_column(df_aggregated_reduced, "Geo Times [s]")
+            self.evaluator.test_results_column(df_aggregated_reduced, "Power@Size [~Q/h]")
+            #self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
+            #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
+            self.evaluator.test_results_column(df_aggregated_reduced, "Throughput@Size")
+            if num_errors == 0:
+                print("* TEST passed: No SQL errors")
+            else:
+                print("* TEST failed: SQL errors")
+            if num_warnings == 0:
+                print("* TEST passed: No SQL warnings")
+            else:
+                print("* TEST failed: SQL warnings (result mismatch)")
+            if self.test_workflow(workflow_actual, workflow_planned):
+                print("* TEST passed: Workflow as planned")
+            else:
+                print("* TEST failed: Workflow not as planned")
+
+

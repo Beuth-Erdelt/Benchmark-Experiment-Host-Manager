@@ -199,6 +199,47 @@ class ycsb(base):
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentfile_upload(filename='')
     def show_summary(self):
+        connections_sorted, monitoring_applications = self.show_summary_header()
+        #####################
+        df = self.evaluator.get_df_benchmarking()
+        if self.benchmarking_is_active():
+            print("\n### Workflow")
+            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            workflow_planned = self.workload['workflow_planned']
+            if len(workflow_actual) > 0:
+                print("\n#### Actual\n")
+                for c in workflow_actual:
+                    print("* DBMS", c, "- Pods", workflow_actual[c])
+            if len(workflow_planned) > 0:
+                print("\n#### Planned\n")
+                for c in workflow_planned:
+                    print("* DBMS", c, "- Pods", workflow_planned[c])
+        if self.loading_is_active():
+            print("\n### Loading")
+            print("\n#### Per Connection\n")
+            df = self.evaluator.get_summary_loading_per_connection()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            print("\n#### Per Run\n")
+            df = self.evaluator.get_summary_loading_per_run()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            df_aggregated_loaded = df.copy()
+            test_loading = True
+        else:
+            df_aggregated_loaded = pd.DataFrame()
+            test_loading = False
+        if self.benchmarking_is_active():
+            print("\n### Execution")
+            print("\n#### Per Connection\n")
+            df = self.evaluator.get_summary_benchmark_per_connection()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            print("\n#### Per Phase\n")
+            df = self.evaluator.get_summary_benchmark_per_phase()
+            print(df.to_markdown(index=True, floatfmt=".2f"))
+            df_aggregated_reduced = df.copy()
+        else:
+            df_aggregated_reduced = pd.DataFrame()
+        """
+        print("===================================")
         #print('ycsb.show_summary()')
         connections_sorted, monitoring_applications = self.show_summary_header()
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
@@ -265,6 +306,8 @@ class ycsb(base):
                 for c in workflow_planned:
                     print("* DBMS", c, "- Pods", workflow_planned[c])
         #####################
+        """
+        contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
         test_results_monitoring = self.show_summary_monitoring()
         #if not df_monitoring_app.empty:
         if len(monitoring_applications) > 0:

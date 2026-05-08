@@ -31,6 +31,7 @@
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
     ./Collectors.md
+    ./Evaluators.md
     ./Tool.md
     ./Concept.md
     ./Config.md

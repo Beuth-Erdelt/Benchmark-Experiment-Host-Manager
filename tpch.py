@@ -12,10 +12,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
+from bexhoma.cli_args import make_base_parser
 from dbmsbenchmarker import *
 import logging
 import urllib3
-import logging
 import argparse
 import time
 from timeit import default_timer
@@ -31,63 +31,23 @@ logging.basicConfig(level=logging.ERROR)
 if __name__ == '__main__':
     description = """Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
     # argparse
-    parser = argparse.ArgumentParser(description=description)
+    parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-aws', '--aws', help='fix components to node groups at AWS', action='store_true', default=False)
-    parser.add_argument('-dbms','--dbms',  help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB'], default=[], nargs='*')
-    parser.add_argument('-lit', '--limit-import-table', help='limit import to one table, name of this table', default='')
-    parser.add_argument('-db',  '--debug', help='dump debug informations', action='store_true')
-    parser.add_argument('-sl',  '--skip-loading', help='do not ingest, start benchmarking immediately', action='store_true', default=False)
-    parser.add_argument('-ss',  '--skip-shutdown', help='do not remove SUTs after benchmarking', action='store_true', default=False)
-    parser.add_argument('-cx',  '--context', help='context of Kubernetes (for a multi cluster environment), default is current context', default=None)
-    parser.add_argument('-e',   '--experiment', help='sets experiment code for continuing started experiment', default=None)
-    parser.add_argument('-m',   '--monitoring', help='activates monitoring', action='store_true')
-    parser.add_argument('-ma',  '--monitoring-app', help='activates application monitoring', action='store_true', default=False)
-    parser.add_argument('-mc',  '--monitoring-cluster', help='activates monitoring for all nodes of cluster', action='store_true', default=False)
-    parser.add_argument('-ms',  '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
-    parser.add_argument('-dt',  '--datatransfer', help='activates transfer of data per query (not only execution)', action='store_true', default=False)
-    parser.add_argument('-nr',  '--num-run', help='number of runs per query', default=1)
-    parser.add_argument('-nc',  '--num-config', help='number of runs per configuration', default=1)
-    parser.add_argument('-ne',  '--num-query-executors', help='comma separated list of number of parallel clients', default="1")
-    parser.add_argument('-nw',  '--num-worker', help='number of workers (for distributed dbms)', default=0)
-    parser.add_argument('-nwr',  '--num-worker-replicas', help='number of workers replications (for distributed dbms)', default=0)
-    parser.add_argument('-nws',  '--num-worker-shards', help='number of worker shards (for distributed dbms)', default=0)
-    parser.add_argument('-nls', '--num-loading-split', help='portion of loaders that should run in parallel', default="1")
-    parser.add_argument('-nlp', '--num-loading-pods', help='total number of loaders per configuration', default="1")
-    parser.add_argument('-nlt', '--num-loading-threads', help='total number of threads per loading process', default="1")
-    parser.add_argument('-nbp', '--num-benchmarking-pods', help='comma separated list of  number of benchmarkers per configuration', default="1")
-    parser.add_argument('-nbt', '--num-benchmarking-threads', help='total number of threads per benchmarking process', default="1")
-    parser.add_argument('-sf',  '--scaling-factor', help='scaling factor (SF)', default=1)
-    parser.add_argument('-t',   '--timeout', help='timeout for a run of a query', default=600)
-    parser.add_argument('-lr',  '--limit-ram', help='limit ram for sut, default 0 (none)', default='0')
-    parser.add_argument('-lc',  '--limit-cpu', help='limit cpus for sut, default 0 (none)', default='0')
-    parser.add_argument('-rr',  '--request-ram', help='request ram for sut, default 16Gi', default='16Gi')
-    parser.add_argument('-rc',  '--request-cpu', help='request cpus for sut, default 4', default='4')
-    parser.add_argument('-rct', '--request-cpu-type', help='request node for sut to have node label cpu=', default='')
-    parser.add_argument('-rg',  '--request-gpu', help='request number of gpus for sut', default=1)
-    parser.add_argument('-rgt', '--request-gpu-type', help='request node for sut to have node label gpu=', default='')
-    parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared', 'ramdisk'])
-    parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
-    parser.add_argument('-rsr', '--request-storage-remove', help='remove existing persistent storage at experiment start', action='store_true', default=False)
-    parser.add_argument('-rnn', '--request-node-name', help='request a specific node for sut', default=None)
-    parser.add_argument('-rnl', '--request-node-loading', help='request a specific node for loading pods', default=None)
-    parser.add_argument('-rnb', '--request-node-benchmarking', help='request a specific node for benchmarking pods', default=None)
-    parser.add_argument('-mtn', '--multi-tenant-num', help='number of tenant', default=0)
-    parser.add_argument('-mtb', '--multi-tenant-by', help='one tenant per (schema, database, container)', default='')
-    parser.add_argument('-mtv', '--multi-tenant-volume', help='one volume per tenant per (for per-database)', action='store_true', default=False)
-    parser.add_argument('-tr',  '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
-    parser.add_argument('-ii',  '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-ic',  '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-is',  '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
-    parser.add_argument('-icol',  '--init-columns', help='uses columnar storage (for Citus)', action='store_true', default=False)
-    parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False)
-    parser.add_argument('-shq', '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
-    parser.add_argument("--set", dest="sets", action="append", default=[], help="Selector assignment, e.g. deployment[sut].container[dbms].max_worker_processes=128")
+    parser.add_argument('-dbms', '--dbms', help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-lit',  '--limit-import-table', help='limit import to one table, name of this table', default='')
+    parser.add_argument('-dt',   '--datatransfer', help='activates transfer of data per query (not only execution)', action='store_true', default=False)
+    parser.add_argument('-nr',   '--num-run', help='number of runs per query', default=1)
+    parser.add_argument('-nls',  '--num-loading-split', help='portion of loaders that should run in parallel', default="1")
+    parser.add_argument('-ii',   '--init-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-ic',   '--init-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-is',   '--init-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False)
+    parser.add_argument('-icol', '--init-columns', help='uses columnar storage (for Citus)', action='store_true', default=False)
+    parser.add_argument('-rcp',  '--recreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False)
+    parser.add_argument('-shq',  '--shuffle-queries', help='have different orderings per stream', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
-    #logging.basicConfig(level=logging.DEBUG)
     debugging = int(args.debug)
     if args.debug:
         logger_bexhoma = logging.getLogger('bexhoma')
@@ -142,7 +102,7 @@ if __name__ == '__main__':
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.aws(context=args.context)
+        cluster = clusters.AWS(context=args.context)
         # scale up
         node_sizes = {
             'auxiliary': 1,
@@ -151,7 +111,7 @@ if __name__ == '__main__':
         }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)
     cluster_name = cluster.contextdata['clustername']
     # limit number of sut
     if args.max_sut is not None:

@@ -24,6 +24,7 @@ Repository = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
 
 # ---- Console scripts ----
 [project.scripts]
+bexhoma      = "bexhoma.scripts.cli:main"
 tpch         = "bexhoma.scripts.tpch:do_benchmark"
 tpcds        = "bexhoma.scripts.tpcds:do_benchmark"
 bexperiments = "bexhoma.scripts.experimentsmanager:manage"

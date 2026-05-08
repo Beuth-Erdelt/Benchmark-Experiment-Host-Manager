@@ -1,34 +1,43 @@
-# Generator for TPC-C data (HammerDB version)
+# Generator for TPC-C data (HammerDB)
 
 The image is based on https://hub.docker.com/r/tpcorg/hammerdb
 
-Currently, TPC-C is adapted for PostgreSQL, MySQL and MariaDB here.
+This folder contains the Dockerfile for a data generator that loads TPC-C data
+into a DBMS using HammerDB's `buildschema` command.
+Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
 
-The following parameter (ENV) have been added:
+## Environment variables
 
-* `SF`: scaling factor (number of warehouses)
-* `BEXHOMA_NUM_PODS`: number of pods in the k8s job
-* `BEXHOMA_CHILD`: number of the current pod in the job, will be overwritten by redis queue value
-* `BEXHOMA_RNGSEED`: seed for random number generator, currently ignored
-* `BEXHOMA_URL`: url of the sut dbms, currently ignored
-* `BEXHOMA_HOST`: host of the sut dbms
-* `BEXHOMA_PORT`: port of the sut dbms
-* `BEXHOMA_JAR`: name of jdbc jar file, currently ignored
-* `BEXHOMA_DRIVER`: jdbc driver name, currently ignored
-* `BEXHOMA_CONNECTION`: name of the connection (i.e., dbms configuration) to be queried
-* `BEXHOMA_EXPERIMENT`: code of the experiment this is part of
-* `BEXHOMA_EXPERIMENT_RUN`: number of total runs (for repetition of the complete experiment)
-* `BEXHOMA_CLIENT`: number of the client in a list of executors
-* `BEXHOMA_USER`: username for sut dbms connection, for future use only
-* `BEXHOMA_PASSWORD`: password for sut dbms connection, for future use only
-* `BEXHOMA_DATABASE`: database name for sut dbms connection, for future use only
-* `BEXHOMA_TIME_START`: Optional. If non-zero, pod will wait until time encoded in this var before starting doing something.
-* `BEXHOMA_TIME_NOW`: Optional. Includes time about planned start.
-* `HAMMERDB_TYPE`: type of sut dbms (postgresql, mysql, mariadb, citus)
-* `HAMMERDB_RAMPUP`: rampup time in minutes before first Transaction Count is taken
-* `HAMMERDB_DURATION`: duration in minutes before second Transaction Count is taken
-* `HAMMERDB_ITERATIONS`: number of transactions before logging off
-* `HAMMERDB_VUSERS`: number of vusers (threads)
-* `HAMMERDB_MYSQL_ENGINE`: engine to be used by MySQL (default innodb)
+### Scaling and parallelism
 
-This folder contains the Dockerfile for a data generator, that loads data into a DBMS.
+* `SF`: Scale factor — number of TPC-C warehouses to load.
+* `BEXHOMA_NUM_PODS`: Number of parallel pods. Echoed to the log.
+* `BEXHOMA_RNGSEED`: Random seed. Currently ignored.
+
+### Target DBMS connection
+
+* `BEXHOMA_HOST`: Hostname of the target DBMS.
+* `BEXHOMA_PORT`: Port of the target DBMS.
+* `BEXHOMA_USER`: Database user.
+* `BEXHOMA_PASSWORD`: Database password.
+* `BEXHOMA_DATABASE`: Database name (used for Citus only; PostgreSQL uses `tpcc`).
+
+### Bexhoma experiment identity
+
+* `BEXHOMA_DBMS`: DBMS label. Echoed to the log.
+* `BEXHOMA_CONFIGURATION`: Configuration name. Echoed to the log.
+* `BEXHOMA_CONNECTION`: Bexhoma connection name. Echoed to the log.
+* `BEXHOMA_EXPERIMENT`: Bexhoma experiment identifier. Echoed to the log.
+* `BEXHOMA_EXPERIMENT_RUN`: Number of the current repetition of the complete experiment.
+* `BEXHOMA_CLIENT`: Client index. Echoed to the log.
+* `BEXHOMA_CHILD`: Index of the current pod (1-based). Echoed to the log.
+
+### HammerDB workload parameters
+
+* `HAMMERDB_TYPE`: Backend type — `postgresql`, `mysql`, `mariadb`, or `citus`.
+* `HAMMERDB_VUSERS`: Number of virtual users (threads) for the load phase.
+* `HAMMERDB_NUM_VU`: Number of virtual users used during setup. Echoed to the log.
+* `HAMMERDB_MYSQL_ENGINE`: Storage engine for MySQL/MariaDB (default `innodb`).
+* `HAMMERDB_RAMPUP`: Echoed to the log. Not used during loading.
+* `HAMMERDB_DURATION`: Echoed to the log. Not used during loading.
+* `HAMMERDB_ITERATIONS`: Echoed to the log. Not used during loading.

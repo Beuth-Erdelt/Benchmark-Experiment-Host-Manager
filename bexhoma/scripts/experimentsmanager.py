@@ -52,9 +52,9 @@ def manage():
         logger_loader.setLevel(logging.DEBUG)
     connection = args.connection
     if args.mode == 'stop':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         if args.experiment is None:
-            experiment = experiments.default(cluster=cluster, code=cluster.code)
+            experiment = experiments.base(cluster=cluster, code=cluster.code)
             if connection is None:
                 connection = ''
             cluster.stop_sut(configuration=connection)
@@ -65,7 +65,7 @@ def manage():
             #cluster.kubectl('delete all -l experiment='+cluster.code)
             # kubectl delete all -l experiment=1742207308
         else:
-            experiment = experiments.default(cluster=cluster, code=args.experiment)
+            experiment = experiments.base(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
             experiment.stop_maintaining()
@@ -74,7 +74,7 @@ def manage():
             cluster.kubectl('delete all -l experiment='+args.experiment)
     elif args.mode == 'summary':
         if not args.experiment is None:
-            cluster = clusters.kubernetes(clusterconfig, context=args.context)
+            cluster = clusters.Kubernetes(clusterconfig, context=args.context)
             resultfolder = cluster.config['benchmarker']['resultfolder']
             code = args.experiment
             with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
@@ -89,7 +89,7 @@ def manage():
                     case 'benchbase':
                         experiment = experiments.benchbase(cluster=cluster, code=code)
                     case _:
-                        experiment = experiments.default(cluster=cluster, code=code)
+                        experiment = experiments.base(cluster=cluster, code=code)
                 # regenerate results - only for debugging
                 #experiment.evaluate_results()
                 #experiment.store_workflow_results()
@@ -97,10 +97,10 @@ def manage():
                     experiment.evaluate_results()
                 experiment.show_summary()
     elif args.mode == 'dashboard':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
-        cluster.connect_dashboard()
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster.forward_dashboard_ports()
     elif args.mode == 'localdashboard':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         import sys
         resultfolder = cluster.config['benchmarker']['resultfolder']
         sys.argv += ['-r',resultfolder]
@@ -108,7 +108,7 @@ def manage():
         from dbmsbenchmarker.scripts import dashboardcli
         dashboardcli.startup()
     elif args.mode == 'localresults':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         # path of folder containing experiment results
         resultfolder = cluster.resultfolder
         # create evaluation object for result folder
@@ -128,7 +128,7 @@ def manage():
         # Display the PrettyTable
         print(pt)
     elif args.mode == 'data':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         dashboard_name = cluster.get_dashboard_pod_name()
         if len(dashboard_name) > 0:
             cmd = {}
@@ -140,10 +140,10 @@ def manage():
         cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
         subprocess.Popen(cmd)
     elif args.mode == 'master':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
-        cluster.connect_master(experiment=args.experiment, configuration=connection)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster.forward_sut_port(experiment=args.experiment, configuration=connection)
     elif args.mode == 'status':
-        cluster = clusters.kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         app = cluster.appname
         # check dashboard
         dashboard_name = cluster.get_dashboard_pod_name()
@@ -151,7 +151,7 @@ def manage():
             status = cluster.get_pod_status(dashboard_name)
             print("Dashboard: {}".format(status))
             # get cluster monitoring Prometheus
-            monitoring_running = cluster.test_if_monitoring_healthy()
+            monitoring_running = cluster.is_monitoring_healthy()
             if monitoring_running:
                 print("Cluster Prometheus: {}".format("Running"))
             else:

@@ -319,7 +319,7 @@ class base():
             return path.as_posix()
         else:
             return str(path)
-    def experimentfile_upload(self, filename):
+    def experimentupload_file(self, filename):
         if not len(self.pod_dashboard):
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
@@ -328,8 +328,8 @@ class base():
                 return ""
         filename_local = self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
-        return self.cluster.file_upload(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
-    def experimentfile_download(self, filename):
+        return self.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
+    def experimentdownload_file(self, filename):
         if not len(self.pod_dashboard):
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
@@ -338,7 +338,7 @@ class base():
                 return ""
         filename_local = self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
-        return self.cluster.file_download(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
+        return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter):
         """
@@ -1052,9 +1052,9 @@ class base():
                 self.cluster.logger.debug(stdout)
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentfile_download(filename='')
+        self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentfile_upload(filename='')
+        self.experimentupload_file(filename='')
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
@@ -1262,7 +1262,7 @@ class base():
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
         filename_remote = self.result_filename_remote(filename)
-        self.experimentfile_upload(filename=filename)
+        self.experimentupload_file(filename=filename)
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
         #self.cluster.kubectl(cmd['upload_results'])
@@ -1283,7 +1283,7 @@ class base():
         :param stop_after_benchmarking: stops after phase 5) This tells if SUT should not be removed when all benchmarking has finished. Set to True if we want to have loaded SUTs for inspection.
         """
         # test if there is a Pometheus server running in the cluster
-        if self.cluster.test_if_monitoring_healthy():
+        if self.cluster.is_monitoring_healthy():
             self.cluster.monitor_cluster_exists = True
             print("{:30s}: is running".format("Cluster monitoring"))
         else:
@@ -1961,7 +1961,7 @@ class base():
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
-                        stdout = self.experimentfile_upload(filename=filename)
+                        stdout = self.experimentupload_file(filename=filename)
                         #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         #stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)

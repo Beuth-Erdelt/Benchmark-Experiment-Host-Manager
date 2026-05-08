@@ -53,3 +53,13 @@ import os
 import sys
 #sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
+
+# Mock heavy optional dependencies so autodoc can import all subpackages
+# without requiring scipy, seaborn, IPython, etc. in the build environment.
+autodoc_mock_imports = [
+    "scipy",
+    "seaborn",
+    "IPython",
+    "dbmsbenchmarker",
+    "kubernetes",
+]

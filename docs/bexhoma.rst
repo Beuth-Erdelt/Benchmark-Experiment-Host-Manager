@@ -1,4 +1,4 @@
-﻿bexhoma package API
+bexhoma package API
 ===================
 
 Subpackages
@@ -7,6 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   bexhoma.collectors
+   bexhoma.evaluators
+   bexhoma.experiments
    bexhoma.scripts
 
 Submodules
@@ -17,7 +20,6 @@ Submodules
 
    bexhoma.clusters
    bexhoma.configurations
-   bexhoma.experiments
 
 Module contents
 ---------------

@@ -32,7 +32,7 @@ then
     benchmark_start_epoch=$(date -u -d "$BEXHOMA_TIME_NOW" +%s)
     echo "that is $benchmark_start_epoch"
 
-    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1 
+    TZ=UTC printf -v current_epoch '%(%Y-%m-%d %H:%M:%S)T\n' -1
     echo "now is $current_epoch"
     current_epoch=$(date -u +%s)
     echo "that is $current_epoch"
@@ -59,7 +59,6 @@ mkdir -p /results/$BEXHOMA_EXPERIMENT
 
 ######################## Get number of client in job queue ########################
 echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-# redis-cli -h 'bexhoma-messagequeue' lpop "bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$BEXHOMA_CHILD" ]
 then
@@ -103,16 +102,9 @@ echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
-######################## Generate workflow file ########################
-# https://www.hammerdb.com/docs3.3/ch08s08.html
-# duration: in minutes
-# https://www.hammerdb.com/docs/ch09s03.html
-# runtimer deprecated starting with v4.6
-######################## Workflow: MySQL ###################
+######################## Generate workflow file (MySQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "mysql" ]; then
-    USER=root
-    PASSWORD=root
     echo "#!/bin/tclsh
 proc runtimer { seconds } {
 set x 0
@@ -164,12 +156,9 @@ after 5000
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
-######################## Generate workflow file ########################
-######################## Workflow: MariaDB ###################
+######################## Generate workflow file (MariaDB) ########################
 
 if [ "$HAMMERDB_TYPE" = "mariadb" ]; then
-    USER=root
-    PASSWORD=root
     echo "#!/bin/tclsh
 proc runtimer { seconds } {
 set x 0
@@ -216,8 +205,7 @@ after 5000
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
-######################## Generate workflow file ########################
-######################## Workflow: PostgreSQL ###################
+######################## Generate workflow file (PostgreSQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "postgresql" ]; then
     echo "#!/bin/tclsh
@@ -258,8 +246,7 @@ foreach z { $HAMMERDB_VUSERS } {
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
-######################## Generate workflow file ########################
-######################## Workflow: Citus ###################
+######################## Generate workflow file (Citus) ########################
 
 if [ "$HAMMERDB_TYPE" = "citus" ]; then
     echo "#!/bin/tclsh
@@ -340,7 +327,6 @@ echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.
 # cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
 echo "/tmp/hdbxtprofile.log"
 cat /tmp/hdbxtprofile.log
-ls /tmp -lh
 
 ######################## Show timing information ###################
 echo "Benchmarking done"

@@ -90,11 +90,11 @@ class base():
         """
         if code == '':
             code = self.codes[0]
-        with open(self.path + "/" + code + "/queries.config", 'r') as inp:
-            workload_properties = ast.literal_eval(inp.read())
-            if 'tenant_per' not in workload_properties or workload_properties['tenant_per'] == '':
-                workload_properties['tenant_per'] = 'None'
-            return workload_properties
+        with open(self.path + "/" + code + "/queries.config", 'r') as f:
+            workload_properties = ast.literal_eval(f.read())
+        if 'tenant_per' not in workload_properties or workload_properties['tenant_per'] == '':
+            workload_properties['tenant_per'] = 'None'
+        return workload_properties
 
     def get_monitored_components(self, code=''):
         """
@@ -229,7 +229,6 @@ class base():
         if 'Total I/O Wait Time [s]' in filtered_agg_dict:
             filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
         cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
-        #cols = ['code', 'configuration', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
         df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
@@ -280,24 +279,24 @@ class base():
         """
         if evaluation is None:
             evaluation = self.get_evaluator()
-        with open(self.path + "/" + evaluation.code + "/connections.config", 'r') as inf:
-            connections = ast.literal_eval(inf.read())
-            connections_sorted = sorted(connections, key=lambda c: c['name'])
-            result = dict()
-            for c in connections_sorted:
-                if 'metrics' not in c['monitoring']:
-                    self.with_monitoring = False
-                    return pd.DataFrame()
-                for m, metric in c['monitoring']['metrics'].items():
-                    if m in result:
-                        continue
-                    result[m] = {
-                        'title': metric['title'],
-                        'active': metric['active'] if 'active' in metric else 'True',
-                        'type': metric['type'] if 'type' in metric else 'cluster',
-                        'metric': metric['metric'] if 'metric' in metric else '',
-                    }
-            return pd.DataFrame(result).T
+        with open(self.path + "/" + evaluation.code + "/connections.config", 'r') as f:
+            connections = ast.literal_eval(f.read())
+        connections_sorted = sorted(connections, key=lambda conn: conn['name'])
+        metrics_dict = dict()
+        for conn in connections_sorted:
+            if 'metrics' not in conn['monitoring']:
+                self.with_monitoring = False
+                return pd.DataFrame()
+            for metric_key, metric in conn['monitoring']['metrics'].items():
+                if metric_key in metrics_dict:
+                    continue
+                metrics_dict[metric_key] = {
+                    'title': metric['title'],
+                    'active': metric.get('active', 'True'),
+                    'type': metric.get('type', 'cluster'),
+                    'metric': metric.get('metric', ''),
+                }
+        return pd.DataFrame(metrics_dict).T
 
 
     def get_connections(self, evaluation=None):
@@ -348,24 +347,22 @@ class base():
         if not self.with_monitoring:
             return pd.DataFrame()
         results = []
-        for idx, row in self.df_metrics.iterrows():
-            if row["active"] == False:
+        for metric_key, row in self.df_metrics.iterrows():
+            if row["active"] is False or row["active"] == False:
                 continue
-            metric_name = idx
-            method = 'diff' if row["metric"] == 'counter' else 'mean'
+            reduction = 'diff' if row["metric"] == 'counter' else 'mean'
             col_name = row["title"]
-            df = evaluation.get_monitoring_metric(metric=metric_name, component=type)
-            if method == 'diff':
+            df = evaluation.get_monitoring_metric(metric=metric_key, component=type)
+            df.index = evaluation.code + '-' + df.index.astype(str)
+            if reduction == 'diff':
                 processed = df.max().sort_index() - df.min().sort_index()
-            elif method == 'max':
+            elif reduction == 'max':
                 processed = df.max().sort_index()
-            elif method == 'mean':
-                processed = df.mean().sort_index()
             else:
-                raise ValueError(f"Unknown processing method: {method}")
-            df_cleaned = pd.DataFrame(processed)
-            df_cleaned.columns = [col_name]
-            results.append(df_cleaned)
+                processed = df.mean().sort_index()
+            df_col = pd.DataFrame(processed)
+            df_col.columns = [col_name]
+            results.append(df_col)
         return pd.concat(results, axis=1).round(2)
 
     def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="stream"):
@@ -385,8 +382,10 @@ class base():
         """
         if not self.with_monitoring:
             return pd.DataFrame()
-        evaluate = self.get_evaluator(code)
-        return evaluate.get_monitoring_metric(metric=metric, component=component)
+        evaluation = self.get_evaluator(code)
+        df = evaluation.get_monitoring_metric(metric=metric, component=component)
+        df.index = code + '-' + df.index.astype(str)
+        return df
 
     def get_monitoring_aggregated_per_phase(self, type="stream"):
         """
@@ -431,8 +430,9 @@ class base():
         """
         if not self.with_monitoring:
             return pd.DataFrame()
-        evaluate = self.get_evaluator(code)
-        df = evaluate.get_monitoring_metric(metric=metric, component=component)
+        evaluation = self.get_evaluator(code)
+        df = evaluation.get_monitoring_metric(metric=metric, component=component)
+        df.index = code + '-' + df.index.astype(str)
         return df.T
 
     def add_metadata(self, df):
@@ -675,6 +675,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_pod()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         df_all.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -695,6 +696,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_connection()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         return df_all
@@ -712,6 +714,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         return df_all
@@ -729,6 +732,7 @@ class base():
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df = evaluation.get_loading_per_run_multitenant()
+            df.index = evaluation.code + '-' + df.index.astype(str)
             if len(df) > 0:
                 df_all = pd.concat([df_all, df.copy()])
         return df_all
@@ -747,16 +751,13 @@ class base():
         :rtype: pandas.DataFrame
         """
         df_all = self.get_loading_per_connection()
-        df = df_all.groupby(['code', 'configuration', 'experiment_run']).max()
-        df = df.reset_index()
+        df = df_all.groupby(['code', 'configuration', 'experiment_run']).max().reset_index()
         df.index = (
             df['code'].astype(str) + "-"
             + df['configuration'].astype(str) + "-"
             + df['experiment_run'].astype(str)
         )
-        df_load = df['time_load'].copy()
-        df_tpx = (df['SF'] * 3600.0) / df_load.sort_index()
-        df['Throughput [SF/h]'] = df_tpx
+        df['Throughput [SF/h]'] = (df['SF'] * 3600.0) / df['time_load'].sort_index()
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
