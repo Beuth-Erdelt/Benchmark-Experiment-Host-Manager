@@ -1,46 +1,71 @@
 # Contributing to Bexhoma
 
-You would like to contribute? Great!
+Contributions are welcome. Areas where help is most useful:
 
-Some things that you can help on include:
-* **New Workloads**: We are interested in adding other relevant workloads, for example more workloads from Benchbase. The `experiments/` folder includes scripts for preparing various databases for various workloads. The `k8s` folder containers YAML manifests for using components. The `images/` folder contains Dockerfiles for implementing tools for components.
-* **New DBMS**: We are interested in adding other relevant DBMS. The `experiments/` folder includes scripts for preparing various databases for various workloads. The `k8s` folder containers YAML manifests for using components. This includes DBMS managed by Bexhoma.
-* **Documentation**: If a point in the documentation is unclear, we look forward to receiving tips and suggestions for improvement.
-* **Testing**: If the behavior is not as expected and you suspect a bug, please report it to our [issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues).
-* **Use Cases**: If you have had any experiences with peculiarities, mistakes, ambiguities or oddities or particularly beautiful cases etc., we are interested in hearing about them and passing them on to others.
+- **New workloads** — add benchmark scripts in `experiments/`, YAML manifests in `k8s/`, and Docker images in `images/`.
+- **New DBMS** — add deployment manifests in `k8s/` and a configuration block in `experiments/`.
+- **Bug fixes and testing** — report bugs via the [issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues) or open a pull request.
+- **Documentation** — corrections, clarifications, and new examples are all welcome.
 
-## Non-code contributions
+---
 
-Even if you donâ€™t feel ready or able to contribute code, you can still help out. There always things that can be improved on the documentation (even just proof reading, or telling us if a section isnâ€™t clear enough).
+## Pull requests
 
+- Branch off from `master` with a short descriptive name (`feature/ycsb-redis`, `fix/loader-encoding`).
+- Keep each PR focused on one change. Unrelated fixes belong in a separate PR.
+- Reference the relevant issue number in the PR description where applicable.
+- By submitting a PR you agree to license your contribution under the **GNU Affero General Public License v3**.
 
-## Code contributions
+---
 
-We welcome pull requests to fix bugs or add new features.
+## Code style
 
-### Licensing
+Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). The most important rules in practice:
 
-In your git commit and/or pull request, please explicitly state that you agree to your contributions being licensed under "GNU Affero General Public License v3".
+**Naming**
+- `snake_case` for functions, methods, and variables; `PascalCase` for classes; `UPPER_CASE` for constants.
+- No single-letter local variables except trivial loop counters. Never use `l`, `O`, or `I`.
+- Do not shadow built-ins (`type`, `id`, `list`, `input`).
 
+**Formatting**
+- 4-space indentation, maximum 79-character lines.
+- Two blank lines between top-level definitions; one blank line between methods.
 
-### Git Usage
+**Idioms**
+- `if x is None` / `if x is not None` — not `== None`.
+- `with open(...) as f:` — not bare `open()/close()`.
+- `dict.get(key, default)` instead of `if key in dict` guard patterns.
+- Prefer early returns over deeply nested `if` blocks.
 
-If you are planning to make a pull request, start by creating a new branch with a short but descriptive name (rather than using your master branch).
+**Docstrings (PEP 257 + Sphinx)**
 
+Every public module, class, and method must have a docstring using Sphinx-style annotations:
 
-### Coding Conventions
+```python
+def my_method(self, param='default'):
+    """
+    One-line summary.
 
-Bexhoma tries to follow the coding conventions laid out in PEP8 and PEP257
+    :param param: What this controls.
+    :type param: str
+    :return: What is returned.
+    :rtype: pandas.DataFrame
+    """
+```
 
-- http://www.python.org/dev/peps/pep-0008/
-- http://www.python.org/dev/peps/pep-0257/
+---
 
+## AI-assisted contributions
 
-### Testing
+Using a code copilot (GitHub Copilot, Claude, etc.) to write or review code is fine and encouraged — as long as you review the output and ensure it meets the style and correctness requirements above.
 
-New features or functions will not be accepted without testing.
-Likewise for any enhancement or bug fix, we require including an additional test.
+---
 
-The file https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/test.sh includes some demo tests.
-For new or important features, we are happy to include a "TEST Passed" or "TEST failed" scenario.
+## Testing
 
+New features and bug fixes must include a test.
+
+- `test.sh` — basic functional test cases; see [TestCases](TestCases.md) for the full list.
+- `test-more.sh` — extended tests covering additional DBMS and longer runs.
+
+Run the relevant test cases against a live Kubernetes cluster before submitting. Log output from `test.sh` goes to `logs_tests/`; include a representative log in your PR if the change affects experiment execution.
