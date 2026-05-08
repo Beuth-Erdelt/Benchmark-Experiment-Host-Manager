@@ -11,7 +11,8 @@
 $paths = @(
     "docs",
     "logs_tests",
-    "images"
+    "images",
+    "scripts"
 )
 
 foreach ($path in $paths) {
