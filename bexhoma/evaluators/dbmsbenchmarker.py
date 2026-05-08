@@ -78,8 +78,8 @@ class dbmsbenchmarker(logger):
         self.evaluation = None
         self.path_base = path
         super().__init__(code, path, True, True)
-        self.get_inspector()
-    def get_inspector(self):
+        self.load_inspector()
+    def load_inspector(self):
         """
         Loads the DBMSBenchmarker inspector for this experiment.
 
@@ -105,7 +105,7 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame
         """
         if self.evaluation is None:
-            self.get_inspector()
+            self.load_inspector()
         loading_times = {}
         for conn_name, connection in self.evaluation.benchmarks.dbms.items():
             loading_times[conn_name] = {}
@@ -128,7 +128,7 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame
         """
         if self.evaluation is None:
-            self.get_inspector()
+            self.load_inspector()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
@@ -229,7 +229,7 @@ class dbmsbenchmarker(logger):
             res = gmean(x)
             return float(res) if np.isscalar(res) or res.size == 1 else float(res[0])
         if self.evaluation is None:
-            self.get_inspector()
+            self.load_inspector()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0

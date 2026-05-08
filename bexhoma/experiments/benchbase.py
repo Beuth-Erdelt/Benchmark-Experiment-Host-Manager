@@ -226,9 +226,9 @@ class benchbase(base):
                 stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentfile_download(filename='')
+        self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentfile_upload(filename='')
+        self.experimentupload_file(filename='')
     def show_summary(self):
         #print('benchbase.show_summary()')
         connections_sorted, monitoring_applications = self.show_summary_header()

@@ -113,11 +113,12 @@ class dbmsbenchmarker(base):
         print("done!")
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentfile_download(filename='')
+        self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentfile_upload(filename='')
+        self.experimentupload_file(filename='')
     def show_summary(self):
         #print('dbmsbenchmarker.show_summary()')
+        self.evaluator.load_inspector()
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()

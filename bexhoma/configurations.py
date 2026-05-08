@@ -3682,8 +3682,8 @@ scrape_configs:
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
     def experimentupload_file(self, filename):
         return self.experiment.experimentupload_file(filename)
-    def experimentfile_download(self, filename):
-        return self.experiment.experimentfile_download(filename)
+    def experimentdownload_file(self, filename):
+        return self.experiment.experimentdownload_file(filename)
     def copyLog(self):
         print("copyLog")
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)
