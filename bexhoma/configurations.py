@@ -133,12 +133,18 @@ class default():
         You should have received a copy of the GNU Affero General Public License
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
+    configurations = dict()
     def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, num_experiment_to_apply=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.logger = logging.getLogger('bexhoma')
         self.experiment = experiment #: Unique identifier of the experiment
         self.docker = docker #: Name of the Docker image
         if len(configuration) == 0:
             configuration = docker
+            if not configuration in default.configurations:
+                default.configurations[configuration] = 1
+            else:
+                default.configurations[configuration] = default.configurations[configuration] + 1
+            configuration = configuration + '-' + str(default.configurations[configuration])
         self.configuration = configuration #: Name of the configuration, default: Name of the Docker image
         self.volume = self.experiment.volume
         if docker is not None:
