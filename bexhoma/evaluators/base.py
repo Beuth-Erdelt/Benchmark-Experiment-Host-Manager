@@ -28,16 +28,18 @@ from pathlib import Path
 
 def natural_sort(l):
     """
-    Sorts a list of strings in natural (human) order so that embedded
-    digit runs are compared numerically rather than lexicographically.
+    Sorts a list in natural (human) order so that embedded digit runs are
+    compared numerically rather than lexicographically.  Works for lists of
+    strings, integers, or any mix whose elements have a meaningful ``str()``
+    representation.
 
-    :param l: List of strings to sort.
-    :type l: list[str]
+    :param l: List to sort.
+    :type l: list
     :return: Sorted list.
-    :rtype: list[str]
+    :rtype: list
     """
     convert = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
     return sorted(l, key=alphanum_key)
 
 class base:
