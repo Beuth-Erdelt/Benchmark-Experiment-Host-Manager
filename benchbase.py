@@ -173,7 +173,8 @@ if __name__ == '__main__':
                     if experiment.tenant_per == 'container':
                         for tenant in range(experiment.num_tenants):
                             name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
-                            config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant), alias='DBMS A')
+                            #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
+                            config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
                             config.set_storage(
                                 storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -242,7 +243,8 @@ if __name__ == '__main__':
                             config.add_benchmark_list(executor_list)
                     else:
                         name_format = 'PostgreSQL-{threads}-{pods}-{target}'
-                        config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                        #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                        config = configurations.benchbase(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -323,7 +325,8 @@ if __name__ == '__main__':
                 if ("CedarDB" in args.dbms):
                     # PostgreSQL
                     name_format = 'CedarDB-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='CedarDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='CedarDB', alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'cedardb'
                         )
@@ -395,7 +398,8 @@ if __name__ == '__main__':
                                     name_format = 'pgb-{threads}-{loading_pods}-{c_in}-{c_out}'
                                 # this is too long
                                 #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
-                                config = configurations.benchbase(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
+                                #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
+                                config = configurations.benchbase(experiment=experiment, docker='PGBouncer', alias='DBMS A')
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
                                 config.sut_has_pool = True                                                # in particular monitor pool component
                                 config.sut_parameters = {
@@ -470,7 +474,8 @@ if __name__ == '__main__':
                     if experiment.tenant_per == 'container':
                         for tenant in range(experiment.num_tenants):
                             name_format = 'MySQL-{threads}-{pods}-{target}-{tenant}'
-                            config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant), alias='DBMS A')
+                            #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
+                            config = configurations.benchbase(experiment=experiment, docker='MySQL', alias='DBMS A')
                             config.set_storage(
                                 storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -540,7 +545,8 @@ if __name__ == '__main__':
                             config.add_benchmark_list(executor_list)
                     else:
                         name_format = 'MySQL-{threads}-{pods}-{target}'
-                        config = configurations.benchbase(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                        #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                        config = configurations.benchbase(experiment=experiment, docker='MySQL', alias='DBMS A')
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'mysql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -622,7 +628,8 @@ if __name__ == '__main__':
                 if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='MariaDB', alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -685,7 +692,8 @@ if __name__ == '__main__':
                 if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
@@ -846,7 +854,8 @@ if __name__ == '__main__':
                 if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
                     if skip_loading:
                         config.loading_deactivated = True
@@ -925,7 +934,8 @@ if __name__ == '__main__':
                 if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='TiDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
@@ -1006,7 +1016,8 @@ if __name__ == '__main__':
                 if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # DatabaseService
                     name_format = 'DBS-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
                     if skip_loading:
                         config.loading_deactivated = True
@@ -1068,7 +1079,8 @@ if __name__ == '__main__':
                 if ("Citus" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
-                    config = configurations.benchbase(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.benchbase(experiment=experiment, docker='Citus', alias='DBMS F', worker=num_worker)
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"

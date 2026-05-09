@@ -165,7 +165,8 @@ if __name__ == '__main__':
                 if experiment.tenant_per == 'container':
                     for tenant in range(experiment.num_tenants):
                         name_format = 'PostgreSQL-{cluster}-{pods}-{tenant}'
-                        config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant), dialect='PostgreSQL', alias='DBMS A2')
+                        #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant)
+                        config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
                         #config.num_tenants = multi_tenant_num
                         #config.tenant_per = multi_tenant_by
                         config.set_storage(
@@ -205,7 +206,8 @@ if __name__ == '__main__':
                             )
                 else:
                     name_format = 'PostgreSQL-{cluster}-{pods}'
-                    config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                    config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
                     #config.num_tenants = multi_tenant_num
                     #config.tenant_per = multi_tenant_by
                     if config.tenant_per:
@@ -253,7 +255,8 @@ if __name__ == '__main__':
             if ("CedarDB" in args.dbms):
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='CedarDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL', alias='DBMS A2')
                 config.set_storage(
                     storageConfiguration = 'cedardb'
                     )
@@ -281,7 +284,8 @@ if __name__ == '__main__':
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
                 config.set_storage(
                     storageConfiguration = 'monetdb'
                     )
@@ -309,7 +313,8 @@ if __name__ == '__main__':
             if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                 # MariaDB
                 name_format = 'MariaDB-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='MariaDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MySQL', alias='DBMS A1')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A1')
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                     )
@@ -345,7 +350,8 @@ if __name__ == '__main__':
                 for threads in num_loading_threads:
                     pods_times_threads=int(loading_pods_total)*int(threads)
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
-                    config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads), dialect='MySQL', alias='DBMS A1')
+                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
+                    config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A1')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
@@ -375,7 +381,8 @@ if __name__ == '__main__':
             if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                 # DatabaseService
                 name_format = 'DBS-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='DatabaseService', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A1')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='DatabaseService', dialect='PostgreSQL', alias='DBMS A1')
                 config.monitoring_sut = False # cannot be monitored since outside of K8s
                 if skip_loading:
                     config.loading_deactivated = True
@@ -405,7 +412,8 @@ if __name__ == '__main__':
             if ("Citus" in args.dbms):
                 # PostgreSQL
                 name_format = 'Citus-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='Citus', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
                 if skip_loading:
                     config.loading_deactivated = True
                 if init_columns:

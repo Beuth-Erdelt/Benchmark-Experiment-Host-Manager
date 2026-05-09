@@ -151,7 +151,8 @@ if __name__ == '__main__':
             if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='PostgreSQL', alias='DBMS A2')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                     )
@@ -177,7 +178,8 @@ if __name__ == '__main__':
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='MonetDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MonetDB', alias='DBMS A1')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
                 config.set_storage(
                     storageConfiguration = 'monetdb'
                     )
@@ -203,7 +205,8 @@ if __name__ == '__main__':
             if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                 # MariaDB
                 name_format = 'MariaDB-{cluster}-{pods}'
-                config = configurations.default(experiment=experiment, docker='MariaDB', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion), dialect='MySQL', alias='DBMS A1')
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A1')
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                     )
@@ -238,7 +241,8 @@ if __name__ == '__main__':
                 for threads in num_loading_threads:
                     pods_times_threads=int(loading_pods_total)*int(threads)
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
-                    config = configurations.default(experiment=experiment, docker='MySQL', configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads), dialect='MySQL', alias='DBMS A1')
+                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
+                    config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A1')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
