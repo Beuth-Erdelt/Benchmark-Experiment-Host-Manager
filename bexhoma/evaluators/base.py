@@ -295,6 +295,7 @@ class base:
         :param result: Accumulator dict that maps connection IDs to metadata rows.
         :type result: dict
         """
+        num_loading_pods = len(c['hostsystem']['loading_timespans']['sensor']) if 'loading_timespans' in c['hostsystem'] and 'sensor' in c['hostsystem']['loading_timespans'] else 0
         result[connection_id] = {
             'code': c['parameter']['code'],
             'connection': c['name'],
@@ -311,6 +312,7 @@ class base:
             'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
                 if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
+            'loading_pods': num_loading_pods,
             'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
             'num_worker': int(c['parameter']['num_worker']),
             'type_tenants': c['parameter']['TENANT_BY'] if 'TENANT_BY' in c['parameter'] else 'None',
@@ -393,7 +395,7 @@ class base:
         selected_cols = [
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
-            'time_generate', 'time_ingest', 'time_postload', 'pods',
+            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods',
             'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         return df[selected_cols].copy()
@@ -418,6 +420,7 @@ class base:
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
+        df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
     def get_loading_per_run_multitenant(self):
         """
@@ -443,4 +446,5 @@ class base:
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
+        df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
