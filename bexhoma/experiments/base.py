@@ -1897,7 +1897,7 @@ class base():
         if len(job_labels) > 0 and len(job_labels[jobname]) > 0:
             # get pairs (start,end) of benchmarking pods
             timing_benchmarker = self.get_job_timing_benchmarking(jobname)
-            print("timing_benchmarker", timing_benchmarker)
+            #print("timing_benchmarker", timing_benchmarker)
             # Unzip the pairs into two separate lists: firsts and seconds
             firsts, seconds = zip(*timing_benchmarker)
             # Find the minimum of the first entries and the maximum of the second entries
