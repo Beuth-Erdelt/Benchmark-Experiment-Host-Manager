@@ -117,6 +117,24 @@ class dbmsbenchmarker(logger):
         df = df.round(2).T
         df = df.rename_axis(index="DBMS")
         return df
+    def test_results(self):
+        """
+        Validates results by loading and reconstructing the workflow.
+
+        :return: ``0`` on success, ``1`` if an exception is raised.
+        :rtype: int
+        """
+        try:
+            self.load_inspector()
+            if self.include_benchmarking:
+                df = self.get_df_benchmarking()
+                self.workflow = self.reconstruct_workflow(df)
+            if self.include_loading:
+                self.get_df_loading()
+            return 0
+        except Exception as exc:
+            print(exc)
+            return 1
     def get_df_benchmarking(self):
         """
         Returns the DataFrame containing all benchmarking-phase results.
