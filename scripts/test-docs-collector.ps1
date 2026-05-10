@@ -9,7 +9,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # See LICENSE for details.
 
-$PYTHON                 = "python.exe"
 $BEXHOMA_NODE_SUT       = "cl-worker38"
 $BEXHOMA_NODE_LOAD      = "cl-worker19"
 $BEXHOMA_NODE_BENCHMARK = "cl-worker19"
@@ -46,13 +45,13 @@ Write-Host "Checks passed. Proceeding..."
 function Wait-BexhomaProcess {
     param([string]$ProcessName)
     while ($true) {
-        $running = Get-CimInstance Win32_Process -Filter "Name='python.exe'" |
-                   Where-Object { $_.CommandLine -like "*$ProcessName.py*" }
+        $running = Get-CimInstance Win32_Process |
+                   Where-Object { $_.CommandLine -like "*bexhoma*$ProcessName*" }
         if (-not $running) { break }
-        Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for process python $ProcessName.py to terminate..."
+        Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for bexhoma $ProcessName to terminate..."
         Start-Sleep -Seconds 60
     }
-    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Process python $ProcessName.py has terminated."
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): bexhoma $ProcessName has terminated."
 }
 
 function Invoke-CleanLogs {
@@ -103,7 +102,7 @@ Wait-BexhomaProcess "ycsb"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-& $PYTHON benchbase.py `
+bexhoma benchbase `
   -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -128,9 +127,10 @@ Wait-BexhomaProcess "ycsb"
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 1/2  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-& $PYTHON benchbase.py `
+bexhoma benchbase `
   -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -155,6 +155,7 @@ Wait-BexhomaProcess "benchbase"
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 2/2  sf=16  nbp=4,8  nbf=20"
 
 
 
@@ -167,7 +168,7 @@ Wait-BexhomaProcess "benchbase"
 $BEXHOMA_NUM_TENANTS = 2
 
 # ---------------- SCHEMA ----------------
-& $PYTHON benchbase.py `
+bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -193,9 +194,10 @@ $BEXHOMA_NUM_TENANTS = 2
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_schema.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- DATABASE ----------------
-& $PYTHON benchbase.py `
+bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -221,9 +223,10 @@ Wait-BexhomaProcess "benchbase"
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_database.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- CONTAINER ----------------
-& $PYTHON benchbase.py `
+bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -249,6 +252,7 @@ Wait-BexhomaProcess "benchbase"
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_container.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -258,7 +262,7 @@ Wait-BexhomaProcess "benchbase"
 ###########################################
 
 
-& $PYTHON tpch.py `
+bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -283,8 +287,9 @@ Wait-BexhomaProcess "benchbase"
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 1/2  sf=3"
 
-& $PYTHON tpch.py `
+bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -309,6 +314,7 @@ Wait-BexhomaProcess "tpch"
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 2/2  sf=6"
 
 
 
@@ -320,7 +326,7 @@ Wait-BexhomaProcess "tpch"
 $BEXHOMA_NUM_TENANTS = 2
 
 # ---------------- SCHEMA ----------------
-& $PYTHON tpch.py `
+bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
@@ -349,9 +355,10 @@ $BEXHOMA_NUM_TENANTS = 2
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_schema.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- DATABASE ----------------
-& $PYTHON tpch.py `
+bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
@@ -380,9 +387,10 @@ Wait-BexhomaProcess "tpch"
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_database.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- CONTAINER ----------------
-& $PYTHON tpch.py `
+bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
@@ -411,6 +419,7 @@ Wait-BexhomaProcess "tpch"
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_container.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
 ###########################################
@@ -419,7 +428,7 @@ Wait-BexhomaProcess "tpch"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-& $PYTHON ycsb.py `
+bexhoma ycsb `
   -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 1000) #> `
@@ -446,9 +455,10 @@ Wait-BexhomaProcess "tpch"
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/2  nbp=1,8  nbf=2"
 
 #### YCSB Monitoring (Example-YCSB.md)
-& $PYTHON ycsb.py `
+bexhoma ycsb `
   -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 1000) #> `
@@ -475,6 +485,7 @@ Wait-BexhomaProcess "ycsb"
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/2  nbp=1,8  nbf=3"
 
 
 
@@ -485,7 +496,7 @@ Wait-BexhomaProcess "ycsb"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-& $PYTHON hammerdb.py `
+bexhoma hammerdb `
   -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
@@ -505,9 +516,10 @@ Wait-BexhomaProcess "ycsb"
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 1/2  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-& $PYTHON hammerdb.py `
+bexhoma hammerdb `
   -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
@@ -527,6 +539,7 @@ Wait-BexhomaProcess "hammerdb"
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 2/2  sf=16  nbp=1,2  nbt=32"
 
 
 ###########################################

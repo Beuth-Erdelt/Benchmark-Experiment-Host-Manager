@@ -45,13 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
 
 
 
@@ -84,7 +77,7 @@ wait_process "ycsb"
 # -rst shared                   storage class for persistent volumes
 # -rss 100Gi                    size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
-nohup python benchbase.py \
+bexhoma benchbase \
   -ms 1 \
   -tr \
   -rr 64Gi \
@@ -104,9 +97,9 @@ nohup python benchbase.py \
   -rst shared \
   -rss 100Gi \
   -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/2  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 # -ms 1                         limit to 1 parallel DBMS configuration at a time
@@ -130,7 +123,7 @@ wait_process "benchbase"
 # -rst shared                   storage class for persistent volumes
 # -rss 100Gi                    size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
-nohup python benchbase.py \
+bexhoma benchbase \
   -ms 1 \
   -tr \
   -rr 64Gi \
@@ -150,9 +143,9 @@ nohup python benchbase.py \
   -rst shared \
   -rss 100Gi \
   -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/2  sf=16  nbp=4,8  nbf=20"
 
 
 
@@ -187,7 +180,7 @@ BEXHOMA_NUM_TENANTS=2
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python benchbase.py \
+bexhoma benchbase \
   -mtn $BEXHOMA_NUM_TENANTS \
   -mtb schema \
   -rr 64Gi \
@@ -208,9 +201,9 @@ nohup python benchbase.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- DATABASE ----------------
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -235,7 +228,7 @@ wait_process "benchbase"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python benchbase.py \
+bexhoma benchbase \
   -mtn $BEXHOMA_NUM_TENANTS \
   -mtb database \
   -rr 64Gi \
@@ -256,9 +249,9 @@ nohup python benchbase.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- CONTAINER ----------------
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -283,7 +276,7 @@ wait_process "benchbase"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python benchbase.py \
+bexhoma benchbase \
   -mtn $BEXHOMA_NUM_TENANTS \
   -mtb container \
   -rr 64Gi \
@@ -304,9 +297,9 @@ nohup python benchbase.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -337,7 +330,7 @@ wait_process "benchbase"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python tpch.py \
+bexhoma tpch \
   -tr \
   -rr 64Gi \
   -lr 64Gi \
@@ -357,9 +350,9 @@ nohup python tpch.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_1.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 1/2  sf=3"
 
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
@@ -382,7 +375,7 @@ wait_process "tpch"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python tpch.py \
+bexhoma tpch \
   -tr \
   -rr 64Gi \
   -lr 64Gi \
@@ -402,9 +395,9 @@ nohup python tpch.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_2.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 2/2  sf=6"
 
 
 
@@ -441,7 +434,7 @@ BEXHOMA_NUM_TENANTS=2
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python tpch.py \
+bexhoma tpch \
   -tr \
   -mtn $BEXHOMA_NUM_TENANTS \
   -mtb schema \
@@ -465,9 +458,9 @@ nohup python tpch.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- DATABASE ----------------
 # -tr                           verify result meets basic sanity requirements
@@ -495,7 +488,7 @@ wait_process "tpch"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python tpch.py \
+bexhoma tpch \
   -tr \
   -mtn $BEXHOMA_NUM_TENANTS \
   -mtb database \
@@ -519,9 +512,9 @@ nohup python tpch.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- CONTAINER ----------------
 # -tr                           verify result meets basic sanity requirements
@@ -549,7 +542,7 @@ wait_process "tpch"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-nohup python tpch.py \
+bexhoma tpch \
   -tr \
   -mtn $BEXHOMA_NUM_TENANTS \
   -mtb container \
@@ -573,9 +566,9 @@ nohup python tpch.py \
   -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
 ###########################################
@@ -607,7 +600,7 @@ wait_process "tpch"
 # -rst shared                   storage class for persistent volumes
 # -rss 15Gi                     size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
-nohup python ycsb.py \
+bexhoma ycsb \
   -ms 1 \
   -tr \
   -sf 3 \
@@ -629,9 +622,9 @@ nohup python ycsb.py \
   -rst shared \
   -rss 15Gi \
   -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/2  nbp=1,8  nbf=2"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -658,7 +651,7 @@ wait_process "ycsb"
 # -rst shared                   storage class for persistent volumes
 # -rss 15Gi                     size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
-nohup python ycsb.py \
+bexhoma ycsb \
   -ms 1 \
   -tr \
   -sf 3 \
@@ -680,9 +673,9 @@ nohup python ycsb.py \
   -rst shared \
   -rss 15Gi \
   -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/2  nbp=1,8  nbf=3"
 
 
 
@@ -709,7 +702,7 @@ wait_process "ycsb"
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-nohup python hammerdb.py \
+bexhoma hammerdb \
   -ms 1 \
   -tr \
   -sf 16 \
@@ -724,9 +717,9 @@ nohup python hammerdb.py \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
 
-wait_process "hammerdb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/2  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 # -ms 1                         limit to 1 parallel DBMS configuration at a time
@@ -745,7 +738,7 @@ wait_process "hammerdb"
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-nohup python hammerdb.py \
+bexhoma hammerdb \
   -ms 1 \
   -tr \
   -sf 16 \
@@ -760,9 +753,9 @@ nohup python hammerdb.py \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
 
-wait_process "hammerdb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/2  sf=16  nbp=1,2  nbt=32"
 
 
 ###########################################
