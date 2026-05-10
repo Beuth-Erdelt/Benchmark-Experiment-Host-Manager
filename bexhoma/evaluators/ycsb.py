@@ -939,6 +939,7 @@ class ycsb(logger):
                     df_plot_filtered[col] = df_plot.loc[:,col]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
             df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
 
 
@@ -962,6 +963,7 @@ class ycsb(logger):
             df_plot_filtered = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
             df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
 
 

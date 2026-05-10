@@ -161,6 +161,8 @@ class dbmsbenchmarker(base):
             print("\n### Execution")
             print("\n#### Per Connection\n")
             df = self.evaluator.get_summary_benchmark_per_connection()
+            df.drop('configuration', axis=1, inplace=True, errors='ignore')
+            df.drop('pod', axis=1, inplace=True, errors='ignore')
             print(df.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Phase\n")
             df = self.evaluator.get_summary_benchmark_per_phase()
@@ -173,7 +175,7 @@ class dbmsbenchmarker(base):
                 df = df.sort_index().T.round(2)
                 #df.index = df.index.map(map_index_to_queryname)
                 #print(df)
-                df.index.names = ["DBMS"]
+                df.index.names = ["Queries"]
                 print(df.to_markdown(index=True, floatfmt=".2f"))
                 num_of_queries = len(df.index)
             print("\n### Errors (failed queries)\n")

@@ -460,4 +460,6 @@ class benchbase(logger):
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_run()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
         return df

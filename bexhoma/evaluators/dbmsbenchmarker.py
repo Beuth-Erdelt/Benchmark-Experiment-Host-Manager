@@ -356,6 +356,11 @@ class dbmsbenchmarker(logger):
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated.copy()
+            df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('phase', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
             return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
         """
@@ -372,8 +377,10 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame or None
         """
         df = self.get_df_benchmarking()
-        if not df.empty:
-            return df
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df.drop('phase', axis=1, inplace=True, errors='ignore')
+        return df
     def get_summary_loading_per_run(self):
         """
         Returns loading metrics aggregated per experiment run.
@@ -387,4 +394,9 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_run()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
+        df.drop('phase', axis=1, inplace=True, errors='ignore')
+        df.drop('pod', axis=1, inplace=True, errors='ignore')
         return df
