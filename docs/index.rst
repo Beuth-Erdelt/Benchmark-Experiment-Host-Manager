@@ -12,6 +12,7 @@
     :hidden:
 
     ../README.md
+    ./Concepts.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
     ./Example-HammerDB.md
