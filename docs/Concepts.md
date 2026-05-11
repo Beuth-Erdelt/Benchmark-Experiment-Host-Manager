@@ -79,28 +79,28 @@ Bexhoma deploys a set of cooperating components inside a Kubernetes cluster.
 ┌─────────────────────────────────────────────────────────────────┐
 │  Kubernetes Cluster                                             │
 │                                                                 │
-│  ┌──────────┐   ┌─────────────┐   ┌────────────────────────┐  │
-│  │  SUT     │   │  Worker(s)  │   │  Connection Pool        │  │
-│  │  (DBMS)  │◄──│  (shards /  │   │  (PgBouncer, optional)  │  │
-│  │          │   │  replicas)  │   └────────────────────────┘  │
-│  └────┬─────┘   └─────────────┘                                │
+│  ┌──────────┐   ┌─────────────┐   ┌────────────────────────┐    │
+│  │  SUT     │   │  Worker(s)  │   │  Connection Pool       │    │
+│  │  (DBMS)  │◄──│  (shards /  │   │  (PgBouncer, optional) │    │
+│  │          │   │  replicas)  │   └────────────────────────┘    │
+│  └────┬─────┘   └─────────────┘                                 │
 │       │                                                         │
-│  ┌────┴──────┐  ┌─────────────┐   ┌────────────────────────┐  │
-│  │  Storage  │  │  Loader(s)  │   │  Benchmarker(s)         │  │
-│  │  Volume   │  │  (data gen) │   │  (workload drivers)     │  │
-│  └───────────┘  └─────────────┘   └────────────────────────┘  │
+│  ┌────┴──────┐  ┌─────────────┐   ┌────────────────────────┐    │
+│  │  Storage  │  │  Loader(s)  │   │  Benchmarker(s)        │    │
+│  │  Volume   │  │  (data gen) │   │  (workload drivers)    │    │
+│  └───────────┘  └─────────────┘   └────────────────────────┘    │
 │                                                                 │
-│  ┌───────────┐  ┌─────────────┐   ┌────────────────────────┐  │
-│  │ Monitoring│  │  Message    │   │  Dashboard / Results    │  │
-│  │ Prometheus│  │  Queue      │   │  (shared result folder) │  │
-│  │ + cAdvisor│  │  (Redis)    │   │                         │  │
-│  └───────────┘  └─────────────┘   └────────────────────────┘  │
+│  ┌───────────┐  ┌─────────────┐   ┌────────────────────────┐    │
+│  │ Monitoring│  │  Message    │   │  Dashboard / Results   │    │
+│  │ Prometheus│  │  Queue      │   │  (shared result folder)│    │
+│  │ + cAdvisor│  │  (Redis)    │   │                        │    │
+│  └───────────┘  └─────────────┘   └────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────┘
          ▲
          │ kubectl / Kubernetes API
          │
   ┌──────┴──────┐
-  │  Bexhoma    │  (orchestrator — runs locally or as a K8s Job)
+  │  Bexhoma    │  (orchestrator — runs locally)
   │  Python     │
   └─────────────┘
 ```
