@@ -3,13 +3,13 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 2606s 
-* Code: 1777969641
+* Duration: 3080s 
+* Code: 1778484673
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.9.6.
+  * Experiment uses bexhoma version 0.9.7.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -23,150 +23,157 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Experiment is run 2 times.
 
 ### Connections
-* PostgreSQL-BHT-16-1-1-1 uses docker image postgres:18.3
-  * RAM:540493398016
+* PostgreSQL-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
-  * host:6.8.0-106-generic
+  * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:253074
-  * datadisk:3282
+  * disk:200546
   * cpu_list:0-127
   * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1777969641
-* PostgreSQL-BHT-16-1-1-2 uses docker image postgres:18.3
-  * RAM:540493398016
+    * code:1778484673
+* PostgreSQL-1-1-2 uses docker image postgres:18.3
+  * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
-  * host:6.8.0-106-generic
+  * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:261478
-  * datadisk:11685
+  * disk:210388
   * cpu_list:0-127
   * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1777969641
-* PostgreSQL-BHT-16-1-2-1 uses docker image postgres:18.3
-  * RAM:540493398016
+    * code:1778484673
+* PostgreSQL-1-2-1 uses docker image postgres:18.3
+  * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
-  * host:6.8.0-106-generic
+  * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:253091
-  * datadisk:3298
+  * disk:200548
   * cpu_list:0-127
   * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1777969641
-* PostgreSQL-BHT-16-1-2-2 uses docker image postgres:18.3
-  * RAM:540493398016
+    * code:1778484673
+* PostgreSQL-1-2-2 uses docker image postgres:18.3
+  * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
-  * host:6.8.0-106-generic
+  * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:262124
-  * datadisk:12331
+  * disk:209502
   * cpu_list:0-127
   * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1777969641
-
-### Execution
-
-| DBMS                    |   experiment_run |   vusers |   client |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
-|:------------------------|-----------------:|---------:|---------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| PostgreSQL-BHT-16-1-1-1 |             1.00 |    32.00 |     1.00 |        1.00 |       7.75 |      23.31 |         0.00 | 113991.00 | 262382.00 |       5.00 |     0.00 |
-| PostgreSQL-BHT-16-1-1-2 |             1.00 |    32.00 |     2.00 |        2.00 |       1.46 |       2.67 |         0.00 |  10518.50 |  24289.00 |       5.00 |     0.00 |
-| PostgreSQL-BHT-16-1-2-1 |             2.00 |    32.00 |     1.00 |        1.00 |      10.32 |      18.35 |         0.00 | 127870.00 | 294706.00 |       5.00 |     0.00 |
-| PostgreSQL-BHT-16-1-2-2 |             2.00 |    32.00 |     2.00 |        2.00 |       1.31 |       2.32 |         0.00 |  23794.50 |  54888.50 |       5.00 |     0.00 |
-
-* Warehouses: 16
+    * code:1778484673
 
 ### Workflow
 
 #### Actual
 
-* DBMS PostgreSQL-BHT-16-1 - Pods [[2, 1], [2, 1]]
+* DBMS PostgreSQL-1 - Pods [[1, 2], [1, 2]]
 
 #### Planned
 
-* DBMS PostgreSQL-BHT-16-1 - Pods [[1, 2], [1, 2]]
+* DBMS PostgreSQL-1 - Pods [[1, 2], [1, 2]]
 
 ### Loading
 
-| DBMS                    |   time_load |   terminals |   pods |   Imported warehouses [1/h] |
-|:------------------------|------------:|------------:|-------:|----------------------------:|
-| PostgreSQL-BHT-16-1-1-1 |       39.00 |        1.00 |   1.00 |                     1476.92 |
-| PostgreSQL-BHT-16-1-1-2 |       39.00 |        1.00 |   2.00 |                     1476.92 |
-| PostgreSQL-BHT-16-1-2-1 |       39.00 |        1.00 |   1.00 |                     1476.92 |
-| PostgreSQL-BHT-16-1-2-2 |       39.00 |        1.00 |   2.00 |                     1476.92 |
+#### Per Run
+
+|                |       code | configuration   |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------:|:----------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 | 1778484673 | PostgreSQL-1    |                1 |   16 |      138.00 |           2.00 |            0.00 |         39.00 |           97.00 |              1 | None           |             0 | False         |              417.39 |
+| PostgreSQL-1-2 | 1778484673 | PostgreSQL-1    |                2 |   16 |      139.00 |           2.00 |            0.00 |         39.00 |           98.00 |              1 | None           |             0 | False         |              414.39 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS               |   experiment_run |   vusers |   client |      NOPM |       TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
+|:-------------------|-----------------:|---------:|---------:|----------:|----------:|-------------:|-----------:|---------:|-----------:|-----------:|
+| PostgreSQL-1-1-1-1 |             1.00 |    32.00 |     1.00 | 133186.00 | 307525.00 |         0.00 |       5.00 |     0.00 |      11.79 |      19.21 |
+| PostgreSQL-1-1-2-1 |             1.00 |    16.00 |     2.00 |  16883.00 |  38978.00 |         0.00 |       5.00 |     0.00 |       1.43 |       2.67 |
+| PostgreSQL-1-1-2-1 |             1.00 |    16.00 |     2.00 |  16880.00 |  38964.00 |         0.00 |       5.00 |     0.00 |       1.36 |       2.52 |
+| PostgreSQL-1-2-1-1 |             2.00 |    32.00 |     1.00 | 124506.00 | 286164.00 |         0.00 |       5.00 |     0.00 |       7.44 |      21.39 |
+| PostgreSQL-1-2-2-1 |             2.00 |    16.00 |     2.00 |  17467.00 |  40569.00 |         0.00 |       5.00 |     0.00 |       1.42 |       2.64 |
+| PostgreSQL-1-2-2-1 |             2.00 |    16.00 |     2.00 |  17449.00 |  40576.00 |         0.00 |       5.00 |     0.00 |       1.40 |       2.58 |
+
+#### Per Phase
+
+| DBMS             |   experiment_run |   vusers |   client |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:-----------------|-----------------:|---------:|---------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
+| PostgreSQL-1-1-1 |             1.00 |    32.00 |     1.00 |        1.00 |      11.79 |      19.21 |         0.00 | 133186.00 | 307525.00 |       5.00 |     0.00 |
+| PostgreSQL-1-1-2 |             1.00 |    32.00 |     2.00 |        2.00 |       1.43 |       2.67 |         0.00 |  16881.50 |  38971.00 |       5.00 |     0.00 |
+| PostgreSQL-1-2-1 |             2.00 |    32.00 |     1.00 |        1.00 |       7.44 |      21.39 |         0.00 | 124506.00 | 286164.00 |       5.00 |     0.00 |
+| PostgreSQL-1-2-2 |             2.00 |    32.00 |     2.00 |        2.00 |       1.42 |       2.64 |         0.00 |  17458.00 |  40572.50 |       5.00 |     0.00 |
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
 
-| DBMS                               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-----------------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777969641-PostgreSQL-BHT-16-1-1-1 |        88.09 |      1.74 |           7.00 |                  7.69 |
-| 1777969641-PostgreSQL-BHT-16-1-1-2 |        88.09 |      1.74 |           7.00 |                  7.69 |
-| 1777969641-PostgreSQL-BHT-16-1-2-1 |        77.90 |      2.44 |           9.79 |                 12.90 |
-| 1777969641-PostgreSQL-BHT-16-1-2-2 |        77.90 |      2.44 |           9.79 |                 12.90 |
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1 |        90.85 |      2.70 |           7.13 |                  7.83 |
+| PostgreSQL-1-1-2 |        90.85 |      2.70 |           7.13 |                  7.83 |
+| PostgreSQL-1-2-1 |     25726.58 |      2.19 |          10.31 |                 13.93 |
+| PostgreSQL-1-2-2 |     25726.58 |      2.19 |          10.31 |                 13.93 |
 
 ### Loading phase: component loader
 
-| DBMS                               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-----------------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777969641-PostgreSQL-BHT-16-1-1-1 |        96.00 |      0.00 |           0.15 |                  0.15 |
-| 1777969641-PostgreSQL-BHT-16-1-1-2 |        96.00 |      0.00 |           0.15 |                  0.15 |
-| 1777969641-PostgreSQL-BHT-16-1-2-1 |       206.12 |      0.00 |           0.15 |                  0.15 |
-| 1777969641-PostgreSQL-BHT-16-1-2-2 |       206.12 |      0.00 |           0.15 |                  0.15 |
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+| PostgreSQL-1-1-2 |         0.02 |      0.00 |           0.00 |                  0.00 |
+| PostgreSQL-1-2-1 |       259.78 |      0.00 |           0.15 |                  0.15 |
+| PostgreSQL-1-2-2 |       259.78 |      0.00 |           0.15 |                  0.15 |
 
 ### Execution phase: SUT deployment
 
-| DBMS                               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-----------------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777969641-PostgreSQL-BHT-16-1-1-1 |     11630.04 |     28.95 |          10.19 |                 13.07 |
-| 1777969641-PostgreSQL-BHT-16-1-1-2 |     13499.66 |     31.88 |          11.21 |                 14.30 |
-| 1777969641-PostgreSQL-BHT-16-1-2-1 |     11141.70 |     28.41 |          10.35 |                 13.40 |
-| 1777969641-PostgreSQL-BHT-16-1-2-2 |     13206.13 |     31.78 |          11.70 |                 15.25 |
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1 |     12202.62 |     30.43 |          10.61 |                 13.87 |
+| PostgreSQL-1-1-2 |     13345.81 |     31.80 |          11.77 |                 15.37 |
+| PostgreSQL-1-2-1 |     11916.65 |     29.52 |          10.33 |                 13.31 |
+| PostgreSQL-1-2-2 |     13483.38 |     31.77 |          11.61 |                 15.07 |
 
 ### Execution phase: component benchmarker
 
-| DBMS                               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-----------------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777969641-PostgreSQL-BHT-16-1-1-1 |       334.62 |      1.57 |           0.84 |                  0.84 |
-| 1777969641-PostgreSQL-BHT-16-1-1-2 |       334.62 |      0.67 |           0.84 |                  0.84 |
-| 1777969641-PostgreSQL-BHT-16-1-2-1 |       370.71 |      1.47 |           1.16 |                  1.16 |
-| 1777969641-PostgreSQL-BHT-16-1-2-2 |       370.71 |      0.95 |           1.16 |                  1.16 |
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1 |       401.17 |      1.78 |           1.17 |                  1.17 |
+| PostgreSQL-1-1-2 |       401.17 |      0.91 |           1.17 |                  1.17 |
+| PostgreSQL-1-2-1 |       371.22 |      1.70 |           0.90 |                  0.90 |
+| PostgreSQL-1-2-2 |       371.22 |      0.80 |           0.90 |                  0.90 |
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS                               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-----------------------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| 1777969641-PostgreSQL-BHT-16-1-1-1 |                        17 |                                        0 |                                                0 |                          14 |                                       0 |
-| 1777969641-PostgreSQL-BHT-16-1-1-2 |                        17 |                                        0 |                                                0 |                          14 |                                       0 |
-| 1777969641-PostgreSQL-BHT-16-1-2-1 |                        18 |                                        0 |                                                0 |                          14 |                                       0 |
-| 1777969641-PostgreSQL-BHT-16-1-2-2 |                        18 |                                        0 |                                                0 |                          14 |                                       0 |
+| DBMS             |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
+|:-----------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
+| PostgreSQL-1-1-1 |                     16.00 |                                     0.00 |                                             0.00 |                       16.00 |                                    0.00 |
+| PostgreSQL-1-1-2 |                     16.00 |                                     0.00 |                                             0.00 |                       16.00 |                                    0.00 |
+| PostgreSQL-1-2-1 |                     17.00 |                                     0.00 |                                             0.00 |                        9.00 |                                    0.00 |
+| PostgreSQL-1-2-2 |                     17.00 |                                     0.00 |                                             0.00 |                        9.00 |                                    0.00 |
 
 #### Execution phase: SUT deployment
 
-| DBMS                               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-----------------------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| 1777969641-PostgreSQL-BHT-16-1-1-1 |                      7.00 |                                     0.00 |                                             0.00 |                       32.00 |                                    0.00 |
-| 1777969641-PostgreSQL-BHT-16-1-1-2 |                      3.00 |                                     0.00 |                                             0.00 |                       32.00 |                                    0.00 |
-| 1777969641-PostgreSQL-BHT-16-1-2-1 |                      7.00 |                                     0.00 |                                             0.00 |                       33.00 |                                    0.00 |
-| 1777969641-PostgreSQL-BHT-16-1-2-2 |                      4.00 |                                     0.00 |                                             0.00 |                       32.00 |                                    0.00 |
+| DBMS             |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
+|:-----------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
+| PostgreSQL-1-1-1 |                      7.00 |                                     0.00 |                                             0.00 |                       33.00 |                                    0.00 |
+| PostgreSQL-1-1-2 |                      4.00 |                                     0.00 |                                             0.00 |                       32.00 |                                    0.00 |
+| PostgreSQL-1-2-1 |                      6.00 |                                     0.00 |                                             0.00 |                       33.00 |                                    0.00 |
+| PostgreSQL-1-2-2 |                      4.00 |                                     0.00 |                                             0.00 |                       32.00 |                                    0.00 |
 
 ### Tests
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
