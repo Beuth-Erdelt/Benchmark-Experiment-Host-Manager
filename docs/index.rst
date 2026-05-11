@@ -14,6 +14,8 @@
     ../README.md
     ./Concepts.md
     ./DBMS.md
+    ./Evaluators.md
+    ./Collectors.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
     ./Example-HammerDB.md
@@ -32,8 +34,6 @@
     ./Example-custom.md
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
-    ./Collectors.md
-    ./Evaluators.md
     ./Tool.md
     ./Concept.md
     ./Config.md
