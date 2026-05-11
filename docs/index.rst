@@ -13,6 +13,7 @@
 
     ../README.md
     ./Concepts.md
+    ./Config.md
     ./DBMS.md
     ./Evaluators.md
     ./Collectors.md
@@ -36,7 +37,6 @@
     ./Example-Metrics.md
     ./Tool.md
     ./Concept.md
-    ./Config.md
     ./Monitoring.md
     ./TestCases.md
     ./CONTRIBUTING.md
