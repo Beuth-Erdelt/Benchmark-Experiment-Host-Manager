@@ -312,7 +312,7 @@ class base:
             'time_ingest': float(c['timeIngesting']),
             'time_postload': float(c['timeIndex']),
             'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
-                if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+                if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'] if 'HAMMERDB_VUSERS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
             'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
