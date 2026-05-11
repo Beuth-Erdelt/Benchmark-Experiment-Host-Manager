@@ -398,7 +398,7 @@ class base:
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
             'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods',
-            'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
+            'tenant', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         return df[selected_cols].copy()
     def get_loading_per_run(self):
