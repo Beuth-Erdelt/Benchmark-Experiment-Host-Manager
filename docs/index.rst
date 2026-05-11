@@ -13,6 +13,7 @@
 
     ../README.md
     ./Concepts.md
+    ./DBMS.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
     ./Example-HammerDB.md
@@ -37,7 +38,6 @@
     ./Concept.md
     ./Config.md
     ./Monitoring.md
-    ./DBMS.md
     ./TestCases.md
     ./CONTRIBUTING.md
     ./bexhoma
