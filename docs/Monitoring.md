@@ -1,274 +1,193 @@
-# Monitoring
+# Concept: Monitoring
 
-Monitoring refers to automatical observation of resource consumption of components.
+Bexhoma automatically observes resource consumption of every cluster component during each benchmark phase and stores the metrics alongside the experiment results.
+Metrics are fetched from Prometheus after each phase completes and are included in the experiment summary and in the result files consumed by evaluators and collectors.
 
-Bexhoma basically offers two variants
-* Monitor only the system-under-test (SUT) with `-m`
-* Monitor all components with `-mc`
+---
 
-Moreover bexhoma expects the cluster to be prepared, i.e. a daemonset of cAdvisors (exporters) is running and there is a Prometheus server (collector) we can connect to.
-However bexhoma can optionally install these components if missing.
+## Monitoring Modes
 
-There is a third option in alpha status: `-ma` for collection of application metrics, for example, pgexporter.
+Three CLI flags control how deeply bexhoma monitors an experiment:
 
-## Configuration and Options
+| Flag | Scope | What is deployed |
+|---|---|---|
+| (none) | No monitoring | No metrics are collected |
+| `-m` | SUT only | cAdvisor sidecar in the SUT pod + per-experiment Prometheus |
+| `-mc` | All components | cAdvisor DaemonSet on every node + per-experiment Prometheus |
+| `-ma` | Application metrics | DBMS-specific exporter sidecar (e.g., pgexporter) + same Prometheus |
 
-Monitoring can be configured.
-Probably you won't have to change much.
-If there is a Prometheus server running in your cluster, make sure to adjust `service_monitoring`.
-If there is no Prometheus server running in your cluster, make sure to leave the template in `service_monitoring` as is.
-Bexhoma checks at the beginning of an experiment if the URL provided is reachable;
-it uses cURL inside the dashboard pod to test if `query_range?query=sum(node_memory_MemTotal_bytes)&start={start}&end={end}&step=60` has a return status of 200 (where `start` is 5 min ago and `end` is 4 min ago).
+`-m` and `-mc` cover hardware metrics (CPU, memory, network, disk).
+`-ma` adds DBMS-internal statistics (buffer pool hits, query rates, replication lag, etc.) scraped from an exporter sidecar.
+`-ma` is currently in alpha status.
 
-If there is no preinstalled Prometheus in the cluster, bexhoma will in case of
-* Monitor only the system-under-test (SUT) with `-m`
-  * install a cAdvisor sidecar container per SUT
-  * install a Prometheus server per experiment
-* Monitor all components with `-mc`
-  * install a cAdvisor per node as a daemonset
-  * install a Prometheus server per experiment
+---
 
-Bexhoma will also make sure all components know of eachother.
+## Prometheus and cAdvisor Provisioning
 
-Configuration takes place in `cluster.config`:
-* `service_monitoring`: a DNS name of the Prometheus server  
-  the placeholders `service` and `namespace` are replaced by the service of the monitoring component of the experiment and the namespace inside the cluster config resp.
-* `service_monitoring_application`: optional setting. This should not be changed. It is a template how to find sidecar containers for collecting application metrics, for example, pgexporter
-* `extend`: number of seconds each interval of observations should be extended  
-  i.g., an interval [t,t'] will be extended to [t-e, t'+e]
-* `shift`: number of seconds each interval of observations should be shifted  
-  i.g., an interval [t,t'] will be shifted to [t+s, t'+s]
-* `metrics`: a dict of informations about metrics to be collected, see below
-  * `type`: is cluster or application
-  * `active`: if set to False, the metric will be ignored
-  * `metric`: is gauge or counter or ratio; this does not affect bexhoma, it only affects how results will be presented (for counter: max - min, for gauge: mean, for ratio: max)
-  * `query`: promql query
-  * `title`: for presentation in summary
+Bexhoma uses Prometheus as the metrics store and cAdvisor as the container metrics exporter.
+At the start of each experiment, bexhoma tests whether the configured Prometheus URL is reachable by sending a `query_range` request from inside the dashboard pod.
+Based on the result, it takes one of two paths:
 
+### Preinstalled Prometheus
 
-Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
+If your cluster already has a Prometheus server (common in production and managed clusters), set `service_monitoring` in `cluster.config` to its URL and bexhoma will use it directly.
+No additional components are installed.
 
-```
-'monitor': {
-    'service_monitoring': 'https://prometheus.mycluster.com/api/v1/',                                      # preinstalled external address
-    'service_monitoring_application': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',       # self installed
-    'extend': 20,
-    'shift': 0,
-    'metrics': {
-        'total_cpu_memory': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'gauge',
-            'query': '(sum(max(container_memory_working_set_bytes{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}) by (instance)))/1024/1024',
-            'title': 'CPU Memory [MiB]'
-        },
-        'total_cpu_memory_cached': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'gauge',
-            'query': '(sum(max(container_memory_usage_bytes{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}) by (instance)))/1024/1024',
-            'title': 'CPU Memory Cached [MiB]'
-        },
-        'total_cpu_util': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'gauge',
-            'query': 'sum(irate(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}[1m]))',
-            'title': 'CPU Util [%]'
-        },
-        'total_cpu_throttled': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'gauge',
-            'query': 'sum(irate(container_cpu_cfs_throttled_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}}[1m]))',
-            'title': 'CPU Throttle [%]'
-        },
-        'total_cpu_util_others': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'gauge',
-            'query': 'sum(irate(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container!="dbms",id!="/"}}[1m]))',
-            'title': 'CPU Util Others [%]'
-        },
-        'total_cpu_util_s': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
-            'title': 'CPU Util [s]'
-        },
-        'total_cpu_util_user_s': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(container_cpu_user_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
-            'title': 'CPU Util User [s]'
-        },
-        'total_cpu_util_sys_s': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(container_cpu_system_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
-            'title': 'CPU Util Sys [s]'
-        },
-        'total_cpu_throttled_s': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(container_cpu_cfs_throttled_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})',
-            'title': 'CPU Throttle [s]'
-        },
-        'total_cpu_util_others_s': {
-            'type': 'cluster',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container!="dbms",id!="/"}})',
-            'title': 'CPU Util Others [s]'
-        },
-        'total_network_rx': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'counter',
-            'query': 'sum(container_network_receive_bytes_total{{container_label_app="bexhoma", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)"}})/1024/1024',
-            'title': 'Net Rx [MiB]'
-        },
-        'total_network_tx': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'counter',
-            'query': 'sum(container_network_transmit_bytes_total{{container_label_app="bexhoma", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)"}})/1024/1024',
-            'title': 'Net Tx [MiB]'
-        },
-        'total_fs_read': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'counter',
-            'query': 'sum(container_fs_reads_bytes_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
-            'title': 'FS Read [MiB]'
-        },
-        'total_fs_write': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'counter',
-            'query': 'sum(container_fs_writes_bytes_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}})/1024/1024',
-            'title': 'FS Write [MiB]'
-        },
-        'total_gpu_util': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'gauge',
-            'query': 'sum(DCGM_FI_DEV_GPU_UTIL{{UUID=~"{gpuid}"}})',
-            'title': 'GPU Util [%]'
-        },
-        'total_gpu_power': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'gauge',
-            'query': 'sum(DCGM_FI_DEV_POWER_USAGE{{UUID=~"{gpuid}"}})',
-            'title': 'GPU Power Usage [W]'
-        },
-        'total_gpu_memory': {
-            'type': 'cluster',
-            'active': False,
-            'metric': 'gauge',
-            'query': 'sum(DCGM_FI_DEV_FB_USED{{UUID=~"{gpuid}"}})',
-            'title': 'GPU Memory [MiB]'
-        },
-    }
-},
+### Auto-Installed Prometheus
+
+If no preinstalled Prometheus is reachable, bexhoma installs the required components automatically:
+
+| Monitoring mode | cAdvisor | Prometheus |
+|---|---|---|
+| `-m` | Sidecar container in the SUT pod | One per experiment |
+| `-mc` | DaemonSet on every cluster node | One per experiment |
+
+All installed components are labelled with the experiment code and removed during the cleanup phase.
+The per-experiment Prometheus is configured at startup to scrape the cAdvisor instances bexhoma just deployed.
+
+#### Kubernetes manifest templates
+
+| Component | Template file |
+|---|---|
+| cAdvisor sidecar (per SUT) | `k8s/deploymenttemplate-PostgreSQL.yml` (and equivalents for other DBMS) |
+| cAdvisor DaemonSet (cluster-wide) | `k8s/daemonsettemplate-monitoring.yml` |
+| Prometheus server | `k8s/deploymenttemplate-bexhoma-prometheus.yml` |
+
+cAdvisor runs in a container named `cadvisor` with a service port named `port-monitoring` on port 9300.
+Prometheus runs with a service port named `port-prometheus` on port 9090.
+
+---
+
+## Hardware Metrics
+
+Hardware metrics are collected from cAdvisor via Prometheus and cover the following resource categories by default:
+
+| Category | Metrics collected |
+|---|---|
+| CPU utilisation | Instantaneous utilisation (`gauge`), total CPU seconds (`counter`), user-space seconds, system seconds |
+| CPU throttling | Throttled time (`gauge` and `counter`) |
+| CPU by other containers | CPU used by non-DBMS containers in the same pod (`gauge` and `counter`) |
+| Memory | Working set bytes (`gauge`), cached bytes including inactive file cache (`gauge`) |
+| Network | Receive bytes (`counter`), transmit bytes (`counter`) — disabled by default |
+| Filesystem | Read bytes (`counter`), write bytes (`counter`) — disabled by default |
+| I/O wait | Node-level I/O wait percentage (`gauge`) |
+| Per-core variance | Standard deviation of per-core CPU utilisation across the DBMS pod (`gauge`) |
+| GPU (DCGM) | GPU utilisation, power, and memory (`gauge`) — disabled by default |
+
+Metrics marked as disabled (`active: False` in `cluster.config`) are present in the configuration but skipped during collection.
+To enable them, set `active: True` on the relevant entries.
+
+See [Config.md](Config.md) for the full metric schema and how to add or modify metric definitions.
+
+---
+
+## PromQL Queries and Placeholders
+
+Every metric definition contains a PromQL query string.
+Bexhoma substitutes the following placeholders at runtime before sending the query:
+
+| Placeholder | Substituted value |
+|---|---|
+| `{configuration}` | The name of the current DBMS configuration (e.g., `PostgreSQL`) |
+| `{experiment}` | The numeric experiment code (e.g., `1775855486`) |
+| `{host}` | The Kubernetes node hosting the SUT |
+| `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod |
+| `{namespace}` | The Kubernetes namespace of the current context |
+
+Because bexhoma uses Python's `str.format()` for substitution, literal PromQL label selector braces `{}` must be written as `{{}}` in the config:
+
+```python
+# PromQL:  container_cpu_usage_seconds_total{container="dbms"}
+# In config:
+'query': 'sum(container_cpu_usage_seconds_total{{container="dbms"}})'
 ```
 
-This is handed over to the [DBMS configuration](https://dbmsbenchmarker.readthedocs.io/en/docs/Options.html#connection-file) of [DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/docs/Concept.html#monitoring-hardware-metrics) for the collection of the metrics.
+### Container label substitution
 
+The container label `"dbms"` in queries targets the SUT container.
+Bexhoma automatically produces parallel queries for other container roles by substituting this label:
 
-### Explanation
+| Container role | Label value |
+|---|---|
+| SUT (DBMS) | `dbms` |
+| Data generator | `datagenerator` |
+| Sensor / sidecar | `sensor` |
+| Benchmarker driver | `dbmsbenchmarker` |
 
-There is a placeholder `{gpuid}` that is substituted automatically by a list of GPUs present in the pod.
-There is a placeholder `{configuration}` that is substituted automatically by the name of the current configuration of the SUT.
-There is a placeholder `{experiment}` that is substituted automatically by the name (identifier) of the current experiment. 
+This means a single metric definition covers all components without requiring separate query entries for each.
 
-Moreover the is an automatical substituion of `container_label_io_kubernetes_container_name="dbms"`; the `dbms` refers to the sut. For other containers it is replaced by `datagenerator`, `sensor` and `dbmsbenchmarker`.
-
-Note that the metrics make a summation over all matching components (containers, CPU cores etc).
-
-Also note that we use Python's format replacement.
-This means the common promql `{}` has to be substituted by `{{}}`.
-
-### Installation Templates
-
-cAdvisor runs as a container `cadvisor` and a service with `port-monitoring` 9300
-* example per SUT (sidecar container): `k8s/deploymenttemplate-PostgreSQL.yml`
-* example per node (daemonset): `k8s/daemonsettemplate-monitoring.yml`
-
-Prometheus runs as a container with a service with `port-prometheus` 9090
-* `k8s/deploymenttemplate-bexhoma-prometheus.yml`
+---
 
 ## Application Metrics
 
-Metrics collectors for DBMS can be run as sidecar containers.
-A list of metrics is defined in the DBMS part of the configuration file.
-Bexhoma has two methods implemented: Balackbox and non-blackbox.
+Application metrics are DBMS-internal statistics exposed by an exporter sidecar container running next to the DBMS.
+They are enabled with `-ma` and require a compatible exporter image to be configured in the DBMS's `dockers` entry (see [DBMS.md](DBMS.md)).
 
+Application metrics are scraped from the per-experiment Prometheus via the `service_monitoring_application` URL template, which points to the application Prometheus port (9090) of the exporter sidecar inside the cluster.
 
-### Blackbox: PostgreSQL
+Bexhoma supports two collection patterns:
 
-A blackbox method in metric exporters means "collect metrics by probing the system from the outside, without relying on internal statistics.
-Here, we collect metrics from an instance of an exporter.
-We send requests to a /probe API and give a list of targets, one for each database.
+### Blackbox collection
 
-* Example per SUT (sidecar container): `k8s/deploymenttemplate-PostgreSQL.yml`
-* Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
+The exporter exposes a `/probe` endpoint.
+Bexhoma sends one request per database, passing the target as a query parameter.
+This allows per-database metric breakdowns within a single DBMS instance.
 
-```
+Used by: **PostgreSQL**, **PGBouncer**
+
+```python
 'monitor': {
     'blackbox': True,
-    'metrics': {
-        'pg_stat_database_blks_read': {
-            'type': 'application',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(pg_stat_database_blks_read{{datname!~"template.*"}})',
-            'title': 'Disk Blocks Read Count'
-        },
-        'pg_stat_database_blks_hit': {
-            'type': 'application',
-            'active': True,
-            'metric': 'counter',
-            'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})',
-            'title': 'Buffer Cache Hit Count'
-        },
-    },
-},
+    'metrics': { ... }
+}
 ```
 
-### No Blackbox: MySQL
+### Standard collection
 
-Here, we collect metrics from an instance of an exporter.
-It automatically contains data about all databases in the system.
+The exporter automatically exposes metrics for all databases in the instance via its default metrics endpoint.
+No per-database probing is needed.
 
-* Example per SUT (sidecar container): `k8s/deploymenttemplate-MySQL.yml`
-* Example metrics, c.f. [config file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config):
+Used by: **MySQL**, **TiDB**, **TiKV**, **Placement Driver**, **YugabyteDB**, **CockroachDB**, **Dragonfly**, **Redis**
 
-```
+```python
 'monitor': {
     'blackbox': False,
-    'metrics': {
-        'mysql_buffer_pool_hit_ratio': {
-            'type': 'application',
-            'active': True,
-            'metric': 'gauge',
-            'query': '(rate(mysql_global_status_innodb_buffer_pool_reads[5m]) == 0) or (1 - (rate(mysql_global_status_innodb_buffer_pool_reads[5m]) / rate(mysql_global_status_innodb_buffer_pool_read_requests[5m])))',
-            'title': 'InnoDB Buffer Pool Hit Ratio'
-        },
-        'mysql_queries_per_second': {
-            'type': 'application',
-            'active': True,
-            'metric': 'gauge',
-            'query': 'rate(mysql_global_status_queries[5m])',
-            'title': 'Queries Per Second (QPS)'
-        },
-    },
-},
+    'metrics': { ... }
+}
 ```
 
+### Named application metric sets
 
+The `monitor` block in `cluster.config` defines named metric sets, one per DBMS family.
+Each DBMS configuration in `dockers` references the relevant set via its `monitor.sut.metrics` or `monitor.worker.metrics` field:
+
+| Metric set | Used by |
+|---|---|
+| `postgresql` | PostgreSQL, PGBouncer (SUT component) |
+| `pgbouncer` | PGBouncer (pool component) |
+| `mysql` | MySQL, MariaDB |
+| `tidb` | TiDB (SQL layer) |
+| `tikv` | TiDB (TiKV storage) |
+| `pd` | TiDB (Placement Driver) |
+| `yb-master` | YugabyteDB (master nodes) |
+| `yb-tserver` | YugabyteDB (tablet servers) |
+| `cockroachdb` | CockroachDB (worker nodes) |
+| `dragonfly` | Dragonfly |
+| `redis` | Redis |
+
+Each named set follows the same metric schema as the hardware metrics (`type`, `active`, `metric`, `query`, `title`).
+The `type` field must be `application` so bexhoma routes queries to `service_monitoring_application` rather than `service_monitoring`.
+
+---
+
+## Timing Adjustments
+
+Prometheus scrapes metrics at fixed intervals (typically every 15–60 seconds), so there is always some lag between when an event occurs and when the metric appears.
+Two configuration keys in `cluster.config` compensate for this:
+
+| Key | Effect |
+|---|---|
+| `extend` | Widens each monitoring interval by this many seconds on both ends: `[t, t']` → `[t − extend, t' + extend]`. The default of 20 s absorbs minor clock skew and scrape latency. |
+| `shift` | Shifts the entire interval forward: `[t, t']` → `[t + shift, t' + shift]`. Useful when container clocks are systematically ahead of the Prometheus clock. |
+
+See [Config.md](Config.md) for how to set these values.

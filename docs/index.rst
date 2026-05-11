@@ -15,6 +15,7 @@
     ./Concepts.md
     ./Config.md
     ./DBMS.md
+    ./Monitoring.md
     ./Evaluators.md
     ./Collectors.md
     ./Prepare-Testbeds.md
@@ -37,7 +38,6 @@
     ./Example-Metrics.md
     ./Tool.md
     ./Concept.md
-    ./Monitoring.md
     ./TestCases.md
     ./CONTRIBUTING.md
     ./bexhoma
