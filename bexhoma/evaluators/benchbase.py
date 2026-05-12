@@ -89,8 +89,9 @@ class benchbase(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
+            connection = configuration_name + '-' + experiment_run + '-' + child
             header = {
-                'connection': connection_name + '-' + child,
+                'connection': connection, #connection_name + '-' + child,
                 'phase': connection_name,
                 'configuration': configuration_name,
                 'experiment_run': experiment_run,
@@ -409,6 +410,7 @@ class benchbase(logger):
         """
         df = self.get_df_benchmarking()
         if not df.empty:
+            print(df)
             columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
@@ -416,7 +418,7 @@ class benchbase(logger):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """

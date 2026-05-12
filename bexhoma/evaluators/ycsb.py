@@ -96,7 +96,8 @@ class ycsb(logger):
                 if cells[0] and cells[0][0] == "[":
                     parsed_rows.append(line.split(", "))
             phase = connection_name
-            connection = configuration_name + '-' + experiment_run + '-' + child
+            #connection = configuration_name + '-' + experiment_run + '-' + child
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
             #connection = connection_name + '-' + child
             col_names = [value[0] + "." + value[1] for value in parsed_rows if len(value) > 1]
             measure_values = [value[2] for value in parsed_rows if len(value) > 1]
@@ -861,7 +862,7 @@ class ycsb(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             columns = [
-            'experiment_run', 'client', 'child',"threads","target","pod_count","exceptions",
+            'configuration', 'experiment_run', 'client', 'child',"threads","target","pod_count","exceptions",
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
             "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
@@ -882,8 +883,9 @@ class ycsb(logger):
                     df_plot_filtered[col] = df_plot.loc[:,col]
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
-            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            #print(df_plot_filtered)
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['configuration', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
+            #df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
