@@ -109,6 +109,7 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
+  -slg 10                       <# log status to stdout every x seconds #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
