@@ -84,6 +84,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -sf 16 \
   -sd 5 \
+  -slg 10 \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 160 \
@@ -130,6 +131,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -sf 16 \
   -sd 5 \
+  -slg 10 \
   -dbms PostgreSQL \
   -nbp 4,8 \
   -nbt 160 \
