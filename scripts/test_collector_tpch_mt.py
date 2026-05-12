@@ -5,6 +5,8 @@ Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
 import sys
+import re
+import os
 import traceback
 import pandas as pd
 from bexhoma import collectors
@@ -15,7 +17,28 @@ pd.options.display.max_columns = None
 pd.options.display.float_format = "{:.2f}".format
 
 path = r"D:\data\benchmarks"
-codes = ["1776772217", "1776770536", "1776768855"]
+
+_LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs_tests")
+
+def _code_from_log(filename):
+    try:
+        with open(os.path.join(_LOG_DIR, filename)) as _f:
+            for _line in _f:
+                _m = re.search(r"Experiment\s+: has code (\d+)", _line)
+                if _m:
+                    return _m.group(1)
+    except FileNotFoundError:
+        pass
+    return None
+
+codes = [c for c in [
+    _code_from_log("doc_tpch_testcase_collector_tenants_schema.log"),
+    _code_from_log("doc_tpch_testcase_collector_tenants_database.log"),
+    _code_from_log("doc_tpch_testcase_collector_tenants_container.log"),
+] if c is not None]
+if not codes:
+    print("ERROR: no experiment codes found in logs_tests/ — run test-docs-collector first.", file=sys.stderr)
+    sys.exit(1)
 
 HEADER_COLS = ["phase", "code", "configuration", "experiment_run",
                "client", "type_tenants", "num_tenants", "vol_tenants"]
