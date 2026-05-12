@@ -410,7 +410,7 @@ class benchbase(logger):
         """
         df = self.get_df_benchmarking()
         if not df.empty:
-            print(df)
+            #print(df)
             columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
