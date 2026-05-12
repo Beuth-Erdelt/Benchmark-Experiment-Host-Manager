@@ -114,16 +114,16 @@ bexhoma benchbase `
   -nbt 160                      <# threads per benchmarking pod #> `
   -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
   -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
@@ -137,22 +137,22 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
-  -slg 10 `
+  -slg 10                       <# log status to stdout every x seconds #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 4,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
   -nbf 20                       <# throughput target as a multiple of the base ops/s #> `
   -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
@@ -166,19 +166,19 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
-  -slg 10 `
+  -slg 10                       <# log status to stdout every x seconds #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 4,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
   -nbf 20                       <# throughput target as a multiple of the base ops/s #> `
   -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_3.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
@@ -493,16 +493,16 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 15Gi                     <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
@@ -523,16 +523,16 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 15Gi                     <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
@@ -553,13 +553,13 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ma                           <# collect application-level metrics #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_3.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
@@ -584,16 +584,16 @@ bexhoma hammerdb `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 16                       <# threads per benchmarking pod (virtual users) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 15Gi                     <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"
@@ -610,16 +610,16 @@ bexhoma hammerdb `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod (virtual users) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ma                           <# collect application-level metrics #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 15Gi                     <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"
@@ -636,13 +636,13 @@ bexhoma hammerdb `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod (virtual users) #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ma                           <# collect application-level metrics #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_3.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"

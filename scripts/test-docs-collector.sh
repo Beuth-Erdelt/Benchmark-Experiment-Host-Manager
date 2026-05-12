@@ -67,16 +67,16 @@ echo "Checks passed. Proceeding..."
 # -nbt 160                      threads per benchmarking pod
 # -nbf 16                       throughput target as a multiple of the base ops/s
 # -tb 1024                      base ops/s used to compute the throughput target (2^10)
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
-# -nc 2                         number of repeated runs per configuration
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -rst shared                   storage class for persistent volumes
 # -rss 100Gi                    size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma benchbase \
   -ms 1 \
   -tr \
@@ -84,20 +84,19 @@ bexhoma benchbase \
   -lr 64Gi \
   -sf 16 \
   -sd 5 \
-  -slg 10 \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 160 \
   -nbf 16 \
   -tb 1024 \
-  -m -mc -ma \
-  -nc 2 \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared \
   -rss 100Gi \
   -rsr \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
@@ -109,21 +108,22 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,
 # -lr 64Gi                      RAM limit for the SUT container
 # -sf 16                        scaling factor (controls database size)
 # -sd 5                         benchmark duration in minutes
+# -slg 10                       log status to stdout every x seconds
 # -dbms PostgreSQL              DBMS under test
 # -nbp 4,8                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod
 # -nbf 20                       throughput target as a multiple of the base ops/s
 # -tb 1024                      base ops/s used to compute the throughput target (2^10)
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
-# -nc 2                         number of repeated runs per configuration
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -rst shared                   storage class for persistent volumes
 # -rss 100Gi                    size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma benchbase \
   -ms 1 \
   -tr \
@@ -137,14 +137,14 @@ bexhoma benchbase \
   -nbt 160 \
   -nbf 20 \
   -tb 1024 \
-  -m -mc -ma \
-  -nc 2 \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared \
   -rss 100Gi \
   -rsr \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
@@ -156,18 +156,19 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,
 # -lr 64Gi                      RAM limit for the SUT container
 # -sf 16                        scaling factor (controls database size)
 # -sd 5                         benchmark duration in minutes
+# -slg 10                       log status to stdout every x seconds
 # -dbms PostgreSQL              DBMS under test
 # -nbp 4,8                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod
 # -nbf 20                       throughput target as a multiple of the base ops/s
 # -tb 1024                      base ops/s used to compute the throughput target (2^10)
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
-# -nc 2                         number of repeated runs per configuration
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma benchbase \
   -ms 1 \
   -tr \
@@ -175,16 +176,17 @@ bexhoma benchbase \
   -lr 64Gi \
   -sf 16 \
   -sd 5 \
+  -slg 10 \
   -dbms PostgreSQL \
   -nbp 4,8 \
   -nbt 160 \
   -nbf 20 \
   -tb 1024 \
-  -m -mc -ma \
-  -nc 2 \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
@@ -673,16 +675,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 # -nbt 64                       threads per benchmarking pod
 # -nbf 2                        benchmarking throughput target as a multiple of the base ops/s
 # -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 2                         number of repeated runs per configuration
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -rst shared                   storage class for persistent volumes
 # -rss 15Gi                     size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma ycsb \
   -ms 1 \
   -tr \
@@ -697,14 +699,14 @@ bexhoma ycsb \
   -nbt 64 \
   -nbf 2 \
   -ne 1 \
-  -nc 2 \
-  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared \
   -rss 15Gi \
   -rsr \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
@@ -724,16 +726,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 # -nbt 64                       threads per benchmarking pod
 # -nbf 3                        benchmarking throughput target as a multiple of the base ops/s
 # -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 2                         number of repeated runs per configuration
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -rst shared                   storage class for persistent volumes
 # -rss 15Gi                     size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma ycsb \
   -ms 1 \
   -tr \
@@ -748,14 +750,14 @@ bexhoma ycsb \
   -nbt 64 \
   -nbf 3 \
   -ne 1 \
-  -nc 2 \
-  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared \
   -rss 15Gi \
   -rsr \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
@@ -774,13 +776,13 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 # -nbt 64                       threads per benchmarking pod
 # -nbf 3                        benchmarking throughput target as a multiple of the base ops/s
 # -ne 1                         parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -nc 2                         number of repeated runs per configuration
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
   -ms 1 \
   -tr \
@@ -795,11 +797,11 @@ bexhoma ycsb \
   -nbt 64 \
   -nbf 3 \
   -ne 1 \
-  -nc 2 \
-  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
@@ -822,16 +824,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod (virtual users)
-# -nc 2                         number of repeated runs per configuration
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -rst shared                   storage class for persistent volumes
 # -rss 15Gi                     size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma hammerdb \
   -ms 1 \
   -tr \
@@ -842,14 +844,14 @@ bexhoma hammerdb \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -nc 2 \
-  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared \
   -rss 15Gi \
   -rsr \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
@@ -864,16 +866,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod (virtual users)
-# -nc 2                         number of repeated runs per configuration
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -ma                           collect application-level metrics
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -rst shared                   storage class for persistent volumes
 # -rss 15Gi                     size of the persistent volume claim
 # -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
 bexhoma hammerdb \
   -ms 1 \
   -tr \
@@ -884,14 +886,14 @@ bexhoma hammerdb \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -nc 2 \
-  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared \
   -rss 15Gi \
   -rsr \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
@@ -906,13 +908,13 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod (virtual users)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 # -nc 2                         number of repeated runs per configuration
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma hammerdb \
   -ms 1 \
   -tr \
@@ -923,11 +925,11 @@ bexhoma hammerdb \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -nc 2 \
-  -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
