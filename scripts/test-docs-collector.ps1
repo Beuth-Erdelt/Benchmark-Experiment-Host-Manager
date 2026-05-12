@@ -127,7 +127,7 @@ bexhoma benchbase `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 1/2  sf=16  nbp=1,2  nbf=16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
@@ -155,7 +155,32 @@ bexhoma benchbase `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "benchbase"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 2/2  sf=16  nbp=4,8  nbf=20"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
+
+#### Benchbase Monitoring (Example-Benchbase.md)
+bexhoma benchbase `
+  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -sd 5                         <# benchmark duration in minutes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -nbp 4,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 160                      <# threads per benchmarking pod #> `
+  -nbf 20                       <# throughput target as a multiple of the base ops/s #> `
+  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_3.log" -Encoding utf8
+
+Wait-BexhomaProcess "benchbase"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
 
@@ -287,7 +312,7 @@ bexhoma tpch `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 1/2  sf=3"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 1/3  sf=3"
 
 bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
@@ -314,7 +339,31 @@ bexhoma tpch `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpch"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 2/2  sf=6"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 2/3  sf=6"
+
+bexhoma tpch `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -sf 6                         <# scaling factor (controls database size in GB) #> `
+  --dbms PostgreSQL             <# DBMS under test #> `
+  -ii                           <# create indexes after data load #> `
+  -ic                           <# enforce constraints after data load #> `
+  -is                           <# run ANALYZE after data load #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
+  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_3.log" -Encoding utf8
+
+Wait-BexhomaProcess "tpch"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 3/3  sf=6"
 
 
 
@@ -455,7 +504,7 @@ bexhoma ycsb `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/2  nbp=1,8  nbf=2"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
@@ -485,7 +534,34 @@ bexhoma ycsb `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/2  nbp=1,8  nbf=3"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
+
+#### YCSB Monitoring (Example-YCSB.md)
+bexhoma ycsb `
+  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -nbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_3.log" -Encoding utf8
+
+Wait-BexhomaProcess "ycsb"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
 
@@ -513,10 +589,13 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -rst shared                   <# storage class for persistent volumes #> `
+  -rss 15Gi                     <# size of the persistent volume claim #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 1/2  sf=16  nbp=1,2  nbt=16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
@@ -536,10 +615,36 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -rst shared                   <# storage class for persistent volumes #> `
+  -rss 15Gi                     <# size of the persistent volume claim #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "hammerdb"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 2/2  sf=16  nbp=1,2  nbt=32"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
+
+#### HammerDB Monitoring (Example-HammerDB.md)
+bexhoma hammerdb `
+  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -sf 16                        <# scaling factor (number of warehouses) #> `
+  -xlat                         <# collect per-operation latency histograms #> `
+  -sd 5                         <# benchmark duration in minutes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -nlt 16                       <# threads per loader pod #> `
+  -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 32                       <# threads per benchmarking pod (virtual users) #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ma                           <# collect application-level metrics #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_3.log" -Encoding utf8
+
+Wait-BexhomaProcess "hammerdb"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 
 ###########################################
