@@ -3002,6 +3002,7 @@ scrape_configs:
         self.pod_sut = pods[0]
         pod_sut = self.pod_sut
         c['hostsystem'] = self.get_host_all()
+        c['storage'] = self.storage
         # get worker information
         c['worker'] = {}
         components = list(self.deployment_infos['statefulset'].keys())

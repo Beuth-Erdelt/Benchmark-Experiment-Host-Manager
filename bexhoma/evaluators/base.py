@@ -337,6 +337,10 @@ class base:
             for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
                 if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
                     result[connection_id][f'sut_parameters_{key}'] = hostdata
+        if 'storage' in c:
+            for key, storagedata in c['storage'].items():
+                if not isinstance(storagedata, list) and not isinstance(storagedata, dict):
+                    result[connection_id][f'sut_storage_{key}'] = storagedata
         if 'args' in c['hostsystem']:
             for arg in c['hostsystem']['args']:
                 if "=" in arg:
