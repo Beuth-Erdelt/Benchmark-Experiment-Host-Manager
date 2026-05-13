@@ -401,7 +401,7 @@ class base:
         selected_cols = [
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
-            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods',
+            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
             'tenant', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         return df[selected_cols].copy()
