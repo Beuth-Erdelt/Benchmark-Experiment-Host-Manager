@@ -121,13 +121,13 @@ class tpcc(logger):
             phase = connection_name
             latency_values = list(extracted_data.values())
             rows = [
-                (connection, phase, configuration_name, experiment_run, client, pod_name, pod_count,
+                (connection, phase, configuration_name, experiment_run, client, child, pod_name, pod_count,
                  code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
                  vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
                 for run_idx, (result, vuser) in enumerate(result_tuples)
             ]
             df = pd.DataFrame(rows)
-            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'pod',
+            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'child', 'pod',
                          'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
                          'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             col_names.extend(list(extracted_data.keys()))
@@ -315,9 +315,9 @@ class tpcc(logger):
         if not df.empty:
             if "P95 [ms]" in df:
                 # we have latencies
-                columns = ['experiment_run',"vusers","client", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+                columns = ['experiment_run',"vusers","client", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                columns = ['experiment_run',"vusers","client", "NOPM", "TPM", "efficiency", "duration", "errors"]
+                columns = ['experiment_run',"vusers","client", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()

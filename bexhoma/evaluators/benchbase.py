@@ -89,7 +89,7 @@ class benchbase(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
-            connection = configuration_name + '-' + experiment_run + '-' + child
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
             header = {
                 'connection': connection, #connection_name + '-' + child,
                 'phase': connection_name,
@@ -117,7 +117,7 @@ class benchbase(logger):
                     result = json.loads(log[0])
                     df = pd.json_normalize(result)
                     df = pd.concat([df_header, df], axis=1)
-                    df.index.name = connection_name
+                    df.index.name = connection #connection_name
                     if keyandthink == "true" and bench == "tpcc":
                         df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     return df
@@ -418,7 +418,7 @@ class benchbase(logger):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['DBMS', 'experiment_run', 'client', 'child'])
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
