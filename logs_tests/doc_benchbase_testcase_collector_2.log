@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1778424541
-Experiment                    : starts at 2026-05-10 16:49:05.510973 (4849.2766804)
+Experiment                    : has code 1778600175
+Experiment                    : starts at 2026-05-12 17:36:15.107065 (879594.094111086)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [20]. Benchmarking runs for 5 minutes.
@@ -21,13 +21,627 @@ Benchmarking is tested with [160] threads, split into [4, 8] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
 PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : found labels on pvc = []
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1778424541
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1778424541
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1778600175
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1778600175
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : storage bexhoma-storage-postgresql-benchbase-tpcc-16 should be removed
 - waiting 10s -               : done
@@ -40,14 +654,14 @@ PostgreSQL-1                  : wants to monitor all components in cluster
 PostgreSQL-1                  : starts monitoring with prometheus pod
 PostgreSQL-1                  : need application monitoring for sut
 - waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-1                  : waits for monitoring
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1778424541-f6679985d-2cm6s to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1778600175-5bd744b5dc-z64v4 to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : start asynch loading scripts of type loaded
@@ -89,14 +703,16 @@ PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
 PostgreSQL-1                  : showing loader times
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1778424820, 1778425552)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1778424820, 1778425552)]
-PostgreSQL-1                  : loader timespan (first to last [s]) = 732
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1778609752, 1778610342)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1778609752, 1778610342)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 590
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1778424541-f6679985d-2cm6s to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1778600175-5bd744b5dc-z64v4 to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : start asynch loading scripts of type indexed
@@ -111,14 +727,20 @@ PostgreSQL-1-1-1              : start benchmarking
 PostgreSQL-1-1-1              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1778424541
+PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1778600175
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778424541-1-1-5cz8s: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778600175-1-1-65h84: found
 PostgreSQL-1-1-1              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-1              : collecting loading metrics of SUT at connection PostgreSQL-1-1-1
-PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1              : collecting metrics of data injector at connection PostgreSQL-1-1-1
-PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -134,16 +756,16 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 PostgreSQL-1-1-1              : showing benchmarker times
-PostgreSQL-1-1-1              : benchmarker timespan job from 1778425708 to 1778426073
-PostgreSQL-1-1-1              : benchmarker timespan pods from 1778425712 to 1778426015
-PostgreSQL-1-1-1              : benchmarker timespan (start to end single container [s]) = 303
-PostgreSQL-1-1-1              : benchmarker times (start/end per pod and container) = [(1778425713, 1778426015), (1778425712, 1778426015), (1778425713, 1778426015), (1778425713, 1778426015)]
-PostgreSQL-1-1-1              : found and updated times {'benchmarker': [(1778425713, 1778426015), (1778425712, 1778426015), (1778425713, 1778426015), (1778425713, 1778426015)]}
+PostgreSQL-1-1-1              : benchmarker timespan job from 1778610447 to 1778610786
+PostgreSQL-1-1-1              : benchmarker timespan pods from 1778610451 to 1778610755
+PostgreSQL-1-1-1              : benchmarker timespan (start to end single container [s]) = 304
+PostgreSQL-1-1-1              : benchmarker times (start/end per pod and container) = [(1778610451, 1778610754), (1778610451, 1778610754), (1778610452, 1778610755), (1778610451, 1778610754)]
+PostgreSQL-1-1-1              : found and updated times {'benchmarker': [(1778610451, 1778610754), (1778610451, 1778610754), (1778610452, 1778610755), (1778610451, 1778610754)]}
 PostgreSQL-1-1-1              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-1              : collecting execution metrics of SUT at connection PostgreSQL-1-1-1
-PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1              : collecting metrics of benchmarker at connection PostgreSQL-1-1-1
-PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 2
@@ -152,14 +774,20 @@ PostgreSQL-1-1-2              : start benchmarking
 PostgreSQL-1-1-2              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1778424541
+PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1778600175
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778424541-1-2-455dl: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778600175-1-2-2kz4h: found
 PostgreSQL-1-1-2              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-2              : collecting loading metrics of SUT at connection PostgreSQL-1-1-2
-PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2              : collecting metrics of data injector at connection PostgreSQL-1-1-2
-PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -175,19 +803,19 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 PostgreSQL-1-1-2              : showing benchmarker times
-PostgreSQL-1-1-2              : benchmarker timespan job from 1778426176 to 1778426574
-PostgreSQL-1-1-2              : benchmarker timespan pods from 1778426183 to 1778426488
-PostgreSQL-1-1-2              : benchmarker timespan (start to end single container [s]) = 305
-PostgreSQL-1-1-2              : benchmarker times (start/end per pod and container) = [(1778426183, 1778426487), (1778426184, 1778426488), (1778426183, 1778426486), (1778426183, 1778426488), (1778426183, 1778426487), (1778426184, 1778426486), (1778426183, 1778426487), (1778426184, 1778426488)]
-PostgreSQL-1-1-2              : found and updated times {'benchmarker': [(1778426183, 1778426487), (1778426184, 1778426488), (1778426183, 1778426486), (1778426183, 1778426488), (1778426183, 1778426487), (1778426184, 1778426486), (1778426183, 1778426487), (1778426184, 1778426488)]}
+PostgreSQL-1-1-2              : benchmarker timespan job from 1778610834 to 1778611175
+PostgreSQL-1-1-2              : benchmarker timespan pods from 1778610840 to 1778611144
+PostgreSQL-1-1-2              : benchmarker timespan (start to end single container [s]) = 304
+PostgreSQL-1-1-2              : benchmarker times (start/end per pod and container) = [(1778610841, 1778611144), (1778610841, 1778611143), (1778610840, 1778611143), (1778610840, 1778611143), (1778610840, 1778611144), (1778610840, 1778611144), (1778610841, 1778611143), (1778610841, 1778611143)]
+PostgreSQL-1-1-2              : found and updated times {'benchmarker': [(1778610841, 1778611144), (1778610841, 1778611143), (1778610840, 1778611143), (1778610840, 1778611143), (1778610840, 1778611144), (1778610840, 1778611144), (1778610841, 1778611143), (1778610841, 1778611143)]}
 PostgreSQL-1-1-2              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-2              : collecting execution metrics of SUT at connection PostgreSQL-1-1-2
-PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2              : collecting metrics of benchmarker at connection PostgreSQL-1-1-2
-PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1778424541-f6679985d-2cm6s
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1778600175-5bd744b5dc-z64v4
 PostgreSQL-1                  : still being removed
 - waiting 30s -               : done
 PostgreSQL-1                  : starts again
@@ -196,27 +824,31 @@ PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : storage bexhoma-storage-postgresql-benchbase-tpcc-16 exists
-PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '1559', 'timeLoadingEnd': '1778425631', 'timeLoadingStart': '1778424812', 'time_generated': '0', 'time_indexed': '819', 'time_ingested': '732', 'time_initschema': '6', 'time_loaded': '8'}
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1778424541
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1778424541
+PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '1267', 'timeLoadingEnd': '1778610424', 'timeLoadingStart': '1778609748', 'time_generated': '0', 'time_indexed': '676', 'time_ingested': '590', 'time_initschema': '1', 'time_loaded': '1'}
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1778600175
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1778600175
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : copied label indexed = True
 PostgreSQL-1                  : copied label loaded = True
-PostgreSQL-1                  : copied label timeLoading = 1559
-PostgreSQL-1                  : copied label timeLoadingEnd = 1778425631
-PostgreSQL-1                  : copied label timeLoadingStart = 1778424812
+PostgreSQL-1                  : copied label timeLoading = 1267
+PostgreSQL-1                  : copied label timeLoadingEnd = 1778610424
+PostgreSQL-1                  : copied label timeLoadingStart = 1778609748
 PostgreSQL-1                  : copied label time_generated = 0
-PostgreSQL-1                  : copied label time_indexed = 819
-PostgreSQL-1                  : copied label time_ingested = 732
-PostgreSQL-1                  : copied label time_initschema = 6
-PostgreSQL-1                  : copied label time_loaded = 8
+PostgreSQL-1                  : copied label time_indexed = 676
+PostgreSQL-1                  : copied label time_ingested = 590
+PostgreSQL-1                  : copied label time_initschema = 1
+PostgreSQL-1                  : copied label time_loaded = 1
 PostgreSQL-1                  : loading is set to finished
 - waiting 10s -               : done
+- waiting 30s -               : done
+PostgreSQL-1                  : is pending
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for monitoring
 PostgreSQL-1                  : wants to monitor all components in cluster
 PostgreSQL-1                  : starts monitoring with prometheus pod
 PostgreSQL-1                  : need application monitoring for sut
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
@@ -231,9 +863,15 @@ PostgreSQL-1-2-1              : start benchmarking
 PostgreSQL-1-2-1              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1778424541
+PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1778600175
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778424541-2-1-8mq5d: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778600175-2-1-5mlqv: found
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -249,16 +887,16 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 PostgreSQL-1-2-1              : showing benchmarker times
-PostgreSQL-1-2-1              : benchmarker timespan job from 1778426928 to 1778427267
-PostgreSQL-1-2-1              : benchmarker timespan pods from 1778426932 to 1778427238
-PostgreSQL-1-2-1              : benchmarker timespan (start to end single container [s]) = 306
-PostgreSQL-1-2-1              : benchmarker times (start/end per pod and container) = [(1778426932, 1778427238), (1778426932, 1778427238), (1778426933, 1778427238), (1778426932, 1778427238)]
-PostgreSQL-1-2-1              : found and updated times {'benchmarker': [(1778426932, 1778427238), (1778426932, 1778427238), (1778426933, 1778427238), (1778426932, 1778427238)]}
+PostgreSQL-1-2-1              : benchmarker timespan job from 1778611482 to 1778611810
+PostgreSQL-1-2-1              : benchmarker timespan pods from 1778611485 to 1778611793
+PostgreSQL-1-2-1              : benchmarker timespan (start to end single container [s]) = 308
+PostgreSQL-1-2-1              : benchmarker times (start/end per pod and container) = [(1778611486, 1778611792), (1778611485, 1778611793), (1778611485, 1778611793), (1778611485, 1778611793)]
+PostgreSQL-1-2-1              : found and updated times {'benchmarker': [(1778611486, 1778611792), (1778611485, 1778611793), (1778611485, 1778611793), (1778611485, 1778611793)]}
 PostgreSQL-1-2-1              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-2-1              : collecting execution metrics of SUT at connection PostgreSQL-1-2-1
-PostgreSQL-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-2-1              : collecting metrics of benchmarker at connection PostgreSQL-1-2-1
-PostgreSQL-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 2
@@ -267,9 +905,15 @@ PostgreSQL-1-2-2              : start benchmarking
 PostgreSQL-1-2-2              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1778424541
+PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1778600175
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778424541-2-2-2bkt4: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1778600175-2-2-4tnr2: found
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -285,32 +929,32 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 PostgreSQL-1-2-2              : showing benchmarker times
-PostgreSQL-1-2-2              : benchmarker timespan job from 1778427367 to 1778427733
-PostgreSQL-1-2-2              : benchmarker timespan pods from 1778427374 to 1778427681
-PostgreSQL-1-2-2              : benchmarker timespan (start to end single container [s]) = 307
-PostgreSQL-1-2-2              : benchmarker times (start/end per pod and container) = [(1778427374, 1778427681), (1778427375, 1778427680), (1778427374, 1778427680), (1778427375, 1778427680), (1778427374, 1778427680), (1778427375, 1778427681), (1778427375, 1778427680), (1778427374, 1778427679)]
-PostgreSQL-1-2-2              : found and updated times {'benchmarker': [(1778427374, 1778427681), (1778427375, 1778427680), (1778427374, 1778427680), (1778427375, 1778427680), (1778427374, 1778427680), (1778427375, 1778427681), (1778427375, 1778427680), (1778427374, 1778427679)]}
+PostgreSQL-1-2-2              : benchmarker timespan job from 1778611858 to 1778612190
+PostgreSQL-1-2-2              : benchmarker timespan pods from 1778611864 to 1778612168
+PostgreSQL-1-2-2              : benchmarker timespan (start to end single container [s]) = 304
+PostgreSQL-1-2-2              : benchmarker times (start/end per pod and container) = [(1778611864, 1778612167), (1778611864, 1778612168), (1778611864, 1778612168), (1778611864, 1778612168), (1778611864, 1778612167), (1778611864, 1778612168), (1778611864, 1778612167), (1778611864, 1778612167)]
+PostgreSQL-1-2-2              : found and updated times {'benchmarker': [(1778611864, 1778612167), (1778611864, 1778612168), (1778611864, 1778612168), (1778611864, 1778612168), (1778611864, 1778612167), (1778611864, 1778612168), (1778611864, 1778612167), (1778611864, 1778612167)]}
 PostgreSQL-1-2-2              : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-2-2              : collecting execution metrics of SUT at connection PostgreSQL-1-2-2
-PostgreSQL-1-2-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-2-2              : collecting metrics of benchmarker at connection PostgreSQL-1-2-2
-PostgreSQL-1-2-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778424541(.*)", pod=~"(.*)postgresql-1-1778424541(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-2              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1778600175(.*)", pod=~"(.*)postgresql-1-1778600175(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1778424541-856f5cdf84-d2fbz
-Experiment                    : ends at 2026-05-10 17:43:19.683521 (8103.4489445) - 3254.17s total
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1778600175-7fd59dc4bf-rksxf
+Experiment                    : ends at 2026-05-12 20:57:12.340177 (891651.327225878) - 12057.23s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 3255s 
-* Code: 1778424541
+* Duration: 12058s 
+* Code: 1778600175
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads.
@@ -336,7 +980,8 @@ Benchbase Workload tpcc SF=16
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:197151
+  * disk:197479
+  * datadisk:4307
   * volume_size:100G
   * volume_used:4.3G
   * cpu_list:0-127
@@ -345,7 +990,7 @@ Benchbase Workload tpcc SF=16
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1778424541
+    * code:1778600175
     * TENANT_VOL:False
 * PostgreSQL-1-1-2 uses docker image postgres:18.3
   * RAM:540492877824
@@ -353,7 +998,8 @@ Benchbase Workload tpcc SF=16
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:197152
+  * disk:197480
+  * datadisk:4588
   * volume_size:100G
   * volume_used:4.3G
   * cpu_list:0-127
@@ -362,7 +1008,7 @@ Benchbase Workload tpcc SF=16
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1778424541
+    * code:1778600175
     * TENANT_VOL:False
 * PostgreSQL-1-2-1 uses docker image postgres:18.3
   * RAM:540492877824
@@ -370,16 +1016,17 @@ Benchbase Workload tpcc SF=16
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:197153
+  * disk:197481
+  * datadisk:4799
   * volume_size:100G
-  * volume_used:4.6G
+  * volume_used:4.7G
   * cpu_list:0-127
   * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1778424541
+    * code:1778600175
     * TENANT_VOL:False
 * PostgreSQL-1-2-2 uses docker image postgres:18.3
   * RAM:540492877824
@@ -387,23 +1034,24 @@ Benchbase Workload tpcc SF=16
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:197154
+  * disk:197481
+  * datadisk:4920
   * volume_size:100G
-  * volume_used:4.6G
+  * volume_used:4.7G
   * cpu_list:0-127
   * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1778424541
+    * code:1778600175
     * TENANT_VOL:False
 
 ### Workflow
 
 #### Actual
 
-* DBMS PostgreSQL-1 - Pods [[4, 8], [4, 8]]
+* DBMS PostgreSQL-1 - Pods [[8, 4], [4, 8]]
 
 #### Planned
 
@@ -415,48 +1063,101 @@ Benchbase Workload tpcc SF=16
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |   16 |     1559.00 |           8.00 |            0.00 |        732.00 |          819.00 |              1 |                |             0 | False         |               36.95 |
-| PostgreSQL-1-2 |                2 |   16 |     1559.00 |           8.00 |            0.00 |        732.00 |          819.00 |              1 |                |             0 | False         |               36.95 |
+| PostgreSQL-1-1 |                1 |   16 |     1267.00 |           1.00 |            0.00 |        590.00 |          676.00 |              1 |                |             0 | False         |               45.46 |
+| PostgreSQL-1-2 |                2 |   16 |     1267.00 |           1.00 |            0.00 |        590.00 |          676.00 |              1 |                |             0 | False         |               45.46 |
 
 ### Execution
 
 #### Per Connection
 
-| DBMS               |   experiment_run |   terminals |   target |   client |   child |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:-------------------|-----------------:|------------:|---------:|---------:|--------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1 |             1.00 |       40.00 |  5120.00 |     1.00 |    1.00 | 300.00 |         0.00 |                          95.83 |                       95.22 |         0.00 |                                                    1970647.00 |                                             417009.00 |
-| PostgreSQL-1-1-1-2 |             1.00 |       40.00 |  5120.00 |     1.00 |    2.00 | 300.00 |         0.00 |                          95.74 |                       95.09 |         0.00 |                                                    1999546.00 |                                             417769.00 |
-| PostgreSQL-1-1-1-3 |             1.00 |       40.00 |  5120.00 |     1.00 |    3.00 | 300.00 |         0.00 |                          93.34 |                       92.67 |         0.00 |                                                    2009154.00 |                                             428316.00 |
-| PostgreSQL-1-1-1-4 |             1.00 |       40.00 |  5120.00 |     1.00 |    4.00 | 300.00 |         0.00 |                          94.89 |                       94.30 |         0.00 |                                                    1972538.00 |                                             420821.00 |
-| PostgreSQL-1-1-2-1 |             1.00 |       20.00 |  2560.00 |     2.00 |    1.00 | 300.00 |         0.00 |                          46.09 |                       45.70 |         0.00 |                                                    2057621.00 |                                             433702.00 |
-| PostgreSQL-1-1-2-2 |             1.00 |       20.00 |  2560.00 |     2.00 |    2.00 | 300.00 |         0.00 |                          47.57 |                       47.33 |         0.00 |                                                    1927908.00 |                                             418398.00 |
-| PostgreSQL-1-1-2-3 |             1.00 |       20.00 |  2560.00 |     2.00 |    3.00 | 300.00 |         0.00 |                          46.17 |                       45.85 |         0.00 |                                                    2015049.00 |                                             430829.00 |
-| PostgreSQL-1-1-2-4 |             1.00 |       20.00 |  2560.00 |     2.00 |    4.00 | 300.00 |         0.00 |                          47.55 |                       47.26 |         0.00 |                                                    1981454.00 |                                             419353.00 |
-| PostgreSQL-1-1-2-5 |             1.00 |       20.00 |  2560.00 |     2.00 |    5.00 | 300.00 |         0.00 |                          46.80 |                       46.51 |         0.00 |                                                    2034691.00 |                                             425993.00 |
-| PostgreSQL-1-1-2-6 |             1.00 |       20.00 |  2560.00 |     2.00 |    6.00 | 300.00 |         0.00 |                          46.84 |                       46.41 |         0.00 |                                                    2016044.00 |                                             425959.00 |
-| PostgreSQL-1-1-2-7 |             1.00 |       20.00 |  2560.00 |     2.00 |    7.00 | 300.00 |         0.00 |                          45.21 |                       44.90 |         0.00 |                                                    2137613.00 |                                             440531.00 |
-| PostgreSQL-1-1-2-8 |             1.00 |       20.00 |  2560.00 |     2.00 |    8.00 | 300.00 |         0.00 |                          47.24 |                       46.95 |         0.00 |                                                    1957745.00 |                                             421022.00 |
-| PostgreSQL-1-2-1-1 |             2.00 |       40.00 |  5120.00 |     1.00 |    1.00 | 300.00 |         0.00 |                          69.83 |                       69.49 |         0.00 |                                                    2693980.00 |                                             568051.00 |
-| PostgreSQL-1-2-1-2 |             2.00 |       40.00 |  5120.00 |     1.00 |    2.00 | 300.00 |         0.00 |                          71.03 |                       70.68 |         0.00 |                                                    2620700.00 |                                             555860.00 |
-| PostgreSQL-1-2-1-3 |             2.00 |       40.00 |  5120.00 |     1.00 |    3.00 | 300.00 |         0.00 |                          71.15 |                       70.79 |         0.00 |                                                    2555477.00 |                                             557365.00 |
-| PostgreSQL-1-2-1-4 |             2.00 |       40.00 |  5120.00 |     1.00 |    4.00 | 300.00 |         0.00 |                          68.99 |                       68.58 |         0.00 |                                                    2760155.00 |                                             573825.00 |
-| PostgreSQL-1-2-2-1 |             2.00 |       20.00 |  2560.00 |     2.00 |    1.00 | 300.00 |         0.00 |                          42.34 |                       42.03 |         0.00 |                                                    2262700.00 |                                             469466.00 |
-| PostgreSQL-1-2-2-2 |             2.00 |       20.00 |  2560.00 |     2.00 |    2.00 | 300.00 |         1.00 |                          43.85 |                       43.54 |         0.00 |                                                    2192389.00 |                                             452677.00 |
-| PostgreSQL-1-2-2-3 |             2.00 |       20.00 |  2560.00 |     2.00 |    3.00 | 300.00 |         0.00 |                          44.01 |                       43.73 |         0.00 |                                                    2241083.00 |                                             451575.00 |
-| PostgreSQL-1-2-2-4 |             2.00 |       20.00 |  2560.00 |     2.00 |    4.00 | 300.00 |         0.00 |                          42.42 |                       42.14 |         0.00 |                                                    2345662.00 |                                             468609.00 |
-| PostgreSQL-1-2-2-5 |             2.00 |       20.00 |  2560.00 |     2.00 |    5.00 | 300.00 |         0.00 |                          43.64 |                       43.36 |         0.00 |                                                    2292563.00 |                                             455729.00 |
-| PostgreSQL-1-2-2-6 |             2.00 |       20.00 |  2560.00 |     2.00 |    6.00 | 300.00 |         0.00 |                          41.49 |                       41.19 |         0.00 |                                                    2325081.00 |                                             477762.00 |
-| PostgreSQL-1-2-2-7 |             2.00 |       20.00 |  2560.00 |     2.00 |    7.00 | 300.00 |         0.00 |                          42.30 |                       42.07 |         0.00 |                                                    2264491.00 |                                             470041.00 |
-| PostgreSQL-1-2-2-8 |             2.00 |       20.00 |  2560.00 |     2.00 |    8.00 | 300.00 |         0.00 |                          42.39 |                       42.11 |         0.00 |                                                    2310354.00 |                                             469255.00 |
+                        connection             phase configuration experiment_run        code client                    pod pod_count bench   profile target time batchsize  sf  num_errors duration  efficiency child  Start timestamp (milliseconds)  Current Timestamp (milliseconds)  Elapsed Time (nanoseconds) DBMS Type                                                                                                        DBMS Version Benchmark Type Final State  Measured Requests                   isolation scalefactor terminals  Throughput (requests/second)  Goodput (requests/second)  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Maximum Latency (microseconds)  Latency Distribution.Median Latency (microseconds)  Latency Distribution.Minimum Latency (microseconds)  Latency Distribution.25th Percentile Latency (microseconds)  Latency Distribution.90th Percentile Latency (microseconds)  Latency Distribution.99th Percentile Latency (microseconds)  \
+connection                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+PostgreSQL-1-1-7  PostgreSQL-1-1-7  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  zjh25.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      304         0.0     7                   1778610842192                     1778611143623                300000386635  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18852  TRANSACTION_READ_COMMITTED          16        20                     62.839919                  62.433253                                                      1380700                                             17238624                                               92040                                                  625                                                        25037                                                       763269                                                      3600158   
+PostgreSQL-1-1-8  PostgreSQL-1-1-8  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  ldh55.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      304         0.0     8                   1778610841679                     1778611144152                300000116514  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              19130  TRANSACTION_READ_COMMITTED          16        20                     63.766642                  63.313309                                                      1357127                                             15633391                                               93868                                                  699                                                        25606                                                       753281                                                      3443443   
+PostgreSQL-1-2-4  PostgreSQL-1-2-4  PostgreSQL-1-2-1  PostgreSQL-1              2  1778600175      1  9s5tb.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      308         0.0     4                   1778611487394                     1778611793155                300000022489  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              26595  TRANSACTION_READ_COMMITTED          16        40                     88.649993                  88.113327                                                      1988971                                             16721770                                              134188                                                  777                                                        40793                                                      1169124                                                      4503262   
+PostgreSQL-1-2-4  PostgreSQL-1-2-4  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  r4ftm.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      307         0.0     4                   1778611865951                     1778612167780                300000216554  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              19892  TRANSACTION_READ_COMMITTED          16        20                     66.306619                  65.896619                                                      1276792                                             13403104                                               87886                                                  713                                                        25122                                                       719290                                                      3461009   
+PostgreSQL-1-1-3  PostgreSQL-1-1-3  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  2kz4h.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      306         0.0     3                   1778610842814                     1778611143387                300000291805  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18852  TRANSACTION_READ_COMMITTED          16        20                     62.839939                  62.379939                                                      1375969                                             17001532                                               93529                                                  752                                                        25731                                                       755710                                                      3582944   
+PostgreSQL-1-2-6  PostgreSQL-1-2-6  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  v6k7m.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      305         0.0     6                   1778611866205                     1778612167554                300000320838  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              20095  TRANSACTION_READ_COMMITTED          16        20                     66.983262                  66.499929                                                      1305117                                             16565754                                               85932                                                  723                                                        24639                                                       721202                                                      3503267   
+PostgreSQL-1-1-1  PostgreSQL-1-1-1  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  sdd2q.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      307         0.0     1                   1778610842568                     1778611143509                300000237546  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18865  TRANSACTION_READ_COMMITTED          16        20                     62.883284                  62.513284                                                      1399675                                             21308105                                               91898                                                  756                                                        25716                                                       765011                                                      3448148   
+PostgreSQL-1-1-4  PostgreSQL-1-1-4  PostgreSQL-1-1-1  PostgreSQL-1              1  1778600175      1  65h84.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      303         0.0     4                   1778610452793                     1778610754729                300000025752  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              43444  TRANSACTION_READ_COMMITTED          16        40                    144.813321                 143.889988                                                      1211201                                             11284223                                               77474                                                  666                                                        20319                                                       668791                                                      3056618   
+PostgreSQL-1-1-4  PostgreSQL-1-1-4  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  nc644.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      305         0.0     4                   1778610842375                     1778611143454                300000258405  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18589  TRANSACTION_READ_COMMITTED          16        20                     61.963280                  61.533280                                                      1417393                                             14819240                                               93842                                                  782                                                        24934                                                       785756                                                      3547888   
+PostgreSQL-1-2-2  PostgreSQL-1-2-2  PostgreSQL-1-2-1  PostgreSQL-1              2  1778600175      1  mc9zr.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           1      308         0.0     2                   1778611487780                     1778611792736                300000109300  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              27000  TRANSACTION_READ_COMMITTED          16        40                     89.999967                  89.573301                                                      1961471                                             18159788                                              135209                                                  834                                                        39635                                                      1161529                                                      4463024   
+PostgreSQL-1-2-7  PostgreSQL-1-2-7  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  4tnr2.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      304         0.0     7                   1778611865803                     1778612167118                300000244051  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              19943  TRANSACTION_READ_COMMITTED          16        20                     66.476613                  66.046613                                                      1303916                                             15056027                                               85137                                                  691                                                        24490                                                       737832                                                      3349984   
+PostgreSQL-1-2-1  PostgreSQL-1-2-1  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  cc64z.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      308         0.0     1                   1778611866136                     1778612167416                300000005686  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              20386  TRANSACTION_READ_COMMITTED          16        20                     67.953332                  67.453332                                                      1304448                                             18631752                                               85740                                                  702                                                        25128                                                       700594                                                      3326977   
+PostgreSQL-1-1-2  PostgreSQL-1-1-2  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  zd2dm.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      308         0.0     2                   1778610842160                     1778611143917                300000261692  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18755  TRANSACTION_READ_COMMITTED          16        20                     62.516612                  62.069946                                                      1370553                                             20833779                                               91564                                                  827                                                        24938                                                       781823                                                      3494432   
+PostgreSQL-1-1-2  PostgreSQL-1-1-2  PostgreSQL-1-1-1  PostgreSQL-1              1  1778600175      1  gz6vg.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      306         0.0     2                   1778610453445                     1778610754841                300000093816  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              43738  TRANSACTION_READ_COMMITTED          16        40                    145.793288                 144.636621                                                      1200376                                             15194326                                               77356                                                  660                                                        20694                                                       669291                                                      3059385   
+PostgreSQL-1-2-2  PostgreSQL-1-2-2  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  rtclj.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      308         0.0     2                   1778611865867                     1778612167761                300000005974  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              20236  TRANSACTION_READ_COMMITTED          16        20                     67.453332                  66.949999                                                      1319873                                             14278029                                               84897                                                  721                                                        24945                                                       721367                                                      3412926   
+PostgreSQL-1-1-6  PostgreSQL-1-1-6  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  8x285.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      305         0.0     6                   1778610842676                     1778611144081                300000013254  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18823  TRANSACTION_READ_COMMITTED          16        20                     62.743331                  62.333331                                                      1365259                                             15711656                                               92836                                                  705                                                        24766                                                       756237                                                      3535908   
+PostgreSQL-1-1-3  PostgreSQL-1-1-3  PostgreSQL-1-1-1  PostgreSQL-1              1  1778600175      1  87mmp.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      304         0.0     3                   1778610453105                     1778610754640                300000037796  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              43111  TRANSACTION_READ_COMMITTED          16        40                    143.703315                 142.743315                                                      1218840                                             12514211                                               77051                                                  675                                                        20789                                                       679595                                                      3144691   
+PostgreSQL-1-2-5  PostgreSQL-1-2-5  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  fz2h8.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      305         0.0     5                   1778611865596                     1778612166907                300000236392  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              20439  TRANSACTION_READ_COMMITTED          16        20                     68.129946                  67.553280                                                      1305267                                             11482958                                               86383                                                  767                                                        24215                                                       715361                                                      3291371   
+PostgreSQL-1-2-1  PostgreSQL-1-2-1  PostgreSQL-1-2-1  PostgreSQL-1              2  1778600175      1  x9ktd.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      310         0.0     1                   1778611487382                     1778611793266                300000093803  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              27089  TRANSACTION_READ_COMMITTED          16        40                     90.296638                  89.816639                                                      1932890                                             13187379                                              133181                                                  645                                                        40245                                                      1127588                                                      4634927   
+PostgreSQL-1-2-3  PostgreSQL-1-2-3  PostgreSQL-1-2-1  PostgreSQL-1              2  1778600175      1  5mlqv.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      309         0.0     3                   1778611487394                     1778611793466                300000111955  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              27044  TRANSACTION_READ_COMMITTED          16        40                     90.146633                  89.603300                                                      1946980                                             17312249                                              133348                                                  672                                                        41574                                                      1137907                                                      4511927   
+PostgreSQL-1-1-1  PostgreSQL-1-1-1  PostgreSQL-1-1-1  PostgreSQL-1              1  1778600175      1  zmh4v.dbmsbenchmarker         4  tpcc  postgres   5120  300       128  16           0      305         0.0     1                   1778610452826                     1778610754440                300000186151  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              43831  TRANSACTION_READ_COMMITTED          16        40                    146.103243                 145.099910                                                      1184485                                             14294925                                               77632                                                  614                                                        20583                                                       664511                                                      3106021   
+PostgreSQL-1-2-3  PostgreSQL-1-2-3  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  b8dmx.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      307         0.0     3                   1778611865398                     1778612167776                300000365112  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              20323  TRANSACTION_READ_COMMITTED          16        20                     67.743251                  67.266585                                                      1300859                                             13637325                                               85593                                                  741                                                        23911                                                       713915                                                      3345725   
+PostgreSQL-1-1-5  PostgreSQL-1-1-5  PostgreSQL-1-1-2  PostgreSQL-1              1  1778600175      2  x969q.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      305         0.0     5                   1778610841860                     1778611143363                300000124548  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              18829  TRANSACTION_READ_COMMITTED          16        20                     62.763307                  62.343307                                                      1404426                                             12359232                                               96162                                                  656                                                        25524                                                       795427                                                      3510436   
+PostgreSQL-1-2-8  PostgreSQL-1-2-8  PostgreSQL-1-2-2  PostgreSQL-1              2  1778600175      2  pm4lj.dbmsbenchmarker         8  tpcc  postgres   2560  300       128  16           0      304         0.0     8                   1778611865318                     1778612167772                300000238706  POSTGRES  PostgreSQL 18.3 (Debian 18.3-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit           tpcc        EXIT              20159  TRANSACTION_READ_COMMITTED          16        20                     67.196613                  66.733280                                                      1330694                                             12266701                                               83749                                                  775                                                        24148                                                       716898                                                      3376698   
+
+                  Latency Distribution.75th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)  
+connection                                                                                                                          
+PostgreSQL-1-1-7                                                       277195                                               317451  
+PostgreSQL-1-1-8                                                       273103                                               313249  
+PostgreSQL-1-2-4                                                       410565                                               446937  
+PostgreSQL-1-2-4                                                       250514                                               300727  
+PostgreSQL-1-1-3                                                       271482                                               317844  
+PostgreSQL-1-2-6                                                       250168                                               297488  
+PostgreSQL-1-1-1                                                       277769                                               317710  
+PostgreSQL-1-1-4                                                       242539                                               275368  
+PostgreSQL-1-1-4                                                       276225                                               321515  
+PostgreSQL-1-2-2                                                       408096                                               440671  
+PostgreSQL-1-2-7                                                       250707                                               300012  
+PostgreSQL-1-2-1                                                       248228                                               293577  
+PostgreSQL-1-1-2                                                       270118                                               318972  
+PostgreSQL-1-1-2                                                       241781                                               273904  
+PostgreSQL-1-2-2                                                       247476                                               295970  
+PostgreSQL-1-1-6                                                       274390                                               318183  
+PostgreSQL-1-1-3                                                       246017                                               277655  
+PostgreSQL-1-2-5                                                       249739                                               293066  
+PostgreSQL-1-2-1                                                       402825                                               438166  
+PostgreSQL-1-2-3                                                       412795                                               438698  
+PostgreSQL-1-1-1                                                       241633                                               273263  
+PostgreSQL-1-2-3                                                       248537                                               294403  
+PostgreSQL-1-1-5                                                       280879                                               318269  
+PostgreSQL-1-2-8                                                       249268                                               296949  
+| connection       |   experiment_run |   terminals |   target |   client |   child |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|-----------------:|------------:|---------:|---------:|--------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-7 |             1.00 |       20.00 |  2560.00 |     2.00 |    7.00 | 300.00 |         0.00 |                          62.84 |                       62.43 |         0.00 |                                                    1380700.00 |                                             317451.00 |
+| PostgreSQL-1-1-8 |             1.00 |       20.00 |  2560.00 |     2.00 |    8.00 | 300.00 |         0.00 |                          63.77 |                       63.31 |         0.00 |                                                    1357127.00 |                                             313249.00 |
+| PostgreSQL-1-2-4 |             2.00 |       40.00 |  5120.00 |     1.00 |    4.00 | 300.00 |         0.00 |                          88.65 |                       88.11 |         0.00 |                                                    1988971.00 |                                             446937.00 |
+| PostgreSQL-1-2-4 |             2.00 |       20.00 |  2560.00 |     2.00 |    4.00 | 300.00 |         0.00 |                          66.31 |                       65.90 |         0.00 |                                                    1276792.00 |                                             300727.00 |
+| PostgreSQL-1-1-3 |             1.00 |       20.00 |  2560.00 |     2.00 |    3.00 | 300.00 |         0.00 |                          62.84 |                       62.38 |         0.00 |                                                    1375969.00 |                                             317844.00 |
+| PostgreSQL-1-2-6 |             2.00 |       20.00 |  2560.00 |     2.00 |    6.00 | 300.00 |         0.00 |                          66.98 |                       66.50 |         0.00 |                                                    1305117.00 |                                             297488.00 |
+| PostgreSQL-1-1-1 |             1.00 |       20.00 |  2560.00 |     2.00 |    1.00 | 300.00 |         0.00 |                          62.88 |                       62.51 |         0.00 |                                                    1399675.00 |                                             317710.00 |
+| PostgreSQL-1-1-4 |             1.00 |       40.00 |  5120.00 |     1.00 |    4.00 | 300.00 |         0.00 |                         144.81 |                      143.89 |         0.00 |                                                    1211201.00 |                                             275368.00 |
+| PostgreSQL-1-1-4 |             1.00 |       20.00 |  2560.00 |     2.00 |    4.00 | 300.00 |         0.00 |                          61.96 |                       61.53 |         0.00 |                                                    1417393.00 |                                             321515.00 |
+| PostgreSQL-1-2-2 |             2.00 |       40.00 |  5120.00 |     1.00 |    2.00 | 300.00 |         1.00 |                          90.00 |                       89.57 |         0.00 |                                                    1961471.00 |                                             440671.00 |
+| PostgreSQL-1-2-7 |             2.00 |       20.00 |  2560.00 |     2.00 |    7.00 | 300.00 |         0.00 |                          66.48 |                       66.05 |         0.00 |                                                    1303916.00 |                                             300012.00 |
+| PostgreSQL-1-2-1 |             2.00 |       20.00 |  2560.00 |     2.00 |    1.00 | 300.00 |         0.00 |                          67.95 |                       67.45 |         0.00 |                                                    1304448.00 |                                             293577.00 |
+| PostgreSQL-1-1-2 |             1.00 |       20.00 |  2560.00 |     2.00 |    2.00 | 300.00 |         0.00 |                          62.52 |                       62.07 |         0.00 |                                                    1370553.00 |                                             318972.00 |
+| PostgreSQL-1-1-2 |             1.00 |       40.00 |  5120.00 |     1.00 |    2.00 | 300.00 |         0.00 |                         145.79 |                      144.64 |         0.00 |                                                    1200376.00 |                                             273904.00 |
+| PostgreSQL-1-2-2 |             2.00 |       20.00 |  2560.00 |     2.00 |    2.00 | 300.00 |         0.00 |                          67.45 |                       66.95 |         0.00 |                                                    1319873.00 |                                             295970.00 |
+| PostgreSQL-1-1-6 |             1.00 |       20.00 |  2560.00 |     2.00 |    6.00 | 300.00 |         0.00 |                          62.74 |                       62.33 |         0.00 |                                                    1365259.00 |                                             318183.00 |
+| PostgreSQL-1-1-3 |             1.00 |       40.00 |  5120.00 |     1.00 |    3.00 | 300.00 |         0.00 |                         143.70 |                      142.74 |         0.00 |                                                    1218840.00 |                                             277655.00 |
+| PostgreSQL-1-2-5 |             2.00 |       20.00 |  2560.00 |     2.00 |    5.00 | 300.00 |         0.00 |                          68.13 |                       67.55 |         0.00 |                                                    1305267.00 |                                             293066.00 |
+| PostgreSQL-1-2-1 |             2.00 |       40.00 |  5120.00 |     1.00 |    1.00 | 300.00 |         0.00 |                          90.30 |                       89.82 |         0.00 |                                                    1932890.00 |                                             438166.00 |
+| PostgreSQL-1-2-3 |             2.00 |       40.00 |  5120.00 |     1.00 |    3.00 | 300.00 |         0.00 |                          90.15 |                       89.60 |         0.00 |                                                    1946980.00 |                                             438698.00 |
+| PostgreSQL-1-1-1 |             1.00 |       40.00 |  5120.00 |     1.00 |    1.00 | 300.00 |         0.00 |                         146.10 |                      145.10 |         0.00 |                                                    1184485.00 |                                             273263.00 |
+| PostgreSQL-1-2-3 |             2.00 |       20.00 |  2560.00 |     2.00 |    3.00 | 300.00 |         0.00 |                          67.74 |                       67.27 |         0.00 |                                                    1300859.00 |                                             294403.00 |
+| PostgreSQL-1-1-5 |             1.00 |       20.00 |  2560.00 |     2.00 |    5.00 | 300.00 |         0.00 |                          62.76 |                       62.34 |         0.00 |                                                    1404426.00 |                                             318269.00 |
+| PostgreSQL-1-2-8 |             2.00 |       20.00 |  2560.00 |     2.00 |    8.00 | 300.00 |         0.00 |                          67.20 |                       66.73 |         0.00 |                                                    1330694.00 |                                             296949.00 |
 
 #### Per Phase
 
 | DBMS             |   experiment_run |   terminals |   target |   pod_count |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|-----------------:|------------:|---------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1 |             1.00 |      160.00 | 20480.00 |        4.00 | 300.00 |         0.00 |                         379.80 |                      377.29 |         0.00 |                                                    2009154.00 |                                             420978.75 |
-| PostgreSQL-1-1-2 |             1.00 |      160.00 | 20480.00 |        8.00 | 300.00 |         0.00 |                         373.48 |                      370.92 |         0.00 |                                                    2137613.00 |                                             426973.38 |
-| PostgreSQL-1-2-1 |             2.00 |      160.00 | 20480.00 |        4.00 | 300.00 |         0.00 |                         281.00 |                      279.54 |         0.00 |                                                    2760155.00 |                                             563775.25 |
-| PostgreSQL-1-2-2 |             2.00 |      160.00 | 20480.00 |        8.00 | 300.00 |         1.00 |                         342.43 |                      340.17 |         0.00 |                                                    2345662.00 |                                             464389.25 |
+| PostgreSQL-1-1-1 |             1.00 |      160.00 | 20480.00 |        4.00 | 300.00 |         0.00 |                         580.41 |                      576.37 |         0.00 |                                                    1218840.00 |                                             275047.50 |
+| PostgreSQL-1-1-2 |             1.00 |      160.00 | 20480.00 |        8.00 | 300.00 |         0.00 |                         502.32 |                      498.92 |         0.00 |                                                    1417393.00 |                                             317899.12 |
+| PostgreSQL-1-2-1 |             2.00 |      160.00 | 20480.00 |        4.00 | 300.00 |         1.00 |                         359.09 |                      357.11 |         0.00 |                                                    1988971.00 |                                             441118.00 |
+| PostgreSQL-1-2-2 |             2.00 |      160.00 | 20480.00 |        8.00 | 300.00 |         0.00 |                         538.24 |                      534.40 |         0.00 |                                                    1330694.00 |                                             296524.00 |
 
 ### Monitoring
 
@@ -464,33 +1165,33 @@ Benchbase Workload tpcc SF=16
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1 |       563.79 |      1.15 |           7.52 |                  9.12 |
-| PostgreSQL-1-1-2 |       563.79 |      1.15 |           7.52 |                  9.12 |
+| PostgreSQL-1-1-1 |       540.35 |      1.34 |           7.53 |                  9.14 |
+| PostgreSQL-1-1-2 |       540.35 |      1.34 |           7.53 |                  9.14 |
 
 ### Loading phase: component loader
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1 |      1234.08 |      5.72 |           0.25 |                  0.25 |
-| PostgreSQL-1-1-2 |      1234.08 |      5.72 |           0.25 |                  0.25 |
+| PostgreSQL-1-1-1 |      1473.39 |      6.06 |           0.26 |                  0.26 |
+| PostgreSQL-1-1-2 |      1473.39 |      6.06 |           0.26 |                  0.26 |
 
 ### Execution phase: SUT deployment
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1 |       481.78 |      2.64 |           8.80 |                 10.63 |
-| PostgreSQL-1-1-2 |       497.59 |      2.61 |           9.02 |                 11.01 |
-| PostgreSQL-1-2-1 |       483.27 |      2.04 |           8.08 |                 10.10 |
-| PostgreSQL-1-2-2 |       467.03 |      2.54 |           8.44 |                 10.59 |
+| PostgreSQL-1-1-1 |       734.47 |      3.45 |           8.97 |                 10.87 |
+| PostgreSQL-1-1-2 |       666.52 |      2.75 |           9.22 |                 11.33 |
+| PostgreSQL-1-2-1 |      2031.70 |      2.65 |           8.15 |                 10.30 |
+| PostgreSQL-1-2-2 |       707.07 |      2.82 |           8.74 |                 11.08 |
 
 ### Execution phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1 |       205.91 |      0.98 |           0.33 |                  0.33 |
-| PostgreSQL-1-1-2 |       201.12 |      1.44 |           0.33 |                  0.33 |
-| PostgreSQL-1-2-1 |       190.65 |      0.74 |           0.30 |                  0.30 |
-| PostgreSQL-1-2-2 |       184.20 |      2.57 |           0.30 |                  0.30 |
+| PostgreSQL-1-1-1 |       285.22 |      1.22 |           0.33 |                  0.33 |
+| PostgreSQL-1-1-2 |       276.45 |      3.48 |           0.33 |                  0.33 |
+| PostgreSQL-1-2-1 |       194.39 |      1.17 |           0.30 |                  0.30 |
+| PostgreSQL-1-2-2 |       225.35 |      1.76 |           0.30 |                  0.30 |
 
 ### Application Metrics
 
@@ -498,17 +1199,17 @@ Benchbase Workload tpcc SF=16
 
 | DBMS             |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
 |:-----------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1 |                     17.00 |                                     0.00 |                                             0.00 |                       17.00 |                                   16.00 |
-| PostgreSQL-1-1-2 |                     17.00 |                                     0.00 |                                             0.00 |                       17.00 |                                   16.00 |
+| PostgreSQL-1-1-1 |                        16 |                                        0 |                                                0 |                          16 |                                      16 |
+| PostgreSQL-1-1-2 |                        16 |                                        0 |                                                0 |                          16 |                                      16 |
 
 #### Execution phase: SUT deployment
 
 | DBMS             |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
 |:-----------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1 |                      1.00 |                                    10.00 |                                             0.00 |                      160.00 |                                  160.00 |
-| PostgreSQL-1-1-2 |                      7.00 |                                    15.00 |                                             0.00 |                      161.00 |                                  160.00 |
-| PostgreSQL-1-2-1 |                     91.00 |                                    15.00 |                                             0.00 |                      160.00 |                                  160.00 |
-| PostgreSQL-1-2-2 |                      1.00 |                                    21.00 |                                             0.00 |                      160.00 |                                  160.00 |
+| PostgreSQL-1-1-1 |                      2.00 |                                    20.00 |                                             0.00 |                      160.00 |                                  160.00 |
+| PostgreSQL-1-1-2 |                      4.00 |                                    18.00 |                                             0.00 |                      160.00 |                                  160.00 |
+| PostgreSQL-1-2-1 |                      2.00 |                                    21.00 |                                             0.00 |                      161.00 |                                  160.00 |
+| PostgreSQL-1-2-2 |                     22.00 |                                     6.00 |                                             0.00 |                      161.00 |                                  160.00 |
 
 ### Tests
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
