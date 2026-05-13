@@ -7,6 +7,7 @@ Shows head() for every DataFrame and prints a bottom-line summary.
 import sys
 import re
 import os
+import ast
 import traceback
 import pandas as pd
 from bexhoma import collectors
@@ -16,7 +17,9 @@ pd.set_option("display.max_colwidth", None)
 pd.options.display.max_columns = None
 pd.options.display.float_format = "{:.2f}".format
 
-path = r"D:\data\benchmarks"
+_CONFIG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "cluster.config")
+with open(_CONFIG) as _cf:
+    path = ast.literal_eval(_cf.read())["benchmarker"]["resultfolder"]
 
 _LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs_tests")
 
