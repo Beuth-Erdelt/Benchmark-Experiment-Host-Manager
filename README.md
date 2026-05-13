@@ -68,7 +68,7 @@ bexhoma ycsb run -ms 1 -tr -sf 1 --workload a -dbms PostgreSQL \
   -tb 16384 -nlp 1 -nlt 64 -nlf 4 -nbp 1,8 -nbt 64 -nbf 2,3
 ```
 
-Runs YCSB workload A with a monolithic 64-thread driver, then repeats with the driver scaled out to 8 instances.
+Loads 1 million rows, then runs workload A (50% reads / 50% updates, 1 million operations) targeting 32,768 ops/s (16,384 × 2) and 49,152 ops/s (16,384 × 3). Each target is tested with 64 driver threads as a single pod and again split across 8 pods.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
 
@@ -79,7 +79,7 @@ bexhoma hammerdb run -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL \
   -nlt 16 -nbp 1,2 -nbt 16
 ```
 
-Runs HammerDB's TPC-C at 16 warehouses with a monolithic 16-thread driver, then repeats with 2 scaled-out instances.
+Loads a TPC-C schema with 16 warehouses using 16 loader threads, then benchmarks for 5 minutes with 16 virtual users — first in a single pod, then split across 2 pods.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.html
 
@@ -90,7 +90,7 @@ bexhoma benchbase run -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL \
   -nbp 1,2 -nbt 16 -nbf 16 -tb 1024
 ```
 
-Runs Benchbase's TPC-C at 16 warehouses with a monolithic 16-thread driver, then repeats with 2 scaled-out instances.
+Loads a TPC-C schema with 16 warehouses, then benchmarks for 5 minutes targeting 16,384 ops/s (1,024 × 16) with 16 threads — first in a single pod, then split across 2 pods.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-Benchbase.html
 
@@ -100,7 +100,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-Benchbase.h
 bexhoma tpch run -ms 1 -dbms PostgreSQL
 ```
 
-Runs TPC-H at scale factor 1 with a monolithic driver.
+Loads 1 GB of TPC-H data (scale factor 1) and runs all 22 decision-support queries with a single client.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
 
@@ -110,7 +110,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
 bexhoma tpcds run -ms 1 -dbms PostgreSQL
 ```
 
-Runs TPC-DS at scale factor 1 with a monolithic driver.
+Loads 1 GB of TPC-DS data (scale factor 1) and runs all 99 decision-support queries with a single client.
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-DS.html
 
