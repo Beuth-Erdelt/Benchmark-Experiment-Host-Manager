@@ -65,14 +65,13 @@ spec:
 
           INITIAL_CLUSTER="${PREFIX}-0=http://${PREFIX}-0.${SVC}.${NS}.svc.cluster.local:2380,${PREFIX}-1=http://${PREFIX}-1.${SVC}.${NS}.svc.cluster.local:2380,${PREFIX}-2=http://${PREFIX}-2.${SVC}.${NS}.svc.cluster.local:2380"
 
-          # member/snap/db is written only after a fully successful bootstrap
-          # member/wal alone can exist from a crashed partial bootstrap
           if [ -f "${DATA_DIR}/member/snap/db" ]; then
-            echo "Fully bootstrapped data found - restarting existing member"
-            printf '' > /pd-args/extra-args
+            echo "Snapshot found - clearing WAL and restarting from snapshot"
+            rm -rf ${DATA_DIR}/member/wal
+            touch /pd-args/extra-args
           else
-            echo "No complete bootstrap found - cleaning up and bootstrapping fresh"
-            rm -rf ${DATA_DIR}/member   # wipe any partial WAL from crashed bootstrap
+            echo "No snapshot - bootstrapping fresh"
+            rm -rf ${DATA_DIR}/member
             printf '%s' "--initial-cluster=${INITIAL_CLUSTER}" > /pd-args/extra-args
           fi
 
