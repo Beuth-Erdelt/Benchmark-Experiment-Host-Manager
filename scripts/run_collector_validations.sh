@@ -3,12 +3,12 @@ PYTHON="C:/Users/Patrick/anaconda3/envs/bexhoma/python.exe"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 TESTS=(
-    test_collector_benchbase.py
-    test_collector_benchbase_mt.py
-    test_collector_hammerdb.py
-    test_collector_tpch.py
-    test_collector_tpch_mt.py
-    test_collector_ycsb.py
+    validate_collector_benchbase.py
+    validate_collector_benchbase_mt.py
+    validate_collector_hammerdb.py
+    validate_collector_tpch.py
+    validate_collector_tpch_mt.py
+    validate_collector_ycsb.py
 )
 
 failed=0

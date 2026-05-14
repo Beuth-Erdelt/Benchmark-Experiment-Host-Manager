@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Functional test for collectors.dbmsbenchmarker / TPC-H (Collector-TPC-H.ipynb).
+Validator for collectors.ycsb (Collector-YCSB.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -8,6 +8,7 @@ import sys
 import re
 import os
 import ast
+import zipfile
 import traceback
 import pandas as pd
 from bexhoma import collectors
@@ -35,20 +36,36 @@ def _code_from_log(filename):
     return None
 
 codes = [c for c in [
-    _code_from_log("doc_tpch_testcase_collector_1.log"),
-    _code_from_log("doc_tpch_testcase_collector_2.log"),
-    _code_from_log("doc_tpch_testcase_collector_3.log"),
+    _code_from_log("doc_ycsb_testcase_collector_1.log"),
+    _code_from_log("doc_ycsb_testcase_collector_2.log"),
+    _code_from_log("doc_ycsb_testcase_collector_3.log"),
 ] if c is not None]
 if not codes:
     print("ERROR: no experiment codes found in logs_tests/ — run test-docs-collector first.", file=sys.stderr)
     sys.exit(1)
 
+_VALIDATIONS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "dev", "validations")
+os.makedirs(_VALIDATIONS_DIR, exist_ok=True)
+
+for code in codes:
+    code_folder = os.path.join(path, code)
+    zip_file = os.path.join(_VALIDATIONS_DIR, f"{code}.zip")
+    if os.path.isdir(code_folder) and not os.path.isfile(zip_file):
+        print(f"Archiving result {code} -> dev/validations/{code}.zip")
+        with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as zf:
+            for _root, _dirs, _files in os.walk(code_folder):
+                for _file in _files:
+                    _fp = os.path.join(_root, _file)
+                    zf.write(_fp, os.path.relpath(_fp, path))
+    elif not os.path.isdir(code_folder) and os.path.isfile(zip_file):
+        print(f"Extracting dev/validations/{code}.zip -> result {code}")
+        with zipfile.ZipFile(zip_file, "r") as zf:
+            zf.extractall(path)
+
 HEADER_COLS = ["phase", "code", "configuration", "experiment_run",
                "client", "type_tenants", "num_tenants", "vol_tenants"]
 TS_COLS     = ["timestamp", "phase", "value", "code", "metric", "component"]
 LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
-PERF_COLS   = ["Power@Size [~Q/h]",
-               "Throughput@Size", "num_of_queries"]
 
 failures = []
 
@@ -78,9 +95,9 @@ def check_df(df, label, required_cols=None):
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.dbmsbenchmarker (TPC-H)")
+sep("Setup: collectors.ycsb")
 try:
-    collect = collectors.dbmsbenchmarker(path, codes)
+    collect = collectors.ycsb(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()
@@ -141,7 +158,7 @@ sep("get_performance_aggregated_per_phase()")
 try:
     df_performance = collect.get_performance_aggregated_per_phase()
     df_performance.dropna(inplace=True)
-    check_df(df_performance, "performance_aggregated_per_phase", PERF_COLS)
+    check_df(df_performance, "performance_aggregated_per_phase", ["client"])
 except Exception:
     traceback.print_exc()
     failures.append("get_performance_aggregated_per_phase() exception")
@@ -155,53 +172,62 @@ except Exception:
     traceback.print_exc()
     failures.append("get_loading_per_run() exception")
 
+# ── LOADING PER POD ───────────────────────────────────────────────────────────
+sep("get_loading_per_pod()")
+try:
+    df = collect.get_loading_per_pod()
+    check_df(df, "loading_per_pod")
+except Exception:
+    traceback.print_exc()
+    failures.append("get_loading_per_pod() exception")
+
 # ── MERGED PERFORMANCE + MONITORING ───────────────────────────────────────────
 sep("Merged performance + monitoring")
 try:
     df_mon  = collect.get_monitoring_aggregated_per_phase(type="stream")
     df_perf = collect.get_performance_aggregated_per_phase()
     merged_df = pd.merge(df_perf, df_mon, left_index=True, right_index=True, how="left")
-    merged_df = merged_df[merged_df["client"] == 1]
     df = collect.add_metadata(merged_df)
     check_df(df, "merged_perf_monitoring", HEADER_COLS)
 except Exception:
     traceback.print_exc()
     failures.append("merged performance+monitoring exception")
 
-# ── WARNINGS PER CONNECTION ────────────────────────────────────────────────────
-sep("get_total_warnings(query_titles=False)")
+# ── LOADING TIMESERIES PER PHASE ──────────────────────────────────────────────
+sep("get_loading_timeseries_per_phase()")
 try:
-    df = collect.get_total_warnings(query_titles=False)
-    check_df(df, "total_warnings")
+    df = collect.get_loading_timeseries_per_phase()
+    check_df(df, "loading_timeseries_per_phase")
 except Exception:
     traceback.print_exc()
-    failures.append("get_total_warnings(query_titles=False) exception")
+    failures.append("get_loading_timeseries_per_phase() exception")
 
-sep("get_total_warnings(query_titles=True)")
+# ── LOADING TIMESERIES ALL ────────────────────────────────────────────────────
+sep("get_loading_timeseries_all()")
 try:
-    df = collect.get_total_warnings(query_titles=True)
-    check_df(df, "total_warnings_titled")
+    df = collect.get_loading_timeseries_all()
+    check_df(df, "loading_timeseries_all")
 except Exception:
     traceback.print_exc()
-    failures.append("get_total_warnings(query_titles=True) exception")
+    failures.append("get_loading_timeseries_all() exception")
 
-# ── ERRORS PER CONNECTION ──────────────────────────────────────────────────────
-sep("get_total_errors(query_titles=True)")
+# ── BENCHMARK TIMESERIES PER PHASE ────────────────────────────────────────────
+sep("get_benchmark_timeseries_per_phase()")
 try:
-    df = collect.get_total_errors(query_titles=True)
-    check_df(df, "total_errors_titled")
+    df = collect.get_benchmark_timeseries_per_phase()
+    check_df(df, "benchmark_timeseries_per_phase")
 except Exception:
     traceback.print_exc()
-    failures.append("get_total_errors() exception")
+    failures.append("get_benchmark_timeseries_per_phase() exception")
 
-# ── QUERY LATENCIES ────────────────────────────────────────────────────────────
-sep("get_query_latencies(query_titles=True)")
+# ── BENCHMARK TIMESERIES ALL ──────────────────────────────────────────────────
+sep("get_benchmark_timeseries_all()")
 try:
-    df = collect.get_query_latencies(query_titles=True)
-    check_df(df, "query_latencies")
+    df = collect.get_benchmark_timeseries_all()
+    check_df(df, "benchmark_timeseries_all")
 except Exception:
     traceback.print_exc()
-    failures.append("get_query_latencies() exception")
+    failures.append("get_benchmark_timeseries_all() exception")
 
 # ── BOTTOM LINE ───────────────────────────────────────────────────────────────
 print(f"\n{'='*60}")

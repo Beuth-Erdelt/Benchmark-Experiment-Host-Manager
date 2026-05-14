@@ -2,12 +2,12 @@ $PYTHON = "C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe"
 $DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $tests = @(
-    "test_collector_benchbase.py"
-    "test_collector_benchbase_mt.py"
-    "test_collector_hammerdb.py"
-    "test_collector_tpch.py"
-    "test_collector_tpch_mt.py"
-    "test_collector_ycsb.py"
+    "validate_collector_benchbase.py"
+    "validate_collector_benchbase_mt.py"
+    "validate_collector_hammerdb.py"
+    "validate_collector_tpch.py"
+    "validate_collector_tpch_mt.py"
+    "validate_collector_ycsb.py"
 )
 
 $failed = 0

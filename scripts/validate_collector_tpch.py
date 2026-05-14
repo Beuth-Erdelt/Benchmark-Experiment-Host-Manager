@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Functional test for collectors.benchbase (Collector-Benchbase.ipynb).
+Validator for collectors.dbmsbenchmarker / TPC-H (Collector-TPC-H.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -8,8 +8,8 @@ import sys
 import re
 import os
 import ast
+import zipfile
 import traceback
-import numpy as np
 import pandas as pd
 from bexhoma import collectors
 
@@ -36,20 +36,38 @@ def _code_from_log(filename):
     return None
 
 codes = [c for c in [
-    _code_from_log("doc_benchbase_testcase_collector_1.log"),
-    _code_from_log("doc_benchbase_testcase_collector_2.log"),
-    _code_from_log("doc_benchbase_testcase_collector_3.log"),
+    _code_from_log("doc_tpch_testcase_collector_1.log"),
+    _code_from_log("doc_tpch_testcase_collector_2.log"),
+    _code_from_log("doc_tpch_testcase_collector_3.log"),
 ] if c is not None]
 if not codes:
     print("ERROR: no experiment codes found in logs_tests/ — run test-docs-collector first.", file=sys.stderr)
     sys.exit(1)
 
+_VALIDATIONS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "dev", "validations")
+os.makedirs(_VALIDATIONS_DIR, exist_ok=True)
+
+for code in codes:
+    code_folder = os.path.join(path, code)
+    zip_file = os.path.join(_VALIDATIONS_DIR, f"{code}.zip")
+    if os.path.isdir(code_folder) and not os.path.isfile(zip_file):
+        print(f"Archiving result {code} -> dev/validations/{code}.zip")
+        with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as zf:
+            for _root, _dirs, _files in os.walk(code_folder):
+                for _file in _files:
+                    _fp = os.path.join(_root, _file)
+                    zf.write(_fp, os.path.relpath(_fp, path))
+    elif not os.path.isdir(code_folder) and os.path.isfile(zip_file):
+        print(f"Extracting dev/validations/{code}.zip -> result {code}")
+        with zipfile.ZipFile(zip_file, "r") as zf:
+            zf.extractall(path)
+
 HEADER_COLS = ["phase", "code", "configuration", "experiment_run",
                "client", "type_tenants", "num_tenants", "vol_tenants"]
 TS_COLS     = ["timestamp", "phase", "value", "code", "metric", "component"]
 LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
-PERF_COLS   = ["Goodput (requests/second)",
-               "Latency Distribution.Average Latency (microseconds)"]
+PERF_COLS   = ["Power@Size [~Q/h]",
+               "Throughput@Size", "num_of_queries"]
 
 failures = []
 
@@ -73,15 +91,15 @@ def check_df(df, label, required_cols=None):
             failures.append(f"{label}: missing columns {missing}")
             ok = False
     if ok:
-        # print(df.head())
+        #print(df.head())
         pass
     return ok
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.benchbase")
+sep("Setup: collectors.dbmsbenchmarker (TPC-H)")
 try:
-    collect = collectors.benchbase(path, codes)
+    collect = collectors.dbmsbenchmarker(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()
@@ -156,43 +174,53 @@ except Exception:
     traceback.print_exc()
     failures.append("get_loading_per_run() exception")
 
-# ── MERGED PERFORMANCE + MONITORING (efficiency metrics) ──────────────────────
-sep("Merged performance + monitoring with E_Tpx / E_Lat / E_RAM")
+# ── MERGED PERFORMANCE + MONITORING ───────────────────────────────────────────
+sep("Merged performance + monitoring")
 try:
     df_mon  = collect.get_monitoring_aggregated_per_phase(type="stream")
     df_perf = collect.get_performance_aggregated_per_phase()
     merged_df = pd.merge(df_perf, df_mon, left_index=True, right_index=True, how="left")
     merged_df = merged_df[merged_df["client"] == 1]
-    merged_df["E_Tpx"] = (merged_df["Goodput (requests/second)"]
-                           / merged_df["CPU Utilization Time [s]"] * 600.)
-    merged_df["E_Lat"] = 1. / np.sqrt(
-        merged_df["Latency Distribution.Average Latency (microseconds)"]
-        * merged_df["CPU Utilization Time [s]"] / 1e6)
-    merged_df["E_RAM"] = (merged_df["Goodput (requests/second)"]
-                          / merged_df["Memory Usage [MiB]"])
     df = collect.add_metadata(merged_df)
-    check_df(df, "merged_perf_monitoring", HEADER_COLS + ["E_Tpx", "E_Lat", "E_RAM"])
+    check_df(df, "merged_perf_monitoring", HEADER_COLS)
 except Exception:
     traceback.print_exc()
     failures.append("merged performance+monitoring exception")
 
-# ── BENCHMARK TIMESERIES PER PHASE ────────────────────────────────────────────
-sep("get_benchmark_timeseries_per_phase()")
+# ── WARNINGS PER CONNECTION ────────────────────────────────────────────────────
+sep("get_total_warnings(query_titles=False)")
 try:
-    df = collect.get_benchmark_timeseries_per_phase()
-    check_df(df, "benchmark_timeseries_per_phase")
+    df = collect.get_total_warnings(query_titles=False)
+    check_df(df, "total_warnings")
 except Exception:
     traceback.print_exc()
-    failures.append("get_benchmark_timeseries_per_phase() exception")
+    failures.append("get_total_warnings(query_titles=False) exception")
 
-# ── BENCHMARK TIMESERIES ALL ──────────────────────────────────────────────────
-sep("get_benchmark_timeseries_all()")
+sep("get_total_warnings(query_titles=True)")
 try:
-    df = collect.get_benchmark_timeseries_all()
-    check_df(df, "benchmark_timeseries_all")
+    df = collect.get_total_warnings(query_titles=True)
+    check_df(df, "total_warnings_titled")
 except Exception:
     traceback.print_exc()
-    failures.append("get_benchmark_timeseries_all() exception")
+    failures.append("get_total_warnings(query_titles=True) exception")
+
+# ── ERRORS PER CONNECTION ──────────────────────────────────────────────────────
+sep("get_total_errors(query_titles=True)")
+try:
+    df = collect.get_total_errors(query_titles=True)
+    check_df(df, "total_errors_titled")
+except Exception:
+    traceback.print_exc()
+    failures.append("get_total_errors() exception")
+
+# ── QUERY LATENCIES ────────────────────────────────────────────────────────────
+sep("get_query_latencies(query_titles=True)")
+try:
+    df = collect.get_query_latencies(query_titles=True)
+    check_df(df, "query_latencies")
+except Exception:
+    traceback.print_exc()
+    failures.append("get_query_latencies() exception")
 
 # ── BOTTOM LINE ───────────────────────────────────────────────────────────────
 print(f"\n{'='*60}")
