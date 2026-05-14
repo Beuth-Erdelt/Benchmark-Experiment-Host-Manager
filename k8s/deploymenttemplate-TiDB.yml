@@ -60,22 +60,21 @@ spec:
         - |
           set -ex
           DATA_DIR=/var/lib/pd
-          NS=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
-          SVC=${BEXHOMA_PD_SERVICE}
-          PREFIX=$(echo $POD_NAME | sed 's/-[0-9]*$//')
+          SVC="${BEXHOMA_PD_SERVICE}"
+          PREFIX=$(echo "$POD_NAME" | sed 's/-[0-9]*$//')
+          REPLICAS="${BEXHOMA_REPLICAS:-3}"
 
-          INITIAL_CLUSTER="${PREFIX}-0=http://${PREFIX}-0.${SVC}.${NS}.svc.cluster.local:2380,${PREFIX}-1=http://${PREFIX}-1.${SVC}.${NS}.svc.cluster.local:2380,${PREFIX}-2=http://${PREFIX}-2.${SVC}.${NS}.svc.cluster.local:2380"
+          INITIAL_CLUSTER=""
+          i=0
+          while [ "$i" -lt "$REPLICAS" ]; do
+            M="${PREFIX}-${i}=http://${PREFIX}-${i}.${SVC}.${NAMESPACE}.svc.cluster.local:2380"
+            [ -z "$INITIAL_CLUSTER" ] && INITIAL_CLUSTER="$M" || INITIAL_CLUSTER="${INITIAL_CLUSTER},${M}"
+            i=$((i + 1))
+          done
 
-          if [ -f "${DATA_DIR}/member/snap/db" ]; then
-            echo "Snapshot found - clearing WAL and restarting from snapshot"
-            rm -rf ${DATA_DIR}/member/wal
-            touch /pd-args/extra-args
-          else
-            echo "No snapshot - bootstrapping fresh"
-            rm -rf ${DATA_DIR}/member
-            printf '%s' "--initial-cluster=${INITIAL_CLUSTER}" > /pd-args/extra-args
-          fi
-
+          # etcd ignores --initial-cluster once a valid data dir exists, so it is
+          # safe to always pass it. Never delete data here.
+          printf '%s' "--initial-cluster=${INITIAL_CLUSTER}" > /pd-args/extra-args
           cat /pd-args/extra-args
         env:
         - name: POD_NAME
