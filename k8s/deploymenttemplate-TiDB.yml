@@ -7,23 +7,19 @@ spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 4000}
   - {port: 9500, protocol: TCP, name: port-web, targetPort: 9500}
-  #- {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 8080}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: bexhoma-pd
+  name: bexhoma-pd          # <-- must match StatefulSet serviceName
   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
-  annotations:
 spec:
   ports:
   - {port: 2379, protocol: TCP, name: port-dbms, targetPort: 2379}
   - {port: 2380, protocol: TCP, name: port-web, targetPort: 2380}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  #-- publishNotReadyAddresses: true
   clusterIP: None
+  publishNotReadyAddresses: true   # <-- important: lets peers find each other during init
   selector: {app: bexhoma, component: pd, configuration: default, experiment: default}
 ---
 apiVersion: v1
@@ -31,24 +27,20 @@ kind: Service
 metadata:
   name: bexhoma-tikv
   labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
-  annotations:
 spec:
   ports:
   - {port: 20160, protocol: TCP, name: port-dbms, targetPort: 20160}
-  #- {port: 2380, protocol: TCP, name: port-web, targetPort: 2380}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  #-- publishNotReadyAddresses: true
   clusterIP: None
+  publishNotReadyAddresses: true
   selector: {app: bexhoma, component: tikv, configuration: default, experiment: default}
 ---
-# PD StatefulSet (3 replicas)
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: bexhoma-pd
   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
 spec:
-  serviceName: bexhoma-pds
+  serviceName: bexhoma-pd   # <-- matches the headless Service name above
   replicas: 3
   selector:
     matchLabels:
@@ -57,44 +49,94 @@ spec:
     metadata:
       labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
     spec:
+      # Init container writes the correct startup args based on whether data exists
+      initContainers:
+      - name: pd-init
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          set -ex
+          DATA_DIR=/var/lib/pd
+          NS=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+          SVC=${BEXHOMA_PD_SERVICE}
+          PREFIX=$(echo $POD_NAME | sed 's/-[0-9]*$//')
+
+          INITIAL_CLUSTER="${PREFIX}-0=http://${PREFIX}-0.${SVC}.${NS}.svc.cluster.local:2380,${PREFIX}-1=http://${PREFIX}-1.${SVC}.${NS}.svc.cluster.local:2380,${PREFIX}-2=http://${PREFIX}-2.${SVC}.${NS}.svc.cluster.local:2380"
+
+          # member/snap/db is written only after a fully successful bootstrap
+          # member/wal alone can exist from a crashed partial bootstrap
+          if [ -f "${DATA_DIR}/member/snap/db" ]; then
+            echo "Fully bootstrapped data found - restarting existing member"
+            printf '' > /pd-args/extra-args
+          else
+            echo "No complete bootstrap found - cleaning up and bootstrapping fresh"
+            rm -rf ${DATA_DIR}/member   # wipe any partial WAL from crashed bootstrap
+            printf '%s' "--initial-cluster=${INITIAL_CLUSTER}" > /pd-args/extra-args
+          fi
+
+          cat /pd-args/extra-args
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: bxw
+          mountPath: /var/lib/pd
+        - name: pd-args
+          mountPath: /pd-args
       containers:
       - name: dbms
         image: pingcap/pd:v7.1.0
-        args:
-          # Use HOSTNAME to derive pod identity. Initial cluster must list all peers.
-          - --name=$(POD_NAME)
-          - --data-dir=/var/lib/pd
-          - --client-urls=http://0.0.0.0:2379
-          - --peer-urls=http://0.0.0.0:2380
-          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_PD_SERVICE):2379
-          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_PD_SERVICE):2380
-          - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
-          #- --initial-cluster=$(BEXHOMA_pd_NAME)-0=http://$(BEXHOMA_pd_NAME)-0.$(BEXHOMA_pd_SERVICE):2380,$(BEXHOMA_pd_NAME)-1=http://$(BEXHOMA_pd_NAME)-1.$(BEXHOMA_pd_SERVICE):2380,$(BEXHOMA_pd_NAME)-2=http://$(BEXHOMA_pd_NAME)-2.$(BEXHOMA_pd_SERVICE):2380
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -ex
+            EXTRA=$(cat /pd-args/extra-args)
+            NS=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+            exec /pd-server \
+              --name=${POD_NAME} \
+              --data-dir=/var/lib/pd \
+              --client-urls=http://0.0.0.0:2379 \
+              --peer-urls=http://0.0.0.0:2380 \
+              --advertise-client-urls=http://${POD_NAME}.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local:2379 \
+              --advertise-peer-urls=http://${POD_NAME}.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local:2380 \
+              ${EXTRA}
         env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         ports:
-          - containerPort: 2379
-            name: client
-          - containerPort: 2380
-            name: peer
-        #volumeMounts:
-        #  - name: bxw
-        #    mountPath: /var/lib/pd
+        - {containerPort: 2379, name: client}
+        - {containerPort: 2380, name: peer}
+        volumeMounts:
+        - name: bxw
+          mountPath: /var/lib/pd
+        - name: pd-args
+          mountPath: /pd-args
+
+      volumes:
+      - name: pd-args
+        emptyDir: {}   # shared between init container and main container, within the pod
+
   volumeClaimTemplates:
-    - metadata:
-        name: bxw
-        labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 10Gi
-        # storageClassName: standard  # optional: anpassen falls nötig
+  - metadata:
+      name: bxw
+      labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
 ---
-# TiKV StatefulSet (3 replicas)
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -114,52 +156,40 @@ spec:
       - name: dbms
         image: pingcap/tikv:v7.1.0
         args:
-          - --addr=0.0.0.0:20160
-          - --advertise-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20160
-          #- --advertise-status-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20180
-          - --status-addr=0.0.0.0:20180
-          - --pd=$(BEXHOMA_PD_LIST)
-          - --data-dir=/var/lib/tikv
+        - --addr=0.0.0.0:20160
+        - --advertise-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE).$(NAMESPACE).svc.cluster.local:20160
+        - --status-addr=0.0.0.0:20180
+        - --pd=$(BEXHOMA_PD_LIST)
+        - --data-dir=/var/lib/tikv
         env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         resources:
-          limits: {cpu: 16, memory: 64Gi}
+          limits:   {cpu: 16, memory: 64Gi}
           requests: {cpu: 16, memory: 64Gi}
         ports:
-          - containerPort: 20160
-            name: tikv
-          - containerPort: 20180
-            name: metrics
+        - {containerPort: 20160, name: tikv}
+        - {containerPort: 20180, name: metrics}
         volumeMounts:
-          - name: bxw
-            mountPath: /var/lib/tikv
+        - name: bxw
+          mountPath: /var/lib/tikv
+
   volumeClaimTemplates:
   - metadata:
       name: bxw
       labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
     spec:
-      accessModes:
-        - "ReadWriteOnce"
+      accessModes: ["ReadWriteOnce"]
       resources:
         requests:
           storage: 100Gi
       storageClassName: shared
-#---
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-#  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-#  name: bexhoma-storage
-#spec:
-#  accessModes:
-#    - ReadWriteOnce
-#  resources:
-#    requests:
-#      storage: 20Gi
-#  storageClassName: shared
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -177,50 +207,31 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - {name: dockerhub}
-      nodeSelector:
-      tolerations:
-      #- key: "nvidia.com/gpu"
-      #  effect: "NoSchedule"
       containers:
       - name: dbms
-        command:
-        - /bin/sh
-        - -c
+        image: pingcap/tidb:v7.1.0
+        command: ["/bin/sh", "-c"]
         args:
         - |
-          set -ex;
-          yum update -y;
-          yum install -y mysql;
-          echo "Starting TiDB..." && \
+          set -ex
+          yum install -y mysql --nogpgcheck
+          echo "Waiting for TiKV store to be Up..."
+          until curl -sf http://${BEXHOMA_PD_NAME}-0.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local:2379/pd/api/v1/stores | grep -qE '"state_name":\s*"Up"'; do
+            echo "No TiKV Up yet, sleeping 5s..."
+            sleep 5
+          done
+          echo "TiKV ready. Starting TiDB..."
           exec /tidb-server --store=tikv --status=9500 --path=$(BEXHOMA_PD_LIST)
-        #command: ["/bin/sh", "-c"]
-        #args:
-        #  - |
-        #    set -ex;
-        #    yum update -y;
-        #    yum install -y mysql;
-        #    echo "Starting TiDB..." && \
-        #    /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
-        image: pingcap/tidb:v7.1.0
-        #args:
-        #  - /tidb-server
-        #  - --tikv=tikv
-        #  - --path=$(BEXHOMA_pd_LIST)
+        env:
+        - name: BEXHOMA_PD_LIST
+          value: "bexhoma-pd-0.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379,bexhoma-pd-1.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379,bexhoma-pd-2.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379"
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         ports:
-          - containerPort: 4000
-            name: mysql
-          - containerPort: 9500
-            name: status
+        - {containerPort: 4000, name: mysql}
+        - {containerPort: 9500, name: status}
         resources:
-          limits: {cpu: 100m, memory: 1Gi}
+          limits:   {cpu: 100m, memory: 1Gi}
           requests: {cpu: 100m, memory: 16Gi}
-        #command: ["/bin/bash"]
-        #args: ["yum update -y && yum install -y mysql && /tidb-server --tikv=tikv --path=$(BEXHOMA_pd_LIST)"]
-        #volumeMounts:
-        #- {mountPath: /data, name: benchmark-data-volume}
-        #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
-      #volumes:
-      #- name: benchmark-data-volume
-      #  persistentVolumeClaim: {claimName: bexhoma-data}
-      #- name: benchmark-storage-volume
-      #  persistentVolumeClaim: {claimName: bexhoma-storage}
