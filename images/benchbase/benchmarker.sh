@@ -138,6 +138,11 @@ if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
     done
 fi
 
+######################## Patch parameters ########################
+if [ "$BENCHBASE_TERMINALS" = "0" ]; then
+    BENCHBASE_TERMINALS="unlimited"
+fi
+
 ######################## Show more parameters ########################
 echo "SF $SF"
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"

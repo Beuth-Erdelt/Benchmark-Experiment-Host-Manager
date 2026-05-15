@@ -82,6 +82,8 @@ class benchbase(logger):
             bench = re.findall('BENCHBASE_BENCH (.+?)\n', stdout)[0]
             profile = re.findall('BENCHBASE_PROFILE (.+?)\n', stdout)[0]
             target = re.findall('BENCHBASE_TARGET (.+?)\n', stdout)[0]
+            if target == "unlimited":
+                target = 0
             time = re.findall('BENCHBASE_TIME (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
             keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
