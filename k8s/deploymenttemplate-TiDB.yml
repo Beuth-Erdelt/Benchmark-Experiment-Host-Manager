@@ -460,7 +460,7 @@ spec:
       resources:
         requests:
           storage: 100Gi
-      storageClassName: shared
+      storageClassName: cephcsi
 ---
 # --- TiDB (SQL layer) Deployment ---------------------------------------------
 apiVersion: apps/v1
