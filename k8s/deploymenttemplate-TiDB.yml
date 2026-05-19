@@ -144,7 +144,7 @@ spec:
     metadata:
       labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
     spec:
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 90
       automountServiceAccountToken: false
       securityContext:
         seccompProfile:
@@ -222,7 +222,7 @@ spec:
         - {name: pd-args, mountPath: /pd-args}
       containers:
       - name: dbms
-        image: pingcap/pd:v7.1.0
+        image: pingcap/pd:v7.1.6
         imagePullPolicy: IfNotPresent
         command:
         - /bin/sh
@@ -276,13 +276,30 @@ spec:
         lifecycle:
           preStop:
             exec:
-              command: ["/bin/sh", "-c", "sleep 15"]
+              command:
+              - /bin/sh
+              - -c
+              - |
+                # 1. Ask PD to resign leadership so another member takes over cleanly
+                curl -sf -X POST http://localhost:2379/pd/api/v1/leader/resign || true
+                # 2. Give etcd time to complete any in-flight WAL writes
+                sleep 5
+                # 3. Force flush to CephFS
+                sync
+                # 4. Wait for endpoint deregistration
+                sleep 10
+        #lifecycle:
+        #  preStop:
+        #    exec:
+        #      command: ["/bin/sh", "-c", "sleep 15"]
         # tcpSocket is used because a stable HTTP health path varies between PD
         # versions. If your PD exposes it, /pd/health on port 2379 is richer.
         startupProbe:
-          tcpSocket: {port: 2379}
+          httpGet:
+            path: /health
+            port: 2379
           periodSeconds: 5
-          failureThreshold: 30           # ~150s for WAL replay / bootstrap
+          failureThreshold: 60   # 5 min
         livenessProbe:
           tcpSocket: {port: 2379}
           periodSeconds: 10
@@ -316,6 +333,7 @@ spec:
       resources:
         requests:
           storage: 10Gi
+      storageClassName: cephcsi
 ---
 # --- TiKV (storage) StatefulSet ----------------------------------------------
 apiVersion: apps/v1
@@ -395,7 +413,7 @@ spec:
           limits:   {cpu: 100m, memory: 64Mi}
       containers:
       - name: dbms
-        image: pingcap/tikv:v7.1.0
+        image: pingcap/tikv:v7.1.6
         imagePullPolicy: IfNotPresent
         args:
         - --addr=0.0.0.0:20160
@@ -500,7 +518,7 @@ spec:
                 matchLabels: {app: bexhoma, component: sut}
       containers:
       - name: dbms
-        image: pingcap/tidb:v7.1.0
+        image: pingcap/tidb:v7.1.6
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         args:
@@ -559,5 +577,5 @@ spec:
         # is below the 16Gi request. Raised to 16Gi. The 100m CPU request/limit
         # is very low for a SQL layer under load - raise it for real benchmarks.
         resources:
-          requests: {cpu: 100m, memory: 16Gi}
-          limits:   {cpu: 100m, memory: 16Gi}
+          requests: {cpu: 4, memory: 16Gi}
+          limits:   {cpu: 4, memory: 16Gi}
