@@ -1,4 +1,4 @@
-$PYTHON = "C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe"
+$PYTHON = "python.exe"
 $DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $tests = @(

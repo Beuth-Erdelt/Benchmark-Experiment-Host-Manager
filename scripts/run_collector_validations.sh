@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-PYTHON="C:/Users/Patrick/anaconda3/envs/bexhoma/python.exe"
+PYTHON="python"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 TESTS=(
