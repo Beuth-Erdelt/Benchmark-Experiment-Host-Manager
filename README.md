@@ -54,6 +54,8 @@ See [example results](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-
 
    All other components (monitoring, message queue, evaluator) are deployed automatically on first use.
 
+> **Optional:** Install a conda environment: `conda create -n "bexhoma" python=3.14.2 ipython`
+
 > **Optional:** Install Jupyter for notebooks: `conda install -c conda-forge jupyter`
 
 ## Quickstart
