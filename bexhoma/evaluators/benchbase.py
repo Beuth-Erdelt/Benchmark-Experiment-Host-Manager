@@ -82,6 +82,8 @@ class benchbase(logger):
             bench = re.findall('BENCHBASE_BENCH (.+?)\n', stdout)[0]
             profile = re.findall('BENCHBASE_PROFILE (.+?)\n', stdout)[0]
             target = re.findall('BENCHBASE_TARGET (.+?)\n', stdout)[0]
+            if target == "unlimited":
+                target = 0
             time = re.findall('BENCHBASE_TIME (.+?)\n', stdout)[0]
             batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
             keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
@@ -89,8 +91,9 @@ class benchbase(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
             header = {
-                'connection': connection_name + '-' + child,
+                'connection': connection, #connection_name + '-' + child,
                 'phase': connection_name,
                 'configuration': configuration_name,
                 'experiment_run': experiment_run,
@@ -116,7 +119,7 @@ class benchbase(logger):
                     result = json.loads(log[0])
                     df = pd.json_normalize(result)
                     df = pd.concat([df_header, df], axis=1)
-                    df.index.name = connection_name
+                    df.index.name = connection #connection_name
                     if keyandthink == "true" and bench == "tpcc":
                         df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     return df
@@ -409,6 +412,7 @@ class benchbase(logger):
         """
         df = self.get_df_benchmarking()
         if not df.empty:
+            #print(df)
             columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
@@ -416,7 +420,7 @@ class benchbase(logger):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['DBMS', 'experiment_run', 'client', 'child'])
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
@@ -460,4 +464,6 @@ class benchbase(logger):
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_run()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
         return df

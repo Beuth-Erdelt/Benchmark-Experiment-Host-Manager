@@ -45,13 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
 
 
 
@@ -63,46 +56,142 @@ wait_process "ycsb"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
-  -rr 64Gi -lr 64Gi \
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -slg 10                       log status to stdout every x seconds
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase \
+  -ms 1 \
+  -tr \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 16 \
   -sd 5 \
+  -slg 10 \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 160 \
   -nbf 16 \
   -tb 1024 \
-  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 100Gi \
+  -rsr \
   -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 100Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_1.log &
+  -m -mc -ma \
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
-  -rr 64Gi -lr 64Gi \
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -slg 10                       log status to stdout every x seconds
+# -dbms PostgreSQL              DBMS under test
+# -nbp 4,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 20                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase \
+  -ms 1 \
+  -tr \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 16 \
   -sd 5 \
+  -slg 10 \
   -dbms PostgreSQL \
   -nbp 4,8 \
   -nbt 160 \
   -nbf 20 \
   -tb 1024 \
-  -m -mc -ma \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 100Gi \
+  -rsr \
   -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 100Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_2.log &
+  -m -mc -ma \
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
-wait_process "benchbase"
+#### Benchbase Monitoring (Example-Benchbase.md)
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -slg 10                       log status to stdout every x seconds
+# -dbms PostgreSQL              DBMS under test
+# -nbp 4,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 20                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase \
+  -ms 1 \
+  -tr \
+  -rr 64Gi \
+  -lr 64Gi \
+  -sf 16 \
+  -sd 5 \
+  -slg 10 \
+  -dbms PostgreSQL \
+  -nbp 4,8 \
+  -nbt 160 \
+  -nbf 20 \
+  -tb 1024 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
 
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
 
@@ -112,56 +201,151 @@ wait_process "benchbase"
 ###########################################
 
 
-
 BEXHOMA_NUM_TENANTS=2
 
 # ---------------- SCHEMA ----------------
-nohup python benchbase.py \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
-  -rr 64Gi -lr 64Gi \
-  -sf 1 -sd 5 -xkey \
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb schema                   tenant isolation level (schema / database / container)
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms PostgreSQL             DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 20Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase \
+  -mtn $BEXHOMA_NUM_TENANTS \
+  -mtb schema \
+  -rr 64Gi \
+  -lr 64Gi \
+  -sf 1 \
+  -sd 5 \
+  -xkey \
   --dbms PostgreSQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 20Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 20Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- DATABASE ----------------
-nohup python benchbase.py \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -rr 64Gi -lr 64Gi \
-  -sf 1 -sd 5 -xkey \
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb database                 tenant isolation level (schema / database / container)
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms PostgreSQL             DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 20Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase \
+  -mtn $BEXHOMA_NUM_TENANTS \
+  -mtb database \
+  -rr 64Gi \
+  -lr 64Gi \
+  -sf 1 \
+  -sd 5 \
+  -xkey \
   --dbms PostgreSQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 20Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 20Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- CONTAINER ----------------
-nohup python benchbase.py \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -rr 64Gi -lr 64Gi \
-  -sf 1 -sd 5 -xkey \
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb container                tenant isolation level (schema / database / container)
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms PostgreSQL             DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne "1,1"                     parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 10Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase \
+  -mtn $BEXHOMA_NUM_TENANTS \
+  -mtb container \
+  -rr 64Gi \
+  -lr 64Gi \
+  -sf 1 \
+  -sd 5 \
+  -xkey \
   --dbms PostgreSQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
   -ne "1,1" \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 10Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -171,35 +355,136 @@ wait_process "benchbase"
 ###########################################
 
 
-nohup python tpch.py -tr \
-  -rr 64Gi -lr 64Gi \
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 3                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma tpch \
+  -tr \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 3 \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp 8 -nbp 1 \
+  -ii \
+  -ic \
+  -is \
+  -nlp 8 \
+  -nbp 1 \
   -ne 1,2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 30Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 30Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_1.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 1/3  sf=3"
 
-nohup python tpch.py -tr \
-  -rr 64Gi -lr 64Gi \
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 6                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma tpch \
+  -tr \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 6 \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp 8 -nbp 1 \
+  -ii \
+  -ic \
+  -is \
+  -nlp 8 \
+  -nbp 1 \
   -ne 1,2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 30Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 30Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_2.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 2/3  sf=6"
+
+
+
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 6                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma tpch \
+  -tr \
+  -rr 64Gi \
+  -lr 64Gi \
+  -sf 6 \
+  --dbms PostgreSQL \
+  -ii \
+  -ic \
+  -is \
+  -nlp 8 \
+  -nbp 1 \
+  -ne 1,2 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
+  run &>$LOG_DIR/doc_tpch_testcase_collector_3.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 3/3  sf=6"
 
 
 
@@ -211,55 +496,166 @@ wait_process "tpch"
 BEXHOMA_NUM_TENANTS=2
 
 # ---------------- SCHEMA ----------------
-nohup python tpch.py -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
-  -rr 64Gi -lr 64Gi \
+# -tr                           verify result meets basic sanity requirements
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb schema                   tenant isolation level (schema / database / container)
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 3                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp $BEXHOMA_NUM_TENANTS     number of data loader pods
+# -nlt 1                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma tpch \
+  -tr \
+  -mtn $BEXHOMA_NUM_TENANTS \
+  -mtb schema \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 3 \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
+  -ii \
+  -ic \
+  -is \
+  -nlp $BEXHOMA_NUM_TENANTS \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 30Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 30Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- DATABASE ----------------
-nohup python tpch.py -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -rr 64Gi -lr 64Gi \
+# -tr                           verify result meets basic sanity requirements
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb database                 tenant isolation level (schema / database / container)
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 3                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp $BEXHOMA_NUM_TENANTS     number of data loader pods
+# -nlt 1                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma tpch \
+  -tr \
+  -mtn $BEXHOMA_NUM_TENANTS \
+  -mtb database \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 3 \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
+  -ii \
+  -ic \
+  -is \
+  -nlp $BEXHOMA_NUM_TENANTS \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 30Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 30Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- CONTAINER ----------------
-nohup python tpch.py -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -rr 64Gi -lr 64Gi \
+# -tr                           verify result meets basic sanity requirements
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb container                tenant isolation level (schema / database / container)
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 3                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 1                        number of data loader pods
+# -nlt 1                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -ne "1,1"                     parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 15Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma tpch \
+  -tr \
+  -mtn $BEXHOMA_NUM_TENANTS \
+  -mtb container \
+  -rr 64Gi \
+  -lr 64Gi \
   -sf 3 \
   --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp 1 -nlt 1 -nbp 1 -nbt 64 \
+  -ii \
+  -ic \
+  -is \
+  -nlp 1 \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
   -ne "1,1" \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 15Gi -rsr \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 15Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log &
+  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
 ###########################################
@@ -268,7 +664,32 @@ wait_process "tpch"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -sf 3                         scaling factor (number of records x 1000)
+# --workload a                  YCSB workload template (a = 50% read / 50% update)
+# -dbms PostgreSQL              DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 2                        benchmarking throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 15Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb \
+  -ms 1 \
+  -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -280,17 +701,46 @@ nohup python ycsb.py -ms 1 -tr \
   -nbt 64 \
   -nbf 2 \
   -ne 1 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 15Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 15Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -sf 3                         scaling factor (number of records x 1000)
+# --workload a                  YCSB workload template (a = 50% read / 50% update)
+# -dbms PostgreSQL              DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 3                        benchmarking throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 15Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb \
+  -ms 1 \
+  -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -302,13 +752,61 @@ nohup python ycsb.py -ms 1 -tr \
   -nbt 64 \
   -nbf 3 \
   -ne 1 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 15Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 15Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
+
+#### YCSB Monitoring (Example-YCSB.md)
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# --workload a                  YCSB workload template (a = 50% read / 50% update)
+# -dbms PostgreSQL              DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 3                        benchmarking throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb \
+  -ms 1 \
+  -tr \
+  -sf 1 \
+  --workload a \
+  -dbms PostgreSQL \
+  -tb 16384 \
+  -nlp 8 \
+  -nlt 64 \
+  -nlf 4 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -nbf 3 \
+  -ne 1 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
+  run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
 
@@ -319,7 +817,28 @@ wait_process "ycsb"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 -tr \
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (number of warehouses)
+# -xlat                         collect per-operation latency histograms
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nlt 16                       threads per loader pod
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod (virtual users)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 15Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma hammerdb \
+  -ms 1 \
+  -tr \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -327,16 +846,41 @@ nohup python hammerdb.py -ms 1 -tr \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 15Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
 
-
-wait_process "hammerdb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 -tr \
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (number of warehouses)
+# -xlat                         collect per-operation latency histograms
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nlt 16                       threads per loader pod
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 32                       threads per benchmarking pod (virtual users)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 15Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma hammerdb \
+  -ms 1 \
+  -tr \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -344,18 +888,53 @@ nohup python hammerdb.py -ms 1 -tr \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 32 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst shared \
+  -rss 15Gi \
+  -rsr \
   -nc 2 \
   -m -mc -ma \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
-wait_process "hammerdb"
+#### HammerDB Monitoring (Example-HammerDB.md)
+# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (number of warehouses)
+# -xlat                         collect per-operation latency histograms
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nlt 16                       threads per loader pod
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 32                       threads per benchmarking pod (virtual users)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma hammerdb \
+  -ms 1 \
+  -tr \
+  -sf 16 \
+  -xlat \
+  -sd 5 \
+  -dbms PostgreSQL \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 32 \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -m -mc -ma \
+  run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
 
-
-
-
-#find /data/benchmarks/ -name "*.pickle" -type f -delete
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 
 ###########################################

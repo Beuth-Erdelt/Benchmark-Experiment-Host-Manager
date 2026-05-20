@@ -169,7 +169,8 @@ if __name__ == '__main__':
                 if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                     # PostgreSQL
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    # , configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'postgresql'
                         )
@@ -231,7 +232,8 @@ if __name__ == '__main__':
                 if ("CedarDB" in args.dbms):
                     # PostgreSQL
                     name_format = 'CedarDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='CedarDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS A')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='CedarDB', alias='DBMS A')
                     config.set_storage(
                         storageConfiguration = 'cedardb'
                         )
@@ -305,7 +307,8 @@ if __name__ == '__main__':
                                     name_format = 'pgb-{threads}-{loading_pods}-{c_in}-{c_out}'
                                 # this is too long
                                 #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
-                                config = configurations.ycsb(experiment=experiment, docker='PGBouncer', configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out), alias='DBMS A')
+                                #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
+                                config = configurations.ycsb(experiment=experiment, docker='PGBouncer', alias='DBMS A')
                                 config.path_experiment_docker = 'PostgreSQL'                   # take init scripts of PostgreSQL
                                 config.sut_has_pool = True                                     # in particular monitor pool component
                                 config.sut_parameters = {
@@ -371,7 +374,8 @@ if __name__ == '__main__':
                 if ("MySQL" in args.dbms or len(args.dbms) == 0):
                     # MySQL
                     name_format = 'MySQL-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MySQL', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS B')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='MySQL', alias='DBMS B')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
@@ -431,7 +435,8 @@ if __name__ == '__main__':
                 if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS C')
+                    # , configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='MariaDB', alias='DBMS C')
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -494,7 +499,8 @@ if __name__ == '__main__':
                 if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
@@ -649,7 +655,8 @@ if __name__ == '__main__':
                 if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='CockroachDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
                     if skip_loading:
                         config.loading_deactivated = True
@@ -728,7 +735,8 @@ if __name__ == '__main__':
                 if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='TiDB', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS D', worker=num_worker)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
@@ -813,7 +821,8 @@ if __name__ == '__main__':
                 if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # DatabaseService
                     name_format = 'DBS-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='DatabaseService', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DatabaseService')
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
                     if skip_loading:
                         config.loading_deactivated = True
@@ -873,7 +882,8 @@ if __name__ == '__main__':
                         docker = 'DragonflyCluster'
                     else:
                         docker = 'Dragonfly'
-                    config = configurations.ycsb(experiment=experiment, docker=docker, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker_inc_replicas)
+                        #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker=docker, alias='DBMS KV', worker=num_worker_inc_replicas)
                     BEXHOMA_DBMS_TYPE = "redis"
                     if num_worker > 0:
                         #config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
@@ -989,7 +999,8 @@ if __name__ == '__main__':
                     # PostgreSQL
                     name_format = 'Redis-{threads}-{pods}-{target}'
                     num_worker_inc_replicas = num_worker * (1+num_worker_replicas)
-                    config = configurations.ycsb(experiment=experiment, docker='Redis', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS KV', worker=num_worker_inc_replicas)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='Redis', alias='DBMS KV', worker=num_worker_inc_replicas)
                     config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
@@ -1102,7 +1113,8 @@ if __name__ == '__main__':
                 if ("Citus" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
-                    config = configurations.ycsb(experiment=experiment, docker='Citus', configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target), alias='DBMS F', worker=num_worker)
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    config = configurations.ycsb(experiment=experiment, docker='Citus', alias='DBMS F', worker=num_worker)
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(

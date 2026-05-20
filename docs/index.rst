@@ -12,6 +12,12 @@
     :hidden:
 
     ../README.md
+    ./Concepts.md
+    ./Config.md
+    ./DBMS.md
+    ./Monitoring.md
+    ./Evaluators.md
+    ./Collectors.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
     ./Example-HammerDB.md
@@ -30,13 +36,8 @@
     ./Example-custom.md
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
-    ./Collectors.md
-    ./Evaluators.md
     ./Tool.md
     ./Concept.md
-    ./Config.md
-    ./Monitoring.md
-    ./DBMS.md
     ./TestCases.md
     ./CONTRIBUTING.md
     ./bexhoma

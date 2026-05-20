@@ -35,6 +35,10 @@ fi
 #	BEXHOMA_CHILD=1
 #fi
 
+######################## Patch parameters ########################
+if [ "$BENCHBASE_TERMINALS" = "0" ]; then
+    BENCHBASE_TERMINALS="unlimited"
+fi
 
 ############ Show more parameters ############
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"

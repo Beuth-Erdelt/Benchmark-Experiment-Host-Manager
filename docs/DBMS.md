@@ -1,495 +1,657 @@
-# DBMS
+# Concept: DBMS
 
-To include a DBMS in a Kubernetes-based experiment you will need
-* a Docker Image
-* a JDBC Driver
-* a Kubernetes Deployment Template
-* some configuration
-  * How to load data (DDL command)
-  * DDL scripts
-  * How to connect via JDBC
+To include a DBMS in a Kubernetes-based experiment you need:
 
-This document contains examples for
-* [MariaDB](#mariadb)
-* [MonetDB](#monetdb)
-* [PostgreSQL](#postgresql)
-* [MySQL](#mysql)
+- a Docker image
+- a JDBC driver (for SQL-based DBMS used with DBMSBenchmarker)
+- a Kubernetes deployment manifest (YAML template)
+- a configuration entry in `cluster.config` (the `dockers` section)
+- DDL scripts for schema creation, data loading, and index building
 
+This document covers all DBMS currently supported by bexhoma.
 
-## Example Explained
+**Relational / SQL**
+- [PostgreSQL](#postgresql)
+- [PostgreSQL + PGBouncer](#pgbouncer)
+- [MySQL](#mysql)
+- [MariaDB](#mariadb)
+- [MonetDB](#monetdb)
+- [Citus](#citus)
 
-### Configuration
+**Distributed SQL / Cloud-Native**
+- [YugabyteDB](#yugabytedb)
+- [CockroachDB](#cockroachdb)
+- [TiDB](#tidb)
 
-DBMS can be adressed using a key.
-We have to define some data per key, for example for the key `PostgreSQL` we use:
+**Key-Value Stores (YCSB)**
+- [Dragonfly](#dragonfly)
+- [DragonflyCluster](#dragonflycluster)
+- [Redis (Cluster)](#redis)
 
-```
+**External / Cloud Database Services**
+- [DatabaseService](#databaseservice)
+
+---
+
+## Configuration Reference
+
+Every entry in the `dockers` section of `cluster.config` may contain the following fields:
+
+| Field | Required | Description |
+|---|---|---|
+| `loadData` | yes | Shell command run inside the SUT container to execute an init script. Placeholders: `{scriptname}`, `{database}`, `{schema}`, `{service_name}`, `{namespace}` |
+| `delay_prepare` | no | Seconds to wait after the container starts before bexhoma considers it ready (useful for engines that restart during init, e.g., MySQL InnoDB setup) |
+| `template` | yes | Base connection template passed to DBMSBenchmarker — includes `version`, `alias`, `docker_alias`, `dialect`, and `JDBC` sub-section |
+| `template.JDBC.driver` | yes | Fully qualified Java class name of the JDBC driver |
+| `template.JDBC.auth` | yes | `[username, password]` pair |
+| `template.JDBC.url` | yes | JDBC URL template. Placeholders: `{serverip}`, `{database}`, `{schema}`, `{dbname}`, `{timeout_ms}`, `{namespace}` |
+| `template.JDBC.jar` | yes | JDBC jar filename(s) expected in `jarfolder` |
+| `template.JDBC.database` | no | Default database name (substituted into `{database}` in `loadData` and the JDBC URL; overridden per tenant in multi-tenant mode) |
+| `template.JDBC.schema` | no | Default schema name (substituted into `{schema}`; overridden per tenant) |
+| `template.init_SQL` | no | SQL statement executed after connection is established (e.g., `SET optimizer_switch = ...`) |
+| `logfile` | no | Path inside the container to a log file that bexhoma downloads after each experiment |
+| `datadir` | no | Path inside the container to the DBMS data directory; bexhoma measures its size after loading |
+| `attachWorker` | no | Command run on the coordinator to register a new worker node (used for distributed DBMS like Citus, CockroachDB) |
+| `worker_port` | no | Internal port of the worker/coordinator headless service (used for TiDB) |
+| `store_args` | no | Whether to capture and display the container startup arguments in the experiment summary (default: `True`) |
+| `priceperhourdollar` | no | Reserved for cost modelling (currently unused) |
+| `monitor` | no | Application-level monitoring configuration; see [Monitoring](Monitoring.md) |
+
+### JDBC URL Placeholders
+
+| Placeholder | Substituted with |
+|---|---|
+| `{serverip}` | Cluster-internal DNS name of the SUT service |
+| `{database}` | Database name (from `template.JDBC.database`, overridden by tenant settings) |
+| `{schema}` | Schema name (from `template.JDBC.schema`, overridden by tenant settings) |
+| `{dbname}` | Alias for `{database}` (legacy; prefer `{database}`) |
+| `{timeout_ms}` | Query timeout in milliseconds |
+| `{namespace}` | Kubernetes namespace from the cluster config |
+
+### Host Information Collected Automatically
+
+After the SUT starts, bexhoma collects the following from inside the container and attaches it to the connection record:
+
+- Total RAM (from `/proc/meminfo`)
+- CPU model and core count (from `/proc/cpuinfo`)
+- Kernel version (`uname -r`)
+- Disk space used on `/` and in the data directory (`du` on `datadir`)
+- GPU count and model (via `nvidia-smi`, if present)
+- Kubernetes node name (from the pod spec)
+
+This information appears in the **Connections** section of every experiment summary.
+
+### Deployment Manifests
+
+Every DBMS needs a Kubernetes manifest template at `k8s/deploymenttemplate-<Key>.yml`.
+The key must match the `dockers` key in `cluster.config` exactly.
+
+Resource requests, limits, and node selectors can be overridden at runtime via CLI parameters (`-rnn`, `-rnl`, `-rnb`) or programmatically via `experiment.set_resources(...)`.
+See [Deployments](Deployments.md) for details.
+
+---
+
+## PostgreSQL
+
+PostgreSQL is the primary test target for analytical benchmarks (TPC-H, TPC-DS) and transactional benchmarks (Benchbase TPC-C, YCSB).
+
+**Deployment template:** [`k8s/deploymenttemplate-PostgreSQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml)
+
+The default deployment ships with an extensive set of tuned startup arguments covering connection limits, memory allocation, parallelism, WAL behaviour, autovacuum, and planner cost constants — optimised for a shared-filesystem (CephFS) environment.
+Notable defaults include `max_connections=1500`, `max_parallel_workers=64`, `shared_buffers=256GB`, `synchronous_commit=off`, and `checkpoint_completion_target=0.9`.
+All of these can be overridden at experiment time using `--set`.
+
+**Configuration** (from `cluster.config`):
+
+```python
 'PostgreSQL': {
-    'loadData': 'psql -U postgres < {scriptname}',
-    'delay_prepare': 60,
+    'loadData': 'psql -U postgres -d {database} < {scriptname}',
+    'delay_prepare': 0,
     'template': {
         'version': 'v11.4',
         'alias': 'General-B',
         'docker_alias': 'GP-B',
-         'JDBC': {
+        'JDBC': {
             'driver': "org.postgresql.Driver",
             'auth': ["postgres", ""],
-            'url': 'jdbc:postgresql://{serverip}:9091/postgres?reWriteBatchedInserts=true',
-            'jar': 'postgresql-42.5.0.jar'
+            'url': 'jdbc:postgresql://{serverip}:9091/{database}?reWriteBatchedInserts=true&currentSchema={schema}',
+            'jar': 'postgresql-42.5.0.jar',
+            'database': 'postgres',
+            'schema': 'public',
         }
     },
     'logfile': '/usr/local/data/logfile',
     'datadir': '/var/lib/postgresql/data/',
     'priceperhourdollar': 0.0,
-    'store_args': True,
     'monitor': {
-        'blackbox': True,
-        'metrics': {
-            'pg_stat_activity_count_idle': {
-                'type': 'application',
-                'active': True,
-                'metric': 'gauge',
-                'query': 'sum(pg_stat_activity_count{{datname!~"template.*", state="idle"}})',
-                'query2': 'sum(pg_stat_activity_count{{datname!~"template.*", state="idle", datname="{database}"}})',
-                'title': 'Number of Idle Sessions',
-            },
+        'sut': {
+            'metrics': 'postgresql',
+            'blackbox': True,
         },
     },
 },
 ```
 
-This has
-* a base name for the DBMS
-* a `delay_prepare` in seconds to wait before system is considered ready
-* a placeholder `template` for the [benchmark tool DBMSBenchmarker](https://dbmsbenchmarker.readthedocs.io/en/latest/Options.html#connection-file)  
-  Some of the data in the reference, like `hostsystem`, will be added by bexhoma automatically.  
-* assumed to have the JDBC driver jar locally available inside the benchmarking tool
-* a command `loadData` for running the init scripts  
-  Some placeholders in the URL are: `serverip` (set automatically to match the corresponding pod), `dbname`, `DBNAME`, `timout_s`, `timeout_ms` (name of the database in lower and upper case, timeout in seconds and miliseconds)
-* `{serverip}` as a placeholder for the host address
-* `{dbname}` as a placeholder for the db name
-* an optional `priceperhourdollar` (currently ignored)
-* an optional name of a `logfile` that is downloaded after the benchmark
-* name of the `datadir` of the DBMS. It's size is measured using `du` after data loading has been finished.
-* an optional `worker_port` (currently only for TiDB), containing the internal port of the headless service
-* `store_args`, iff the args of the DBMS containers should be stored for display in summary (default: True)
-* an optional `monitoring` section for [application metrics](https://bexhoma.readthedocs.io/en/latest/Example-Metrics.html)
+The `database` and `schema` fields support multi-tenant mode: bexhoma substitutes the tenant-specific database or schema name when running schema-per-tenant or database-per-tenant experiments.
 
-### Collect Host Informations
+**DDL scripts:**
+- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/PostgreSQL)
+- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/PostgreSQL)
+- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/PostgreSQL)
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/PostgreSQL)
 
-Some information is given by configuration (JDBC data e.g.), some is collected automatically from the experiment host:
-```
-cluster.get_host_memory()
-cluster.get_host_cpu()
-cluster.get_host_cores()
-cluster.get_host_system()
-cluster.get_host_diskspace_used()
-cluster.get_host_diskspace_used_data()
-cluster.get_host_cuda()
-cluster.get_host_gpus()
-cluster.get_host_gpu_ids()
-cluster.get_host_node()
-```
+---
 
-Most of these run inside the docker container:
-* `cluster.get_host_memory()`: Collects `grep MemTotal /proc/meminfo | awk '{print $2}'` and multiplies by 1024
-* `cluster.get_host_cpu()`: Collects `cat /proc/cpuinfo | grep \'model name\' | head -n 1`
-* `cluster.get_host_cores()`: Collects `grep -c ^processor /proc/cpuinfo`
-* `cluster.get_host_system()`: Collects `uname -r`
-* `cluster.get_host_diskspace_used()`: Collects `df / | awk 'NR == 2{print $3}'`
-* `cluster.get_host_diskspace_used_data()`: Collects `du datadir | awk 'END{ FS=OFS=\"\t\" }END{print $1}'` inside docker container, where `datadir` is set in config of DBMS
-* `cluster.get_host_cuda()`: Collects `nvidia-smi | grep \'CUDA\'`
-* `cluster.get_host_gpus()`: Collects `nvidia-smi -L` and then aggregates the type using `Counter([x[x.find(":")+2:x.find("(")-1] for x in l if len(x)>0])`
-* `cluster.get_host_gpu_ids()`: Collects `nvidia-smi -L` and finds 'UUID: ' inside
-* `cluster.get_host_node()`: Gets `spec.nodeName` from pod description
-* `cluster.get_host_volume()`: Gets size and used from `df -h | grep volumes`
+## PGBouncer
 
-### Deployment Manifests
+`PGBouncer` is the configuration key for a PostgreSQL deployment fronted by a **PgBouncer connection pool**.
+The SUT component runs PostgreSQL; the pool component runs PgBouncer.
+Benchmarker pods connect to PgBouncer, which multiplexes connections to PostgreSQL.
 
-Every DBMS that is deployed by bexhoma needs a YAML manifest.
-See for example https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
+This configuration is used to benchmark the overhead and benefit of connection pooling compared to direct PostgreSQL access.
+See [Example: PGBouncer](Example-PGBouncer.md) for a worked example.
 
-You may want to pay attention to name of the secret:
-```
-      imagePullSecrets:
-      - {name: dockerhub}
-```
-Another section that might be interesting is
-```
-      tolerations:
-```
+**Deployment template:** [`k8s/deploymenttemplate-PGBouncer.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PGBouncer.yml)
 
-#### Parametrize Templates
+**Configuration** (from `cluster.config`):
 
-Some parameters can be changed per DBMS or per experiment in Python, for example
-```
-experiment.set_resources(
-    requests = {
-        'cpu': cpu,
-        'memory': memory,
-        'gpu': 0
+```python
+'PGBouncer': {
+    'loadData': 'psql -U postgres -d {database} < {scriptname}',
+    'delay_prepare': 0,
+    'template': {
+        'version': 'v11.4',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+        'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", ""],
+            'url': 'jdbc:postgresql://{serverip}:9091/{database}?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar',
+            'database': 'postgres',
+            'schema': 'public',
+        }
     },
-    limits = {
-        'cpu': 0,
-        'memory': 0
-    },
-    nodeSelector = {
-        'cpu': cpu_type,
-        'gpu': '',
-    })
-experiment.set_resources(
-    nodeSelector = {
-        'cpu': cpu_type,
-        'gpu': '',
-        'kubernetes.io/hostname': request_node_name
-    })        
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for both the sut (postgres_exporter) and pool (pgbouncer_exporter) components
+},
 ```
 
-The parameters can be set via CLI (see for example `tpch.py`).
+The `monitor` section uses Kubernetes pod discovery to scrape both the PostgreSQL exporter (port 9187 on the SUT pods) and the PgBouncer exporter (port 9127 on the pool pods).
 
-## MariaDB
+PGBouncer uses the same DDL scripts as PostgreSQL — see the PostgreSQL section above.
 
-### Deployment
-
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml
-
-As of bexhoma version `v0.7.1` this contains
-```
-        args: [
-          "--innodb_log_buffer_size", "17179869184",
-          "--innodb-write-io-threads", "16",
-          "--innodb-log-file-size", "4294967296"
-        ]
-```
-as default settings.
-
-### Configuration
-
-```
-       'MariaDB': {
-            'loadData': 'mariadb < {scriptname}',
-            'template': {
-                'version': 'v10.4.6',
-                'alias': 'GP A',
-                'docker_alias': 'GP A',
-                'dialect': 'MySQL',
-                'JDBC': {
-                    'driver': "org.mariadb.jdbc.Driver",
-                    'auth': ["root", ""],
-                    'url': 'jdbc:mysql://{serverip}:9091/{dbname}',
-                    'jar': './mariadb-java-client-3.1.0.jar'
-                }
-            },
-            'logfile': '',
-            'datadir': '/var/lib/mysql/',
-            'priceperhourdollar': 0.0,
-        },
-```
-
-### DDL Scripts
-
-Example for [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDB)
-
-## MonetDB
-
-### Deployment
-
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MonetDB.yml
-
-### Configuration
-
-```
-       'MonetDB': {
-            'loadData': 'cd /home/monetdb;echo "user=monetdb\npassword=monetdb" > .monetdb;mclient demo < {scriptname}',
-            'template': {
-                'version': '11.37.11',
-                'alias': 'Columnwise',
-                'docker_alias': 'Columnwise',
-                 'JDBC': {
-                    'auth': ['monetdb', 'monetdb'],
-                    'driver': 'org.monetdb.jdbc.MonetDriver',
-                    'jar': 'jars/monetdb-jdbc-3.3.jre8',
-                    'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout=0'
-                }
-            },
-            'logfile': '/var/monetdb5/dbfarm/merovingian.log',
-            'datadir': '/var/monetdb5/',
-            'priceperhourdollar': 0.0,
-        },
-```
-
-### DDL Scripts
-
-Example for
-* [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MonetDB)
-
-## PostgreSQL
-
-### Deployment
-
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml
-
-As of bexhoma version `v0.8.9` this contains
-```
-        args:
-          # --- Connection & Worker Processes ---
-          - "-c"
-          - "max_connections=1500"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
-          - "-c"
-          - "max_worker_processes=128"   # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-WORKER-PROCESSES
-          - "-c"
-          - "max_parallel_workers=64"    # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS
-          - "-c"
-          - "max_parallel_workers_per_gather=8"  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS-PER-GATHER
-          - "-c"
-          - "max_parallel_maintenance_workers=8" # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-MAINTENANCE-WORKERS
-
-          # --- Memory Settings ---
-          - "-c"
-          - "shared_buffers=256GB"       # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS
-          - "-c"
-          - "effective_cache_size=350GB" # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE
-          - "-c"
-          - "work_mem=128MB"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM
-          - "-c"
-          - "maintenance_work_mem=4GB"   # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAINTENANCE-WORK-MEM
-          - "-c"
-          - "temp_buffers=64MB"          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-TEMP-BUFFERS
-          - "-c"
-          - "wal_buffers=16MB"           # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-BUFFERS
-          - "-c"
-          - "autovacuum_work_mem=1GB"    # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-WORK-MEM
-
-          # --- Autovacuum ---
-          - "-c"
-          - "autovacuum=on"                           # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM
-          - "-c"
-          - "autovacuum_max_workers=10"               # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-MAX-WORKERS
-          - "-c"
-          - "autovacuum_vacuum_cost_limit=1000"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-LIMIT
-          - "-c"
-          - "vacuum_cost_limit=1000"                  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-VACUUM-COST-LIMIT
-          - "-c"
-          - "autovacuum_naptime=15s"                  # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-NAPTIME
-          - "-c"
-          - "autovacuum_vacuum_cost_delay=20ms"       # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM-VACUUM-COST-DELAY
-
-          # --- WAL & Checkpoints (Ceph-optimized) ---
-          - "-c"
-          - "wal_level=replica"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
-          - "-c"
-          - "wal_compression=on"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-COMPRESSION
-          - "-c"
-          - "wal_writer_delay=500ms"                  # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-WRITER-DELAY
-          - "-c"
-          - "commit_delay=10000"                      # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-COMMIT-DELAY
-          - "-c"
-          - "synchronous_commit=off"                  # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT
-          - "-c"
-          - "max_wal_size=2GB"                        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE
-          - "-c"
-          - "min_wal_size=1GB"                        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MIN-WAL-SIZE
-          - "-c"
-          - "checkpoint_timeout=5min"                 # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-TIMEOUT
-          - "-c"
-          - "checkpoint_completion_target=0.9"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
-
-          # --- Planner Cost Tweaks (CephFS) ---
-          - "-c"
-          - "random_page_cost=4.0"                    # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-RANDOM-PAGE-COST
-          - "-c"
-          - "seq_page_cost=1.5"                       # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-SEQ-PAGE-COST
-          - "-c"
-          - "cpu_tuple_cost=0.01"                     # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-CPU-TUPLE-COST
-          - "-c"
-          - "effective_io_concurrency=2"              # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
-          - "-c"
-          - "default_statistics_target=500"           # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-DEFAULT-STATISTICS-TARGET
-
-          # --- Locks and Limits ---
-          - "-c"
-          - "max_locks_per_transaction=128"           # https://www.postgresql.org/docs/current/runtime-config-locks.html#GUC-MAX-LOCKS-PER-TRANSACTION
-          - "-c"
-          - "max_pred_locks_per_transaction=128"      # https://www.postgresql.org/docs/current/runtime-config-locks.html#GUC-MAX-PRED-LOCKS-PER-TRANSACTION
-          - "-c"
-          - "max_stack_depth=7MB"                     # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-STACK-DEPTH
-          - "-c"
-          - "max_files_per_process=4000"              # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-FILES-PER-PROCESS
-
-          # --- Miscellaneous ---
-          - "-c"
-          - "huge_pages=try"                          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-HUGE-PAGES
-```
-as default settings.
-
-### Configuration
-
-```
-        'PostgreSQL': {
-            'loadData': 'psql -U postgres -d {database} < {scriptname}',
-            'delay_prepare': 0,
-            'template': {
-                'version': 'v11.4',
-                'alias': 'General-B',
-                'docker_alias': 'GP-B',
-                 'JDBC': {
-                    'driver': "org.postgresql.Driver",
-                    'auth': ["postgres", ""],
-                    'url': 'jdbc:postgresql://{serverip}:9091/{database}?reWriteBatchedInserts=true&currentSchema={schema}',
-                    'jar': 'postgresql-42.5.0.jar',
-                    'database': 'postgres',
-                    'schema': 'public',
-                }
-            },
-            'logfile': '/usr/local/data/logfile',
-            'datadir': '/var/lib/postgresql/data/',
-            'priceperhourdollar': 0.0,
-            'monitor': {
-                'metrics': {
-                    'pg_stat_database_blks_read': {
-                        'type': 'application',
-                        'active': True,
-                        'metric': 'counter',
-                        'query': 'sum(pg_stat_database_blks_read{{datname!~"template.*"}})',
-                        'title': 'Number of disk blocks read in this database'
-                    },
-                    'pg_stat_database_blks_hit': {
-                        'type': 'application',
-                        'active': True,
-                        'metric': 'counter',
-                        'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})',
-                        'title': 'Number of times disk blocks were found already in the buffer cache'
-                    },
-                    'cache_hit_ratio': {
-                        'type': 'application',
-                        'active': True,
-                        'metric': 'gauge',
-                        'query': 'sum(pg_stat_database_blks_hit{{datname!~"template.*"}})/(sum(pg_stat_database_blks_hit{{datname!~"template.*"}}) + sum(pg_stat_database_blks_read{{datname!~"template.*"}}))',
-                        'title': 'Cache hit ratio'
-                    },
-                }
-            },
-        },
-```
-
-This has additional options:
-* `database`: the default database
-* `schema`: the default schema
-* `loadData` knowns the database via `{database}`. This will be replaced by the default database name or, in case of multi-tenancy, by the database of the tenant.
-* `url` knowns the database via `{database}` and the schema via `{schema}`. This will be replaced by the default database name and schema name or, in case of multi-tenancy, by the database or schema of the tenant.
-* `monitor`: some application metrics to be collected if `-ma` is activated
-
-### DDL Scripts
-
-Example for
-* [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/PostgreSQL)
-* [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/PostgreSQL)
+---
 
 ## MySQL
 
-### Deployment
+MySQL is supported for TPC-H and YCSB experiments.
+The default image runs MySQL 8.4.
 
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml
+**Deployment template:** [`k8s/deploymenttemplate-MySQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml)
 
-As of bexhoma version `v0.7.0` this contains
-```
-        args: [
-          # Some of these need restart
-          # The comments come from 8.3 docs
-          # https://dev.mysql.com/doc/refman/8.3/en/optimizing-innodb-logging.html
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-performance-multiple_io_threads.html
-          "--innodb-write-io-threads=64",             # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_write_io_threads
-          "--innodb-read-io-threads=64",              # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_read_io_threads
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-linux-native-aio.html
-          "--innodb-use-native-aio=0",                # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_use_native_aio
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_page_size
-          # "--innodb-page-size=4K",                  # Small for OLTP or similar to filesystem page size
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_chunk_size
-          # To avoid potential performance issues, the number of chunks (innodb_buffer_pool_size / innodb_buffer_pool_chunk_size) should not exceed 1000.
-          "--innodb-buffer-pool-chunk-size=500M",     # Small when size of pool changes often
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_buffer_pool_instances
-          # https://releem.com/docs/mysql-performance-tuning/innodb_buffer_pool_size
-          "--innodb-buffer-pool-instances=64",        # Parallelizes reads, but may lock writes
-          "--innodb-buffer-pool-size=32G",            # Buffer pool size must always be equal to or a multiple of innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances.
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-configuring-io-capacity.html
-          "--innodb-io-capacity=1000",                # Faster SSD assumed
-          # https://dev.mysql.com/doc/refman/8.0/en/innodb-redo-log-buffer.html
-          "--innodb-log-buffer-size=32G",             # The size in bytes of the buffer that InnoDB uses to write to the log files on disk
-          "--innodb-redo-log-capacity=8G",            # Defines the amount of disk space occupied by redo log files
-          "--innodb-flush-log-at-trx-commit=0",       # The default setting of 1 is required for full ACID compliance. With a setting of 0, logs are written and flushed to disk once per second.
-          # https://dev.mysql.com/doc/refman/8.3/en/online-ddl-parallel-thread-configuration.html
-          "--innodb-parallel-read-threads=64",        # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_parallel_read_threads
-          "--innodb-ddl-threads=64",                  # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_threads
-          "--innodb-ddl-buffer-size=128M",            # https://dev.mysql.com/doc/refman/8.3/en/innodb-parameters.html#sysvar_innodb_ddl_buffer_size
-          # https://dev.mysql.com/doc/refman/8.3/en/server-system-variables.html#sysvar_tmp_table_size
-          "--tmp-table-size=1GB",                     # Defines the maximum size of internal in-memory temporary tables
-          "--max-heap-table-size=1GB",                # Maximum size to which user-created MEMORY tables are permitted to grow
-          # https://dev.mysql.com/doc/refman/8.3/en/innodb-doublewrite-buffer.html
-          "--innodb-doublewrite=0",
-          "--innodb-change-buffer-max-size=50",       # You might increase this value for a MySQL server with heavy insert, update, and delete activity
-        ]
-```
-as default settings. It also runs MySQL 8.4.0 as default. Please visit the official website for explanations about settings, https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html
+The default deployment tuning includes `innodb-buffer-pool-size=32G`, `innodb-write-io-threads=64`, `innodb-read-io-threads=64`, `innodb-redo-log-capacity=8G`, `innodb-flush-log-at-trx-commit=0`, and `innodb-parallel-read-threads=64`.
+See the [MySQL 8.4 documentation](https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html) for parameter explanations.
 
-### Configuration
+**Configuration** (from `cluster.config`):
 
-```
-        'MySQL': {
-            'loadData': 'mysql --local-infile < {scriptname}',
-            'delay_prepare': 300,
-            'template': {
-                'version': 'CE 8.0.22',
-                'alias': 'General-C',
-                'docker_alias': 'GP-C',
-                'dialect': 'MySQL',
-                'JDBC': {
-                    'driver': "com.mysql.cj.jdbc.Driver",
-                    'auth': ["root", "root"],
-                    'url': 'jdbc:mysql://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
-                    'jar': ['mysql-connector-j-8.0.31.jar', 'slf4j-simple-1.7.21.jar']
-                }
-            },
-            'logfile': '/var/log/mysqld.log',
-            'datadir': '/var/lib/mysql/',
-            'priceperhourdollar': 0.0,
+```python
+'MySQL': {
+    'loadData': 'mysql --local-infile {database} < {scriptname}',
+    'delay_prepare': 120,
+    'template': {
+        'version': 'CE 8.0.36',
+        'alias': 'General-C',
+        'docker_alias': 'GP-C',
+        'dialect': 'MySQL',
+        'JDBC': {
+            'driver': "com.mysql.cj.jdbc.Driver",
+            'auth': ["root", "root"],
+            'url': 'jdbc:mysql://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
+            'jar': ['mysql-connector-j-8.0.31.jar', 'slf4j-simple-1.7.21.jar'],
+            'database': 'mysql',  # placeholder — must be overwritten per experiment
+        }
+    },
+    'logfile': '/var/log/mysqld.log',
+    'datadir': '/var/lib/mysql/',
+    'priceperhourdollar': 0.0,
+    'monitor': {
+        'sut': {
+            'metrics': 'mysql',
+            'blackbox': False,
         },
+    },
+},
 ```
 
-This uses `delay_prepare` to make bexhoma wait 5 minutes before starting to query the dbms.
-This is because configuring InnoDB takes a while and the server might restart during that period.
+`delay_prepare: 120` makes bexhoma wait 2 minutes before querying the DBMS.
+This accounts for InnoDB's buffer pool initialisation, which can cause a brief restart.
 
-### DDL Scripts
+**DDL scripts:**
+- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)
+- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MySQL)
+- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MySQL)
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
 
-Example for
-* [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)
-* [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
+---
 
+## MariaDB
 
-## Add a new DBMS
+MariaDB is supported for TPC-H, Benchbase TPC-C, HammerDB TPC-C, and YCSB experiments.
+It uses a dedicated `bexhoma` database user rather than `root`.
 
-Suppose you want to add a new DBMS called `newDBMS`.
+**Deployment template:** [`k8s/deploymenttemplate-MariaDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml)
 
-You will need to
-* add a corresponding section to the dockers part in `cluster.config`.
-* add a YAML template for the DBMS component called `k8s/deploymenttemplate-NewDBMS.yml` (just copy `k8s/deploymenttemplate-Dummy.yml`)
-* add schema scripts for the DBMS in a subfolder of `experiments/`
-* add a section to the Python management script, e.g., `example.py`. Look for  
+The default deployment sets `innodb_log_buffer_size`, `innodb-write-io-threads=16`, and `innodb-log-file-size`.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'MariaDB': {
+    'loadData': 'mariadb --user=bexhoma --password=password < {scriptname}',
+    'template': {
+        'version': 'v10.4.6',
+        'alias': 'General-A',
+        'docker_alias': 'GP-A',
+        'dialect': 'MySQL',
+        'JDBC': {
+            'driver': "org.mariadb.jdbc.Driver",
+            'auth': ["bexhoma", "password"],
+            'url': 'jdbc:mariadb://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
+            'jar': 'mariadb-java-client-3.1.0.jar',
+            'database': 'mariadb',  # placeholder — must be overwritten per experiment
+        },
+        'init_SQL': "SET optimizer_switch = 'mrr=on,mrr_cost_based=off'",
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/mysql/',
+    'priceperhourdollar': 0.0,
+},
 ```
-    # add configs
-    if args.dbms == "Dummy":
-        # Dummy DBMS
-        name_format = 'Dummy-{cluster}'
-        config = configurations.default(experiment=experiment, docker='Dummy', configuration=name_format.format(cluster=cluster_name), dialect='PostgreSQL', alias='DBMS A1')
-        config.loading_finished = True
-```  
-The parameter `docker='Dummy'` refers to the key in the dockers section in `cluster.config` and the name of the file in `k8s/`.
-You may add several DBMS by this way to the same experiment for comparison.
-Note that `example.py` contains a line
+
+The `init_SQL` statement is executed after each connection is established and enables multi-range read optimisation.
+
+**DDL scripts:**
+- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDB)
+- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MariaDB)
+- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MariaDB)
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MariaDB)
+
+---
+
+## MonetDB
+
+MonetDB is a column-store DBMS well-suited for TPC-H analytical workloads.
+
+**Deployment template:** [`k8s/deploymenttemplate-MonetDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MonetDB.yml)
+
+**Configuration** (from `cluster.config`):
+
+```python
+'MonetDB': {
+    'loadData': "cd /home/monetdb;printf 'user=monetdb\npassword=monetdb\n' > .monetdb;mclient demo < {scriptname}",
+    'template': {
+        'version': '11.37.11',
+        'alias': 'Columnwise',
+        'docker_alias': 'Columnwise',
+        'JDBC': {
+            'auth': ['monetdb', 'monetdb'],
+            'driver': 'org.monetdb.jdbc.MonetDriver',
+            'jar': 'monetdb-jdbc-12.2.jre8.jar',
+            'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout={timeout_ms}',
+            'database': 'demo',
+        }
+    },
+    'logfile': '/var/monetdb5/dbfarm/merovingian.log',
+    'datadir': '/var/monetdb5/',
+    'priceperhourdollar': 0.0,
+},
 ```
-parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['Dummy'])
+
+The `loadData` command first writes a `.monetdb` credentials file into the container home directory before piping the script to `mclient`.
+
+**DDL scripts:**
+- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MonetDB)
+- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MonetDB)
+
+---
+
+## Citus
+
+Citus is a distributed extension for PostgreSQL that shards tables across worker nodes.
+The coordinator node is deployed as the SUT; worker nodes are deployed as a StatefulSet.
+After each worker pod starts, bexhoma runs the `attachWorker` command on the coordinator to register it.
+
+**Deployment template:** [`k8s/deploymenttemplate-Citus.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Citus.yml)
+
+**Configuration** (from `cluster.config`):
+
+```python
+'Citus': {
+    'loadData': 'psql -U postgres < {scriptname}',
+    'attachWorker': "psql -U postgres --command=\"SELECT * from master_add_node('{worker}.{service_sut}', 5432);\"",
+    'template': {
+        'version': '10.0.2',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+        'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", "postgres"],
+            'url': 'jdbc:postgresql://{serverip}:9091/postgres?loadBalanceHosts=true',
+            'jar': 'postgresql-42.5.0.jar',
+            'database': 'postgres',
+            'schema': 'public',
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+},
 ```
-which filters command line arguments and restricts to adding only one DBMS (you may want to ignore `args.dbms` instead).
 
-If you need a JDBC driver different  from the above, please raise an issue: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues
+**DDL scripts:**
+- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/Citus)
+- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/Citus)
+- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/Citus)
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Citus)
 
+See [Example: Citus](Example-Citus.md) for a worked example.
 
+---
+
+## YugabyteDB
+
+YugabyteDB is a distributed, PostgreSQL-compatible DBMS.
+It consists of master and tablet-server (TServer) components, both deployed as StatefulSets.
+The JDBC connection targets the TServer service.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'YugabyteDB': {
+    'loadData': 'psql -U yugabyte --host yb-tserver-service.{namespace}.svc.cluster.local --port 5433 < {scriptname}',
+    'template': {
+        'version': 'v2.17.1',
+        'alias': 'Cloud-Native-1',
+        'docker_alias': 'CN1',
+        'JDBC': {
+            'driver': "com.yugabyte.Driver",
+            'auth': ["yugabyte", ""],
+            'url': 'jdbc:yugabytedb://yb-tserver-service.{namespace}.svc.cluster.local:5433/yugabyte?load-balance=true',
+            'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar',
+            'database': 'yugabyte',
+            'schema': 'public',
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for yb-master (port 7000) and yb-tserver (port 9000) pods
+},
+```
+
+The monitoring section configures Kubernetes pod discovery for both the master component (port 7000) and the TServer component (port 9000), scraping YugabyteDB's native Prometheus endpoint at `/prometheus-metrics`.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB)
+
+See [Example: YugabyteDB](Example-YugaByteDB.md) for a worked example.
+
+---
+
+## CockroachDB
+
+CockroachDB is a distributed, PostgreSQL wire-compatible DBMS.
+Worker nodes form the CockroachDB cluster; bexhoma registers each worker via the `attachWorker` command.
+The PostgreSQL JDBC driver is used for connectivity.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'CockroachDB': {
+    'loadData': 'cockroach sql --host {service_name} --port 9091 --insecure --file {scriptname}',
+    'delay_prepare': 120,
+    'attachWorker': "",  # CockroachDB auto-discovers cluster members
+    'template': {
+        'version': 'v24.2.4',
+        'alias': 'Cloud-Native-2',
+        'docker_alias': 'CN2',
+        'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["root", ""],
+            'url': 'jdbc:postgresql://{serverip}:9091/defaultdb?reWriteBatchedInserts=true&sslmode=disable',
+            'jar': 'postgresql-42.5.0.jar',
+            'database': 'defaultdb',
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/cockroach/cockroach-data',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for worker pods at /_status/vars on port 8080
+},
+```
+
+The monitoring section scrapes CockroachDB's built-in Prometheus endpoint (`/_status/vars`, port 8080) from all worker pods.
+
+**DDL scripts:**
+- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/CockroachDB)
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CockroachDB)
+
+See [Example: CockroachDB](Example-CockroachDB.md) for a worked example.
+
+---
+
+## TiDB
+
+TiDB is a distributed, MySQL-compatible DBMS.
+It consists of three components: the TiDB SQL layer (SUT), TiKV storage nodes (worker), and the Placement Driver (PD) coordinator.
+All three are deployed and monitored separately.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'TiDB': {
+    'loadData': 'mysql -P 4000 -h 127.0.0.1 -D {database} --local-infile < {scriptname}',
+    'delay_prepare': 60,
+    'template': {
+        'version': 'CE 8.0.22',
+        'alias': 'General-C',
+        'docker_alias': 'GP-C',
+        'dialect': 'MySQL',
+        'JDBC': {
+            'driver': "com.mysql.cj.jdbc.Driver",
+            'auth': ["root", "root"],
+            'url': 'jdbc:mysql://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
+            'jar': ['mysql-connector-j-8.0.31.jar', 'slf4j-simple-1.7.21.jar'],
+            'database': 'test',
+        }
+    },
+    'logfile': '/var/log/mysqld.log',
+    'datadir': '/var/lib/mysql/',
+    'priceperhourdollar': 0.0,
+    'worker_port': 2379,
+    'store_args': False,
+    'monitor': { ... },  # Prometheus discovery for tidb (port 9500), pd (port 2379), and tikv (port 20180) pods
+},
+```
+
+`store_args: False` suppresses capturing TiDB's verbose startup arguments in the summary.
+`worker_port: 2379` is the PD headless service port used internally for cluster coordination.
+The monitoring section scrapes all three components via Kubernetes pod discovery.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/TiDB)
+
+See [Example: TiDB](Example-TiDB.md) for a worked example.
+
+---
+
+## Dragonfly
+
+Dragonfly is a Redis-compatible, high-performance in-memory data store.
+It is used as the SUT for YCSB key-value workloads as a single-instance deployment.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'Dragonfly': {
+    'loadData': 'redis-cli < {scriptname}',
+    'delay_prepare': 0,
+    'attachWorker': '',
+    'template': {
+        'version': 'xxx',
+        'alias': 'Key-Value-1',
+        'docker_alias': 'KV1',
+        'auth': ["root", ""],
+    },
+    'logfile': '/var/log/redis/redis-server.log',
+    'datadir': '/data',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for sut pods on port 6379 at /metrics
+},
+```
+
+No JDBC driver is needed — YCSB communicates via the Redis wire protocol.
+The monitoring section scrapes Dragonfly's native Prometheus endpoint at `/metrics` on port 6379.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Dragonfly)
+
+See [Example: Dragonfly](Example-Dragonfly.md) for a worked example.
+
+---
+
+## DragonflyCluster
+
+`DragonflyCluster` is the configuration key for Dragonfly deployed as a **cluster** (multiple worker nodes).
+The loader and benchmarker connect via the cluster's headless service name.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'DragonflyCluster': {
+    'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
+    'delay_prepare': 0,
+    'attachWorker': '',
+    'template': {
+        'version': 'xxx',
+        'alias': 'Key-Value-1',
+        'docker_alias': 'KV1',
+        'auth': ["root", ""],
+    },
+    'logfile': '/var/log/redis/redis-server.log',
+    'datadir': '/data',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for worker pods on port 6379 at /metrics
+},
+```
+
+The key difference from single-node Dragonfly is that `loadData` targets the cluster service DNS name rather than `localhost`.
+DragonflyCluster uses the same YCSB DDL scripts as single-node [Dragonfly](#dragonfly).
+
+---
+
+## Redis
+
+`Redis` is the configuration key for a Redis cluster deployment (multiple shards as workers).
+It is used as the SUT for YCSB key-value workloads in a distributed setting.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'Redis': {
+    'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
+    'delay_prepare': 0,
+    'attachWorker': '',
+    'template': {
+        'version': 'xxx',
+        'alias': 'Key-Value-1',
+        'docker_alias': 'KV1',
+        'auth': ["root", ""],
+    },
+    'logfile': '/var/log/redis/redis-server.log',
+    'datadir': '/data',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for worker pods on port 9121 (redis_exporter)
+},
+```
+
+Monitoring uses a `redis_exporter` sidecar scraping each worker pod on port 9121.
+
+Redis does not have dedicated DDL scripts; YCSB manages table/key-space creation directly via the Redis wire protocol.
+
+See [Example: Redis](Example-Redis.md) for a worked example.
+
+---
+
+## DatabaseService
+
+`DatabaseService` is a generic configuration for **external database services** — cloud-managed databases or any PostgreSQL-compatible endpoint that is not itself deployed inside the Kubernetes cluster.
+The JDBC connection and `loadData` command reference the service by its in-cluster DNS name via `{namespace}`.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'DatabaseService': {
+    'loadData': 'psql -U postgres --host bexhoma-service.{namespace}.svc.cluster.local --port 9091 < {scriptname}',
+    'template': {
+        'version': 'v11.4',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+        'JDBC': {
+            'driver': "org.postgresql.Driver",
+            'auth': ["postgres", ""],
+            'url': 'jdbc:postgresql://bexhoma-service.{namespace}.svc.cluster.local:9091/postgres?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar',
+            'database': 'postgres',
+        }
+    },
+    'logfile': '/usr/local/data/logfile',
+    'datadir': '/var/lib/postgresql/data/',
+    'priceperhourdollar': 0.0,
+},
+```
+
+**DDL scripts:**
+- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/DatabaseService)
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/DatabaseService)
+
+See [Example: Cloud Database](Example-CloudDatabase.md) for a worked example.
+
+---
+
+## Add a New DBMS
+
+To add a DBMS called `NewDBMS`:
+
+1. **Add a configuration entry** in the `dockers` section of `cluster.config` following the reference above.
+
+2. **Create a deployment manifest** at `k8s/deploymenttemplate-NewDBMS.yml`.  
+   Copy `k8s/deploymenttemplate-Dummy.yml` as a starting point and adjust the image, port, and resource defaults.
+
+3. **Add DDL scripts** in a subfolder of `experiments/`, e.g., `experiments/tpch/NewDBMS/` for TPC-H.
+
+4. **Register the DBMS in the experiment script** (e.g., `example.py`):
+
+   ```python
+   if args.dbms == "NewDBMS":
+       name_format = 'NewDBMS-{cluster}'
+       config = configurations.default(
+           experiment=experiment,
+           docker='NewDBMS',
+           configuration=name_format.format(cluster=cluster_name),
+           alias='DBMS A1'
+       )
+   ```
+
+   The `docker='NewDBMS'` parameter must match the `dockers` key and the YAML filename.
+
+5. **Add the choice** to the CLI argument parser:
+
+   ```python
+   parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['NewDBMS'])
+   ```
+
+If you need a JDBC driver that is not yet included, please raise an issue at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues.

@@ -1,3 +1,66 @@
+# =============================================================================
+# Bexhoma TiDB cluster - production-hardened manifest
+# =============================================================================
+# Component names, label selectors and ENV *values* are intentionally left
+# unchanged because other components outside this manifest depend on them.
+#
+# -----------------------------------------------------------------------------
+# IMPORTANT - restart / recovery model (read this before editing the init logic)
+# -----------------------------------------------------------------------------
+# etcd (which PD embeds) only consults --initial-cluster during the FIRST
+# bootstrap of an empty data directory. Once a valid data directory exists,
+# etcd ignores --initial-cluster and recovers its member ID + peer list from
+# its own WAL to rejoin the cluster.
+#
+# Therefore the correct, safe behaviour is:
+#   * ALWAYS pass the same --initial-cluster value, on every start.
+#   * NEVER delete, move, or "repair" anything under the PD data directory
+#     from an init container. Deleting member/wal while keeping member/snap/db
+#     leaves etcd with a snapshot but no valid member identity, which causes
+#     "cannot use none as id" / "context deadline exceeded" crash loops.
+#
+# A genuinely corrupt PD cluster is a deliberate operator recovery action
+# (PD's `pd-recover` tool: scale PD to 0, delete PD PVCs, scale back to 1,
+# restart TiKV + TiDB) - it must NOT be automated on every pod restart,
+# because that silently destroys cluster metadata whenever a pod is flaky.
+#
+# -----------------------------------------------------------------------------
+# Best practices applied:
+#   * podManagementPolicy: Parallel on PD  -> avoids the etcd quorum deadlock
+#     (sequential start can never reach quorum). Also on TiKV (faster start).
+#   * Replica-count agnostic: the PD init container builds --initial-cluster
+#     dynamically from BEXHOMA_REPLICAS, so 1, 3, 5, ... PD pods all work.
+#   * Init container is now NON-DESTRUCTIVE: it only composes the
+#     --initial-cluster string. It never touches the data directory.
+#   * startup / liveness / readiness probes on every component.
+#   * Graceful shutdown: preStop hooks + tuned terminationGracePeriodSeconds.
+#   * PodDisruptionBudgets so voluntary disruptions keep quorum.
+#   * Soft pod anti-affinity so replicas spread across nodes when possible.
+#   * RollingUpdate strategies, revisionHistoryLimit, minReadySeconds.
+#   * Hardened securityContext (no privilege escalation, dropped capabilities,
+#     RuntimeDefault seccomp), automountServiceAccountToken: false.
+#   * Resource requests/limits on every container (TUNE THESE for your load -
+#     the PD values are conservative defaults; TiKV/TiDB keep prior values,
+#     except the TiDB memory limit which was raised from 1Gi because a limit
+#     below the 16Gi request is rejected by the API server).
+#
+# NOTE: podManagementPolicy, serviceName and volumeClaimTemplates are IMMUTABLE
+# on an existing StatefulSet. To adopt this on a running cluster, delete the
+# StatefulSets first (the PVCs survive):
+#   kubectl delete sts bexhoma-pd bexhoma-tikv --cascade=orphan
+# then kubectl apply -f this-file.
+#
+# FIRST-TIME / POST-FIX CLEAN START: because earlier bootstraps failed partway
+# and may have left half-written PD data directories, do ONE deliberate clean
+# wipe so the first bootstrap completes cleanly:
+#   kubectl delete sts bexhoma-pd --cascade=orphan
+#   kubectl delete pvc -l component=pd
+#   kubectl apply -f this-file
+# After that, normal restarts need none of this - intact data dirs just rejoin.
+#
+# BEXHOMA_REPLICAS MUST equal .spec.replicas of the PD StatefulSet.
+# =============================================================================
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,23 +70,19 @@ spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 4000}
   - {port: 9500, protocol: TCP, name: port-web, targetPort: 9500}
-  #- {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 8080}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: bexhoma-pd
+  name: bexhoma-pd                       # must match the PD StatefulSet serviceName
   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
-  annotations:
 spec:
   ports:
   - {port: 2379, protocol: TCP, name: port-dbms, targetPort: 2379}
   - {port: 2380, protocol: TCP, name: port-web, targetPort: 2380}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  #-- publishNotReadyAddresses: true
   clusterIP: None
+  publishNotReadyAddresses: true         # lets peers resolve each other during init
   selector: {app: bexhoma, component: pd, configuration: default, experiment: default}
 ---
 apiVersion: v1
@@ -31,25 +90,53 @@ kind: Service
 metadata:
   name: bexhoma-tikv
   labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
-  annotations:
 spec:
   ports:
   - {port: 20160, protocol: TCP, name: port-dbms, targetPort: 20160}
-  #- {port: 2380, protocol: TCP, name: port-web, targetPort: 2380}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  #-- publishNotReadyAddresses: true
+  - {port: 20180, protocol: TCP, name: port-web, targetPort: 20180}
   clusterIP: None
+  publishNotReadyAddresses: true
   selector: {app: bexhoma, component: tikv, configuration: default, experiment: default}
 ---
-# PD StatefulSet (3 replicas)
+# --- Disruption budgets -------------------------------------------------------
+# maxUnavailable: 1 is replica-count agnostic: with >=3 PD/TiKV pods it keeps a
+# quorum / majority of stores available during voluntary disruptions (node
+# drains, upgrades). With 1-2 replicas you have no HA anyway - prefer an ODD
+# PD count (1, 3, 5) so etcd can form a majority.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bexhoma-pd
+  labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bexhoma-tikv
+  labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
+---
+# --- PD (Placement Driver / etcd) StatefulSet --------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: bexhoma-pd
   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
 spec:
-  serviceName: bexhoma-pds
-  replicas: 3
+  serviceName: bexhoma-pd                # matches the headless Service name
+  replicas: 3                            # keep ODD; BEXHOMA_REPLICAS must equal this
+  podManagementPolicy: Parallel          # REQUIRED: sequential start can't reach quorum
+  revisionHistoryLimit: 10
+  minReadySeconds: 10
+  updateStrategy:
+    type: RollingUpdate                  # updates go one ordinal at a time -> quorum kept
   selector:
     matchLabels:
       {app: bexhoma, component: pd, configuration: default, experiment: default}
@@ -57,44 +144,198 @@ spec:
     metadata:
       labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
     spec:
+      terminationGracePeriodSeconds: 90
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels: {app: bexhoma, component: pd}
+      # Init container: ONLY composes the --initial-cluster string for however
+      # many replicas exist. It is intentionally NON-DESTRUCTIVE - it never
+      # reads, deletes, or modifies anything under the PD data directory.
+      # etcd ignores --initial-cluster once a valid data dir exists, so passing
+      # it unconditionally is safe for both first boot and every restart.
+      initContainers:
+      - name: pd-init
+        image: busybox:1.36
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          SVC="${BEXHOMA_PD_SERVICE}"
+          PREFIX=$(echo "$POD_NAME" | sed 's/-[0-9]*$//')
+          REPLICAS="${BEXHOMA_REPLICAS:-3}"
+
+          # Build the etcd initial-cluster string for N replicas (N >= 1).
+          INITIAL_CLUSTER=""
+          i=0
+          while [ "$i" -lt "$REPLICAS" ]; do
+            MEMBER="${PREFIX}-${i}=http://${PREFIX}-${i}.${SVC}.${NAMESPACE}.svc.cluster.local:2380"
+            if [ -z "$INITIAL_CLUSTER" ]; then
+              INITIAL_CLUSTER="$MEMBER"
+            else
+              INITIAL_CLUSTER="${INITIAL_CLUSTER},${MEMBER}"
+            fi
+            i=$((i + 1))
+          done
+
+          # Always pass --initial-cluster. On first boot etcd uses it to
+          # bootstrap; on every later restart etcd ignores it and recovers
+          # identity + membership from its own WAL. Nothing is deleted here.
+          printf '%s' "--initial-cluster=${INITIAL_CLUSTER}" > /pd-args/extra-args
+
+          echo "extra-args contents:"
+          cat /pd-args/extra-args
+          echo ""
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: BEXHOMA_PD_SERVICE
+          value: bexhoma-pd
+        - name: BEXHOMA_REPLICAS         # MUST equal .spec.replicas above
+          value: "3"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests: {cpu: 50m, memory: 64Mi}
+          limits:   {cpu: 200m, memory: 128Mi}
+        volumeMounts:
+        # The data dir is intentionally NOT mounted here - the init container
+        # has no reason to touch it. Only the shared args dir is mounted.
+        - {name: pd-args, mountPath: /pd-args}
       containers:
       - name: dbms
-        image: pingcap/pd:v7.1.0
-        args:
-          # Use HOSTNAME to derive pod identity. Initial cluster must list all peers.
-          - --name=$(POD_NAME)
-          - --data-dir=/var/lib/pd
-          - --client-urls=http://0.0.0.0:2379
-          - --peer-urls=http://0.0.0.0:2380
-          - --advertise-client-urls=http://$(POD_NAME).$(BEXHOMA_PD_SERVICE):2379
-          - --advertise-peer-urls=http://$(POD_NAME).$(BEXHOMA_PD_SERVICE):2380
-          - --initial-cluster=$(BEXHOMA_INITIAL_CLUSTER)
-          #- --initial-cluster=$(BEXHOMA_pd_NAME)-0=http://$(BEXHOMA_pd_NAME)-0.$(BEXHOMA_pd_SERVICE):2380,$(BEXHOMA_pd_NAME)-1=http://$(BEXHOMA_pd_NAME)-1.$(BEXHOMA_pd_SERVICE):2380,$(BEXHOMA_pd_NAME)-2=http://$(BEXHOMA_pd_NAME)-2.$(BEXHOMA_pd_SERVICE):2380
+        image: pingcap/pd:v7.1.6
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+
+          echo "===== PD PVC DIAGNOSTIC ($(date -u)) ====="
+          echo "POD_NAME=${POD_NAME}"
+          echo "--- mount info for /var/lib/pd ---"
+          df -h /var/lib/pd || true
+          mount | grep /var/lib/pd || echo "(no specific mount line - may be part of a parent mount)"
+          echo "--- full tree under /var/lib/pd ---"
+          ls -laR /var/lib/pd || echo "(/var/lib/pd does not exist or is empty)"
+          echo "--- member/ summary ---"
+          if [ -d /var/lib/pd/member ]; then
+            echo "member/ EXISTS"
+            [ -d /var/lib/pd/member/wal ]  && echo "  wal/  exists: $(ls -la /var/lib/pd/member/wal)"   || echo "  wal/  MISSING"
+            [ -d /var/lib/pd/member/snap ] && echo "  snap/ exists: $(ls -la /var/lib/pd/member/snap)" || echo "  snap/ MISSING"
+          else
+            echo "member/ DOES NOT EXIST  -> this volume is empty (fresh bootstrap expected)"
+          fi
+          echo "===== END DIAGNOSTIC ====="
+
+          EXTRA="$(cat /pd-args/extra-args)"
+          exec /pd-server \
+            --name="${POD_NAME}" \
+            --data-dir=/var/lib/pd \
+            --client-urls=http://0.0.0.0:2379 \
+            --peer-urls=http://0.0.0.0:2380 \
+            --advertise-client-urls="http://${POD_NAME}.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local:2379" \
+            --advertise-peer-urls="http://${POD_NAME}.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local:2380" \
+            ${EXTRA}
         env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: BEXHOMA_PD_SERVICE
+          value: bexhoma-pd
         ports:
-          - containerPort: 2379
-            name: client
-          - containerPort: 2380
-            name: peer
-        #volumeMounts:
-        #  - name: bxw
-        #    mountPath: /var/lib/pd
-  volumeClaimTemplates:
-    - metadata:
-        name: bxw
-        labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
-      spec:
-        accessModes: ["ReadWriteOnce"]
+        - {containerPort: 2379, name: client}
+        - {containerPort: 2380, name: peer}
+        # PD handles SIGTERM gracefully (it transfers etcd leadership itself).
+        # The sleep just lets Service endpoints deregister before the process
+        # exits, so peers stop being routed here first.
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                # 1. Ask PD to resign leadership so another member takes over cleanly
+                curl -sf -X POST http://localhost:2379/pd/api/v1/leader/resign || true
+                # 2. Give etcd time to complete any in-flight WAL writes
+                sleep 5
+                # 3. Force flush to CephFS
+                sync
+                # 4. Wait for endpoint deregistration
+                sleep 10
+        #lifecycle:
+        #  preStop:
+        #    exec:
+        #      command: ["/bin/sh", "-c", "sleep 15"]
+        # tcpSocket is used because a stable HTTP health path varies between PD
+        # versions. If your PD exposes it, /pd/health on port 2379 is richer.
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 2379
+          periodSeconds: 5
+          failureThreshold: 60   # 5 min
+        livenessProbe:
+          tcpSocket: {port: 2379}
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 5
+        readinessProbe:
+          tcpSocket: {port: 2379}
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        # PD is lightweight - these are conservative defaults, tune as needed.
         resources:
-          requests:
-            storage: 10Gi
-        # storageClassName: standard  # optional: anpassen falls nötig
+          requests: {cpu: 250m, memory: 512Mi}
+          limits:   {cpu: "1",  memory: 2Gi}
+        volumeMounts:
+        - {name: bxw, mountPath: /var/lib/pd}
+        - {name: pd-args, mountPath: /pd-args}
+      volumes:
+      - name: pd-args
+        emptyDir: {}                     # shared between init and main container
+  volumeClaimTemplates:
+  - metadata:
+      name: bxw
+      labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: cephcsi
 ---
-# TiKV StatefulSet (3 replicas)
+# --- TiKV (storage) StatefulSet ----------------------------------------------
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -103,6 +344,11 @@ metadata:
 spec:
   serviceName: bexhoma-tikv
   replicas: 3
+  podManagementPolicy: Parallel          # faster start; TiKV nodes are independent
+  revisionHistoryLimit: 10
+  minReadySeconds: 10
+  updateStrategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       {app: bexhoma, component: tikv, configuration: default, experiment: default}
@@ -110,117 +356,226 @@ spec:
     metadata:
       labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
     spec:
+      terminationGracePeriodSeconds: 120 # TiKV needs time to flush / shed leaders
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels: {app: bexhoma, component: tikv}
+      # Best-effort wait so TiKV does not log-spam before PD is reachable.
+      # Bounded (~3 min) then continues anyway - TiKV retries PD internally,
+      # so this can never deadlock the pod in Init.
+      initContainers:
+      - name: wait-for-pd
+        image: busybox:1.36
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          PD_HOST="${BEXHOMA_PD_NAME}-0.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local"
+          echo "Waiting for PD at ${PD_HOST}:2379 ..."
+          i=0
+          while [ "$i" -lt 60 ]; do
+            if nc -w 2 "${PD_HOST}" 2379 < /dev/null 2>/dev/null; then
+              echo "PD is reachable."
+              exit 0
+            fi
+            echo "  PD not reachable yet (attempt ${i}), retrying in 3s..."
+            i=$((i + 1))
+            sleep 3
+          done
+          echo "WARNING: PD not reachable after timeout; starting TiKV anyway."
+          exit 0
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: BEXHOMA_PD_NAME
+          value: bexhoma-pd
+        - name: BEXHOMA_PD_SERVICE
+          value: bexhoma-pd
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests: {cpu: 50m, memory: 32Mi}
+          limits:   {cpu: 100m, memory: 64Mi}
       containers:
       - name: dbms
-        image: pingcap/tikv:v7.1.0
+        image: pingcap/tikv:v7.1.6
+        imagePullPolicy: IfNotPresent
         args:
-          - --addr=0.0.0.0:20160
-          - --advertise-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20160
-          #- --advertise-status-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE):20180
-          - --status-addr=0.0.0.0:20180
-          - --pd=$(BEXHOMA_PD_LIST)
-          - --data-dir=/var/lib/tikv
+        - --addr=0.0.0.0:20160
+        - --advertise-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE).$(NAMESPACE).svc.cluster.local:20160
+        - --status-addr=0.0.0.0:20180
+        - --advertise-status-addr=$(POD_NAME).$(BEXHOMA_TIKV_SERVICE).$(NAMESPACE).svc.cluster.local:20180
+        - --pd=$(BEXHOMA_PD_LIST)
+        - --data-dir=/var/lib/tikv
         env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-        resources:
-          limits: {cpu: 16, memory: 64Gi}
-          requests: {cpu: 16, memory: 64Gi}
+        # POD_NAME and NAMESPACE must be declared before any var that
+        # references them via $(...) substitution.
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: BEXHOMA_TIKV_SERVICE
+          value: bexhoma-tikv
+        - name: BEXHOMA_PD_LIST
+          value: "bexhoma-pd-0.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379,bexhoma-pd-1.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379,bexhoma-pd-2.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379"
         ports:
-          - containerPort: 20160
-            name: tikv
-          - containerPort: 20180
-            name: metrics
+        - {containerPort: 20160, name: tikv}
+        - {containerPort: 20180, name: metrics}
+        # Sleep lets PD begin migrating Raft leaders off this store and lets
+        # Service endpoints deregister before TiKV receives SIGTERM.
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 30"]
+        startupProbe:
+          tcpSocket: {port: 20160}
+          periodSeconds: 5
+          failureThreshold: 30
+        livenessProbe:
+          tcpSocket: {port: 20160}
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 5
+        readinessProbe:
+          tcpSocket: {port: 20160}
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:   {cpu: 16, memory: 64Gi}
+          requests: {cpu: 16, memory: 64Gi}
         volumeMounts:
-          - name: bxw
-            mountPath: /var/lib/tikv
+        - {name: bxw, mountPath: /var/lib/tikv}
   volumeClaimTemplates:
   - metadata:
       name: bxw
       labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
     spec:
-      accessModes:
-        - "ReadWriteOnce"
+      accessModes: ["ReadWriteOnce"]
       resources:
         requests:
           storage: 100Gi
-      storageClassName: shared
-#---
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-#  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-#  name: bexhoma-storage
-#spec:
-#  accessModes:
-#    - ReadWriteOnce
-#  resources:
-#    requests:
-#      storage: 20Gi
-#  storageClassName: shared
+      storageClassName: cephcsi
 ---
+# --- TiDB (SQL layer) Deployment ---------------------------------------------
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   name: bexhoma-deployment-tidb
 spec:
-  replicas: 1
+  replicas: 1                            # stateless - scale freely, each is independent
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600           # yum install + wait-for-TiKV can be slow
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0                  # zero-downtime when replicas > 1
+      maxSurge: 1
   selector:
     matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
   template:
     metadata:
       labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
     spec:
+      terminationGracePeriodSeconds: 30
       automountServiceAccountToken: false
       imagePullSecrets:
       - {name: dockerhub}
-      nodeSelector:
-      tolerations:
-      #- key: "nvidia.com/gpu"
-      #  effect: "NoSchedule"
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels: {app: bexhoma, component: sut}
       containers:
       - name: dbms
-        command:
-        - /bin/sh
-        - -c
+        image: pingcap/tidb:v7.1.6
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
         args:
         - |
-          set -ex;
-          yum update -y;
-          yum install -y mysql;
-          echo "Starting TiDB..." && \
-          exec /tidb-server --store=tikv --status=9500 --path=$(BEXHOMA_PD_LIST)
-        #command: ["/bin/sh", "-c"]
-        #args:
-        #  - |
-        #    set -ex;
-        #    yum update -y;
-        #    yum install -y mysql;
-        #    echo "Starting TiDB..." && \
-        #    /tidb-server --store=tikv --status=10080 --path=$(BEXHOMA_PD_LIST)
-        image: pingcap/tidb:v7.1.0
-        #args:
-        #  - /tidb-server
-        #  - --tikv=tikv
-        #  - --path=$(BEXHOMA_pd_LIST)
+          set -e
+          echo "Installing mysql client..."
+          yum install -y mysql --nogpgcheck || echo "WARNING: mysql client install failed; continuing."
+          echo "Waiting for at least one TiKV store to be Up..."
+          until curl -sf "http://${BEXHOMA_PD_NAME}-0.${BEXHOMA_PD_SERVICE}.${NAMESPACE}.svc.cluster.local:2379/pd/api/v1/stores" \
+                | grep -qE '"state_name":[[:space:]]*"Up"'; do
+            echo "  No TiKV store Up yet, sleeping 5s..."
+            sleep 5
+          done
+          echo "TiKV is Up. Starting TiDB..."
+          exec /tidb-server --store=tikv --status=9500 --path="${BEXHOMA_PD_LIST}"
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: BEXHOMA_PD_NAME
+          value: bexhoma-pd
+        - name: BEXHOMA_PD_SERVICE
+          value: bexhoma-pd
+        - name: BEXHOMA_PD_LIST
+          value: "bexhoma-pd-0.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379,bexhoma-pd-1.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379,bexhoma-pd-2.bexhoma-pd.$(NAMESPACE).svc.cluster.local:2379"
         ports:
-          - containerPort: 4000
-            name: mysql
-          - containerPort: 9500
-            name: status
+        - {containerPort: 4000, name: mysql}
+        - {containerPort: 9500, name: status}
+        # Let in-flight queries drain before the process exits.
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 10"]
+        # tidb-server only starts after yum + the wait loop, so the startup
+        # probe is generous: ~15 min before liveness can kick in.
+        startupProbe:
+          httpGet: {path: /status, port: 9500}
+          periodSeconds: 10
+          failureThreshold: 90
+        livenessProbe:
+          httpGet: {path: /status, port: 9500}
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 5
+        readinessProbe:
+          httpGet: {path: /status, port: 9500}
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        # NOTE: the original limits.memory was 1Gi, which is REJECTED because it
+        # is below the 16Gi request. Raised to 16Gi. The 100m CPU request/limit
+        # is very low for a SQL layer under load - raise it for real benchmarks.
         resources:
-          limits: {cpu: 100m, memory: 1Gi}
-          requests: {cpu: 100m, memory: 16Gi}
-        #command: ["/bin/bash"]
-        #args: ["yum update -y && yum install -y mysql && /tidb-server --tikv=tikv --path=$(BEXHOMA_pd_LIST)"]
-        #volumeMounts:
-        #- {mountPath: /data, name: benchmark-data-volume}
-        #- {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
-      #volumes:
-      #- name: benchmark-data-volume
-      #  persistentVolumeClaim: {claimName: bexhoma-data}
-      #- name: benchmark-storage-volume
-      #  persistentVolumeClaim: {claimName: bexhoma-storage}
+          requests: {cpu: 4, memory: 16Gi}
+          limits:   {cpu: 4, memory: 16Gi}

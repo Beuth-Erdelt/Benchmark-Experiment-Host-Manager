@@ -103,21 +103,24 @@ class dbmsbenchmarker(base):
         cmd['update_dbmsbenchmarker'] = 'git pull'#/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['update_dbmsbenchmarker'], pod=pod_dashboard, container="dashboard")
         if self.benchmarking_is_active():
-            print("Join results ", end="", flush=True)
+            #print("Join results ", end="", flush=True)
+            print("{:30s}: join results...".format("Experiment"), end="", flush=True)
             cmd['merge_results'] = 'python merge.py -r /results/ -c '+str(self.code)
             self.cluster.execute_command_in_pod(command=cmd['merge_results'], pod=pod_dashboard, container="dashboard")
             print("done!")
-        print("Build evaluation cube ", end="", flush=True)
+        #print("Build evaluation cube ", end="", flush=True)
+        print("{:30s}: build evaluation cube...".format("Experiment"), end="", flush=True)
         cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
         self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         print("done!")
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentfile_download(filename='')
+        self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentfile_upload(filename='')
+        self.experimentupload_file(filename='')
     def show_summary(self):
         #print('dbmsbenchmarker.show_summary()')
+        self.evaluator.load_inspector()
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -158,6 +161,8 @@ class dbmsbenchmarker(base):
             print("\n### Execution")
             print("\n#### Per Connection\n")
             df = self.evaluator.get_summary_benchmark_per_connection()
+            df.drop('configuration', axis=1, inplace=True, errors='ignore')
+            df.drop('pod', axis=1, inplace=True, errors='ignore')
             print(df.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Phase\n")
             df = self.evaluator.get_summary_benchmark_per_phase()
@@ -170,7 +175,7 @@ class dbmsbenchmarker(base):
                 df = df.sort_index().T.round(2)
                 #df.index = df.index.map(map_index_to_queryname)
                 #print(df)
-                df.index.names = ["DBMS"]
+                df.index.names = ["Queries"]
                 print(df.to_markdown(index=True, floatfmt=".2f"))
                 num_of_queries = len(df.index)
             print("\n### Errors (failed queries)\n")

@@ -133,12 +133,18 @@ class default():
         You should have received a copy of the GNU Affero General Public License
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
     """
+    configurations = dict()
     def __init__(self, experiment, docker=None, configuration='', script=None, alias=None, num_experiment_to_apply=None, clients=[1], dialect='', worker=0, dockerimage=''):#, code=None, instance=None, volume=None, docker=None, script=None, queryfile=None):
         self.logger = logging.getLogger('bexhoma')
         self.experiment = experiment #: Unique identifier of the experiment
         self.docker = docker #: Name of the Docker image
         if len(configuration) == 0:
             configuration = docker
+            if not configuration in default.configurations:
+                default.configurations[configuration] = 1
+            else:
+                default.configurations[configuration] = default.configurations[configuration] + 1
+            configuration = configuration + '-' + str(default.configurations[configuration])
         self.configuration = configuration #: Name of the configuration, default: Name of the Docker image
         self.volume = self.experiment.volume
         if docker is not None:
@@ -2996,6 +3002,7 @@ scrape_configs:
         self.pod_sut = pods[0]
         pod_sut = self.pod_sut
         c['hostsystem'] = self.get_host_all()
+        c['storage'] = self.storage
         # get worker information
         c['worker'] = {}
         components = list(self.deployment_infos['statefulset'].keys())
@@ -3682,8 +3689,8 @@ scrape_configs:
         return self.experiment.cluster.execute_command_in_pod(command=command, pod=pod, container=container, params=params)
     def experimentupload_file(self, filename):
         return self.experiment.experimentupload_file(filename)
-    def experimentfile_download(self, filename):
-        return self.experiment.experimentfile_download(filename)
+    def experimentdownload_file(self, filename):
+        return self.experiment.experimentdownload_file(filename)
     def copyLog(self):
         print("copyLog")
         pods = self.experiment.cluster.get_pods(component='sut', configuration=self.configuration, experiment=self.code)

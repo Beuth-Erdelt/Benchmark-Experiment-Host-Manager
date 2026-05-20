@@ -155,7 +155,8 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                config = configurations.hammerdb(experiment=experiment, docker='PostgreSQL', configuration=config_name, dialect='PostgreSQL', alias='DBMS D')
+                #, configuration=config_name
+                config = configurations.hammerdb(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS D')
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                 )
@@ -205,7 +206,8 @@ if __name__ == '__main__':
                 # MySQL
                 name_format = 'MySQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                config = configurations.hammerdb(experiment=experiment, docker='MySQL', configuration=config_name, dialect='MySQL', alias='DBMS D')
+                #, configuration=config_name
+                config = configurations.hammerdb(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS D')
                 config.set_storage(
                     storageConfiguration = 'mysql'
                 )
@@ -262,7 +264,8 @@ if __name__ == '__main__':
                 # MariaDB
                 name_format = 'MariaDB-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                config = configurations.hammerdb(experiment=experiment, docker='MariaDB', configuration=config_name, dialect='MariaDB', alias='DBMS D')
+                #, configuration=config_name
+                config = configurations.hammerdb(experiment=experiment, docker='MariaDB', dialect='MariaDB', alias='DBMS D')
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                 )
@@ -322,7 +325,8 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'Citus-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                config = configurations.hammerdb(experiment=experiment, docker='Citus', configuration=config_name, dialect='Citus', alias='DBMS D', worker=num_worker)
+                #, configuration=config_name
+                config = configurations.hammerdb(experiment=experiment, docker='Citus', dialect='Citus', alias='DBMS D', worker=num_worker)
                 config.set_storage(
                     storageConfiguration = 'citus'
                     )

@@ -77,6 +77,7 @@ class logger(base):
             if filename.startswith("bexhoma-loading-" + jobname) and filename.endswith(".sensor.log"):
                 full_path = self.path + "/" + filename
                 df = self.log_to_df(full_path)
+                #df.index = df['configuration'].astype(str) + "-" + df['experiment_run'].astype(str)
                 if df.empty and full_path in self.workflow_errors:
                     print("Error in " + filename)
                     print(self.workflow_errors)

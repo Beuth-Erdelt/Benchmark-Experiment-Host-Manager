@@ -78,8 +78,8 @@ class dbmsbenchmarker(logger):
         self.evaluation = None
         self.path_base = path
         super().__init__(code, path, True, True)
-        self.get_inspector()
-    def get_inspector(self):
+        self.load_inspector()
+    def load_inspector(self):
         """
         Loads the DBMSBenchmarker inspector for this experiment.
 
@@ -105,7 +105,7 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame
         """
         if self.evaluation is None:
-            self.get_inspector()
+            self.load_inspector()
         loading_times = {}
         for conn_name, connection in self.evaluation.benchmarks.dbms.items():
             loading_times[conn_name] = {}
@@ -117,6 +117,24 @@ class dbmsbenchmarker(logger):
         df = df.round(2).T
         df = df.rename_axis(index="DBMS")
         return df
+    def test_results(self):
+        """
+        Validates results by loading and reconstructing the workflow.
+
+        :return: ``0`` on success, ``1`` if an exception is raised.
+        :rtype: int
+        """
+        try:
+            self.load_inspector()
+            if self.include_benchmarking:
+                df = self.get_df_benchmarking()
+                self.workflow = self.reconstruct_workflow(df)
+            if self.include_loading:
+                self.get_df_loading()
+            return 0
+        except Exception as exc:
+            print(exc)
+            return 1
     def get_df_benchmarking(self):
         """
         Returns the DataFrame containing all benchmarking-phase results.
@@ -128,7 +146,7 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame
         """
         if self.evaluation is None:
-            self.get_inspector()
+            self.load_inspector()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
@@ -229,7 +247,7 @@ class dbmsbenchmarker(logger):
             res = gmean(x)
             return float(res) if np.isscalar(res) or res.size == 1 else float(res[0])
         if self.evaluation is None:
-            self.get_inspector()
+            self.load_inspector()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
@@ -338,6 +356,11 @@ class dbmsbenchmarker(logger):
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated.copy()
+            df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('phase', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
             return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
         """
@@ -354,8 +377,10 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame or None
         """
         df = self.get_df_benchmarking()
-        if not df.empty:
-            return df
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df.drop('phase', axis=1, inplace=True, errors='ignore')
+        return df
     def get_summary_loading_per_run(self):
         """
         Returns loading metrics aggregated per experiment run.
@@ -369,4 +394,9 @@ class dbmsbenchmarker(logger):
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_run()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
+        df.drop('phase', axis=1, inplace=True, errors='ignore')
+        df.drop('pod', axis=1, inplace=True, errors='ignore')
         return df

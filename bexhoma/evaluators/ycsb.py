@@ -96,7 +96,9 @@ class ycsb(logger):
                 if cells[0] and cells[0][0] == "[":
                     parsed_rows.append(line.split(", "))
             phase = connection_name
-            connection = connection_name + '-' + child
+            #connection = configuration_name + '-' + experiment_run + '-' + child
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
+            #connection = connection_name + '-' + child
             col_names = [value[0] + "." + value[1] for value in parsed_rows if len(value) > 1]
             measure_values = [value[2] for value in parsed_rows if len(value) > 1]
             row_values = [code, phase, connection, configuration_name, experiment_run, client,
@@ -109,7 +111,12 @@ class ycsb(logger):
                        'batchsize', 'exceptions', 'child']
             columns.extend(col_names)
             df.columns = columns
+            # only works for benchmarking
             df.index.name = connection
+            # should also work for loading without PVC
+            #df.index = df['configuration'].astype(str) + "-" + df['experiment_run'].astype(str)  + "-" + df['child'].astype(str)
+            #print("NEW INDEX", df)
+            #df.index.name = connection
             return df
         except Exception as exc:
             print(exc)
@@ -408,7 +415,9 @@ class ycsb(logger):
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key[0]])
+            key_index = "-".join(map(str, key))
+            df_grp = pd.DataFrame(dict_grp, index=[key_index])
+            #df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
     def loading_set_datatypes(self, df):
@@ -497,7 +506,9 @@ class ycsb(logger):
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key[0]])
+            key_index = "-".join(map(str, key))
+            df_grp = pd.DataFrame(dict_grp, index=[key_index])
+            #df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         return df_aggregated
     def get_df_loading(self):
@@ -851,7 +862,7 @@ class ycsb(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             columns = [
-            'experiment_run', 'client', 'child',"threads","target","pod_count","exceptions",
+            'configuration', 'experiment_run', 'client', 'child',"threads","target","pod_count","exceptions",
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
             "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
@@ -870,7 +881,11 @@ class ycsb(logger):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client', 'child'])
+            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
+            #print(df_plot_filtered)
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['configuration', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
+            #df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
@@ -934,7 +949,9 @@ class ycsb(logger):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run'])
+            #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
+            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
 
 
@@ -953,10 +970,12 @@ class ycsb(logger):
         df = self.get_df_loading()
         if not df.empty:
             df_plot = self.loading_set_datatypes(df)
-            df_aggregated = self.loading_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = self.loading_aggregate_by_parallel_pods(df_plot, columns=['configuration', 'experiment_run'])
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             df_plot_filtered = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
+            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
 
 

@@ -28,16 +28,18 @@ from pathlib import Path
 
 def natural_sort(l):
     """
-    Sorts a list of strings in natural (human) order so that embedded
-    digit runs are compared numerically rather than lexicographically.
+    Sorts a list in natural (human) order so that embedded digit runs are
+    compared numerically rather than lexicographically.  Works for lists of
+    strings, integers, or any mix whose elements have a meaningful ``str()``
+    representation.
 
-    :param l: List of strings to sort.
-    :type l: list[str]
+    :param l: List to sort.
+    :type l: list
     :return: Sorted list.
-    :rtype: list[str]
+    :rtype: list
     """
     convert = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
     return sorted(l, key=alphanum_key)
 
 class base:
@@ -295,6 +297,7 @@ class base:
         :param result: Accumulator dict that maps connection IDs to metadata rows.
         :type result: dict
         """
+        num_loading_pods = len(c['hostsystem']['loading_timespans']['sensor']) if 'loading_timespans' in c['hostsystem'] and 'sensor' in c['hostsystem']['loading_timespans'] else 0
         result[connection_id] = {
             'code': c['parameter']['code'],
             'connection': c['name'],
@@ -309,8 +312,9 @@ class base:
             'time_ingest': float(c['timeIngesting']),
             'time_postload': float(c['timeIndex']),
             'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
-                if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+                if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'] if 'HAMMERDB_VUSERS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
+            'loading_pods': num_loading_pods,
             'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
             'num_worker': int(c['parameter']['num_worker']),
             'type_tenants': c['parameter']['TENANT_BY'] if 'TENANT_BY' in c['parameter'] else 'None',
@@ -333,6 +337,10 @@ class base:
             for key, hostdata in c['parameter']['connection_parameter']['sut_parameters'].items():
                 if not isinstance(hostdata, list) and not isinstance(hostdata, dict):
                     result[connection_id][f'sut_parameters_{key}'] = hostdata
+        if 'storage' in c:
+            for key, storagedata in c['storage'].items():
+                if not isinstance(storagedata, list) and not isinstance(storagedata, dict):
+                    result[connection_id][f'sut_storage_{key}'] = storagedata
         if 'args' in c['hostsystem']:
             for arg in c['hostsystem']['args']:
                 if "=" in arg:
@@ -393,8 +401,8 @@ class base:
         selected_cols = [
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
-            'time_generate', 'time_ingest', 'time_postload', 'pods',
-            'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
+            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
+            'tenant', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         return df[selected_cols].copy()
     def get_loading_per_run(self):
@@ -418,6 +426,7 @@ class base:
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
+        df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
     def get_loading_per_run_multitenant(self):
         """
@@ -443,4 +452,5 @@ class base:
         df.drop('connection', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
+        df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
