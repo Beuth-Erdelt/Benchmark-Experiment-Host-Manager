@@ -15,6 +15,14 @@ the codebase and follow the existing convention.
 - Use `_` for intentionally unused loop or tuple-unpack variables.
 - Use f-strings consistently; do not mix with `%` or `.format()`.
 - Delete commented-out code that is not documentation.
+- When removing a commented-out code block, also remove any comment whose sole
+  purpose was to describe what that dead code did.
+- Triple-quoted strings used as block comments or section separators are dead
+  strings, not docstrings; replace with a `# Section name` line or delete.
+- No always-constant variables used to gate output (`silent = False` that is
+  never changed); flatten the conditional directly.
+- Deprecated methods that are kept for reference must be prefixed `OLD_`
+  (e.g. `OLD_evaluate_results`), not suffixed or left with an ambiguous name.
 - Never use bare `except:`; always catch specific exception types.
 - Extract unexplained numeric and string literals into named constants.
 
