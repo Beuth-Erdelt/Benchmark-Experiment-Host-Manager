@@ -10,25 +10,9 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
-import re
 import pandas as pd
-import json
-import ast
-from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 from .base import base
@@ -36,14 +20,9 @@ from .base import base
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["dbmsbenchmarker"]
 
-
-"""
-############################################################################
-DBMSBenchmarker
-############################################################################
-"""
-
+# DBMSBenchmarker experiment class
 
 
 class dbmsbenchmarker(base):
@@ -65,7 +44,7 @@ class dbmsbenchmarker(base):
         base.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
         self.evaluator = evaluators.dbmsbenchmarker(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
-                         pod_dashboard=''):
+                         pod_dashboard: str = '') -> None:
         """
         Let the dashboard pod build the evaluations.
         This is specific to dbmsbenchmarker.
@@ -83,20 +62,20 @@ class dbmsbenchmarker(base):
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         # specific to dbmsbenchmarker
         cmd = {}
@@ -118,8 +97,14 @@ class dbmsbenchmarker(base):
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self):
-        #print('dbmsbenchmarker.show_summary()')
+    def show_summary(self) -> None:
+        """
+        Print a Markdown-formatted summary of a DBMSBenchmarker experiment.
+
+        Covers workflow, loading times, per-connection and per-phase execution stats,
+        query latencies, SQL errors, SQL warnings, monitoring metrics, and
+        pass/fail test assertions.
+        """
         self.evaluator.load_inspector()
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################

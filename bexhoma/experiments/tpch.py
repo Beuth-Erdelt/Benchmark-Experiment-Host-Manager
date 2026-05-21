@@ -10,39 +10,19 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
+from dbmsbenchmarker import parameter
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
-import re
-import pandas as pd
-import json
-import ast
 from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
-from bexhoma import evaluators
 from .dbmsbenchmarker import dbmsbenchmarker
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["tpch"]
 
-
-"""
-############################################################################
-TPC-H
-############################################################################
-"""
+# TPC-H experiment class
 
 class tpch(dbmsbenchmarker):
     """
@@ -79,11 +59,23 @@ class tpch(dbmsbenchmarker):
             type = 'tpch',
             )
         self.storage_label = 'tpch-'+str(SF)
-    def set_queries_full(self):
+    def set_queries_full(self) -> None:
+        """Switch to the full TPC-H query file covering all 22 queries."""
         self.set_queryfile('queries-tpch.config')
-    def set_queries_profiling(self):
+
+    def set_queries_profiling(self) -> None:
+        """Switch to the abbreviated profiling query file for import validation."""
         self.set_queryfile('queries-tpch-profiling.config')
-    def prepare_testbed(self, parameter):
+
+    def prepare_testbed(self, parameter: dict) -> None:
+        """
+        Configure the TPC-H experiment from a CLI parameter dict and delegate to dbmsbenchmarker.
+
+        Sets workload metadata and appends info lines about SF, query ordering,
+        parameterisation, indexing strategy, and optional table-level import limits.
+
+        :param parameter: Dict of CLI arguments as produced by argparse.
+        """
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter

@@ -9,25 +9,11 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
+from dbmsbenchmarker import parameter
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
-import re
 import pandas as pd
-import json
-import ast
 from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 from .base import base
@@ -35,14 +21,9 @@ from .base import base
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["ycsb"]
 
-
-
-"""
-############################################################################
-YCSB
-############################################################################
-"""
+# YCSB experiment class
 
 class ycsb(base):
     """
@@ -86,7 +67,15 @@ class ycsb(base):
                 "dbmsbenchmarker": True
             }
         }
-    def prepare_testbed(self, parameter):
+    def prepare_testbed(self, parameter: dict) -> None:
+        """
+        Configure the YCSB experiment from a CLI parameter dict and delegate to base.
+
+        Sets workload metadata and appends info lines about the YCSB workload letter,
+        number of rows, operations, batch size, and throughput target factors.
+
+        :param parameter: Dict of CLI arguments as produced by argparse.
+        """
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -179,26 +168,33 @@ class ycsb(base):
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         print("{:30s}: downloading partial results".format("Experiment"))
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self):
+    def show_summary(self) -> None:
+        """
+        Print a Markdown-formatted summary of a YCSB experiment.
+
+        Covers workflow (actual vs. planned), per-connection and per-run loading stats,
+        execution throughput and latency by operation type, application metrics, and
+        pass/fail test assertions including a check for FAILED columns.
+        """
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
