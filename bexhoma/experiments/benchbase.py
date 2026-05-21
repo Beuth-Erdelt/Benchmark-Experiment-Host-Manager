@@ -39,14 +39,12 @@ class benchbase(base):
     def __init__(self,
             cluster,
             code=None,
-            #queryfile = 'queries-tpch.config',
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
-        self.SF = SF
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        self.SF = SF                                                    # Benchbase scaling factor (e.g. number of warehouses / 10 000 rows)
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
         self.set_experiment(indexing='Checks')
@@ -58,11 +56,12 @@ class benchbase(base):
             info = 'This experiment performs some Benchbase workloads.',
             type = 'benchbase',
             )
-        self.storage_label = 'benchbase-'+str(SF)
-        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
-        self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-        self.benchmark = 'tpcc'                                                          # Benchbase knows several benchmarks. Here we store, which one to use, default tpcc
-        self.components = {
+        self.storage_label = 'benchbase-'+str(SF)                      # label used to match persistent storage to this experiment
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"  # K8s job template for the Benchbase loading container
+        self.evaluator = evaluators.benchbase(                          # evaluator specific to Benchbase result format
+            code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.benchmark = 'tpcc'                                         # active Benchbase workload; changed via set_benchmark_type()
+        self.components = {                                             # maps component types to required sub-components (no datagenerator for Benchbase)
             "loader": {
                 "sensor": True
              },
@@ -112,8 +111,6 @@ class benchbase(base):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'load':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'Benchbase Data {} Loading SF={}'.format(type_of_benchmark, SF),
                 info = 'This imports a Benchbase data set.',
@@ -121,8 +118,6 @@ class benchbase(base):
                 defaultParameters = {'SF': SF}
             )
         else:
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'Benchbase Start DBMS',
                 info = 'This just starts a SUT.',
@@ -143,7 +138,6 @@ class benchbase(base):
                     self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
         if self.loading_is_active() or self.benchmarking_is_active():
             if SF:
-                #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
                 self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
             self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         if self.benchmarking_is_active():
@@ -190,7 +184,7 @@ class benchbase(base):
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def test_results(self):
+    def test_results(self) -> None:
         """
         Run test script locally.
         Extract exit code.
@@ -279,7 +273,6 @@ class benchbase(base):
         test_results_monitoring = self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))

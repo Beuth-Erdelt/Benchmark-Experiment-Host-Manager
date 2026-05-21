@@ -40,15 +40,14 @@ class tpch(dbmsbenchmarker):
             SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            script=None
-            #detached=False
+            script=None,
             ):
-        dbmsbenchmarker.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
-        self.SF = SF
+        dbmsbenchmarker.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
+        self.SF = SF                                                    # TPC-H scaling factor (data size in GB)
+        self.use_distributed_datasource = False                         # True when loading uses a distributed in-cluster data source
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpch')
-        #self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/tpch')
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_additional_labels(SF=SF)
@@ -58,7 +57,7 @@ class tpch(dbmsbenchmarker):
             info = 'This experiment performs some TPC-H inspired queries.',
             type = 'tpch',
             )
-        self.storage_label = 'tpch-'+str(SF)
+        self.storage_label = 'tpch-'+str(SF)                           # label used to match persistent storage to this experiment
     def set_queries_full(self) -> None:
         """Switch to the full TPC-H query file covering all 22 queries."""
         self.set_queryfile('queries-tpch.config')
@@ -90,7 +89,7 @@ class tpch(dbmsbenchmarker):
         shuffle_queries = args.shuffle_queries
         # limit to one table
         limit_import_table = args.limit_import_table
-         # indexes
+        # indexes
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
@@ -106,8 +105,6 @@ class tpch(dbmsbenchmarker):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'load':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'TPC-H Data Loading SF='+str(SF),
                 info = 'This imports TPC-H data sets.',
@@ -115,8 +112,6 @@ class tpch(dbmsbenchmarker):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'start':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'TPC-H Start DBMS',
                 info = 'This just starts a SUT.',
@@ -134,7 +129,6 @@ class tpch(dbmsbenchmarker):
                 defaultParameters = {'SF': SF}
             )
         else:
-            # we want to profile the import
             self.set_queries_profiling()
             self.set_workload(
                 name = 'TPC-H Data Profiling SF='+str(SF),
@@ -142,8 +136,6 @@ class tpch(dbmsbenchmarker):
                 type = 'tpch',
                 defaultParameters = {'SF': SF}
             )
-            # patch: use short profiling (only keys)
-            #self.set_queryfile('queries-tpch-profiling-keys.config')
         # new loading in cluster
         self.loading_active = True
         self.use_distributed_datasource = True
@@ -172,7 +164,6 @@ class tpch(dbmsbenchmarker):
                     self.set_experiment(indexing='Index_and_Constraints_and_Statistics')
                     init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
                 self.workload['info'] = self.workload['info']+init_scripts
-            #self.set_experiment(script='Schema', indexing='Index')
             if len(limit_import_table):
                 # import is limited to single table
                 self.workload['info'] = self.workload['info']+"\nImport is limited to table {}.".format(limit_import_table)

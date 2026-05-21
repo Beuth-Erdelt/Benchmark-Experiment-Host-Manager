@@ -48,7 +48,10 @@ __all__ = [
 
 class DictToObject(object):
     """
-    https://coderwall.com/p/idfiea/python-dict-to-object
+    Recursively convert a nested dict into an object with attribute access.
+
+    Nested dicts become nested :class:`DictToObject` instances; all other
+    values are stored as-is.
     """
     def __init__(self, dictionary):
         def _traverse(key, element):
@@ -67,12 +70,18 @@ SELECTOR_RE = re.compile(
 
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
-    Parses a single --set argument of the form:
-      <selector>=<value>
-    where selector is:
-      deployment[NAME].container[CONTAINER].PARAM
-      statefulset[NAME].container[CONTAINER].PARAM
-    Returns: (selector_dict, value_str)
+    Parse a single ``--set`` argument of the form ``<selector>=<value>``.
+
+    The selector must match one of:
+
+    * ``deployment[NAME].container[CONTAINER].PARAM``
+    * ``statefulset[NAME].container[CONTAINER].PARAM``
+
+    :param s: Raw ``--set`` string from the CLI.
+    :return: A tuple of (selector_dict, value_str) where selector_dict
+             contains keys ``kind``, ``workload``, ``container``, and ``param``.
+    :rtype: tuple[dict, str]
+    :raises ValueError: When the string has no ``=`` or the selector does not match.
     """
     if "=" not in s:
         raise ValueError(f"--set expects selector=value (got: {s})")
@@ -125,7 +134,7 @@ class base():
             runsPerConnection = 0,
             timeout = timeout,
             singleConnection = True)
-        self.components = {
+        self.components = {                                             # maps component types to required sub-components
             "loader": {
                 "datagenerator": True,
                 "sensor": True
@@ -138,8 +147,10 @@ class base():
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
-        self.num_maintaining_pods = 0
-        self.num_tenants = 0
+        self.num_maintaining_pods = 0                                   # number of maintaining pods in total (pre-initialized; redeclared below)
+        self.num_tenants = 0                                            # number of tenants for multi-tenant experiments
+        self.tenant_per = ""                                            # granularity of tenancy: 'container', 'schema', etc.
+        self.multi_tenant_volume = False                                # True if each tenant gets a dedicated persistent volume
         self.cluster.add_experiment(self)
         self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
         self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
@@ -161,8 +172,8 @@ class base():
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
         self.workload['monitoring_components'] = {}                     # dict for infos about which components are monitored
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
-        self.monitor_app_active = True
-        self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrcis
+        self.monitor_app_active = True                                  # Bool, tells if application-level metrics are monitored
+        self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrics
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
         self.loading_deactivated = False                                # Bool, tells if loading phase should be skipped
@@ -175,9 +186,13 @@ class base():
         self.initscript = []                                            # list of scripts for creating schema
         self.indexing = ""                                              # name of the script collection for creating indexes
         self.indexscript = []                                           # list of scripts for creating indexes
+        self.volume = ""                                                # volume key used to look up init scripts in cluster config
+        self.volumeid = ""                                              # cluster-internal ID of the persistent volume
+        self.queryfile = ""                                             # name of the query config file for dbmsbenchmarker
         # command line parameters
         self.args = None                                                # command line parameters as an object
         self.args_dict = dict()                                         # command line parameters as a dict
+        self.dbms_args = []                                             # parsed --set selector/value pairs from CLI
         # k8s:
         self.namespace = self.cluster.namespace                         # name of the K8s namespace to use
         self.configurations = []                                        # list of configurations (i.e., dbms to test)
@@ -196,7 +211,6 @@ class base():
         # should results be tested for validity?
         test_result = self.args.test_result
         if self.args.mode == 'start':
-            #self.start_sut()
             start = default_timer()
             start_datetime = str(datetime.now())
             print("{:30s}: has code {}".format("Experiment", self.code))
@@ -243,14 +257,11 @@ class base():
             self.store_workflow_results()
             self.show_summary()
         elif self.args.mode == 'summary':
-            #self.evaluate_results()
-            #self.store_workflow_results()
             self.show_summary()
         else:
             # total time of experiment
             start = default_timer()
             start_datetime = str(datetime.now())
-            #print("Experiment starts at {} ({})".format(start_datetime, start))
             print("{:30s}: has code {}".format("Experiment", self.code))
             print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
             print("{:30s}: {}".format("Experiment", self.workload['info']))
@@ -265,16 +276,13 @@ class base():
             ##################
             self.evaluate_results()
             self.store_workflow_results()
-            #self.stop_benchmarker()
-            #self.stop_sut()
-            #self.zip() # OOM? exit code 137
+            # zip() skipped: causes OOM (exit code 137) in large experiments
             if test_result:
                 test_result_code = self.test_results()
                 if test_result_code == 0:
                     print("Test successful!")
-            #self.restart_dashboard()        # only for dbmsbenchmarker because of dashboard. Jupyter server does not need to restart
             self.show_summary()
-    def benchmarking_is_active(self):
+    def benchmarking_is_active(self) -> bool:
         """
         Returns True, when this is a benchmarking experiment.
         Returns False in case of mode=start or mode=load.
@@ -285,7 +293,7 @@ class base():
         if 'benchmarking_active' in self.workload:
             self.benchmarking_active = self.workload['benchmarking_active']
         return self.benchmarking_active
-    def loading_is_active(self):
+    def loading_is_active(self) -> bool:
         """
         Returns True, when this is an experiment including loading.
         Returns False in case of mode=start.
@@ -580,12 +588,12 @@ class base():
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
         self.workload['loading_active'] = self.loading_is_active()
-    def generate_port_forward(self, service):
+    def generate_port_forward(self, service: str) -> str:
         """
-        Generates command to port-forward to a service.
-        Returns it as a string
+        Generate a ``kubectl port-forward`` command string for a given service.
 
-        :return: Command to port-forward to SUT service as a string
+        :param service: Name of the Kubernetes service to forward.
+        :return: Shell command string that forwards the cluster port to localhost.
         """
         context = self.cluster.context
         port = self.cluster.port
@@ -595,7 +603,7 @@ class base():
         #print("{:30s}: {}".format(configuration, command))
         return command
     def get_dashboard_pod(self,
-                          pod_dashboard=''):
+                          pod_dashboard: str = '') -> str:
         """
         Get name of dashboard pod.
         This also checks the status. Waits until available.
@@ -616,7 +624,7 @@ class base():
                     status = self.cluster.get_pod_status(pod_dashboard)
                     self.cluster.logger.debug(pod_dashboard+status)
         return pod_dashboard
-    def test_results(self):
+    def test_results(self) -> None:
         """
         Run test script locally.
         Extract exit code.
@@ -631,7 +639,7 @@ class base():
         #    print("Result workflow complete")
         #else:
         #    print("Result workflow not complete")
-    def test_results_in_dashboard(self):
+    def test_results_in_dashboard(self) -> int:
         """
         DEPRECATED? Not used currently - depends on good test script for dbmsbenchmarker
         Run test script in dashboard pod.
@@ -669,13 +677,13 @@ class base():
                 pass
         return 1
     def wait(self,
-             sec,
-             silent=False):
+             sec: int,
+             silent: bool = False) -> None:
         """
-        Function for waiting some time and inform via output about this
+        Wait for a given number of seconds, optionally without printing.
 
-        :param sec: Number of seconds to wait
-        :param silent: True means we do not output anything about this waiting
+        :param sec: Number of seconds to wait.
+        :param silent: If True, suppress output during the wait.
         """
         #+print("Waiting "+str(sec)+"s...", end="", flush=True)
         #intervals = int(sec)
@@ -684,33 +692,32 @@ class base():
         if sec > 0:
             return self.cluster.wait(sec, silent)
     def delay(self,
-              sec,
-              silent=False):
+              sec: int,
+              silent: bool = False) -> None:
         """
-        Function for waiting some time and inform via output about this.
-        Synonymous for wait()
+        Wait for a given number of seconds. Alias for :meth:`wait`.
 
-        :param sec: Number of seconds to wait
-        :param silent: True means we do not output anything about this waiting
+        :param sec: Number of seconds to wait.
+        :param silent: If True, suppress output during the wait.
         """
         self.wait(sec, silent)
     def set_queryfile(self,
-                      queryfile):
+                      queryfile: str) -> None:
         """
-        Sets the name of a query file of the experiment.
-        This is for the benchmarker component (dbmsbenchmarker).
+        Set the name of the query config file used by the benchmarker component.
 
-        :param code: Unique identifier of an experiment
+        :param queryfile: Filename of the dbmsbenchmarker query config (e.g. ``queries.config``).
         """
         self.queryfile = queryfile
     def set_experiments_configfolder(self,
-                                     experiments_configfolder):
+                                     experiments_configfolder: str) -> None:
         """
-        Sets the configuration folder for the experiment.
-        Bexhoma expects subfolders for expeiment types, for example tpch.
-        In there, bexhoma looks for query.config files (for dbmsbenchmarker) and subfolders containing the schema per dbms.
+        Set the relative config folder for the experiment type.
 
-        :param experiments_configfolder: Relative path to an experiment folder
+        Bexhoma expects subfolders per experiment type (e.g. ``experiments/tpch``).
+        Each subfolder must contain a ``queries.config`` and per-DBMS schema subdirectories.
+
+        :param experiments_configfolder: Relative path to the experiment config folder.
         """
         self.experiments_configfolder = experiments_configfolder
     def set_additional_labels(self,
@@ -2549,7 +2556,7 @@ class base():
                     else:
                         test_results = test_results + f"* TEST passed: {title} contains no 0 or NaN in CPU [CPUs]\n"
         return test_results.rstrip('\n')
-    def show_summary_monitoring_OLD(self):
+    def OLD_show_summary_monitoring(self):
         test_results = ""
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
         code = self.code
@@ -2617,8 +2624,6 @@ class base():
 
 
 
-
-
 """
 ############################################################################
 Simple IoT example experiment
@@ -2642,9 +2647,8 @@ class iot(base):
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.set_experiment(volume='iot')
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/iot')
@@ -2655,8 +2659,8 @@ class iot(base):
             info = 'This experiment performs some IoT inspired queries.',
             type = 'iot',
             )
-        self.storage_label = 'tpch-'+str(SF)
-        self.maintaining_active = True
+        self.storage_label = 'tpch-'+str(SF)                           # label used to match persistent storage to this experiment
+        self.maintaining_active = True                                  # IoT experiments always run a maintaining job alongside benchmarking
     def set_queries_full(self):
         self.set_queryfile('queries-iot.config')
     def set_queries_profiling(self):
@@ -2699,9 +2703,8 @@ class tsbs(base):
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.set_experiment(volume='tsbs')
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tsbs')
@@ -2712,9 +2715,9 @@ class tsbs(base):
             info = 'This experiment performs some TSBS inspired queries.',
             type = 'tsdb',
             )
-        self.storage_label = 'tsbs-'+str(SF)
-        self.maintaining_active = True
-        self.jobtemplate_maintaining = "jobtemplate-maintaining-tsbs.yml"
+        self.storage_label = 'tsbs-'+str(SF)                               # label used to match persistent storage to this experiment
+        self.maintaining_active = True                                      # TSBS experiments always run a maintaining job alongside benchmarking
+        self.jobtemplate_maintaining = "jobtemplate-maintaining-tsbs.yml"   # K8s job template for the TSBS maintaining container
     def set_queries_full(self):
         self.set_queryfile('queries-tsbs.config')
     def set_queries_profiling(self):
@@ -2734,11 +2737,7 @@ class tsbs(base):
 
 
 
-"""
-############################################################################
-Example
-############################################################################
-"""
+# Example experiment class
 
 class example(base):
     """
@@ -2754,30 +2753,23 @@ class example(base):
             queryfile = 'queries.config',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            script=None
-            #detached=False
+            script=None,
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         if script is None:
             script = 'empty'
         self.set_experiment(volume='example')
         self.set_experiment(script=script)
         self.cluster.set_experiments_configfolder('experiments/example')
-        #parameter.defaultParameters = {'SF': str(SF)}
-        #self.set_additional_labels(SF=SF)
         self.set_queryfile(queryfile)
         self.set_workload(
             name = 'Custom Example Queries',
             info = 'This experiment performs some custom queries.'
             )
-        self.storage_label = 'example'
+        self.storage_label = 'example'                                      # label used to match persistent storage to this experiment
 
 
-"""
-############################################################################
-TPCx-AI
-############################################################################
-"""
+# TPCx-AI experiment class
 
 class tpcxai(base):
     """
@@ -2795,10 +2787,9 @@ class tpcxai(base):
             SF = '100',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            script=None
-            #detached=False
+            script=None,
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpcxai')
@@ -2811,7 +2802,7 @@ class tpcxai(base):
             name = 'TPCx-AI Queries SF='+str(SF),
             info = 'This experiment performs some TPCx-AI inspired queries.'
             )
-        self.storage_label = 'tpcxai-'+str(SF)
+        self.storage_label = 'tpcxai-'+str(SF)                             # label used to match persistent storage to this experiment
     def set_queries_full(self):
         self.set_queryfile('queries-tpcxai.config')
     def set_queries_profiling(self):

@@ -37,16 +37,14 @@ class tpcc(base):
     def __init__(self,
             cluster,
             code=None,
-            #queryfile = 'queries-tpch.config',
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
-        self.SF = SF
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        self.SF = SF                                                    # TPC-C scaling factor (number of warehouses)
         self.set_experiment(volume='tpcc')
-        self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(script='Schema')
         self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
         parameter.defaultParameters = {'SF': str(SF)}
@@ -56,10 +54,11 @@ class tpcc(base):
             info = 'This experiment performs some TPC-C inspired workloads.',
             type = 'tpcc',
             )
-        self.storage_label = 'hammerdb-'+str(SF)
-        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
-        self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-        self.components = {
+        self.storage_label = 'hammerdb-'+str(SF)                       # label used to match persistent storage to this experiment
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"   # K8s job template for the HammerDB loading container
+        self.evaluator = evaluators.tpcc(                               # evaluator specific to TPC-C / HammerDB result format
+            code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.components = {                                             # maps component types to required sub-components (no datagenerator for HammerDB)
             "loader": {
                 "sensor": True
              },
@@ -96,8 +95,6 @@ class tpcc(base):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'load':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'HammerDB Data Loading SF={} (warehouses for TPC-C)'.format(SF),
                 info = 'This imports TPC-C data sets.',
@@ -105,8 +102,6 @@ class tpcc(base):
                 defaultParameters = {'SF': SF}
             )
         else:
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'HammerDB Start DBMS',
                 info = 'This just starts a SUT.',
@@ -131,7 +126,7 @@ class tpcc(base):
             if extra_latency:
                 self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         base.prepare_testbed(self, parameter)
-    def test_results(self):
+    def test_results(self) -> None:
         """
         Run test script locally.
         Extract exit code.
