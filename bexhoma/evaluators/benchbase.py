@@ -62,6 +62,7 @@ class benchbase(logger):
         """
         # test for known errors
         logger.log_to_df(self, filename)
+        df_header = pd.DataFrame()
         # extract status and result fields
         try:
             with open(filename) as f:
@@ -131,7 +132,6 @@ class benchbase(logger):
         except Exception as e:
             print(e)
             print(traceback.format_exc())
-            print(stdout)
             return df_header
     def benchmarking_set_datatypes(self, df):
         """
