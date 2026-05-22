@@ -1292,7 +1292,7 @@ class Kubernetes():
 
     def pod_log(self, pod, container=''):
         """
-        Return the ``kubectl logs`` output for a given Pod or container.
+        Return the ``kubectl logs --tail=-1`` output for a given Pod or container.
 
         :param pod: Name of the Pod.
         :param container: Container name within the Pod (optional).
@@ -1302,6 +1302,7 @@ class Kubernetes():
             fullcommand = 'logs ' + pod + ' --container=' + container
         else:
             fullcommand = 'logs ' + pod
+        fullcommand = fullcommand + ' --tail=-1'
         return self.kubectl(fullcommand)
 
     def get_pod_containers(self, pod):
