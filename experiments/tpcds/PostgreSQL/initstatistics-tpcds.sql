@@ -1,5 +1,12 @@
--- Analyzing all TPC-DS tables
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/PostgreSQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Collect planner statistics for all TPC-DS tables and re-enable
+--          synchronous_commit (disabled during bulk loading in initschema).
 
+-- Analyzing all TPC-DS tables
 ANALYZE VERBOSE public.call_center;
 ANALYZE VERBOSE public.catalog_page;
 ANALYZE VERBOSE public.catalog_returns;
@@ -27,5 +34,4 @@ ANALYZE VERBOSE public.web_sales;
 ANALYZE VERBOSE public.web_site;
 
 ALTER SYSTEM SET synchronous_commit = on;
--- ALTER SYSTEM SET fsync = on;
 SELECT pg_reload_conf();

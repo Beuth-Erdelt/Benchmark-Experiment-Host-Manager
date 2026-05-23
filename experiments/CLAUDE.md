@@ -205,3 +205,5 @@ They do **not** include the `ALTER SYSTEM synchronous_commit` lines.
 | `tpch/SAPHANA` | Done |
 | `tpch/SQLServer` | Done |
 | `tpch/Citus` | Done |
+| `tpcds/MariaDB` | Done |
+| `tpcds/MySQL` | Done |

@@ -1,4 +1,10 @@
--- Analyzing all TPC-DS tables
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/MySQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Collect optimizer statistics for all TPC-DS tables in MySQL.
+--          Run after initindexes-tpcds.sql.
 
 ANALYZE TABLE tpcds.call_center;
 ANALYZE TABLE tpcds.catalog_page;
