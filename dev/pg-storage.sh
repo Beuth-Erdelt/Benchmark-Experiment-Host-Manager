@@ -8,6 +8,7 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 BEXHOMA_DURATION=40
 BEXHOMA_EXECUTIONS="1,1,1"
 BEXHOMA_REPETITIONS="1"
+BEXHOMA_WAREHOUSES=80
 
 
 clean_logs() {
@@ -53,7 +54,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -92,7 +93,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -131,7 +132,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -170,7 +171,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -214,7 +215,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -240,7 +241,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -278,7 +279,7 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -304,7 +305,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -342,7 +343,7 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -368,7 +369,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -406,7 +407,7 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -432,7 +433,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -476,7 +477,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -502,7 +503,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -540,7 +541,7 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -566,7 +567,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -604,7 +605,7 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -630,7 +631,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -668,7 +669,7 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
@@ -694,7 +695,7 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
   -dbms PostgreSQL \
   -nlp 1 \
