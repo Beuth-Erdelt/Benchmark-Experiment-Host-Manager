@@ -1,36 +1,31 @@
--- sccsid:     @(#)dss.ri	2.1.8.1
--- tpcd benchmark version 8.0
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/Exasol
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Add foreign key constraints to TPC-H tables in Exasol.
+--          Primary keys are added separately in initindexes-tpch.sql; Exasol
+--          treats PKs primarily as optimizer hints rather than enforcement.
+--          The supplier→nation FK is applied here; it is part of the TPC-H DDL
+--          standard and Exasol can use it as a join-elimination hint.
+--          Statements are ordered by FK dependency.
 
--- for table nation
-alter table public.nation
-add foreign key (n_regionkey) references public.region(r_regionkey);
+ALTER TABLE public.nation
+    ADD FOREIGN KEY (n_regionkey) REFERENCES public.region (r_regionkey);
 
--- for table supplier
-alter table public.supplier
-add foreign key (s_nationkey) references public.nation(n_nationkey);
+ALTER TABLE public.supplier
+    ADD FOREIGN KEY (s_nationkey) REFERENCES public.nation (n_nationkey);
 
--- for table customer
-alter table public.customer
-add foreign key (c_nationkey) references public.nation(n_nationkey);
+ALTER TABLE public.customer
+    ADD FOREIGN KEY (c_nationkey) REFERENCES public.nation (n_nationkey);
 
--- for table partsupp
-alter table public.partsupp
-add foreign key (ps_suppkey) references public.supplier(s_suppkey);
+ALTER TABLE public.partsupp
+    ADD FOREIGN KEY (ps_suppkey) REFERENCES public.supplier (s_suppkey),
+    ADD FOREIGN KEY (ps_partkey) REFERENCES public.part     (p_partkey);
 
-alter table public.partsupp
-add foreign key (ps_partkey) references public.part(p_partkey);
+ALTER TABLE public.orders
+    ADD FOREIGN KEY (o_custkey) REFERENCES public.customer (c_custkey);
 
--- for table orders
-alter table public.orders
-add foreign key (o_custkey) references public.customer(c_custkey);
-
--- for table lineitem
-alter table public.lineitem
-add foreign key (l_orderkey)  references public.orders(o_orderkey);
-
-alter table public.lineitem
-add foreign key (l_partkey,l_suppkey) references 
-        public.partsupp(ps_partkey,ps_suppkey);
-
-
-
+ALTER TABLE public.lineitem
+    ADD FOREIGN KEY (l_orderkey)           REFERENCES public.orders   (o_orderkey),
+    ADD FOREIGN KEY (l_partkey, l_suppkey) REFERENCES public.partsupp (ps_partkey, ps_suppkey);

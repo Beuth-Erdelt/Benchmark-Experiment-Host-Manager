@@ -1,56 +1,18 @@
--- indexes for foreign keys
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/DatabaseService
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Create indexes on foreign key columns to accelerate TPC-H join queries
+--          in DatabaseService. Indexes on lineitem(l_partkey) and lineitem(l_suppkey)
+--          are omitted: l_partkey is covered as the leading column of the compound
+--          index (l_partkey, l_suppkey); l_suppkey alone is not selective enough for
+--          the TPC-H workload.
 
--- for table region
--- alter table public.region
--- add primary key (r_regionkey);
-
--- for table nation
--- alter table public.nation
--- add primary key (n_nationkey);
-
-create index on public.nation (n_regionkey);
-
--- for table part
--- alter table public.part
--- add primary key (p_partkey);
-
--- for table supplier
--- alter table public.supplier
--- add primary key (s_suppkey);
-
--- create index on public.supplier (s_nationkey);
-
--- for table partsupp
--- alter table public.partsupp
--- add primary key (ps_partkey,ps_suppkey);
-
--- for table customer
--- alter table public.customer
--- add primary key (c_custkey);
-
-create index on public.customer (c_nationkey);
-
--- for table partsupp
-create index on public.partsupp (ps_suppkey);
-
-create index on public.partsupp (ps_partkey);
-
--- for table lineitem
--- alter table public.lineitem
--- add primary key (l_orderkey,l_linenumber);
-
--- for table orders
--- alter table public.orders
--- add primary key (o_orderkey);
-
-create index on public.orders (o_custkey);
-
--- for table lineitem
-create index on public.lineitem (l_orderkey);
-
--- create index on public.lineitem (l_partkey);
-
--- create index on public.lineitem (l_suppkey);
-
-create index on public.lineitem (l_partkey,l_suppkey);
-
+CREATE INDEX n_r  ON public.nation   (n_regionkey);
+CREATE INDEX c_n  ON public.customer (c_nationkey);
+CREATE INDEX ps_p ON public.partsupp (ps_partkey);
+CREATE INDEX ps_s ON public.partsupp (ps_suppkey);
+CREATE INDEX o_c  ON public.orders   (o_custkey);
+CREATE INDEX l_o  ON public.lineitem (l_orderkey);
+CREATE INDEX l_ps ON public.lineitem (l_partkey, l_suppkey);

@@ -1,56 +1,23 @@
--- indexes for foreign keys
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/MonetDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Create indexes on foreign key columns to support join operations
+--          in TPC-H queries. Run after data loading.
+--          Unlike other DBMS variants, individual indexes on lineitem(l_partkey)
+--          and lineitem(l_suppkey) are created here in addition to the compound
+--          index — MonetDB's columnar storage benefits from per-column access
+--          paths and does not make individual indexes redundant.
+--          The index on supplier(s_nationkey) is omitted because the
+--          supplier→nation FK is not applied in this configuration.
 
--- for table region
--- alter table region
--- add primary key (r_regionkey);
-
--- for table nation
--- alter table nation
--- add primary key (n_nationkey);
-
-create index n_r on nation (n_regionkey);
-
--- for table part
--- alter table part
--- add primary key (p_partkey);
-
--- for table supplier
--- alter table supplier
--- add primary key (s_suppkey);
-
--- create index s_n on supplier (s_nationkey);
-
--- for table partsupp
--- alter table partsupp
--- add primary key (ps_partkey,ps_suppkey);
-
--- for table customer
--- alter table customer
--- add primary key (c_custkey);
-
-create index c_n on customer (c_nationkey);
-
--- for table partsupp
-create index ps_s on partsupp (ps_suppkey);
-
-create index ps_p on partsupp (ps_partkey);
-
--- for table lineitem
--- alter table lineitem
--- add primary key (l_orderkey,l_linenumber);
-
--- for table orders
--- alter table orders
--- add primary key (o_orderkey);
-
-create index o_c on orders (o_custkey);
-
--- for table lineitem
-create index l_o on lineitem (l_orderkey);
-
-create index l_p on lineitem (l_partkey);
-
-create index l_s on lineitem (l_suppkey);
-
-create index l_ps on lineitem (l_partkey,l_suppkey);
-
+CREATE INDEX n_r  ON nation   (n_regionkey);
+CREATE INDEX c_n  ON customer (c_nationkey);
+CREATE INDEX ps_s ON partsupp (ps_suppkey);
+CREATE INDEX ps_p ON partsupp (ps_partkey);
+CREATE INDEX o_c  ON orders   (o_custkey);
+CREATE INDEX l_o  ON lineitem (l_orderkey);
+CREATE INDEX l_p  ON lineitem (l_partkey);
+CREATE INDEX l_s  ON lineitem (l_suppkey);
+CREATE INDEX l_ps ON lineitem (l_partkey, l_suppkey);

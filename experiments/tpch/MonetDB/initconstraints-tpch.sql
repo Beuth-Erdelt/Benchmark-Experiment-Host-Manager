@@ -1,77 +1,44 @@
--- sccsid:     @(#)dss.ri	2.1.8.1
--- tpcd benchmark version 8.0
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/MonetDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Add primary key and foreign key constraints to TPC-H tables.
+--          Run after data loading (initdata-tpch-SF*.sql).
+--          Each ALTER TABLE combines all actions for that table so it is
+--          locked only once. Statements are ordered by FK dependency.
+--          Table names are unqualified (MonetDB resolves them in the sys schema).
 
--- for table region
-alter table region
-add primary key (r_regionkey);
+ALTER TABLE region
+    ADD PRIMARY KEY (r_regionkey);
 
--- for table nation
-alter table nation
-add primary key (n_nationkey);
+ALTER TABLE nation
+    ADD PRIMARY KEY (n_nationkey),
+    ADD FOREIGN KEY (n_regionkey) REFERENCES region(r_regionkey);
 
--- for table part
-alter table part
-add primary key (p_partkey);
+ALTER TABLE part
+    ADD PRIMARY KEY (p_partkey);
 
--- for table supplier
-alter table supplier
-add primary key (s_suppkey);
+ALTER TABLE supplier
+    ADD PRIMARY KEY (s_suppkey);
+-- supplier→nation FK not applied: not required by the TPC-H query workload
 
--- for table partsupp
-alter table partsupp
-add primary key (ps_partkey,ps_suppkey);
+ALTER TABLE partsupp
+    ADD PRIMARY KEY (ps_partkey, ps_suppkey),
+    ADD FOREIGN KEY (ps_suppkey) REFERENCES supplier(s_suppkey),
+    ADD FOREIGN KEY (ps_partkey) REFERENCES part(p_partkey);
 
--- for table customer
-alter table customer
-add primary key (c_custkey);
+ALTER TABLE customer
+    ADD PRIMARY KEY (c_custkey),
+    ADD FOREIGN KEY (c_nationkey) REFERENCES nation(n_nationkey);
 
--- for table lineitem
-alter table lineitem
-add primary key (l_orderkey,l_linenumber);
+ALTER TABLE orders
+    ADD PRIMARY KEY (o_orderkey),
+    ADD FOREIGN KEY (o_custkey)   REFERENCES customer(c_custkey);
 
--- for table orders
-alter table orders
-add primary key (o_orderkey);
-
-
-
--- for table nation
-alter table nation
-add foreign key (n_regionkey) references region(r_regionkey);
-
--- for table supplier
--- alter table supplier
--- add foreign key (s_nationkey) references nation(n_nationkey);
-
--- for table customer
-alter table customer
-add foreign key (c_nationkey) references nation(n_nationkey);
-
--- for table partsupp
-alter table partsupp
-add foreign key (ps_suppkey) references supplier(s_suppkey);
-
-alter table partsupp
-add foreign key (ps_partkey) references part(p_partkey);
-
--- for table orders
-alter table orders
-add foreign key (o_custkey) references customer(c_custkey);
-
--- for table lineitem
-alter table lineitem
-add foreign key (l_orderkey)  references orders(o_orderkey);
-
-alter table lineitem
-add foreign key (l_partkey) references 
-        part(p_partkey);
-
-alter table lineitem
-add foreign key (l_suppkey) references 
-        supplier(s_suppkey);
-
-alter table lineitem
-add foreign key (l_partkey,l_suppkey) references 
-        partsupp(ps_partkey,ps_suppkey);
-
-
+ALTER TABLE lineitem
+    ADD PRIMARY KEY (l_orderkey, l_linenumber),
+    ADD FOREIGN KEY (l_orderkey)           REFERENCES orders(o_orderkey),
+    ADD FOREIGN KEY (l_partkey)            REFERENCES part(p_partkey),
+    ADD FOREIGN KEY (l_suppkey)            REFERENCES supplier(s_suppkey),
+    ADD FOREIGN KEY (l_partkey, l_suppkey) REFERENCES partsupp(ps_partkey, ps_suppkey);

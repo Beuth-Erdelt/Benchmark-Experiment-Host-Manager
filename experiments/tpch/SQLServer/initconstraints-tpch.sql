@@ -1,0 +1,7 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/SQLServer
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Placeholder — no foreign key constraints are applied in this SQL Server
+--          TPC-H configuration. Primary keys are declared inline in initschema-tpch.sql.

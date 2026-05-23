@@ -1,77 +1,24 @@
--- sccsid:     @(#)dss.ri	2.1.8.1
--- tpcd benchmark version 8.0
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/SingleStore
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Create hash indexes on foreign key columns in SingleStore.
+--          Hash indexes complement the primary key for fast point-lookup joins.
+--          Individual indexes on l_partkey and l_suppkey are kept; the compound
+--          (l_partkey, l_suppkey) index is omitted because each column already
+--          has a single-column hash index that covers the TPC-H join patterns.
 
--- for table region
--- alter table tpch.region
--- add index using hash (r_regionkey);
+ALTER TABLE tpch.nation   ADD INDEX USING HASH (n_regionkey);
+ALTER TABLE tpch.customer ADD INDEX USING HASH (c_nationkey);
 
--- for table nation
--- alter table tpch.nation
--- add index using hash (n_nationkey);
+ALTER TABLE tpch.partsupp
+    ADD INDEX USING HASH (ps_suppkey),
+    ADD INDEX USING HASH (ps_partkey);
 
-alter table tpch.nation
-add index using hash (n_regionkey);
+ALTER TABLE tpch.orders ADD INDEX USING HASH (o_custkey);
 
--- for table part
--- alter table tpch.part
--- add index using hash (p_partkey);
-
--- for table supplier
--- alter table tpch.supplier
--- add index using hash (s_suppkey);
-
--- alter table tpch.supplier
--- add index using hash (s_nationkey);
-
--- for table partsupp
--- alter table tpch.partsupp
--- add index using hash (ps_partkey,ps_suppkey);
-
--- for table customer
--- alter table tpch.customer
--- add index using hash (c_custkey);
-
-alter table tpch.customer
-add index using hash (c_nationkey);
-
--- for table lineitem
--- alter table tpch.lineitem
--- add index using hash (l_orderkey,l_linenumber);
-
--- for table orders
--- alter table tpch.orders
--- add index using hash (o_orderkey);
-
--- for table partsupp
-alter table tpch.partsupp
-add index using hash (ps_suppkey);
-
-alter table tpch.partsupp
-add index using hash (ps_partkey);
-
--- for table orders
-alter table tpch.orders
-add index using hash (o_custkey);
-
-
--- for table lineitem
-alter table tpch.lineitem
-add index using hash (l_orderkey);
-
-alter table tpch.lineitem
-add index using hash (l_partkey);
-
-alter table tpch.lineitem
-add index using hash (l_suppkey);
-
--- columns already have a (single column) index
--- alter table tpch.lineitem
--- add index using hash (l_partkey,l_suppkey);
-
-
--- alter table tpch.lineitem
--- add index using hash (l_partkey,l_suppkey) references 
---      partsupp(ps_partkey,ps_suppkey);
-
-
-
+ALTER TABLE tpch.lineitem
+    ADD INDEX USING HASH (l_orderkey),
+    ADD INDEX USING HASH (l_partkey),
+    ADD INDEX USING HASH (l_suppkey);

@@ -1,52 +1,35 @@
--- indexes for foreign keys
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/Exasol
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Add primary key constraints to TPC-H tables in Exasol.
+--          In Exasol primary keys are not enforced at insert time; they serve
+--          as optimizer hints that enable join elimination and filter push-down.
+--          No secondary indexes are created: Exasol's columnar storage and
+--          zone maps make traditional B-tree indexes unnecessary for the TPC-H
+--          analytical workload.
 
--- for table region
-alter table public.region
-add primary key (r_regionkey);
+ALTER TABLE public.region
+    ADD PRIMARY KEY (r_regionkey);
 
--- for table nation
-alter table public.nation
-add primary key (n_nationkey);
+ALTER TABLE public.nation
+    ADD PRIMARY KEY (n_nationkey);
 
--- create index on public.nation (n_regionkey);
+ALTER TABLE public.part
+    ADD PRIMARY KEY (p_partkey);
 
--- for table part
-alter table public.part
-add primary key (p_partkey);
+ALTER TABLE public.supplier
+    ADD PRIMARY KEY (s_suppkey);
 
--- for table supplier
-alter table public.supplier
-add primary key (s_suppkey);
+ALTER TABLE public.partsupp
+    ADD PRIMARY KEY (ps_partkey, ps_suppkey);
 
--- create index on public.supplier (s_nationkey);
+ALTER TABLE public.customer
+    ADD PRIMARY KEY (c_custkey);
 
--- for table partsupp
-alter table public.partsupp
-add primary key (ps_partkey,ps_suppkey);
+ALTER TABLE public.orders
+    ADD PRIMARY KEY (o_orderkey);
 
--- for table customer
-alter table public.customer
-add primary key (c_custkey);
-
--- create index on public.customer (c_nationkey);
-
--- for table partsupp
--- create index on public.partsupp (ps_suppkey);
-
--- create index on public.partsupp (ps_partkey);
-
--- for table lineitem
-alter table public.lineitem
-add primary key (l_orderkey,l_linenumber);
-
--- for table orders
-alter table public.orders
-add primary key (o_orderkey);
-
--- create index on public.orders (o_custkey);
-
--- for table lineitem
--- create index on public.lineitem (l_orderkey);
-
--- create index on public.lineitem (l_partkey,l_suppkey);
-
+ALTER TABLE public.lineitem
+    ADD PRIMARY KEY (l_orderkey, l_linenumber);
