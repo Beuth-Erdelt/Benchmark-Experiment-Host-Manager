@@ -19,3 +19,5 @@ CREATE INDEX ps_p ON tpch.partsupp (ps_partkey);
 CREATE INDEX o_c  ON tpch.orders   (o_custkey);
 CREATE INDEX l_o  ON tpch.lineitem (l_orderkey);
 CREATE INDEX l_ps ON tpch.lineitem (l_partkey, l_suppkey);
+
+COMMIT;

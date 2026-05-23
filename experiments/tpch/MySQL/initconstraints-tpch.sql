@@ -41,3 +41,5 @@ ALTER TABLE tpch.lineitem
     ADD FOREIGN KEY (l_partkey)            REFERENCES tpch.part(p_partkey),
     ADD FOREIGN KEY (l_suppkey)            REFERENCES tpch.supplier(s_suppkey),
     ADD FOREIGN KEY (l_partkey, l_suppkey) REFERENCES tpch.partsupp(ps_partkey, ps_suppkey);
+
+COMMIT;
