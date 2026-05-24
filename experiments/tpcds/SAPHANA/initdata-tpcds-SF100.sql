@@ -1,5 +1,12 @@
-ALTER SYSTEM ALTER CONFIGURATION ('indexserver.ini', 'system') set ('import_export', 'enable_csv_import_path_filter') = 'false' with reconfigure;
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/SAPHANA
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Load TPC-DS scale factor 100 data into SAP HANA using IMPORT FROM
+--          CSV FILE. Run after initschema-tpcds.sql.
 
+ALTER SYSTEM ALTER CONFIGURATION ('indexserver.ini', 'system') SET ('import_export', 'enable_csv_import_path_filter') = 'false' WITH RECONFIGURE;
 
 IMPORT FROM CSV FILE '/data/tpcds/SF100/call_center.dat'
 INTO tpcds.call_center
@@ -37,7 +44,6 @@ THREADS 10
 NO TYPE CHECK
 BATCH 1000;
 
-
 IMPORT FROM CSV FILE '/data/tpcds/SF100/customer.dat'
 INTO tpcds.customer
 WITH
@@ -73,9 +79,6 @@ FIELD DELIMITED BY '|'
 THREADS 10
 NO TYPE CHECK
 BATCH 1000;
-
-
-
 
 IMPORT FROM CSV FILE '/data/tpcds/SF100/dbgen_version.dat'
 INTO tpcds.dbgen_version
@@ -113,8 +116,6 @@ THREADS 10
 NO TYPE CHECK
 BATCH 1000;
 
-
-
 IMPORT FROM CSV FILE '/data/tpcds/SF100/item.dat'
 INTO tpcds.item
 WITH
@@ -151,9 +152,6 @@ THREADS 10
 NO TYPE CHECK
 BATCH 1000;
 
-
-
-
 IMPORT FROM CSV FILE '/data/tpcds/SF100/store.dat'
 INTO tpcds.store
 WITH
@@ -189,8 +187,6 @@ FIELD DELIMITED BY '|'
 THREADS 10
 NO TYPE CHECK
 BATCH 1000;
-
-
 
 IMPORT FROM CSV FILE '/data/tpcds/SF100/warehouse.dat'
 INTO tpcds.warehouse

@@ -207,3 +207,14 @@ They do **not** include the `ALTER SYSTEM synchronous_commit` lines.
 | `tpch/Citus` | Done |
 | `tpcds/MariaDB` | Done |
 | `tpcds/MySQL` | Done |
+| `tpcds/Clickhouse` | Done |
+| `tpcds/DB2` | Done |
+| `tpcds/Exasol` | Done |
+| `tpcds/MariaDBCS` | Done |
+| `tpcds/MemSQL` | Done |
+| `tpcds/MonetDB` | Done |
+| `tpcds/OmniSci` | Done |
+| `tpcds/OmniSciCPU` | Done |
+| `tpcds/SAPHANA` | Done |
+| `tpcds/SQLServer` | Done |
+| `tpcds/Citus` | Done |
