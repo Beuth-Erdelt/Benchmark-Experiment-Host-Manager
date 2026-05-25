@@ -1,7 +1,19 @@
-# Benchmark Experiment Host Manager - Example for Experiments
+# Example — Custom SQL Workload Template
 
-The folder contains a dummy query file.
-It must be adjusted for experiments running a custom SQL workload against existing databases.
+This folder contains a template for running a custom SQL workload against an existing database using the [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) query executor.
+
+## Contents
+
+| File | Purpose |
+|---|---|
+| `connections.config` | DBMS connection parameters (host, port, user, password, database) |
+| `queries.config` | Query definitions: SQL text, expected result shape, timing configuration |
+
+## Usage
+
+Adjust `connections.config` to point to your target DBMS and edit `queries.config` to define the SQL queries to benchmark. No schema or data loading scripts are needed — this template assumes the target database already exists and is populated.
+
+---
 
 ## Orchestration of Benchmarking Experiments
 
@@ -12,6 +24,7 @@ It must be adjusted for experiments running a custom SQL workload against existi
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
 For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
 
+---
 
 ## References
 
