@@ -237,3 +237,13 @@ They do **not** include the `ALTER SYSTEM synchronous_commit` lines.
 | `ycsb/SingleStore` | Done |
 | `ycsb/TiDB` | Done |
 | `ycsb/YugabyteDB` | Done |
+| `benchbase/chbenchmark/PostgreSQL` | Done |
+| `benchbase/tpcc/Citus` | Done |
+| `benchbase/tpcc/CockroachDB` | Done |
+| `benchbase/tpcc/MariaDB` | Done |
+| `benchbase/tpcc/MySQL` | Done |
+| `benchbase/tpcc/PostgreSQL` | Done |
+| `benchbase/tpcc/TiDB` | Done |
+| `benchbase/tpcc/YugabyteDB` | Done |
+| `benchbase/twitter/PostgreSQL` | Done |
+| `benchbase/ycsb/PostgreSQL` | Done |

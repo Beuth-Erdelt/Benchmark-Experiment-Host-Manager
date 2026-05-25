@@ -3,8 +3,8 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Configure the MySQL server for TPC-H loading, then create the
---          TPC-H tables in the tpch database.
+-- Purpose: Configure the MySQL server for TPC-H loading, create the TPC-H
+--          tables in the tpch database, then add primary key constraints.
 
 -- Create a passworded root account accessible from any host
 DROP USER 'root'@'%';
@@ -141,5 +141,29 @@ CREATE TABLE tpch.lineitem (
     l_shipmode       CHAR(10)      NOT NULL,
     l_comment        VARCHAR(44)   NOT NULL
 );
+
+ALTER TABLE tpch.region
+    ADD PRIMARY KEY (r_regionkey);
+
+ALTER TABLE tpch.nation
+    ADD PRIMARY KEY (n_nationkey);
+
+ALTER TABLE tpch.part
+    ADD PRIMARY KEY (p_partkey);
+
+ALTER TABLE tpch.supplier
+    ADD PRIMARY KEY (s_suppkey);
+
+ALTER TABLE tpch.partsupp
+    ADD PRIMARY KEY (ps_partkey, ps_suppkey);
+
+ALTER TABLE tpch.customer
+    ADD PRIMARY KEY (c_custkey);
+
+ALTER TABLE tpch.orders
+    ADD PRIMARY KEY (o_orderkey);
+
+ALTER TABLE tpch.lineitem
+    ADD PRIMARY KEY (l_orderkey, l_linenumber);
 
 COMMIT;

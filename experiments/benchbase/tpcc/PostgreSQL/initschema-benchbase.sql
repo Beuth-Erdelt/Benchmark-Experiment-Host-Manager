@@ -1,1 +1,7 @@
-
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/tpcc/PostgreSQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Schema initialisation placeholder for benchbase TPC-C on PostgreSQL.
+--          Benchbase creates the TPC-C tables automatically at runtime.

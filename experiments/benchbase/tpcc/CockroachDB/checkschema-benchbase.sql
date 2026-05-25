@@ -1,30 +1,26 @@
--- This table contains information about the distribution of ranges across the nodes. It gives insights into the status of ranges, including which node is hosting which range.
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/tpcc/CockroachDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Cluster topology and table distribution verification for the
+--          benchbase TPC-C schema on CockroachDB.
+
+-- Shows range distribution across nodes and which node hosts which range.
 SELECT 'crdb_internal.ranges' AS message;
 SELECT * FROM crdb_internal.ranges;
 
--- This table provides information about the nodes in the cluster, including their status and other metadata.
+-- Shows node status and metadata for all nodes in the cluster.
 SELECT 'crdb_internal.gossip_nodes' AS message;
 SELECT * FROM crdb_internal.gossip_nodes;
-
--- This table provides statistics about the performance and health of ranges, such as the number of keys, the number of queries, and the number of operations on the range.
--- SELECT 'crdb_internal.range_stats' AS message;
--- SELECT * FROM crdb_internal.range_stats;
-
--- This table offers information about the health and status of nodes in the CockroachDB cluster.
--- SELECT 'crdb_internal.node_status' AS message;
--- SELECT * FROM crdb_internal.node_status;
 
 SELECT 'crdb_internal.tables' AS message;
 SELECT * FROM crdb_internal.tables;
 
 SELECT 'crdb_internal.tables' AS message;
-SELECT * 
+SELECT *
 FROM crdb_internal.ranges;
 
 SELECT 'crdb_internal.tables.replicas' AS message;
-SELECT range_id, replicas, lease_holder 
-FROM crdb_internal.ranges ;
-
-
-
-
+SELECT range_id, replicas, lease_holder
+FROM crdb_internal.ranges;
