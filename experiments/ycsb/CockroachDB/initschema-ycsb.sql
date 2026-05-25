@@ -1,15 +1,24 @@
+-- Benchmark-Experiment-Host-Manager | experiments/ycsb/CockroachDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Creates the YCSB usertable for CockroachDB with a hash-partitioned
+--          primary key, configures zone replication, and reports cluster
+--          range and node distribution.
+
 CREATE TABLE public.usertable (
-  YCSB_KEY varchar(255) PRIMARY KEY USING HASH,
-  FIELD0 text,
-  FIELD1 text,
-  FIELD2 text,
-  FIELD3 text,
-  FIELD4 text,
-  FIELD5 text,
-  FIELD6 text,
-  FIELD7 text,
-  FIELD8 text,
-  FIELD9 text
+    YCSB_KEY  VARCHAR(255) PRIMARY KEY USING HASH,
+    FIELD0    TEXT,
+    FIELD1    TEXT,
+    FIELD2    TEXT,
+    FIELD3    TEXT,
+    FIELD4    TEXT,
+    FIELD5    TEXT,
+    FIELD6    TEXT,
+    FIELD7    TEXT,
+    FIELD8    TEXT,
+    FIELD9    TEXT
 );
 
 ALTER TABLE public.usertable CONFIGURE ZONE USING num_replicas = {num_worker_replicas};
@@ -25,26 +34,13 @@ SELECT * FROM crdb_internal.ranges;
 SELECT 'crdb_internal.gossip_nodes' AS message;
 SELECT * FROM crdb_internal.gossip_nodes;
 
--- This table provides statistics about the performance and health of ranges, such as the number of keys, the number of queries, and the number of operations on the range.
--- SELECT 'crdb_internal.range_stats' AS message;
--- SELECT * FROM crdb_internal.range_stats;
-
--- This table offers information about the health and status of nodes in the CockroachDB cluster.
--- SELECT 'crdb_internal.node_status' AS message;
--- SELECT * FROM crdb_internal.node_status;
-
 SELECT 'crdb_internal.tables' AS message;
 SELECT * FROM crdb_internal.tables;
 
 SELECT 'crdb_internal.tables.usertable' AS message;
-SELECT * 
+SELECT *
 FROM crdb_internal.ranges;
--- WHERE table_id = (SELECT table_id FROM crdb_internal.tables WHERE name = 'usertable');
 
 SELECT 'crdb_internal.tables.usertable.replicas' AS message;
-SELECT range_id, replicas, lease_holder 
+SELECT range_id, replicas, lease_holder
 FROM crdb_internal.ranges;
--- WHERE table_id = (SELECT table_id FROM crdb_internal.tables WHERE name = 'usertable');
-
-
-

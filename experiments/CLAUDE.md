@@ -224,3 +224,16 @@ They do **not** include the `ALTER SYSTEM synchronous_commit` lines.
 | `tpcc/MySQL` | Done |
 | `tpcc/SingleStore` | Done |
 | `tpcc/Citus` | Done |
+| `ycsb/CedarDB` | Done |
+| `ycsb/Citus` | Done |
+| `ycsb/CockroachDB` | Done |
+| `ycsb/DatabaseService` | Done |
+| `ycsb/Dragonfly` | Done |
+| `ycsb/Kinetica` | Done |
+| `ycsb/MariaDB` | Done |
+| `ycsb/MonetDB` | Done |
+| `ycsb/MySQL` | Done |
+| `ycsb/PostgreSQL` | Done |
+| `ycsb/SingleStore` | Done |
+| `ycsb/TiDB` | Done |
+| `ycsb/YugabyteDB` | Done |
