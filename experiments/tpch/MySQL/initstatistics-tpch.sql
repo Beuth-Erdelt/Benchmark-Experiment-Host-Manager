@@ -6,6 +6,16 @@
 -- Purpose: Collect table statistics after data loading.
 --          Run after initdata-tpch-SF*.sql (and optionally after initindexes).
 
+
+ANALYZE TABLE tpch.customer;
+ANALYZE TABLE tpch.lineitem;
+ANALYZE TABLE tpch.nation;
+ANALYZE TABLE tpch.orders;
+ANALYZE TABLE tpch.part;
+ANALYZE TABLE tpch.partsupp;
+ANALYZE TABLE tpch.region;
+ANALYZE TABLE tpch.supplier;
+
 -- after import + indexes + constraints
 SET GLOBAL autocommit = 1;
 SET GLOBAL foreign_key_checks = 1;
@@ -19,12 +29,3 @@ SET GLOBAL innodb_io_capacity_max = 2000;
 
 SET GLOBAL innodb_ddl_threads = 4;
 SET GLOBAL innodb_parallel_read_threads = 4;
-
-ANALYZE TABLE tpch.customer;
-ANALYZE TABLE tpch.lineitem;
-ANALYZE TABLE tpch.nation;
-ANALYZE TABLE tpch.orders;
-ANALYZE TABLE tpch.part;
-ANALYZE TABLE tpch.partsupp;
-ANALYZE TABLE tpch.region;
-ANALYZE TABLE tpch.supplier;

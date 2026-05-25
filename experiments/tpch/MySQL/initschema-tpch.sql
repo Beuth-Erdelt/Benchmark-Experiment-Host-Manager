@@ -19,12 +19,12 @@ SET GLOBAL innodb_flush_log_at_trx_commit = 2;
 SET GLOBAL sync_binlog = 0;
 
 -- io tuning
-SET GLOBAL innodb_io_capacity = 4000;
-SET GLOBAL innodb_io_capacity_max = 20000;
+-- SET GLOBAL innodb_io_capacity = 4000;
+-- SET GLOBAL innodb_io_capacity_max = 20000;
 
 -- parallelism
-SET GLOBAL innodb_ddl_threads = 32;
-SET GLOBAL innodb_parallel_read_threads = 32;
+-- SET GLOBAL innodb_ddl_threads = 32;
+-- SET GLOBAL innodb_parallel_read_threads = 32;
 
 -- redo log (requires restart if changed in config)
 -- innodb_redo_log_capacity = 16G
@@ -36,9 +36,6 @@ SET GLOBAL innodb_parallel_read_threads = 32;
 SET GLOBAL foreign_key_checks = 0;
 SET GLOBAL unique_checks = 0;
 SET GLOBAL autocommit = 0;
-
--- optional if replication/binlog not needed
-SET GLOBAL sql_log_bin = 0;
 
 -- Enable server-side LOAD DATA INFILE (required for bulk loading from /data/)
 SET GLOBAL local_infile = 1;

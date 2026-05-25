@@ -12,6 +12,8 @@
 --          The index on supplier(s_nationkey) is omitted because the
 --          supplier→nation FK is not applied in this configuration.
 
+SET GLOBAL innodb_sort_buffer_size = 268435456;
+
 CREATE INDEX n_r  ON tpch.nation   (n_regionkey);
 CREATE INDEX c_n  ON tpch.customer (c_nationkey);
 CREATE INDEX ps_s ON tpch.partsupp (ps_suppkey);

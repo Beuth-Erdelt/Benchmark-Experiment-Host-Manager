@@ -218,3 +218,9 @@ They do **not** include the `ALTER SYSTEM synchronous_commit` lines.
 | `tpcds/SAPHANA` | Done |
 | `tpcds/SQLServer` | Done |
 | `tpcds/Citus` | Done |
+| `tpcc/MariaDB` | Done |
+| `tpcc/PostgreSQL` | Done |
+| `tpcc/CockroachDB` | Done |
+| `tpcc/MySQL` | Done |
+| `tpcc/SingleStore` | Done |
+| `tpcc/Citus` | Done |

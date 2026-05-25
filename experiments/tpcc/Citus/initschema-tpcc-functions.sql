@@ -1,10 +1,12 @@
--- this is what hammerdb generates for postgresql
--- for citus and benchbase we do not use this, since benchbase runs business logic on the client side
-
-
-
-
--- DROP FUNCTION public.dbms_random(int4, int4);
+-- Benchmark-Experiment-Host-Manager | experiments/tpcc/Citus
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: HammerDB-generated PL/pgSQL stored procedures for TPC-C on
+--          PostgreSQL and Citus (dbms_random, delivery, neword, ostat,
+--          payment, slev). Not used with BenchBase, which runs transaction
+--          logic on the client side.
 
 CREATE OR REPLACE FUNCTION public.dbms_random(integer, integer)
  RETURNS integer
@@ -19,8 +21,6 @@ AS $function$
                 END;
                 $function$
 ;
-
--- DROP FUNCTION public.delivery(int4, int4);
 
 CREATE OR REPLACE FUNCTION public.delivery(integer, integer)
  RETURNS integer
@@ -94,8 +94,6 @@ AS $function$
                 END;
                 $function$
 ;
-
--- DROP FUNCTION public.neword(int4, int4, int4, int4, int4, int4);
 
 CREATE OR REPLACE FUNCTION public.neword(integer, integer, integer, integer, integer, integer)
  RETURNS numeric
@@ -352,8 +350,6 @@ AS $function$
                 $function$
 ;
 
--- DROP FUNCTION public.ostat(int4, int4, int4, int4, varchar);
-
 CREATE OR REPLACE FUNCTION public.ostat(integer, integer, integer, integer, character varying)
  RETURNS SETOF record
  LANGUAGE plpgsql
@@ -422,8 +418,6 @@ AS $function$
                 END;
                 $function$
 ;
-
--- DROP FUNCTION public.payment(int4, int4, int4, int4, int4, int4, numeric, varchar, varchar, numeric);
 
 CREATE OR REPLACE FUNCTION public.payment(integer, integer, integer, integer, integer, integer, numeric, character varying, character varying, numeric)
  RETURNS integer
@@ -554,8 +548,6 @@ AS $function$
                 END;
                 $function$
 ;
-
--- DROP FUNCTION public.slev(int4, int4, int4);
 
 CREATE OR REPLACE FUNCTION public.slev(integer, integer, integer)
  RETURNS integer

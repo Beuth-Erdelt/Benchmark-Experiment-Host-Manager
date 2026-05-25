@@ -1,22 +1,9 @@
--- DROP USER 'root'@'%';
--- FLUSH PRIVILEGES;
+-- Benchmark-Experiment-Host-Manager | experiments/tpcc/MariaDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Placeholder — MariaDB user setup and session configuration for
+--          TPC-C is performed externally. No schema creation is needed here.
 
--- CREATE USER 'root'@'%';
--- ALTER USER 'root'@'%' IDENTIFIED BY 'root';
-
- -- SET PASSWORD FOR root@'172.17.0.3' = PASSWORD('root');
-
--- GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
--- FLUSH PRIVILEGES;
-
--- allow load local in file
--- SET GLOBAL local_infile = 1;
-
--- allow zero date
--- SET sql_mode='';
--- SET GLOBAL sql_mode='';
-
--- speed up import
--- SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
--- SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
--- SET GLOBAL innodb_flush_log_at_trx_commit =0;
+-- No statements are needed; the TPC-C schema is created by the benchmark tool.
