@@ -190,6 +190,7 @@ class ycsb(base):
         execution throughput and latency by operation type, application metrics, and
         pass/fail test assertions including a check for FAILED columns.
         """
+        self._test_results = []
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -230,28 +231,19 @@ class ycsb(base):
         else:
             df_aggregated_reduced = pd.DataFrame()
         contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 metrics.index.names = ["DBMS"]
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
         if test_loading:
-            self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
-        self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
+            self._test_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
+        self._test_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
         if self.benchmarking_is_active():
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
-        if contains_failed:
-            print("* TEST failed: {} contains FAILED column".format("Execution Phase:"))
-            return False
-        else:
-            print("* TEST passed: {} contains no FAILED column".format("Execution Phase:"))
-            return True
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._record_test(not contains_failed, "Execution Phase: contains no FAILED column" if not contains_failed else "Execution Phase: contains FAILED column")
+        self._print_test_summary()
+        return not contains_failed
 

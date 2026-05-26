@@ -200,6 +200,7 @@ class base():
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.logger(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
         """
@@ -1268,6 +1269,44 @@ class base():
             if not compare_lists(workflow_1[key], workflow_2[key]):
                 return False
         return True
+    def _record_test(self, passed: bool, label: str) -> bool:
+        """
+        Append a test result to the internal collector and return the passed flag.
+
+        :param passed: Whether the test passed.
+        :type passed: bool
+        :param label: Human-readable description of what was tested.
+        :type label: str
+        :return: The value of passed, allowing inline chaining.
+        :rtype: bool
+        """
+        self._test_results.append((passed, label))
+        return passed
+    def _test_column(self, df, column: str, title: str = '') -> bool:
+        """
+        Call evaluator.test_results_column silently and record the result.
+
+        Mirrors the label format used by test_results_column so the summary
+        line matches what would have been printed inline.
+
+        :param df: DataFrame to check.
+        :param column: Column name to inspect for zero or NaN values.
+        :type column: str
+        :param title: Optional prefix prepended to the column name in the label.
+        :type title: str
+        :return: True if the column contains no zero or NaN values.
+        :rtype: bool
+        """
+        passed = self.evaluator.test_results_column(df, column, silent=True, title=title)
+        full_title = f"{title} {column}" if len(title) > 0 else column
+        suffix = "contains no 0 or NaN" if passed else "contains 0 or NaN"
+        return self._record_test(passed, f"{full_title} {suffix}")
+    def _print_test_summary(self) -> None:
+        """Print all results collected in _test_results as a single summary block."""
+        print("\n### Tests")
+        for passed, label in self._test_results:
+            status = "passed" if passed else "failed"
+            print(f"* TEST {status}: {label}")
     def update_workload(self):
         """
         Updates query.config locally and remotely via dashboard pod.
@@ -2278,6 +2317,7 @@ class base():
         """
         Show a summary of an experiment of type dbmsbenchmarker.
         """
+        self._test_results = []
         self.cluster.logger.debug('base.show_summary()')
         connections_sorted, monitoring_applications = self.show_summary_header()
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
@@ -2451,40 +2491,23 @@ class base():
                 for c in workflow_planned:
                     print("* DBMS", c, "- Pods", workflow_planned[c])
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
-        #if not df_monitoring_app.empty:
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
-                #print(metrics)
                 metrics.index.names = ["DBMS"]
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-            #print("\n### Application Metrics")
-            #print(df_monitoring_app)
-        print("\n### Tests")
         if self.benchmarking_is_active():
-            self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
-            self.evaluator.test_results_column(df_power, "Power@Size [~Q/h]")
-            #self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
-            #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
-            self.evaluator.test_results_column(df_benchmark, "Throughput@Size")
-            if num_errors == 0:
-                print("* TEST passed: No SQL errors")
-            else:
-                print("* TEST failed: SQL errors")
-            if num_warnings == 0:
-                print("* TEST passed: No SQL warnings")
-            else:
-                print("* TEST failed: SQL warnings (result mismatch)")
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
-        if self.loading_is_active() or self.benchmarking_is_active():
-            if len(test_results_monitoring) > 0:
-                print(test_results_monitoring)
+            self._test_column(df_geo_mean_runtime, "Geo Times [s]")
+            self._test_column(df_power, "Power@Size [~Q/h]")
+            self._test_column(df_benchmark, "Throughput@Size")
+            passed_errors = num_errors == 0
+            self._record_test(passed_errors, "No SQL errors" if passed_errors else "SQL errors")
+            passed_warnings = num_warnings == 0
+            self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
     def show_summary_monitoring_table(self, evaluate: object, component: str) -> list:
         """
         Build a list of DataFrames containing CPU and RAM monitoring metrics for one component.
@@ -2527,35 +2550,25 @@ class base():
         if not df_cleaned.empty:
             df_monitoring.append(df_cleaned.copy())
         return df_monitoring
-    def show_summary_monitoring(self) -> str:
+    def show_summary_monitoring(self) -> None:
         """
-        Print monitoring tables for all registered monitoring components and return test-result lines.
+        Print monitoring tables for all registered monitoring components and record test results.
 
-        :return: Newline-separated test-result strings (passed/failed per component metric).
+        Results are appended to ``self._test_results`` via :meth:`_record_test`.
         """
-        test_results = ""
-        #resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        #code = self.code
-        #evaluation = evaluators.ycsb(code=code, path=resultfolder)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             print("\n### Monitoring")
-            #print(self.workload['monitoring_components'])
-            #####################
             for component, title in self.workload['monitoring_components'].items():
                 df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
-                ##########
                 if len(df_monitoring) > 0:
                     print(f"\n### {title}\n")
                     df = pd.concat(df_monitoring, axis=1).round(2)
                     df = df.reindex(index=evaluators.natural_sort(df.index))
-                    #print(df)
                     df.index.names = ["DBMS"]
                     print(df.to_markdown(index=True, floatfmt=".2f"))
-                    if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
-                        test_results = test_results + f"* TEST failed: {title} contains 0 or NaN in CPU [CPUs]\n"
-                    else:
-                        test_results = test_results + f"* TEST passed: {title} contains no 0 or NaN in CPU [CPUs]\n"
-        return test_results.rstrip('\n')
+                    passed = self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True)
+                    suffix = "no 0 or NaN" if passed else "0 or NaN"
+                    self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
     def OLD_show_summary_monitoring(self):
         test_results = ""
         resultfolder = self.cluster.config['benchmarker']['resultfolder']

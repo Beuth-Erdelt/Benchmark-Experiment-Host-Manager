@@ -104,6 +104,7 @@ class dbmsbenchmarker(base):
         query latencies, SQL errors, SQL warnings, monitoring metrics, and
         pass/fail test assertions.
         """
+        self._test_results = []
         self.evaluator.load_inspector()
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
@@ -176,35 +177,21 @@ class dbmsbenchmarker(base):
         else:
             df_aggregated_reduced = pd.DataFrame()
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
         if self.benchmarking_is_active():
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
-        if self.benchmarking_is_active():
-            self.evaluator.test_results_column(df_aggregated_reduced, "Geo Times [s]")
-            self.evaluator.test_results_column(df_aggregated_reduced, "Power@Size [~Q/h]")
-            self.evaluator.test_results_column(df_aggregated_reduced, "Throughput@Size")
-            if num_errors == 0:
-                print("* TEST passed: No SQL errors")
-            else:
-                print("* TEST failed: SQL errors")
-            if num_warnings == 0:
-                print("* TEST passed: No SQL warnings")
-            else:
-                print("* TEST failed: SQL warnings (result mismatch)")
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
+            self._test_column(df_aggregated_reduced, "Geo Times [s]")
+            self._test_column(df_aggregated_reduced, "Power@Size [~Q/h]")
+            self._test_column(df_aggregated_reduced, "Throughput@Size")
+            passed_errors = num_errors == 0
+            self._record_test(passed_errors, "No SQL errors" if passed_errors else "SQL errors")
+            passed_warnings = num_warnings == 0
+            self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
 
 

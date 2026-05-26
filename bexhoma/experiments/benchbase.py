@@ -238,6 +238,7 @@ class benchbase(base):
         Covers workflow (actual vs. planned), loading times, execution throughput per
         connection and phase, application metrics, and pass/fail test assertions.
         """
+        self._test_results = []
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -270,20 +271,15 @@ class benchbase(base):
         else:
             df_aggregated_reduced = pd.DataFrame()
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
-        self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
+        self._test_column(df_aggregated_reduced, "Throughput (requests/second)")
         if self.benchmarking_is_active():
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
 
 

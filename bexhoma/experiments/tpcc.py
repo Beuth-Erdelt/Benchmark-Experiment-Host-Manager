@@ -180,6 +180,7 @@ class tpcc(base):
         Covers workflow (actual vs. planned), loading and execution tables, application
         metrics, and pass/fail test assertions.
         """
+        self._test_results = []
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -292,23 +293,16 @@ class tpcc(base):
             #print(df_connections)
         """
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
-                #print(metrics)
                 metrics.index.names = ["DBMS"]
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
         if self.benchmarking_is_active():
-            self.evaluator.test_results_column(df_aggregated_reduced, "NOPM")
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
+            self._test_column(df_aggregated_reduced, "NOPM")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
 
 
