@@ -1284,10 +1284,7 @@ class base():
         return passed
     def _test_column(self, df, column: str, title: str = '') -> bool:
         """
-        Call evaluator.test_results_column silently and record the result.
-
-        Mirrors the label format used by test_results_column so the summary
-        line matches what would have been printed inline.
+        Call evaluator.test_results_column and record the result.
 
         :param df: DataFrame to check.
         :param column: Column name to inspect for zero or NaN values.
@@ -1297,7 +1294,7 @@ class base():
         :return: True if the column contains no zero or NaN values.
         :rtype: bool
         """
-        passed = self.evaluator.test_results_column(df, column, silent=True, title=title)
+        passed = self.evaluator.test_results_column(df, column)
         full_title = f"{title} {column}" if len(title) > 0 else column
         suffix = "contains no 0 or NaN" if passed else "contains 0 or NaN"
         return self._record_test(passed, f"{full_title} {suffix}")
@@ -2566,7 +2563,7 @@ class base():
                     df = df.reindex(index=evaluators.natural_sort(df.index))
                     df.index.names = ["DBMS"]
                     print(df.to_markdown(index=True, floatfmt=".2f"))
-                    passed = self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True)
+                    passed = self.evaluator.test_results_column(df, "CPU [CPUs]")
                     suffix = "no 0 or NaN" if passed else "0 or NaN"
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
     def OLD_show_summary_monitoring(self):
@@ -2583,7 +2580,7 @@ class base():
                 print("\n### Ingestion - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
                     test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
@@ -2595,7 +2592,7 @@ class base():
                 print("\n### Ingestion - Loader")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
                     test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
@@ -2607,7 +2604,7 @@ class base():
                 print("\n### Execution - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
                     test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
@@ -2619,7 +2616,7 @@ class base():
                 print("\n### Execution - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]", silent=True):
+                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
                     test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
                     test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"

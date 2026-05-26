@@ -240,36 +240,21 @@ class base:
         :rtype: int
         """
         return 0
-    def test_results_column(self, df, test_column, silent=False, title=''):
+    def test_results_column(self, df, test_column: str) -> bool:
         """
-        Checks whether a column in a DataFrame contains any zero or NaN values.
+        Check whether a column in a DataFrame contains any zero or NaN values.
 
         :param df: DataFrame to check.
         :type df: pandas.DataFrame
         :param test_column: Column name to inspect.
         :type test_column: str
-        :param silent: When ``True``, suppresses printed output.
-        :type silent: bool
-        :param title: Optional label prefix for the printed message.
-        :type title: str
         :return: ``True`` if the column is fully populated with non-zero values,
                  ``False`` otherwise.
         :rtype: bool
         """
-        if len(title) > 0:
-            title = f"{title} {test_column}"
-        else:
-            title = test_column
-        if not df is None and not df.empty:
+        if df is not None and not df.empty:
             contains_zero_or_nan = df[test_column].isin([0]) | df[test_column].isna()
-            if contains_zero_or_nan.any():
-                if not silent:
-                    print("* TEST failed: {} contains 0 or NaN".format(title))
-                return False
-            else:
-                if not silent:
-                    print("* TEST passed: {} contains no 0 or NaN".format(title))
-                return True
+            return not contains_zero_or_nan.any()
         return False
     def get_workload(self):
         """
