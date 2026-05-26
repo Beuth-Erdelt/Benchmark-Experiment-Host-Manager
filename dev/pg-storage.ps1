@@ -59,6 +59,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -98,6 +99,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -137,6 +139,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -176,6 +179,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -220,6 +224,7 @@ bexhoma benchbase load -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -246,6 +251,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -284,6 +290,7 @@ bexhoma benchbase load -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -310,6 +317,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -348,6 +356,7 @@ bexhoma benchbase load -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -374,6 +383,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -412,6 +422,7 @@ bexhoma benchbase load -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
@@ -438,6 +449,7 @@ bexhoma benchbase run -tr `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   -sf $BEXHOMA_WAREHOUSES `
   -sd $BEXHOMA_DURATION `
+  -slg 10 `
   -dbms PostgreSQL `
   -nlp 1 `
   -nbp 1 `
