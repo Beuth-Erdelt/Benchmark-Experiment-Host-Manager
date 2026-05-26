@@ -1,7 +1,74 @@
-# Benchmark Experiment Host Manager - Benchbase Experiments
+# Benchbase Experiments
 
-The folder contains subfolders with DDL scripts and a query file for multiple DBMSs.
-These are used for Benchbase experiments.
+This folder contains DDL scripts for use with the [Benchbase](https://github.com/cmu-db/benchbase) benchmarking framework. Benchbase is a Java-based tool that manages data generation, schema creation, data loading, and workload execution entirely; the SQL files here handle server configuration and post-load verification.
+
+## Benchmark Overview
+
+Benchbase supports multiple workloads. This folder is organised by workload and then by DBMS:
+
+```
+benchbase/
+    tpcc/         TPC-C — transactional order-processing (9 tables)
+    chbenchmark/  CH-benCHmark — OLAP queries over TPC-C data
+    ycsb/         YCSB — key-value workload (usertable)
+    twitter/      Twitter benchmark — social-network read/write workload
+```
+
+Each workload subfolder contains one subdirectory per supported DBMS.
+
+---
+
+## File Naming Convention
+
+| File | Purpose |
+|---|---|
+| `initschema-benchbase.sql` | Server configuration (user accounts, engine settings) and/or `CREATE DATABASE`; schema creation is handled by Benchbase at runtime |
+| `initschema-benchbase-schema.sql` | Named-schema variant using the `{BEXHOMA_SCHEMA}` placeholder (PostgreSQL TPC-C only) |
+| `initschema-benchbase-postgresql.sql` | Full benchbase-generated PostgreSQL DDL with FK constraints; reference schema for the Citus variant (Citus TPC-C only) |
+| `checkschema-benchbase.sql` | Post-load verification: `VACUUM ANALYZE` / `ANALYZE TABLE`, row counts, cluster topology, InnoDB configuration |
+| `checkschema-benchbase-schema.sql` | Named-schema variant of the checkschema file (PostgreSQL TPC-C only) |
+
+Files whose names contain `filled` are generated variants with Bexhoma placeholders already substituted; they are not edited directly.
+
+---
+
+## Supported DBMS by Workload
+
+### TPC-C (`tpcc/`)
+
+TPC-C simulates a wholesale supplier order-processing system with 9 tables (warehouse, district, customer, history, new_order, orders, order_line, item, stock). Benchbase creates all tables automatically; the SQL files configure the server and verify the result.
+
+| Folder | Notes |
+|---|---|
+| `PostgreSQL` | `checkschema` runs `VACUUM ANALYZE`, reports pg_settings; `-schema` variant with `{BEXHOMA_SCHEMA}` |
+| `MariaDB` | Server configuration placeholder; Benchbase creates tables |
+| `MySQL` | User account setup, `local_infile`, zero-date mode, `CREATE DATABASE benchbase` |
+| `CockroachDB` | `checkschema` reports range distribution and gossip node status |
+| `TiDB` | Sets `max-replicas` via `SET CONFIG pd`; creates `benchbase` database |
+| `YugabyteDB` | Full DDL with YugabyteDB HASH/ASC primary key syntax; FK constraints omitted; 300 s wait for tablet splitting |
+| `Citus` | Full DDL with Citus shard distribution commands; FK constraints omitted; PostgreSQL reference DDL in separate file |
+
+### chBenchmark (`chbenchmark/`)
+
+CH-benCHmark runs analytical queries over TPC-C data, combining OLTP and OLAP in one schema. Benchbase creates the schema.
+
+| Folder | Notes |
+|---|---|
+| `PostgreSQL` | `checkschema` reports table and index sizes |
+
+### YCSB (`ycsb/`)
+
+| Folder | Notes |
+|---|---|
+| `PostgreSQL` | `checkschema` reports table and index sizes |
+
+### Twitter (`twitter/`)
+
+| Folder | Notes |
+|---|---|
+| `PostgreSQL` | `checkschema` reports table and index sizes |
+
+---
 
 ## Orchestration of Benchmarking Experiments
 
@@ -12,6 +79,7 @@ These are used for Benchbase experiments.
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
 For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
 
+---
 
 ## References
 

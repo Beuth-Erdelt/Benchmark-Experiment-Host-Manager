@@ -56,7 +56,9 @@ class logger(base):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker-" + jobname) and filename.endswith(".dbmsbenchmarker.log"):
                 df = self.log_to_df(self.path + "/" + filename)
-                if not df.empty:
+                if df.empty:
+                    self.num_missing_benchmarking_dfs += 1
+                else:
                     with open(self.path + "/" + filename + ".df.pickle", "wb") as f:
                         pickle.dump(df, f)
     def end_loading(self, jobname):
@@ -77,20 +79,22 @@ class logger(base):
             if filename.startswith("bexhoma-loading-" + jobname) and filename.endswith(".sensor.log"):
                 full_path = self.path + "/" + filename
                 df = self.log_to_df(full_path)
-                #df.index = df['configuration'].astype(str) + "-" + df['experiment_run'].astype(str)
-                if df.empty and full_path in self.workflow_errors:
-                    print("Error in " + filename)
-                    print(self.workflow_errors)
-                elif not df.empty:
+                if df.empty:
+                    self.num_missing_loading_dfs += 1
+                    if full_path in self.workflow_errors:
+                        print("Error in " + filename)
+                        print(self.workflow_errors)
+                else:
                     with open(self.path + "/" + filename + ".df.pickle", "wb") as f:
                         pickle.dump(df, f)
-    def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end=''):
+    def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end='', num_missing=0):
         """
         Collects all per-pod pickle DataFrames for one phase and writes a combined pickle.
 
         Scans the result folder for files matching
         ``<filename_source_start>*<filename_source_end>``, concatenates their
-        DataFrames, sets ``connection`` as the index, and writes the result to
+        DataFrames, sets ``connection`` as the index, adds a ``missing_dfs`` column
+        with the count of absent pod DataFrames, and writes the result to
         ``<filename_result>``.
 
         :param filename_result: Name of the combined output pickle file.
@@ -99,16 +103,25 @@ class logger(base):
         :type filename_source_start: str
         :param filename_source_end: Filename suffix used to match source pickle files.
         :type filename_source_end: str
+        :param num_missing: Number of per-pod DataFrames that failed to parse and are absent from the union.
+        :type num_missing: int
         """
         df_collected = None
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith(filename_source_start) and filename.endswith(filename_source_end):
-                df = pd.read_pickle(self.path + "/" + filename)
+                try:
+                    df = pd.read_pickle(self.path + "/" + filename)
+                except Exception:
+                    num_missing += 1
+                    continue
                 if not df.empty:
                     df_collected = df.copy() if df_collected is None else pd.concat([df_collected, df])
+                else:
+                    num_missing += 1
         if df_collected is not None and not df_collected.empty:
+            df_collected['missing_dfs'] = num_missing
             df_collected.set_index('connection', inplace=True, drop=False)
             with open(self.path + "/" + filename_result, "wb") as f:
                 pickle.dump(df_collected, f)
@@ -121,11 +134,21 @@ class logger(base):
         for the loading phase.
         """
         if self.include_benchmarking:
+            self.num_missing_benchmarking_dfs = 0
             self.transform_all_logs_benchmarking()
-            self._collect_dfs(filename_result="bexhoma-benchmarker.all.df.pickle" , filename_source_start="bexhoma-benchmarker", filename_source_end=".log.df.pickle")
+            self._collect_dfs(
+                filename_result="bexhoma-benchmarker.all.df.pickle",
+                filename_source_start="bexhoma-benchmarker",
+                filename_source_end=".log.df.pickle",
+                num_missing=self.num_missing_benchmarking_dfs)
         if self.include_loading:
+            self.num_missing_loading_dfs = 0
             self.transform_all_logs_loading()
-            self._collect_dfs(filename_result="bexhoma-loading.all.df.pickle" , filename_source_start="bexhoma-loading", filename_source_end=".log.df.pickle")
+            self._collect_dfs(
+                filename_result="bexhoma-loading.all.df.pickle",
+                filename_source_start="bexhoma-loading",
+                filename_source_end=".log.df.pickle",
+                num_missing=self.num_missing_loading_dfs)
     def get_df_benchmarking(self):
         """
         Returns the DataFrame containing all benchmarking-phase results.

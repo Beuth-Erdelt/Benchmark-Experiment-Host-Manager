@@ -10,25 +10,9 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
-import re
 import pandas as pd
-import json
-import ast
-from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 from .base import base
@@ -36,14 +20,9 @@ from .base import base
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["dbmsbenchmarker"]
 
-
-"""
-############################################################################
-DBMSBenchmarker
-############################################################################
-"""
-
+# DBMSBenchmarker experiment class
 
 
 class dbmsbenchmarker(base):
@@ -56,16 +35,15 @@ class dbmsbenchmarker(base):
     def __init__(self,
             cluster,
             code=None,
-            #queryfile = 'queries-tpch.config',
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)#, detached)
-        self.evaluator = evaluators.dbmsbenchmarker(code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        base.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
+        self.evaluator = evaluators.dbmsbenchmarker(                    # evaluator specific to DBMSBenchmarker result format
+            code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
-                         pod_dashboard=''):
+                         pod_dashboard: str = '') -> None:
         """
         Let the dashboard pod build the evaluations.
         This is specific to dbmsbenchmarker.
@@ -83,20 +61,20 @@ class dbmsbenchmarker(base):
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         # specific to dbmsbenchmarker
         cmd = {}
@@ -118,30 +96,22 @@ class dbmsbenchmarker(base):
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self):
-        #print('dbmsbenchmarker.show_summary()')
+    def show_summary(self) -> None:
+        """
+        Print a Markdown-formatted summary of a DBMSBenchmarker experiment.
+
+        Covers workflow, loading times, per-connection and per-phase execution stats,
+        query latencies, SQL errors, SQL warnings, monitoring metrics, and
+        pass/fail test assertions.
+        """
+        self._test_results = []
         self.evaluator.load_inspector()
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
         if self.benchmarking_is_active():
             print("\n### Workflow")
-            #df = self.evaluator.get_summary_benchmark_per_phase()
             df = self.evaluator.get_summary_benchmark_per_connection()
-            #print(df)
-            """
-            workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df)
-            #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
-            workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-            """
             workflow_actual = self.evaluator.reconstruct_workflow(df)
             workflow_planned = self.workload['workflow_planned']
             if len(workflow_actual) > 0:
@@ -173,8 +143,6 @@ class dbmsbenchmarker(base):
             df = self.evaluator.get_query_latencies(query_titles=True)
             if not df is None:
                 df = df.sort_index().T.round(2)
-                #df.index = df.index.map(map_index_to_queryname)
-                #print(df)
                 df.index.names = ["Queries"]
                 print(df.to_markdown(index=True, floatfmt=".2f"))
                 num_of_queries = len(df.index)
@@ -185,20 +153,14 @@ class dbmsbenchmarker(base):
                 df_errors = df.copy()
                 df_errors = df_errors[~(df_errors == False).all(axis=1)]
                 list_error_queries = list(df_errors.index)
-                # set readable names
-                #df.index = df.index.map(map_index_to_queryname)
                 # remove only False rows
                 df = df[~(df == False).all(axis=1)]
-                #print(df)
                 print(df.to_markdown(index=True, floatfmt=".2f"))
                 for error in list_error_queries:
-                    numQuery = error[1:]        # remove the leading "Q""
+                    numQuery = error[1:]        # remove the leading "Q"
                     list_errors = self.evaluator.evaluation.get_error(numQuery)
                     list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
-                    #print(list_errors)
                     print("* "+error)
-                    #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
-                    #print(df_error)
                     for k,v in list_errors.items():
                         print("  * {}: {}".format(k,v))
             else:
@@ -207,50 +169,29 @@ class dbmsbenchmarker(base):
             df = self.evaluator.get_total_warnings(query_titles=True)
             num_warnings = df.sum().sum()
             if num_warnings > 0:
-                # set readable names
-                #df.index = df.index.map(map_index_to_queryname)
                 # remove only False rows
                 df = df[~(df == False).all(axis=1)]
-                #print(df)
                 print(df.to_markdown(index=True, floatfmt=".2f"))
             else:
                 print("No warnings")
         else:
             df_aggregated_reduced = pd.DataFrame()
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
-        #self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
         if self.benchmarking_is_active():
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
-        if self.benchmarking_is_active():
-            self.evaluator.test_results_column(df_aggregated_reduced, "Geo Times [s]")
-            self.evaluator.test_results_column(df_aggregated_reduced, "Power@Size [~Q/h]")
-            #self.evaluator.test_results_column(df_geo_mean_runtime, "Geo Times [s]")
-            #self.evaluator.test_results_column(df_benchmark, "Throughput@Size [~GB/h]")
-            self.evaluator.test_results_column(df_aggregated_reduced, "Throughput@Size")
-            if num_errors == 0:
-                print("* TEST passed: No SQL errors")
-            else:
-                print("* TEST failed: SQL errors")
-            if num_warnings == 0:
-                print("* TEST passed: No SQL warnings")
-            else:
-                print("* TEST failed: SQL warnings (result mismatch)")
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
+            self._test_column(df_aggregated_reduced, "Geo Times [s]")
+            self._test_column(df_aggregated_reduced, "Power@Size [~Q/h]")
+            self._test_column(df_aggregated_reduced, "Throughput@Size")
+            passed_errors = num_errors == 0
+            self._record_test(passed_errors, "No SQL errors" if passed_errors else "SQL errors")
+            passed_warnings = num_warnings == 0
+            self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
 
 

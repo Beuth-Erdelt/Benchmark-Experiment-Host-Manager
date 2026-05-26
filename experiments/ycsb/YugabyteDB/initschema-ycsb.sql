@@ -1,66 +1,40 @@
+-- Benchmark-Experiment-Host-Manager | experiments/ycsb/YugabyteDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Creates the YCSB usertable for YugabyteDB, reports the creation
+--          timestamp and row count, and verifies tablet distribution.
+
 -- https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc
 -- https://docs.yugabyte.com/stable/architecture/docdb-sharding/tablet-splitting/#ycsb-workload-with-automatic-tablet-splitting-example
 -- https://www.yugabyte.com/blog/optimizing-yugabytedb-memory-tuning-for-ysql/
 -- ./bin/yb-ctl --rf=3 create --master_flags "enable_automatic_tablet_splitting=true,tablet_split_low_phase_size_threshold_bytes=30000000" --tserver_flags "memstore_size_mb=10"
 
-
--- SELECT 'DROP old usertable' as message;
--- DROP TABLE IF EXISTS public.usertable CASCADE;
-
--- wait 60 seconds
--- SELECT 'Wait 60 s';
--- select (pg_sleep(60.0::double precision)::text = '')::text as "waiting completed", current_timestamp as "time after waiting";
-
 ALTER DATABASE yugabyte SET temp_file_limit=-1;
 
-
--- SELECT "CREATE new usertable";
 CREATE TABLE IF NOT EXISTS usertable (
-           YCSB_KEY VARCHAR(255) PRIMARY KEY,
-           FIELD0 TEXT, FIELD1 TEXT, FIELD2 TEXT, FIELD3 TEXT,
-           FIELD4 TEXT, FIELD5 TEXT, FIELD6 TEXT, FIELD7 TEXT,
-           FIELD8 TEXT, FIELD9 TEXT);
-
-/*
-or: ) SPLIT INTO 16 TABLETS;
-*/
-
-/*
-CREATE TABLE usertable (
-  YCSB_KEY varchar(255),
-  FIELD0 text,
-  FIELD1 text,
-  FIELD2 text,
-  FIELD3 text,
-  FIELD4 text,
-  FIELD5 text,
-  FIELD6 text,
-  FIELD7 text,
-  FIELD8 text,
-  FIELD9 text,
-  PRIMARY KEY (YCSB_KEY ASC))
-  SPLIT AT VALUES (('user10'),('user14'),('user18'),
-  ('user22'),('user26'),('user30'),('user34'),('user38'),
-  ('user42'),('user46'),('user50'),('user54'),('user58'),
-  ('user62'),('user66'),('user70'),('user74'),('user78'),
-  ('user82'),('user86'),('user90'),('user94'),('user98')
+    YCSB_KEY  VARCHAR(255) PRIMARY KEY,
+    FIELD0    TEXT,
+    FIELD1    TEXT,
+    FIELD2    TEXT,
+    FIELD3    TEXT,
+    FIELD4    TEXT,
+    FIELD5    TEXT,
+    FIELD6    TEXT,
+    FIELD7    TEXT,
+    FIELD8    TEXT,
+    FIELD9    TEXT
 );
-*/
 
 SELECT current_timestamp AS "Time after creation";
 
--- wait 300 seconds
--- SELECT 'Wait 300 s';
--- select (pg_sleep(300.0::double precision)::text = '')::text as "waiting completed", current_timestamp as "time after waiting";
-
 SELECT COUNT(*) AS "Number of rows in usertable" FROM usertable;
 
-select 'yb_table_properties.usertable' as msg;
+SELECT 'yb_table_properties.usertable' AS msg;
 SELECT * FROM yb_table_properties('usertable'::regclass);
 
-
-
-select 'yb_servers' as msg;
-SELECT * -- public_ip, yb_local_tablets.*
+SELECT 'yb_servers' AS msg;
+SELECT *
 FROM yb_servers()
 JOIN yb_local_tablets ON true;

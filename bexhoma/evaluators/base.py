@@ -69,6 +69,8 @@ class base:
         self.include_benchmarking = include_benchmarking
         self.workflow = dict()
         self.workflow_errors = dict()
+        self.num_missing_benchmarking_dfs = 0
+        self.num_missing_loading_dfs = 0
     def log_to_df(self, filename):
         """
         Scans a pod log file for known errors and records them in ``self.workflow_errors``.
@@ -151,7 +153,7 @@ class base:
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading-" + jobname) and filename.endswith(".sensor.log"):
                 self.log_to_df(self.path + "/" + filename)
-    def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end=''):
+    def _collect_dfs(self, filename_result='', filename_source_start='', filename_source_end='', num_missing=0):
         """
         No-op base implementation; overridden by :class:`logger` to collect pickled DataFrames.
 
@@ -161,6 +163,8 @@ class base:
         :type filename_source_start: str
         :param filename_source_end: Filename suffix used to match source pickle files.
         :type filename_source_end: str
+        :param num_missing: Number of per-pod DataFrames that failed to parse and are absent from the union.
+        :type num_missing: int
         """
         pass
     def evaluate_results(self, pod_dashboard=''):

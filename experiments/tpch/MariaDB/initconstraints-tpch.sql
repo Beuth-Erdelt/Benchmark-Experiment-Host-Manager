@@ -1,79 +1,43 @@
--- sccsid:     @(#)dss.ri	2.1.8.1
--- tpcd benchmark version 8.0
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/MariaDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Add primary key and foreign key constraints to TPC-H tables.
+--          Run after data loading (initdata-tpch-SF*.sql).
+--          Each ALTER TABLE combines all actions for that table so it is
+--          locked only once. Statements are ordered by FK dependency.
 
+ALTER TABLE tpch.region
+    ADD PRIMARY KEY (r_regionkey);
 
--- for table region
-alter table tpch.region
-add primary key (r_regionkey);
+ALTER TABLE tpch.nation
+    ADD PRIMARY KEY (n_nationkey),
+    ADD FOREIGN KEY (n_regionkey) REFERENCES tpch.region(r_regionkey);
 
--- for table nation
-alter table tpch.nation
-add primary key (n_nationkey);
+ALTER TABLE tpch.part
+    ADD PRIMARY KEY (p_partkey);
 
--- for table part
-alter table tpch.part
-add primary key (p_partkey);
+ALTER TABLE tpch.supplier
+    ADD PRIMARY KEY (s_suppkey);
+-- supplier→nation FK not applied: not required by the TPC-H query workload
 
--- for table supplier
-alter table tpch.supplier
-add primary key (s_suppkey);
+ALTER TABLE tpch.partsupp
+    ADD PRIMARY KEY (ps_partkey, ps_suppkey),
+    ADD FOREIGN KEY (ps_suppkey) REFERENCES tpch.supplier(s_suppkey),
+    ADD FOREIGN KEY (ps_partkey) REFERENCES tpch.part(p_partkey);
 
--- for table partsupp
-alter table tpch.partsupp
-add primary key (ps_partkey,ps_suppkey);
+ALTER TABLE tpch.customer
+    ADD PRIMARY KEY (c_custkey),
+    ADD FOREIGN KEY (c_nationkey) REFERENCES tpch.nation(n_nationkey);
 
--- for table customer
-alter table tpch.customer
-add primary key (c_custkey);
+ALTER TABLE tpch.orders
+    ADD PRIMARY KEY (o_orderkey),
+    ADD FOREIGN KEY (o_custkey)   REFERENCES tpch.customer(c_custkey);
 
--- for table lineitem
-alter table tpch.lineitem
-add primary key (l_orderkey,l_linenumber);
-
--- for table orders
-alter table tpch.orders
-add primary key (o_orderkey);
-
-
-
--- for table nation
-alter table tpch.nation
-add foreign key (n_regionkey) references tpch.region(r_regionkey);
-
--- for table supplier
--- alter table tpch.supplier
--- add foreign key (s_nationkey) references tpch.nation(n_nationkey);
-
--- for table customer
-alter table tpch.customer
-add foreign key (c_nationkey) references tpch.nation(n_nationkey);
-
--- for table partsupp
-alter table tpch.partsupp
-add foreign key (ps_suppkey) references tpch.supplier(s_suppkey);
-
-alter table tpch.partsupp
-add foreign key (ps_partkey) references tpch.part(p_partkey);
-
--- for table orders
-alter table tpch.orders
-add foreign key (o_custkey) references tpch.customer(c_custkey);
-
--- for table lineitem
-alter table tpch.lineitem
-add foreign key (l_orderkey)  references tpch.orders(o_orderkey);
-
-alter table tpch.lineitem
-add foreign key (l_partkey) references 
-        tpch.part(p_partkey);
-
-alter table tpch.lineitem
-add foreign key (l_suppkey) references 
-        tpch.supplier(s_suppkey);
-
-alter table tpch.lineitem
-add foreign key (l_partkey,l_suppkey) references 
-        tpch.partsupp(ps_partkey,ps_suppkey);
-
-
-
+ALTER TABLE tpch.lineitem
+    ADD PRIMARY KEY (l_orderkey, l_linenumber),
+    ADD FOREIGN KEY (l_orderkey)           REFERENCES tpch.orders(o_orderkey),
+    ADD FOREIGN KEY (l_partkey)            REFERENCES tpch.part(p_partkey),
+    ADD FOREIGN KEY (l_suppkey)            REFERENCES tpch.supplier(s_suppkey),
+    ADD FOREIGN KEY (l_partkey, l_suppkey) REFERENCES tpch.partsupp(ps_partkey, ps_suppkey);

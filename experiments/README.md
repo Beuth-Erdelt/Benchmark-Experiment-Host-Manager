@@ -1,6 +1,17 @@
-# Benchmark Experiment Host Manager
+# Benchmark Experiment Host Manager — Schema and Query Files
 
-In this folder is a collection of workload and schema files for benchmarking experiments.
+This directory contains workload and schema files for benchmarking experiments. Each subfolder corresponds to one benchmark and holds per-DBMS DDL scripts, data-loading scripts, and query configuration files.
+
+## Directory Overview
+
+| Folder | Benchmark | Type | Workload driver |
+|---|---|---|---|
+| [`tpch/`](tpch/) | [TPC-H](https://www.tpc.org/tpch/) | Analytical — 8 tables, 22 queries | dbmsbenchmarker |
+| [`tpcds/`](tpcds/) | [TPC-DS](https://www.tpc.org/tpcds/) | Analytical — 25 tables, 99 queries | dbmsbenchmarker |
+| [`tpcc/`](tpcc/) | TPC-C (HammerDB TPROC-C) | Transactional — 9 tables | HammerDB |
+| [`ycsb/`](ycsb/) | [YCSB](https://github.com/brianfrankcooper/YCSB) | Key-value — 1 table | YCSB-JDBC |
+| [`benchbase/`](benchbase/) | [Benchbase](https://github.com/cmu-db/benchbase) — TPC-C, chBenchmark, YCSB, Twitter | Mixed | Benchbase |
+| [`example/`](example/) | Custom SQL workload template | — | dbmsbenchmarker |
 
 ## Orchestration of Benchmarking Experiments
 
@@ -11,6 +22,7 @@ In this folder is a collection of workload and schema files for benchmarking exp
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
 For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
 
+---
 
 ## References
 

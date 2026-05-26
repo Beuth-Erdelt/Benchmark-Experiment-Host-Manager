@@ -1,167 +1,219 @@
--- 
--- Legal Notice 
--- 
--- This document and associated source code (the "Work") is a part of a 
--- benchmark specification maintained by the TPC. 
--- 
--- The TPC reserves all right, title, and interest to the Work as provided 
--- under U.S. and international laws, including without limitation all patent 
--- and trademark rights therein. 
--- 
--- No Warranty 
--- 
--- 1.1 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE INFORMATION 
---     CONTAINED HEREIN IS PROVIDED "AS IS" AND WITH ALL FAULTS, AND THE 
---     AUTHORS AND DEVELOPERS OF THE WORK HEREBY DISCLAIM ALL OTHER 
---     WARRANTIES AND CONDITIONS, EITHER EXPRESS, IMPLIED OR STATUTORY, 
---     INCLUDING, BUT NOT LIMITED TO, ANY (IF ANY) IMPLIED WARRANTIES, 
---     DUTIES OR CONDITIONS OF MERCHANTABILITY, OF FITNESS FOR A PARTICULAR 
---     PURPOSE, OF ACCURACY OR COMPLETENESS OF RESPONSES, OF RESULTS, OF 
---     WORKMANLIKE EFFORT, OF LACK OF VIRUSES, AND OF LACK OF NEGLIGENCE. 
---     ALSO, THERE IS NO WARRANTY OR CONDITION OF TITLE, QUIET ENJOYMENT, 
---     QUIET POSSESSION, CORRESPONDENCE TO DESCRIPTION OR NON-INFRINGEMENT 
---     WITH REGARD TO THE WORK. 
--- 1.2 IN NO EVENT WILL ANY AUTHOR OR DEVELOPER OF THE WORK BE LIABLE TO 
---     ANY OTHER PARTY FOR ANY DAMAGES, INCLUDING BUT NOT LIMITED TO THE 
---     COST OF PROCURING SUBSTITUTE GOODS OR SERVICES, LOST PROFITS, LOSS 
---     OF USE, LOSS OF DATA, OR ANY INCIDENTAL, CONSEQUENTIAL, DIRECT, 
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/MonetDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Add TPC-DS primary key and foreign key constraints to MonetDB
+--          tables. Run after initschema-tpcds.sql and before
+--          initindexes-tpcds.sql.
+--
+-- Legal Notice
+--
+-- This document and associated source code (the "Work") is a part of a
+-- benchmark specification maintained by the TPC.
+--
+-- The TPC reserves all right, title, and interest to the Work as provided
+-- under U.S. and international laws, including without limitation all patent
+-- and trademark rights therein.
+--
+-- No Warranty
+--
+-- 1.1 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE INFORMATION
+--     CONTAINED HEREIN IS PROVIDED "AS IS" AND WITH ALL FAULTS, AND THE
+--     AUTHORS AND DEVELOPERS OF THE WORK HEREBY DISCLAIM ALL OTHER
+--     WARRANTIES AND CONDITIONS, EITHER EXPRESS, IMPLIED OR STATUTORY,
+--     INCLUDING, BUT NOT LIMITED TO, ANY (IF ANY) IMPLIED WARRANTIES,
+--     DUTIES OR CONDITIONS OF MERCHANTABILITY, OF FITNESS FOR A PARTICULAR
+--     PURPOSE, OF ACCURACY OR COMPLETENESS OF RESPONSES, OF RESULTS, OF
+--     WORKMANLIKE EFFORT, OF LACK OF VIRUSES, AND OF LACK OF NEGLIGENCE.
+--     ALSO, THERE IS NO WARRANTY OR CONDITION OF TITLE, QUIET ENJOYMENT,
+--     QUIET POSSESSION, CORRESPONDENCE TO DESCRIPTION OR NON-INFRINGEMENT
+--     WITH REGARD TO THE WORK.
+-- 1.2 IN NO EVENT WILL ANY AUTHOR OR DEVELOPER OF THE WORK BE LIABLE TO
+--     ANY OTHER PARTY FOR ANY DAMAGES, INCLUDING BUT NOT LIMITED TO THE
+--     COST OF PROCURING SUBSTITUTE GOODS OR SERVICES, LOST PROFITS, LOSS
+--     OF USE, LOSS OF DATA, OR ANY INCIDENTAL, CONSEQUENTIAL, DIRECT,
 --     INDIRECT, OR SPECIAL DAMAGES WHETHER UNDER CONTRACT, TORT, WARRANTY,
---     OR OTHERWISE, ARISING IN ANY WAY OUT OF THIS OR ANY OTHER AGREEMENT 
---     RELATING TO THE WORK, WHETHER OR NOT SUCH AUTHOR OR DEVELOPER HAD 
---     ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES. 
--- 
+--     OR OTHERWISE, ARISING IN ANY WAY OUT OF THIS OR ANY OTHER AGREEMENT
+--     RELATING TO THE WORK, WHETHER OR NOT SUCH AUTHOR OR DEVELOPER HAD
+--     ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
+--
 -- Contributors:
 -- Gradient Systems
---
 
-alter table customer_address add primary key(ca_address_sk);
-alter table customer_demographics add primary key(cd_demo_sk);
-alter table date_dim add primary key(d_date_sk);
-alter table warehouse add primary key(w_warehouse_sk);
-alter table ship_mode add primary key(sm_ship_mode_sk);
-alter table time_dim add primary key(t_time_sk);
-alter table reason add primary key(r_reason_sk);
-alter table income_band add primary key(ib_income_band_sk);
-alter table item add primary key(i_item_sk);
-alter table store add primary key(s_store_sk);
-alter table call_center add primary key(cc_call_center_sk);
-alter table customer add primary key(c_customer_sk);
-alter table web_site add primary key(web_site_sk);
-alter table store_returns add primary key(sr_item_sk, sr_ticket_number);
-alter table household_demographics add primary key(hd_demo_sk);
-alter table web_page add primary key(wp_web_page_sk);
-alter table promotion add primary key(p_promo_sk);
-alter table catalog_page add primary key(cp_catalog_page_sk);
-alter table inventory add primary key(inv_date_sk, inv_item_sk, inv_warehouse_sk);
-alter table catalog_returns add primary key(cr_item_sk, cr_order_number);
-alter table web_returns add primary key(wr_item_sk, wr_order_number);
-alter table web_sales add primary key(ws_item_sk, ws_order_number);
-alter table catalog_sales add primary key(cs_item_sk, cs_order_number);
-alter table store_sales add primary key(ss_item_sk, ss_ticket_number);
+-- catalog_page→promotion FK not applied: column cp_promo_id does not exist in catalog_page
+-- catalog_returns→date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
 
+ALTER TABLE customer_address
+    ADD PRIMARY KEY (ca_address_sk);
 
+ALTER TABLE customer_demographics
+    ADD PRIMARY KEY (cd_demo_sk);
 
-alter table call_center add constraint cc_d1 foreign key  (cc_closed_date_sk) references date_dim (d_date_sk);
-alter table call_center add constraint cc_d2 foreign key  (cc_open_date_sk) references date_dim (d_date_sk);
-alter table catalog_page add constraint cp_d1 foreign key  (cp_end_date_sk) references date_dim (d_date_sk);
--- alter table catalog_page add constraint cp_p foreign key  (cp_promo_id) references promotion (p_promo_sk);
-alter table catalog_page add constraint cp_d2 foreign key  (cp_start_date_sk) references date_dim (d_date_sk);
-alter table catalog_returns add constraint cr_cc foreign key  (cr_call_center_sk) references call_center (cc_call_center_sk);
-alter table catalog_returns add constraint cr_cp foreign key  (cr_catalog_page_sk) references catalog_page (cp_catalog_page_sk);
-alter table catalog_returns add constraint cr_i foreign key  (cr_item_sk) references item (i_item_sk);
-alter table catalog_returns add constraint cr_r foreign key  (cr_reason_sk) references reason (r_reason_sk);
-alter table catalog_returns add constraint cr_a1 foreign key  (cr_refunded_addr_sk) references customer_address (ca_address_sk);
-alter table catalog_returns add constraint cr_cd1 foreign key  (cr_refunded_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table catalog_returns add constraint cr_c1 foreign key  (cr_refunded_customer_sk) references customer (c_customer_sk);
-alter table catalog_returns add constraint cr_hd1 foreign key  (cr_refunded_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table catalog_returns add constraint cr_d1 foreign key  (cr_returned_date_sk) references date_dim (d_date_sk);
-alter table catalog_returns add constraint cr_t foreign key  (cr_returned_time_sk) references time_dim (t_time_sk);
-alter table catalog_returns add constraint cr_a2 foreign key  (cr_returning_addr_sk) references customer_address (ca_address_sk);
-alter table catalog_returns add constraint cr_cd2 foreign key  (cr_returning_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table catalog_returns add constraint cr_c2 foreign key  (cr_returning_customer_sk) references customer (c_customer_sk);
-alter table catalog_returns add constraint cr_hd2 foreign key  (cr_returning_hdemo_sk) references household_demographics (hd_demo_sk);
--- alter table catalog_returns add constraint cr_d2 foreign key  (cr_ship_date_sk) references date_dim (d_date_sk);
-alter table catalog_returns add constraint cr_sm foreign key  (cr_ship_mode_sk) references ship_mode (sm_ship_mode_sk);
-alter table catalog_returns add constraint cr_w2 foreign key  (cr_warehouse_sk) references warehouse (w_warehouse_sk);
-alter table catalog_sales add constraint cs_b_a foreign key  (cs_bill_addr_sk) references customer_address (ca_address_sk);
-alter table catalog_sales add constraint cs_b_cd foreign key  (cs_bill_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table catalog_sales add constraint cs_b_c foreign key  (cs_bill_customer_sk) references customer (c_customer_sk);
-alter table catalog_sales add constraint cs_b_hd foreign key  (cs_bill_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table catalog_sales add constraint cs_cc foreign key  (cs_call_center_sk) references call_center (cc_call_center_sk); 
-alter table catalog_sales add constraint cs_cp foreign key  (cs_catalog_page_sk) references catalog_page (cp_catalog_page_sk);
-alter table catalog_sales add constraint cs_i foreign key  (cs_item_sk) references item (i_item_sk);
-alter table catalog_sales add constraint cs_p foreign key  (cs_promo_sk) references promotion (p_promo_sk);
-alter table catalog_sales add constraint cs_s_a foreign key  (cs_ship_addr_sk) references customer_address (ca_address_sk);
-alter table catalog_sales add constraint cs_s_cd foreign key  (cs_ship_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table catalog_sales add constraint cs_s_c foreign key  (cs_ship_customer_sk) references customer (c_customer_sk);
-alter table catalog_sales add constraint cs_d1 foreign key  (cs_ship_date_sk) references date_dim (d_date_sk);
-alter table catalog_sales add constraint cs_s_hd foreign key  (cs_ship_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table catalog_sales add constraint cs_sm foreign key  (cs_ship_mode_sk) references ship_mode (sm_ship_mode_sk);
-alter table catalog_sales add constraint cs_d2 foreign key  (cs_sold_date_sk) references date_dim (d_date_sk);
-alter table catalog_sales add constraint cs_t foreign key  (cs_sold_time_sk) references time_dim (t_time_sk);
-alter table catalog_sales add constraint cs_w foreign key  (cs_warehouse_sk) references warehouse (w_warehouse_sk);
-alter table customer add constraint c_a foreign key  (c_current_addr_sk) references customer_address (ca_address_sk);
-alter table customer add constraint c_cd foreign key  (c_current_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table customer add constraint c_hd foreign key  (c_current_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table customer add constraint c_fsd foreign key  (c_first_sales_date_sk) references date_dim (d_date_sk);
-alter table customer add constraint c_fsd2 foreign key  (c_first_shipto_date_sk) references date_dim (d_date_sk);
-alter table household_demographics add constraint hd_ib foreign key  (hd_income_band_sk) references income_band (ib_income_band_sk); 
-alter table inventory add constraint inv_d foreign key  (inv_date_sk) references date_dim (d_date_sk);
-alter table inventory add constraint inv_i foreign key  (inv_item_sk) references item (i_item_sk);
-alter table inventory add constraint inv_w foreign key  (inv_warehouse_sk) references warehouse (w_warehouse_sk);
-alter table promotion add constraint p_end_date foreign key  (p_end_date_sk) references date_dim (d_date_sk);
-alter table promotion add constraint p_i foreign key  (p_item_sk) references item (i_item_sk);
-alter table promotion add constraint p_start_date foreign key  (p_start_date_sk) references date_dim (d_date_sk);
-alter table store add constraint s_close_date foreign key  (s_closed_date_sk) references date_dim (d_date_sk);
-alter table store_returns add constraint sr_a foreign key  (sr_addr_sk) references customer_address (ca_address_sk);
-alter table store_returns add constraint sr_cd foreign key  (sr_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table store_returns add constraint sr_c foreign key  (sr_customer_sk) references customer (c_customer_sk);
-alter table store_returns add constraint sr_hd foreign key  (sr_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table store_returns add constraint sr_i foreign key  (sr_item_sk) references item (i_item_sk);
-alter table store_returns add constraint sr_r foreign key  (sr_reason_sk) references reason (r_reason_sk);
-alter table store_returns add constraint sr_ret_d foreign key  (sr_returned_date_sk) references date_dim (d_date_sk);
-alter table store_returns add constraint sr_t foreign key  (sr_return_time_sk) references time_dim (t_time_sk);
-alter table store_returns add constraint sr_s foreign key  (sr_store_sk) references store (s_store_sk);
-alter table store_sales add constraint ss_a foreign key  (ss_addr_sk) references customer_address (ca_address_sk);
-alter table store_sales add constraint ss_cd foreign key  (ss_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table store_sales add constraint ss_c foreign key  (ss_customer_sk) references customer (c_customer_sk);
-alter table store_sales add constraint ss_hd foreign key  (ss_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table store_sales add constraint ss_i foreign key  (ss_item_sk) references item (i_item_sk);
-alter table store_sales add constraint ss_p foreign key  (ss_promo_sk) references promotion (p_promo_sk);
-alter table store_sales add constraint ss_d foreign key  (ss_sold_date_sk) references date_dim (d_date_sk);
-alter table store_sales add constraint ss_t foreign key  (ss_sold_time_sk) references time_dim (t_time_sk);
-alter table store_sales add constraint ss_s foreign key  (ss_store_sk) references store (s_store_sk);
-alter table web_page add constraint wp_ad foreign key  (wp_access_date_sk) references date_dim (d_date_sk);
-alter table web_page add constraint wp_cd foreign key  (wp_creation_date_sk) references date_dim (d_date_sk);
-alter table web_returns add constraint wr_i foreign key  (wr_item_sk) references item (i_item_sk);
-alter table web_returns add constraint wr_r foreign key  (wr_reason_sk) references reason (r_reason_sk);
-alter table web_returns add constraint wr_ref_a foreign key  (wr_refunded_addr_sk) references customer_address (ca_address_sk);
-alter table web_returns add constraint wr_ref_cd foreign key  (wr_refunded_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table web_returns add constraint wr_ref_c foreign key  (wr_refunded_customer_sk) references customer (c_customer_sk);
-alter table web_returns add constraint wr_ref_hd foreign key  (wr_refunded_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table web_returns add constraint wr_ret_d foreign key  (wr_returned_date_sk) references date_dim (d_date_sk);
-alter table web_returns add constraint wr_ret_t foreign key  (wr_returned_time_sk) references time_dim (t_time_sk);
-alter table web_returns add constraint wr_ret_a foreign key  (wr_returning_addr_sk) references customer_address (ca_address_sk);
-alter table web_returns add constraint wr_ret_cd foreign key  (wr_returning_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table web_returns add constraint wr_ret_c foreign key  (wr_returning_customer_sk) references customer (c_customer_sk);
-alter table web_returns add constraint wr_ret_hd foreign key  (wr_returning_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table web_returns add constraint wr_wp foreign key  (wr_web_page_sk) references web_page (wp_web_page_sk);
-alter table web_sales add constraint ws_b_a foreign key  (ws_bill_addr_sk) references customer_address (ca_address_sk);
-alter table web_sales add constraint ws_b_cd foreign key  (ws_bill_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table web_sales add constraint ws_b_c foreign key  (ws_bill_customer_sk) references customer (c_customer_sk);
-alter table web_sales add constraint ws_b_hd foreign key  (ws_bill_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table web_sales add constraint ws_i foreign key  (ws_item_sk) references item (i_item_sk);
-alter table web_sales add constraint ws_p foreign key  (ws_promo_sk) references promotion (p_promo_sk);
-alter table web_sales add constraint ws_s_a foreign key  (ws_ship_addr_sk) references customer_address (ca_address_sk);
-alter table web_sales add constraint ws_s_cd foreign key  (ws_ship_cdemo_sk) references customer_demographics (cd_demo_sk);
-alter table web_sales add constraint ws_s_c foreign key  (ws_ship_customer_sk) references customer (c_customer_sk);
-alter table web_sales add constraint ws_s_d foreign key  (ws_ship_date_sk) references date_dim (d_date_sk);
-alter table web_sales add constraint ws_s_hd foreign key  (ws_ship_hdemo_sk) references household_demographics (hd_demo_sk);
-alter table web_sales add constraint ws_sm foreign key  (ws_ship_mode_sk) references ship_mode (sm_ship_mode_sk);
-alter table web_sales add constraint ws_d2 foreign key  (ws_sold_date_sk) references date_dim (d_date_sk);
-alter table web_sales add constraint ws_t foreign key  (ws_sold_time_sk) references time_dim (t_time_sk);
-alter table web_sales add constraint ws_w2 foreign key  (ws_warehouse_sk) references warehouse (w_warehouse_sk);
-alter table web_sales add constraint ws_wp foreign key  (ws_web_page_sk) references web_page (wp_web_page_sk);
-alter table web_sales add constraint ws_ws foreign key  (ws_web_site_sk) references web_site (web_site_sk);
-alter table web_site add constraint web_d1 foreign key  (web_close_date_sk) references date_dim (d_date_sk);
-alter table web_site add constraint web_d2 foreign key  (web_open_date_sk) references date_dim (d_date_sk);
+ALTER TABLE date_dim
+    ADD PRIMARY KEY (d_date_sk);
+
+ALTER TABLE warehouse
+    ADD PRIMARY KEY (w_warehouse_sk);
+
+ALTER TABLE ship_mode
+    ADD PRIMARY KEY (sm_ship_mode_sk);
+
+ALTER TABLE time_dim
+    ADD PRIMARY KEY (t_time_sk);
+
+ALTER TABLE reason
+    ADD PRIMARY KEY (r_reason_sk);
+
+ALTER TABLE income_band
+    ADD PRIMARY KEY (ib_income_band_sk);
+
+ALTER TABLE item
+    ADD PRIMARY KEY (i_item_sk);
+
+ALTER TABLE household_demographics
+    ADD PRIMARY KEY (hd_demo_sk),
+    ADD CONSTRAINT hd_ib FOREIGN KEY (hd_income_band_sk) REFERENCES income_band (ib_income_band_sk);
+
+ALTER TABLE call_center
+    ADD PRIMARY KEY (cc_call_center_sk),
+    ADD CONSTRAINT cc_d1 FOREIGN KEY (cc_closed_date_sk) REFERENCES date_dim (d_date_sk),
+    ADD CONSTRAINT cc_d2 FOREIGN KEY (cc_open_date_sk)   REFERENCES date_dim (d_date_sk);
+
+ALTER TABLE catalog_page
+    ADD PRIMARY KEY (cp_catalog_page_sk),
+    ADD CONSTRAINT cp_d1 FOREIGN KEY (cp_end_date_sk)   REFERENCES date_dim (d_date_sk),
+    ADD CONSTRAINT cp_d2 FOREIGN KEY (cp_start_date_sk) REFERENCES date_dim (d_date_sk);
+
+ALTER TABLE store
+    ADD PRIMARY KEY (s_store_sk),
+    ADD CONSTRAINT s_close_date FOREIGN KEY (s_closed_date_sk) REFERENCES date_dim (d_date_sk);
+
+ALTER TABLE web_site
+    ADD PRIMARY KEY (web_site_sk),
+    ADD CONSTRAINT web_d1 FOREIGN KEY (web_close_date_sk) REFERENCES date_dim (d_date_sk),
+    ADD CONSTRAINT web_d2 FOREIGN KEY (web_open_date_sk)  REFERENCES date_dim (d_date_sk);
+
+ALTER TABLE web_page
+    ADD PRIMARY KEY (wp_web_page_sk),
+    ADD CONSTRAINT wp_ad FOREIGN KEY (wp_access_date_sk)   REFERENCES date_dim (d_date_sk),
+    ADD CONSTRAINT wp_cd FOREIGN KEY (wp_creation_date_sk) REFERENCES date_dim (d_date_sk);
+
+ALTER TABLE promotion
+    ADD PRIMARY KEY (p_promo_sk),
+    ADD CONSTRAINT p_end_date   FOREIGN KEY (p_end_date_sk)   REFERENCES date_dim (d_date_sk),
+    ADD CONSTRAINT p_i          FOREIGN KEY (p_item_sk)       REFERENCES item     (i_item_sk),
+    ADD CONSTRAINT p_start_date FOREIGN KEY (p_start_date_sk) REFERENCES date_dim (d_date_sk);
+
+ALTER TABLE customer
+    ADD PRIMARY KEY (c_customer_sk),
+    ADD CONSTRAINT c_a    FOREIGN KEY (c_current_addr_sk)      REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT c_cd   FOREIGN KEY (c_current_cdemo_sk)     REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT c_hd   FOREIGN KEY (c_current_hdemo_sk)     REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT c_fsd  FOREIGN KEY (c_first_sales_date_sk)  REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT c_fsd2 FOREIGN KEY (c_first_shipto_date_sk) REFERENCES date_dim              (d_date_sk);
+
+ALTER TABLE inventory
+    ADD PRIMARY KEY (inv_date_sk, inv_item_sk, inv_warehouse_sk),
+    ADD CONSTRAINT inv_d FOREIGN KEY (inv_date_sk)      REFERENCES date_dim (d_date_sk),
+    ADD CONSTRAINT inv_i FOREIGN KEY (inv_item_sk)      REFERENCES item     (i_item_sk),
+    ADD CONSTRAINT inv_w FOREIGN KEY (inv_warehouse_sk) REFERENCES warehouse (w_warehouse_sk);
+
+ALTER TABLE store_returns
+    ADD PRIMARY KEY (sr_item_sk, sr_ticket_number),
+    ADD CONSTRAINT sr_a     FOREIGN KEY (sr_addr_sk)          REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT sr_cd    FOREIGN KEY (sr_cdemo_sk)         REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT sr_c     FOREIGN KEY (sr_customer_sk)      REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT sr_hd    FOREIGN KEY (sr_hdemo_sk)         REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT sr_i     FOREIGN KEY (sr_item_sk)          REFERENCES item                  (i_item_sk),
+    ADD CONSTRAINT sr_r     FOREIGN KEY (sr_reason_sk)        REFERENCES reason                (r_reason_sk),
+    ADD CONSTRAINT sr_ret_d FOREIGN KEY (sr_returned_date_sk) REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT sr_t     FOREIGN KEY (sr_return_time_sk)   REFERENCES time_dim              (t_time_sk),
+    ADD CONSTRAINT sr_s     FOREIGN KEY (sr_store_sk)         REFERENCES store                 (s_store_sk);
+
+ALTER TABLE catalog_returns
+    ADD PRIMARY KEY (cr_item_sk, cr_order_number),
+    ADD CONSTRAINT cr_cc  FOREIGN KEY (cr_call_center_sk)        REFERENCES call_center           (cc_call_center_sk),
+    ADD CONSTRAINT cr_cp  FOREIGN KEY (cr_catalog_page_sk)       REFERENCES catalog_page          (cp_catalog_page_sk),
+    ADD CONSTRAINT cr_i   FOREIGN KEY (cr_item_sk)               REFERENCES item                  (i_item_sk),
+    ADD CONSTRAINT cr_r   FOREIGN KEY (cr_reason_sk)             REFERENCES reason                (r_reason_sk),
+    ADD CONSTRAINT cr_a1  FOREIGN KEY (cr_refunded_addr_sk)      REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT cr_cd1 FOREIGN KEY (cr_refunded_cdemo_sk)     REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT cr_c1  FOREIGN KEY (cr_refunded_customer_sk)  REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT cr_hd1 FOREIGN KEY (cr_refunded_hdemo_sk)     REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT cr_d1  FOREIGN KEY (cr_returned_date_sk)      REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT cr_t   FOREIGN KEY (cr_returned_time_sk)      REFERENCES time_dim              (t_time_sk),
+    ADD CONSTRAINT cr_a2  FOREIGN KEY (cr_returning_addr_sk)     REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT cr_cd2 FOREIGN KEY (cr_returning_cdemo_sk)    REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT cr_c2  FOREIGN KEY (cr_returning_customer_sk) REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT cr_hd2 FOREIGN KEY (cr_returning_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT cr_sm  FOREIGN KEY (cr_ship_mode_sk)          REFERENCES ship_mode             (sm_ship_mode_sk),
+    ADD CONSTRAINT cr_w2  FOREIGN KEY (cr_warehouse_sk)          REFERENCES warehouse             (w_warehouse_sk);
+
+ALTER TABLE web_returns
+    ADD PRIMARY KEY (wr_item_sk, wr_order_number),
+    ADD CONSTRAINT wr_i      FOREIGN KEY (wr_item_sk)               REFERENCES item                  (i_item_sk),
+    ADD CONSTRAINT wr_r      FOREIGN KEY (wr_reason_sk)             REFERENCES reason                (r_reason_sk),
+    ADD CONSTRAINT wr_ref_a  FOREIGN KEY (wr_refunded_addr_sk)      REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT wr_ref_cd FOREIGN KEY (wr_refunded_cdemo_sk)     REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT wr_ref_c  FOREIGN KEY (wr_refunded_customer_sk)  REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT wr_ref_hd FOREIGN KEY (wr_refunded_hdemo_sk)     REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT wr_ret_d  FOREIGN KEY (wr_returned_date_sk)      REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT wr_ret_t  FOREIGN KEY (wr_returned_time_sk)      REFERENCES time_dim              (t_time_sk),
+    ADD CONSTRAINT wr_ret_a  FOREIGN KEY (wr_returning_addr_sk)     REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT wr_ret_cd FOREIGN KEY (wr_returning_cdemo_sk)    REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT wr_ret_c  FOREIGN KEY (wr_returning_customer_sk) REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT wr_ret_hd FOREIGN KEY (wr_returning_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT wr_wp     FOREIGN KEY (wr_web_page_sk)           REFERENCES web_page              (wp_web_page_sk);
+
+ALTER TABLE catalog_sales
+    ADD PRIMARY KEY (cs_item_sk, cs_order_number),
+    ADD CONSTRAINT cs_b_a  FOREIGN KEY (cs_bill_addr_sk)     REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT cs_b_cd FOREIGN KEY (cs_bill_cdemo_sk)    REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT cs_b_c  FOREIGN KEY (cs_bill_customer_sk) REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT cs_b_hd FOREIGN KEY (cs_bill_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT cs_cc   FOREIGN KEY (cs_call_center_sk)   REFERENCES call_center           (cc_call_center_sk),
+    ADD CONSTRAINT cs_cp   FOREIGN KEY (cs_catalog_page_sk)  REFERENCES catalog_page          (cp_catalog_page_sk),
+    ADD CONSTRAINT cs_i    FOREIGN KEY (cs_item_sk)          REFERENCES item                  (i_item_sk),
+    ADD CONSTRAINT cs_p    FOREIGN KEY (cs_promo_sk)         REFERENCES promotion             (p_promo_sk),
+    ADD CONSTRAINT cs_s_a  FOREIGN KEY (cs_ship_addr_sk)     REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT cs_s_cd FOREIGN KEY (cs_ship_cdemo_sk)    REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT cs_s_c  FOREIGN KEY (cs_ship_customer_sk) REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT cs_d1   FOREIGN KEY (cs_ship_date_sk)     REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT cs_s_hd FOREIGN KEY (cs_ship_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT cs_sm   FOREIGN KEY (cs_ship_mode_sk)     REFERENCES ship_mode             (sm_ship_mode_sk),
+    ADD CONSTRAINT cs_d2   FOREIGN KEY (cs_sold_date_sk)     REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT cs_t    FOREIGN KEY (cs_sold_time_sk)     REFERENCES time_dim              (t_time_sk),
+    ADD CONSTRAINT cs_w    FOREIGN KEY (cs_warehouse_sk)     REFERENCES warehouse             (w_warehouse_sk);
+
+ALTER TABLE store_sales
+    ADD PRIMARY KEY (ss_item_sk, ss_ticket_number),
+    ADD CONSTRAINT ss_a  FOREIGN KEY (ss_addr_sk)      REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT ss_cd FOREIGN KEY (ss_cdemo_sk)     REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT ss_c  FOREIGN KEY (ss_customer_sk)  REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT ss_hd FOREIGN KEY (ss_hdemo_sk)     REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT ss_i  FOREIGN KEY (ss_item_sk)      REFERENCES item                  (i_item_sk),
+    ADD CONSTRAINT ss_p  FOREIGN KEY (ss_promo_sk)     REFERENCES promotion             (p_promo_sk),
+    ADD CONSTRAINT ss_d  FOREIGN KEY (ss_sold_date_sk) REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT ss_t  FOREIGN KEY (ss_sold_time_sk) REFERENCES time_dim              (t_time_sk),
+    ADD CONSTRAINT ss_s  FOREIGN KEY (ss_store_sk)     REFERENCES store                 (s_store_sk);
+
+ALTER TABLE web_sales
+    ADD PRIMARY KEY (ws_item_sk, ws_order_number),
+    ADD CONSTRAINT ws_b_a  FOREIGN KEY (ws_bill_addr_sk)     REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT ws_b_cd FOREIGN KEY (ws_bill_cdemo_sk)    REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT ws_b_c  FOREIGN KEY (ws_bill_customer_sk) REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT ws_b_hd FOREIGN KEY (ws_bill_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT ws_i    FOREIGN KEY (ws_item_sk)          REFERENCES item                  (i_item_sk),
+    ADD CONSTRAINT ws_p    FOREIGN KEY (ws_promo_sk)         REFERENCES promotion             (p_promo_sk),
+    ADD CONSTRAINT ws_s_a  FOREIGN KEY (ws_ship_addr_sk)     REFERENCES customer_address      (ca_address_sk),
+    ADD CONSTRAINT ws_s_cd FOREIGN KEY (ws_ship_cdemo_sk)    REFERENCES customer_demographics (cd_demo_sk),
+    ADD CONSTRAINT ws_s_c  FOREIGN KEY (ws_ship_customer_sk) REFERENCES customer              (c_customer_sk),
+    ADD CONSTRAINT ws_s_d  FOREIGN KEY (ws_ship_date_sk)     REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT ws_s_hd FOREIGN KEY (ws_ship_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
+    ADD CONSTRAINT ws_sm   FOREIGN KEY (ws_ship_mode_sk)     REFERENCES ship_mode             (sm_ship_mode_sk),
+    ADD CONSTRAINT ws_d2   FOREIGN KEY (ws_sold_date_sk)     REFERENCES date_dim              (d_date_sk),
+    ADD CONSTRAINT ws_t    FOREIGN KEY (ws_sold_time_sk)     REFERENCES time_dim              (t_time_sk),
+    ADD CONSTRAINT ws_w2   FOREIGN KEY (ws_warehouse_sk)     REFERENCES warehouse             (w_warehouse_sk),
+    ADD CONSTRAINT ws_wp   FOREIGN KEY (ws_web_page_sk)      REFERENCES web_page              (wp_web_page_sk),
+    ADD CONSTRAINT ws_ws   FOREIGN KEY (ws_web_site_sk)      REFERENCES web_site              (web_site_sk);

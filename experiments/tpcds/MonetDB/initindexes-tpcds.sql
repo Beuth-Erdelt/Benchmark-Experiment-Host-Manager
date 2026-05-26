@@ -1,3 +1,10 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/MonetDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Create indexes on TPC-DS tables in MonetDB. Run after
+--          initconstraints-tpcds.sql and before initdata-tpcds-SF*.sql.
 
 -- Store Sales Fact Table
 CREATE INDEX idx_store_sales_customer_id ON store_sales (ss_customer_sk);
@@ -51,12 +58,6 @@ CREATE INDEX idx_web_returns_item_id ON web_returns (wr_item_sk);
 CREATE INDEX idx_web_returns_date_id ON web_returns (wr_returned_date_sk);
 CREATE INDEX idx_web_returns_order_number ON web_returns (wr_order_number);
 
-
-
-
-
-
-
 -- Indexes for the catalog_sales table
 CREATE INDEX idx_catalog_sales_order_ship_date ON catalog_sales (cs_order_number, cs_ship_date_sk);
 CREATE INDEX idx_catalog_sales_ship_addr ON catalog_sales (cs_ship_addr_sk);
@@ -75,9 +76,6 @@ CREATE INDEX idx_customer_address_sk_state ON customer_address (ca_address_sk, c
 -- Indexes for call_center table to filter by call_center_sk and county
 CREATE INDEX idx_call_center_county ON call_center (cc_call_center_sk, cc_county);
 
-
-
-
 -- Indexes for web_sales table
 CREATE INDEX idx_web_sales_order_number ON web_sales (ws_order_number);
 CREATE INDEX idx_web_sales_ship_date ON web_sales (ws_ship_date_sk);
@@ -86,7 +84,6 @@ CREATE INDEX idx_web_sales_web_site ON web_sales (ws_web_site_sk);
 
 -- Indexes for web_site table
 CREATE INDEX idx_web_site_company ON web_site (web_site_sk, web_company_name);
-
 
 CREATE INDEX idx_customer_current_cdemo_sk ON customer (c_current_cdemo_sk);
 CREATE INDEX idx_customer_address_county ON customer_address (ca_county);

@@ -6,8 +6,12 @@ BEXHOMA_NODE_SUT="cl-worker3"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 BEXHOMA_DURATION=40
-BEXHOMA_EXECUTIONS="1,1,1"
-BEXHOMA_REPETITIONS="1"
+BEXHOMA_EXECUTIONS="1"
+BEXHOMA_REPETITIONS="3"
+BEXHOMA_WAREHOUSES=160
+BEXHOMA_RAM="48Gi"
+BEXHOMA_DISK="30Gi"
+BEXHOMA_TERMINALS=16
 
 
 clean_logs() {
@@ -42,7 +46,7 @@ clean_logs() {
 ######################## RAMDISK #####################
 ######################################################
 
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-${BEXHOMA_WAREHOUSES}
 
 bexperiments stop
 
@@ -53,19 +57,20 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst ramdisk -rss 20Gi -rsr \
+  -rst ramdisk -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -81,7 +86,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b1_ramdisk.log"
+  &> "$LOG_DIR/_test_pg18_b1_ramdisk.log"
 
 bexperiments stop
 
@@ -92,19 +97,20 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst ramdisk -rss 20Gi -rsr \
+  -rst ramdisk -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -120,7 +126,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=800 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=500000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b2_ramdisk.log"
+  &> "$LOG_DIR/_test_pg18_b2_ramdisk.log"
 
 bexperiments stop
 
@@ -131,19 +137,20 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst ramdisk -rss 20Gi -rsr \
+  -rst ramdisk -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -159,7 +166,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b3_ramdisk.log"
+  &> "$LOG_DIR/_test_pg18_b3_ramdisk.log"
 
 bexperiments stop
 
@@ -170,19 +177,20 @@ bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst ramdisk -rss 20Gi -rsr \
+  -rst ramdisk -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -198,7 +206,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=2MB \
-  &> "$LOG_DIR/_test_pg_b4_ramdisk.log"
+  &> "$LOG_DIR/_test_pg18_b4_ramdisk.log"
 
 
 ######################################################
@@ -206,7 +214,7 @@ bexhoma benchbase run -tr \
 ######################################################
 
 bexperiments stop
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-${BEXHOMA_WAREHOUSES}
 
 ######################################################
 ########################### B1 #######################
@@ -214,19 +222,20 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi -rsr \
+  -rst shared -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -234,25 +243,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b1_load_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b1_load_ceph.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi \
+  -rst shared -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -268,7 +278,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b1_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b1_ceph.log"
 
 bexperiments stop
 
@@ -278,19 +288,20 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi -rsr \
+  -rst shared -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -298,25 +309,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b2_load_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b2_load_ceph.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi \
+  -rst shared -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -332,7 +344,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=800 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=500000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b2_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b2_ceph.log"
 
 bexperiments stop
 
@@ -342,19 +354,20 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi -rsr \
+  -rst shared -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -362,25 +375,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b3_load_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b3_load_ceph.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi \
+  -rst shared -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -396,7 +410,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b3_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b3_ceph.log"
 
 bexperiments stop
 
@@ -406,19 +420,20 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi -rsr \
+  -rst shared -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -426,25 +441,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b4_load_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b4_load_ceph.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst shared -rss 20Gi \
+  -rst shared -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -460,7 +476,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=2MB \
-  &> "$LOG_DIR/_test_pg_b4_ceph.log"
+  &> "$LOG_DIR/_test_pg18_b4_ceph.log"
 
 
 ######################################################
@@ -468,7 +484,7 @@ bexhoma benchbase run -tr \
 ######################################################
 
 bexperiments stop
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
+kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-${BEXHOMA_WAREHOUSES}
 
 ######################################################
 ########################### B1 #######################
@@ -476,19 +492,20 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi -rsr \
+  -rst local-hdd -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -496,25 +513,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b1_load_local.log"
+  &> "$LOG_DIR/_test_pg18_b1_load_local.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi \
+  -rst local-hdd -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -530,7 +548,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b1_local.log"
+  &> "$LOG_DIR/_test_pg18_b1_local.log"
 
 bexperiments stop
 
@@ -540,19 +558,20 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi -rsr \
+  -rst local-hdd -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -560,25 +579,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b2_load_local.log"
+  &> "$LOG_DIR/_test_pg18_b2_load_local.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi \
+  -rst local-hdd -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -594,7 +614,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=800 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=500000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b2_local.log"
+  &> "$LOG_DIR/_test_pg18_b2_local.log"
 
 bexperiments stop
 
@@ -604,19 +624,20 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi -rsr \
+  -rst local-hdd -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -624,25 +645,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b3_load_local.log"
+  &> "$LOG_DIR/_test_pg18_b3_load_local.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi \
+  -rst local-hdd -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -658,7 +680,7 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=256kB \
-  &> "$LOG_DIR/_test_pg_b3_local.log"
+  &> "$LOG_DIR/_test_pg18_b3_local.log"
 
 bexperiments stop
 
@@ -668,19 +690,20 @@ bexperiments stop
 
 bexhoma benchbase load -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne 1 \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi -rsr \
+  -rst local-hdd -rss $BEXHOMA_DISK -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].fsync=off \
   --set deployment[bexhoma-deployment-postgres].container[dbms].synchronous_commit=off \
@@ -688,25 +711,26 @@ bexhoma benchbase load -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=1GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_wal_size=4GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].checkpoint_completion_target=0.9 \
-  &> "$LOG_DIR/_test_pg_b4_load_local.log"
+  &> "$LOG_DIR/_test_pg18_b4_load_local.log"
 
 bexperiments stop
 
 bexhoma benchbase run -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -sf 160 \
+  -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
+  -slg 10 \
   -dbms PostgreSQL \
   -nlp 1 \
   -nbp 1 \
-  -nbt 16 \
+  -nbt $BEXHOMA_TERMINALS \
   -nbf 16 \
   -tb 1024 \
   -ne $BEXHOMA_EXECUTIONS \
   -nc $BEXHOMA_REPETITIONS \
-  -rr 32Gi -lr 32Gi \
+  -rr $BEXHOMA_RAM -lr $BEXHOMA_RAM \
   -m -mc -ma \
-  -rst local-hdd -rss 20Gi \
+  -rst local-hdd -rss $BEXHOMA_DISK \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=256 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=8GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=64MB \
@@ -722,4 +746,4 @@ bexhoma benchbase run -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_cost_limit=200 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].autovacuum_vacuum_max_threshold=100000 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].vacuum_buffer_usage_limit=2MB \
-  &> "$LOG_DIR/_test_pg_b4_local.log"
+  &> "$LOG_DIR/_test_pg18_b4_local.log"

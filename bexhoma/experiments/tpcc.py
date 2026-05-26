@@ -9,25 +9,11 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
+from dbmsbenchmarker import parameter
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
-import re
 import pandas as pd
-import json
-import ast
 from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 from .base import base
@@ -35,13 +21,9 @@ from .base import base
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["tpcc"]
 
-
-"""
-############################################################################
-TPC-C
-############################################################################
-"""
+# TPC-C (HammerDB) experiment class
 
 class tpcc(base):
     """
@@ -55,16 +37,14 @@ class tpcc(base):
     def __init__(self,
             cluster,
             code=None,
-            #queryfile = 'queries-tpch.config',
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
-        self.SF = SF
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        self.SF = SF                                                    # TPC-C scaling factor (number of warehouses)
         self.set_experiment(volume='tpcc')
-        self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(script='Schema')
         self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/tpcc')
         parameter.defaultParameters = {'SF': str(SF)}
@@ -74,10 +54,11 @@ class tpcc(base):
             info = 'This experiment performs some TPC-C inspired workloads.',
             type = 'tpcc',
             )
-        self.storage_label = 'hammerdb-'+str(SF)
-        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
-        self.evaluator = evaluators.tpcc(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-        self.components = {
+        self.storage_label = 'hammerdb-'+str(SF)                       # label used to match persistent storage to this experiment
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"   # K8s job template for the HammerDB loading container
+        self.evaluator = evaluators.tpcc(                               # evaluator specific to TPC-C / HammerDB result format
+            code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.components = {                                             # maps component types to required sub-components (no datagenerator for HammerDB)
             "loader": {
                 "sensor": True
              },
@@ -85,7 +66,15 @@ class tpcc(base):
                 "dbmsbenchmarker": True
             }
         }
-    def prepare_testbed(self, parameter):
+    def prepare_testbed(self, parameter: dict) -> None:
+        """
+        Configure the TPC-C experiment from a CLI parameter dict and delegate to base.
+
+        Sets workload metadata, loading job template, and appends info lines about SF,
+        benchmark duration, and optional keying/latency settings.
+
+        :param parameter: Dict of CLI arguments as produced by argparse.
+        """
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -106,8 +95,6 @@ class tpcc(base):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'load':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'HammerDB Data Loading SF={} (warehouses for TPC-C)'.format(SF),
                 info = 'This imports TPC-C data sets.',
@@ -115,8 +102,6 @@ class tpcc(base):
                 defaultParameters = {'SF': SF}
             )
         else:
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'HammerDB Start DBMS',
                 info = 'This just starts a SUT.',
@@ -141,7 +126,7 @@ class tpcc(base):
             if extra_latency:
                 self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
         base.prepare_testbed(self, parameter)
-    def test_results(self):
+    def test_results(self) -> None:
         """
         Run test script locally.
         Extract exit code.
@@ -168,27 +153,34 @@ class tpcc(base):
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         # copy logs and yamls to result folder
         print("{:30s}: downloading partial results".format("Experiment"))
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self):
+    def show_summary(self) -> None:
+        """
+        Print a Markdown-formatted summary of a TPC-C (HammerDB) experiment.
+
+        Covers workflow (actual vs. planned), loading and execution tables, application
+        metrics, and pass/fail test assertions.
+        """
+        self._test_results = []
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -301,23 +293,16 @@ class tpcc(base):
             #print(df_connections)
         """
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
-                #print(metrics)
                 metrics.index.names = ["DBMS"]
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
         if self.benchmarking_is_active():
-            self.evaluator.test_results_column(df_aggregated_reduced, "NOPM")
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
+            self._test_column(df_aggregated_reduced, "NOPM")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
 
 

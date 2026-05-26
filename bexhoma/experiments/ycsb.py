@@ -9,25 +9,11 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
+from dbmsbenchmarker import parameter
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
-import re
 import pandas as pd
-import json
-import ast
 from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 from .base import base
@@ -35,14 +21,9 @@ from .base import base
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["ycsb"]
 
-
-
-"""
-############################################################################
-YCSB
-############################################################################
-"""
+# YCSB experiment class
 
 class ycsb(base):
     """
@@ -56,16 +37,14 @@ class ycsb(base):
     def __init__(self,
             cluster,
             code=None,
-            #queryfile = 'queries-tpch.config',
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
-        self.SF = SF
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        self.SF = SF                                                    # YCSB scaling factor (dataset size in GB; 1 SF = 1 000 000 rows of ~1 kB)
         self.set_experiment(volume='ycsb')
-        self.set_experiment(script='Schema')#SF'+str(SF)+'-index')
+        self.set_experiment(script='Schema')
         self.set_experiment(indexing='Checks')
         self.cluster.set_experiments_configfolder('experiments/ycsb')
         parameter.defaultParameters = {'SF': str(SF)}
@@ -75,10 +54,11 @@ class ycsb(base):
             info = 'This experiment performs some YCSB inspired workloads.',
             type = 'ycsb',
             )
-        self.storage_label = 'ycsb-'+str(SF)
-        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"
-        self.evaluator = evaluators.ycsb(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-        self.components = {
+        self.storage_label = 'ycsb-'+str(SF)                           # label used to match persistent storage to this experiment
+        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"       # K8s job template for the YCSB loading container
+        self.evaluator = evaluators.ycsb(                               # evaluator specific to YCSB result format
+            code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.components = {                                             # maps component types to required sub-components (no datagenerator for YCSB)
             "loader": {
                 "sensor": True
              },
@@ -86,7 +66,15 @@ class ycsb(base):
                 "dbmsbenchmarker": True
             }
         }
-    def prepare_testbed(self, parameter):
+    def prepare_testbed(self, parameter: dict) -> None:
+        """
+        Configure the YCSB experiment from a CLI parameter dict and delegate to base.
+
+        Sets workload metadata and appends info lines about the YCSB workload letter,
+        number of rows, operations, batch size, and throughput target factors.
+
+        :param parameter: Dict of CLI arguments as produced by argparse.
+        """
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -114,8 +102,6 @@ class ycsb(base):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'load':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'YCSB Data Loading SF='+str(SF),
                 info = 'This imports YCSB data sets.',
@@ -123,8 +109,6 @@ class ycsb(base):
                 defaultParameters = {'SF': SF}
             )
         else:
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'YCSB Start DBMS',
                 info = 'This just starts a SUT.',
@@ -151,7 +135,7 @@ class ycsb(base):
         if self.benchmarking_is_active():
             self.workload['info'] = self.workload['info']+"\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
         base.prepare_testbed(self, parameter)
-    def test_results(self):
+    def test_results(self) -> None:
         """
         Run test script locally.
         Extract exit code.
@@ -179,26 +163,34 @@ class ycsb(base):
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         print("{:30s}: downloading partial results".format("Experiment"))
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self):
+    def show_summary(self) -> None:
+        """
+        Print a Markdown-formatted summary of a YCSB experiment.
+
+        Covers workflow (actual vs. planned), per-connection and per-run loading stats,
+        execution throughput and latency by operation type, application metrics, and
+        pass/fail test assertions including a check for FAILED columns.
+        """
+        self._test_results = []
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -238,103 +230,20 @@ class ycsb(base):
             df_aggregated_reduced = df.copy()
         else:
             df_aggregated_reduced = pd.DataFrame()
-        """
-        print("===================================")
-        #print('ycsb.show_summary()')
-        connections_sorted, monitoring_applications = self.show_summary_header()
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        #####################
-        test_loading = False
-        df = self.evaluator.get_df_loading()
-        if not df.empty:
-            print("\n### Loading\n")
-            df = df.sort_values(['configuration','experiment_run','client'])
-            df = df[df.columns.drop(list(df.filter(regex='FAILED')))]
-            #print(df)
-            #print(df.columns)
-            df_plot = self.evaluator.loading_set_datatypes(df)
-            df_aggregated = self.evaluator.loading_aggregate_by_parallel_pods(df_plot)
-            df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
-            df_aggregated_loaded = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]]
-            df_aggregated_loaded = df_aggregated_loaded.rename_axis(index="DBMS")
-            print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f"))
-            test_loading = True
-        #####################
-        contains_failed = False
-        df = self.evaluator.get_df_benchmarking()
-        df_aggregated_reduced = pd.DataFrame()
-        if not df.empty:
-            print("\n### Execution\n")
-            df.fillna(0, inplace=True)
-            #print(df.T)
-            #exit()
-            df_plot = self.evaluator.benchmarking_set_datatypes(df)
-            df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
-            df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions"]].copy()
-            columns = [
-            "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
-            "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
-            "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
-            "[UPDATE].Return=OK","[UPDATE].99thPercentileLatency(us)","[UPDATE].99thPercentileLatency(us)",
-            "[SCAN].Return=OK","[SCAN].99thPercentileLatency(us)","[SCAN].99thPercentileLatency(us)",
-            "[READ-MODIFY-WRITE].Operations","[READ-MODIFY-WRITE].99thPercentileLatency(us)","[READ-MODIFY-WRITE].99thPercentileLatency(us)",
-            "[INSERT-FAILED].Operations","[INSERT-FAILED].99thPercentileLatency(us)","[INSERT-FAILED].99thPercentileLatency(us)",
-            "[READ-FAILED].Operations","[READ-FAILED].99thPercentileLatency(us)","[READ-FAILED].99thPercentileLatency(us)",
-            "[UPDATE-FAILED].Operations","[UPDATE-FAILED].99thPercentileLatency(us)","[UPDATE-FAILED].99thPercentileLatency(us)",
-            "[SCAN-FAILED].Operations","[SCAN-FAILED].99thPercentileLatency(us)","[SCAN-FAILED].99thPercentileLatency(us)",
-            "[READ-MODIFY-WRITE-FAILED].Operations","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)","[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)",
-            ]
-            for col in columns:
-                if col in df_aggregated.columns:
-                    df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
-            contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Workflow")
-            workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-        #####################
-        """
         contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
-        test_results_monitoring = self.show_summary_monitoring()
-        #if not df_monitoring_app.empty:
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 metrics.index.names = ["DBMS"]
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
         if test_loading:
-            self.evaluator.test_results_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
-        self.evaluator.test_results_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
+            self._test_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
+        self._test_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
         if self.benchmarking_is_active():
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
-        silent = False
-        if contains_failed:
-            if not silent:
-                print("* TEST failed: {} contains FAILED column".format("Execution Phase:"))
-            return False
-        else:
-            if not silent:
-                print("* TEST passed: {} contains no FAILED column".format("Execution Phase:"))
-            return True
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._record_test(not contains_failed, "Execution Phase: contains no FAILED column" if not contains_failed else "Execution Phase: contains FAILED column")
+        self._print_test_summary()
+        return not contains_failed
 

@@ -1,3 +1,11 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/MariaDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Load TPC-DS data at scale factor 100 (SF100 ≈ 100 GB) into MariaDB.
+--          See initdata-tpcds-SF1.sql for format details.
+
 LOAD DATA LOCAL INFILE '/data/tpcds/SF100/call_center.dat' INTO TABLE tpcds.call_center FIELDS TERMINATED BY '|' OPTIONALLY ENCLOSED BY '"'
 (@cc_call_center_sk, @cc_call_center_id, @cc_rec_start_date, @cc_rec_end_date, @cc_closed_date_sk, @cc_open_date_sk, @cc_name, @cc_class, @cc_employees, @cc_sq_ft, @cc_hours, @cc_manager, @cc_mkt_id, @cc_mkt_class, @cc_mkt_desc, @cc_market_manager, @cc_division, @cc_division_name, @cc_company, @cc_company_name, @cc_street_number, @cc_street_name, @cc_street_type, @cc_suite_number, @cc_city, @cc_county, @cc_state, @cc_zip, @cc_country, @cc_gmt_offset, @cc_tax_percentage) SET cc_call_center_sk=NULLIF(@cc_call_center_sk,''), cc_call_center_id=NULLIF(@cc_call_center_id,''), cc_rec_start_date=NULLIF(@cc_rec_start_date,''), cc_rec_end_date=NULLIF(@cc_rec_end_date,''), cc_closed_date_sk=NULLIF(@cc_closed_date_sk,''), cc_open_date_sk=NULLIF(@cc_open_date_sk,''), cc_name=NULLIF(@cc_name,''), cc_class=NULLIF(@cc_class,''), cc_employees=NULLIF(@cc_employees,''), cc_sq_ft=NULLIF(@cc_sq_ft,''), cc_hours=NULLIF(@cc_hours,''), cc_manager=NULLIF(@cc_manager,''), cc_mkt_id=NULLIF(@cc_mkt_id,''), cc_mkt_class=NULLIF(@cc_mkt_class,''), cc_mkt_desc=NULLIF(@cc_mkt_desc,''), cc_market_manager=NULLIF(@cc_market_manager,''), cc_division=NULLIF(@cc_division,''), cc_division_name=NULLIF(@cc_division_name,''), cc_company=NULLIF(@cc_company,''), cc_company_name=NULLIF(@cc_company_name,''), cc_street_number=NULLIF(@cc_street_number,''), cc_street_name=NULLIF(@cc_street_name,''), cc_street_type=NULLIF(@cc_street_type,''), cc_suite_number=NULLIF(@cc_suite_number,''), cc_city=NULLIF(@cc_city,''), cc_county=NULLIF(@cc_county,''), cc_state=NULLIF(@cc_state,''), cc_zip=NULLIF(@cc_zip,''), cc_country=NULLIF(@cc_country,''), cc_gmt_offset=NULLIF(@cc_gmt_offset,''), cc_tax_percentage=NULLIF(@cc_tax_percentage,'');
 

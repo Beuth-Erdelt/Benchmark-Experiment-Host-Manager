@@ -1,3 +1,11 @@
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/tpcc/MySQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Post-load statistics collection and InnoDB configuration reporting
+--          for the benchbase TPC-C schema on MySQL.
+
 USE benchbase;
 
 -- ANALYZE: Update table statistics for the optimizer
@@ -11,18 +19,6 @@ ANALYZE TABLE oorder;
 ANALYZE TABLE order_line;
 ANALYZE TABLE item;
 
--- OPTIMIZE (Optional): Reclaim disk space and defragment InnoDB tables
--- Uncomment if you suspect high fragmentation or heavy deletes
--- OPTIMIZE TABLE customer;
--- OPTIMIZE TABLE district;
--- OPTIMIZE TABLE history;
--- OPTIMIZE TABLE warehouse;
--- OPTIMIZE TABLE stock;
--- OPTIMIZE TABLE new_order;
--- OPTIMIZE TABLE oorder;
--- OPTIMIZE TABLE order_line;
--- OPTIMIZE TABLE item;
-
 -- Count number of warehouses
 SELECT COUNT(*) AS `count warehouses` FROM warehouse;
 
@@ -31,24 +27,22 @@ SELECT COUNT(*) AS `count warehouses` FROM warehouse;
 SHOW GLOBAL VARIABLES;
 
 -- Table statistics: estimated row counts and last update time
-SELECT 
-  TABLE_NAME AS table_name,
-  ENGINE,
-  TABLE_ROWS AS approx_row_count,
-  UPDATE_TIME AS last_update
+SELECT
+    TABLE_NAME AS table_name,
+    ENGINE,
+    TABLE_ROWS AS approx_row_count,
+    UPDATE_TIME AS last_update
 FROM information_schema.tables
--- WHERE table_schema = 'BEXHOMA_SCHEMA'
 ORDER BY TABLE_ROWS DESC
 LIMIT 10;
 
 -- Show current database and user
-SELECT 
-  DATABASE() AS `current_database`,
-  USER() AS `current_user`;
+SELECT
+    DATABASE() AS `current_database`,
+    USER() AS `current_user`;
 
 -- Optional: show table status for deeper insights (includes size info)
-SHOW TABLE STATUS -- FROM BEXHOMA_SCHEMA
-;
+SHOW TABLE STATUS;
 
 -- Redo log capacity
 SHOW VARIABLES LIKE 'innodb_redo_log_capacity';

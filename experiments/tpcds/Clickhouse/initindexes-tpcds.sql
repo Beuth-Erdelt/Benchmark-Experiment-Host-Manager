@@ -1,0 +1,7 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpcds/Clickhouse
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Placeholder — ClickHouse uses MergeTree primary keys and zone maps
+--          for indexing; explicit CREATE INDEX statements are not supported.

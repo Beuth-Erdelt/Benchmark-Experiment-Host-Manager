@@ -9,25 +9,13 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
+from dbmsbenchmarker import parameter
 import logging
 import urllib3
-from os import makedirs, path
-import time
-from timeit import default_timer
-#import datetime
-import os
-from datetime import datetime, timedelta
 import re
 import pandas as pd
 import json
-import ast
 from types import SimpleNamespace
-from importlib.metadata import version
-from pathlib import Path
-import platform
-import math
-from typing import List, Tuple, Optional
 
 from bexhoma import evaluators
 from .base import base
@@ -35,12 +23,9 @@ from .base import base
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+__all__ = ["benchbase"]
 
-"""
-############################################################################
-Benchbase
-############################################################################
-"""
+# Benchbase experiment class
 
 class benchbase(base):
     """
@@ -54,14 +39,12 @@ class benchbase(base):
     def __init__(self,
             cluster,
             code=None,
-            #queryfile = 'queries-tpch.config',
             SF = '1',
             num_experiment_to_apply = 1,
             timeout = 7200,
-            #detached=False
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)#, detached)
-        self.SF = SF
+        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        self.SF = SF                                                    # Benchbase scaling factor (e.g. number of warehouses / 10 000 rows)
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
         self.set_experiment(indexing='Checks')
@@ -73,11 +56,12 @@ class benchbase(base):
             info = 'This experiment performs some Benchbase workloads.',
             type = 'benchbase',
             )
-        self.storage_label = 'benchbase-'+str(SF)
-        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"
-        self.evaluator = evaluators.benchbase(code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-        self.benchmark = 'tpcc'                                                          # Benchbase knows several benchmarks. Here we store, which one to use, default tpcc
-        self.components = {
+        self.storage_label = 'benchbase-'+str(SF)                      # label used to match persistent storage to this experiment
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"  # K8s job template for the Benchbase loading container
+        self.evaluator = evaluators.benchbase(                          # evaluator specific to Benchbase result format
+            code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
+        self.benchmark = 'tpcc'                                         # active Benchbase workload; changed via set_benchmark_type()
+        self.components = {                                             # maps component types to required sub-components (no datagenerator for Benchbase)
             "loader": {
                 "sensor": True
              },
@@ -85,11 +69,24 @@ class benchbase(base):
                 "dbmsbenchmarker": True
             }
         }
-    def set_benchmark_type(self, benchmark='tpcc'):
+    def set_benchmark_type(self, benchmark: str = 'tpcc') -> None:
+        """
+        Select the Benchbase workload to run and update the storage label and config folder accordingly.
+
+        :param benchmark: Benchbase benchmark name, e.g. 'tpcc', 'ycsb', 'seats'.
+        """
         self.benchmark = benchmark
-        self.storage_label = 'benchbase-{benchmark}-{SF}'.format(benchmark=self.benchmark, SF=self.SF)
-        self.cluster.set_experiments_configfolder('experiments/benchbase/'+benchmark)
-    def prepare_testbed(self, parameter):
+        self.storage_label = f'benchbase-{self.benchmark}-{self.SF}'
+        self.cluster.set_experiments_configfolder(f'experiments/benchbase/{benchmark}')
+    def prepare_testbed(self, parameter: dict) -> None:
+        """
+        Configure the experiment from CLI-style parameter dict and delegate to base.
+
+        Sets workload metadata, loading job template, and appends human-readable
+        info lines about SF, benchmark type, duration, and target throughput factors.
+
+        :param parameter: Dict of CLI arguments as produced by argparse.
+        """
         args = SimpleNamespace(**parameter)
         self.args = args
         self.args_dict = parameter
@@ -114,8 +111,6 @@ class benchbase(base):
                 defaultParameters = {'SF': SF}
             )
         elif mode == 'load':
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'Benchbase Data {} Loading SF={}'.format(type_of_benchmark, SF),
                 info = 'This imports a Benchbase data set.',
@@ -123,8 +118,6 @@ class benchbase(base):
                 defaultParameters = {'SF': SF}
             )
         else:
-            # we want to profile the import
-            #self.set_queries_profiling()
             self.set_workload(
                 name = 'Benchbase Start DBMS',
                 info = 'This just starts a SUT.',
@@ -145,7 +138,6 @@ class benchbase(base):
                     self.workload['info'] = self.workload['info']+" Workload is '{}'.".format(workload)
         if self.loading_is_active() or self.benchmarking_is_active():
             if SF:
-                #self.workload['info'] = self.workload['info']+" Scaling factor (e.g., number of warehouses for TPC-C) is {}.".format(SF)
                 self.workload['info'] = self.workload['info']+" Scaling factor is {}.".format(SF)
             self.workload['info'] = self.workload['info']+" Target is based on multiples of '{}'.".format(target_base)
         if self.benchmarking_is_active():
@@ -157,7 +149,17 @@ class benchbase(base):
             if SD:
                 self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(int(SD/60))
         base.prepare_testbed(self, parameter)
-    def log_to_df(self, filename):
+    def log_to_df(self, filename: str) -> pd.DataFrame:
+        """
+        Parse a Benchbase container log file and return its JSON result as a DataFrame.
+
+        Looks for a ``####BEXHOMA####...####BEXHOMA####`` block in the log and decodes
+        the embedded JSON.  Returns an empty DataFrame when the block is absent or the
+        file cannot be read.
+
+        :param filename: Absolute path to the log file.
+        :return: Normalised DataFrame of the JSON result, or empty DataFrame on failure.
+        """
         self.cluster.logger.debug('benchbase.log_to_df({})'.format(filename))
         try:
             with open(filename) as f:
@@ -178,11 +180,11 @@ class benchbase(base):
         except Exception as e:
             print(e)
             return pd.DataFrame()
-    def DEPRECATED_get_parts_of_name(self, name):
+    def DEPRECATED_get_parts_of_name(self, name: str) -> dict:
         parts_name = re.findall('{(.+?)}', self.name_format)
         parts_values = re.findall('-(.+?)-', "-"+name.replace("-","--")+"--")
         return dict(zip(parts_name, parts_values))
-    def test_results(self):
+    def test_results(self) -> None:
         """
         Run test script locally.
         Extract exit code.
@@ -210,27 +212,33 @@ class benchbase(base):
         if self.monitoring_active:
             cmd = {}
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                stdin, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         print("{:30s}: downloading partial results".format("Experiment"))
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self):
-        #print('benchbase.show_summary()')
+    def show_summary(self) -> None:
+        """
+        Print a Markdown-formatted summary of loading and benchmarking results for this Benchbase experiment.
+
+        Covers workflow (actual vs. planned), loading times, execution throughput per
+        connection and phase, application metrics, and pass/fail test assertions.
+        """
+        self._test_results = []
         connections_sorted, monitoring_applications = self.show_summary_header()
         #####################
         df = self.evaluator.get_df_benchmarking()
@@ -263,21 +271,15 @@ class benchbase(base):
         else:
             df_aggregated_reduced = pd.DataFrame()
         #####################
-        test_results_monitoring = self.show_summary_monitoring()
+        self.show_summary_monitoring()
         if len(monitoring_applications) > 0:
             print("\n### Application Metrics")
-            #print(monitoring_applications)#df_monitoring_app)
             for title, metrics in monitoring_applications.items():
                 print("\n#### "+title+"\n")
                 print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        print("\n### Tests")
-        self.evaluator.test_results_column(df_aggregated_reduced, "Throughput (requests/second)")
-        if len(test_results_monitoring) > 0:
-            print(test_results_monitoring)
+        self._test_column(df_aggregated_reduced, "Throughput (requests/second)")
         if self.benchmarking_is_active():
-            if self.test_workflow(workflow_actual, workflow_planned):
-                print("* TEST passed: Workflow as planned")
-            else:
-                print("* TEST failed: Workflow not as planned")
+            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
+        self._print_test_summary()
 
 

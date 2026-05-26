@@ -1,2 +1,8 @@
-
--- not supported
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/OmniSci
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Placeholder — OmniSci / HeavyAI does not support secondary indexes.
+--          Query acceleration relies on fragment-level metadata (min/max zones)
+--          and GPU-parallel full-fragment scans rather than index structures.

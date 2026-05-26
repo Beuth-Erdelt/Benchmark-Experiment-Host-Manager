@@ -1,7 +1,53 @@
-# Benchmark Experiment Host Manager - HammerDB Experiments
+# TPC-C Experiments (HammerDB)
 
-The folder contains subfolders with DDL scripts and a query file for multiple DBMSs.
-These are used for HammerDB's TPROC-C experiments.
+This folder contains DDL scripts for initialising the TPC-C schema across 6 database systems. HammerDB implements TPC-C as **TPROC-C** and drives all data generation and loading internally; the SQL files here handle only server configuration, schema creation, and post-load verification.
+
+## Benchmark Overview
+
+TPC-C is an OLTP benchmark that simulates a wholesale supplier order-processing system. It operates on 9 tables:
+
+| Table | Role |
+|---|---|
+| `warehouse` | Top-level entity; root of FK hierarchy |
+| `district` | 10 districts per warehouse |
+| `customer` | 3 000 customers per district |
+| `history` | Payment history records; no PK |
+| `new_order` | Open orders awaiting delivery |
+| `orders` | Completed order headers (`oorder` in some DBMS) |
+| `order_line` | Line items; up to 15 per order |
+| `item` | 100 000 product records; lookup table |
+| `stock` | Inventory levels; one row per item per warehouse |
+
+FK dependency order (referenced before dependent):
+`warehouse → district / stock → customer → history / orders → new_order / order_line; item → stock`
+
+---
+
+## File Naming Convention
+
+| File | Purpose |
+|---|---|
+| `initschema-tpcc.sql` | Create all 9 TPC-C tables with inline primary key and (where applicable) foreign key constraints |
+| `checkschema-tpcc.sql` | Post-load verification: collect statistics and report table sizes (PostgreSQL, Citus only) |
+| `initschema-tpcc-functions.sql` | PL/pgSQL stored procedures for the five TPROC-C transactions (Citus only) |
+| `initschema-tpcc-tmp.sql` | pg_dump-derived DDL with Citus shard distribution commands (Citus only) |
+
+Files whose names contain `filled` are generated variants with Bexhoma placeholders already substituted; they are not edited directly.
+
+---
+
+## Supported DBMS
+
+| Folder | Schema / DB | Constraints | Notes |
+|---|---|---|---|
+| `PostgreSQL` | `public` | Inline PK; no FK | `checkschema-tpcc.sql` runs `VACUUM ANALYZE` and reports pg_settings |
+| `MariaDB` | `tpcc` | Inline PK + FK | InnoDB; `IDENTIFIED WITH mysql_native_password BY 'root'` |
+| `MySQL` | `tpcc` | Inline PK + FK | InnoDB; MEMORY engine for warehouse; zero-date mode |
+| `CockroachDB` | `public` | `PRIMARY KEY USING HASH`; no FK | `ALTER TABLE … CONFIGURE ZONE USING num_replicas = {num_worker_replicas}` |
+| `SingleStore` | `tpcc` | `KEY … USING CLUSTERED COLUMNSTORE`; no FK | `SHARD KEY`; `CREATE REFERENCE TABLE` for item |
+| `Citus` | `public` | Named `CONSTRAINT … PRIMARY KEY`; no FK | Stored procedures; Citus shard distribution; pg_dump-derived DDL variant |
+
+---
 
 ## Orchestration of Benchmarking Experiments
 
@@ -12,6 +58,7 @@ These are used for HammerDB's TPROC-C experiments.
 For full power, use this tool as an orchestrator as in [2]. It also starts a monitoring container using [Prometheus](https://prometheus.io/) and a metrics collector container using [cAdvisor](https://github.com/google/cadvisor). For analytical use cases, the Python package [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker), [3], is used as query executor and evaluator as in [1,2].
 For transactional use cases, HammerDB's TPC-C, Benchbase's TPC-C and YCSB are used as drivers for generating and loading data and for running the workload as in [4].
 
+---
 
 ## References
 

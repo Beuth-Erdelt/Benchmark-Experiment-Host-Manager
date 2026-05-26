@@ -1,0 +1,9 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/Clickhouse
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Placeholder — ClickHouse does not use traditional secondary
+--          indexes. Query performance is driven by the MergeTree ORDER BY
+--          (sparse primary index) defined in initschema-tpch.sql. No
+--          statements are executed.

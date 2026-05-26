@@ -1,1 +1,7 @@
-
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/Kinetica
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Placeholder — Kinetica does not expose a manual ANALYZE or statistics
+--          collection command; statistics are maintained automatically by the engine.
