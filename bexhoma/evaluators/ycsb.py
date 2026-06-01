@@ -953,6 +953,8 @@ class ycsb(logger):
             df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
             df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
+        else:
+            return df
 
 
     def get_summary_loading_per_run(self):
@@ -977,6 +979,8 @@ class ycsb(logger):
             df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
             df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
+        else:
+            return df
 
 
 
