@@ -167,6 +167,7 @@ class base():
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
         self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
         self.jobtemplate_loading = ""                                   # name of YAML manifest for loading component
+        self.jobtemplate_benchmarking = ""                              # name of YAML manifest for benchmarking component
         self.querymanagement = {}                                       # parameters for query.config
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config

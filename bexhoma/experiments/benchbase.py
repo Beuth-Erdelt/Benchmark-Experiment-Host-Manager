@@ -57,7 +57,8 @@ class benchbase(base):
             type = 'benchbase',
             )
         self.storage_label = 'benchbase-'+str(SF)                      # label used to match persistent storage to this experiment
-        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"  # K8s job template for the Benchbase loading container
+        self.jobtemplate_loading = "jobtemplate-loading-benchbase.yml"        # K8s job template for the Benchbase loading container
+        self.jobtemplate_benchmarking = "jobtemplate-benchmarking-benchbase.yml" # K8s job template for the Benchbase benchmarking container
         self.evaluator = evaluators.benchbase(                          # evaluator specific to Benchbase result format
             code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
         self.benchmark = 'tpcc'                                         # active Benchbase workload; changed via set_benchmark_type()

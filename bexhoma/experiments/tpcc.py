@@ -55,7 +55,8 @@ class tpcc(base):
             type = 'tpcc',
             )
         self.storage_label = 'hammerdb-'+str(SF)                       # label used to match persistent storage to this experiment
-        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"   # K8s job template for the HammerDB loading container
+        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"         # K8s job template for the HammerDB loading container
+        self.jobtemplate_benchmarking = "jobtemplate-benchmarking-hammerdb.yml"  # K8s job template for the HammerDB benchmarking container
         self.evaluator = evaluators.tpcc(                               # evaluator specific to TPC-C / HammerDB result format
             code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
         self.components = {                                             # maps component types to required sub-components (no datagenerator for HammerDB)

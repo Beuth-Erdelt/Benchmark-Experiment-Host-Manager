@@ -40,11 +40,6 @@ __all__ = [
     'patch_container',
     'load_data_asynch',
     'default',
-    'hammerdb',
-    'ycsb',
-    'benchbase',
-    'yugabytedb',
-    'kinetica',
 ]
 
 # -------- YAML helpers --------
@@ -3786,6 +3781,10 @@ scrape_configs:
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
 
+        The YAML template is resolved in priority order:
+        the ``template`` argument > ``self.experiment.jobtemplate_benchmarking`` >
+        the default ``"jobtemplate-benchmarking-dbmsbenchmarker.yml"``.
+
         :param app: app the job belongs to
         :param component: Component, for example sut or monitoring
         :param experiment: Unique identifier of the experiment
@@ -3793,8 +3792,9 @@ scrape_configs:
         :param client: Number of benchmarker if there is a sequence of benchmarkers
         :param parallelism: Number of parallel pods in job
         :param alias: Alias name of the dbms
-        :param env: Dict of environment variables
-        :param template: Template for the job manifest 
+        :param env: Optional extra environment variables merged into the job ENV
+        :param template: Optional override for the YAML job template filename
+        :param num_pods: Total number of pods in the job
         :return: Name of file in YAML format containing the benchmarker job
         """
         if len(app) == 0:
@@ -3805,20 +3805,25 @@ scrape_configs:
         # determine start time
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=240)
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        # store parameters in connection for evaluation
-        e = {'BEXHOMA_TIME_NOW': now_string,
-            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
+        base_env = {
+            'BEXHOMA_TIME_NOW': now_string,
+            'BEXHOMA_TIME_START': 0,
             'DBMSBENCHMARKER_CLIENT': str(parallelism),
+            'DBMSBENCHMARKER_PODS': str(num_pods),
             'DBMSBENCHMARKER_CODE': code,
             'DBMSBENCHMARKER_CONNECTION': connection,
             'BEXHOMA_CONNECTION': connection,
             'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias}
-        env = {**env, **e}
-        env = {**env, **self.benchmarking_parameters}
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-dbmsbenchmarker.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)
+            'DBMSBENCHMARKER_ALIAS': alias,
+        }
+        env = {**base_env, **env, **self.loading_parameters, **self.benchmarking_parameters}
+        # resolve template: explicit arg > experiment setting > default
+        if len(template) == 0:
+            if len(self.experiment.jobtemplate_benchmarking) > 0:
+                template = self.experiment.jobtemplate_benchmarking
+            else:
+                template = "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)
     def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
         """
         Creates a job template for maintaining.
@@ -3949,366 +3954,6 @@ scrape_configs:
             endpoints.append(endpoint)
             print("{:30s}: worker endpoint: {}".format(self.configuration, endpoint))
         return endpoints
-
-
-
-
-class hammerdb(default):
-    """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
-
-        Class for managing an DBMS configuation.
-        This is plugged into an experiment object.
-
-        :param experiment: Unique identifier of the experiment
-        :param docker: Name of the Docker image
-        :param configuration: Name of the configuration
-        :param script: Unique identifier of the experiment
-        :param alias: Unique identifier of the experiment
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    """
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
-        """
-        Creates a job template for the benchmarker.
-        This sets meta data in the template and ENV.
-        This sets some settings specific to HammerDB.
-
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: Number of benchmarker if there is a sequence of benchmarkers
-        :param parallelism: Number of parallel pods in job
-        :param alias: Alias name of the dbms
-        :return: Name of file in YAML format containing the benchmarker job
-        """
-        if len(app) == 0:
-            app = self.appname
-        code = str(int(experiment))
-        experimentRun = str(self.num_experiment_to_apply_done+1)
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
-        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
-        self.logger.debug('hammerdb.create_manifest_benchmarking({})'.format(jobname))
-        # determine start time
-        now = datetime.utcnow()
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=180)
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'BEXHOMA_TIME_NOW': now_string,
-            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
-            'DBMSBENCHMARKER_CLIENT': str(parallelism),
-            'DBMSBENCHMARKER_PODS': str(num_pods),
-            'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connection,
-            'BEXHOMA_CONNECTION': connection,
-            'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias}
-        env = {**env, **self.loading_parameters}
-        env = {**env, **self.benchmarking_parameters}
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-hammerdb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)#, jobname=jobname)
-
-
-
-
-
-class ycsb(default):
-    """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
-
-        Class for managing an DBMS configuation.
-        This is plugged into an experiment object.
-
-        :param experiment: Unique identifier of the experiment
-        :param docker: Name of the Docker image
-        :param configuration: Name of the configuration
-        :param script: Unique identifier of the experiment
-        :param alias: Unique identifier of the experiment
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    """
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
-        """
-        Creates a job template for the benchmarker.
-        This sets meta data in the template and ENV.
-        This sets some settings specific to YCSB.
-
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: Number of benchmarker if there is a sequence of benchmarkers
-        :param parallelism: Number of parallel pods in job
-        :param alias: Alias name of the dbms
-        :return: Name of file in YAML format containing the benchmarker job
-        """
-        if len(app) == 0:
-            app = self.appname
-        code = str(int(experiment))
-        experimentRun = str(self.num_experiment_to_apply_done+1)
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
-        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
-        self.logger.debug('ycsb.create_manifest_benchmarking({})'.format(jobname))
-        # determine start time
-        now = datetime.utcnow()
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=180)
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'BEXHOMA_TIME_NOW': now_string,
-            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
-            'DBMSBENCHMARKER_CLIENT': str(parallelism),
-            'DBMSBENCHMARKER_PODS': str(num_pods),
-            'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connection,
-            'BEXHOMA_CONNECTION': connection,
-            'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias}
-        env = {**env, **self.loading_parameters}
-        env = {**env, **self.benchmarking_parameters}
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-ycsb.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)#, jobname=jobname)
-
-
-
-
-class benchbase(default):
-    """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
-
-        Class for managing an DBMS configuation.
-        This is plugged into an experiment object.
-
-        :param experiment: Unique identifier of the experiment
-        :param docker: Name of the Docker image
-        :param configuration: Name of the configuration
-        :param script: Unique identifier of the experiment
-        :param alias: Unique identifier of the experiment
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    """
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', num_pods=1):
-        """
-        Creates a job template for the benchmarker.
-        This sets meta data in the template and ENV.
-        This sets some settings specific to YCSB.
-
-        :param app: app the job belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: Number of benchmarker if there is a sequence of benchmarkers
-        :param parallelism: Number of parallel pods in job
-        :param alias: Alias name of the dbms
-        :return: Name of file in YAML format containing the benchmarker job
-        """
-        if len(app) == 0:
-            app = self.appname
-        code = str(int(experiment))
-        experimentRun = str(self.num_experiment_to_apply_done+1)
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client)
-        servicename = self.get_service_sut(configuration=configuration)#self.generate_component_name(app=app, component='sut', experiment=experiment, configuration=configuration)
-        self.logger.debug('benchbase.create_manifest_benchmarking({})'.format(jobname))
-        # determine start time
-        now = datetime.utcnow()
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=180)
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {'BEXHOMA_TIME_NOW': now_string,
-            'BEXHOMA_TIME_START': 0,#start_string, # wait until (=0 do not wait)
-            'DBMSBENCHMARKER_CLIENT': str(parallelism),
-            'DBMSBENCHMARKER_PODS': str(num_pods),
-            'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connection,
-            'BEXHOMA_CONNECTION': connection,
-            'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias}
-        env = {**env, **self.loading_parameters}
-        env = {**env, **self.benchmarking_parameters}
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template="jobtemplate-benchmarking-benchbase.yml", num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)#, jobname=jobname)
-
-
-
-
-class yugabytedb(default):
-    """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
-
-        Class for managing an DBMS configuation.
-        This is plugged into an experiment object.
-        This class contains specific settings for a YugabyteDB installation.
-        This is handled outside of bexhoma with the official helm chart.
-        The service name is fixed to be "yb-tserver-service"
-
-        :param experiment: Unique identifier of the experiment
-        :param docker: Name of the Docker image
-        :param configuration: Name of the configuration
-        :param script: Unique identifier of the experiment
-        :param alias: Unique identifier of the experiment
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    """
-    def get_service_sut(self, configuration):
-        """
-        Returns the same of the service where to connect to the SUT.
-        This in general is the name of the service of the deployed component.
-        For SUT, that require a component that is not controlled by bexhoma, this may be overwritten.
-        Here, always "yb-tserver-service" is returned.
-
-        :param configuration: name of the configuration
-        :return: name of the configuration's sut's service
-        """
-        return "yb-tserver-service"
-
-
-
-
-class kinetica(default):
-    """
-    :Date: 2022-10-01
-    :Version: 0.6.0
-    :Authors: Patrick K. Erdelt
-
-        Class for managing an DBMS configuation.
-        This is plugged into an experiment object.
-        This class contains specific settings for a Kinetica installation.
-        This is handled outside of bexhoma with the official KAgent.
-        The service name is fixed to be "bexhoma-service-kinetica"
-
-        :param experiment: Unique identifier of the experiment
-        :param docker: Name of the Docker image
-        :param configuration: Name of the configuration
-        :param script: Unique identifier of the experiment
-        :param alias: Unique identifier of the experiment
-
-        Copyright (C) 2020  Patrick K. Erdelt
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Affero General Public License for more details.
-
-        You should have received a copy of the GNU Affero General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    """
-    def get_service_sut(self, configuration):
-        """
-        Returns the same of the service where to connect to the SUT.
-        This in general is the name of the service of the deployed component.
-        For SUT, that require a component that is not controlled by bexhoma, this may be overwritten.
-        Here, always "bexhoma-service-kinetica" is returned.
-
-        :param configuration: name of the configuration
-        :return: name of the configuration's sut's service
-        """
-        return "bexhoma-service-kinetica"
-    def create_monitoring(self, app='', component='monitoring', experiment='', configuration=''):
-        """
-        Generate a name for the monitoring component.
-        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`.
-        For Kinetica, the service to be monitored is named 'bexhoma-service-kinetica'.
-
-        :param app: app the component belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        """
-        if component == 'sut':
-            name = 'bexhoma-service-kinetica'
-        else:
-            name = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration)
-        self.logger.debug("kinetica.create_monitoring({})".format(name))
-        return name
-    def set_metric_of_config(self, metric, host, gpuid):
-        """
-        Returns a promql query.
-        Parameters in this query are substituted, so that prometheus finds the correct metric.
-        Example: In 'sum(irate(container_cpu_usage_seconds_total{{container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_pod_name=~"(.*){configuration}-{experiment}(.*)", container_label_io_kubernetes_container_name="dbms"}}[1m]))'
-        configuration and experiment are placeholders and will be replaced by concrete values.
-        Here: We do not have a SUT that is specific to the experiment or configuration.
-
-        :param metric: Parametrized promql query
-        :param host: Name of the host the metrics should be collected from
-        :param gpuid: GPU that the metrics should watch
-        :return: promql query without parameters
-        """
-        return metric.format(host=host, gpuid=gpuid, configuration='kinetica', experiment='worker')
-    def get_worker_endpoints(self):
-        """
-        Returns all endpoints of a headless service that monitors nodes of a distributed DBMS.
-        These are IPs of cAdvisor instances.
-        The endpoint list is to be filled in a config of an instance of Prometheus.
-        For Kinetica the service is fixed to be 'bexhoma-service-monitoring-default' and does not depend on the experiment.
-
-        :return: list of endpoints
-        """
-        endpoints = self.experiment.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-        self.logger.debug("kinetica.get_worker_endpoints({})".format(endpoints))
-        return endpoints
-
 
 
 

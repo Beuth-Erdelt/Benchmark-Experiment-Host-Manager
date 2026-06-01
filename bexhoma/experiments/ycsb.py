@@ -55,7 +55,8 @@ class ycsb(base):
             type = 'ycsb',
             )
         self.storage_label = 'ycsb-'+str(SF)                           # label used to match persistent storage to this experiment
-        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"       # K8s job template for the YCSB loading container
+        self.jobtemplate_loading = "jobtemplate-loading-ycsb.yml"             # K8s job template for the YCSB loading container
+        self.jobtemplate_benchmarking = "jobtemplate-benchmarking-ycsb.yml"      # K8s job template for the YCSB benchmarking container
         self.evaluator = evaluators.ycsb(                               # evaluator specific to YCSB result format
             code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
         self.components = {                                             # maps component types to required sub-components (no datagenerator for YCSB)
