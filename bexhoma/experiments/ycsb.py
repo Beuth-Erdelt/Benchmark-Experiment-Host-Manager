@@ -207,7 +207,8 @@ class ycsb(base):
                 print("\n#### Planned\n")
                 for c in workflow_planned:
                     print("* DBMS", c, "- Pods", workflow_planned[c])
-        if self.loading_is_active():
+        df = self.evaluator.get_summary_loading_per_connection()
+        if self.loading_is_active() and not df.empty:
             print("\n### Loading")
             print("\n#### Per Connection\n")
             df = self.evaluator.get_summary_loading_per_connection()
