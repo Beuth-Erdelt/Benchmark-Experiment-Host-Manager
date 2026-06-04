@@ -59,8 +59,8 @@ spec:
           - "--mysql-native-password=ON"           # Backward-compatible password auth
           #- "--innodb_log_file_size=2GB"          # Deprecated in 8.0.30
           - "--innodb-redo-log-capacity=32GB"
-          - "--innodb-io-capacity=300"             # Tuned for NVMe SSDs vs. remote deistributed Ceph
-          - "--innodb-io-capacity_max=600"         # Twice the capacity
+          - "--innodb-io-capacity=400"             # Tuned for NVMe SSDs vs. remote deistributed Ceph
+          - "--innodb-io-capacity_max=2000"         # Twice the capacity
           # --- I/O Threading ---
           - "--innodb-read-io-threads=8"           # Max threads to handle read I/O
           - "--innodb-write-io-threads=8"          # Max threads for write I/O
@@ -93,6 +93,7 @@ spec:
           #- "--innodb-ddl-buffer-size=256M"       # DDL metadata operations memory
           # --- Doublewrite Buffer ---
           - "--innodb-doublewrite=0"               # Disable for CephFS redundancy and speed
+          - "--tmpdir=/mysqltmp"
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
           - {name: MYSQL_ROOT_HOST, value: '%'}
@@ -132,6 +133,7 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /var/lib/mysql, name: benchmark-storage-volume}
+        - {mountPath: /mysqltmp, name: mysqltmp}
       - name: monitor-application
         image: prom/mysqld-exporter:v0.17.2
         args:
@@ -168,3 +170,7 @@ spec:
       - name: disk
         hostPath:
           path: /dev/disk
+      - name: mysqltmp
+        emptyDir:
+          medium: Memory
+          sizeLimit: 32Gi
