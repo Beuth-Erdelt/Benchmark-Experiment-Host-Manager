@@ -144,15 +144,12 @@ class logger(base):
         """
         Return the combined loading pickle filename for this evaluator.
 
-        When ``benchmark_run > 0`` the name is scoped to this benchmark's index
-        (``bexhoma-loading.{N}.all.df.pickle``); otherwise the legacy name
-        ``bexhoma-loading.all.df.pickle`` is returned for backward compat.
+        Loading is performed once per experiment, shared across all benchmark
+        runs, so the name is always ``bexhoma-loading.all.df.pickle``.
 
         :return: Pickle filename (basename only, not full path).
         :rtype: str
         """
-        if self.benchmark_run > 0:
-            return f"bexhoma-loading.{self.benchmark_run}.all.df.pickle"
         return "bexhoma-loading.all.df.pickle"
 
     def evaluate_results(self, pod_dashboard=''):

@@ -1786,25 +1786,25 @@ class base():
                 for config in self.configurations:
                     #if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
                     if config.sut_is_pending():
-                        print("{} pending".format(config.configuration))
+                        #print("{} pending".format(config.configuration))
                         self.cluster.logger.debug("{} pending".format(config.configuration))
                         do = True
                     if not config.loading_started or not config.loading_finished:
-                        print("{} not loaded".format(config.configuration))
+                        #print("{} not loaded".format(config.configuration))
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
-                    print(config.client, len(config.experiment_dict["benchmarker"]))
+                    #print(config.client, len(config.experiment_dict["benchmarker"]))
                     _still_has_benchmarks = (
                         (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
                         or (not bool(config.experiment_dict["benchmarker"]) and len(config.benchmark_list) > 0)
                     )
                     if _still_has_benchmarks:
-                        print("{} still benchmarks to run".format(config.configuration))
+                        #print("{} still benchmarks to run".format(config.configuration))
                         self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
                         do = True
                     if stop_after_starting:
                         if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                            print("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
+                            #print("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                             self.cluster.logger.debug("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                             do = True
     def benchmark_list(self, list_clients):
