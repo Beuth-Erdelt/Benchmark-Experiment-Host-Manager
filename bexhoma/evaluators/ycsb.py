@@ -46,14 +46,16 @@ class ycsb(logger):
     :param include_loading: Ignored; loading is always enabled for this evaluator.
     :param include_benchmarking: Ignored; benchmarking is always enabled.
     """
-    def __init__(self, code, path, include_loading=False, include_benchmarking=True):
+    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0):
         """
         :param code: Experiment identifier — also the name of the result sub-folder.
         :param path: Root path that contains the result folders.
         :param include_loading: Ignored; loading is always enabled for this evaluator.
         :param include_benchmarking: Ignored; benchmarking is always enabled.
+        :param benchmark_run: 1-based position in the benchmark sequence; 0 means unset.
+        :type benchmark_run: int
         """
-        super().__init__(code, path, True, True)
+        super().__init__(code, path, True, True, benchmark_run=benchmark_run)
     def log_to_df(self, filename):
         """
         Parses a YCSB pod log file into a single-row DataFrame.
@@ -78,6 +80,8 @@ class ycsb(logger):
             code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
+            benchmark_run = benchmark_run[0] if benchmark_run else '1'
             target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
             threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
             workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
@@ -97,18 +101,18 @@ class ycsb(logger):
                     parsed_rows.append(line.split(", "))
             phase = connection_name
             #connection = configuration_name + '-' + experiment_run + '-' + child
-            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
             #connection = connection_name + '-' + child
             col_names = [value[0] + "." + value[1] for value in parsed_rows if len(value) > 1]
             measure_values = [value[2] for value in parsed_rows if len(value) > 1]
             row_values = [code, phase, connection, configuration_name, experiment_run, client,
-                          pod_name, pod_count, threads, target, sf, workload, operations,
-                          batchsize, exceptions, child]
+                          benchmark_run, pod_name, pod_count, threads, target, sf, workload,
+                          operations, batchsize, exceptions, child]
             row_values.extend(measure_values)
             df = pd.DataFrame(row_values).T
             columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client',
-                       'pod', 'pod_count', 'threads', 'target', 'SF', 'workload', 'operations',
-                       'batchsize', 'exceptions', 'child']
+                       'benchmark_run', 'pod', 'pod_count', 'threads', 'target', 'SF', 'workload',
+                       'operations', 'batchsize', 'exceptions', 'child']
             columns.extend(col_names)
             df.columns = columns
             # only works for benchmarking
@@ -140,6 +144,7 @@ class ycsb(logger):
                 'configuration':'str',
                 'experiment_run':'int',
                 'client':'int',
+                'benchmark_run':'int',
                 'pod':'str',
                 'pod_count':'int',
                 'threads':'int',

@@ -1,7 +1,7 @@
 """
 Experiment class for HammerDB TPC-C benchmarks.
 
-Provides :class:`tpcc`, which extends :class:`base` to orchestrate
+Provides :class:`tpcc`, which extends :class:`mixed` to orchestrate
 HammerDB TPC-C workloads inside a Kubernetes cluster.
 
 Authors: Patrick K. Erdelt
@@ -12,37 +12,40 @@ See LICENSE for details.
 from dbmsbenchmarker import parameter
 import logging
 import urllib3
-import pandas as pd
-from types import SimpleNamespace
 
-from bexhoma import evaluators
-from .base import base
+from bexhoma import benchmarks
+from .mixed import mixed
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 __all__ = ["tpcc"]
 
-# TPC-C (HammerDB) experiment class
 
-class tpcc(base):
+class tpcc(mixed):
     """
-    Class for defining an TPC-C experiment (in the HammerDB version).
-    This sets
+    TPC-C experiment: orchestrates HammerDB TPC-C loading and benchmarking
+    inside a Kubernetes cluster.
 
-    * the folder to the experiment - including query file and schema informations per dbms
-    * name and information about the experiment
-    * additional parameters - here SF (the scaling factor), i.e. number of warehouses
+    Registers a :class:`~bexhoma.benchmarks.tpcc.TPCC` benchmark object and
+    pre-populates the experiment dict template with HammerDB-specific job templates.
     """
+
     def __init__(self,
-            cluster,
-            code=None,
-            SF = '1',
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
-        self.SF = SF                                                    # TPC-C scaling factor (number of warehouses)
+                 cluster,
+                 code=None,
+                 SF='1',
+                 num_experiment_to_apply=1,
+                 timeout=7200):
+        """
+        :param cluster: Cluster object.
+        :param code: Experiment identifier; auto-generated if ``None``.
+        :param SF: Scaling factor — number of TPC-C warehouses.
+        :param num_experiment_to_apply: Repetition count.
+        :param timeout: Per-query timeout in seconds.
+        """
+        mixed.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        self.SF = SF
         self.set_experiment(volume='tpcc')
         self.set_experiment(script='Schema')
         self.set_experiment(indexing='Checks')
@@ -50,97 +53,43 @@ class tpcc(base):
         parameter.defaultParameters = {'SF': str(SF)}
         self.set_queryfile('queries.config')
         self.set_workload(
-            name = 'TPC-C Queries SF='+str(SF),
-            info = 'This experiment performs some TPC-C inspired workloads.',
-            type = 'tpcc',
-            )
-        self.storage_label = 'hammerdb-'+str(SF)                       # label used to match persistent storage to this experiment
-        self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"         # K8s job template for the HammerDB loading container
-        self.jobtemplate_benchmarking = "jobtemplate-benchmarking-hammerdb.yml"  # K8s job template for the HammerDB benchmarking container
-        self.evaluator = evaluators.tpcc(                               # evaluator specific to TPC-C / HammerDB result format
-            code=self.code, path=self.cluster.resultfolder, include_loading=False, include_benchmarking=True)
-        self.components = {                                             # maps component types to required sub-components (no datagenerator for HammerDB)
-            "loader": {
-                "sensor": True
-             },
-            "benchmarker": {
-                "dbmsbenchmarker": True
-            }
-        }
-    def prepare_testbed(self, parameter: dict) -> None:
-        """
-        Configure the TPC-C experiment from a CLI parameter dict and delegate to base.
-
-        Sets workload metadata, loading job template, and appends info lines about SF,
-        benchmark duration, and optional keying/latency settings.
-
-        :param parameter: Dict of CLI arguments as produced by argparse.
-        """
-        args = SimpleNamespace(**parameter)
-        self.args = args
-        self.args_dict = parameter
-        mode = str(parameter['mode'])
-        if mode=='load' or mode=='start':
-            self.benchmarking_active = False
-        if mode=='start':
-            self.loading_deactivated = True
-        SF = str(self.SF)
-        SD = int(args.scaling_duration)
-        extra_latency = int(args.extra_latency)
-        extra_keying = int(args.extra_keying)
-        if mode == 'run':
-            self.set_workload(
-                name = 'HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
-                info = 'This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
-                type = 'tpcc',
-                defaultParameters = {'SF': SF}
-            )
-        elif mode == 'load':
-            self.set_workload(
-                name = 'HammerDB Data Loading SF={} (warehouses for TPC-C)'.format(SF),
-                info = 'This imports TPC-C data sets.',
-                type = 'tpcc',
-                defaultParameters = {'SF': SF}
-            )
-        else:
-            self.set_workload(
-                name = 'HammerDB Start DBMS',
-                info = 'This just starts a SUT.',
-                intro = 'Start DBMS and do not load data.',
-                type = 'tpcc',
-                defaultParameters = {'SF': SF}
-            )
-        self.loading_active = True
+            name='TPC-C Queries SF=' + str(SF),
+            info='This experiment performs some TPC-C inspired workloads.',
+            type='tpcc',
+        )
+        self.storage_label = 'hammerdb-' + str(SF)
         self.jobtemplate_loading = "jobtemplate-loading-hammerdb.yml"
-        self.set_experiment(script='Schema')
-        # note more infos about experiment in workload description
-        if self.loading_is_active():
-            self.workload['info'] = self.workload['info']+"\nTPC-C data is generated and loaded using several threads."
-        if self.loading_is_active() or self.benchmarking_is_active():
-            if SF:
-                self.workload['info'] = self.workload['info']+"\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
-        if self.benchmarking_is_active():
-            if SD:
-                self.workload['info'] = self.workload['info']+" Benchmarking runs for {} minutes.".format(SD)
-            if extra_keying:
-                self.workload['info'] = self.workload['info']+" Benchmarking has keying and thinking times activated."
-            if extra_latency:
-                self.workload['info'] = self.workload['info']+" Benchmarking also logs latencies."
-        base.prepare_testbed(self, parameter)
-    def test_results(self) -> None:
-        """
-        Run test script locally.
-        Extract exit code.
+        self.jobtemplate_benchmarking = "jobtemplate-benchmarking-hammerdb.yml"
+        self.components = {
+            "loader": {"sensor": True},
+            "benchmarker": {"dbmsbenchmarker": True},
+        }
+        self.add_benchmark(benchmarks.TPCC(SF=SF))
+        self.experiment_dict_template = {
+            "loader": [
+                {
+                    "name":        "tpcc-loader",
+                    "benchmarker": "hammerdb",
+                    "template":    "jobtemplate-loading-hammerdb.yml",
+                    "parallelism": 1,
+                    "num_pods":    1,
+                    "target":      "sut",
+                    "parameters":  {},
+                },
+            ],
+            "benchmarker": [[
+                {
+                    "name":        "tpcc",
+                    "benchmarker": "hammerdb",
+                    "template":    "jobtemplate-benchmarking-hammerdb.yml",
+                    "parallelism": 1,
+                    "num_pods":    1,
+                    "target":      "sut",
+                    "parameters":  {},
+                },
+            ]],
+        }
 
-        :return: exit code of test script
-        """
-        self.cluster.logger.debug('tpcc.test_results()')
-        self.evaluator.test_results()
-        workflow = self.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
     def OLD_evaluate_results(self, pod_dashboard=''):
         """
         Build a DataFrame locally that contains all benchmarking results.
@@ -169,141 +118,7 @@ class tpcc(base):
                 cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
                 _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
-        # copy logs and yamls to result folder
         print("{:30s}: downloading partial results".format("Experiment"))
         self.experimentdownload_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.experimentupload_file(filename='')
-    def show_summary(self) -> None:
-        """
-        Print a Markdown-formatted summary of a TPC-C (HammerDB) experiment.
-
-        Covers workflow (actual vs. planned), loading and execution tables, application
-        metrics, and pass/fail test assertions.
-        """
-        self._test_results = []
-        connections_sorted, monitoring_applications = self.show_summary_header()
-        #####################
-        df = self.evaluator.get_df_benchmarking()
-        if self.benchmarking_is_active():
-            print("\n### Workflow")
-            workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-        if self.loading_is_active():
-            print("\n### Loading")
-            print("\n#### Per Run\n")
-            df = self.evaluator.get_summary_loading_per_run()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-        if self.benchmarking_is_active():
-            print("\n### Execution")
-            print("\n#### Per Connection\n")
-            df = self.evaluator.get_summary_benchmark_per_connection()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-            print("\n#### Per Phase\n")
-            df = self.evaluator.get_summary_benchmark_per_phase()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-            df_aggregated_reduced = df.copy()
-        else:
-            df_aggregated_reduced = pd.DataFrame()
-        #print('tpcc.show_summary()')
-        """
-        #connections_sorted, monitoring_applications = self.show_summary_header()
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        #####################
-        if self.loading_is_active():
-            df = self.evaluator.get_df_loading()
-            if not df.empty:
-                print("\n### Loading\n")
-                #print(df)
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-        #####################
-        warehouses = 0
-        if self.benchmarking_is_active():
-            df = self.evaluator.get_df_benchmarking()
-            if not df.empty:
-                print("\n### Execution\n")
-                #print(df)
-                warehouses = int(df['sf'].max())
-                df.fillna(0, inplace=True)
-                df_plot = self.evaluator.benchmarking_set_datatypes(df)
-                df_aggregated = self.evaluator.benchmarking_aggregate_by_parallel_pods(df_plot)
-                df_aggregated = df_aggregated.sort_values(['experiment_run','client','pod_count']).round(2)
-                if "P95 [ms]" in df_aggregated:
-                    # we have latencies
-                    aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
-                    columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
-                else:
-                    aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
-                    columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
-                df_aggregated_reduced = df_aggregated[aggregated_list].copy()
-                for col in columns:
-                    if col in df_aggregated.columns:
-                        df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-                #print(df_aggregated_reduced)
-                df_aggregated_reduced.index.names = ["DBMS"]
-                print(df_aggregated_reduced.to_markdown(index=True, floatfmt=".2f"))
-            print("\n* Warehouses:", warehouses)
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Workflow")
-            workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-        #####################
-        if self.loading_is_active():
-            print("\n### Loading\n")
-            #connections_sorted = sorted(connections, key=lambda c: c['name']) 
-            result = dict()
-            for c in connections_sorted:
-                result[c['name']] = {
-                    'time_load': c['timeIngesting'],
-                    #'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'], # these are the benchmark clients
-                    'terminals': c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_NUM_VU'],
-                    #'target': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TARGET'],
-                    'pods': c['parameter']['parallelism'],
-                }
-                #result[c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']] = c['timeIngesting']
-            df = pd.DataFrame(result)#, index=['time_load'])#, index=result.keys())
-            #print(df)
-            #df = df.T.pivot(columns='terminals', index='target', values='time_load')
-            df_connections = df.copy().T
-            #print(df_connections)
-            df_time_load = pd.DataFrame(df_connections['time_load'], columns=['time_load'])
-            df_tpx = (warehouses*3600.0)/df_time_load.sort_index()
-            #print(df_tpx)
-            #df_loading_tpx = df_tpx['time_load']
-            df_connections['Imported warehouses [1/h]'] = df_tpx['time_load']
-            df_connections.index.names = ["DBMS"]
-            print(df_connections.to_markdown(index=True, floatfmt=".2f"))
-            #print(df_connections)
-        """
-        #####################
-        self.show_summary_monitoring()
-        if len(monitoring_applications) > 0:
-            print("\n### Application Metrics")
-            for title, metrics in monitoring_applications.items():
-                print("\n#### "+title+"\n")
-                metrics.index.names = ["DBMS"]
-                print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        if self.benchmarking_is_active():
-            self._test_column(df_aggregated_reduced, "NOPM")
-            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
-        self._print_test_summary()
-
-

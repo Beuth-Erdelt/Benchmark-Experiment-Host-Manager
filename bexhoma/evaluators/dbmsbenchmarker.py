@@ -66,7 +66,7 @@ class dbmsbenchmarker(logger):
     :param include_loading: Unused; loading is always enabled for this evaluator.
     :param include_benchmarking: Unused; benchmarking is always enabled.
     """
-    def __init__(self, code, path, include_loading=False, include_benchmarking=True):
+    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0):
         """
         Initialises the inspector before delegating to the parent constructor.
 
@@ -74,10 +74,12 @@ class dbmsbenchmarker(logger):
         :param path: Root path that contains the result folders.
         :param include_loading: Ignored; always ``True``.
         :param include_benchmarking: Ignored; always ``True``.
+        :param benchmark_run: 1-based position in the benchmark sequence; 0 means unset.
+        :type benchmark_run: int
         """
         self.evaluation = None
         self.path_base = path
-        super().__init__(code, path, True, True)
+        super().__init__(code, path, True, True, benchmark_run=benchmark_run)
         self.load_inspector()
     def load_inspector(self):
         """

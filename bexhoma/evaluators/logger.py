@@ -78,7 +78,7 @@ class logger(base):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading-" + jobname) and filename.endswith(".sensor.log"):
                 full_path = self.path + "/" + filename
-                df = self.log_to_df(full_path)
+                df = self.log_to_df_loading(full_path)
                 if df.empty:
                     self.num_missing_loading_dfs += 1
                     if full_path in self.workflow_errors:
@@ -125,19 +125,50 @@ class logger(base):
             df_collected.set_index('connection', inplace=True, drop=False)
             with open(self.path + "/" + filename_result, "wb") as f:
                 pickle.dump(df_collected, f)
+    def _pickle_name_benchmarking(self) -> str:
+        """
+        Return the combined benchmarking pickle filename for this evaluator.
+
+        When ``benchmark_run > 0`` the name is scoped to this benchmark's index
+        (``bexhoma-benchmarker.{N}.all.df.pickle``); otherwise the legacy name
+        ``bexhoma-benchmarker.all.df.pickle`` is returned for backward compat.
+
+        :return: Pickle filename (basename only, not full path).
+        :rtype: str
+        """
+        if self.benchmark_run > 0:
+            return f"bexhoma-benchmarker.{self.benchmark_run}.all.df.pickle"
+        return "bexhoma-benchmarker.all.df.pickle"
+
+    def _pickle_name_loading(self) -> str:
+        """
+        Return the combined loading pickle filename for this evaluator.
+
+        When ``benchmark_run > 0`` the name is scoped to this benchmark's index
+        (``bexhoma-loading.{N}.all.df.pickle``); otherwise the legacy name
+        ``bexhoma-loading.all.df.pickle`` is returned for backward compat.
+
+        :return: Pickle filename (basename only, not full path).
+        :rtype: str
+        """
+        if self.benchmark_run > 0:
+            return f"bexhoma-loading.{self.benchmark_run}.all.df.pickle"
+        return "bexhoma-loading.all.df.pickle"
+
     def evaluate_results(self, pod_dashboard=''):
         """
         Parses all pod log files and persists the results as pickled DataFrames.
 
         Calls :meth:`transform_all_logs_benchmarking` and :meth:`_collect_dfs` for the
         benchmarking phase when ``include_benchmarking`` is set, and analogously
-        for the loading phase.
+        for the loading phase.  When ``benchmark_run > 0``, each phase writes a
+        per-benchmark pickle file rather than the shared ``*.all.df.pickle``.
         """
         if self.include_benchmarking:
             self.num_missing_benchmarking_dfs = 0
             self.transform_all_logs_benchmarking()
             self._collect_dfs(
-                filename_result="bexhoma-benchmarker.all.df.pickle",
+                filename_result=self._pickle_name_benchmarking(),
                 filename_source_start="bexhoma-benchmarker",
                 filename_source_end=".log.df.pickle",
                 num_missing=self.num_missing_benchmarking_dfs)
@@ -145,10 +176,11 @@ class logger(base):
             self.num_missing_loading_dfs = 0
             self.transform_all_logs_loading()
             self._collect_dfs(
-                filename_result="bexhoma-loading.all.df.pickle",
+                filename_result=self._pickle_name_loading(),
                 filename_source_start="bexhoma-loading",
                 filename_source_end=".log.df.pickle",
                 num_missing=self.num_missing_loading_dfs)
+
     def get_df_benchmarking(self):
         """
         Returns the DataFrame containing all benchmarking-phase results.
@@ -159,7 +191,7 @@ class logger(base):
         :return: DataFrame of benchmarking results, or empty DataFrame when unavailable.
         :rtype: pandas.DataFrame
         """
-        pickle_path = self.path + "/bexhoma-benchmarker.all.df.pickle"
+        pickle_path = self.path + "/" + self._pickle_name_benchmarking()
         if os.path.isfile(pickle_path):
             return pd.read_pickle(pickle_path)
         self.evaluate_results()
@@ -176,7 +208,7 @@ class logger(base):
         :return: DataFrame of loading results, or empty DataFrame when unavailable.
         :rtype: pandas.DataFrame
         """
-        pickle_path = self.path + "/bexhoma-loading.all.df.pickle"
+        pickle_path = self.path + "/" + self._pickle_name_loading()
         if os.path.isfile(pickle_path):
             return pd.read_pickle(pickle_path)
         return pd.DataFrame()

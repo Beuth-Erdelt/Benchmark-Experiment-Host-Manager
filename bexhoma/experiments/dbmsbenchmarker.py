@@ -15,32 +15,41 @@ import urllib3
 import pandas as pd
 
 from bexhoma import evaluators
-from .base import base
+from .mixed import mixed
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 __all__ = ["dbmsbenchmarker"]
 
-# DBMSBenchmarker experiment class
 
+class dbmsbenchmarker(mixed):
+    """
+    Experiment class for DBMSBenchmarker-based benchmarks.
 
-class dbmsbenchmarker(base):
+    Provides ``evaluate_results`` (which joins per-connection results on a
+    dashboard pod and builds the evaluation cube) and ``show_summary`` (which
+    presents per-query latencies, errors, and warnings).
+
+    TPC-H and TPC-DS subclass this to add their own benchmark registration and
+    experiment dict template.
     """
-    Class for defining an DBMSBenchmarker experiment.
-    This
-    
-    * merges results for different connections into one
-    """
+
     def __init__(self,
-            cluster,
-            code=None,
-            SF = '1',
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            ):
-        base.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
-        self.evaluator = evaluators.dbmsbenchmarker(                    # evaluator specific to DBMSBenchmarker result format
+                 cluster,
+                 code=None,
+                 SF='1',
+                 num_experiment_to_apply=1,
+                 timeout=7200):
+        """
+        :param cluster: Cluster object.
+        :param code: Experiment identifier; auto-generated if ``None``.
+        :param SF: Scaling factor (forwarded to sub-class templates).
+        :param num_experiment_to_apply: Repetition count.
+        :param timeout: Per-query timeout in seconds.
+        """
+        mixed.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
+        self.evaluator = evaluators.dbmsbenchmarker(
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
                          pod_dashboard: str = '') -> None:

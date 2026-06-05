@@ -55,18 +55,23 @@ class base:
     :param path: Root path that contains the result folders.
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
+    :param benchmark_run: 1-based position in the benchmark sequence; 0 means unset.
     """
-    def __init__(self, code, path, include_loading=False, include_benchmarking=True):
+    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0):
         """
         :param code: Experiment identifier — also the name of the result sub-folder.
         :param path: Root path that contains the result folders.
         :param include_loading: Whether loading-phase results are expected.
         :param include_benchmarking: Whether benchmarking-phase results are expected.
+        :param benchmark_run: 1-based position of this evaluator in the benchmark sequence; 0 means unset.
+        :type benchmark_run: int
         """
         self.path = path + "/" + code
         self.code = code
         self.include_loading = include_loading
         self.include_benchmarking = include_benchmarking
+        self.benchmark_run: int = benchmark_run
+        self.experiment = None
         self.workflow = dict()
         self.workflow_errors = dict()
         self.num_missing_benchmarking_dfs = 0
@@ -98,9 +103,30 @@ class base:
         if not self.workflow_errors[filename]:
             del self.workflow_errors[filename]
         return pd.DataFrame()
+
+    def log_to_df_loading(self, filename: str) -> pd.DataFrame:
+        """
+        Parse a loading pod log file and return the result as a DataFrame.
+
+        Default implementation delegates to :meth:`log_to_df`, which is
+        correct for benchmarks whose loading and benchmarking log formats are
+        identical (e.g. YCSB).  Subclasses where the formats differ must
+        override this method.
+
+        :param filename: Absolute path to the loading log file.
+        :type filename: str
+        :return: DataFrame of loading results, or empty DataFrame on failure.
+        :rtype: pandas.DataFrame
+        """
+        return self.log_to_df(filename)
+
     def transform_all_logs_benchmarking(self):
         """
         Iterates over all benchmarker log files and calls :meth:`end_benchmarking` for each.
+
+        When ``self.benchmark_run > 0``, only processes log files whose jobname ends
+        with the matching benchmark index (last ``-``-separated component), so that
+        each evaluator in a multi-benchmark experiment only ingests its own logs.
         """
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
@@ -108,10 +134,22 @@ class base:
             if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
                 jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
+                if self.benchmark_run > 0:
+                    try:
+                        file_benchmark_run = int(jobname.split("-")[-1])
+                    except (ValueError, IndexError):
+                        file_benchmark_run = 1
+                    if file_benchmark_run != self.benchmark_run:
+                        continue
                 self.end_benchmarking(jobname)
+
     def transform_all_logs_loading(self):
         """
         Iterates over all loader sensor log files and calls :meth:`end_loading` for each.
+
+        When ``self.benchmark_run > 0``, only processes log files whose jobname ends
+        with the matching benchmark index, so that each evaluator only ingests its own
+        loading logs.
         """
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
@@ -119,6 +157,13 @@ class base:
             if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
                 pod_name = filename[filename.rindex("-")+1:-len(".log")]
                 jobname = filename[len("bexhoma-loading-"):-len("-"+pod_name+".sensor.log")]
+                if self.benchmark_run > 0:
+                    try:
+                        file_benchmark_run = int(jobname.split("-")[-1])
+                    except (ValueError, IndexError):
+                        file_benchmark_run = 1
+                    if file_benchmark_run != self.benchmark_run:
+                        continue
                 self.end_loading(jobname)
     def end_benchmarking(self, jobname):
         """

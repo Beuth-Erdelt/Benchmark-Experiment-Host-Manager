@@ -75,6 +75,8 @@ class tpcc(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             vusers_loading = re.findall('HAMMERDB_NUM_VU (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
+            benchmark_run = benchmark_run[0] if benchmark_run else '1'
             timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
             allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
@@ -117,17 +119,17 @@ class tpcc(logger):
                 efficiency = round(100. * float(result_tuples[0][0][0]) / float(result_tuples[0][1]) / 1.286, 2)
             else:
                 efficiency = 0
-            connection = connection_name + '-' + child
+            connection = connection_name + '-' + client + '-' + benchmark_run + '-' + child
             phase = connection_name
             latency_values = list(extracted_data.values())
             rows = [
-                (connection, phase, configuration_name, experiment_run, client, child, pod_name, pod_count,
+                (connection, phase, configuration_name, experiment_run, client, benchmark_run, child, pod_name, pod_count,
                  code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
                  vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
                 for run_idx, (result, vuser) in enumerate(result_tuples)
             ]
             df = pd.DataFrame(rows)
-            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'child', 'pod',
+            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child', 'pod',
                          'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
                          'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             col_names.extend(list(extracted_data.keys()))
@@ -175,6 +177,7 @@ class tpcc(logger):
                 'experiment_run':'int',
                 'code':'int',
                 'client':'int',
+                'benchmark_run':'int',
                 'pod':'str',
                 'pod_count':'int',
                 'iterations':'int',
@@ -205,6 +208,7 @@ class tpcc(logger):
                 'experiment_run':'int',
                 'code':'int',
                 'client':'int',
+                'benchmark_run':'int',
                 'pod':'str',
                 'pod_count':'int',
                 'iterations':'int',

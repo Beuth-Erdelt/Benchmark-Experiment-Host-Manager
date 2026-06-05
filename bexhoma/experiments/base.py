@@ -201,6 +201,8 @@ class base():
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.logger(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
+        self.evaluators: dict = {}                                        # benchmark.name → evaluator instance
         self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
@@ -925,6 +927,25 @@ class base():
         :param configuration: Configuration object
         """
         self.configurations.append(configuration)
+
+    def add_benchmark(self, benchmark) -> None:
+        """
+        Register a benchmark and create its evaluator.
+
+        Assigns a 1-based ``benchmark_index``, instantiates the evaluator, wires
+        ``evaluator.experiment`` back to this experiment, and sets ``self.evaluator``
+        to the first registered benchmark's evaluator for backward-compat.
+
+        :param benchmark: :class:`~bexhoma.benchmarks.base.Benchmark` instance.
+        """
+        benchmark.benchmark_index = len(self.benchmarks) + 1
+        self.benchmarks.append(benchmark)
+        benchmark.evaluator = benchmark.create_evaluator(
+            self.code, self.cluster.resultfolder, benchmark.benchmark_index)
+        benchmark.evaluator.experiment = self
+        self.evaluators[benchmark.name] = benchmark.evaluator
+        if len(self.benchmarks) == 1:
+            self.evaluator = benchmark.evaluator
     def set_querymanagement_quicktest(self,
                                       numRun: int = 1,
                                       datatransfer: bool = False) -> None:
@@ -1355,6 +1376,12 @@ class base():
             print("{:30s}: is running".format("Cluster monitoring"))
         else:
             self.cluster.monitor_cluster_exists = False
+        for config in self.configurations:
+            if config.experiment_dict["loader"] or config.experiment_dict["benchmarker"]:
+                filename = f"bexhoma-experiment-dict-{config.configuration}.json"
+                filepath = self.result_filename_local(filename)
+                with open(filepath, 'w') as _f:
+                    json.dump(config.experiment_dict, _f, indent=2)
         intervals_wait = 0
         do = True
         while do:
@@ -1407,7 +1434,11 @@ class base():
                 # start loading
                 if not config.loading_started:
                     # check if monitoring has started
-                    if len(config.benchmark_list) > 0:
+                    _has_benchmarks = (
+                        (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                        or len(config.benchmark_list) > 0
+                    )
+                    if _has_benchmarks:
                         if config.monitoring_active and not config.monitoring_is_running():
                             print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
@@ -1460,7 +1491,11 @@ class base():
                                 else:
                                     config.start_loading()
                 # check if maintaining
-                if config.loading_finished and len(config.benchmark_list) > 0:
+                _has_benchmarks_maintaining = (
+                    (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                    or len(config.benchmark_list) > 0
+                )
+                if config.loading_finished and _has_benchmarks_maintaining:
                     if config.monitoring_active and not config.monitoring_is_running():
                         print("{:30s}: waits for monitoring".format(config.configuration))
                         if not config.monitoring_is_pending():
@@ -1540,7 +1575,12 @@ class base():
                         print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                         continue
                     # still benchmarks: check loading and maintaining
-                    if len(config.benchmark_list) > 0:
+                    _use_experiment_dict = bool(config.experiment_dict["benchmarker"])
+                    _has_more_rounds = (
+                        (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                        or len(config.benchmark_list) > 0
+                    )
+                    if _has_more_rounds:
                         if config.monitoring_active and not config.monitoring_is_running():
                             print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
@@ -1558,8 +1598,34 @@ class base():
                         print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
                     else:
-                        if len(config.benchmark_list) > 0:
-                            # next element in list
+                        if _use_experiment_dict and config.client <= len(config.experiment_dict["benchmarker"]):
+                            # experiment dict path: submit all parallel entries in this client round
+                            client = str(config.client)
+                            experimentRun = str(config.num_experiment_to_apply_done + 1)
+                            client_round = config.experiment_dict["benchmarker"][config.client - 1]
+                            config.client += 1
+                            if config.client > self.client:
+                                print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
+                                self.client = config.client
+                                redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
+                                self.cluster.set_pod_counter(queue=redisQueue, value=0)
+                            print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                            for bm_idx, bench_entry in enumerate(client_round):
+                                benchmark_index = bm_idx + 1
+                                connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
+                                print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
+                                if bench_entry.get("parameters"):
+                                    config.set_benchmarking_parameters(**bench_entry["parameters"])
+                                config.run_benchmarker_pod(
+                                    connection=connection,
+                                    configuration=config.configuration,
+                                    client=client,
+                                    parallelism=bench_entry["parallelism"],
+                                    benchmark_run=str(benchmark_index),
+                                    template_override=bench_entry.get("template", ""),
+                                )
+                        elif not _use_experiment_dict and len(config.benchmark_list) > 0:
+                            # legacy benchmark_list path
                             parallelism = config.benchmark_list.pop(0)
                             client = str(config.client)
                             config.client = config.client+1
@@ -1575,15 +1641,9 @@ class base():
                                 benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                                 print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
                                 config.set_benchmarking_parameters(**benchmarking_parameters)
-                            # we now always add the experiment number to the connection name
-                            #if config.num_experiment_to_apply > 1:
-                            #    connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
-                            #else:
-                            #    connection = config.configuration+'-'+client
                             connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                             print("{:30s}: start benchmarking".format(connection))
                             config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
-                            #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         else:
                             # no list element left
                             if not stop_after_benchmarking:
@@ -1673,8 +1733,9 @@ class base():
                                     #redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
                                     #self.cluster.set_pod_counter(queue=redisQueue, value=0)
                                     # find next sequence of benchmarks
-                                    config.benchmark_list = config.benchmark_list_template.copy()
-                                    config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
+                                    if not config.experiment_dict["benchmarker"]:
+                                        config.benchmark_list = config.benchmark_list_template.copy()
+                                        config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
                                     self.client = 0
                                     # wait for PV to be gone completely
                                     #self.wait(60)
@@ -1792,8 +1853,12 @@ class base():
                     if not config.loading_started or not config.loading_finished:
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
-                    if len(config.benchmark_list) > 0:
-                        self.cluster.logger.debug("{} still benchmarks to run: {}".format(config.configuration, config.benchmark_list))
+                    _still_has_benchmarks = (
+                        (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                        or len(config.benchmark_list) > 0
+                    )
+                    if _still_has_benchmarks:
+                        self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
                         do = True
                     if stop_after_starting:
                         if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -2193,7 +2258,16 @@ class base():
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
                         """
-        self.evaluator.end_benchmarking(jobname)
+        if self.benchmarks:
+            try:
+                benchmark_run = int(jobname.split("-")[-1])
+                evaluator = self.benchmarks[benchmark_run - 1].evaluator
+            except (IndexError, ValueError):
+                evaluator = self.evaluator
+        else:
+            evaluator = self.evaluator
+        evaluator.end_benchmarking(jobname)
+
     def end_loading(self,
                     jobname: str) -> None:
         """
@@ -2203,7 +2277,15 @@ class base():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('base.end_loading({})'.format(jobname))
-        self.evaluator.end_loading(jobname)
+        if self.benchmarks:
+            try:
+                benchmark_run = int(jobname.split("-")[-1])
+                evaluator = self.benchmarks[benchmark_run - 1].evaluator
+            except (IndexError, ValueError):
+                evaluator = self.evaluator
+        else:
+            evaluator = self.evaluator
+        evaluator.end_loading(jobname)
     def show_summary_header(self) -> tuple:
         """
         Print workload metadata and per-connection details, then return sorted connection list and monitoring data.

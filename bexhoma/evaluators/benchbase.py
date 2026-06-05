@@ -74,6 +74,8 @@ class benchbase(logger):
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
+            benchmark_run = benchmark_run[0] if benchmark_run else '1'
             code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
@@ -92,7 +94,7 @@ class benchbase(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
-            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
             header = {
                 'connection': connection, #connection_name + '-' + child,
                 'phase': connection_name,
@@ -100,6 +102,7 @@ class benchbase(logger):
                 'experiment_run': experiment_run,
                 'code': code,
                 'client': client,
+                'benchmark_run': benchmark_run,
                 'pod': pod_name,
                 'pod_count': pod_count,
                 'bench': bench,
@@ -149,6 +152,7 @@ class benchbase(logger):
             'experiment_run':'int',
             'duration':'int',
             'client':'int',
+            'benchmark_run':'int',
             'code': 'int',
             'pod':'str',
             'pod_count':'int',
