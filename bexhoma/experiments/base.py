@@ -1706,6 +1706,8 @@ class base():
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply
                 else:
                     print("{:30s}: is loading".format(config.configuration))
+            _we_have_running_benchmarks = False
+            _we_have_incomplete_jobs = False
             for config in self.configurations:
                 # all jobs of configuration - benchmarker
                 #app = self.cluster.appname
@@ -1722,6 +1724,7 @@ class base():
                 pods = self.cluster.get_job_pods(app, component, self.code, configuration)
                 # status per job
                 for job in jobs:
+                    _we_have_running_benchmarks = True
                     # status per pod
                     for p in pods:
                         if not self.cluster.pod_log_exists(p):
@@ -1749,6 +1752,8 @@ class base():
                             #    #self.cluster.delete_pod(p)
                     success = self.cluster.get_job_status(job)
                     self.cluster.logger.debug('job {} has success status {}'.format(job, success))
+                    if not success:
+                        _we_have_incomplete_jobs = True
                     #print(job, success)
                     if success:
                         # status per pod
@@ -1781,7 +1786,7 @@ class base():
                         self.end_benchmarking(job, config)
                         self.cluster.delete_job(job)
                         config.check_volumes()
-            if len(pods) == 0 and len(jobs) == 0:
+            if _we_have_running_benchmarks: #len(pods) == 0 and len(jobs) == 0:
                 do = False
                 for config in self.configurations:
                     #if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
@@ -1807,6 +1812,9 @@ class base():
                             #print("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                             self.cluster.logger.debug("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                             do = True
+                if _we_have_incomplete_jobs:
+                    self.cluster.logger.debug("there are still running benchmark jobs")
+                    do = True
     def benchmark_list(self, list_clients):
         """
         DEPRECATED? Is not used anymore.
