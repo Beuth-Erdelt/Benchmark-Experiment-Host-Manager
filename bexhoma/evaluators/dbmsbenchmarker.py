@@ -183,7 +183,6 @@ class dbmsbenchmarker(logger):
             df_row['pods'] = int(connection_data['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
             df_row['client'] = int(connection_data['parameter']['client'])
-            df_row['benchmark_run'] = self.benchmark_run if self.benchmark_run > 0 else 1
             df_row['code'] = int(connection_data['parameter']['code'])
             df_row['pod'] = pod_idx
             df_row['benchmark_start'] = connection_props['times']['total'][conn_name]['time_start']
@@ -205,6 +204,7 @@ class dbmsbenchmarker(logger):
         df_benchmark = df_benchmark.reset_index(level=group_keys)
         df_benchmark = df_benchmark.set_index("connection", drop=False)
         df_benchmark['pod'] = df_benchmark['connection']
+        df_benchmark['benchmark_run'] = self.benchmark_run if self.benchmark_run > 0 else 1
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
         df['Power@Size [~Q/h]'] = df['SF'] * 3600. / df['total_timer_execution']
