@@ -242,7 +242,7 @@ class default():
         self.monitor_loading = True                                             #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.monitoring_sut = True                                              #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
         self.jobtemplate_maintaining = ""                                       #: Name of YAML template file for the maintaining job
-        self.jobtemplate_loading = ""                                           #: Name of YAML template file for the loading job
+        self._jobtemplate_loading = ""                                          #: Name of YAML template file for the loading job
         self.storage_label = experiment.storage_label                           #: Kubernetes node label used to select the storage node for PVs
         self.experiment_done = False                                            #: True, iff the SUT has performed the experiment completely
         self.dockerimage = dockerimage                                          #: Name of the Docker image of the SUT
@@ -284,6 +284,33 @@ class default():
         self.connection = ""                                                    #: Name of the dbmsbenchmarker connection currently being executed
         self.current_benchmark_start = 0                                        #: Unix timestamp when the current benchmark run started
         self.volumeid = ""                                                      #: Identifier of the persistent volume claimed by this configuration
+
+    @property
+    def jobtemplate_loading(self) -> str:
+        """
+        Name of the YAML template file used for the loading job.
+
+        :return: Template file name.
+        :rtype: str
+        """
+        return self._jobtemplate_loading
+
+    @jobtemplate_loading.setter
+    def jobtemplate_loading(self, template: str) -> None:
+        """
+        Set the loading job template and keep the experiment dict in sync.
+
+        When a non-empty template is assigned, the ``template`` field of the
+        first loader entry in ``experiment_dict`` is updated so the persisted
+        experiment dict reflects the template that will actually be used.
+
+        :param template: YAML template file name.
+        :type template: str
+        """
+        self._jobtemplate_loading = template
+        if template and self.experiment_dict.get('loader'):
+            self.experiment_dict['loader'][0]['template'] = template
+
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
