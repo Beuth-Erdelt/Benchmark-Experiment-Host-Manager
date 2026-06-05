@@ -313,7 +313,13 @@ class default():
         self.benchmark_list = copy.deepcopy(list_clients)
         self.benchmark_list_template = copy.deepcopy(list_clients)
         self.benchmarking_parameters_list_template = copy.deepcopy(self.benchmarking_parameters_list)
-        if self.experiment_dict['benchmarker'] and list_clients:
+        if not list_clients:
+            # Empty list means no benchmarking (e.g. mode=start or mode=load).
+            # Clear the template-copied benchmarker section so _still_has_benchmarks
+            # evaluates to False and the orchestration loop terminates correctly.
+            self.experiment_dict['benchmarker'] = []
+            return
+        if self.experiment_dict['benchmarker']:
             template_entry = self.experiment_dict['benchmarker'][0][0]
             new_benchmarker = []
             for i, parallelism in enumerate(list_clients):
