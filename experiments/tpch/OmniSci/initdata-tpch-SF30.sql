@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 30 (SF30 ≈ 30 GB) into OmniSci.
+-- Purpose: Load TPC-H data at scale factor 30 (SF30 ~ 30 GB) into OmniSci.
 --          See initdata-tpch-SF1.sql for option descriptions.
 
 COPY customer FROM '/data/tpch/SF30/customer.tbl'

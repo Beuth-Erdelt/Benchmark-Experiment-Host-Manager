@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-DS data at scale factor 30 (SF30 ≈ 30 GB) into PostgreSQL.
+-- Purpose: Load TPC-DS data at scale factor 30 (SF30 ~ 30 GB) into PostgreSQL.
 --          See initdata-tpcds-SF1.sql for format details.
 
 COPY public.call_center             FROM '/data/tpcds/SF30/call_center.dat'             DELIMITER '|' NULL '';

@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into the public schema
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into the public schema
 --          using CockroachDB's IMPORT INTO command. Source files must be BOM-free
 --          UTF-8 (-nobom suffix) and accessible via the nodelocal file store.
 

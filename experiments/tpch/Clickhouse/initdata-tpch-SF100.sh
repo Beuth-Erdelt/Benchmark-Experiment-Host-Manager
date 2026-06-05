@@ -3,7 +3,7 @@
 # Copyright (C) 2020 Patrick K. Erdelt
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # See LICENSE for details.
-# Purpose: Load TPC-H data at scale factor 100 (SF100 ≈ 100 GB) into the tpch database
+# Purpose: Load TPC-H data at scale factor 100 (SF100 ~ 100 GB) into the tpch database
 #          using the clickhouse-client CSV importer. The pipe character '|' is
 #          used as the field delimiter, matching the dbgen .tbl output format.
 

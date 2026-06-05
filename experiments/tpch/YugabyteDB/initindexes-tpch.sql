@@ -10,7 +10,7 @@
 --          compound index (l_partkey, l_suppkey), and l_suppkey alone is not
 --          selective enough to benefit queries in the TPC-H workload.
 --          The index on supplier(s_nationkey) is omitted because the
---          supplier→nation FK is not applied in this configuration.
+--          supplier->nation FK is not applied in this configuration.
 
 CREATE INDEX ON public.nation   (n_regionkey);
 CREATE INDEX ON public.customer (c_nationkey);

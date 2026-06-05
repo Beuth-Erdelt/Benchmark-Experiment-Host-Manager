@@ -9,7 +9,7 @@
 --          Each ALTER TABLE combines all FK actions for that table so it is
 --          locked only once. Statements are ordered by FK dependency.
 
--- supplier→nation FK not applied: not required by the TPC-H query workload
+-- supplier->nation FK not applied: not required by the TPC-H query workload
 
 ALTER TABLE tpch.nation
     ADD FOREIGN KEY (n_regionkey) REFERENCES tpch.region(r_regionkey);

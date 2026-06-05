@@ -3,6 +3,6 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — ClickHouse does not support PRIMARY KEY or FOREIGN KEY
+-- Purpose: Placeholder - ClickHouse does not support PRIMARY KEY or FOREIGN KEY
 --          constraints in the relational sense. Referential integrity is not
 --          enforced by the engine.

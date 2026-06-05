@@ -7,7 +7,7 @@
 --          table. The dummy column absorbs the trailing '|' delimiter that
 --          dbgen appends to every row in .tbl files, allowing direct COPY INTO
 --          loading without pre-processing the data files.
---          Uses decimal(16,2) — MonetDB's extended precision over decimal(15,2).
+--          Uses decimal(16,2) - MonetDB's extended precision over decimal(15,2).
 
 CREATE TABLE nation (
     n_nationkey  INTEGER        NOT NULL,

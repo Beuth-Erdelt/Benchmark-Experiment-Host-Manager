@@ -3,6 +3,6 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — SingleStore (formerly MemSQL) does not enforce foreign
+-- Purpose: Placeholder - SingleStore (formerly MemSQL) does not enforce foreign
 --          key constraints; they are parsed and silently ignored.
 --          See: https://docs.memsql.com/v7.1/concepts/mysql-features-unsupported-in-memsql/

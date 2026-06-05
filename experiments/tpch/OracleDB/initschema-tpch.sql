@@ -5,10 +5,10 @@
 -- See LICENSE for details.
 -- Purpose: Create the tpch user, grant permissions, and create TPC-H tables
 --          in OracleDB. Two table variants are created per TPC-H table:
---            ext_<table> — external table (ORGANIZATION EXTERNAL) that reads
+--            ext_<table> - external table (ORGANIZATION EXTERNAL) that reads
 --                          the .tbl file directly via oracle_loader; used as
 --                          the source for INSERT ... SELECT during data load.
---            <table>     — the permanent internal table where data is stored.
+--            <table>     - the permanent internal table where data is stored.
 --          Date columns use CHAR(10) in external tables (read as yyyy-mm-dd
 --          text) and DATE in internal tables; conversion happens on insert with
 --          NLS_DATE_FORMAT='YYYY-MM-DD'.

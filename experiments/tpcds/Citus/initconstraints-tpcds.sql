@@ -50,7 +50,7 @@ ALTER TABLE public.call_center
 ALTER TABLE public.catalog_page
     ADD CONSTRAINT cp_d1 FOREIGN KEY (cp_end_date_sk)   REFERENCES date_dim (d_date_sk),
     ADD CONSTRAINT cp_d2 FOREIGN KEY (cp_start_date_sk) REFERENCES date_dim (d_date_sk);
--- catalog_page→promotion FK not applied: column cp_promo_id does not exist in catalog_page
+-- catalog_page->promotion FK not applied: column cp_promo_id does not exist in catalog_page
 
 ALTER TABLE public.store
     ADD CONSTRAINT s_close_date FOREIGN KEY (s_closed_date_sk) REFERENCES date_dim (d_date_sk);
@@ -108,7 +108,7 @@ ALTER TABLE public.catalog_returns
     ADD CONSTRAINT cr_hd2 FOREIGN KEY (cr_returning_hdemo_sk)    REFERENCES household_demographics (hd_demo_sk),
     ADD CONSTRAINT cr_sm  FOREIGN KEY (cr_ship_mode_sk)          REFERENCES ship_mode (sm_ship_mode_sk),
     ADD CONSTRAINT cr_w2  FOREIGN KEY (cr_warehouse_sk)          REFERENCES warehouse (w_warehouse_sk);
--- catalog_returns→date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
+-- catalog_returns->date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
 
 ALTER TABLE public.web_returns
     ADD CONSTRAINT wr_i      FOREIGN KEY (wr_item_sk)               REFERENCES item (i_item_sk),

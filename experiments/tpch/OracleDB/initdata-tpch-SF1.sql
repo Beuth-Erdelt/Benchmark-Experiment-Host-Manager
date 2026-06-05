@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into OracleDB.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into OracleDB.
 --          Each INSERT reads from the corresponding external table (ext_<name>)
 --          created in initschema-tpch.sql; the /*+ APPEND */ hint uses direct-path
 --          insert to bypass the buffer cache and speed up bulk loading.

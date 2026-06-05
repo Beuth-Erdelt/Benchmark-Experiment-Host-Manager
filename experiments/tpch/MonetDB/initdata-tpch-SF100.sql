@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 100 (SF100 ≈ 100 GB) using MonetDB's
+-- Purpose: Load TPC-H data at scale factor 100 (SF100 ~ 100 GB) using MonetDB's
 --          COPY INTO command with explicit record counts. Providing the expected
 --          row count allows MonetDB to pre-allocate storage and avoid resizing
 --          during the bulk load.

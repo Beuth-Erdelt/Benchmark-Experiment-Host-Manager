@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — MariaDB ColumnStore does not support primary key
+-- Purpose: Placeholder - MariaDB ColumnStore does not support primary key
 --          or foreign key constraints. No statements are executed.

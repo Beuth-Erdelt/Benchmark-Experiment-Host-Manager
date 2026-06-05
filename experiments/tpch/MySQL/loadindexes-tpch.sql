@@ -6,7 +6,7 @@
 -- Purpose: Verify that indexes created by initindexes-tpch.sql are actually
 --          used by forcing index scans, then count all rows in each table.
 --          Note: FORCE INDEX(s_n) references supplier(s_nationkey) which is
---          not created in initindexes-tpch.sql (supplier→nation FK not applied).
+--          not created in initindexes-tpch.sql (supplier->nation FK not applied).
 
 -- Force index scans to confirm each index is operational
 SELECT COUNT(*) FROM tpch.customer  FORCE INDEX(c_n);

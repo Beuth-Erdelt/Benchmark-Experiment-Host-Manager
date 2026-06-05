@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — OmniSci / HeavyAI does not support PRIMARY KEY or
+-- Purpose: Placeholder - OmniSci / HeavyAI does not support PRIMARY KEY or
 --          FOREIGN KEY constraints. Referential integrity is not enforced.

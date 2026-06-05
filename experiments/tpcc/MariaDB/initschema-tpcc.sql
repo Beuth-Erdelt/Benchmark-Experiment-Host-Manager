@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — MariaDB user setup and session configuration for
+-- Purpose: Placeholder - MariaDB user setup and session configuration for
 --          TPC-C is performed externally. No schema creation is needed here.
 
 -- No statements are needed; the TPC-C schema is created by the benchmark tool.

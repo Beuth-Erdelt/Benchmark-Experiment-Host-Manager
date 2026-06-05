@@ -5,7 +5,7 @@
 -- See LICENSE for details.
 -- Purpose: Create TPC-H tables in MonetDB (default sys schema).
 --          Tables are created without a schema prefix and land in the current
---          schema (sys by default). Uses decimal(16,2) — MonetDB extends
+--          schema (sys by default). Uses decimal(16,2) - MonetDB extends
 --          DECIMAL precision beyond the TPC-H standard decimal(15,2).
 
 CREATE TABLE nation (

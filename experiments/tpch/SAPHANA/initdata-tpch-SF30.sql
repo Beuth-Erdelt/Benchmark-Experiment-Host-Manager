@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 30 (SF30 ≈ 30 GB) into SAP HANA.
+-- Purpose: Load TPC-H data at scale factor 30 (SF30 ~ 30 GB) into SAP HANA.
 --          See initdata-tpch-SF1.sql for option descriptions.
 --          Note: the ORDERS error log path retains the original SF1 path.
 

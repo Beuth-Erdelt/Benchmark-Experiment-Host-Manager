@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 30 (SF30 ≈ 30 GB) into DatabaseService.
+-- Purpose: Load TPC-H data at scale factor 30 (SF30 ~ 30 GB) into DatabaseService.
 --          COPY reads pipe-delimited .tbl files; NULL '' maps empty fields to SQL NULL.
 
 COPY public.customer FROM '/data/tpch/SF30/customer.tbl' DELIMITER '|' NULL '';

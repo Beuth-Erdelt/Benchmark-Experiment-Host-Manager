@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-DS data at scale factor 1 (SF1 ≈ 1 GB) into MariaDB.
+-- Purpose: Load TPC-DS data at scale factor 1 (SF1 ~ 1 GB) into MariaDB.
 --          Data files are pipe-delimited .dat files produced by dsdgen.
 --          NULLIF converts empty strings to NULL for nullable columns.
 

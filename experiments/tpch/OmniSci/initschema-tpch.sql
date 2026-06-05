@@ -4,7 +4,7 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Create TPC-H tables for OmniSci (now HeavyAI) without explicit sharding.
---          Key/ID columns use TEXT ENCODING DICT(32) — a 32-bit dictionary that
+--          Key/ID columns use TEXT ENCODING DICT(32) - a 32-bit dictionary that
 --          stores integer-like keys as encoded strings and enables fast joins via
 --          dictionary intersection. String data columns use TEXT ENCODING DICT
 --          (default bit-width). No fragment_size or shard_count is specified,

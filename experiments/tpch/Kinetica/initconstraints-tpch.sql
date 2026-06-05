@@ -6,10 +6,10 @@
 -- Purpose: Add foreign key constraints to TPC-H tables in Kinetica.
 --          Statements are ordered by FK dependency. Table names are unqualified
 --          because Kinetica places tables in the schema of the connected user.
---          supplier→nation FK not applied: not required by the TPC-H query workload.
+--          supplier->nation FK not applied: not required by the TPC-H query workload.
 --          Kinetica shard key caveats for lineitem:
---            l_suppkey → supplier: lineitem and supplier have different shard key counts.
---            (l_partkey, l_suppkey) → partsupp: shard keys exist but 0 were equated.
+--            l_suppkey -> supplier: lineitem and supplier have different shard key counts.
+--            (l_partkey, l_suppkey) -> partsupp: shard keys exist but 0 were equated.
 
 ALTER TABLE nation
     ADD FOREIGN KEY (n_regionkey) REFERENCES region (r_regionkey);

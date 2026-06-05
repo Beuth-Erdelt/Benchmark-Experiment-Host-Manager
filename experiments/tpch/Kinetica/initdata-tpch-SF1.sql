@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into Kinetica.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into Kinetica.
 --          COPY reads pipe-delimited .tbl files; NULL '' maps empty fields to SQL NULL.
 
 COPY public.customer FROM '/data/tpch/SF1/customer.tbl' DELIMITER '|' NULL '';

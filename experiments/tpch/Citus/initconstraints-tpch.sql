@@ -5,7 +5,7 @@
 -- See LICENSE for details.
 -- Purpose: Add TPC-H foreign key constraints for Citus.
 --          All 8 FK relationships from the TPC-H DDL are applied, including
---          nation→region and supplier→nation. Citus enforces FKs between
+--          nation->region and supplier->nation. Citus enforces FKs between
 --          distributed and reference tables at the coordinator.
 --          Statements are ordered by FK dependency: referenced tables first.
 

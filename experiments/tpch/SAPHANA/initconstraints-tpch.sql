@@ -5,7 +5,7 @@
 -- See LICENSE for details.
 -- Purpose: Add foreign key constraints to TPC-H tables in SAP HANA.
 --          All 8 TPC-H foreign keys are applied here, including the
---          supplier→nation FK that is omitted in most other DBMS variants.
+--          supplier->nation FK that is omitted in most other DBMS variants.
 --          ON DELETE RESTRICT ON UPDATE RESTRICT prevents cascading modifications.
 --          Statements are ordered by FK dependency.
 

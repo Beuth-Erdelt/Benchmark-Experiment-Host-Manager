@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — primary key and foreign key constraints are not
+-- Purpose: Placeholder - primary key and foreign key constraints are not
 --          applied in this DB2 configuration. No statements are executed.

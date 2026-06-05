@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 3 (SF3 ≈ 3 GB) using MonetDB's
+-- Purpose: Load TPC-H data at scale factor 3 (SF3 ~ 3 GB) using MonetDB's
 --          COPY INTO command. DELIMITERS '|' matches dbgen's pipe output;
 --          NULL AS '' maps the trailing empty field to NULL.
 
