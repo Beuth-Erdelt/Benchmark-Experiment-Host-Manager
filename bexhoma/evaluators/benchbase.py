@@ -417,7 +417,7 @@ class benchbase(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             #print(df)
-            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["experiment_run","terminals","target","client","benchmark_run", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -447,7 +447,7 @@ class benchbase(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
+            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","benchmark_run","pod_count"]].copy()
             columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:

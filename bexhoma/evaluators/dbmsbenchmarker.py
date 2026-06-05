@@ -183,6 +183,7 @@ class dbmsbenchmarker(logger):
             df_row['pods'] = int(connection_data['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
             df_row['client'] = int(connection_data['parameter']['client'])
+            df_row['benchmark_run'] = self.benchmark_run if self.benchmark_run > 0 else 1
             df_row['code'] = int(connection_data['parameter']['code'])
             df_row['pod'] = pod_idx
             df_row['benchmark_start'] = connection_props['times']['total'][conn_name]['time_start']
@@ -211,7 +212,7 @@ class dbmsbenchmarker(logger):
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
         df = df[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client',
-                  'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
+                  'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
                   'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df
     def benchmarking_set_datatypes(self, df):
@@ -265,6 +266,7 @@ class dbmsbenchmarker(logger):
                 'Geo Times [s]': safe_gmean,
                 'Power@Size [~Q/h]': safe_gmean,
                 'code': 'max',
+                'benchmark_run': 'max',
                 'pod_count': 'count',
                 'SF': 'max',
                 'experiment_run': 'max',
@@ -284,7 +286,7 @@ class dbmsbenchmarker(logger):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"
-        df_aggregated = df_aggregated[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
+        df_aggregated = df_aggregated[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df_aggregated
     def get_total_warnings(self, query_titles=False):
         """

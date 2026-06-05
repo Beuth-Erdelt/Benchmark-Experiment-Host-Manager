@@ -129,16 +129,14 @@ class logger(base):
         """
         Return the combined benchmarking pickle filename for this evaluator.
 
-        When ``benchmark_run > 0`` the name is scoped to this benchmark's index
-        (``bexhoma-benchmarker.{N}.all.df.pickle``); otherwise the legacy name
-        ``bexhoma-benchmarker.all.df.pickle`` is returned for backward compat.
+        Always returns ``bexhoma-benchmarker.{N}.all.df.pickle``, where ``N``
+        is ``benchmark_run`` when set, or ``1`` when unset.
 
         :return: Pickle filename (basename only, not full path).
         :rtype: str
         """
-        if self.benchmark_run > 0:
-            return f"bexhoma-benchmarker.{self.benchmark_run}.all.df.pickle"
-        return "bexhoma-benchmarker.all.df.pickle"
+        run = self.benchmark_run if self.benchmark_run > 0 else 1
+        return f"bexhoma-benchmarker.{run}.all.df.pickle"
 
     def _pickle_name_loading(self) -> str:
         """

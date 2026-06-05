@@ -319,9 +319,9 @@ class tpcc(logger):
         if not df.empty:
             if "P95 [ms]" in df:
                 # we have latencies
-                columns = ['experiment_run',"vusers","client", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+                columns = ['experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                columns = ['experiment_run',"vusers","client", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
+                columns = ['experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -353,10 +353,10 @@ class tpcc(logger):
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
             if "P95 [ms]" in df_aggregated:
                 # we have latencies
-                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                aggregated_list = ['experiment_run',"vusers","client","benchmark_run","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                aggregated_list = ['experiment_run',"vusers","client","benchmark_run","pod_count", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:

@@ -867,7 +867,7 @@ class ycsb(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             columns = [
-            'configuration', 'experiment_run', 'client', 'child',"threads","target","pod_count","exceptions",
+            'configuration', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","pod_count","exceptions",
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
             "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
@@ -913,7 +913,7 @@ class ycsb(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","pod_count","exceptions"]].copy()
+            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","benchmark_run","pod_count","exceptions"]].copy()
             columns = [
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
