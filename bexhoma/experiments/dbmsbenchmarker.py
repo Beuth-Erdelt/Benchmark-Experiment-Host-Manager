@@ -156,15 +156,17 @@ class dbmsbenchmarker(mixed):
                 print(df.to_markdown(index=True, floatfmt=".2f"))
                 num_of_queries = len(df.index)
             print("\n### Errors (failed queries)\n")
-            df = self.evaluator.get_total_errors(query_titles=True)
+            df = self.evaluator.get_total_errors(query_titles=False)
             num_errors = df.sum().sum()
             if num_errors > 0:
                 df_errors = df.copy()
                 df_errors = df_errors[~(df_errors == False).all(axis=1)]
-                list_error_queries = list(df_errors.index)
+                df_errors = df_errors.loc[:, ~(df_errors == False).all(axis=0)]
+                list_error_queries = list(df_errors.T.index)
                 # remove only False rows
+                df = self.evaluator.get_total_errors(query_titles=True)
                 df = df[~(df == False).all(axis=1)]
-                print(df.to_markdown(index=True, floatfmt=".2f"))
+                print(df.T.to_markdown(index=True, floatfmt=".2f"))
                 for error in list_error_queries:
                     numQuery = error[1:]        # remove the leading "Q"
                     list_errors = self.evaluator.evaluation.get_error(numQuery)
