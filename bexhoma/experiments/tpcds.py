@@ -84,7 +84,7 @@ class tpcds(dbmsbenchmarker):
                 {
                     "name":        "tpcds",
                     "benchmarker": "dbmsbenchmarker",
-                    "template":    "jobtemplate-benchmarking-tpcds.yml",
+                    "template":    "jobtemplate-benchmarking-dbmsbenchmarker.yml",
                     "parallelism": 1,
                     "num_pods":    1,
                     "target":      "sut",

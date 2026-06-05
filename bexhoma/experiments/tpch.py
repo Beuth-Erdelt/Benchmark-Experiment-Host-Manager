@@ -84,7 +84,7 @@ class tpch(dbmsbenchmarker):
                 {
                     "name":        "tpch",
                     "benchmarker": "dbmsbenchmarker",
-                    "template":    "jobtemplate-benchmarking-tpch.yml",
+                    "template":    "jobtemplate-benchmarking-dbmsbenchmarker.yml",
                     "parallelism": 1,
                     "num_pods":    1,
                     "target":      "sut",
