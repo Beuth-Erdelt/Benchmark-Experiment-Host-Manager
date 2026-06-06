@@ -1265,7 +1265,18 @@ class base():
         Constructs a list of runs for the planned workflow.
         Stores this information in self.workload['workflow_planned'].
         Updates query.config locally and remotely via update_workload().
+
+        When the experiment has registered :class:`~bexhoma.benchmarks.base.Benchmark`
+        objects (via :meth:`~bexhoma.experiments.mixed.mixed.add_benchmark`), the
+        ordered benchmark type sequence is written to ``self.workload['benchmark_sequence']``
+        so that collectors can later reconstruct the benchmark-run → tool-type mapping
+        from ``queries.config``.
         """
+        if hasattr(self, 'benchmarks') and self.benchmarks:
+            self.workload['benchmark_sequence'] = [
+                {'index': bm.benchmark_index, 'type': bm.name}
+                for bm in self.benchmarks
+            ]
         workflow = self.get_workflow_list()
         self.workload['workflow_planned'] = workflow
         self.update_workload()
@@ -1615,7 +1626,11 @@ class base():
                             connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
                             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
                             if bench_entry.get("parameters"):
-                                config.set_benchmarking_parameters(**bench_entry["parameters"])
+                                # Assign directly to avoid the side effect in
+                                # set_benchmarking_parameters() that overwrites
+                                # experiment_dict["benchmarker"][0], which would
+                                # corrupt subsequent -nc repetitions.
+                                config.benchmarking_parameters = bench_entry["parameters"].copy()
                             config.run_benchmarker_pod(
                                 connection=connection,
                                 configuration=config.configuration,

@@ -154,7 +154,7 @@ class base():
             evaluation = self.get_evaluator(code)
             df = self.get_performance_single(evaluation)
             df = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase', 'benchmark_run'])
             df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
             df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
@@ -189,7 +189,7 @@ class base():
             df['num_tenants'] = workload['num_tenants']
             df['vol_tenants'] = workload['multi_tenant_volume']
             df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(
-                df, columns=['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
+                df, columns=['code', 'experiment_run', 'client', 'benchmark_run', 'type_tenants', 'num_tenants']
             )
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
             df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)

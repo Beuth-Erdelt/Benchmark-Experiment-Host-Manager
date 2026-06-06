@@ -338,6 +338,7 @@ class base:
             'configuration': c['configuration'] if 'configuration' in c else '',
             'phase': c['phase'],
             'experiment_run': c['parameter']['numExperiment'],
+            'benchmark_run': int(c['parameter'].get('numBenchmark', 0)),
             'client': int(c['parameter']['client']),
             'dockerimage': c['parameter']['dockerimage'],
             'time_load': float(c['timeLoad']),

@@ -35,13 +35,16 @@ class tpcc(base):
     Overrides :meth:`get_evaluator` to return a :class:`evaluators.tpcc` instance.
     All data collection and aggregation methods are inherited from :class:`base`.
     """
-    def __init__(self, path, codes):
+    def __init__(self, path, codes, benchmark_run: int = 0):
         """
         :param path: Base filesystem path that contains the experiment directories.
         :type path: str
         :param codes: List of experiment codes to collect results for.
         :type codes: list[str]
+        :param benchmark_run: 1-based benchmark index to filter results to; 0 means all runs.
+        :type benchmark_run: int
         """
+        self.benchmark_run = benchmark_run
         base.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
@@ -55,4 +58,4 @@ class tpcc(base):
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.tpcc(code=code, path=self.path)
+        return evaluators.tpcc(code=code, path=self.path, benchmark_run=self.benchmark_run)

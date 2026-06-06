@@ -35,13 +35,16 @@ class benchbase(base):
     Overrides :meth:`get_evaluator` to return a :class:`evaluators.benchbase` instance.
     All data collection and aggregation methods are inherited from :class:`base`.
     """
-    def __init__(self, path, codes):
+    def __init__(self, path, codes, benchmark_run: int = 0):
         """
         :param path: Base filesystem path that contains the experiment directories.
         :type path: str
         :param codes: List of experiment codes to collect results for.
         :type codes: list[str]
+        :param benchmark_run: 1-based benchmark index to filter results to; 0 means all runs.
+        :type benchmark_run: int
         """
+        self.benchmark_run = benchmark_run
         base.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
@@ -55,16 +58,16 @@ class benchbase(base):
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.benchbase(code=code, path=self.path)
+        return evaluators.benchbase(code=code, path=self.path, benchmark_run=self.benchmark_run)
 
     def get_benchmark_timeseries_per_phase(self, metric="throughput"):
         """
         Combines aggregated Benchbase time-series per phase from all experiment codes into a wide-format DataFrame.
 
-        For each code and each unique ``(configuration, client, experiment_run)`` combination,
-        calls :meth:`evaluators.benchbase.get_benchmark_logs_timeseries_df_aggregated` and
-        places the metric column as one column in the result.  Each column is labelled
-        ``{code}-{configuration}-{client}-{experiment_run}``.
+        For each code and each unique ``(configuration, client, experiment_run, benchmark_run)``
+        combination, calls :meth:`evaluators.benchbase.get_benchmark_logs_timeseries_df_aggregated`
+        and places the metric column as one column in the result.  Each column is labelled
+        ``{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}``.
 
         :param metric: Benchbase metric to retrieve (default ``'throughput'``).
         :type metric: str
@@ -79,8 +82,8 @@ class benchbase(base):
             if df_benchmarking.empty:
                 continue
             df_benchmarking = evaluation.benchmarking_set_datatypes(df_benchmarking)
-            for (configuration, client, experiment_run), _ in df_benchmarking.groupby(
-                ['configuration', 'client', 'experiment_run']
+            for (configuration, client, experiment_run, benchmark_run), _ in df_benchmarking.groupby(
+                ['configuration', 'client', 'experiment_run', 'benchmark_run']
             ):
                 df_ts = evaluation.get_benchmark_logs_timeseries_df_aggregated(
                     metric=metric,
@@ -89,7 +92,7 @@ class benchbase(base):
                     experiment_run=experiment_run
                 )
                 if isinstance(df_ts, pd.DataFrame) and not df_ts.empty and metric in df_ts.columns:
-                    col_label = f"{code}-{configuration}-{client}-{experiment_run}"
+                    col_label = f"{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}"
                     df_result[col_label] = df_ts[metric]
         return df_result
 
@@ -119,8 +122,8 @@ class benchbase(base):
                 continue
             df_benchmarking = evaluation.benchmarking_set_datatypes(df_benchmarking)
             df_code = pd.DataFrame()
-            for (configuration, client, experiment_run), _ in df_benchmarking.groupby(
-                ['configuration', 'client', 'experiment_run']
+            for (configuration, client, experiment_run, benchmark_run), _ in df_benchmarking.groupby(
+                ['configuration', 'client', 'experiment_run', 'benchmark_run']
             ):
                 df_ts = evaluation.get_benchmark_logs_timeseries_df_aggregated(
                     metric=metric,
@@ -138,9 +141,10 @@ class benchbase(base):
                     df_long['configuration'] = configuration
                     df_long['client'] = str(client)
                     df_long['experiment_run'] = str(experiment_run)
+                    df_long['benchmark_run'] = str(benchmark_run)
                     df_code = pd.concat([df_code, df_long])
             if not df_code.empty:
-                join_keys = ['code', 'configuration', 'client', 'experiment_run']
+                join_keys = ['code', 'configuration', 'client', 'experiment_run', 'benchmark_run']
                 extra_cols = [
                     c for c in df_connections.columns
                     if c not in join_keys and c not in ['connection', 'phase']
@@ -148,7 +152,8 @@ class benchbase(base):
                 df_meta = df_connections[join_keys + extra_cols].drop_duplicates(subset=join_keys).copy()
                 df_meta['client'] = df_meta['client'].astype(str)
                 df_meta['experiment_run'] = df_meta['experiment_run'].astype(str)
+                df_meta['benchmark_run'] = df_meta['benchmark_run'].astype(str)
                 df_code = df_code.merge(df_meta, on=join_keys, how='left')
                 df_timeseries = pd.concat([df_timeseries, df_code])
-        df_timeseries = df_timeseries.sort_values(["second", "configuration", "experiment_run", "client"])
+        df_timeseries = df_timeseries.sort_values(["second", "configuration", "experiment_run", "client", "benchmark_run"])
         return df_timeseries
