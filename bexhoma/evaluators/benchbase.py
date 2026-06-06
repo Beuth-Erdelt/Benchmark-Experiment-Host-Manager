@@ -207,6 +207,7 @@ class benchbase(logger):
             aggregate = {
                 'connection':'max',
                 'client':'max',
+                'benchmark_run':'max',
                 'code':'max',
                 'pod':'sum',
                 'pod_count':'count',

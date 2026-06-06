@@ -246,6 +246,7 @@ class tpcc(logger):
                 aggregate = {
                     'connection':'max',
                     'client':'max',
+                    'benchmark_run':'max',
                     'code':'max',
                     'pod':'sum',
                     'pod_count':'count',
@@ -273,6 +274,7 @@ class tpcc(logger):
                 aggregate = {
                     'code':'max',
                     'client':'max',
+                    'benchmark_run':'max',
                     'pod':'sum',
                     'pod_count':'count',
                     'iterations':'max',

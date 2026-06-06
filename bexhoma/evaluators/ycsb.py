@@ -291,6 +291,7 @@ class ycsb(logger):
             aggregate = {
                 'code':'max',
                 'client':'max',
+                'benchmark_run':'max',
                 'pod':'sum',
                 'pod_count':'count',
                 'threads':'sum',

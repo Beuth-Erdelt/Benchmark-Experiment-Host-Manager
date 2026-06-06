@@ -347,7 +347,7 @@ class default():
             self.experiment_dict['benchmarker'] = []
             return
         if self.experiment_dict['benchmarker']:
-            template_entry = self.experiment_dict['benchmarker'][0][0]
+            template_entries = self.experiment_dict['benchmarker'][0]
             new_benchmarker = []
             for i, parallelism in enumerate(list_clients):
                 per_round_params = (
@@ -355,16 +355,19 @@ class default():
                     if i < len(self.benchmarking_parameters_list)
                     else {}
                 )
-                entry = {
-                    'name':        template_entry['name'],
-                    'benchmarker': template_entry['benchmarker'],
-                    'template':    template_entry['template'],
-                    'parallelism': int(parallelism),
-                    'num_pods':    int(parallelism),
-                    'target':      template_entry.get('target', 'sut'),
-                    'parameters':  {**template_entry['parameters'], **per_round_params},
-                }
-                new_benchmarker.append([entry])
+                round_entries = [
+                    {
+                        'name':        tmpl['name'],
+                        'benchmarker': tmpl['benchmarker'],
+                        'template':    tmpl['template'],
+                        'parallelism': int(parallelism),
+                        'num_pods':    int(parallelism),
+                        'target':      tmpl.get('target', 'sut'),
+                        'parameters':  {**tmpl['parameters'], **per_round_params},
+                    }
+                    for tmpl in template_entries
+                ]
+                new_benchmarker.append(round_entries)
             self.experiment_dict['benchmarker'] = new_benchmarker
     def wait(self, sec, silent=False):
         """
@@ -525,7 +528,8 @@ class default():
         """
         self.benchmarking_parameters = kwargs
         if self.experiment_dict['benchmarker'] and self.experiment_dict['benchmarker'][0]:
-            self.experiment_dict['benchmarker'][0][0]['parameters'].update(kwargs)
+            for entry in self.experiment_dict['benchmarker'][0]:
+                entry['parameters'].update(kwargs)
 
     def OLD_add_benchmarking_parameters(self, **kwargs):
         """
@@ -556,18 +560,21 @@ class default():
         self.benchmarking_parameters_list.append(env_vars)
         if not self.experiment_dict['benchmarker'] or not self.experiment_dict['benchmarker'][0]:
             return
-        template_entry = self.experiment_dict['benchmarker'][0][0]
-        pod_count = parallelism if parallelism is not None else template_entry['parallelism']
-        entry = {
-            'name':        template_entry['name'],
-            'benchmarker': template_entry['benchmarker'],
-            'template':    template_entry['template'],
-            'parallelism': pod_count,
-            'num_pods':    pod_count,
-            'target':      template_entry.get('target', 'sut'),
-            'parameters':  {**template_entry['parameters'], **env_vars},
-        }
-        self.experiment_dict['benchmarker'].append([entry])
+        template_entries = self.experiment_dict['benchmarker'][0]
+        pod_count = parallelism if parallelism is not None else template_entries[0]['parallelism']
+        round_entries = [
+            {
+                'name':        tmpl['name'],
+                'benchmarker': tmpl['benchmarker'],
+                'template':    tmpl['template'],
+                'parallelism': pod_count,
+                'num_pods':    pod_count,
+                'target':      tmpl.get('target', 'sut'),
+                'parameters':  {**tmpl['parameters'], **env_vars},
+            }
+            for tmpl in template_entries
+        ]
+        self.experiment_dict['benchmarker'].append(round_entries)
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
@@ -2929,6 +2936,7 @@ scrape_configs:
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = experimentRun
+        c['parameter']['numBenchmark'] = benchmark_run
         c['parameter']['num_worker'] = self.num_worker
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter

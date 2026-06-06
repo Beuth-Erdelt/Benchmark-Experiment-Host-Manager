@@ -182,7 +182,10 @@ class dbmsbenchmarker(logger):
             df_row['SF'] = float(connection_data['parameter']['connection_parameter']['loading_parameters']['SF'])
             df_row['pods'] = int(connection_data['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
+            df_row['benchmark_run'] = int(connection_data['parameter']['numBenchmark'])
             df_row['client'] = int(connection_data['parameter']['client'])
+            #last_segment = conn_name.rsplit('-', 1)[-1]
+            #df_row['benchmark_run'] = int(last_segment) if last_segment.isdigit() else 1
             df_row['code'] = int(connection_data['parameter']['code'])
             df_row['pod'] = pod_idx
             df_row['benchmark_start'] = connection_props['times']['total'][conn_name]['time_start']
@@ -191,7 +194,7 @@ class dbmsbenchmarker(logger):
             df_row['benchmark_end'] = connection_props['times']['total'][conn_name]['time_end']
             df_timing_rows = pd.concat([df_timing_rows, df_row])
         df_timing = df_timing_rows.sort_index()
-        group_keys = ['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client']
+        group_keys = ['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client', 'benchmark_run']
         benchmark_start = df_timing.groupby(group_keys)['benchmark_start'].min()
         benchmark_end = df_timing.groupby(group_keys)['benchmark_end'].max()
         df_benchmark = (benchmark_end - benchmark_start).to_frame(name='time [s]').round(2)
@@ -204,7 +207,6 @@ class dbmsbenchmarker(logger):
         df_benchmark = df_benchmark.reset_index(level=group_keys)
         df_benchmark = df_benchmark.set_index("connection", drop=False)
         df_benchmark['pod'] = df_benchmark['connection']
-        df_benchmark['benchmark_run'] = self.benchmark_run if self.benchmark_run > 0 else 1
         df = pd.concat([df, df_benchmark], axis=1)
         df.drop('SF2', axis=1, inplace=True)
         df['Power@Size [~Q/h]'] = df['SF'] * 3600. / df['total_timer_execution']
