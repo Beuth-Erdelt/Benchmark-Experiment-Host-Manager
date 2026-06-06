@@ -918,6 +918,8 @@ class default():
         for i in range(1, self.num_loading+1):
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
         # reset number of clients per job
+        redisQueue = '{}-{}-{}-{}'.format(app, 'generator-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
         self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         # start job

@@ -73,12 +73,12 @@ BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 
 ######################## Wait until all pods of experiment are ready ########################
 if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
-    echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    echo "Querying counter bexhoma-generator-podcount-$BEXHOMA_EXPERIMENT"
     # add this pod to counter
-    redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT"
+    redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-generator-podcount-$BEXHOMA_EXPERIMENT"
     # wait for number of pods to be as expected
     while : ; do
-        PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_EXPERIMENT)"
+        PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-generator-podcount-$BEXHOMA_EXPERIMENT)"
         echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS_TOTAL running pods"
         if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
         then
