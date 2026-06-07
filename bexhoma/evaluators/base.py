@@ -132,8 +132,8 @@ class base:
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
-                pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                jobname = filename[len("bexhoma-benchmarker-"):-len("-"+pod_name+".dbmsbenchmarker.log")]
+                inner = filename[len("bexhoma-benchmarker-"):-len(".dbmsbenchmarker.log")]
+                jobname = inner[:inner.rindex("-")]
                 if self.benchmark_run > 0:
                     try:
                         file_benchmark_run = int(jobname.split("-")[-1])
@@ -155,8 +155,8 @@ class base:
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
             if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
-                pod_name = filename[filename.rindex("-")+1:-len(".log")]
-                jobname = filename[len("bexhoma-loading-"):-len("-"+pod_name+".sensor.log")]
+                inner = filename[len("bexhoma-loading-"):-len(".sensor.log")]
+                jobname = inner[:inner.rindex("-")]
                 if self.benchmark_run > 0:
                     try:
                         file_benchmark_run = int(jobname.split("-")[-1])
