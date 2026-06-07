@@ -90,6 +90,15 @@ class tpch(dbmsbenchmarker):
                     "target":      "sut",
                     "parameters":  {},
                 },
+                #{
+                #    "name":        "tpch",
+                #    "benchmarker": "dbmsbenchmarker",
+                #    "template":    "jobtemplate-benchmarking-dbmsbenchmarker.yml",
+                #    "parallelism": 1,
+                #    "num_pods":    1,
+                #    "target":      "sut",
+                #    "parameters":  {},
+                #},
             ]],
         }
 
