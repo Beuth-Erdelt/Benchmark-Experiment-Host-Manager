@@ -20,6 +20,29 @@ source ./scripts/testfunctions.sh
 ####################################################
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
@@ -51,6 +74,31 @@ kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-2
 sleep 30
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
@@ -82,6 +130,21 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 ####################################################
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dbms Citus                   DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
@@ -107,6 +170,25 @@ kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-3
 sleep 30
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 128                       scaling factor (controls database size)
+# -sd 20                        benchmark duration in minutes
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dbms Citus                   DBMS under test
+# -nbp 1,2,4,8                  benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 20 \
@@ -127,6 +209,28 @@ wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 128                       scaling factor (controls database size)
+# -sd 20                        benchmark duration in minutes
+# -slg 30                       log status to stdout every x seconds
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -xkey                         simulate user think time and keying delays
+# -dbms Citus                   DBMS under test
+# -nbp 1,2,5,10                 benchmarking pod counts to sweep (comma-separated)
+# -nbt 1280                     threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -nc 2                         number of repeated runs per configuration
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 20 \
@@ -155,6 +259,22 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1
 ####################################################
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (number of warehouses)
+# -xlat                         collect per-operation latency histograms
+# -dbms Citus                   DBMS under test
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nlt 8                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod (virtual users)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
@@ -181,6 +301,28 @@ kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-3
 sleep 30
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 128                       scaling factor (number of warehouses)
+# -sd 30                        benchmark duration in minutes
+# -xlat                         collect per-operation latency histograms
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nlp 1                        number of data loader pods
+# -nlt 128                      threads per loader pod
+# -nbp 1,2,4,8                  benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod (virtual users)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 30 \
@@ -211,6 +353,28 @@ kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-3
 sleep 30
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 500                       scaling factor (number of warehouses)
+# -sd 20                        benchmark duration in minutes
+# -xlat                         collect per-operation latency histograms
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -nlp 1                        number of data loader pods
+# -nlt 250                      threads per loader pod
+# -nbp 1,2,5,10                 benchmarking pod counts to sweep (comma-separated)
+# -nbt 250                      threads per benchmarking pod (virtual users)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 200Gi                    size of the persistent volume claim
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 500 \
   -sd 20 \
@@ -238,6 +402,25 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,
 #################### TPC-H Citus ###################
 ####################################################
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (controls database size in GB)
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dt                           disable result type checking
+# -t 1200                       query timeout in seconds
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -nw 4 \
@@ -264,6 +447,29 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 10                        scaling factor (controls database size in GB)
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dt                           disable result type checking
+# -t 14400                      query timeout in seconds
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -ne 1,1                       parallel client counts to sweep (comma-separated)
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -nw 4 \
@@ -292,6 +498,27 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 10                        scaling factor (controls database size in GB)
+# -nw 4                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -dt                           disable result type checking
+# -t 14400                      query timeout in seconds
+# -dbms Citus                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -icol                         use columnar storage for tables
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -ne 1,1                       parallel client counts to sweep (comma-separated)
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -nw 4 \

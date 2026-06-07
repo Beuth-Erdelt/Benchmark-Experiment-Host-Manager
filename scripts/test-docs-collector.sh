@@ -25,7 +25,7 @@ BEXHOMA_NODE_SUT="cl-worker38"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -74,7 +74,7 @@ wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -123,7 +123,7 @@ wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -645,7 +645,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 3                         scaling factor (number of records x 1000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
@@ -697,7 +697,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 3                         scaling factor (number of records x 1000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
@@ -748,7 +748,7 @@ wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 1                         scaling factor (number of records x 1000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
@@ -801,7 +801,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
@@ -844,7 +844,7 @@ wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
@@ -887,7 +887,7 @@ wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms $BEXHOMA_MS                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms

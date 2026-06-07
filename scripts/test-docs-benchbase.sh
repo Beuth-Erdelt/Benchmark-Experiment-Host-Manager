@@ -21,6 +21,18 @@ source ./scripts/testfunctions.sh
 
 
 #### Benchbase Scale (Example-Benchbase.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
@@ -37,6 +49,20 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
@@ -59,6 +85,21 @@ sleep 30
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -nc 2                         number of repeated runs per configuration
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
@@ -82,6 +123,27 @@ sleep 30
 
 
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rr 128Gi                     RAM requested for the SUT container
+# -lr 128Gi                     RAM limit for the SUT container
+# -sf 160                       scaling factor (controls database size)
+# -sd 30                        benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -dbms PostgreSQL              DBMS under test
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -nbp 1,2,5,10                 benchmarking pod counts to sweep (comma-separated)
+# -nbt 1600                     threads per benchmarking pod
+# -nbf 1                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \

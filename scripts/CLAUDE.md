@@ -44,10 +44,15 @@ and their multi-tenant variants, then extracts `## Show Summary` sections from e
 
 **Log file naming pattern:** `doc_<benchmark>_testcase_collector[_tenants_<isolation>][_N].log`
 
-**Comment style in `.ps1`:** inline `<# ... #>` block comments (the only syntax compatible
-with PowerShell backtick line continuation — `#` line comments cannot follow a `` ` ``).
+**Comment style in `.sh`:** a heading comment block immediately before each `bexhoma` call
+lists every parameter of that call, one `# -flag value   description` line per flag. The
+description starts at column 32 (0-indexed); use 1 space minimum when the flag+value is longer.
 
-**Comment alignment:** all `<# ... #>` are aligned to column 32. The one exception is
+**Comment style in `.ps1`:** inline `<# ... #>` block comments on the same line as each
+parameter (the only syntax compatible with PowerShell backtick line continuation — `#` line
+comments cannot follow a `` ` ``).
+
+**Comment alignment (both variants):** descriptions aligned to column 32. The one exception is
 `-ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS"` (49 chars) which lands at column 50.
 
 **Shared helper functions** (bash: `testfunctions.sh`, PowerShell: `testfunctions.ps1`):
@@ -61,6 +66,11 @@ with PowerShell backtick line continuation — `#` line comments cannot follow a
 - Override `BEXHOMA_MS` after sourcing when the script intentionally uses a value other than 1 (e.g., `BEXHOMA_MS=2` for DatabaseService which compares two DBMS simultaneously).
 - Pass `-ms $BEXHOMA_MS` to every `bexhoma` call.
 - Call `wait_process "<name>"` / `Wait-BexhomaProcess "<name>"` after every `bexhoma` invocation.
+
+### Bash-specific
+- One CLI parameter per continuation line (each ending with `\`).
+- Precede every `bexhoma` call with a heading comment block: one `# -flag [value]   description` line per parameter, in the same order they appear in the call. Each flag is listed separately even when multiple flags share a continuation line in the call (e.g., `-ii -ic -is`).
+- Redirect both stdout and stderr with `&>$LOG_DIR/<logfile>`.
 
 ### PowerShell-specific
 - One CLI parameter per line, each followed by a `<# description #>` comment.
