@@ -2070,10 +2070,10 @@ class base():
                         for name, deployment in config.deployment_infos['deployment'].items():
                             print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                             if name=='sut' and config.monitoring_sut:
-                                print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
+                                print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
                                 config.fetch_metrics(
                                     title=f"Execution phase: SUT deployment",
-                                    connection=config.current_benchmark_connection,
+                                    connection=connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
                                     #container="dbms",
@@ -2087,10 +2087,10 @@ class base():
                                     pod_dashboard=pod_dashboard
                                     )
                             elif name!='sut':
-                                print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
+                                print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
                                 config.fetch_metrics(
                                     title=f"Execution phase: component {name}",
-                                    connection=config.current_benchmark_connection,
+                                    connection=connection,
                                     connection_file=connection+'.config',
                                     container=deployment['containers'][0], #"dbms",
                                     #container="dbms",
@@ -2106,10 +2106,10 @@ class base():
                     if 'statefulset' in config.deployment_infos:
                         for name, statefulset in config.deployment_infos['statefulset'].items():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
-                            print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
+                            print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
                             config.fetch_metrics(
                                 title=f"Execution phase: component {name}",
-                                connection=config.current_benchmark_connection,
+                                connection=connection,
                                 connection_file=connection+'.config',
                                 container="dbms",
                                 component=name,
