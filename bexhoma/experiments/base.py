@@ -1399,6 +1399,7 @@ class base():
             #time.sleep(intervals)
             self.wait(intervals_wait)
             intervals_wait = intervals
+            _benchmark_just_submitted = False
             # count number of running and pending pods
             num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
             num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
@@ -1639,6 +1640,7 @@ class base():
                                 benchmark_run=str(benchmark_index),
                                 template_override=bench_entry.get("template", ""),
                             )
+                        _benchmark_just_submitted = True
                     elif not _use_experiment_dict and len(config.benchmark_list) > 0:
                         # legacy benchmark_list path
                         parallelism = config.benchmark_list.pop(0)
@@ -1659,6 +1661,7 @@ class base():
                         connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                         print("{:30s}: start benchmarking".format(connection))
                         config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
+                        _benchmark_just_submitted = True
                     else:
                         # no list element left
                         if not stop_after_benchmarking:
@@ -1803,6 +1806,12 @@ class base():
                         config.check_volumes()
             if _we_have_running_benchmarks: #len(pods) == 0 and len(jobs) == 0:
                 do = False
+                # A job was submitted this iteration: the Kubernetes API may not yet
+                # return it from get_jobs(), so _we_have_incomplete_jobs would be
+                # False even though the job is actually running.  Force another pass
+                # so the new job can be observed before the termination check fires.
+                if _benchmark_just_submitted:
+                    do = True
                 for config in self.configurations:
                     #if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
                     if config.sut_is_pending():
