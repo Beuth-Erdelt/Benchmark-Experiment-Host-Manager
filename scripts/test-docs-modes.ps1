@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for bexhoma start/load mode experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -20,7 +20,7 @@
 
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   --workload c                  <# YCSB workload template (c = 100% read) #> `
@@ -35,7 +35,7 @@ kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   --workload c                  <# YCSB workload template (c = 100% read) #> `
@@ -53,7 +53,7 @@ kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   --workload c                  <# YCSB workload template (c = 100% read) #> `
@@ -83,7 +83,7 @@ kubectl delete all -l app=bexhoma,usecase=ycsb
 
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -97,7 +97,7 @@ kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -114,7 +114,7 @@ kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -143,7 +143,7 @@ kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
 
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -157,7 +157,7 @@ kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -174,7 +174,7 @@ kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -203,7 +203,7 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -217,7 +217,7 @@ kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -237,7 +237,7 @@ kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -269,7 +269,7 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -283,7 +283,7 @@ kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
@@ -303,7 +303,7 @@ kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `

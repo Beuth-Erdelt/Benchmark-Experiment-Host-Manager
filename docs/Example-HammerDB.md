@@ -32,6 +32,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -40,7 +41,7 @@ For performing the experiment we can run the [hammerdb file](https://github.com/
 
 Example:
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -306,7 +307,7 @@ We in the following also activate measurement of latencies with `-xlat`.
 
 Example:
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -xlat \
@@ -452,7 +453,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -584,7 +585,7 @@ kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 The keying and thinking times can be activated via `-xkey`:
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 160 \
   -sd 30 \
   -xlat \

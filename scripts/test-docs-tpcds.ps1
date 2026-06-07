@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for TPC-DS experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### TCP-DS Compare (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -46,7 +46,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS compare  sf=
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms MonetDB                 <# DBMS under test #> `
@@ -72,7 +72,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS monitoring  
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms MonetDB                 <# DBMS under test #> `
@@ -101,7 +101,7 @@ Start-Sleep -Seconds 30
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms MonetDB                 <# DBMS under test #> `
@@ -136,7 +136,7 @@ Start-Sleep -Seconds 30
 
 #### TCP-DS Power 30 (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 30                        <# scaling factor (controls database size in GB) #> `
@@ -163,7 +163,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB powe
 
 #### TCP-DS Power 30 repeated (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 30                        <# scaling factor (controls database size in GB) #> `
@@ -189,7 +189,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB powe
 
 #### TCP-DS Throughput 30 (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 30                        <# scaling factor (controls database size in GB) #> `
@@ -220,7 +220,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB thro
 
 #### TCP-DS Profiling (Example-TPC-DS.md)
 bexhoma tpcds `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms MonetDB                 <# DBMS under test #> `

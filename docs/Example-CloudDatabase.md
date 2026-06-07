@@ -103,6 +103,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=2
 
 mkdir -p $LOG_DIR
 ```
@@ -111,7 +112,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -269,7 +270,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -384,7 +385,7 @@ Persistent Storage is not managed by bexhoma, but by the Cloud service.
 We can add the request for a PVC to the experiment setup:
 
 ```bash
-bexhoma ycsb -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 5 \
   -sfo 10 \
   --workload a \
@@ -595,7 +596,7 @@ Watch for
 ## Benchbase's TPC-C
 
 ```bash
-bexhoma benchbase -ms 2 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -715,7 +716,7 @@ BEXHOMA_DATABASE = 'postgres',
 This time we skip loading (`-sl`), since the database is already present.
 
 ```bash
-bexhoma benchbase -ms 2 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -835,7 +836,7 @@ At first we run a simple power test against SF=3.
 Components are monitored.
 
 ```bash
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -976,7 +977,7 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 Now loading is skipped (`-sl`) as data is already present in the Cloud system.
 
 ```bash
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -1136,7 +1137,7 @@ sleep 10
 ### Ingestion with Persistent Storage
 
 ```bash
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -1284,7 +1285,7 @@ The persistent volume helps to memorize this.
 We can rerun the experiment without explicitly skipping ingestion (no `-sl`).
 
 ```bash
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \

@@ -35,6 +35,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -43,7 +44,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -336,7 +337,7 @@ options:
 Example:
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -483,7 +484,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -624,7 +625,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
 ```
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \
   -sd 30 \

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for collector experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -25,7 +25,7 @@ $BEXHOMA_NODE_SUT = "cl-worker38"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -54,7 +54,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -83,7 +83,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -403,7 +403,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container 
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -433,7 +433,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/3 
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -463,7 +463,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/3 
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -498,7 +498,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 3/3 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
@@ -524,7 +524,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
@@ -550,7 +550,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `

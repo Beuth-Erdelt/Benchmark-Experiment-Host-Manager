@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for Citus experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -20,7 +20,7 @@ source ./scripts/testfunctions.sh
 ####################################################
 
 
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -41,6 +41,7 @@ bexhoma ycsb -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_citus_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-ycsb-1
@@ -50,7 +51,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-2
 sleep 30
 
 
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -72,6 +73,7 @@ bexhoma ycsb -ms 1 -tr \
   -rst shared -rss 50Gi \
   run &>$LOG_DIR/doc_ycsb_citus_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 
 
@@ -80,7 +82,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 ####################################################
 
 
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -94,6 +96,7 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_1.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
 kubectl delete pvc bexhoma-storage-citus-benchbase-tpcc-128
@@ -104,7 +107,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-3
 sleep 30
 
 
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 20 \
   -nw 4 \
@@ -120,10 +123,11 @@ bexhoma benchbase -ms 1 -tr \
   -rst shared -rss 100Gi \
   run &>$LOG_DIR/doc_benchbase_citus_2.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
@@ -142,6 +146,7 @@ bexhoma benchbase -ms 1 -tr \
   -rst shared -rss 100Gi \
   run &>$LOG_DIR/doc_benchbase_citus_3.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
 
@@ -150,7 +155,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1
 ####################################################
 
 
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms Citus \
@@ -165,6 +170,7 @@ bexhoma hammerdb -ms 1 -tr \
   -nc 1 \
   run &>$LOG_DIR/doc_hammerdb_citus_1.log
 
+wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-128
@@ -175,7 +181,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-3
 sleep 30
 
 
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 30 \
   -xlat \
@@ -194,6 +200,7 @@ bexhoma hammerdb -ms 1 -tr \
   -rst shared -rss 50Gi \
   run &>$LOG_DIR/doc_hammerdb_citus_2.log
 
+wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-500
@@ -204,7 +211,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-3
 sleep 30
 
 
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 500 \
   -sd 20 \
   -xlat \
@@ -223,6 +230,7 @@ bexhoma hammerdb -ms 1 -tr \
   -rst shared -rss 200Gi \
   run &>$LOG_DIR/doc_hammerdb_citus_3.log
 
+wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
 
@@ -230,7 +238,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,
 #################### TPC-H Citus ###################
 ####################################################
 
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -nw 4 \
   -nwr 1 \
@@ -256,7 +264,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \
@@ -284,7 +292,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \

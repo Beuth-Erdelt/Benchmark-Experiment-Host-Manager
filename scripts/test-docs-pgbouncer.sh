@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for PGBouncer experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -20,7 +20,7 @@ source ./scripts/testfunctions.sh
 ####################################################
 
 
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -45,7 +45,7 @@ bexhoma ycsb -ms 1 -tr \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=16  nbp=16"
 
 
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -76,7 +76,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer storage  sf=16  nbp=16 
 ####################################################
 
 
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -88,11 +88,12 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
 #### Benchbase PGBouncer (Example-PGBouncer.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -107,6 +108,7 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 

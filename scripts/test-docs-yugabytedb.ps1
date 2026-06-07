@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for YugabyteDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -135,7 +135,7 @@ Install-YugabyteDB -Persistent "no"
 
 #### YCSB Ingestion (Example-YugaByteDB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -162,7 +162,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB ing
 
 #### YCSB Execution (Example-YugaByteDB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -202,7 +202,7 @@ Start-Sleep -Seconds 30
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -241,7 +241,7 @@ Start-Sleep -Seconds 30
 
 #### Benchbase Simple (Example-YugaByteDB.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -272,7 +272,7 @@ Start-Sleep -Seconds 30
 
 #### Benchbase More Complex (Example-YugaByteDB.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 128                       <# scaling factor (controls database size) #> `
   -slg 30                       <# log status to stdout every x seconds #> `
@@ -308,7 +308,7 @@ Install-YugabyteDB -Persistent "no"
 Start-Sleep -Seconds 30
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -343,7 +343,7 @@ Start-Sleep -Seconds 30
 
 #### Benchbase Application Metrics (Example-YugaByteDB.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `

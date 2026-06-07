@@ -25,6 +25,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -33,7 +34,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
@@ -411,7 +412,7 @@ options:
 
 Example:
 ```bash
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -597,7 +598,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -771,7 +772,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -965,7 +966,7 @@ TPC-H supports scaling factors that are fractional.
 Example: SF=0.1
 
 ```bash
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -1168,10 +1169,11 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -1392,12 +1394,13 @@ This is repeated 2 times (`-nc`).
 
 ```bash
 mkdir -p ./logs/
+BEXHOMA_MS=1
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -1611,12 +1614,13 @@ We then run two power tests, one after the other, and then a throughput test wit
 
 ```bash
 mkdir -p ./logs/
+BEXHOMA_MS=1
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \

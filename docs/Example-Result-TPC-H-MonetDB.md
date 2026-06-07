@@ -33,10 +33,11 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -240,12 +241,13 @@ This is repeated 2 times (`-nc`).
 
 ```bash
 mkdir -p ./logs/
+BEXHOMA_MS=1
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -439,12 +441,13 @@ We then run two power tests, one after the other, and then a throughput test wit
 
 ```bash
 mkdir -p ./logs/
+BEXHOMA_MS=1
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \

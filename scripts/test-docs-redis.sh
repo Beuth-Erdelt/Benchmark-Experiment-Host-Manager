@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for Redis experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -39,6 +39,7 @@ bexhoma ycsb -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_redis_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
 
 
@@ -62,6 +63,7 @@ bexhoma ycsb -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_redis_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3  sf=1  nbp=1"
 
 
@@ -86,6 +88,7 @@ bexhoma ycsb -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_redis_3.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 replication  sf=1  nbp=1"
 
 
@@ -109,6 +112,7 @@ bexhoma ycsb -tr \
   -rst shared -rss 50Gi -rsr \
   run &>$LOG_DIR/doc_ycsb_redis_4.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single PVC  sf=1  nbp=1  nc=2"
 
 
@@ -133,6 +137,7 @@ bexhoma ycsb -tr \
   -rst shared -rss 50Gi -rsr \
   run &>$LOG_DIR/doc_ycsb_redis_5.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 

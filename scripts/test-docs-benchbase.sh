@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for Benchbase experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 #### Benchbase Scale (Example-Benchbase.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -32,11 +32,12 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -48,6 +49,7 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 
 
@@ -57,7 +59,7 @@ sleep 30
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -70,6 +72,7 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 
 
@@ -79,7 +82,7 @@ sleep 30
 
 
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \
   -sd 30 \
@@ -96,6 +99,7 @@ bexhoma benchbase -ms 1 -tr \
   -rst shared -rss 100Gi \
   run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
 
 

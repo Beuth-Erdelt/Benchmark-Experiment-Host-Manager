@@ -36,6 +36,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -262,7 +263,7 @@ In the following example, this means that used memory, CPU time, etc. are summed
 
 If you want to deploy Dragonfly as a cluster, you can adjust the number of workers `-nw` when calling the script:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \

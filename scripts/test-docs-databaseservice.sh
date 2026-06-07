@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for managed database service experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -12,6 +12,7 @@
 
 source ./scripts/testfunctions.sh
 
+BEXHOMA_MS=2
 
 
 
@@ -33,7 +34,7 @@ sleep 10
 
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
-bexhoma ycsb -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -50,11 +51,12 @@ bexhoma ycsb -ms 2 -tr \
   -nc 1 \
   run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
 
 #### YCSB Execution (Example-CloudDatabase.md)
-bexhoma ycsb -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -73,6 +75,7 @@ bexhoma ycsb -ms 2 -tr \
   -sl \
   run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
 # delete database service placeholder
@@ -94,7 +97,7 @@ sleep 10
 
 
 #### YCSB Persistent Storage (Example-CloudDatabase.md)
-bexhoma ycsb -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 5 \
   -sfo 10 \
   --workload a \
@@ -113,6 +116,7 @@ bexhoma ycsb -ms 2 -tr \
   -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
 
@@ -136,7 +140,7 @@ sleep 10
 
 
 # no PVC
-bexhoma benchbase -ms 2 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -147,10 +151,11 @@ bexhoma benchbase -ms 2 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
-bexhoma benchbase -ms 2 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -162,6 +167,7 @@ bexhoma benchbase -ms 2 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
 
@@ -185,7 +191,7 @@ sleep 10
 
 
 #### TCP-H Monitoring (Example-CloudDatabase.md) — no PVC
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -196,11 +202,12 @@ bexhoma tpch -ms 2 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md) — no PVC, skip loading
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -212,6 +219,7 @@ bexhoma tpch -ms 2 -dt -tr \
   -sl \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
 
@@ -233,7 +241,7 @@ sleep 10
 
 
 #### TCP-H Monitoring (Example-TPC-H.md) — with PVC, ingestion
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -245,11 +253,12 @@ bexhoma tpch -ms 2 -dt -tr \
   -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md) — with PVC, execution only
-bexhoma tpch -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -261,6 +270,7 @@ bexhoma tpch -ms 2 -dt -tr \
   -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 
 

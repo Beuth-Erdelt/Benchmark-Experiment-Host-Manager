@@ -12,6 +12,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -29,7 +30,7 @@ The folder also contains `\*_summary.txt` files containing only the result summa
 #### TPC-H Simple
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -161,7 +162,7 @@ TEST passed: Workflow as planned
 #### TPC-H Monitoring
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -315,7 +316,7 @@ kubectl delete pvc bexhoma-storage-postgresql-tpch-1
 
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -569,7 +570,7 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -728,7 +729,7 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -862,7 +863,7 @@ No warnings
 #### TPC-H Monitoring
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -1048,7 +1049,7 @@ kubectl delete pvc bexhoma-storage-mysql-tpch-1
 ```
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -1297,7 +1298,7 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms MySQL \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
@@ -1451,7 +1452,7 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -1582,7 +1583,7 @@ TEST passed: Workflow as planned
 #### TPC-H Monitoring
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -1735,7 +1736,7 @@ kubectl delete pvc bexhoma-storage-mariadb-tpch-1
 ```
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -1994,7 +1995,7 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms MariaDB \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
@@ -2163,7 +2164,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -2368,7 +2369,7 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -2605,7 +2606,7 @@ kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
 
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -2961,7 +2962,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -3165,7 +3166,7 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -3394,7 +3395,7 @@ kubectl delete pvc bexhoma-storage-mysql-tpcds-1
 ```
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -3722,7 +3723,7 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -3933,7 +3934,7 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -4086,7 +4087,7 @@ kubectl delete pvc bexhoma-storage-mariadb-tpcds-1
 ```
 
 ```bash
-bexhoma tpcds -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -4356,7 +4357,7 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4444,7 +4445,7 @@ sleep 10
 ```
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4547,7 +4548,7 @@ TEST passed: Workflow as planned
 #### Benchbase Monitoring
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4649,7 +4650,7 @@ TEST passed: Workflow as planned
 #### Benchbase Complex
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4897,7 +4898,7 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4994,7 +4995,7 @@ sleep 10
 ```
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5095,7 +5096,7 @@ TEST passed: Workflow as planned
 #### Benchbase Monitoring
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5196,7 +5197,7 @@ TEST passed: Workflow as planned
 #### Benchbase Complex
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5436,7 +5437,7 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5539,7 +5540,7 @@ sleep 10
 ```
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5657,7 +5658,7 @@ Benchbase Workload tpcc SF=16
 #### Benchbase Monitoring
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5784,7 +5785,7 @@ Benchbase Workload tpcc SF=16
 #### Benchbase Complex
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -6064,7 +6065,7 @@ Benchbase Workload tpcc SF=16
 #### HammerDB Simple
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -6144,7 +6145,7 @@ TEST passed: Workflow as planned
 #### HammerDB Monitoring
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -6239,7 +6240,7 @@ TEST passed: Workflow as planned
 #### HammerDB Complex
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -dbms PostgreSQL \
@@ -6466,7 +6467,7 @@ TEST passed: Workflow as planned
 #### HammerDB Simple
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MySQL \
@@ -6545,7 +6546,7 @@ TEST passed: Workflow as planned
 #### HammerDB Monitoring
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MySQL \
@@ -6649,7 +6650,7 @@ TEST passed: Workflow as planned
 #### HammerDB Complex
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -dbms MySQL \
@@ -6867,7 +6868,7 @@ TEST passed: Workflow as planned
 #### HammerDB Simple
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MariaDB \
@@ -6962,7 +6963,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 #### HammerDB Monitoring
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MariaDB \
@@ -7092,7 +7093,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 #### HammerDB Complex
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -dbms MariaDB \
@@ -7370,7 +7371,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ### YCSB Loader Test for Scaling the Driver
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -7461,7 +7462,7 @@ TEST passed: Result contains no FAILED column
 ### YCSB Loader Test for Persistency
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -7574,7 +7575,7 @@ TEST passed: Result contains no FAILED column
 ### YCSB Execution for Scaling and Repetition
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -7784,7 +7785,7 @@ TEST passed: Result contains no FAILED column
 ### YCSB Execution Different Workload
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload e \
   -dbms PostgreSQL \
@@ -7874,7 +7875,7 @@ TEST failed: Result contains FAILED column
 ### YCSB Execution Monitoring
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \

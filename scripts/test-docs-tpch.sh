@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for TPC-H experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
@@ -30,11 +30,12 @@ bexhoma tpch -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_compare.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -45,11 +46,12 @@ bexhoma tpch -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -60,6 +62,7 @@ bexhoma tpch -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
@@ -69,7 +72,7 @@ sleep 30
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -80,11 +83,12 @@ bexhoma tpch -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_storage.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
 
 #### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
-bexhoma tpch -ms 1 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -95,6 +99,7 @@ bexhoma tpch -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
@@ -109,7 +114,7 @@ sleep 30
 
 
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -122,11 +127,12 @@ bexhoma tpch -ms 1 \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
 #### TCP-H Power 100 repeated (Example-Result-TPC-H-MonetDB.md)
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -139,11 +145,12 @@ bexhoma tpch -ms 1 \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
 #### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
-bexhoma tpch -ms 1 \
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -156,6 +163,7 @@ bexhoma tpch -ms 1 \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 

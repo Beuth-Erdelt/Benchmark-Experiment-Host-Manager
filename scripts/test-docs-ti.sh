@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for TiDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 #### YCSB Ingestion (Example-TiDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -41,10 +41,11 @@ bexhoma ycsb -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_tidb_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 
 
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -58,6 +59,7 @@ bexhoma benchbase -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_benchbase_tidb_1.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 
 

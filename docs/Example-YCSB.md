@@ -32,6 +32,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -40,7 +41,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -375,7 +376,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -520,7 +521,7 @@ YCSB SF=1
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -715,7 +716,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -960,7 +961,7 @@ In special cases (for example a batch of benchmarks) you may want to set a param
 Here is an example for how to use `--set` for PostgreSQL 18. This sets `effective_io_concurrency` to 64.
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -1059,7 +1060,7 @@ Workload A is 50% READ and 50% UPDATE.
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \
@@ -1281,7 +1282,7 @@ Workload B is 95% READ and 5% UPDATE.
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload b \
   -dbms PostgreSQL \
@@ -1436,7 +1437,7 @@ Workload C is 100% READ.
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload c \
   -dbms PostgreSQL \
@@ -1599,7 +1600,7 @@ It assumes the keyspace is filled completely up to some `recordcount` and new da
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload d \
   -xio hashed \
@@ -1741,7 +1742,7 @@ Scans might be done over empty keyspaces.
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload e \
   -xio ordered \
@@ -1877,7 +1878,7 @@ Workload F is 50% READ and 50% READ-MODIFY-WRITE.
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload f \
   -dbms PostgreSQL \

@@ -13,6 +13,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -25,7 +26,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -m -mc -ma -ms 1 -tr \
+bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -212,7 +213,7 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -342,7 +343,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -536,7 +537,7 @@ No warnings
 
 Example:
 ```bash
-bexhoma tpcds -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -808,7 +809,7 @@ No warnings
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -1024,7 +1025,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma benchbase -m -mc -ma -ms 1 -tr \
+bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms MySQL \
@@ -1196,7 +1197,7 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-bexhoma hammerdb -ms 1 -tr -lr 64Gi \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr -lr 64Gi \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -1326,7 +1327,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
@@ -1486,7 +1487,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-bexhoma tpcds -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
@@ -1715,7 +1716,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr -lr 64Gi \
+bexhoma ycsb -ms $BEXHOMA_MS -tr -lr 64Gi \
   -sf 3 \
   --workload a \
   -dbms MySQL \
@@ -1916,7 +1917,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -2110,7 +2111,7 @@ YCSB SF=10
 
 Example:
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -2508,7 +2509,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -2777,7 +2778,7 @@ YCSB SF=1
 Example:
 ```bash
 
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -3121,7 +3122,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -3273,7 +3274,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -3452,7 +3453,7 @@ Make sure to have YugabyteDB installed [externally](https://bexhoma.readthedocs.
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -3618,7 +3619,7 @@ YCSB SF=1
 
 Example:
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \

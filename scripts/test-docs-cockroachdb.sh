@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for CockroachDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 #### YCSB Ingestion (Example-CockroachDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -41,11 +41,12 @@ bexhoma ycsb -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
 #### YCSB PVC (Example-CockroachDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -66,11 +67,12 @@ bexhoma ycsb -ms 1 -tr \
   -rst shared -rss 50Gi -rsr \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
 #### YCSB Scale (Example-CockroachDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -90,11 +92,12 @@ bexhoma ycsb -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 
 
 #### Benchbase Simple (Example-CockroachDB.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -107,11 +110,12 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
 #### Benchbase Complex (Example-CockroachDB.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -125,11 +129,12 @@ bexhoma benchbase -ms 1 -tr \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
 #### Benchbase Complex with PVC (Example-CockroachDB.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -144,6 +149,7 @@ bexhoma benchbase -ms 1 -tr \
   -rst shared -rss 100Gi -rsr \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 

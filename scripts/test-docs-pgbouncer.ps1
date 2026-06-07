@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for PGBouncer experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -22,7 +22,7 @@
 
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of records x 1000) #> `
   -sfo 16                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -54,7 +54,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=
 
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of records x 1000) #> `
   -sfo 16                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -94,7 +94,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer stor
 
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 10                        <# benchmark duration in minutes #> `
@@ -115,7 +115,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-conne
 
 #### Benchbase PGBouncer (Example-PGBouncer.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 10                        <# benchmark duration in minutes #> `

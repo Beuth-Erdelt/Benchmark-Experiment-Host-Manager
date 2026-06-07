@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for Benchbase experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### Benchbase Scale (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -43,7 +43,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase scale  sf
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -70,7 +70,7 @@ Start-Sleep -Seconds 30
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -98,7 +98,7 @@ Start-Sleep -Seconds 30
 
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `

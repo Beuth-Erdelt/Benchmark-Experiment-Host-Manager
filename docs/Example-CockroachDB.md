@@ -39,6 +39,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -47,7 +48,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -276,7 +277,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -512,7 +513,7 @@ It can be activated by `-m -mc -ma`.
 See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for some example definitions.
 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -729,7 +730,7 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 CockroachDB has 3 workers.
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -901,7 +902,7 @@ TPC-C is performed at 128 warehouses.
 The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -1235,7 +1236,7 @@ TPC-C is performed at 128 warehouses.
 The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \

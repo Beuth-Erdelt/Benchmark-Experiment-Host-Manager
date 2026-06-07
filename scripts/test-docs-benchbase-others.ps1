@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for Benchbase experiments on additional DBMS.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### Benchbase Twitter Simple (Example-Benchbase-Others.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -44,7 +44,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase twitter s
 
 #### Benchbase Twitter Scale (Example-Benchbase-Others.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
@@ -69,7 +69,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase twitter s
 
 #### Benchbase CH-benCHmark Simple (Example-Benchbase-Others.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -90,7 +90,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase chbenchma
 
 #### Benchbase CH-benCHmark Scale (Example-Benchbase-Others.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `

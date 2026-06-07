@@ -33,6 +33,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -41,7 +42,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -293,7 +294,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -624,7 +625,7 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 Citus has 3 workers.
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -809,7 +810,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-3
 The benchmark is run via
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 20 \
   -nw 4 \
@@ -1245,7 +1246,7 @@ Each thread also gets assigned a fixed range of districts per warehouse.
 Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
@@ -1789,7 +1790,7 @@ Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and wil
 result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', 
 True)`
 In Zeile:1 Zeichen:1
-+ python benchbase.py -ms 1 -tr `
++ python benchbase.py -ms $BEXHOMA_MS -tr `
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (C:\Users\Patric...asting', True)`:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
@@ -1950,7 +1951,7 @@ Citus has 3 workers.
 
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms Citus \
@@ -2063,7 +2064,7 @@ TEST passed: Workflow as planned
 ### HammerDB More Complex Example
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -sd 30 \
   -xlat \
@@ -2485,7 +2486,7 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s 
 
 
 ```bash
-bexhoma hammerdb -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 500 \
   -sd 20 \
   -nw 4 \
@@ -3168,7 +3169,7 @@ In a correlated subquery there cannot be a replicated table, so we have to rewri
 
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -nw 4 \
   -nwr 1 \
@@ -3355,7 +3356,7 @@ Then we run TPC-H Power Test at SF=10.
 Note that this takes a lot of disk space including for indexes.
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \
@@ -3784,7 +3785,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 The experiment runs like this:
 
 ```bash
-bexhoma tpch -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \

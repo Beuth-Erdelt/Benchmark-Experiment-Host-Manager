@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for Citus experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -20,7 +20,7 @@
 
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -56,7 +56,7 @@ Start-Sleep -Seconds 30
 
 
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -93,7 +93,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus storage 
 
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -122,7 +122,7 @@ Start-Sleep -Seconds 30
 
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 128                       <# scaling factor (controls database size) #> `
   -sd 20                        <# benchmark duration in minutes #> `
@@ -148,7 +148,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus sca
 
 
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 128                       <# scaling factor (controls database size) #> `
   -sd 20                        <# benchmark duration in minutes #> `
@@ -182,7 +182,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus key
 
 
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
@@ -212,7 +212,7 @@ Start-Sleep -Seconds 30
 
 
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 128                       <# scaling factor (number of warehouses) #> `
   -sd 30                        <# benchmark duration in minutes #> `
@@ -248,7 +248,7 @@ Start-Sleep -Seconds 30
 
 
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 500                       <# scaling factor (number of warehouses) #> `
   -sd 20                        <# benchmark duration in minutes #> `
@@ -281,7 +281,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus larg
 ####################################################
 
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -nw 4                         <# number of worker nodes #> `
@@ -314,7 +314,7 @@ Start-Sleep -Seconds 30
 
 
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
   -nw 4                         <# number of worker nodes #> `
@@ -351,7 +351,7 @@ Start-Sleep -Seconds 30
 
 
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
   -nw 4                         <# number of worker nodes #> `

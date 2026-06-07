@@ -29,6 +29,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -37,7 +38,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -262,7 +263,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -514,7 +515,7 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 We activate the new-connection-per-transaction feature with `-xconn`.
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -630,7 +631,7 @@ We activate the new-connection-per-transaction feature.
 This time there will be a connection pool of size 32, handled by 2 pods of PGBouncer.
 
 ```bash
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \

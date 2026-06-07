@@ -24,6 +24,7 @@ BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 
 # ---------------------------------------------------------------------------
@@ -112,3 +113,13 @@ fi
 echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
+
+# ---------------------------------------------------------------------------
+# Wait for any pre-existing jobs
+# ---------------------------------------------------------------------------
+
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"

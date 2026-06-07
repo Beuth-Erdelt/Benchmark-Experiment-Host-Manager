@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for YugabyteDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -79,7 +79,7 @@ remove_yugabytedb() {
 install_yugabytedb no
 
 #### YCSB Ingestion (Example-YugaByteDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -97,10 +97,11 @@ bexhoma ycsb -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 #### YCSB Execution (Example-YugaByteDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -119,6 +120,7 @@ bexhoma ycsb -ms 1 -tr \
   -sl \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
@@ -134,7 +136,7 @@ kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
 sleep 30
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -153,6 +155,7 @@ bexhoma ycsb -ms 1 -tr \
   -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
@@ -166,7 +169,7 @@ sleep 30
 
 
 #### Benchbase Simple (Example-YugaByteDB.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -178,6 +181,7 @@ bexhoma benchbase -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
@@ -191,7 +195,7 @@ sleep 30
 
 
 #### Benchbase More Complex (Example-YugaByteDB.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -slg 30 \
   -sd 20 \
@@ -205,6 +209,7 @@ bexhoma benchbase -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
@@ -221,7 +226,7 @@ remove_yugabytedb no
 install_yugabytedb no
 sleep 30
 
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -238,6 +243,7 @@ bexhoma ycsb -ms 1 -tr \
   -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
@@ -251,7 +257,7 @@ sleep 30
 
 
 #### Benchbase Application Metrics (Example-YugaByteDB.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -262,6 +268,7 @@ bexhoma benchbase -ms 1 -tr \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for HammerDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### HammerDB Scale (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -42,7 +42,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB scale  sf=
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
@@ -69,7 +69,7 @@ Start-Sleep -Seconds 30
 
 #### HammerDB Persistent Storage (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
@@ -98,7 +98,7 @@ Start-Sleep -Seconds 30
 
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
 bexhoma hammerdb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -sd 20                        <# benchmark duration in minutes #> `

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for CockroachDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### YCSB Ingestion (Example-CockroachDB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -53,7 +53,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB in
 
 #### YCSB PVC (Example-CockroachDB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 1                        <# number of operations for the benchmark phase (x 1000) #> `
@@ -86,7 +86,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB st
 
 #### YCSB Scale (Example-CockroachDB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -116,7 +116,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB sc
 
 #### Benchbase Simple (Example-CockroachDB.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -138,7 +138,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Cockroach
 
 #### Benchbase Complex (Example-CockroachDB.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 128                       <# scaling factor (controls database size) #> `
   -sd 10                        <# benchmark duration in minutes #> `
@@ -163,7 +163,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Cockroach
 
 #### Benchbase Complex with PVC (Example-CockroachDB.md)
 bexhoma benchbase `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 128                       <# scaling factor (controls database size) #> `
   -sd 10                        <# benchmark duration in minutes #> `

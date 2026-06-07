@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for managed database service experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -11,6 +11,7 @@
 
 . .\scripts\testfunctions.ps1
 
+$BEXHOMA_MS = 2
 
 
 
@@ -33,7 +34,7 @@ Start-Sleep -Seconds 10
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
 bexhoma ycsb `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 1                        <# number of operations for the benchmark phase (x 1000) #> `
@@ -59,7 +60,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseServic
 
 #### YCSB Execution (Example-CloudDatabase.md)
 bexhoma ycsb `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -105,7 +106,7 @@ Start-Sleep -Seconds 10
 
 #### YCSB Persistent Storage (Example-CloudDatabase.md)
 bexhoma ycsb `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 5                         <# scaling factor (number of records x 1000) #> `
   -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
@@ -154,7 +155,7 @@ Start-Sleep -Seconds 10
 
 # no PVC
 bexhoma benchbase `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -173,7 +174,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseS
 
 # no PVC, skip loading
 bexhoma benchbase `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
   -sd 5                         <# benchmark duration in minutes #> `
@@ -213,7 +214,7 @@ Start-Sleep -Seconds 10
 
 #### TCP-H Monitoring (Example-CloudDatabase.md) — no PVC
 bexhoma tpch `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms DatabaseService         <# DBMS under test #> `
@@ -237,7 +238,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseServi
 
 #### TCP-H Monitoring (Example-TPC-H.md) — no PVC, skip loading
 bexhoma tpch `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms DatabaseService         <# DBMS under test #> `
@@ -279,7 +280,7 @@ Start-Sleep -Seconds 10
 
 #### TCP-H Monitoring (Example-TPC-H.md) — with PVC, ingestion
 bexhoma tpch `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms DatabaseService         <# DBMS under test #> `
@@ -305,7 +306,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseServi
 
 #### TCP-H Monitoring (Example-TPC-H.md) — with PVC, execution only
 bexhoma tpch `
-  -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms DatabaseService         <# DBMS under test #> `

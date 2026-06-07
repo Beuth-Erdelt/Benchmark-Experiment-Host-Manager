@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for Benchbase experiments on additional DBMS.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 #### Benchbase Twitter Simple (Example-Benchbase-Others.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -33,11 +33,12 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter simple  sf=16  nbp=1"
 
 
 #### Benchbase Twitter Scale (Example-Benchbase-Others.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 1600 \
   -sd 20 \
@@ -51,11 +52,12 @@ bexhoma benchbase -ms 1 -tr \
   -m -mc \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
 
 #### Benchbase CH-benCHmark Simple (Example-Benchbase-Others.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -67,11 +69,12 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
 
 
 #### Benchbase CH-benCHmark Scale (Example-Benchbase-Others.md)
-bexhoma benchbase -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 100 \
   -sd 20 \
@@ -84,6 +87,7 @@ bexhoma benchbase -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
 
@@ -102,6 +106,7 @@ bexhoma benchbase -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
 
@@ -120,6 +125,7 @@ bexhoma benchbase -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
 
@@ -138,6 +144,7 @@ bexhoma benchbase -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
 
@@ -156,6 +163,7 @@ bexhoma benchbase -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
 
 
@@ -174,6 +182,7 @@ bexhoma benchbase -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
 
 
@@ -192,6 +201,7 @@ bexhoma benchbase -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
 

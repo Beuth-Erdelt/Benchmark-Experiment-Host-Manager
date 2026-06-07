@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for YCSB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### YCSB Scale Loading (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -48,7 +48,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading  sf=1 
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -73,7 +73,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB benchmarking  
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -105,7 +105,7 @@ Start-Sleep -Seconds 30
 
 #### YCSB Persistent Storage (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -132,7 +132,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB storage  sf=1 
 
 #### YCSB Custom Loading Parameters (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -160,7 +160,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch 
 
 #### YCSB Workload A (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -189,7 +189,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload a  sf
 
 #### YCSB Workload B (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload b                  <# YCSB workload template (b = 95% read / 5% update) #> `
@@ -218,7 +218,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload b  sf
 
 #### YCSB Workload C (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload c                  <# YCSB workload template (c = 100% read) #> `
@@ -247,7 +247,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c  sf
 
 #### YCSB Workload D (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload d                  <# YCSB workload template (d = read latest) #> `
@@ -277,7 +277,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload d  sf
 
 #### YCSB Workload E (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload e                  <# YCSB workload template (e = scan) #> `
@@ -307,7 +307,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload e  sf
 
 #### YCSB Workload F (Example-YCSB.md)
 bexhoma ycsb `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload f                  <# YCSB workload template (f = read-modify-write) #> `

@@ -44,6 +44,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -52,7 +53,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
@@ -534,7 +535,7 @@ options:
 
 Example:
 ```bash
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -797,7 +798,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -1047,7 +1048,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -1325,7 +1326,7 @@ Here, we run it at TPC-DS SF=10 in MonetDB:
 
 
 ```bash
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -1945,10 +1946,11 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 
-bexhoma tpcds -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -2204,7 +2206,7 @@ We then run two power tests, one after the other (`-ne 1,1`), and shut down the 
 This is repeated 2 times (`-nc`).
 
 ```bash
-bexhoma tpcds -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -2497,7 +2499,7 @@ We then run two power tests, one after the other, and then a throughput test wit
 
 
 ```bash
-bexhoma tpcds -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \

@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for Dragonfly experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -40,11 +40,12 @@ bexhoma ycsb -tr \
   -rr 64Gi -lr 64Gi \
   run &>$LOG_DIR/doc_ycsb_dragonfly_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
 
 
 # Cluster of 3 Dragonfly instances
-bexhoma ycsb -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -64,6 +65,7 @@ bexhoma ycsb -ms 1 -tr \
   -rr 64Gi -lr 64Gi \
   run &>$LOG_DIR/doc_ycsb_dragonfly_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
 
 
@@ -88,6 +90,7 @@ bexhoma ycsb -tr \
   -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_dragonfly_3.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 
 
@@ -112,6 +115,7 @@ bexhoma ycsb -tr \
   -rr 64Gi -lr 64Gi \
   run &>$LOG_DIR/doc_ycsb_dragonfly_4.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 
 
@@ -137,6 +141,7 @@ bexhoma ycsb -tr \
   -rr 64Gi -lr 64Gi \
   run &>$LOG_DIR/doc_ycsb_dragonfly_5.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for TPC-DS experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 #### TCP-DS Compare (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
@@ -31,11 +31,12 @@ bexhoma tpcds -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_compare.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -47,11 +48,12 @@ bexhoma tpcds -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -63,6 +65,7 @@ bexhoma tpcds -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
@@ -72,7 +75,7 @@ sleep 30
 
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -84,6 +87,7 @@ bexhoma tpcds -ms 1 -dt -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
 
 
@@ -98,7 +102,7 @@ sleep 30
 
 
 #### TCP-DS Power 30 (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -110,11 +114,12 @@ bexhoma tpcds -ms 1 \
   -rst shared -rss 1000Gi -rsr \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
 #### TCP-DS Power 30 repeated (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -126,11 +131,12 @@ bexhoma tpcds -ms 1 \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
 #### TCP-DS Throughput 30 (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -142,6 +148,7 @@ bexhoma tpcds -ms 1 \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 
+wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
@@ -151,7 +158,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 
 
 #### TCP-DS Profiling (Example-TPC-DS.md)
-bexhoma tpcds -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \

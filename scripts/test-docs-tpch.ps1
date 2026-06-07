@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # Generates documentation summaries for TPC-H experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -23,7 +23,7 @@
 
 #### TCP-H Compare (Example-TPC-H.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -45,7 +45,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H compare  sf=1
 
 #### TCP-H Monitoring (Example-TPC-H.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -70,7 +70,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H monitoring  s
 
 #### TCP-H Throughput (Example-TPC-H.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -98,7 +98,7 @@ Start-Sleep -Seconds 30
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -122,7 +122,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H storage  sf=1
 
 #### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -dt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -157,7 +157,7 @@ Start-Sleep -Seconds 30
 
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
@@ -186,7 +186,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power
 
 #### TCP-H Power 100 repeated (Example-Result-TPC-H-MonetDB.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
@@ -215,7 +215,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power
 
 #### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
 bexhoma tpch `
-  -ms 1                         <# limit to 1 parallel DBMS configuration at a time #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
