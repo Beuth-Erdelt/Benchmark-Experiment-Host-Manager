@@ -1,736 +1,717 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1769100503
-Experiment                    : starts at 2026-01-22 17:48:23.130671 (33292666.601220947)
+Experiment                    : has code 1780843293
+Experiment                    : starts at 2026-06-07 16:41:33.728314 (2214372.897351)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 20 minutes. Benchmarking has keying and thinking times activated. Benchmarking also logs latencies.
-Experiment uses bexhoma version 0.8.20.
+Experiment uses bexhoma version 0.9.10.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker14.
+SUT is fixed to cl-worker38.
 Database is persisted to disk of type shared and size 30Gi.
 Loading is tested with [8] threads, split into [1] pods.
 Benchmarking is tested with [160] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
 Cluster monitoring            : is running
-PostgreSQL-BHT-8-1            : will start now
-PostgreSQL-BHT-8-1            : deployments ['sut']
-PostgreSQL-BHT-8-1            : stateful sets []
-PostgreSQL-BHT-8-1            : pvcs ['sut']
-PostgreSQL-BHT-8-1            : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
-PostgreSQL-BHT-8-1            : found labels on pvc = []
-PostgreSQL-BHT-8-1            : name of SUT pods = bexhoma-sut-postgresql-bht-8-1-1769100503
-PostgreSQL-BHT-8-1            : name of SUT service = bexhoma-sut-postgresql-bht-8-1-1769100503
-PostgreSQL-BHT-8-1            : name of SUT PVC name = bexhoma-storage-postgresql-hammerdb-16
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
+PostgreSQL-1                  : found labels on pvc = []
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1780843293
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1780843293
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-hammerdb-16
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : is pending
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is not loaded yet
-PostgreSQL-BHT-8-1            : connect to pod bexhoma-sut-postgresql-bht-8-1-1769100503-5d9dd6d76b-7pjjn to load scripts
-PostgreSQL-BHT-8-1            : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
-PostgreSQL-BHT-8-1            : will be labeling bexhoma-storage-postgresql-hammerdb-16
-PostgreSQL-BHT-8-1            : start asynch loading scripts of type loaded
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1780843293-964bc95c5-fjf4d to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-hammerdb-16
+PostgreSQL-1                  : start asynch loading scripts of type loaded
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : showing loader times
-PostgreSQL-BHT-8-1            : generator times (start/end per pod and container) []
-PostgreSQL-BHT-8-1            : loader times (start/end per pod and container) [(1769100662, 1769100857)]
-PostgreSQL-BHT-8-1            : total times (start/end per pod and container) [(1769100662, 1769100857)]
-PostgreSQL-BHT-8-1            : loader timespan (first to last [s]) = 195
-PostgreSQL-BHT-8-1            : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
-PostgreSQL-BHT-8-1            : will be labeling bexhoma-storage-postgresql-hammerdb-16
-PostgreSQL-BHT-8-1            : connect to pod bexhoma-sut-postgresql-bht-8-1-1769100503-5d9dd6d76b-7pjjn to load scripts
-PostgreSQL-BHT-8-1            : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
-PostgreSQL-BHT-8-1            : will be labeling bexhoma-storage-postgresql-hammerdb-16
-PostgreSQL-BHT-8-1            : start asynch loading scripts of type indexed
-PostgreSQL-BHT-8-1            : is loading
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times
+PostgreSQL-1                  : generator times (start/end per pod and container) []
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1780843497, 1780843692)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1780843497, 1780843692)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 195
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-hammerdb-16
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1780843293-964bc95c5-fjf4d to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-hammerdb-16
+PostgreSQL-1                  : start asynch loading scripts of type indexed
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-PostgreSQL-BHT-8-1            : benchmarks done 0 of 2. This will be client 1
-PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '20', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 160, 'HAMMERDB_KEYANDTHINK': 'true', 'HAMMERDB_TIMEPROFILE': 'true'}
-PostgreSQL-BHT-8-1-1-1        : start benchmarking
-PostgreSQL-BHT-8-1-1-1        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1769100503
+PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 1
+PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1780843293
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1769100503-1-1-jdpz6: found
-PostgreSQL-BHT-8-1-1-1        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1-1-1        : collecting loading metrics of SUT at connection PostgreSQL-BHT-8-1-1-1
-PostgreSQL-BHT-8-1-1-1        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-PostgreSQL-BHT-8-1-1-1        : collecting metrics of data injector at connection PostgreSQL-BHT-8-1-1-1
-PostgreSQL-BHT-8-1-1-1        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1780843293-1-1-1-qqkxx: found
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-1-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of data injector at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-timing_benchmarker [(1769100916, 1769102403)]
-PostgreSQL-BHT-8-1-1-1        : showing benchmarker times
-PostgreSQL-BHT-8-1-1-1        : benchmarker timespan job from 1769100914 to 1769102419
-PostgreSQL-BHT-8-1-1-1        : benchmarker timespan pods from 1769100916 to 1769102403
-PostgreSQL-BHT-8-1-1-1        : benchmarker timespan (start to end single container [s]) = 1487
-PostgreSQL-BHT-8-1-1-1        : benchmarker times (start/end per pod and container) = [(1769100916, 1769102403)]
-PostgreSQL-BHT-8-1-1-1        : found and updated times {'benchmarker': [(1769100916, 1769102403)]}
-PostgreSQL-BHT-8-1-1-1        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1-1-1        : collecting execution metrics of SUT at connection PostgreSQL-BHT-8-1-1-1
-PostgreSQL-BHT-8-1-1-1        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-PostgreSQL-BHT-8-1-1-1        : collecting metrics of benchmarker at connection PostgreSQL-BHT-8-1-1-1
-PostgreSQL-BHT-8-1-1-1        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-PostgreSQL-BHT-8-1            : benchmarks done 0 of 2. This will be client 2
-PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '20', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 80, 'HAMMERDB_KEYANDTHINK': 'true', 'HAMMERDB_TIMEPROFILE': 'true'}
-PostgreSQL-BHT-8-1-1-2        : start benchmarking
-PostgreSQL-BHT-8-1-1-2        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1769100503
+PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 2
+PostgreSQL-1-1-2-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1780843293
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1769100503-1-2-bjtgq: found
-PostgreSQL-BHT-8-1-1-2        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1-1-2        : collecting loading metrics of SUT at connection PostgreSQL-BHT-8-1-1-2
-PostgreSQL-BHT-8-1-1-2        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-PostgreSQL-BHT-8-1-1-2        : collecting metrics of data injector at connection PostgreSQL-BHT-8-1-1-2
-PostgreSQL-BHT-8-1-1-2        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1780843293-1-2-1-25cbv: found
+PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-2-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-2-1
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : collecting metrics of data injector at connection PostgreSQL-1-1-2-1
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : showing benchmarker times
+PostgreSQL-1-1-1-1            : benchmarker timespan job from 1780843772 to 1780845311
+PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1780843776 to 1780845263
+PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 1487
+PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1780843776, 1780845263)]
+PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1780843776, 1780845263)]}
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-2-1
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1780843293-964bc95c5-fjf4d
+PostgreSQL-1                  : still being removed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-timing_benchmarker [(1769102469, 1769103916), (1769102469, 1769103916)]
-PostgreSQL-BHT-8-1-1-2        : showing benchmarker times
-PostgreSQL-BHT-8-1-1-2        : benchmarker timespan job from 1769102466 to 1769103946
-PostgreSQL-BHT-8-1-1-2        : benchmarker timespan pods from 1769102469 to 1769103916
-PostgreSQL-BHT-8-1-1-2        : benchmarker timespan (start to end single container [s]) = 1447
-PostgreSQL-BHT-8-1-1-2        : benchmarker times (start/end per pod and container) = [(1769102469, 1769103916), (1769102469, 1769103916)]
-PostgreSQL-BHT-8-1-1-2        : found and updated times {'benchmarker': [(1769102469, 1769103916), (1769102469, 1769103916)]}
-PostgreSQL-BHT-8-1-1-2        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1-1-2        : collecting execution metrics of SUT at connection PostgreSQL-BHT-8-1-1-2
-PostgreSQL-BHT-8-1-1-2        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-PostgreSQL-BHT-8-1-1-2        : collecting metrics of benchmarker at connection PostgreSQL-BHT-8-1-1-2
-PostgreSQL-BHT-8-1-1-2        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : can be stopped
-PostgreSQL-BHT-8-1            : had 0 0 restarts at worker bexhoma-sut-postgresql-bht-8-1-1769100503-5d9dd6d76b-7pjjn
-PostgreSQL-BHT-8-1            : still being removed
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : starts again
-PostgreSQL-BHT-8-1            : deployments ['sut']
-PostgreSQL-BHT-8-1            : stateful sets []
-PostgreSQL-BHT-8-1            : pvcs ['sut']
-PostgreSQL-BHT-8-1            : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
-PostgreSQL-BHT-8-1            : storage bexhoma-storage-postgresql-hammerdb-16 exists
-PostgreSQL-BHT-8-1            : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '413', 'timeLoadingEnd': '1769100878', 'timeLoadingStart': '1769100660', 'time_generated': '0', 'time_indexed': '218', 'time_ingested': '195', 'time_initschema': '1', 'time_loaded': '0'}
-PostgreSQL-BHT-8-1            : name of SUT pods = bexhoma-sut-postgresql-bht-8-1-1769100503
-PostgreSQL-BHT-8-1            : name of SUT service = bexhoma-sut-postgresql-bht-8-1-1769100503
-PostgreSQL-BHT-8-1            : name of SUT PVC name = bexhoma-storage-postgresql-hammerdb-16
-PostgreSQL-BHT-8-1            : copied label indexed = True
-PostgreSQL-BHT-8-1            : copied label loaded = True
-PostgreSQL-BHT-8-1            : copied label timeLoading = 413
-PostgreSQL-BHT-8-1            : copied label timeLoadingEnd = 1769100878
-PostgreSQL-BHT-8-1            : copied label timeLoadingStart = 1769100660
-PostgreSQL-BHT-8-1            : copied label time_generated = 0
-PostgreSQL-BHT-8-1            : copied label time_indexed = 218
-PostgreSQL-BHT-8-1            : copied label time_ingested = 195
-PostgreSQL-BHT-8-1            : copied label time_initschema = 1
-PostgreSQL-BHT-8-1            : copied label time_loaded = 0
-PostgreSQL-BHT-8-1            : loading is set to finished
+PostgreSQL-1                  : starts again
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-hammerdb-16']
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-hammerdb-16 exists
+PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '432', 'timeLoadingEnd': '1780843727', 'timeLoadingStart': '1780843491', 'time_generated': '0', 'time_indexed': '236', 'time_ingested': '195', 'time_initschema': '1', 'time_loaded': '1'}
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1780843293
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1780843293
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-hammerdb-16
+PostgreSQL-1                  : copied label indexed = True
+PostgreSQL-1                  : copied label loaded = True
+PostgreSQL-1                  : copied label timeLoading = 432
+PostgreSQL-1                  : copied label timeLoadingEnd = 1780843727
+PostgreSQL-1                  : copied label timeLoadingStart = 1780843491
+PostgreSQL-1                  : copied label time_generated = 0
+PostgreSQL-1                  : copied label time_indexed = 236
+PostgreSQL-1                  : copied label time_ingested = 195
+PostgreSQL-1                  : copied label time_initschema = 1
+PostgreSQL-1                  : copied label time_loaded = 1
+PostgreSQL-1                  : loading is set to finished
 - waiting 10s -               : done
+PostgreSQL-1-1-2-1            : showing benchmarker times
+PostgreSQL-1-1-2-1            : benchmarker timespan job from 1780845287 to 1780846802
+PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1780845291 to 1780846738
+PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 1447
+PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1780845291, 1780846738), (1780845292, 1780846738)]
+PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1780845291, 1780846738), (1780845292, 1780846738)]}
+PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-2-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-2-1
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-2-1
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : benchmarks done 1 of 2. This will be client 1
-PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '20', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 160, 'HAMMERDB_KEYANDTHINK': 'true', 'HAMMERDB_TIMEPROFILE': 'true'}
-PostgreSQL-BHT-8-1-2-1        : start benchmarking
-PostgreSQL-BHT-8-1-2-1        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1769100503
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 1
+PostgreSQL-1-2-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1-2-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1780843293
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1769100503-2-1-78xdh: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1780843293-2-1-1-9mmv5: found
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-timing_benchmarker [(1769104189, 1769105676)]
-PostgreSQL-BHT-8-1-2-1        : showing benchmarker times
-PostgreSQL-BHT-8-1-2-1        : benchmarker timespan job from 1769104187 to 1769105707
-PostgreSQL-BHT-8-1-2-1        : benchmarker timespan pods from 1769104189 to 1769105676
-PostgreSQL-BHT-8-1-2-1        : benchmarker timespan (start to end single container [s]) = 1487
-PostgreSQL-BHT-8-1-2-1        : benchmarker times (start/end per pod and container) = [(1769104189, 1769105676)]
-PostgreSQL-BHT-8-1-2-1        : found and updated times {'benchmarker': [(1769104189, 1769105676)]}
-PostgreSQL-BHT-8-1-2-1        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1-2-1        : collecting execution metrics of SUT at connection PostgreSQL-BHT-8-1-2-1
-PostgreSQL-BHT-8-1-2-1        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-PostgreSQL-BHT-8-1-2-1        : collecting metrics of benchmarker at connection PostgreSQL-BHT-8-1-2-1
-PostgreSQL-BHT-8-1-2-1        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : benchmarks done 1 of 2. This will be client 2
-PostgreSQL-BHT-8-1            : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '2', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '20', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'postgresql', 'HAMMERDB_VUSERS': 80, 'HAMMERDB_KEYANDTHINK': 'true', 'HAMMERDB_TIMEPROFILE': 'true'}
-PostgreSQL-BHT-8-1-2-2        : start benchmarking
-PostgreSQL-BHT-8-1-2-2        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1            : benchmarking results in folder /home/perdelt/benchmarks/1769100503
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 2
+PostgreSQL-1-2-2-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1-2-2-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1780843293
 - waiting 10s -               : done
-PostgreSQL-BHT-8-1            : benchmarking is waiting for job bexhoma-benchmarker-postgresql-bht-8-1-1769100503-2-2-jx9px: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1780843293-2-2-1-h7njv: found
+PostgreSQL-1-2-1-1            : showing benchmarker times
+PostgreSQL-1-2-1-1            : benchmarker timespan job from 1780846988 to 1780848532
+PostgreSQL-1-2-1-1            : benchmarker timespan pods from 1780846992 to 1780848479
+PostgreSQL-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 1487
+PostgreSQL-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1780846992, 1780848479)]
+PostgreSQL-1-2-2-1            : found and updated times {'benchmarker': [(1780846992, 1780848479)]}
+PostgreSQL-1-2-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-2-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-2-1-1
+PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-2-2-1
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : has running benchmarks
-timing_benchmarker [(1769105756, 1769107202), (1769105756, 1769107203)]
-PostgreSQL-BHT-8-1-2-2        : showing benchmarker times
-PostgreSQL-BHT-8-1-2-2        : benchmarker timespan job from 1769105753 to 1769107220
-PostgreSQL-BHT-8-1-2-2        : benchmarker timespan pods from 1769105756 to 1769107203
-PostgreSQL-BHT-8-1-2-2        : benchmarker timespan (start to end single container [s]) = 1447
-PostgreSQL-BHT-8-1-2-2        : benchmarker times (start/end per pod and container) = [(1769105756, 1769107202), (1769105756, 1769107203)]
-PostgreSQL-BHT-8-1-2-2        : found and updated times {'benchmarker': [(1769105756, 1769107202), (1769105756, 1769107203)]}
-PostgreSQL-BHT-8-1-2-2        : needs monitoring (common metrics) for deployment sut
-PostgreSQL-BHT-8-1-2-2        : collecting execution metrics of SUT at connection PostgreSQL-BHT-8-1-2-2
-PostgreSQL-BHT-8-1-2-2        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-PostgreSQL-BHT-8-1-2-2        : collecting metrics of benchmarker at connection PostgreSQL-BHT-8-1-2-2
-PostgreSQL-BHT-8-1-2-2        : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", pod=~"(.*)postgresql-bht-8-1-1769100503(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-- waiting 30s -               : done
-PostgreSQL-BHT-8-1            : can be stopped
-PostgreSQL-BHT-8-1            : had 0 0 restarts at worker bexhoma-sut-postgresql-bht-8-1-1769100503-79968d67bd-p8q2q
-Experiment                    : ends at 2026-01-22 19:41:02.565052 (33299426.035605356) - 6759.43s total
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1780843293-c8d67b694-gzdh6
+PostgreSQL-1-2-2-1            : showing benchmarker times
+PostgreSQL-1-2-2-1            : benchmarker timespan job from 1780848518 to 1780850001
+PostgreSQL-1-2-2-1            : benchmarker timespan pods from 1780848520 to 1780849967
+PostgreSQL-1-2-2-1            : benchmarker timespan (start to end single container [s]) = 1447
+PostgreSQL-1-2-2-1            : benchmarker times (start/end per pod and container) = [(1780848520, 1780849967), (1780848520, 1780849967)]
+PostgreSQL-1-2-2-1            : found and updated times {'benchmarker': [(1780848520, 1780849967), (1780848520, 1780849967)]}
+PostgreSQL-1-2-2-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-2-2-1            : collecting execution metrics of SUT at connection PostgreSQL-1-2-2-1
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-2-1            : collecting metrics of benchmarker at connection PostgreSQL-1-2-2-1
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1780843293(.*)", pod=~"(.*)postgresql-1-1780843293(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Experiment                    : ends at 2026-06-07 18:33:32.886675 (2221090.0944108) - 6717.20s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow not complete
+Result workflow complete
 
 ## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
-    Type: tpcc
-    Duration: 6760s 
-    Code: 1769100503
-    HammerDB runs the benchmark.
-    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
-    TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 20 minutes. Benchmarking has keying and thinking times activated. Benchmarking also logs latencies.
-    Experiment uses bexhoma version 0.8.20.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Database is persisted to disk of type shared and size 30Gi.
-    Loading is tested with [8] threads, split into [1] pods.
-    Benchmarking is tested with [160] threads, split into [1, 2] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run 2 times.
+* Type: tpcc
+* Duration: 6718s 
+* Code: 1780843293
+* HammerDB runs the benchmark.
+* This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+  * TPC-C data is generated and loaded using several threads.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 20 minutes. Benchmarking has keying and thinking times activated. Benchmarking also logs latencies.
+  * Experiment uses bexhoma version 0.9.10.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database is persisted to disk of type shared and size 30Gi.
+  * Loading is tested with [8] threads, split into [1] pods.
+  * Benchmarking is tested with [160] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run 2 times.
 
 ### Connections
-PostgreSQL-BHT-8-1-1-1 uses docker image postgres:17.5
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:95452
-    datadisk:3287
-    volume_size:30G
-    volume_used:3.3G
-    cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1769100503
-PostgreSQL-BHT-8-1-1-2 uses docker image postgres:17.5
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:95452
-    datadisk:3357
-    volume_size:30G
-    volume_used:3.3G
-    cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1769100503
-PostgreSQL-BHT-8-1-2-1 uses docker image postgres:17.5
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:95452
-    datadisk:3427
-    volume_size:30G
-    volume_used:3.4G
-    cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1769100503
-PostgreSQL-BHT-8-1-2-2 uses docker image postgres:17.5
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:95452
-    datadisk:3447
-    volume_size:30G
-    volume_used:3.4G
-    cpu_list:0-63
-    args:['-c', 'max_connections=1500', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1769100503
-
-### Execution
-                        experiment_run  vusers  client  pod_count  efficiency   NOPM    TPM  duration  errors
-PostgreSQL-BHT-8-1-1-1               1     160       1          1       97.20  200.0  464.0        20       0
-PostgreSQL-BHT-8-1-1-2               1     160       2          2       97.20  200.0  466.0        20       0
-PostgreSQL-BHT-8-1-2-1               2     160       1          1       97.69  201.0  460.0        20       0
-PostgreSQL-BHT-8-1-2-2               2     160       2          2       98.42  202.5  466.0        20       0
-
-Warehouses: 16
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:202795
+  * volume_size:30G
+  * volume_used:2.6G
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1780843293
+* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:202795
+  * volume_size:30G
+  * volume_used:2.6G
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1780843293
+* PostgreSQL-1-2-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:202795
+  * volume_size:30G
+  * volume_used:2.2G
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1780843293
+* PostgreSQL-1-2-2-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:202795
+  * volume_size:30G
+  * volume_used:2.2G
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1780843293
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8-1 - Pods [[2, 1], [2, 1]]
+
+* DBMS PostgreSQL-1 - Pods [[1, 2], [1, 2]]
 
 #### Planned
-DBMS PostgreSQL-BHT-8-1 - Pods [[1, 2], [1, 2]]
+
+* DBMS PostgreSQL-1 - Pods [[1, 2], [1, 2]]
 
 ### Loading
-                        time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-8-1-1-1      195.0        1.0   1.0                 295.384615
-PostgreSQL-BHT-8-1-1-2      195.0        1.0   2.0                 295.384615
-PostgreSQL-BHT-8-1-2-1      195.0        1.0   1.0                 295.384615
-PostgreSQL-BHT-8-1-2-2      195.0        1.0   2.0                 295.384615
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:---------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |   16 |      432.00 |           1.00 |            0.00 |        195.00 |          236.00 |              1 |           8 |          | None           |             0 | False         |              133.33 |
+| PostgreSQL-1-2 |                2 |   16 |      432.00 |           1.00 |            0.00 |        195.00 |          236.00 |              1 |           8 |          | None           |             0 | False         |              133.33 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                     |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |   TPM |   efficiency |   duration |   errors |
+|:-------------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|------:|-------------:|-----------:|---------:|
+| PostgreSQL-1-1-1-1-1-1-1 |                1 |      160 |        1 |               1 |       1 |    196 |   477 |        95.26 |         20 |        0 |
+| PostgreSQL-1-1-2-1-2-1-1 |                1 |       80 |        2 |               1 |       1 |    201 |   485 |       195.37 |         20 |        0 |
+| PostgreSQL-1-1-2-1-2-1-1 |                1 |       80 |        2 |               1 |       1 |    201 |   485 |       195.37 |         20 |        0 |
+| PostgreSQL-1-2-1-1-1-1-1 |                2 |      160 |        1 |               1 |       1 |    201 |   477 |        97.69 |         20 |        0 |
+| PostgreSQL-1-2-2-1-2-1-1 |                2 |       80 |        2 |               1 |       1 |    199 |   475 |       193.43 |         20 |        0 |
+| PostgreSQL-1-2-2-1-2-1-1 |                2 |       80 |        2 |               1 |       1 |    199 |   475 |       193.43 |         20 |        0 |
+
+#### Per Phase
+
+| DBMS               |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |   NOPM |    TPM |   duration |   errors |
+|:-------------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|-------:|-------:|-----------:|---------:|
+| PostgreSQL-1-1-1-1 |             1.00 |   160.00 |     1.00 |            1.00 |        1.00 |        95.26 | 196.00 | 477.00 |      20.00 |     0.00 |
+| PostgreSQL-1-1-2-1 |             1.00 |   160.00 |     2.00 |            1.00 |        2.00 |        97.69 | 201.00 | 485.00 |      20.00 |     0.00 |
+| PostgreSQL-1-2-1-1 |             2.00 |   160.00 |     1.00 |            1.00 |        1.00 |        97.69 | 201.00 | 477.00 |      20.00 |     0.00 |
+| PostgreSQL-1-2-2-1 |             2.00 |   160.00 |     2.00 |            1.00 |        2.00 |        96.71 | 199.00 | 475.00 |      20.00 |     0.00 |
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
-                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       93.45     0.59          7.59                 9.04
-PostgreSQL-BHT-8-1-1-2       93.45     0.59          7.59                 9.04
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       112.56 |      0.74 |           0.22 |                  2.78 |
+| PostgreSQL-1-1-2-1 |       112.56 |      0.74 |           0.22 |                  2.78 |
 
 ### Loading phase: component loader
-                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       248.1     2.98          0.08                 0.09
-PostgreSQL-BHT-8-1-1-2       248.1     2.98          0.08                 0.09
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       250.22 |      4.29 |           0.09 |                  0.09 |
+| PostgreSQL-1-1-2-1 |       250.22 |      4.29 |           0.09 |                  0.09 |
 
 ### Execution phase: SUT deployment
-                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       31.12     0.31          8.86                10.42
-PostgreSQL-BHT-8-1-1-2       30.61     0.05          9.02                10.57
-PostgreSQL-BHT-8-1-2-1      200.66     0.07          7.91                 9.56
-PostgreSQL-BHT-8-1-2-2       39.44     0.07          8.05                 9.98
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        47.78 |      0.07 |           0.92 |                  3.48 |
+| PostgreSQL-1-1-2-1 |        50.27 |      0.08 |           0.93 |                  3.17 |
+| PostgreSQL-1-2-1-1 |       214.74 |      0.07 |           0.92 |                  2.86 |
+| PostgreSQL-1-2-2-1 |        48.85 |      0.11 |           0.92 |                  2.83 |
 
 ### Execution phase: component benchmarker
-                        CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1-1-1       23.80     0.06          0.58                 0.58
-PostgreSQL-BHT-8-1-1-2       23.41     0.02          0.58                 0.58
-PostgreSQL-BHT-8-1-2-1       26.34     0.07          0.58                 0.58
-PostgreSQL-BHT-8-1-2-2       23.93     0.12          0.58                 0.58
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-2-1 |        22.00 |      0.16 |           0.58 |                  0.58 |
+| PostgreSQL-1-2-2-1 |        22.42 |      0.13 |           0.58 |                  0.58 |
 
 ### Tests
-TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: NOPM contains no 0 or NaN
-TEST passed: Workflow as planned
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: NOPM contains no 0 or NaN
+* TEST passed: Workflow as planned
