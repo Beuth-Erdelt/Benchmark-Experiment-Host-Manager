@@ -1,4 +1,4 @@
-﻿# Concepts
+# Concepts
 
 ## What is Bexhoma?
 

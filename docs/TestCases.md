@@ -1,4 +1,4 @@
-﻿# Test Cases
+# Test Cases
 
 There is a variety of combinations of options that can be tested.
 

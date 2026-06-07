@@ -19,11 +19,11 @@
 # Default variable values (override after dot-sourcing if needed)
 # ---------------------------------------------------------------------------
 
-$BEXHOMA_NODE_SUT       = "cl-worker14"
+$BEXHOMA_NODE_SUT       = "cl-worker38"
 $BEXHOMA_NODE_LOAD      = "cl-worker19"
 $BEXHOMA_NODE_BENCHMARK = "cl-worker19"
 $LOG_DIR                = ".\logs_tests"
-$BEXHOMA_MS             = 1
+$BEXHOMA_MS             = 4
 
 # ---------------------------------------------------------------------------
 # Helper functions
@@ -96,8 +96,8 @@ Write-Host "Checks passed. Proceeding..."
 # Wait for any pre-existing jobs
 # ---------------------------------------------------------------------------
 
-Wait-BexhomaProcess "tpch"
-Wait-BexhomaProcess "tpcds"
-Wait-BexhomaProcess "hammerdb"
-Wait-BexhomaProcess "benchbase"
-Wait-BexhomaProcess "ycsb"
+#Wait-BexhomaProcess "tpch"
+#Wait-BexhomaProcess "tpcds"
+#Wait-BexhomaProcess "hammerdb"
+#Wait-BexhomaProcess "benchbase"
+#Wait-BexhomaProcess "ycsb"

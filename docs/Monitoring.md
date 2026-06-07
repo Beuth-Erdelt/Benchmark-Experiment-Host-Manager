@@ -1,4 +1,4 @@
-﻿# Concept: Monitoring
+# Concept: Monitoring
 
 Bexhoma automatically observes resource consumption of every cluster component during each benchmark phase and stores the metrics alongside the experiment results.
 Metrics are fetched from Prometheus after each phase completes and are included in the experiment summary and in the result files consumed by evaluators and collectors.

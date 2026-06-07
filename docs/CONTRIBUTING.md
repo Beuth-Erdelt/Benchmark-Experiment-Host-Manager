@@ -1,4 +1,4 @@
-﻿# Contributing to Bexhoma
+# Contributing to Bexhoma
 
 Contributions are welcome. Areas where help is most useful:
 

@@ -1,4 +1,4 @@
-﻿# Example: Benchmark TiDB
+# Example: Benchmark TiDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 TiDB is a disaggregated DBMS.

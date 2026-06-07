@@ -1,4 +1,4 @@
-﻿# Benchmark: Benchbase's Others
+# Benchmark: Benchbase's Others
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
