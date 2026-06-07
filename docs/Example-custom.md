@@ -1,4 +1,4 @@
-# Example: Run a custom SQL workload
+﻿# Example: Run a custom SQL workload
 
 This example assumes you have
 * a DBMS installed outside of bexhoma

@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,7 +53,7 @@ wait_process "ycsb"
 ####################################################
 
 
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -90,11 +72,9 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_citus_1.log &
+  run &>$LOG_DIR/doc_ycsb_citus_1.log
 
-
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-ycsb-1
 kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-0
@@ -103,7 +83,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-2
 sleep 30
 
 
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -123,10 +103,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_citus_2.log &
+  run &>$LOG_DIR/doc_ycsb_citus_2.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -134,7 +113,7 @@ wait_process "ycsb"
 ####################################################
 
 
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -146,11 +125,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_citus_1.log &
+  run &>$LOG_DIR/doc_benchbase_citus_1.log
 
-
-wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
 kubectl delete pvc bexhoma-storage-citus-benchbase-tpcc-128
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-0
@@ -160,7 +137,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-3
 sleep 30
 
 
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -nw 4 \
@@ -174,13 +151,12 @@ nohup python benchbase.py -ms 1 -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
+  run &>$LOG_DIR/doc_benchbase_citus_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
-wait_process "benchbase"
-
-
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
@@ -197,11 +173,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_citus_3.log &
+  run &>$LOG_DIR/doc_benchbase_citus_3.log
 
-
-wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
 
 ####################################################
@@ -209,8 +183,7 @@ wait_process "benchbase"
 ####################################################
 
 
-
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 16 \
   -xlat \
   -dbms Citus \
@@ -223,11 +196,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_1.log &
+  run &>$LOG_DIR/doc_hammerdb_citus_1.log
 
-
-wait_process "hammerdb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-128
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-0
@@ -237,7 +208,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-3
 sleep 30
 
 
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 128 \
   -sd 30 \
   -xlat \
@@ -254,11 +225,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_2.log &
+  run &>$LOG_DIR/doc_hammerdb_citus_2.log
 
-
-wait_process "hammerdb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-500
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-0
@@ -268,7 +237,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-3
 sleep 30
 
 
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 500 \
   -sd 20 \
   -xlat \
@@ -285,19 +254,16 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 200Gi \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_3.log &
+  run &>$LOG_DIR/doc_hammerdb_citus_3.log
 
-
-wait_process "hammerdb"
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
 
 ####################################################
 #################### TPC-H Citus ###################
 ####################################################
 
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms 1 -tr \
   -sf 1 \
   -nw 4 \
   -nwr 1 \
@@ -311,11 +277,9 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_1.log &
+  run &>$LOG_DIR/test_tpch_testcase_citus_1.log
 
-
-wait_process "tpch"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus  sf=1  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-tpch-10
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
@@ -325,7 +289,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms 1 -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \
@@ -341,12 +305,9 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_2.log &
+  run &>$LOG_DIR/test_tpch_testcase_citus_2.log
 
-
-wait_process "tpch"
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
 kubectl delete pvc bexhoma-storage-citus-tpch-10
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
@@ -356,7 +317,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms 1 -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \
@@ -372,15 +333,9 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_3.log &
+  run &>$LOG_DIR/test_tpch_testcase_citus_3.log
 
-
-wait_process "tpch"
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 
 
 ###########################################

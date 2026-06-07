@@ -45,34 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-############# Generate Docs ###############
-###########################################
-
-
-
-
 
 
 
@@ -82,7 +54,7 @@ wait_process "ycsb"
 
 
 #### TCP-DS Compare (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms 1 -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
@@ -90,16 +62,13 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -t 1200 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_compare.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 7200
-wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms 1 -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -109,15 +78,13 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms 1 -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -127,11 +94,9 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -nc 1 \
   -ne 1,2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_throughput.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
 #### Remove persistent storage
@@ -140,7 +105,7 @@ sleep 30
 
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms 1 -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -150,24 +115,9 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
-# does not work
-#nohup python tpcds.py -ms 1 -dt -tr \
-#  -dbms PostgreSQL \
-#  -nlp 8 \
-#  -nlt 8 \
-#  -sf 0.1 \
-#  -ii -ic -is \
-#  -nc 2 \
-#  -rst shared -rss 5Gi -rsr \
-#  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-#  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_fractional.log &
-#wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
 
 
 ###########################################
@@ -181,7 +131,7 @@ sleep 30
 
 
 #### TCP-DS Power 30 (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 \
+bexhoma tpcds -ms 1 \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -191,16 +141,13 @@ nohup python tpcds.py -ms 1 \
   -rr 1024Gi -lr 1024Gi \
   -t 14400 -dt \
   -rst shared -rss 1000Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpcds_monetdb_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
-#### Wait so that next experiment receives a different code
-#sleep 1800
-wait_process "tpcds"
-
-
-#### TCP-DS Power 30 (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 \
+#### TCP-DS Power 30 repeated (Example-TPC-DS.md)
+bexhoma tpcds -ms 1 \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -210,16 +157,13 @@ nohup python tpcds.py -ms 1 \
   -rr 1024Gi -lr 1024Gi \
   -t 14400 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
 #### TCP-DS Throughput 30 (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 \
+bexhoma tpcds -ms 1 \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -229,16 +173,9 @@ nohup python tpcds.py -ms 1 \
   -rr 1024Gi -lr 1024Gi \
   -t 14400 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpcds"
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
 ###########################################
@@ -246,8 +183,8 @@ wait_process "tpcds"
 ###########################################
 
 
-#### TCP-H Profiling (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr \
+#### TCP-DS Profiling (Example-TPC-DS.md)
+bexhoma tpcds -ms 1 -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -258,12 +195,9 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi \
-  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling.log &
+  profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpcds"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS profiling  sf=10  ne=1,1"
 
 
 ###########################################

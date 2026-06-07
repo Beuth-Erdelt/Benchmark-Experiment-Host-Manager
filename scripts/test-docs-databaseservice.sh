@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -84,7 +66,7 @@ sleep 10
 
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+bexhoma ycsb -ms 2 -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -99,16 +81,13 @@ nohup python ycsb.py -ms 2 -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_1.log &
+  run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
 
 #### YCSB Execution (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+bexhoma ycsb -ms 2 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -125,12 +104,9 @@ nohup python ycsb.py -ms 2 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_2.log &
+  run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
 # delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
@@ -151,7 +127,7 @@ sleep 10
 
 
 #### YCSB Persistent Storage (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+bexhoma ycsb -ms 2 -tr \
   -sf 5 \
   -sfo 10 \
   --workload a \
@@ -168,21 +144,9 @@ nohup python ycsb.py -ms 2 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_3.log &
+  run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
 
 
@@ -205,7 +169,7 @@ sleep 10
 
 
 # no PVC
-nohup python benchbase.py -ms 2 -tr \
+bexhoma benchbase -ms 2 -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -214,14 +178,12 @@ nohup python benchbase.py -ms 2 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_1.log &
+  run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
-nohup python benchbase.py -ms 2 -tr \
+bexhoma benchbase -ms 2 -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -231,17 +193,9 @@ nohup python benchbase.py -ms 2 -tr \
   -tb 1024 \
   -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_2.log &
+  run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "benchbase"
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
 
 
@@ -263,9 +217,8 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 sleep 10
 
 
-#### TCP-H Monitoring (Example-CloudDatabase.md)
-# no PVC
-nohup python tpch.py -ms 2 -dt -tr \
+#### TCP-H Monitoring (Example-CloudDatabase.md) — no PVC
+bexhoma tpch -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -274,16 +227,13 @@ nohup python tpch.py -ms 2 -dt -tr \
   -t 1200 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md)
-# no PVC, skip loading
-nohup python tpch.py -ms 2 -dt -tr \
+#### TCP-H Monitoring (Example-TPC-H.md) — no PVC, skip loading
+bexhoma tpch -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -293,11 +243,9 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
 
 # delete pvc of placeholder
@@ -316,12 +264,9 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 sleep 10
 
-# login into database service placeholder
-# kubectl port-forward svc/bexhoma-service 9091:9091
 
-#### TCP-H Monitoring (Example-TPC-H.md)
-# with PVC, ingestion
-nohup python tpch.py -ms 2 -dt -tr \
+#### TCP-H Monitoring (Example-TPC-H.md) — with PVC, ingestion
+bexhoma tpch -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -331,16 +276,13 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md)
-# with PVC, execution only
-nohup python tpch.py -ms 2 -dt -tr \
+#### TCP-H Monitoring (Example-TPC-H.md) — with PVC, execution only
+bexhoma tpch -ms 2 -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -350,21 +292,14 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 
 
 # delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
-
-
-
-
-
 
 
 ###########################################

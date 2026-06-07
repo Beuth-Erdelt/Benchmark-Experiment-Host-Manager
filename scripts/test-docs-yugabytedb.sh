@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,8 +54,7 @@ wait_process "ycsb"
 
 
 install_yugabytedb() {
-  # Parameter: $1 = persistent storage? yes/no
-  PERSISTENT=${1:-yes}  # Default: persistent
+  PERSISTENT=${1:-yes}
 
   if [[ "$PERSISTENT" == "yes" ]]; then
     EPHEMERAL=false
@@ -107,14 +88,9 @@ enableLoadBalancer=true
   sleep 60
 }
 
-#install_yugabytedb yes   # persistent storage
-#install_yugabytedb no    # ephemeral storage
-#install_yugabytedb       # default = persistent
-
 
 remove_yugabytedb() {
-  # Parameter: $1 = remove PVCs? yes/no
-  REMOVE_PVC=${1:-no}  # default: do NOT remove PVCs
+  REMOVE_PVC=${1:-no}
 
   echo "Deleting Helm release bexhoma..."
   helm delete bexhoma
@@ -131,16 +107,12 @@ remove_yugabytedb() {
   sleep 60
 }
 
-#remove_yugabytedb yes   # Helm release + PVCs
-#remove_yugabytedb no    # nur Helm release, PVCs behalten
-#remove_yugabytedb       # default = no
-
 
 # install YugabyteDB
 install_yugabytedb no
 
 #### YCSB Ingestion (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -156,14 +128,12 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_1.log &
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
-wait_process "ycsb"
-
-# skip loading, because previous process has generated it
 #### YCSB Execution (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -180,10 +150,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_2.log &
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
 # remove YugabyteDB installation
@@ -198,7 +167,7 @@ kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
 sleep 30
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -215,10 +184,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_3.log &
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
 # remove YugabyteDB installation
@@ -231,7 +199,7 @@ sleep 30
 
 
 #### Benchbase Simple (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -241,10 +209,9 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
+  run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 
-
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
 # remove YugabyteDB installation
@@ -255,31 +222,9 @@ sleep 30
 install_yugabytedb no
 sleep 30
 
-# kubectl patch statefulset yb-tserver --type=merge -p '
-# spec:
-#   template:
-#     spec:
-#       containers:
-#       - name: yb-tserver
-#         livenessProbe:
-#           exec:
-#             command: ["true"]
-# '
-
-# kubectl patch statefulset yb-master --type=merge -p '
-# spec:
-#   template:
-#     spec:
-#       containers:
-#       - name: yb-master
-#         livenessProbe:
-#           exec:
-#             command: ["true"]
-# '
-
 
 #### Benchbase More Complex (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -slg 30 \
   -sd 20 \
@@ -291,18 +236,13 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
+  run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 
-
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
 # remove YugabyteDB installation
 remove_yugabytedb no
-
-
-
-
 
 
 ################################################
@@ -314,7 +254,7 @@ remove_yugabytedb no
 install_yugabytedb no
 sleep 30
 
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -329,9 +269,9 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
 # remove YugabyteDB installation
@@ -343,8 +283,8 @@ install_yugabytedb no
 sleep 30
 
 
-#### Benchbase Simple (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase Application Metrics (Example-YugaByteDB.md)
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -353,14 +293,13 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 
 # remove YugabyteDB installation
 remove_yugabytedb no
-
 
 
 ###########################################

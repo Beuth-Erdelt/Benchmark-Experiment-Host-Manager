@@ -1,4 +1,4 @@
-# Benchmark: YCSB
+﻿# Benchmark: YCSB
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -40,7 +40,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -54,7 +54,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_loading.log
 ```
 
 This
@@ -375,7 +375,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -389,7 +389,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
 ```
 This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
 Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
@@ -520,7 +520,7 @@ YCSB SF=1
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -535,7 +535,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like this:
@@ -715,7 +715,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -730,7 +730,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -rst shared -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_storage.log
 ```
 The following status shows we have one volume of type `shared`.
 Every PostgreSQL experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
@@ -960,7 +960,7 @@ In special cases (for example a batch of benchmarks) you may want to set a param
 Here is an example for how to use `--set` for PostgreSQL 18. This sets `effective_io_concurrency` to 64.
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -974,7 +974,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
 ```
 
 The result looks something like
@@ -1059,7 +1059,7 @@ Workload A is 50% READ and 50% UPDATE.
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \
@@ -1074,7 +1074,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_a.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_a.log
 ```
 
 ### Evaluate Results
@@ -1281,7 +1281,7 @@ Workload B is 95% READ and 5% UPDATE.
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload b \
   -dbms PostgreSQL \
@@ -1296,7 +1296,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_b.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_b.log
 ```
 
 ### Evaluate Results
@@ -1436,7 +1436,7 @@ Workload C is 100% READ.
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload c \
   -dbms PostgreSQL \
@@ -1451,7 +1451,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_c.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_c.log
 ```
 
 ### Evaluate Results
@@ -1599,7 +1599,7 @@ It assumes the keyspace is filled completely up to some `recordcount` and new da
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload d \
   -xio hashed \
@@ -1615,7 +1615,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_d.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_d.log
 ```
 
 ### Evaluate Results
@@ -1741,7 +1741,7 @@ Scans might be done over empty keyspaces.
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload e \
   -xio ordered \
@@ -1757,7 +1757,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_e.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_e.log
 ```
 
 ### Evaluate Results
@@ -1877,7 +1877,7 @@ Workload F is 50% READ and 50% READ-MODIFY-WRITE.
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload f \
   -dbms PostgreSQL \
@@ -1892,7 +1892,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_f.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_f.log
 ```
 
 ### Evaluate Results

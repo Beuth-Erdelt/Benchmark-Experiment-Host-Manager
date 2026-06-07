@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,7 +54,7 @@ wait_process "ycsb"
 
 
 #### YCSB Ingestion (Example-TiDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -90,14 +72,12 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_tidb_1.log &
+  run &>$LOG_DIR/doc_ycsb_tidb_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 
 
-wait_process "ycsb"
-
-
-
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -109,14 +89,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_tidb_1.log &
+  run &>$LOG_DIR/doc_benchbase_tidb_1.log
 
-
-wait_process "benchbase"
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 
 
 ###########################################

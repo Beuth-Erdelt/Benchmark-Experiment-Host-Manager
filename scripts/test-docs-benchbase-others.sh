@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,9 +53,8 @@ wait_process "ycsb"
 ####################################################
 
 
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase Twitter Simple (Example-Benchbase-Others.md)
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -83,16 +64,13 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -b twitter \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter simple  sf=16  nbp=1"
 
 
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase Twitter Scale (Example-Benchbase-Others.md)
+bexhoma benchbase -ms 1 -tr \
   -rr 128Gi -lr 128Gi \
   -sf 1600 \
   -sd 20 \
@@ -104,16 +82,13 @@ nohup python benchbase.py -ms 1 -tr \
   -b twitter \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
 
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase CH-benCHmark Simple (Example-Benchbase-Others.md)
+bexhoma benchbase -ms 1 -tr \
   -sf 10 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -123,15 +98,13 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -b chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
 
 
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase CH-benCHmark Scale (Example-Benchbase-Others.md)
+bexhoma benchbase -ms 1 -tr \
   -rr 128Gi -lr 128Gi \
   -sf 100 \
   -sd 20 \
@@ -142,16 +115,13 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -b chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
 
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -tr \
+#### Benchbase YCSB Workload C (Example-Benchbase-Others.md)
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -163,16 +133,13 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
 
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -tr \
+#### Benchbase YCSB Workload A (Example-Benchbase-Others.md)
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -184,16 +151,13 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
 
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -tr \
+#### Benchbase YCSB Workload B (Example-Benchbase-Others.md)
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -205,18 +169,13 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
 
-
-
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -tr \
+#### Benchbase YCSB Workload D (Example-Benchbase-Others.md)
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -228,17 +187,13 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
 
 
-
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -tr \
+#### Benchbase YCSB Workload E (Example-Benchbase-Others.md)
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -250,17 +205,13 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
 
 
-
-
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -tr \
+#### Benchbase YCSB Workload F (Example-Benchbase-Others.md)
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -272,14 +223,9 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
 
 ###########################################

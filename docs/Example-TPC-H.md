@@ -1,4 +1,4 @@
-# Benchmark: TPC-H
+﻿# Benchmark: TPC-H
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -33,14 +33,14 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
+  run &>$LOG_DIR/doc_tpch_testcase_compare.log
 ```
 
 This
@@ -411,7 +411,7 @@ options:
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -420,7 +420,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like this:
@@ -597,7 +597,7 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -606,7 +606,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 1 \
   -ne 1,2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
+  run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 ```
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
@@ -771,7 +771,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -780,7 +780,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
+  run &>$LOG_DIR/doc_tpch_testcase_storage.log
 ```
 The following status shows we have a volumes of type `shared`.
 Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.
@@ -965,7 +965,7 @@ TPC-H supports scaling factors that are fractional.
 Example: SF=0.1
 
 ```bash
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -974,7 +974,7 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 5Gi -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_fractional.log &
+  run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 ```
 
 results in
@@ -1171,7 +1171,7 @@ LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
 
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -1181,7 +1181,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_1.log
 ```
 
 ### Status Data Disk
@@ -1397,7 +1397,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -1407,7 +1407,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_2.log
 ```
 
 ### Evaluate Results
@@ -1616,7 +1616,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -1626,7 +1626,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_3.log
 ```
 
 ### Evaluate Results

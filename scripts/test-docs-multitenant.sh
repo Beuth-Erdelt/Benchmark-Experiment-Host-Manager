@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,7 +54,7 @@ wait_process "ycsb"
 
 BEXHOMA_NUM_TENANTS=2
 
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 \
   --dbms PostgreSQL \
@@ -81,11 +63,11 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
@@ -94,22 +76,22 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
   -ii -ic -is \
-  -nlp 1 -nlt 1 -nbp 1  -nlt 64 \
+  -nlp 1 -nlt 1 -nbp 1 -nlt 64 \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 5Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -120,7 +102,7 @@ wait_process "tpch"
 
 BEXHOMA_NUM_TENANTS=2
 
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 -sd 5 -xkey \
@@ -129,11 +111,11 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 20Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -142,11 +124,11 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 20Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
@@ -155,10 +137,9 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log
 
-wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -169,7 +150,7 @@ wait_process "benchbase"
 
 BEXHOMA_NUM_TENANTS=2
 
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -178,11 +159,11 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log &
+  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log
 
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
@@ -191,24 +172,9 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log &
+  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log
 
-wait_process "benchbase"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 ###########################################

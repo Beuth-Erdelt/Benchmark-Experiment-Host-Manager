@@ -1,4 +1,4 @@
-# Example: Benchmark CockroachDB
+﻿# Example: Benchmark CockroachDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -47,7 +47,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -65,7 +65,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_1.log &
+  run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
 ```
 
 This
@@ -276,7 +276,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -295,7 +295,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
+  run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
 ```
 The following status shows we have one volume of type `shared`.
 Every Citus experiment will take the databases from these volumes and skip loading.
@@ -512,8 +512,7 @@ It can be activated by `-m -mc -ma`.
 See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for some example definitions.
 
 ```bash
-#### YCSB PVC (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -531,7 +530,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_3.log &
+  run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
 ```
 
 
@@ -730,7 +729,7 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 CockroachDB has 3 workers.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -741,7 +740,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
+  run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 ```
 
 ### Evaluate Results
@@ -902,7 +901,7 @@ TPC-C is performed at 128 warehouses.
 The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -914,7 +913,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
+  run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
 ```
 
 ### Evaluate Results
@@ -1236,7 +1235,7 @@ TPC-C is performed at 128 warehouses.
 The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -1249,7 +1248,7 @@ nohup python benchbase.py -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
   -rst shared -rss 100Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_3.log &
+  run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
 ```
 
 ### Evaluate Results

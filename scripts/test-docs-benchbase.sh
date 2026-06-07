@@ -45,31 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-############# Generate Docs ###############
-###########################################
-
 
 
 
@@ -79,7 +54,7 @@ wait_process "ycsb"
 
 
 #### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -88,15 +63,13 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -106,10 +79,9 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 
-#### Wait so that next experiment receives a different code
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 
 
 #### Remove persistent storage
@@ -118,7 +90,7 @@ sleep 30
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -129,10 +101,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 
-#### Wait so that next experiment receives a different code
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 
 
 #### Remove persistent storage
@@ -140,7 +111,8 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 sleep 30
 
 
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase Keying and Thinking Time (Example-Benchbase.md)
+bexhoma benchbase -ms 1 -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \
   -sd 30 \
@@ -155,11 +127,10 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
 
-#### Wait so that next experiment receives a different code
-wait_process "benchbase"
 
 ###########################################
 ############## Clean Folder ###############

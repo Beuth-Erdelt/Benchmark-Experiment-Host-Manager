@@ -1,4 +1,4 @@
-# Benchmark: Benchbase's Others
+﻿# Benchmark: Benchbase's Others
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -41,7 +41,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -51,7 +51,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -b twitter \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 ```
 
 This
@@ -165,7 +165,7 @@ You can find the output of the files in the result folder.
 
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 1600 \
   -sd 20 \
   -dbms PostgreSQL \
@@ -176,7 +176,7 @@ nohup python benchbase.py -ms 1 -tr \
   -b twitter \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 ```
 
 ### Evaluate Results
@@ -407,7 +407,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 10 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -417,7 +417,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -b chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 ```
 
 This
@@ -531,7 +531,7 @@ You can find the output of the files in the result folder.
 
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 100 \
   -sd 20 \
   -dbms PostgreSQL \
@@ -541,7 +541,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -b chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 ```
 
 ### Evaluate Results
@@ -722,7 +722,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -tr \
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -734,7 +734,7 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 ```
 
 This
@@ -857,7 +857,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -tr \
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -869,7 +869,7 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 ```
 
 
@@ -976,7 +976,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -tr \
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -988,7 +988,7 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 ```
 
 
@@ -1097,7 +1097,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -tr \
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -1109,7 +1109,7 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 ```
 
 This time we only use a single benchmarking pod.
@@ -1200,7 +1200,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -tr \
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -1212,7 +1212,7 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 ```
 
 This time we only use a single benchmarking pod.
@@ -1303,7 +1303,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -tr \
+bexhoma benchbase -tr \
   -sf 1000 \
   -sd 5 \
   --benchmark ycsb \
@@ -1315,7 +1315,7 @@ nohup python benchbase.py -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 ```
 
 ### Evaluate Results

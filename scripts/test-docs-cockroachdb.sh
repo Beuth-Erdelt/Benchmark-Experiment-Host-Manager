@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,7 +54,7 @@ wait_process "ycsb"
 
 
 #### YCSB Ingestion (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -90,14 +72,13 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_1.log &
+  run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
 #### YCSB PVC (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -116,14 +97,13 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_2.log &
+  run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
-wait_process "ycsb"
-
-
-#### YCSB PVC (Example-CockroachDB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Scale (Example-CockroachDB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -141,14 +121,13 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_cockroachdb_3.log &
+  run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 
 
 #### Benchbase Simple (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -159,14 +138,13 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_1.log &
+  run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 
-
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
 #### Benchbase Complex (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -178,14 +156,13 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_2.log &
+  run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
 
-
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
 #### Benchbase Complex with PVC (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 10 \
   -nw 3 \
@@ -198,19 +175,9 @@ nohup python benchbase.py -ms 1 -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
   -rst shared -rss 100Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_benchbase_cockroachdb_3.log &
+  run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
 
-
-wait_process "benchbase"
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 
 ###########################################

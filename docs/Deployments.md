@@ -1,4 +1,4 @@
-# Deployments in Kubernetes
+﻿# Deployments in Kubernetes
 
 The deployment is expected to be given as a file named `'deployment-'+docker+'-'+instance+'.yml'`
 Such files are generated from a template.

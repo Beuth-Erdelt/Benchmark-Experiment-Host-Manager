@@ -1,4 +1,4 @@
-# Example: Benchmark Citus
+﻿# Example: Benchmark Citus
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -41,7 +41,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -60,7 +60,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_citus_1.log &
+  run &>$LOG_DIR/doc_ycsb_citus_1.log
 ```
 
 This
@@ -293,7 +293,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -313,7 +313,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_citus_2.log &
+  run &>$LOG_DIR/doc_ycsb_citus_2.log
 ```
 The following status shows we have one volume of type `shared`.
 Every Citus experiment will take the databases from these volumes and skip loading.
@@ -624,7 +624,7 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 Citus has 3 workers.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -636,7 +636,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_citus_1.log &
+  run &>$LOG_DIR/doc_benchbase_citus_1.log
 ```
 
 ### Evaluate Results
@@ -809,7 +809,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-3
 The benchmark is run via
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -nw 4 \
@@ -823,7 +823,7 @@ nohup python benchbase.py -ms 1 -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_citus_2.log &
+  run &>$LOG_DIR/doc_benchbase_citus_2.log
 ```
 
 ### Evaluate Results
@@ -1245,7 +1245,7 @@ Each thread also gets assigned a fixed range of districts per warehouse.
 Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -sd 20 \
   -slg 30 \
@@ -1262,7 +1262,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_citus_3.log &
+  run &>$LOG_DIR/doc_benchbase_citus_3.log
 ```
 
 ### Evaluate Results
@@ -1950,7 +1950,7 @@ Citus has 3 workers.
 
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 16 \
   -xlat \
   -dbms Citus \
@@ -1963,7 +1963,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_1.log &
+  run &>$LOG_DIR/doc_hammerdb_citus_1.log
 ```
 
 ### Evaluate Results
@@ -2063,7 +2063,7 @@ TEST passed: Workflow as planned
 ### HammerDB More Complex Example
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 128 \
   -sd 30 \
   -xlat \
@@ -2080,7 +2080,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_2.log &
+  run &>$LOG_DIR/doc_hammerdb_citus_2.log
 ```
 
 ### Evaluate Results
@@ -2485,7 +2485,7 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s 
 
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 500 \
   -sd 20 \
   -nw 4 \
@@ -2501,7 +2501,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 200Gi \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_citus_3.log &
+  run &>$LOG_DIR/doc_hammerdb_citus_3.log
 ```
 
 ### Evaluate Results
@@ -3168,7 +3168,7 @@ In a correlated subquery there cannot be a replicated table, so we have to rewri
 
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms 1 -tr \
   -sf 1 \
   -nw 4 \
   -nwr 1 \
@@ -3182,7 +3182,7 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_1.log &
+  run &>$LOG_DIR/test_tpch_testcase_citus_1.log
 ```
 
 
@@ -3355,7 +3355,7 @@ Then we run TPC-H Power Test at SF=10.
 Note that this takes a lot of disk space including for indexes.
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms 1 -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \
@@ -3370,7 +3370,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,1 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_2.log &
+  run &>$LOG_DIR/test_tpch_testcase_citus_2.log
 ```
 
 ### Evaluate Results
@@ -3784,7 +3784,7 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 The experiment runs like this:
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms 1 -tr \
   -sf 10 \
   -nw 4 \
   -nwr 1 \
@@ -3799,7 +3799,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,1 \
   -nc 2 \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_citus_3.log &
+  run &>$LOG_DIR/test_tpch_testcase_citus_3.log
 ```
 
 ### Evaluate Results

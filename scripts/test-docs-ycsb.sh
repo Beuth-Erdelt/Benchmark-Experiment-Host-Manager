@@ -45,30 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-############# Generate Docs ###############
-###########################################
 
 
 
@@ -78,7 +54,7 @@ wait_process "ycsb"
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -92,15 +68,13 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_loading.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading  sf=1  nlp=1,8"
 
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -114,15 +88,13 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -137,11 +109,9 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1800
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB monitoring  sf=3  nbp=1,8"
 
 
 #### Remove persistent storage
@@ -150,7 +120,7 @@ sleep 30
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -165,13 +135,13 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_storage.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_storage.log
 
-#### Wait so that next experiment receives a different code
-#sleep 900
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
 
-nohup python ycsb.py -ms 1 -tr \
+
+#### YCSB Custom Loading Parameters (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -185,17 +155,18 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading patch  sf=1  nlp=1"
+
 
 ###########################################
 ############## All Workloads ##############
 ###########################################
 
 
-#### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Workload A (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \
@@ -211,15 +182,13 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rr 64Gi -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_a.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_a.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload a  sf=10  nbp=1,8"
 
 
-#### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Workload B (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload b \
   -dbms PostgreSQL \
@@ -235,15 +204,13 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rr 64Gi -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_b.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_b.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload b  sf=10  nbp=1,8"
 
 
-#### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Workload C (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload c \
   -dbms PostgreSQL \
@@ -259,15 +226,13 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rr 64Gi -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_c.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_c.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload c  sf=10  nbp=1,8"
 
 
-#### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Workload D (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload d \
   -xio hashed \
@@ -284,15 +249,13 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rr 64Gi -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_d.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_d.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload d  sf=10  nbp=1"
 
 
-#### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Workload E (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload e \
   -xio ordered \
@@ -309,15 +272,13 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rr 64Gi -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_e.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_e.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload e  sf=10  nbp=1"
 
 
-#### YCSB Monitoring (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Workload F (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   --workload f \
   -dbms PostgreSQL \
@@ -333,19 +294,9 @@ nohup python ycsb.py -ms 1 -tr \
   -m -mc \
   -rr 64Gi -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_f.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_f.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload f  sf=10  nbp=1,8"
 
 
 ###########################################

@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,8 +53,8 @@ wait_process "ycsb"
 ####################################################
 
 
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+#### Benchbase Application Metrics (Example-Benchbase.md)
+bexhoma benchbase -m -mc -ma -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -81,16 +63,13 @@ nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
-
-#### YCSB Monitoring Application Metrics (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Application Metrics (Example-YCSB.md)
+bexhoma ycsb -ms 1 -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -105,15 +84,13 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log
 
-wait_process "ycsb"
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=1,8"
 
 
-#### TCP-H Monitoring Application Metrics (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-H Application Metrics (Example-TPC-H.md)
+bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -122,14 +99,13 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 
 
-
-#### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-DS Application Metrics (Example-TPC-DS.md)
+bexhoma tpcds -ms 1 -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -138,13 +114,13 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
 
-wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL appmetrics  sf=3"
 
 
-#### HammerDB Monitoring Application Metrics (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 -tr \
+#### HammerDB Application Metrics (Example-HammerDB.md)
+bexhoma hammerdb -ms 1 -tr \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -154,15 +130,9 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log
 
-wait_process "hammerdb"
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -170,9 +140,8 @@ wait_process "hammerdb"
 ####################################################
 
 
-
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+#### Benchbase MySQL Application Metrics
+bexhoma benchbase -m -mc -ma -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms MySQL \
@@ -181,16 +150,13 @@ nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
-wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL appmetrics  sf=16  nbp=1,2"
 
 
-
-#### YCSB Monitoring Application Metrics (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr -lr 64Gi \
+#### YCSB MySQL Application Metrics
+bexhoma ycsb -ms 1 -tr -lr 64Gi \
   -sf 3 \
   --workload a \
   -dbms MySQL \
@@ -205,15 +171,13 @@ nohup python ycsb.py -ms 1 -tr -lr 64Gi \
   -nc 1 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log
 
-wait_process "ycsb"
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 
 
-#### TCP-H Monitoring Application Metrics (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-H MySQL Application Metrics
+bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
@@ -222,14 +186,13 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL appmetrics  sf=3"
 
 
-
-#### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-DS MySQL Application Metrics
+bexhoma tpcds -ms 1 -dt -tr -lr 64Gi \
   -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
@@ -239,13 +202,13 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
 
-wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL appmetrics  sf=3"
 
 
-#### HammerDB Monitoring Application Metrics (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
+#### HammerDB MySQL Application Metrics
+bexhoma hammerdb -ms 1 -tr -lr 64Gi \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -255,10 +218,9 @@ nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
   -nbt 16 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log
 
-wait_process "hammerdb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -266,7 +228,7 @@ wait_process "hammerdb"
 ####################################################
 
 
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -284,13 +246,13 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB appmetrics  sf=10  nbp=1"
 
 
-#### Benchbase Simple (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase CockroachDB Application Metrics
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -302,10 +264,9 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
 
-wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -313,7 +274,7 @@ wait_process "benchbase"
 ####################################################
 
 
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -331,11 +292,9 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log
 
-wait_process "ycsb"
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
 
 
 ####################################################
@@ -343,7 +302,7 @@ wait_process "ycsb"
 ####################################################
 
 
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -361,13 +320,12 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB appmetrics  sf=1  nbp=1"
 
 
-wait_process "ycsb"
-
-
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -379,10 +337,9 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 
-wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -390,8 +347,7 @@ wait_process "benchbase"
 ####################################################
 
 
-
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -411,13 +367,13 @@ nohup python ycsb.py -ms 1 -tr \
   -npp 4 \
   -npi 128 \
   -npo 64 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=16"
 
 
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase PGBouncer Application Metrics
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -431,15 +387,9 @@ nohup python benchbase.py -ms 1 -tr \
   -npo 32 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
 
-wait_process "benchbase"
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PGBouncer appmetrics  sf=16  nbp=1,2"
 
 
 ###########################################

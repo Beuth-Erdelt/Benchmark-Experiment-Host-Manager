@@ -1,4 +1,4 @@
-# Example: MonetDB TPC-H@100
+﻿# Example: MonetDB TPC-H@100
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -36,7 +36,7 @@ LOG_DIR="./logs_tests"
 
 mkdir -p $LOG_DIR
 
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -46,7 +46,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_1.log
 ```
 
 ## Status Data Disk
@@ -245,7 +245,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -255,7 +255,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_2.log
 ```
 
 yields
@@ -444,7 +444,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -454,7 +454,7 @@ nohup python tpch.py -ms 1 \
   -dbms MonetDB \
   -t 1200 -dt \
   -rst shared -rss 300Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_3.log
 ```
 
 yields something like

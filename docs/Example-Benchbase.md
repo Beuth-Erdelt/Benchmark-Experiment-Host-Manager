@@ -1,4 +1,4 @@
-# Benchmark: Benchbase's TPC-C
+﻿# Benchmark: Benchbase's TPC-C
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -43,7 +43,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -52,7 +52,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 ```
 
 This
@@ -336,7 +336,7 @@ options:
 Example:
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -346,7 +346,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 ```
 
 The result looks something like
@@ -483,7 +483,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -494,7 +494,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -rst shared -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 ```
 
 The following status shows we have two volumes of type `shared`.
@@ -624,7 +624,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
 ```
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \
   -sd 30 \
@@ -639,7 +639,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 ```
 
 ## Evaluate Results

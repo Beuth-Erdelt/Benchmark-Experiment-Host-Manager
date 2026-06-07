@@ -1,4 +1,4 @@
-# Example: Benchmark Redis
+﻿# Example: Benchmark Redis
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed NoSQL DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -45,7 +45,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -61,7 +61,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_1.log &
+  run &>$LOG_DIR/doc_ycsb_redis_1.log
 ```
 
 This
@@ -226,7 +226,7 @@ In the following example, this means that used memory, CPU time, etc. are summed
 
 If you want to deploy Redis as a cluster, you can adjust the number of workers `-nw` when calling the script:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -243,7 +243,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_2.log &
+  run &>$LOG_DIR/doc_ycsb_redis_2.log
 ```
 
 yields something like
@@ -378,7 +378,7 @@ We can set the number of replicas with the parameter `-nwr`.
 Note that Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` creates 6 worker nodes, 3 for sharding and another 3 for the (single) replicas.
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -396,7 +396,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+  run &>$LOG_DIR/doc_ycsb_redis_3.log
 ```
 
 yields something like
@@ -561,7 +561,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -578,7 +578,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
+  run &>$LOG_DIR/doc_ycsb_redis_4.log
 ```
 
 The following status shows we have one volume of type `shared`.
@@ -710,7 +710,7 @@ Similarly we can make a Redis cluster to store the database in persistent storag
 Here, we remove existing storage via `-rsr` to start with a clean copy.
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -728,7 +728,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_5.log &
+  run &>$LOG_DIR/doc_ycsb_redis_5.log
 ```
 
 Redis expects fully qualified domain name (FQDN) for each pod.

@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,7 +53,7 @@ wait_process "ycsb"
 ####################################################
 
 
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -91,13 +73,12 @@ nohup python ycsb.py -ms 1 -tr \
   -npp 4 \
   -npi 128 \
   -npo 64 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log &
+  run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=16  nbp=16"
 
 
-wait_process "ycsb"
-
-
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -118,13 +99,9 @@ nohup python ycsb.py -ms 1 -tr \
   -npi 128 \
   -npo 64 \
   -rst shared -rss 100Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log &
+  run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 
-
-wait_process "ycsb"
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
 
 
 ####################################################
@@ -132,8 +109,7 @@ wait_process "ycsb"
 ####################################################
 
 
-
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -143,14 +119,13 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
-wait_process "benchbase"
-
-
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase PGBouncer (Example-PGBouncer.md)
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -163,16 +138,9 @@ nohup python benchbase.py -ms 1 -tr \
   -npi 32 \
   -npo 32 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 
-
-wait_process "benchbase"
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 
 ###########################################

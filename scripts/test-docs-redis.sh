@@ -45,24 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,7 +54,7 @@ wait_process "ycsb"
 
 
 # Single host Redis
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -88,14 +70,13 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_1.log &
+  run &>$LOG_DIR/doc_ycsb_redis_1.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
 
 
 # Cluster of 3 Redis instances
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -112,13 +93,13 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_2.log &
+  run &>$LOG_DIR/doc_ycsb_redis_2.log
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3  sf=1  nbp=1"
 
-wait_process "ycsb"
 
 # Cluster of 3 Redis instances and replication
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -136,14 +117,13 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_3.log &
+  run &>$LOG_DIR/doc_ycsb_redis_3.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 replication  sf=1  nbp=1"
 
 
 # Single host Redis with PVC
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -160,14 +140,13 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_4.log &
+  run &>$LOG_DIR/doc_ycsb_redis_4.log
 
-
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single PVC  sf=1  nbp=1  nc=2"
 
 
 # Cluster of 3 Redis instances and PVC
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -185,21 +164,9 @@ nohup python ycsb.py -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_ycsb_redis_5.log &
+  run &>$LOG_DIR/doc_ycsb_redis_5.log
 
-
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
 ###########################################

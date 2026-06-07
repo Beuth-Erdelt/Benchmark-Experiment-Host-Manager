@@ -45,34 +45,6 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-############# Generate Docs ###############
-###########################################
-
-
-
-
 
 
 
@@ -82,22 +54,20 @@ wait_process "ycsb"
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
+  run &>$LOG_DIR/doc_tpch_testcase_compare.log
 
-
-#### Wait so that next experiment receives a different code
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -106,15 +76,13 @@ nohup python tpch.py -ms 1 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -123,11 +91,9 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 1 \
   -ne 1,2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
+  run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
 #### Remove persistent storage
@@ -136,7 +102,7 @@ sleep 30
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -145,14 +111,13 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
+  run &>$LOG_DIR/doc_tpch_testcase_storage.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
 
-nohup python tpch.py -ms 1 -dt -tr \
+#### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
+bexhoma tpch -ms 1 -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -161,9 +126,9 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 5Gi -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_fractional.log &
+  run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
 ###########################################
@@ -177,7 +142,7 @@ sleep 30
 
 
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -188,16 +153,13 @@ nohup python tpch.py -ms 1 \
   -rr 256Gi -lr 256Gi \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
-#### Wait so that next experiment receives a different code
-#sleep 1800
-wait_process "tpch"
-
-
-#### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
+#### TCP-H Power 100 repeated (Example-Result-TPC-H-MonetDB.md)
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -208,16 +170,13 @@ nohup python tpch.py -ms 1 \
   -rr 256Gi -lr 256Gi \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_2.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
 #### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
+bexhoma tpch -ms 1 \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -228,12 +187,9 @@ nohup python tpch.py -ms 1 \
   -rr 256Gi -lr 256Gi \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_3.log
 
-#### Wait so that next experiment receives a different code
-#sleep 4800
-wait_process "tpch"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 
 ###########################################

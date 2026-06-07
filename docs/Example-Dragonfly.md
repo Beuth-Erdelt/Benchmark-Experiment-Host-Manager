@@ -1,4 +1,4 @@
-# Example: Benchmark Dragonfly
+﻿# Example: Benchmark Dragonfly
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed NoSQL DBMS, that can be managed by bexhoma** and exists in the Kubernetes cluster in the same namespace.
 
@@ -44,7 +44,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -61,7 +61,7 @@ nohup python ycsb.py -tr \
   -nc 1 \
   -m -mc -ma \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_1.log &
+  run &>$LOG_DIR/doc_ycsb_dragonfly_1.log
 ```
 
 This
@@ -262,7 +262,7 @@ In the following example, this means that used memory, CPU time, etc. are summed
 
 If you want to deploy Dragonfly as a cluster, you can adjust the number of workers `-nw` when calling the script:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -280,7 +280,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc -ma \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_2.log &
+  run &>$LOG_DIR/doc_ycsb_dragonfly_2.log
 ```
 
 yields something like
@@ -441,7 +441,7 @@ However, only the basic master-copy replication is implemented in bexhoma.
 Whenever `-nwr` is greater than 0, it is set to the number of workers minus 1.
 
 ```bash
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -459,7 +459,7 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_3.log &
+  run &>$LOG_DIR/doc_ycsb_dragonfly_3.log
 ```
 
 yields something like
@@ -621,7 +621,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -639,7 +639,7 @@ nohup python ycsb.py -tr \
   -m -mc -ma \
   -rst shared -rss 50Gi -rsr \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_4.log &
+  run &>$LOG_DIR/doc_ycsb_dragonfly_4.log
 ```
 
 The following status shows we have one volume of type `shared`.
@@ -669,7 +669,7 @@ Similarly we can make a Dragonfly cluster to store the database in persistent st
 Here, we remove existing storage via `-rsr` to start with a clean copy.
 
 ```bash
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -688,7 +688,7 @@ nohup python ycsb.py -tr \
   -m -mc -ma \
   -rst shared -rss 50Gi -rsr \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_5.log &
+  run &>$LOG_DIR/doc_ycsb_dragonfly_5.log
 ```
 
 We copied the following behaviour from Redis:

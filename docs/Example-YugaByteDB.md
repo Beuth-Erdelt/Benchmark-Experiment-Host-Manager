@@ -1,4 +1,4 @@
-# Example: Benchmark YugabyteDB
+﻿# Example: Benchmark YugabyteDB
 
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 
@@ -107,7 +107,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -123,7 +123,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_1.log &
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 ```
 
 This
@@ -298,7 +298,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -315,7 +315,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_2.log &
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
@@ -423,7 +423,7 @@ Persistent Storage is not managed by bexhoma, but by YugabyteDB.
 We can add the request for a PVC to the experiment setup.
 Make sure to reset the database before this test as it should not contain data from previous test runs.
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -440,7 +440,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_3.log &
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 ```
 This will add a PVC to the Dummy DBMS.
 Nothing will be stored there, but it maintains status information about previous loading processes.
@@ -653,7 +653,7 @@ Watch for
 TPC-C is performed at 16 warehouses. The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -663,7 +663,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
+  run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 ```
 
 yields
@@ -814,7 +814,7 @@ Make sure to reset the database before this test as it should not contain data f
 
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 128 \
   -slg 30 \
   -sd 20 \
@@ -826,7 +826,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
+  run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 ```
 
 yields

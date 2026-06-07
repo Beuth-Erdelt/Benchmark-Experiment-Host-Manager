@@ -1,4 +1,4 @@
-# Concept: Cluster Configuration
+﻿# Concept: Cluster Configuration
 
 Bexhoma reads all cluster and experiment settings from a file called `cluster.config` in the working directory.
 The file is a Python dict literal (parsed with `ast.literal_eval`).

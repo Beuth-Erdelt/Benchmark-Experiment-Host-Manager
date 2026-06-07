@@ -45,29 +45,11 @@ echo "Passed: $LOG_DIR/ found."
 
 echo "Checks passed. Proceeding..."
 
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
-nohup python tpch.py -ms 5 -dt -tr \
+bexhoma tpch -ms 5 -dt -tr \
   -dbms CedarDB \
   -nlp 8 \
   -nlt 8 \
@@ -75,16 +57,13 @@ nohup python tpch.py -ms 5 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log &
+  run &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
-wait_process "tpch"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
-nohup python ycsb.py -ms 5 -tr \
+bexhoma ycsb -ms 5 -tr \
   -sf 1 \
   --workload a \
   -dbms CedarDB \
@@ -98,13 +77,13 @@ nohup python ycsb.py -ms 5 -tr \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log
 
-#### Wait so that next experiment receives a different code
-wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
 
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -ms 2 -tr \
+
+#### Benchbase CH-benCHmark (Example-Benchbase-Others.md)
+bexhoma benchbase -ms 2 -tr \
   -sf 10 \
   -sd 5 \
   -dbms CedarDB \
@@ -114,13 +93,9 @@ nohup python benchbase.py -ms 2 -tr \
   -tb 1024 \
   -b chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log
 
-#### Wait so that next experiment receives a different code
-wait_process "benchbase"
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB chbenchmark simple  sf=10  nbp=1"
 
 
 ###########################################
@@ -129,5 +104,3 @@ wait_process "benchbase"
 
 
 clean_logs
-
-

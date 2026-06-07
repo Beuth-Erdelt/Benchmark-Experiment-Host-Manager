@@ -1,4 +1,4 @@
-# Example: Application Metrics
+﻿# Example: Application Metrics
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -25,7 +25,7 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+bexhoma benchbase -m -mc -ma -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -34,7 +34,7 @@ nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 ```
 
 This
@@ -212,7 +212,7 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms 1 -tr \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -222,7 +222,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log
 ```
 
 doc_hammerdb_testcase_appmetrics.log
@@ -342,7 +342,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -351,7 +351,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
 ```
 
 doc_tpch_testcase_appmetrics.log
@@ -536,7 +536,7 @@ No warnings
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpcds -ms 1 -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -545,7 +545,7 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
 ```
 
 doc_tpcds_testcase_appmetrics.log
@@ -808,7 +808,7 @@ No warnings
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -823,7 +823,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log
 ```
 
 doc_ycsb_testcase_appmetrics.log
@@ -1024,7 +1024,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+bexhoma benchbase -m -mc -ma -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms MySQL \
@@ -1033,7 +1033,7 @@ nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 ```
 
 This
@@ -1196,7 +1196,7 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
+bexhoma hammerdb -ms 1 -tr -lr 64Gi \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -1206,7 +1206,7 @@ nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
   -nbt 16 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log
 ```
 
 doc_hammerdb_run_mysql_appmetrics.log
@@ -1326,7 +1326,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms 1 -dt -tr -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
@@ -1335,7 +1335,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
 ```
 
 doc_tpch_run_mysql_appmetrics.log
@@ -1486,7 +1486,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpcds -ms 1 -dt -tr -lr 64Gi \
   -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
@@ -1496,7 +1496,7 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
 ```
 
 doc_tpcds_run_mysql_appmetrics.log
@@ -1715,7 +1715,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr -lr 64Gi \
+bexhoma ycsb -ms 1 -tr -lr 64Gi \
   -sf 3 \
   --workload a \
   -dbms MySQL \
@@ -1730,7 +1730,7 @@ nohup python ycsb.py -ms 1 -tr -lr 64Gi \
   -nc 1 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log
 ```
 
 doc_ycsb_run_mysql_appmetrics.log
@@ -1916,7 +1916,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -1934,7 +1934,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log
 ```
 
 doc_ycsb_run_cockroachdb_appmetrics.log
@@ -2110,7 +2110,7 @@ YCSB SF=10
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -2122,7 +2122,7 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
 ```
 
 doc_benchbase_run_cockroachdb_appmetrics.log
@@ -2319,7 +2319,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-nohup python ycsb.py -tr \
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -2337,7 +2337,7 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log
 ```
 
 doc_ycsb_run_redis_appmetrics.log
@@ -2508,7 +2508,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -2526,7 +2526,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log
 ```
 
 doc_ycsb_run_tidb_appmetrics.log
@@ -2777,7 +2777,7 @@ YCSB SF=1
 Example:
 ```bash
 
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -2789,7 +2789,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 ```
 
 doc_benchbase_run_tidb_appmetrics.log
@@ -3121,7 +3121,7 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -3141,7 +3141,7 @@ nohup python ycsb.py -ms 1 -tr \
   -npp 4 \
   -npi 128 \
   -npo 64 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 ```
 
 doc_ycsb_run_pgbouncer_appmetrics.log
@@ -3273,7 +3273,7 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -3287,7 +3287,7 @@ nohup python benchbase.py -ms 1 -tr \
   -npo 32 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
 ```
 
 doc_benchbase_run_pgbouncer_appmetrics.log
@@ -3452,7 +3452,7 @@ Make sure to have YugabyteDB installed [externally](https://bexhoma.readthedocs.
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms 1 -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -3467,7 +3467,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 ```
 
 doc_ycsb_run_yugabytedb_appmetrics.log
@@ -3618,7 +3618,7 @@ YCSB SF=1
 
 Example:
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms 1 -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -3627,7 +3627,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 ```
 
 doc_benchbase_run_yugabytedb_appmetrics.log
