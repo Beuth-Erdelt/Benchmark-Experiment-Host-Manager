@@ -2066,7 +2066,7 @@ class base():
                         #print(config.benchmark.connections)
                         for k,c in enumerate(config.benchmark.connections):
                             #print(c['name'])
-                            if c['name'] == config.connection:
+                            if c['name'] == connection:
                                 config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
                                 print("{:30s}: found and updated times {}".format(c['name'], config.benchmarking_timespans))
                                 break
@@ -2205,10 +2205,10 @@ class base():
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
-                        print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, config.current_benchmark_connection))
+                        print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
                         config.fetch_metrics(
                             title=f"Execution phase: component benchmarker",
-                            connection=config.current_benchmark_connection,
+                            connection=connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",
                             component="benchmarker",
