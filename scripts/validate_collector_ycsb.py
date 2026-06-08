@@ -63,7 +63,7 @@ for code in codes:
             zf.extractall(path)
 
 HEADER_COLS = ["phase", "code", "configuration", "experiment_run",
-               "client", "type_tenants", "num_tenants", "vol_tenants"]
+               "benchmark_run", "client", "type_tenants", "num_tenants", "vol_tenants"]
 TS_COLS     = ["timestamp", "phase", "value", "code", "metric", "component"]
 LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
 

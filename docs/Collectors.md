@@ -21,6 +21,7 @@ Supported benchmark types:
 | `collectors.tpcc` | HammerDB TPC-C | `evaluators.tpcc` |
 | `collectors.ycsb` | YCSB | `evaluators.ycsb` |
 | `collectors.dbmsbenchmarker` | DBMSBenchmarker | `evaluators.dbmsbenchmarker` |
+| `collectors.mixed` | Multiple tools in one experiment | per-tool evaluator, selected automatically |
 
 ---
 
@@ -122,6 +123,8 @@ collect = collectors.benchbase(path, codes)
 The constructor reads `connections.config` from the first code to build the metrics metadata table.
 
 An optional `benchmark_run` parameter (default `0`) filters all result methods to a single benchmark session; `0` includes all sessions.
+
+For experiments that ran multiple benchmark tools in sequence, use `collectors.mixed` instead — see the [dedicated section](#collectorsmixed) below.
 
 ### Configuration & Metadata
 
@@ -295,6 +298,58 @@ Per-query failed-execution counts for all codes.
 Per-query result-mismatch counts for all codes.
 
 Pass `query_titles=True` to replace the numeric query index with the human-readable title from the query configuration.
+
+### `collectors.mixed`
+
+For experiments that ran **more than one benchmark tool** in a single experiment (e.g. Benchbase followed by YCSB, or two different tools in the same client round).
+
+#### How it works
+
+When an experiment finishes, `store_workflow_results()` writes a `benchmark_sequence` key into `queries.config`:
+
+```python
+# Example queries.config entry
+'benchmark_sequence': [
+    {'index': 1, 'type': 'benchbase'},
+    {'index': 2, 'type': 'ycsb'},
+]
+```
+
+`collectors.mixed` reads this key and dispatches to the correct typed sub-collector for each benchmark-run index, so each tool's log files are parsed by the right evaluator.
+
+The constraint is that all configurations in an experiment must share the same benchmark sequence (which is enforced by the experiment framework — every configuration receives a deep copy of the same `experiment_dict_template`).
+
+#### Constructor
+
+```python
+collect = collectors.mixed(path, codes)
+```
+
+Same signature as the typed collectors. Reads `benchmark_sequence` from `queries.config` of the first code.
+
+#### Methods
+
+**`get_typed_collector(benchmark_run: int)`**  
+Returns a fully functional typed sub-collector (e.g. `collectors.benchbase`) scoped to the given benchmark-run index. All standard methods (`get_performance_aggregated_per_phase`, `get_monitoring_aggregated_per_phase`, etc.) are available on the returned object.
+
+**`get_performance_per_benchmark()`**  
+Calls `get_performance_aggregated_per_phase()` on each typed sub-collector and returns a dict keyed by benchmark type name:
+
+```python
+results = collect.get_performance_per_benchmark()
+# {'benchbase': df_benchbase, 'ycsb': df_ycsb}
+```
+
+When two entries share the same tool type (parallel runs of the same tool), their DataFrames are concatenated under the shared key, with `benchmark_run` as a distinguishing column.
+
+#### Supported type names
+
+| `type` in `benchmark_sequence` | Mapped collector |
+|---|---|
+| `'benchbase'` | `collectors.benchbase` |
+| `'ycsb'` | `collectors.ycsb` |
+| `'tpcc'` / `'hammerdb'` | `collectors.tpcc` |
+| `'dbmsbenchmarker'` / `'tpch'` / `'tpcds'` | `collectors.dbmsbenchmarker` |
 
 ---
 
