@@ -1839,6 +1839,11 @@ class base():
                 if _we_have_incomplete_jobs:
                     self.cluster.logger.debug("there are still running benchmark jobs")
                     do = True
+            else:
+                # No benchmarker jobs exist: stop the loop once every configuration
+                # has finished all its experiment repetitions.
+                if all(config.experiment_done for config in self.configurations):
+                    do = False
     def benchmark_list(self, list_clients):
         """
         DEPRECATED? Is not used anymore.
