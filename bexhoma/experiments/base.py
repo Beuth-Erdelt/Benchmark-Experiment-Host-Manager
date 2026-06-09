@@ -1603,12 +1603,15 @@ class base():
                             continue
                     app = self.cluster.appname
                     component = 'benchmarker'
-                    # Use job completion status rather than pod presence: Succeeded pods
-                    # remain in the cluster until explicitly deleted, causing spurious
-                    # "has running benchmarks" messages for several intervals.
+                    # Defer benchmark submission and stop_sut() while any jobs exist,
+                    # whether still running or succeeded-but-not-yet-cleaned-up.
+                    # end_benchmarking() runs in the second loop below; stop_sut() must
+                    # not fire until that loop has processed all completed jobs and
+                    # deleted them, so we continue here for any non-empty job list.
                     _active_jobs = self.cluster.get_jobs(app, component, self.code, configuration=config.configuration)
-                    if _active_jobs and any(not self.cluster.get_job_status(j) for j in _active_jobs):
-                        print("{:30s}: has running benchmarks".format(config.configuration))
+                    if _active_jobs:
+                        if any(not self.cluster.get_job_status(j) for j in _active_jobs):
+                            print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
                     if _use_experiment_dict and config.client <= len(config.experiment_dict["benchmarker"]):
                         # experiment dict path: submit all parallel entries in this client round
