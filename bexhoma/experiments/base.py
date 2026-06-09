@@ -1834,6 +1834,14 @@ class base():
                         #print("{} still benchmarks to run".format(config.configuration))
                         self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
                         do = True
+                    # The else block (stop_sut + reset_sut + start_sut) is deferred to
+                    # the next iteration while active jobs exist.  When the last job of a
+                    # repetition was just processed, _still_has_benchmarks is False
+                    # (client counter not yet reset) but another repetition is pending.
+                    # Keep the loop running so the else block can fire next iteration.
+                    if not stop_after_benchmarking and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                        self.cluster.logger.debug("{} more repetitions pending: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
+                        do = True
                     if stop_after_starting:
                         if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
                             #print("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
