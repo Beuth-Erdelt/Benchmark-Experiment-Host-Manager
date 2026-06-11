@@ -33,7 +33,7 @@ Supported benchmark types:
 * The SUT being tested is called a **configuration**, e.g. `PostgreSQL-A`.
 * An experiment is run one or more times; the repeat counter is **experiment\_run**.
 * Each run has a sequence of phases; the phase number is **client**.
-* An experiment may execute several sequential benchmark sessions; the session counter is **benchmark\_run** (`numBenchmark`). Most experiments have a single benchmark run (`benchmark_run = 1`).
+* Within each client phase, one or more benchmark jobs may run in parallel; the 1-based index of each parallel job is **benchmark\_run** (`numBenchmark`). Most phases launch a single job (`benchmark_run = 1`).
 * Each phase can have several parallel drivers called **pods**.
 * A **connection** identifies one benchmark session for one configuration: `<configuration>-<num_worker>-<experiment_run>-<client>-<benchmark_run>`. Each connection entry in `connections.config` carries a unique name and produces a unique **phase** string when prefixed with the code: `<code>-<configuration>-<num_worker>-<experiment_run>-<client>-<benchmark_run>`.
 
