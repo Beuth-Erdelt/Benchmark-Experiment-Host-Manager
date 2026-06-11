@@ -245,7 +245,7 @@ class benchbase(logger):
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            key_index = "_".join(map(str, key))
+            key_index = "-".join(map(str, key))
             df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid for TPC-C runs where vusers == 10 × SF

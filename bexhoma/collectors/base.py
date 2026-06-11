@@ -154,7 +154,7 @@ class base():
             evaluation = self.get_evaluator(code)
             df = self.get_performance_single(evaluation)
             df = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase', 'benchmark_run'])
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase']) #, 'benchmark_run'])
             df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
             df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
@@ -580,7 +580,7 @@ class base():
         df_sum = (
             df_timeseries
             .groupby(
-                ["timestamp", "code", "phase", "experiment_run", "client",
+                ["timestamp", "code", "phase", "experiment_run", "client", "benchmark_run",
                  "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"],
                 as_index=False
             )["value"]
