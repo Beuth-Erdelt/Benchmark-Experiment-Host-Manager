@@ -1,9 +1,14 @@
 #!/bin/bash
-# Shared helper functions and default variable values sourced by all bexhoma test scripts.
+# Shared helper functions, default variables, and startup checks sourced by all
+# bexhoma test scripts.
 #
-# Provides wait helpers, log-extraction utilities, and default node assignments
-# (BEXHOMA_NODE_SUT, BEXHOMA_NODE_LOAD, BEXHOMA_NODE_BENCHMARK). Source this
-# file at the top of every test script with: source ./scripts/testfunctions.sh
+# Declares default node/path variables, defines helper functions, then runs
+# prerequisite checks (files, directories, log folder) so every script that
+# sources this file starts in a known-good state.
+#
+# Default node values can be overridden in the sourcing script after this line:
+#   source ./scripts/testfunctions.sh
+#   BEXHOMA_NODE_SUT="other-node"   # override example
 #
 # Author: Patrick K. Erdelt
 # Copyright (C) 2020 Patrick K. Erdelt
@@ -11,15 +16,20 @@
 # See LICENSE for details.
 
 
-# some default values
-BEXHOMA_NODE_SUT="cl-worker11"
+# ---------------------------------------------------------------------------
+# Default variable values (override after sourcing if needed)
+# ---------------------------------------------------------------------------
+
+BEXHOMA_NODE_SUT="cl-worker14"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
-###########################################
-########## Prepare log folder #############
-###########################################
+
+# ---------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------
 
 
 prepare_logs() {
@@ -35,34 +45,16 @@ prepare_logs() {
 }
 
 
-
-###########################################
-### Wait for benchmarking to complete #####
-###########################################
-
-
 wait_process() {
     local process_name=$1
 
-    # Wait until the process with the name passed as an argument has terminated
     while ps aux | grep "[p]ython $process_name.py" > /dev/null; do
-        # Process is still running, wait for 5 seconds
         echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for process python $process_name.py to terminate..."
         sleep 60
     done
 
     echo "$(date +"%Y-%m-%d %H:%M:%S"): Process python $process_name.py has terminated."
 }
-
-# Example usage
-#wait_process "tpch"
-
-
-
-
-###########################################
-############## Clean Folder ###############
-###########################################
 
 
 clean_logs() {
@@ -77,7 +69,6 @@ clean_logs() {
 
     echo "Removing connection warning lines from log files..."
 
-    # Remove the specific warning from all files recursively
     grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . \
     | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
 
@@ -85,7 +76,6 @@ clean_logs() {
 
     echo "Extracting summaries from log files..."
 
-    # Loop over each .log file in LOG_DIR
     for file in "$LOG_DIR"/*.log; do
         echo "Cleaning $file"
         filename=$(basename "$file" .log)
@@ -95,3 +85,41 @@ clean_logs() {
 
     echo "Extraction complete! Files are saved in $LOG_DIR."
 }
+
+
+# ---------------------------------------------------------------------------
+# Startup checks (run at source time)
+# ---------------------------------------------------------------------------
+
+if [[ ! -f "cluster.config" ]]; then
+    echo "Error: cluster.config not found."
+    exit 1
+fi
+echo "Passed: ./cluster.config found."
+
+for dir in "experiments" "k8s"; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Error: Directory '$dir' missing."
+        exit 1
+    fi
+done
+echo "Passed: ./experiments/ found."
+echo "Passed: ./k8s/ found."
+
+if ! prepare_logs; then
+    echo "Error: prepare_logs failed with code $?"
+    exit 1
+fi
+echo "Passed: $LOG_DIR/ found."
+
+echo "Checks passed. Proceeding..."
+
+# ---------------------------------------------------------------------------
+# Wait for any pre-existing jobs
+# ---------------------------------------------------------------------------
+
+wait_process "tpch"
+wait_process "tpcds"
+wait_process "hammerdb"
+wait_process "benchbase"
+wait_process "ycsb"

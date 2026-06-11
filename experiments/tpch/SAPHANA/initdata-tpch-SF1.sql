@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into SAP HANA.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into SAP HANA.
 --          IMPORT FROM CSV FILE reads pipe-delimited .tbl files; THREADS 10 runs
 --          parallel ingest workers; NO TYPE CHECK skips column-type validation
 --          to maximise throughput; BATCH 1000 commits every 1000 rows.

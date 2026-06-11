@@ -61,6 +61,7 @@ ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
 | `path` | Root directory that contains the per-experiment sub-folders |
 | `include_loading` | Whether loading-phase results are expected (evaluators enable this automatically) |
 | `include_benchmarking` | Whether benchmarking-phase results are expected (default `True`) |
+| `benchmark_run` | 1-based index of the benchmark run to filter results to; `0` means include all runs (default `0`) |
 
 ---
 
@@ -134,10 +135,16 @@ Returns a DataFrame of connection/pod metadata read from `connections.config`.
 One row per pod (when `orig_name` is present) or per client (otherwise).
 
 Key columns: `phase`, `code`, `connection`, `configuration`, `experiment_run`,
-`client`, `pods`, `time_load`, `time_preload`, `time_generate`, `time_ingest`,
-`time_postload`, `type_tenants`, `num_tenants`, `vol_tenants`, plus flattened
-`host_*`, `loading_parameters_*`, `benchmarking_parameters_*`, `sut_parameters_*`,
-and `arg_*` fields.
+`benchmark_run`, `client`, `pods`, `time_load`, `time_preload`, `time_generate`,
+`time_ingest`, `time_postload`, `type_tenants`, `num_tenants`, `vol_tenants`,
+plus flattened `host_*`, `loading_parameters_*`, `benchmarking_parameters_*`,
+`sut_parameters_*`, and `arg_*` fields.
+
+`benchmark_run` (`numBenchmark`) is the 1-based sequence number of the benchmark
+session within a single experiment run.  Each benchmark session produces its own
+connection entry with a unique name — and therefore a unique `phase` string — so
+different `benchmark_run` values are always distinguishable without using
+`benchmark_run` as an explicit join key.
 
 ### `get_workload()`
 
@@ -239,6 +246,10 @@ Casts a benchmarking DataFrame to the correct column types.
 Reduces parallel pods to one row per group (default: per `phase`).
 Throughput and goodput are summed; latency percentiles use `max`; minimum
 latency uses `min`; average latency uses `mean`.
+
+Pass `columns=['phase', 'benchmark_run']` to preserve the `benchmark_run`
+dimension and produce one row per `(phase, benchmark_run)` pair instead of
+collapsing all benchmark sessions into one.
 
 ### `parse_benchbase_log_file(file_path)`
 

@@ -20,7 +20,7 @@ ALTER TABLE tpch.part
 
 ALTER TABLE tpch.supplier
     ADD PRIMARY KEY (s_suppkey);
--- supplier→nation FK not applied: not required by the TPC-H query workload
+-- supplier->nation FK not applied: not required by the TPC-H query workload
 
 ALTER TABLE tpch.partsupp
     ADD PRIMARY KEY (ps_partkey, ps_suppkey),

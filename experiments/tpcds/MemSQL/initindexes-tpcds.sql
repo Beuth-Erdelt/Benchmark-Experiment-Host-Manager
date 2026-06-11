@@ -3,6 +3,6 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — MemSQL/SingleStore clustered columnstore indexes are
+-- Purpose: Placeholder - MemSQL/SingleStore clustered columnstore indexes are
 --          declared inline in initschema-tpcds.sql; no additional CREATE INDEX
 --          statements are needed for TPC-DS on MemSQL/SingleStore.

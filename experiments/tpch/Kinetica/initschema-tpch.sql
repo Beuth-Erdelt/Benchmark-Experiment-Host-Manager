@@ -7,7 +7,7 @@
 --          part, supplier, partsupp, customer) are REPLICATED to every node so
 --          joins against them avoid network shuffles. Fact tables (orders,
 --          lineitem) are sharded on the join key (o_orderkey / l_orderkey) for
---          parallel scan and co-located lineitem→orders joins. Primary keys are
+--          parallel scan and co-located lineitem->orders joins. Primary keys are
 --          declared inline; foreign keys are added in initconstraints-tpch.sql.
 
 DROP TABLE IF EXISTS lineitem;

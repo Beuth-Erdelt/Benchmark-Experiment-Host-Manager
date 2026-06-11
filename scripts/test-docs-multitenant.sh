@@ -10,58 +10,7 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,7 +21,26 @@ wait_process "ycsb"
 
 BEXHOMA_NUM_TENANTS=2
 
-nohup python tpch.py -tr \
+# -tr                           verify result meets basic sanity requirements
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb schema                   tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp $BEXHOMA_NUM_TENANTS     number of data loader pods
+# -nlt 1                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 10Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 \
   --dbms PostgreSQL \
@@ -81,11 +49,31 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log
 
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python tpch.py -tr \
+# -tr                           verify result meets basic sanity requirements
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb database                 tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp $BEXHOMA_NUM_TENANTS     number of data loader pods
+# -nlt 1                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 10Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
@@ -94,22 +82,43 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log
 
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python tpch.py -tr \
+# -tr                           verify result meets basic sanity requirements
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb container                tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size in GB)
+# --dbms PostgreSQL             DBMS under test
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 1                        number of data loader pods
+# -nlt 1                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nlt 64                       threads per loader pod
+# -ne 1,1                       parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 5Gi                      size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
   -ii -ic -is \
-  -nlp 1 -nlt 1 -nbp 1  -nlt 64 \
+  -nlp 1 -nlt 1 -nbp 1 -nlt 64 \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 5Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log
 
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -120,7 +129,25 @@ wait_process "tpch"
 
 BEXHOMA_NUM_TENANTS=2
 
-nohup python benchbase.py \
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb schema                   tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms PostgreSQL             DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 20Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 -sd 5 -xkey \
@@ -129,11 +156,30 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 20Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log
 
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python benchbase.py \
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb database                 tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms PostgreSQL             DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 20Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -142,11 +188,30 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 20Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log
 
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python benchbase.py \
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb container                tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms PostgreSQL             DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne 1,1                       parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 10Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
@@ -155,10 +220,10 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log
 
 wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -169,7 +234,25 @@ wait_process "benchbase"
 
 BEXHOMA_NUM_TENANTS=2
 
-nohup python benchbase.py \
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb database                 tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms MySQL                  DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -178,11 +261,30 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log &
+  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log
 
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
-nohup python benchbase.py \
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -mtn $BEXHOMA_NUM_TENANTS     number of tenants
+# -mtb container                tenant isolation level (schema / database / container)
+# -sf 1                         scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# --dbms MySQL                  DBMS under test
+# -nlp 1                        number of data loader pods
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 10                       threads per benchmarking pod
+# -ne 1,1                       parallel client counts for loading and benchmarking
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
@@ -191,24 +293,10 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log &
+  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log
 
 wait_process "benchbase"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 ###########################################

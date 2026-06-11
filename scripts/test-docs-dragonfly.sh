@@ -10,58 +10,7 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,8 +20,30 @@ wait_process "ycsb"
 ####################################################
 
 
-# Single host Redis
-nohup python ycsb.py -tr \
+# Single host Dragonfly
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Dragonfly               DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 12                       loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -89,15 +60,38 @@ nohup python ycsb.py -tr \
   -nc 1 \
   -m -mc -ma \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_1.log &
-
+  run &>$LOG_DIR/doc_ycsb_dragonfly_1.log
 
 wait_process "ycsb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
 
 
 # Cluster of 3 Dragonfly instances
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Dragonfly               DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 12                       loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -115,13 +109,36 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc -ma \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_2.log &
-
+  run &>$LOG_DIR/doc_ycsb_dragonfly_2.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
+
 
 # Cluster of 3 Dragonfly instances and replication
-nohup python ycsb.py -tr \
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Dragonfly               DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 12                       loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -139,14 +156,39 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_3.log &
-
+  run &>$LOG_DIR/doc_ycsb_dragonfly_3.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 
 
 # Single host Dragonfly with PVC
-nohup python ycsb.py -tr \
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Dragonfly               DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 12                       loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -164,14 +206,40 @@ nohup python ycsb.py -tr \
   -m -mc -ma \
   -rst shared -rss 50Gi -rsr \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_4.log &
-
+  run &>$LOG_DIR/doc_ycsb_dragonfly_4.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 
 
-# Cluster of 3 Redis instances and PVC
-nohup python ycsb.py -tr \
+# Cluster of 3 Dragonfly instances and PVC
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Dragonfly               DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 12                       loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 2                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rst shared                   storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -190,21 +258,10 @@ nohup python ycsb.py -tr \
   -m -mc -ma \
   -rst shared -rss 50Gi -rsr \
   -rr 64Gi -lr 64Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_dragonfly_5.log &
-
+  run &>$LOG_DIR/doc_ycsb_dragonfly_5.log
 
 wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
 ###########################################

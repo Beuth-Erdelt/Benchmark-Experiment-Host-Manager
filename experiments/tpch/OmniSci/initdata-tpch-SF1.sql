@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into OmniSci.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into OmniSci.
 --          OmniSci COPY uses its own options: delimiter sets the field separator,
 --          header='false' skips header-row detection, quoted='false' disables
 --          quote handling (dbgen output is unquoted).

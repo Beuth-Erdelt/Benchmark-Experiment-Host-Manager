@@ -10,58 +10,7 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,8 +20,23 @@ wait_process "ycsb"
 ####################################################
 
 
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+#### Benchbase Application Metrics (Example-Benchbase.md)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -81,16 +45,34 @@ nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
-
-#### YCSB Monitoring Application Metrics (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr \
+#### YCSB Application Metrics (Example-YCSB.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 3                         scaling factor (number of records x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms PostgreSQL              DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 2,3                      throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
@@ -105,15 +87,32 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=1,8"
 
 
-
-
-#### TCP-H Monitoring Application Metrics (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-H Application Metrics (Example-TPC-H.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -dbms PostgreSQL              DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 3                         scaling factor (controls database size in GB)
+# -t 1200                       query timeout in seconds
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -122,14 +121,32 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
 
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 
 
-
-#### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-DS Application Metrics (Example-TPC-DS.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -dbms PostgreSQL              DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 3                         scaling factor (controls database size in GB)
+# -t 1200                       query timeout in seconds
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -138,13 +155,29 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
 
 wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL appmetrics  sf=3"
 
 
-#### HammerDB Monitoring Application Metrics (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 -tr \
+#### HammerDB Application Metrics (Example-HammerDB.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (number of warehouses)
+# -xlat                         collect per-operation latency histograms
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nlt 16                       threads per loader pod
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod (virtual users)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -154,15 +187,10 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log
 
 wait_process "hammerdb"
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -170,9 +198,23 @@ wait_process "hammerdb"
 ####################################################
 
 
-
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -m -mc -ma -ms 1 -tr \
+#### Benchbase MySQL Application Metrics
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms MySQL                   DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms MySQL \
@@ -181,16 +223,35 @@ nohup python benchbase.py -m -mc -ma -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL appmetrics  sf=16  nbp=1,2"
 
 
-
-#### YCSB Monitoring Application Metrics (Example-YCSB.md)
-nohup python ycsb.py -ms 1 -tr -lr 64Gi \
+#### YCSB MySQL Application Metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 3                         scaling factor (number of records x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms MySQL                   DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 2,3                      throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb -ms $BEXHOMA_MS -tr -lr 64Gi \
   -sf 3 \
   --workload a \
   -dbms MySQL \
@@ -205,15 +266,32 @@ nohup python ycsb.py -ms 1 -tr -lr 64Gi \
   -nc 1 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 
 
-
-
-#### TCP-H Monitoring Application Metrics (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-H MySQL Application Metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -dbms MySQL                   DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 3                         scaling factor (controls database size in GB)
+# -t 1200                       query timeout in seconds
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
@@ -222,14 +300,34 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
 
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL appmetrics  sf=3"
 
 
-
-#### TCP-DS Monitoring Application Metrics (Example-TPC-DS.md)
-nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
+#### TPC-DS MySQL Application Metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -dbms MySQL                   DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 3                         scaling factor (controls database size in GB)
+# -t 1200                       query timeout in seconds
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
@@ -239,13 +337,30 @@ nohup python tpcds.py -ms 1 -dt -tr -lr 64Gi \
   -ii -ic -is \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
 
 wait_process "tpcds"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL appmetrics  sf=3"
 
 
-#### HammerDB Monitoring Application Metrics (Example-HammerDB.md)
-nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
+#### HammerDB MySQL Application Metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -sf 16                        scaling factor (number of warehouses)
+# -xlat                         collect per-operation latency histograms
+# -sd 5                         benchmark duration in minutes
+# -dbms MySQL                   DBMS under test
+# -nlt 16                       threads per loader pod
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod (virtual users)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hammerdb -ms $BEXHOMA_MS -tr -lr 64Gi \
   -sf 16 \
   -xlat \
   -sd 5 \
@@ -255,10 +370,10 @@ nohup python hammerdb.py -ms 1 -tr -lr 64Gi \
   -nbt 16 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log &
+  run &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log
 
 wait_process "hammerdb"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -266,7 +381,30 @@ wait_process "hammerdb"
 ####################################################
 
 
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 10                        scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 3                        number of worker node replicas
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms CockroachDB             DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -sfo 10 \
   -nw 3 \
@@ -284,13 +422,31 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB appmetrics  sf=10  nbp=1"
 
 
-#### Benchbase Simple (Example-CockroachDB.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase CockroachDB Application Metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 3                        number of worker node replicas
+# -dbms CockroachDB             DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -302,10 +458,10 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
 
 wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -313,7 +469,29 @@ wait_process "benchbase"
 ####################################################
 
 
-nohup python ycsb.py -tr \
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms Redis                   DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 12                       loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb -tr \
   -sf 1 \
   -sfo 10 \
   -nw 3 \
@@ -331,11 +509,10 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log
 
 wait_process "ycsb"
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
 
 
 ####################################################
@@ -343,7 +520,28 @@ wait_process "ycsb"
 ####################################################
 
 
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 1                        number of operations for the benchmark phase (x 1000)
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 3                        number of worker node replicas
+# -nsr 3                        number of storage replicas
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms TiDB                    DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 1                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 1                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   -nw 3 \
@@ -361,13 +559,27 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log &
-
+  run &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB appmetrics  sf=1  nbp=1"
 
 
-nohup python benchbase.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 3                        number of worker node replicas
+# -nsr 3                        number of storage replicas
+# -dbms TiDB                    DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -nw 3 \
@@ -379,10 +591,10 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 
 wait_process "benchbase"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=1,2"
 
 
 ####################################################
@@ -390,8 +602,33 @@ wait_process "benchbase"
 ####################################################
 
 
-
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (number of records x 1000)
+# -sfo 16                       number of operations for the benchmark phase (x 1000)
+# --workload c                  YCSB workload template (c = 100%% read)
+# -dbms PGBouncer               DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 16                       number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 11                       loading throughput target as a multiple of the base ops/s
+# -nbp 16                       benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nbf 11                       throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -npp 4                        number of PGBouncer proxy pods
+# -npi 128                      maximum incoming connections per PGBouncer instance
+# -npo 64                       maximum outgoing connections per PGBouncer instance
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -411,13 +648,33 @@ nohup python ycsb.py -ms 1 -tr \
   -npp 4 \
   -npi 128 \
   -npo 64 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=16"
 
 
-#### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase PGBouncer Application Metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 10                        benchmark duration in minutes
+# -xconn                        use a new connection per transaction
+# -dbms PGBouncer               DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 32                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -npp 2                        number of PGBouncer proxy pods
+# -npi 32                       maximum incoming connections per PGBouncer instance
+# -npo 32                       maximum outgoing connections per PGBouncer instance
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -431,15 +688,10 @@ nohup python benchbase.py -ms 1 -tr \
   -npo 32 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
 
 wait_process "benchbase"
-
-
-
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PGBouncer appmetrics  sf=16  nbp=1,2"
 
 
 ###########################################

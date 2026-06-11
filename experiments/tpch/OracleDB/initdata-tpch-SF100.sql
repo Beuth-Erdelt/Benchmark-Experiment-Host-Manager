@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 100 (SF100 ≈ 100 GB) into OracleDB.
+-- Purpose: Load TPC-H data at scale factor 100 (SF100 ~ 100 GB) into OracleDB.
 --          NOTE: This file uses PostgreSQL COPY syntax and will not execute
 --          on a native Oracle instance. It may be used by a compatibility layer
 --          or placeholder for an alternative loading path.

@@ -74,6 +74,8 @@ class benchbase(logger):
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
+            benchmark_run = benchmark_run[0] if benchmark_run else '1'
             code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
@@ -92,7 +94,7 @@ class benchbase(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
-            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + child
+            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
             header = {
                 'connection': connection, #connection_name + '-' + child,
                 'phase': connection_name,
@@ -100,6 +102,7 @@ class benchbase(logger):
                 'experiment_run': experiment_run,
                 'code': code,
                 'client': client,
+                'benchmark_run': benchmark_run,
                 'pod': pod_name,
                 'pod_count': pod_count,
                 'bench': bench,
@@ -149,6 +152,7 @@ class benchbase(logger):
             'experiment_run':'int',
             'duration':'int',
             'client':'int',
+            'benchmark_run':'int',
             'code': 'int',
             'pod':'str',
             'pod_count':'int',
@@ -203,6 +207,7 @@ class benchbase(logger):
             aggregate = {
                 'connection':'max',
                 'client':'max',
+                'benchmark_run':'max',
                 'code':'max',
                 'pod':'sum',
                 'pod_count':'count',
@@ -240,7 +245,7 @@ class benchbase(logger):
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            key_index = "_".join(map(str, key))
+            key_index = "-".join(map(str, key))
             df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid for TPC-C runs where vusers == 10 × SF
@@ -413,7 +418,7 @@ class benchbase(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             #print(df)
-            columns = ["experiment_run","terminals","target","client", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["experiment_run","terminals","target","client","benchmark_run", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -443,7 +448,7 @@ class benchbase(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","pod_count"]].copy()
+            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","benchmark_run","pod_count"]].copy()
             columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:

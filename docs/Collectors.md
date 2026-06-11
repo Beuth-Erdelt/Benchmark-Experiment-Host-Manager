@@ -21,6 +21,7 @@ Supported benchmark types:
 | `collectors.tpcc` | HammerDB TPC-C | `evaluators.tpcc` |
 | `collectors.ycsb` | YCSB | `evaluators.ycsb` |
 | `collectors.dbmsbenchmarker` | DBMSBenchmarker | `evaluators.dbmsbenchmarker` |
+| `collectors.mixed` | Multiple tools in one experiment | per-tool evaluator, selected automatically |
 
 ---
 
@@ -32,12 +33,13 @@ Supported benchmark types:
 * The SUT being tested is called a **configuration**, e.g. `PostgreSQL-A`.
 * An experiment is run one or more times; the repeat counter is **experiment\_run**.
 * Each run has a sequence of phases; the phase number is **client**.
+* Within each client phase, one or more benchmark jobs may run in parallel; the 1-based index of each parallel job is **benchmark\_run** (`numBenchmark`). Most phases launch a single job (`benchmark_run = 1`).
 * Each phase can have several parallel drivers called **pods**.
-* A **connection** is the state of one configuration as seen by one pod: `<configuration>-<experiment_run>-<client>-<pod>`. Prefixed with the code it becomes globally unique: `<code>-<configuration>-<experiment_run>-<client>-<pod>`.
+* A **connection** identifies one benchmark session for one configuration: `<configuration>-<num_worker>-<experiment_run>-<client>-<benchmark_run>`. Each connection entry in `connections.config` carries a unique name and produces a unique **phase** string when prefixed with the code: `<code>-<configuration>-<num_worker>-<experiment_run>-<client>-<benchmark_run>`.
 
-  Example: `1775855486-PostgreSQL-A-1-2-3` — first run, second client, third pod.
+  Example: `1775855486-PostgreSQL-1-1-2-1` — first run, second client, first benchmark run.
 
-* A **phase** is the monitoring scope for one (configuration, run, client) triple: `<configuration>-<experiment_run>-<client>`.
+* A **connection ID** (the DataFrame index in `get_connections()`) appends the pod index: `<code>-<configuration>-<num_worker>-<experiment_run>-<client>-<benchmark_run>-<pod>`.
 
 ### Aggregation
 
@@ -120,11 +122,15 @@ collect = collectors.benchbase(path, codes)
 
 The constructor reads `connections.config` from the first code to build the metrics metadata table.
 
+An optional `benchmark_run` parameter (default `0`) filters all result methods to a single benchmark session; `0` includes all sessions.
+
+For experiments that ran multiple benchmark tools in sequence, use `collectors.mixed` instead — see the [dedicated section](#collectorsmixed) below.
+
 ### Configuration & Metadata
 
 **`get_connections()`**  
 Returns a DataFrame of connection metadata for all experiments.  
-Columns include: `phase`, `code`, `connection`, `configuration`, `experiment_run`, `client`, `type_tenants`, `num_tenants`, `vol_tenants`.
+Columns include: `phase`, `code`, `connection`, `configuration`, `experiment_run`, `benchmark_run`, `client`, `type_tenants`, `num_tenants`, `vol_tenants`.
 
 **`get_metrics_metadata()`**  
 Returns a DataFrame listing all hardware metrics defined in the experiment, with columns `title`, `active`, `type`, `metric`.
@@ -169,10 +175,10 @@ Like `get_monitoring_timeseries_all` but annotates each row with tenant metadata
 Unaggregated per-pod results concatenated across all codes. Phase, connection, and configuration columns are prefixed with the experiment code.
 
 **`get_performance_aggregated_per_phase()`**  
-Aggregates parallel pods into phases for each code, then concatenates all codes. Produces one row per phase.
+Aggregates parallel pods into phases for each code, then concatenates all codes. Groups by `(phase, benchmark_run)`, producing one row per `(phase, benchmark_run)` pair. When `benchmark_run` is always 1 the result is equivalent to one row per phase.
 
 **`get_performance_aggregated_per_phase_multitenant()`**  
-Same as above but adds `type_tenants`, `num_tenants`, and `vol_tenants` columns from the workload configuration.
+Same as above but adds `type_tenants`, `num_tenants`, and `vol_tenants` columns from the workload configuration. Groups by `(code, experiment_run, client, benchmark_run, type_tenants, num_tenants)`, preserving the `benchmark_run` dimension.
 
 ---
 
@@ -195,13 +201,13 @@ Same as above but fetches the multi-tenant variant from the evaluator, which inc
 ### Utility
 
 **`add_metadata(df)`**  
-Enriches a monitoring DataFrame with connection metadata by attempting five join strategies in order:
+Enriches a DataFrame with connection metadata by attempting four join strategies in order:
 
-1. Index vs. `phase` column
-2. Shared index values
-3. `phase` column join
-4. Multi-tenant key join on `(code, configuration, experiment_run, client, type_tenants, num_tenants)`
-5. Loading key join on `(code, configuration, experiment_run)`
+1. **Index × `phase` column** — when `df`'s index intersects `df_connections['phase']`. Used for monitoring DataFrames whose index is the phase string. Because each `benchmark_run` produces a distinct phase string, this strategy correctly distinguishes benchmark sessions without an explicit `benchmark_run` join key.
+2. **Shared index** — when `df`'s index intersects `df_connections`'s index.
+3. **`phase` column join** — when both DataFrames have a `phase` column. Used for merged performance + monitoring DataFrames. Again, unique phase strings per `benchmark_run` ensure correct matching.
+4. **Multi-tenant key join** on `(code, experiment_run, client, type_tenants, num_tenants)` — used after `get_monitoring_aggregated_per_phase_multitenant()` has already aggregated away the `benchmark_run` dimension via its groupby, so omitting `benchmark_run` from the key is intentional.
+5. **Loading key join** on `(code, configuration, experiment_run)`.
 
 **`collectors.get_non_constant(df)`**  
 Standalone function. Drops all columns whose values are identical across every row — useful after `get_connections()` to surface the parameters that actually vary across experiment runs.
@@ -229,10 +235,10 @@ evaluate.get_benchmark_logs_timeseries_df_single(metric, configuration, client, 
 The collector adds two time-series methods that span all experiment codes:
 
 **`get_benchmark_timeseries_per_phase(metric='throughput')`**  
-Wide-format DataFrame: index is second, each column represents one `(code, configuration, client, experiment_run)` phase, labelled `{code}-{configuration}-{client}-{experiment_run}`. Phases with different time ranges produce NaN for missing seconds.
+Wide-format DataFrame: index is second, each column represents one `(code, configuration, client, experiment_run, benchmark_run)` phase, labelled `{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}`. Phases with different time ranges produce NaN for missing seconds.
 
 **`get_benchmark_timeseries_all(metric='throughput')`**  
-Long-format DataFrame with columns `second`, `code`, `configuration`, `client`, `experiment_run`, `metric`, `value`, plus connection metadata columns (e.g. `type_tenants`, `num_tenants`, `vol_tenants`). One row per second per phase.
+Long-format DataFrame with columns `second`, `code`, `configuration`, `client`, `experiment_run`, `benchmark_run`, `metric`, `value`, plus connection metadata columns (e.g. `type_tenants`, `num_tenants`, `vol_tenants`). One row per second per phase.
 
 ### `collectors.tpcc`
 
@@ -267,10 +273,10 @@ evaluate.get_loading_logs_timeseries_df_single(metric, configuration, experiment
 The collector adds four time-series methods that span all experiment codes:
 
 **`get_benchmark_timeseries_per_phase(metric='current_ops_per_sec')`**  
-Wide-format DataFrame: index is second, each column represents one `(code, configuration, client, experiment_run)` benchmarking phase, labelled `{code}-{configuration}-{client}-{experiment_run}`.
+Wide-format DataFrame: index is second, each column represents one `(code, configuration, client, experiment_run, benchmark_run)` benchmarking phase, labelled `{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}`.
 
 **`get_benchmark_timeseries_all(metric='current_ops_per_sec')`**  
-Long-format DataFrame with columns `second`, `code`, `configuration`, `client`, `experiment_run`, `metric`, `value`, plus connection metadata columns. One row per second per benchmarking phase.
+Long-format DataFrame with columns `second`, `code`, `configuration`, `client`, `experiment_run`, `benchmark_run`, `metric`, `value`, plus connection metadata columns. One row per second per benchmarking phase.
 
 **`get_loading_timeseries_per_phase(metric='current_ops_per_sec')`**  
 Wide-format DataFrame for the loading phase: index is second, each column represents one `(code, configuration, experiment_run)` loading phase, labelled `{code}-{configuration}-{experiment_run}`. No `client` dimension.
@@ -292,6 +298,58 @@ Per-query failed-execution counts for all codes.
 Per-query result-mismatch counts for all codes.
 
 Pass `query_titles=True` to replace the numeric query index with the human-readable title from the query configuration.
+
+### `collectors.mixed`
+
+For experiments that ran **more than one benchmark tool** in a single experiment (e.g. Benchbase followed by YCSB, or two different tools in the same client round).
+
+#### How it works
+
+When an experiment finishes, `store_workflow_results()` writes a `benchmark_sequence` key into `queries.config`:
+
+```python
+# Example queries.config entry
+'benchmark_sequence': [
+    {'index': 1, 'type': 'benchbase'},
+    {'index': 2, 'type': 'ycsb'},
+]
+```
+
+`collectors.mixed` reads this key and dispatches to the correct typed sub-collector for each benchmark-run index, so each tool's log files are parsed by the right evaluator.
+
+The constraint is that all configurations in an experiment must share the same benchmark sequence (which is enforced by the experiment framework — every configuration receives a deep copy of the same `experiment_dict_template`).
+
+#### Constructor
+
+```python
+collect = collectors.mixed(path, codes)
+```
+
+Same signature as the typed collectors. Reads `benchmark_sequence` from `queries.config` of the first code.
+
+#### Methods
+
+**`get_typed_collector(benchmark_run: int)`**  
+Returns a fully functional typed sub-collector (e.g. `collectors.benchbase`) scoped to the given benchmark-run index. All standard methods (`get_performance_aggregated_per_phase`, `get_monitoring_aggregated_per_phase`, etc.) are available on the returned object.
+
+**`get_performance_per_benchmark()`**  
+Calls `get_performance_aggregated_per_phase()` on each typed sub-collector and returns a dict keyed by benchmark type name:
+
+```python
+results = collect.get_performance_per_benchmark()
+# {'benchbase': df_benchbase, 'ycsb': df_ycsb}
+```
+
+When two entries share the same tool type (parallel runs of the same tool), their DataFrames are concatenated under the shared key, with `benchmark_run` as a distinguishing column.
+
+#### Supported type names
+
+| `type` in `benchmark_sequence` | Mapped collector |
+|---|---|
+| `'benchbase'` | `collectors.benchbase` |
+| `'ycsb'` | `collectors.ycsb` |
+| `'tpcc'` / `'hammerdb'` | `collectors.tpcc` |
+| `'dbmsbenchmarker'` / `'tpch'` / `'tpcds'` | `collectors.dbmsbenchmarker` |
 
 ---
 

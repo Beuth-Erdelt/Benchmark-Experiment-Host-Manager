@@ -7,10 +7,10 @@
 --          in TPC-H queries. Run after data loading.
 --          Unlike other DBMS variants, individual indexes on lineitem(l_partkey)
 --          and lineitem(l_suppkey) are created here in addition to the compound
---          index — MonetDB's columnar storage benefits from per-column access
+--          index - MonetDB's columnar storage benefits from per-column access
 --          paths and does not make individual indexes redundant.
 --          The index on supplier(s_nationkey) is omitted because the
---          supplier→nation FK is not applied in this configuration.
+--          supplier->nation FK is not applied in this configuration.
 
 CREATE INDEX n_r  ON nation   (n_regionkey);
 CREATE INDEX c_n  ON customer (c_nationkey);

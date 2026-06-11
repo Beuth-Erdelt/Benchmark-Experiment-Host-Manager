@@ -10,64 +10,28 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
-nohup python tpch.py -ms 5 -dt -tr \
+# -ms 5                         max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -dbms CedarDB                 DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 3                         scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms 5 -dt -tr \
   -dbms CedarDB \
   -nlp 8 \
   -nlt 8 \
@@ -75,16 +39,31 @@ nohup python tpch.py -ms 5 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log &
+  run &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpch"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
-nohup python ycsb.py -ms 5 -tr \
+# -ms 5                         max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms CedarDB                 DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 1,8                      number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 1,4                      loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 2                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb -ms 5 -tr \
   -sf 1 \
   --workload a \
   -dbms CedarDB \
@@ -98,13 +77,27 @@ nohup python ycsb.py -ms 5 -tr \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log &
+  run &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log
 
-#### Wait so that next experiment receives a different code
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
 
-#### Benchbase Scale (Example-Benchbase-Others.md)
-nohup python benchbase.py -ms 2 -tr \
+
+#### Benchbase CH-benCHmark (Example-Benchbase-Others.md)
+# -ms 2                         max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 10                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms CedarDB                 DBMS under test
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 100                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -b chbenchmark                Benchbase benchmark type
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -ms 2 -tr \
   -sf 10 \
   -sd 5 \
   -dbms CedarDB \
@@ -114,13 +107,10 @@ nohup python benchbase.py -ms 2 -tr \
   -tb 1024 \
   -b chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log
 
-#### Wait so that next experiment receives a different code
 wait_process "benchbase"
-
-
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB chbenchmark simple  sf=10  nbp=1"
 
 
 ###########################################
@@ -129,5 +119,3 @@ wait_process "benchbase"
 
 
 clean_logs
-
-

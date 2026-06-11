@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-DS data at scale factor 100 (SF100 ≈ 100 GB) into MariaDB.
+-- Purpose: Load TPC-DS data at scale factor 100 (SF100 ~ 100 GB) into MariaDB.
 --          See initdata-tpcds-SF1.sql for format details.
 
 LOAD DATA LOCAL INFILE '/data/tpcds/SF100/call_center.dat' INTO TABLE tpcds.call_center FIELDS TERMINATED BY '|' OPTIONALLY ENCLOSED BY '"'

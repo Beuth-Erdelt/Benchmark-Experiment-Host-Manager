@@ -10,68 +10,7 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-############# Generate Docs ###############
-###########################################
-
-
-
 
 
 
@@ -82,22 +21,52 @@ wait_process "ycsb"
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 1                         scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_compare.log &
+  run &>$LOG_DIR/doc_tpch_testcase_compare.log
 
-
-#### Wait so that next experiment receives a different code
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -dbms PostgreSQL              DBMS under test
+# -rr 64Gi                      RAM requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 10                        scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -106,15 +75,29 @@ nohup python tpch.py -ms 1 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -dbms PostgreSQL              DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 1                         scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -123,11 +106,10 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 1 \
   -ne 1,2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_throughput.log &
+  run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
 #### Remove persistent storage
@@ -136,7 +118,23 @@ sleep 30
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
-nohup python tpch.py -ms 1 -dt -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -dbms PostgreSQL              DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 1                         scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nc 2                         number of repeated runs per configuration
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -145,14 +143,31 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_storage.log &
+  run &>$LOG_DIR/doc_tpch_testcase_storage.log
 
-#### Wait so that next experiment receives a different code
-#sleep 600
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
 
-nohup python tpch.py -ms 1 -dt -tr \
+#### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -dt                           disable result type checking
+# -tr                           verify result meets basic sanity requirements
+# -dbms PostgreSQL              DBMS under test
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -sf 0.1                       scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nc 2                         number of repeated runs per configuration
+# -rst shared                   storage class for persistent volumes
+# -rss 5Gi                      size of the persistent volume claim
+# -rsr                          delete and recreate the PVC at experiment start
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -161,9 +176,10 @@ nohup python tpch.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 5Gi -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_fractional.log &
+  run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
 ###########################################
@@ -177,7 +193,28 @@ sleep 30
 
 
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -sf 100                       scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -dbms MonetDB                 DBMS under test
+# -rr 256Gi                     RAM requested for the SUT container
+# -lr 256Gi                     RAM limit for the SUT container
+# -t 3600                       query timeout in seconds
+# -dt                           disable result type checking
+# -rst shared                   storage class for persistent volumes
+# -rss 1000Gi                   size of the persistent volume claim
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -188,16 +225,35 @@ nohup python tpch.py -ms 1 \
   -rr 256Gi -lr 256Gi \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_1.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 1800
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
-#### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
+#### TCP-H Power 100 repeated (Example-Result-TPC-H-MonetDB.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -sf 100                       scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,1                       parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -dbms MonetDB                 DBMS under test
+# -rr 256Gi                     RAM requested for the SUT container
+# -lr 256Gi                     RAM limit for the SUT container
+# -t 3600                       query timeout in seconds
+# -dt                           disable result type checking
+# -rst shared                   storage class for persistent volumes
+# -rss 1000Gi                   size of the persistent volume claim
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -208,16 +264,35 @@ nohup python tpch.py -ms 1 \
   -rr 256Gi -lr 256Gi \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_2.log
 
-
-#### Wait so that next experiment receives a different code
-#sleep 4800
 wait_process "tpch"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
 #### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
-nohup python tpch.py -ms 1 \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -sf 100                       scaling factor (controls database size in GB)
+# -ii                           create indexes after data load
+# -ic                           enforce constraints after data load
+# -is                           run ANALYZE after data load
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,1,3                     parallel client counts to sweep (comma-separated)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -dbms MonetDB                 DBMS under test
+# -rr 256Gi                     RAM requested for the SUT container
+# -lr 256Gi                     RAM limit for the SUT container
+# -t 3600                       query timeout in seconds
+# -dt                           disable result type checking
+# -rst shared                   storage class for persistent volumes
+# -rss 1000Gi                   size of the persistent volume claim
+bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
   -ii -ic -is \
@@ -228,12 +303,10 @@ nohup python tpch.py -ms 1 \
   -rr 256Gi -lr 256Gi \
   -t 3600 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpch_monetdb_3.log
 
-#### Wait so that next experiment receives a different code
-#sleep 4800
 wait_process "tpch"
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 
 ###########################################

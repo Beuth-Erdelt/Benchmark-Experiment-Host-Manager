@@ -8,8 +8,8 @@
 --          automatically for each PRIMARY KEY constraint; both structures are added
 --          in one step. Foreign keys per TPC-H spec section 1.4.2.3 are included
 --          here rather than in initconstraints-tpch.sql (which holds CHECK constraints).
---          Note: nation→region and supplier→nation FKs are not applied; lineitem→part
---          and lineitem→supplier FKs are applied (all per TPC-H spec 1.4.2.3).
+--          Note: nation->region and supplier->nation FKs are not applied; lineitem->part
+--          and lineitem->supplier FKs are applied (all per TPC-H spec 1.4.2.3).
 
 ALTER TABLE tpch.region
     ADD CONSTRAINT pk_region PRIMARY KEY (r_regionkey);

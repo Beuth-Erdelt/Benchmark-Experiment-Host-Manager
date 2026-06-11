@@ -10,65 +10,7 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###########################################
-############# Generate Docs ###############
-###########################################
 
 
 
@@ -79,7 +21,19 @@ wait_process "ycsb"
 
 
 #### Benchbase Scale (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -88,15 +42,28 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_scale.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 
-#### Wait so that next experiment receives a different code
-#sleep 1200
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -106,10 +73,10 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 
-#### Wait so that next experiment receives a different code
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 
 
 #### Remove persistent storage
@@ -118,7 +85,22 @@ sleep 30
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
-nohup python benchbase.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms PostgreSQL              DBMS under test
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 160                      threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -nc 2                         number of repeated runs per configuration
+# -rst shared                   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -129,10 +111,10 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -rst shared -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_storage.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 
-#### Wait so that next experiment receives a different code
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 
 
 #### Remove persistent storage
@@ -140,7 +122,29 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
 sleep 30
 
 
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase Keying and Thinking Time (Example-Benchbase.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rr 128Gi                     RAM requested for the SUT container
+# -lr 128Gi                     RAM limit for the SUT container
+# -sf 160                       scaling factor (controls database size)
+# -sd 30                        benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -dbms PostgreSQL              DBMS under test
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -nbp 1,2,5,10                 benchmarking pod counts to sweep (comma-separated)
+# -nbt 1600                     threads per benchmarking pod
+# -nbf 1                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \
   -sd 30 \
@@ -155,11 +159,11 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_keytime.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 
-
-#### Wait so that next experiment receives a different code
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
+
 
 ###########################################
 ############## Clean Folder ###############

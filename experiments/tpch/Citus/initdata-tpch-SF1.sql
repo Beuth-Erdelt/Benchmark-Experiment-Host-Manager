@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into Citus.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into Citus.
 --          Pipe-delimited .tbl files are loaded via COPY; NULL '' handles the
 --          empty string that dbgen writes for nullable columns.
 --          After loading, shards are rebalanced across all active workers.

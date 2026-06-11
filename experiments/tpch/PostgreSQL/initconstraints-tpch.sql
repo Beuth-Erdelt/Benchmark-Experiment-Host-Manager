@@ -7,7 +7,7 @@
 --          Run after data loading (initdata-tpch-SF*.sql).
 --          Each ALTER TABLE combines all actions for that table so it is
 --          locked only once. Statements are ordered by FK dependency.
---          Note: the supplier→nation FK is part of the TPC-H DDL standard
+--          Note: the supplier->nation FK is part of the TPC-H DDL standard
 --          but is not required by any query in the TPC-H workload and is
 --          therefore not applied here.
 

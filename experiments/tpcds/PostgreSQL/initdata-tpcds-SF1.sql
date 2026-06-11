@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-DS data at scale factor 1 (SF1 ≈ 1 GB) into PostgreSQL.
+-- Purpose: Load TPC-DS data at scale factor 1 (SF1 ~ 1 GB) into PostgreSQL.
 --          Data files are pipe-delimited .dat files produced by dsdgen.
 
 COPY public.call_center             FROM '/data/tpcds/SF1/call_center.dat'             DELIMITER '|' NULL '';

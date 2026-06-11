@@ -49,8 +49,8 @@ CREATE TABLE stock (
     s_dist_09     CHAR(24)       NOT NULL,
     s_dist_10     CHAR(24)       NOT NULL,
     CONSTRAINT stock_pkey PRIMARY KEY (s_w_id HASH, s_i_id ASC)
-    -- stock→item FK not applied: not supported on YugabyteDB distributed tables
-    -- stock→warehouse FK not applied: not supported on YugabyteDB distributed tables
+    -- stock->item FK not applied: not supported on YugabyteDB distributed tables
+    -- stock->warehouse FK not applied: not supported on YugabyteDB distributed tables
 );
 
 CREATE TABLE district (
@@ -66,7 +66,7 @@ CREATE TABLE district (
     d_state      CHAR(2)         NOT NULL,
     d_zip        CHAR(9)         NOT NULL,
     CONSTRAINT district_pkey PRIMARY KEY ((d_w_id,d_id) HASH)
-    -- district→warehouse FK not applied: not supported on YugabyteDB distributed tables
+    -- district->warehouse FK not applied: not supported on YugabyteDB distributed tables
 );
 
 CREATE TABLE customer (
@@ -92,7 +92,7 @@ CREATE TABLE customer (
     c_middle        CHAR(2)         NOT NULL,
     c_data          VARCHAR(500)    NOT NULL,
     CONSTRAINT customer_pkey PRIMARY KEY ((c_w_id,c_d_id) HASH,c_id)
-    -- customer→district FK not applied: not supported on YugabyteDB distributed tables
+    -- customer->district FK not applied: not supported on YugabyteDB distributed tables
 );
 
 CREATE TABLE history (
@@ -104,8 +104,8 @@ CREATE TABLE history (
     h_date    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP NOT NULL,
     h_amount  NUMERIC(6, 2)  NOT NULL,
     h_data    VARCHAR(24)    NOT NULL
-    -- history→customer FK not applied: not supported on YugabyteDB distributed tables
-    -- history→district FK not applied: not supported on YugabyteDB distributed tables
+    -- history->customer FK not applied: not supported on YugabyteDB distributed tables
+    -- history->district FK not applied: not supported on YugabyteDB distributed tables
 );
 
 CREATE TABLE oorder (
@@ -119,7 +119,7 @@ CREATE TABLE oorder (
     o_entry_d     TIMESTAMP  DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oorder_o_w_id_o_d_id_o_c_id_o_id_key UNIQUE (o_w_id, o_d_id, o_c_id, o_id),
     CONSTRAINT oorder_pkey PRIMARY KEY ((o_w_id,o_d_id) HASH,o_id)
-    -- oorder→customer FK not applied: not supported on YugabyteDB distributed tables
+    -- oorder->customer FK not applied: not supported on YugabyteDB distributed tables
 );
 
 CREATE TABLE new_order (
@@ -127,7 +127,7 @@ CREATE TABLE new_order (
     no_d_id  INTEGER  NOT NULL,
     no_o_id  INTEGER  NOT NULL,
     CONSTRAINT new_order_pkey PRIMARY KEY ((no_w_id,no_d_id) HASH,no_o_id)
-    -- new_order→oorder FK not applied: not supported on YugabyteDB distributed tables
+    -- new_order->oorder FK not applied: not supported on YugabyteDB distributed tables
 );
 
 CREATE TABLE order_line (
@@ -142,8 +142,8 @@ CREATE TABLE order_line (
     ol_quantity     NUMERIC(6, 2)  NOT NULL,
     ol_dist_info    CHAR(24)       NOT NULL,
     CONSTRAINT order_line_pkey PRIMARY KEY ((ol_w_id,ol_d_id) HASH, ol_o_id,ol_number)
-    -- order_line→stock FK not applied: not supported on YugabyteDB distributed tables
-    -- order_line→oorder FK not applied: not supported on YugabyteDB distributed tables
+    -- order_line->stock FK not applied: not supported on YugabyteDB distributed tables
+    -- order_line->oorder FK not applied: not supported on YugabyteDB distributed tables
 );
 
 SELECT current_timestamp AS "Time after creation";

@@ -12,6 +12,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -29,7 +30,7 @@ The folder also contains `\*_summary.txt` files containing only the result summa
 #### TPC-H Simple
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -40,7 +41,7 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_1.log &
+  run &>$LOG_DIR/test_tpch_testcase_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -161,7 +162,7 @@ TEST passed: Workflow as planned
 #### TPC-H Monitoring
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -173,7 +174,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_2.log &
+  run &>$LOG_DIR/test_tpch_testcase_postgresql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -315,7 +316,7 @@ kubectl delete pvc bexhoma-storage-postgresql-tpch-1
 
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -328,7 +329,7 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
+  run &>$LOG_DIR/test_tpch_testcase_postgresql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -569,7 +570,7 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
@@ -581,7 +582,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -rnl "$BEXHOMA_NODE_LOAD" \
   -rnb "$BEXHOMA_NODE_BENCHMARK" \
   -rst ramdisk -rss 50Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_ramdisk.log &
+  run &>$LOG_DIR/doc_tpch_testcase_ramdisk.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -728,7 +729,7 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -739,7 +740,7 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_1.log &
+  run &>$LOG_DIR/test_tpch_testcase_mysql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -862,7 +863,7 @@ No warnings
 #### TPC-H Monitoring
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -874,7 +875,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_2.log &
+  run &>$LOG_DIR/test_tpch_testcase_mysql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1048,7 +1049,7 @@ kubectl delete pvc bexhoma-storage-mysql-tpch-1
 ```
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -1061,7 +1062,7 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_3.log &
+  run &>$LOG_DIR/test_tpch_testcase_mysql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1297,7 +1298,7 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms MySQL \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
@@ -1310,7 +1311,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -rnl "$BEXHOMA_NODE_LOAD" \
   -rnb "$BEXHOMA_NODE_BENCHMARK" \
   -rst ramdisk -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log &
+  run &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1451,7 +1452,7 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -1462,7 +1463,7 @@ nohup python tpch.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_1.log &
+  run &>$LOG_DIR/test_tpch_testcase_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -1582,7 +1583,7 @@ TEST passed: Workflow as planned
 #### TPC-H Monitoring
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -1594,7 +1595,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_2.log &
+  run &>$LOG_DIR/test_tpch_testcase_mariadb_2.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1735,7 +1736,7 @@ kubectl delete pvc bexhoma-storage-mariadb-tpch-1
 ```
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -1748,7 +1749,7 @@ nohup python tpch.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_3.log &
+  run &>$LOG_DIR/test_tpch_testcase_mariadb_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -1994,7 +1995,7 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
   -dbms MariaDB \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
@@ -2007,7 +2008,7 @@ nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
   -rnl "$BEXHOMA_NODE_LOAD" \
   -rnb "$BEXHOMA_NODE_BENCHMARK" \
   -rst ramdisk -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log &
+  run &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log
 
 ```
 
@@ -2163,7 +2164,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -2174,7 +2175,7 @@ nohup python tpcds.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log &
+  run &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -2368,7 +2369,7 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -2380,7 +2381,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_2.log &
+  run &>$LOG_DIR/test_tpcds_testcase_postgresql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -2605,7 +2606,7 @@ kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
 
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -2618,7 +2619,7 @@ nohup python tpcds.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log &
+  run &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -2961,7 +2962,7 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -2972,7 +2973,7 @@ nohup python tpcds.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_1.log &
+  run &>$LOG_DIR/test_tpcds_testcase_mysql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -3165,7 +3166,7 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -3177,7 +3178,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_2.log &
+  run &>$LOG_DIR/test_tpcds_testcase_mysql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -3394,7 +3395,7 @@ kubectl delete pvc bexhoma-storage-mysql-tpcds-1
 ```
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 10 \
   -dt \
   -t 1200 \
@@ -3407,7 +3408,7 @@ nohup python tpcds.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_3.log &
+  run &>$LOG_DIR/test_tpcds_testcase_mysql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -3722,7 +3723,7 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -3733,7 +3734,7 @@ nohup python tpcds.py -ms 1 -tr \
   -nbp 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log &
+  run &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -3933,7 +3934,7 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -3945,7 +3946,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log &
+  run &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -4086,7 +4087,7 @@ kubectl delete pvc bexhoma-storage-mariadb-tpcds-1
 ```
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -dt \
   -t 1200 \
@@ -4099,7 +4100,7 @@ nohup python tpcds.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log &
+  run &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -4356,7 +4357,7 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4367,7 +4368,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
+  run &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -4444,7 +4445,7 @@ sleep 10
 ```
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4456,7 +4457,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
+  run &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -4547,7 +4548,7 @@ TEST passed: Workflow as planned
 #### Benchbase Monitoring
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4559,7 +4560,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log &
+  run &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -4649,7 +4650,7 @@ TEST passed: Workflow as planned
 #### Benchbase Complex
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4662,7 +4663,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
+  run &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log
 ```
 
 yields (after ca. 30 minutes) something like
@@ -4897,7 +4898,7 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4908,7 +4909,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_1.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mysql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -4994,7 +4995,7 @@ sleep 10
 ```
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5006,7 +5007,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_2.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mysql_2.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -5095,7 +5096,7 @@ TEST passed: Workflow as planned
 #### Benchbase Monitoring
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5107,7 +5108,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_3.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mysql_3.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -5196,7 +5197,7 @@ TEST passed: Workflow as planned
 #### Benchbase Complex
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5209,7 +5210,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_4.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mysql_4.log
 ```
 
 yields (after ca. 30 minutes) something like
@@ -5436,7 +5437,7 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5447,7 +5448,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 8 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_1.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -5539,7 +5540,7 @@ sleep 10
 ```
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5551,7 +5552,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -5657,7 +5658,7 @@ Benchbase Workload tpcc SF=16
 #### Benchbase Monitoring
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5669,7 +5670,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_3.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mariadb_3.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -5784,7 +5785,7 @@ Benchbase Workload tpcc SF=16
 #### Benchbase Complex
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -5797,7 +5798,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log &
+  run &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log
 ```
 
 yields (after ca. 30 minutes) something like
@@ -6064,7 +6065,7 @@ Benchbase Workload tpcc SF=16
 #### HammerDB Simple
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -6074,7 +6075,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes)
@@ -6144,7 +6145,7 @@ TEST passed: Workflow as planned
 #### HammerDB Monitoring
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -6156,7 +6157,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log
 ```
 
 yields (after ca. 15 minutes)
@@ -6239,7 +6240,7 @@ TEST passed: Workflow as planned
 #### HammerDB Complex
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -dbms PostgreSQL \
@@ -6251,7 +6252,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log
 ```
 
 yields (after ca. 60 minutes)
@@ -6466,7 +6467,7 @@ TEST passed: Workflow as planned
 #### HammerDB Simple
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MySQL \
@@ -6476,7 +6477,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_1.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_mysql_1.log
 ```
 
 yields (after ca. 10 minutes)
@@ -6545,7 +6546,7 @@ TEST passed: Workflow as planned
 #### HammerDB Monitoring
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MySQL \
@@ -6557,7 +6558,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log
 ```
 
 yields (after ca. 15 minutes)
@@ -6649,7 +6650,7 @@ TEST passed: Workflow as planned
 #### HammerDB Complex
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -dbms MySQL \
@@ -6661,7 +6662,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log
 ```
 
 yields (after ca. 60 minutes)
@@ -6867,7 +6868,7 @@ TEST passed: Workflow as planned
 #### HammerDB Simple
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MariaDB \
@@ -6877,7 +6878,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_1.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes)
@@ -6962,7 +6963,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 #### HammerDB Monitoring
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms MariaDB \
@@ -6974,7 +6975,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log
 ```
 
 yields (after ca. 15 minutes)
@@ -7092,7 +7093,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 #### HammerDB Complex
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 2 \
   -dbms MariaDB \
@@ -7104,7 +7105,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 2 \
   -m -mc \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log &
+  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log
 ```
 
 yields (after ca. 60 minutes)
@@ -7370,7 +7371,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ### YCSB Loader Test for Scaling the Driver
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -7384,7 +7385,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nbf 1 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
+  run &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -7461,7 +7462,7 @@ TEST passed: Result contains no FAILED column
 ### YCSB Loader Test for Persistency
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -7476,7 +7477,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
+  run &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log
 ```
 
 yields (after ca. 10 minutes) something like
@@ -7574,7 +7575,7 @@ TEST passed: Result contains no FAILED column
 ### YCSB Execution for Scaling and Repetition
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -7589,7 +7590,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
+  run &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
@@ -7784,7 +7785,7 @@ TEST passed: Result contains no FAILED column
 ### YCSB Execution Different Workload
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload e \
   -dbms PostgreSQL \
@@ -7799,7 +7800,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
+  run &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log
 ```
 
 yields (after ca. 5 minutes) something like
@@ -7874,7 +7875,7 @@ TEST failed: Result contains FAILED column
 ### YCSB Execution Monitoring
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \
@@ -7890,7 +7891,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -rst shared -rss 100Gi \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_5.log &
+  run &>$LOG_DIR/test_ycsb_testcase_5.log
 ```
 
 yields (after ca. 10 minutes) something like

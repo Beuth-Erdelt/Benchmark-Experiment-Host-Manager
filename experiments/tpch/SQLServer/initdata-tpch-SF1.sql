@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into SQL Server.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into SQL Server.
 --          BULK INSERT reads pipe-delimited .tbl files from the server filesystem.
 --          LASTROW caps the read at the expected row count, preventing BULK INSERT
 --          from treating the trailing '|' delimiter as an extra empty row.

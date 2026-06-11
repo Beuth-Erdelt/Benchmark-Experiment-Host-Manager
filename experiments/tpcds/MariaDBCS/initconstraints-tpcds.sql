@@ -40,8 +40,8 @@
 -- Contributors:
 -- Gradient Systems
 
--- catalog_page→promotion FK not applied: column cp_promo_id does not exist in catalog_page
--- catalog_returns→date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
+-- catalog_page->promotion FK not applied: column cp_promo_id does not exist in catalog_page
+-- catalog_returns->date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
 
 ALTER TABLE tpcds.call_center
     ADD CONSTRAINT cc_d1 FOREIGN KEY (cc_closed_date_sk) REFERENCES date_dim (d_date_sk),

@@ -10,58 +10,7 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
-
-# Config nodes and paths
-BEXHOMA_NODE_SUT="cl-worker14"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
-
-# Wait for all previous jobs to complete
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -72,8 +21,7 @@ wait_process "ycsb"
 
 
 install_yugabytedb() {
-  # Parameter: $1 = persistent storage? yes/no
-  PERSISTENT=${1:-yes}  # Default: persistent
+  PERSISTENT=${1:-yes}
 
   if [[ "$PERSISTENT" == "yes" ]]; then
     EPHEMERAL=false
@@ -107,14 +55,9 @@ enableLoadBalancer=true
   sleep 60
 }
 
-#install_yugabytedb yes   # persistent storage
-#install_yugabytedb no    # ephemeral storage
-#install_yugabytedb       # default = persistent
-
 
 remove_yugabytedb() {
-  # Parameter: $1 = remove PVCs? yes/no
-  REMOVE_PVC=${1:-no}  # default: do NOT remove PVCs
+  REMOVE_PVC=${1:-no}
 
   echo "Deleting Helm release bexhoma..."
   helm delete bexhoma
@@ -131,16 +74,32 @@ remove_yugabytedb() {
   sleep 60
 }
 
-#remove_yugabytedb yes   # Helm release + PVCs
-#remove_yugabytedb no    # nur Helm release, PVCs behalten
-#remove_yugabytedb       # default = no
-
 
 # install YugabyteDB
 install_yugabytedb no
 
 #### YCSB Ingestion (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms YugabyteDB              DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -156,14 +115,34 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_1.log &
-
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
-# skip loading, because previous process has generated it
 #### YCSB Execution (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms YugabyteDB              DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -sl                           skip loading phase (reuse existing data)
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -180,10 +159,10 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_2.log &
-
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
 # remove YugabyteDB installation
@@ -198,7 +177,29 @@ kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
 sleep 30
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms YugabyteDB              DBMS under test
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -rst shared                   storage class for persistent volumes
+# -rss 1Gi                      size of the persistent volume claim
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -215,10 +216,10 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_yugabytedb_3.log &
-
+  run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
 # remove YugabyteDB installation
@@ -231,7 +232,21 @@ sleep 30
 
 
 #### Benchbase Simple (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms YugabyteDB              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -241,10 +256,10 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_1.log &
-
+  run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
 # remove YugabyteDB installation
@@ -255,31 +270,25 @@ sleep 30
 install_yugabytedb no
 sleep 30
 
-# kubectl patch statefulset yb-tserver --type=merge -p '
-# spec:
-#   template:
-#     spec:
-#       containers:
-#       - name: yb-tserver
-#         livenessProbe:
-#           exec:
-#             command: ["true"]
-# '
-
-# kubectl patch statefulset yb-master --type=merge -p '
-# spec:
-#   template:
-#     spec:
-#       containers:
-#       - name: yb-master
-#         livenessProbe:
-#           exec:
-#             command: ["true"]
-# '
-
 
 #### Benchbase More Complex (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 128                       scaling factor (controls database size)
+# -slg 30                       log status to stdout every x seconds
+# -sd 20                        benchmark duration in minutes
+# -xkey                         simulate user think time and keying delays
+# -dbms YugabyteDB              DBMS under test
+# -nbp 1,2,5,10                 benchmarking pod counts to sweep (comma-separated)
+# -nbt 1280                     threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
   -slg 30 \
   -sd 20 \
@@ -291,18 +300,14 @@ nohup python benchbase.py -ms 1 -tr \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
-  run </dev/null &>$LOG_DIR/doc_benchbase_yugabytedb_2.log &
-
+  run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
 # remove YugabyteDB installation
 remove_yugabytedb no
-
-
-
-
 
 
 ################################################
@@ -314,7 +319,25 @@ remove_yugabytedb no
 install_yugabytedb no
 sleep 30
 
-nohup python ycsb.py -ms 1 -tr \
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 1                         scaling factor (number of records x 1000)
+# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
+# -dbms YugabyteDB              DBMS under test
+# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nbf 4                        throughput target as a multiple of the base ops/s
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -329,9 +352,10 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log &
+  run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 
 wait_process "ycsb"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
 # remove YugabyteDB installation
@@ -343,8 +367,20 @@ install_yugabytedb no
 sleep 30
 
 
-#### Benchbase Simple (Example-YugaByteDB.md)
-nohup python benchbase.py -ms 1 -tr \
+#### Benchbase Application Metrics (Example-YugaByteDB.md)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -sf 16                        scaling factor (controls database size)
+# -sd 5                         benchmark duration in minutes
+# -dbms YugabyteDB              DBMS under test
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -nbf 16                       throughput target as a multiple of the base ops/s
+# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect application-level metrics
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms YugabyteDB \
@@ -353,14 +389,14 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -m -mc -ma \
-  run </dev/null &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log &
+  run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 
 wait_process "benchbase"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 
 # remove YugabyteDB installation
 remove_yugabytedb no
-
 
 
 ###########################################

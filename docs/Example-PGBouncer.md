@@ -29,6 +29,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -37,7 +38,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -56,7 +57,7 @@ nohup python ycsb.py -ms 1 -tr \
   -npp 4 \
   -npi 128 \
   -npo 64 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log &
+  run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
 ```
 
 This
@@ -262,7 +263,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sfo 16 \
   --workload c \
@@ -282,7 +283,7 @@ nohup python ycsb.py -ms 1 -tr \
   -npi 128 \
   -npo 64 \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log &
+  run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 ```
 The following status shows we have one volume of type `shared`.
 Every PGBouncer experiment (and every PostgreSQL experiment) will take the database from this volume and skip loading.
@@ -514,7 +515,7 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 We activate the new-connection-per-transaction feature with `-xconn`.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -524,7 +525,7 @@ nohup python benchbase.py -ms 1 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 ```
 
 ### Evaluate Results
@@ -630,7 +631,7 @@ We activate the new-connection-per-transaction feature.
 This time there will be a connection pool of size 32, handled by 2 pods of PGBouncer.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 10 \
   -xconn \
@@ -643,7 +644,7 @@ nohup python benchbase.py -ms 1 -tr \
   -npi 32 \
   -npo 32 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log &
+  run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 ```
 
 ### Evaluate Results

@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — primary keys are declared inline in initschema-tpcds.sql;
+-- Purpose: Placeholder - primary keys are declared inline in initschema-tpcds.sql;
 --          no additional constraints are applied for TPC-DS on DB2.

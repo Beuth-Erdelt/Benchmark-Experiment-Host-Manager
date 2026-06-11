@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 100 (SF100 ≈ 100 GB) into SQL Server.
+-- Purpose: Load TPC-H data at scale factor 100 (SF100 ~ 100 GB) into SQL Server.
 --          See initdata-tpch-SF1.sql for option descriptions.
 
 USE [tpch]

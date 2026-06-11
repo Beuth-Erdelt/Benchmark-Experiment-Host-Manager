@@ -44,6 +44,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -52,7 +53,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
@@ -60,7 +61,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -t 1200 \
   -ii -ic -is \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_compare.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_compare.log
 ```
 
 This
@@ -534,7 +535,7 @@ options:
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -544,7 +545,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -ii -ic -is \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like this:
@@ -797,7 +798,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -807,7 +808,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -nc 1 \
   -ne 1,2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_throughput.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
 ```
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
@@ -1047,7 +1048,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -1057,7 +1058,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -nc 2 \
   -rst shared -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpcds_testcase_storage.log &
+  run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 ```
 The following status shows we have a volumes of type `shared`.
 Every experiment running TPC-DS of SF=1 at MonetDB will take the database from this volume and skip loading.
@@ -1325,7 +1326,7 @@ Here, we run it at TPC-DS SF=10 in MonetDB:
 
 
 ```bash
-nohup python tpcds.py -ms 1 -dt -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -dt -tr \
   -dbms MonetDB \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
@@ -1336,7 +1337,7 @@ nohup python tpcds.py -ms 1 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi \
-  profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling.log &
+  profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
 ```
 
 ### Evaluate Results
@@ -1945,10 +1946,11 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 
-nohup python tpcds.py -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -1958,7 +1960,7 @@ nohup python tpcds.py -ms 1 \
   -rr 1024Gi -lr 1024Gi \
   -t 14400 -dt \
   -rst shared -rss 1000Gi -rsr \
-  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_1.log &
+  run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 ```
 
 
@@ -2204,7 +2206,7 @@ We then run two power tests, one after the other (`-ne 1,1`), and shut down the 
 This is repeated 2 times (`-nc`).
 
 ```bash
-nohup python tpcds.py -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -2214,7 +2216,7 @@ nohup python tpcds.py -ms 1 \
   -rr 1024Gi -lr 1024Gi \
   -t 14400 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_2.log &
+  run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 ```
 
 ### Evaluate Results
@@ -2497,7 +2499,7 @@ We then run two power tests, one after the other, and then a throughput test wit
 
 
 ```bash
-nohup python tpcds.py -ms 1 \
+bexhoma tpcds -ms $BEXHOMA_MS \
   -m -mc \
   -sf 30 \
   -ii -ic -is \
@@ -2507,7 +2509,7 @@ nohup python tpcds.py -ms 1 \
   -rr 1024Gi -lr 1024Gi \
   -t 14400 -dt \
   -rst shared -rss 1000Gi \
-  run </dev/null &>$LOG_DIR/doc_tpcds_monetdb_3.log &
+  run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 ```
 
 ### Evaluate Results

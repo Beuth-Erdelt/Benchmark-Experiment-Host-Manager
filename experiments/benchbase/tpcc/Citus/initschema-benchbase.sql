@@ -30,7 +30,7 @@ CREATE TABLE public.customer (
     c_middle        CHAR(2)         NOT NULL,
     c_data          VARCHAR(500)    NOT NULL,
     CONSTRAINT customer_pkey PRIMARY KEY (c_w_id, c_d_id, c_id)
-    -- customer→district FK not applied: not supported on Citus distributed tables
+    -- customer->district FK not applied: not supported on Citus distributed tables
 );
 
 CREATE TABLE public.district (
@@ -46,7 +46,7 @@ CREATE TABLE public.district (
     d_state      CHAR(2)         NOT NULL,
     d_zip        CHAR(9)         NOT NULL,
     CONSTRAINT district_pkey PRIMARY KEY (d_w_id, d_id)
-    -- district→warehouse FK not applied: not supported on Citus distributed tables
+    -- district->warehouse FK not applied: not supported on Citus distributed tables
 );
 
 CREATE TABLE public.history (
@@ -58,8 +58,8 @@ CREATE TABLE public.history (
     h_date    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP NOT NULL,
     h_amount  NUMERIC(6, 2)  NOT NULL,
     h_data    VARCHAR(24)    NOT NULL
-    -- history→customer FK not applied: not supported on Citus distributed tables
-    -- history→district FK not applied: not supported on Citus distributed tables
+    -- history->customer FK not applied: not supported on Citus distributed tables
+    -- history->district FK not applied: not supported on Citus distributed tables
 );
 
 CREATE TABLE public.item (
@@ -76,7 +76,7 @@ CREATE TABLE public.new_order (
     no_d_id  INTEGER  NOT NULL,
     no_o_id  INTEGER  NOT NULL,
     CONSTRAINT new_order_pkey PRIMARY KEY (no_w_id, no_d_id, no_o_id)
-    -- new_order→oorder FK not applied: not supported on Citus distributed tables
+    -- new_order->oorder FK not applied: not supported on Citus distributed tables
 );
 
 CREATE TABLE public.order_line (
@@ -91,8 +91,8 @@ CREATE TABLE public.order_line (
     ol_quantity     NUMERIC(6, 2)  NOT NULL,
     ol_dist_info    CHAR(24)       NOT NULL,
     CONSTRAINT order_line_pkey PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number)
-    -- order_line→stock FK not applied: not supported on Citus distributed tables
-    -- order_line→oorder FK not applied: not supported on Citus distributed tables
+    -- order_line->stock FK not applied: not supported on Citus distributed tables
+    -- order_line->oorder FK not applied: not supported on Citus distributed tables
 );
 
 CREATE TABLE public.oorder (
@@ -105,7 +105,7 @@ CREATE TABLE public.oorder (
     o_all_local   INTEGER    NOT NULL,
     o_entry_d     TIMESTAMP  DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oorder_pkey PRIMARY KEY (o_w_id, o_d_id, o_id)
-    -- oorder→customer FK not applied: not supported on Citus distributed tables
+    -- oorder->customer FK not applied: not supported on Citus distributed tables
 );
 CREATE UNIQUE INDEX oorder_i2 ON public.oorder USING BTREE (o_w_id, o_d_id, o_c_id, o_id);
 
@@ -128,8 +128,8 @@ CREATE TABLE public.stock (
     s_dist_09     CHAR(24)       NOT NULL,
     s_dist_10     CHAR(24)       NOT NULL,
     CONSTRAINT stock_pkey PRIMARY KEY (s_w_id, s_i_id)
-    -- stock→item FK not applied: not supported on Citus distributed tables
-    -- stock→warehouse FK not applied: not supported on Citus distributed tables
+    -- stock->item FK not applied: not supported on Citus distributed tables
+    -- stock->warehouse FK not applied: not supported on Citus distributed tables
 );
 
 CREATE TABLE public.warehouse (

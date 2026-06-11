@@ -41,8 +41,8 @@
 -- Contributors:
 -- Gradient Systems
 
--- catalog_page→promotion FK not applied: column cp_promo_id does not exist in catalog_page
--- catalog_returns→date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
+-- catalog_page->promotion FK not applied: column cp_promo_id does not exist in catalog_page
+-- catalog_returns->date_dim (cr_ship_date_sk) FK not applied: cr_ship_date_sk intentionally omitted per TPC-DS specification
 
 ALTER TABLE customer_address
     ADD PRIMARY KEY (ca_address_sk);

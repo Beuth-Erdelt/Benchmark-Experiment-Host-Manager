@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 10 (SF10 ≈ 10 GB) into Citus.
+-- Purpose: Load TPC-H data at scale factor 10 (SF10 ~ 10 GB) into Citus.
 --          See initdata-tpch-SF1.sql for option descriptions.
 
 COPY public.customer FROM '/data/tpch/SF10/customer.tbl' DELIMITER '|' NULL '';

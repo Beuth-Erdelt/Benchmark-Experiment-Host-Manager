@@ -3,6 +3,6 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — no secondary indexes are created in this SQL Server
+-- Purpose: Placeholder - no secondary indexes are created in this SQL Server
 --          TPC-H configuration. The clustered primary key indexes declared in
 --          initschema-tpch.sql cover the key access patterns.

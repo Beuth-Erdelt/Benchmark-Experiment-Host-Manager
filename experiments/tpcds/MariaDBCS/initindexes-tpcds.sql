@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — MariaDB ColumnStore manages its own columnar indexes
+-- Purpose: Placeholder - MariaDB ColumnStore manages its own columnar indexes
 --          internally; explicit CREATE INDEX statements are not applicable.

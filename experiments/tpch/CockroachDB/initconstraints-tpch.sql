@@ -6,7 +6,7 @@
 -- Purpose: Add foreign key constraints to TPC-H tables. Run after data loading.
 --          NOT VALID skips validation of existing rows, which is safe after a
 --          bulk load from trusted dbgen data. Statements are ordered by FK
---          dependency. Note: the supplier→nation FK is applied here (unlike
+--          dependency. Note: the supplier->nation FK is applied here (unlike
 --          most other DBMS variants) following the full TPC-H DDL standard.
 --          CockroachDB automatically creates a backing index for each FK.
 -- Reference: https://github.com/cockroachdb/cockroach/blob/master/pkg/workload/tpch/tpch.go

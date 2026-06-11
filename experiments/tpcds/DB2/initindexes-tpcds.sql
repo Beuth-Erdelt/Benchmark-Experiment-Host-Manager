@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — no additional indexes are created beyond the primary
+-- Purpose: Placeholder - no additional indexes are created beyond the primary
 --          key indexes implicit in initschema-tpcds.sql for TPC-DS on DB2.

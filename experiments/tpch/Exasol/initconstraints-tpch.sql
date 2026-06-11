@@ -6,7 +6,7 @@
 -- Purpose: Add foreign key constraints to TPC-H tables in Exasol.
 --          Primary keys are added separately in initindexes-tpch.sql; Exasol
 --          treats PKs primarily as optimizer hints rather than enforcement.
---          The supplier→nation FK is applied here; it is part of the TPC-H DDL
+--          The supplier->nation FK is applied here; it is part of the TPC-H DDL
 --          standard and Exasol can use it as a join-elimination hint.
 --          Statements are ordered by FK dependency.
 

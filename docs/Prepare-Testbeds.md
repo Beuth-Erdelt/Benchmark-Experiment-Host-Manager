@@ -47,6 +47,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -109,12 +110,12 @@ Starts PostgreSQL without loading any data.
 After this completes you can connect to the instance and run queries manually.
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   --workload c \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT \
-  start </dev/null &>$LOG_DIR/test_ycsb_start_postgresql.log &
+  start &>$LOG_DIR/test_ycsb_start_postgresql.log
 ```
 
 The summary confirms the SUT is running and shows the port-forward command.
@@ -125,13 +126,13 @@ Starts PostgreSQL and imports YCSB data using 8 parallel loader pods with 64 thr
 The data volume is created and marked as loaded; subsequent `run` invocations with the same parameters will skip this step.
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   --workload c \
   -m -mc \
   -nlp 8 -nlt 64 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load </dev/null &>$LOG_DIR/test_ycsb_load_postgresql.log &
+  load &>$LOG_DIR/test_ycsb_load_postgresql.log
 ```
 
 Key parameters:
@@ -146,13 +147,13 @@ The **Ingestion** tables show how much CPU and RAM the SUT and loader consumed.
 Full experiment: loads data and then runs YCSB workload C with 8 benchmarker pods.
 
 ```bash
-nohup python ycsb.py -ms 1 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   --workload c \
   -m -mc \
   -nlp 8 -nlt 64 -nbp 8 -nbt 64 -ss \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_ycsb_run_postgresql.log &
+  run &>$LOG_DIR/test_ycsb_run_postgresql.log
 ```
 
 Key parameters:
@@ -173,11 +174,11 @@ The configuration name encodes concurrency and target: `PostgreSQL-<pods>-<pods>
 ### Start DBMS
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT \
-  start </dev/null &>$LOG_DIR/test_benchbase_start_postgresql.log &
+  start &>$LOG_DIR/test_benchbase_start_postgresql.log
 ```
 
 ### Start DBMS and Load Data
@@ -185,12 +186,12 @@ nohup python benchbase.py -ms 1 -tr \
 Imports TPC-C data (scale factor 1) using 8 parallel loader pods.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -nlp 8 -nlt 64 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load </dev/null &>$LOG_DIR/test_benchbase_load_postgresql.log &
+  load &>$LOG_DIR/test_benchbase_load_postgresql.log
 ```
 
 The **Loading** table reports `Throughput [SF/h]` — scale factors loaded per hour.
@@ -200,12 +201,12 @@ The **Loading** table reports `Throughput [SF/h]` — scale factors loaded per h
 Loads data with 1 pod (Benchbase loads serially by design) and runs the workload with 8 benchmarker pods for 5 minutes.
 
 ```bash
-nohup python benchbase.py -ms 1 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -nlp 1 -nlt 64 -nbp 8 -nbt 64 -ss \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql.log
 ```
 
 The **Execution** table reports:
@@ -223,11 +224,11 @@ The configuration name encodes virtual users and clients: `PostgreSQL-BHT-<vuser
 ### Start DBMS
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT \
-  start </dev/null &>$LOG_DIR/test_hammerdb_start_postgresql.log &
+  start &>$LOG_DIR/test_hammerdb_start_postgresql.log
 ```
 
 ### Start DBMS and Load Data
@@ -236,12 +237,12 @@ Imports TPC-C data (1 warehouse = scale factor 1) using a single loader pod.
 HammerDB's loader is inherently single-threaded, so `-nlp 1 -nlt 1` is typical.
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load </dev/null &>$LOG_DIR/test_hammerdb_load_postgresql.log &
+  load &>$LOG_DIR/test_hammerdb_load_postgresql.log
 ```
 
 The **Loading** table reports `Imported warehouses [1/h]`.
@@ -251,12 +252,12 @@ The **Loading** table reports `Imported warehouses [1/h]`.
 Loads data and runs TPC-C for 5 minutes with 64 virtual users.
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_hammerdb_run_postgresql.log &
+  run &>$LOG_DIR/test_hammerdb_run_postgresql.log
 ```
 
 The **Execution** table reports `NOPM` (New Orders Per Minute) and `TPM` (Transactions Per Minute), which are the standard HammerDB TPC-C metrics.
@@ -272,11 +273,11 @@ After loading, the DBMSBenchmarker tool runs the 22 queries and records per-quer
 ### Start DBMS
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT \
-  start </dev/null &>$LOG_DIR/test_tpch_start_postgresql.log &
+  start &>$LOG_DIR/test_tpch_start_postgresql.log
 ```
 
 ### Start DBMS and Load Data
@@ -285,12 +286,12 @@ Generates and loads TPC-H data at scale factor 1.
 The flags `-ii -ic -is` trigger index creation, constraint application, and statistics gathering after the raw data is ingested.
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -ii -ic -is -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load </dev/null &>$LOG_DIR/test_tpch_load_postgresql.log &
+  load &>$LOG_DIR/test_tpch_load_postgresql.log
 ```
 
 The **Loading** table breaks down time into phases:
@@ -308,12 +309,12 @@ The **Loading** table breaks down time into phases:
 Loads TPC-H data and runs all 22 queries once.
 
 ```bash
-nohup python tpch.py -ms 1 -tr \
+bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql.log
 ```
 
 The **Execution** section reports per-query latency in the **Latency of Timer Execution** table and the TPC-H standard metrics:
@@ -334,22 +335,22 @@ Its structure mirrors TPC-H: `dbgen2` generates data, a loader imports it, DBMSB
 ### Start DBMS
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT \
-  start </dev/null &>$LOG_DIR/test_tpcds_start_postgresql.log &
+  start &>$LOG_DIR/test_tpcds_start_postgresql.log
 ```
 
 ### Start DBMS and Load Data
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -ii -ic -is -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load </dev/null &>$LOG_DIR/test_tpcds_load_postgresql.log &
+  load &>$LOG_DIR/test_tpcds_load_postgresql.log
 ```
 
 ### Start DBMS and Load Data and Run Workload
@@ -358,12 +359,12 @@ Loads TPC-DS data and runs all 99 queries.
 Some queries may fail on certain DBMS (e.g., Q90 raises a division-by-zero on PostgreSQL at SF=1); these are flagged in the **Errors** section and in **Tests**.
 
 ```bash
-nohup python tpcds.py -ms 1 -tr \
+bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
   -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/test_tpcds_run_postgresql.log &
+  run &>$LOG_DIR/test_tpcds_run_postgresql.log
 ```
 
 The **Execution** section reports per-query latency for all 99 TPC-DS queries and the same Power@Size / Throughput@Size metrics as TPC-H.

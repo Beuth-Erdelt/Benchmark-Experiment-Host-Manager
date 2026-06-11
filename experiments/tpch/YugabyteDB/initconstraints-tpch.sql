@@ -10,7 +10,7 @@
 
 ALTER TABLE public.nation
     ADD FOREIGN KEY (n_regionkey) REFERENCES region(r_regionkey);
--- supplier→nation FK not applied: not required by the TPC-H query workload
+-- supplier->nation FK not applied: not required by the TPC-H query workload
 
 ALTER TABLE public.partsupp
     ADD FOREIGN KEY (ps_suppkey) REFERENCES supplier(s_suppkey),

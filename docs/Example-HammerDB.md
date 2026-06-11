@@ -32,6 +32,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -40,7 +41,7 @@ For performing the experiment we can run the [hammerdb file](https://github.com/
 
 Example:
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms PostgreSQL \
@@ -48,7 +49,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbp 1,2 \
   -nbt 16 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_scale.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_scale.log
 ```
 
 This
@@ -306,7 +307,7 @@ We in the following also activate measurement of latencies with `-xlat`.
 
 Example:
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -xlat \
@@ -316,7 +317,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nbt 16 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like
@@ -452,7 +453,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -462,7 +463,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_storage.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_storage.log
 ```
 
 The following status shows we have two volumes of type `shared`.
@@ -584,7 +585,7 @@ kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 The keying and thinking times can be activated via `-xkey`:
 
 ```bash
-nohup python hammerdb.py -ms 1 -tr \
+bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 160 \
   -sd 30 \
   -xlat \
@@ -598,7 +599,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 100Gi \
-  run </dev/null &>$LOG_DIR/doc_hammerdb_testcase_keytime.log &
+  run &>$LOG_DIR/doc_hammerdb_testcase_keytime.log
 ```
 
 ## Evaluate Results

@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 30 (SF30 ≈ 30 GB) into SingleStore.
+-- Purpose: Load TPC-H data at scale factor 30 (SF30 ~ 30 GB) into SingleStore.
 --          LOAD DATA INFILE reads pipe-delimited .tbl files from the server
 --          filesystem. The trailing '|' dbgen appends is silently consumed
 --          because SingleStore reads exactly as many fields as the table has columns.

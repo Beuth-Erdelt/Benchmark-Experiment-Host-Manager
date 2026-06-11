@@ -201,6 +201,8 @@ class base():
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.logger(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
+        self.evaluators: dict = {}                                        # benchmark.name → evaluator instance
         self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
@@ -925,6 +927,25 @@ class base():
         :param configuration: Configuration object
         """
         self.configurations.append(configuration)
+
+    def add_benchmark(self, benchmark) -> None:
+        """
+        Register a benchmark and create its evaluator.
+
+        Assigns a 1-based ``benchmark_index``, instantiates the evaluator, wires
+        ``evaluator.experiment`` back to this experiment, and sets ``self.evaluator``
+        to the first registered benchmark's evaluator for backward-compat.
+
+        :param benchmark: :class:`~bexhoma.benchmarks.base.Benchmark` instance.
+        """
+        benchmark.benchmark_index = len(self.benchmarks) + 1
+        self.benchmarks.append(benchmark)
+        benchmark.evaluator = benchmark.create_evaluator(
+            self.code, self.cluster.resultfolder, benchmark.benchmark_index)
+        benchmark.evaluator.experiment = self
+        self.evaluators[benchmark.name] = benchmark.evaluator
+        if len(self.benchmarks) == 1:
+            self.evaluator = benchmark.evaluator
     def set_querymanagement_quicktest(self,
                                       numRun: int = 1,
                                       datatransfer: bool = False) -> None:
@@ -1244,7 +1265,18 @@ class base():
         Constructs a list of runs for the planned workflow.
         Stores this information in self.workload['workflow_planned'].
         Updates query.config locally and remotely via update_workload().
+
+        When the experiment has registered :class:`~bexhoma.benchmarks.base.Benchmark`
+        objects (via :meth:`~bexhoma.experiments.mixed.mixed.add_benchmark`), the
+        ordered benchmark type sequence is written to ``self.workload['benchmark_sequence']``
+        so that collectors can later reconstruct the benchmark-run → tool-type mapping
+        from ``queries.config``.
         """
+        if hasattr(self, 'benchmarks') and self.benchmarks:
+            self.workload['benchmark_sequence'] = [
+                {'index': bm.benchmark_index, 'type': bm.name}
+                for bm in self.benchmarks
+            ]
         workflow = self.get_workflow_list()
         self.workload['workflow_planned'] = workflow
         self.update_workload()
@@ -1355,12 +1387,19 @@ class base():
             print("{:30s}: is running".format("Cluster monitoring"))
         else:
             self.cluster.monitor_cluster_exists = False
+        for config in self.configurations:
+            if config.experiment_dict["loader"] or config.experiment_dict["benchmarker"]:
+                filename = f"bexhoma-experiment-dict-{config.configuration}.json"
+                filepath = self.result_filename_local(filename)
+                with open(filepath, 'w') as _f:
+                    json.dump(config.experiment_dict, _f, indent=2)
         intervals_wait = 0
         do = True
         while do:
             #time.sleep(intervals)
             self.wait(intervals_wait)
             intervals_wait = intervals
+            _benchmark_just_submitted = False
             # count number of running and pending pods
             num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
             num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
@@ -1407,7 +1446,11 @@ class base():
                 # start loading
                 if not config.loading_started:
                     # check if monitoring has started
-                    if len(config.benchmark_list) > 0:
+                    _has_benchmarks = (
+                        (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                        or len(config.benchmark_list) > 0
+                    )
+                    if _has_benchmarks:
                         if config.monitoring_active and not config.monitoring_is_running():
                             print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
@@ -1460,7 +1503,11 @@ class base():
                                 else:
                                     config.start_loading()
                 # check if maintaining
-                if config.loading_finished and len(config.benchmark_list) > 0:
+                _has_benchmarks_maintaining = (
+                    (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                    or len(config.benchmark_list) > 0
+                )
+                if config.loading_finished and _has_benchmarks_maintaining:
                     if config.monitoring_active and not config.monitoring_is_running():
                         print("{:30s}: waits for monitoring".format(config.configuration))
                         if not config.monitoring_is_pending():
@@ -1540,7 +1587,12 @@ class base():
                         print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                         continue
                     # still benchmarks: check loading and maintaining
-                    if len(config.benchmark_list) > 0:
+                    _use_experiment_dict = bool(config.experiment_dict["benchmarker"])
+                    _has_more_rounds = (
+                        (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                        or len(config.benchmark_list) > 0
+                    )
+                    if _has_more_rounds:
                         if config.monitoring_active and not config.monitoring_is_running():
                             print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.monitoring_is_pending():
@@ -1551,162 +1603,132 @@ class base():
                             continue
                     app = self.cluster.appname
                     component = 'benchmarker'
-                    configuration = ''
-                    pods = self.cluster.get_job_pods(app, component, self.code, configuration=config.configuration)
-                    if len(pods) > 0:
-                        # still pods there
-                        print("{:30s}: has running benchmarks".format(config.configuration))
+                    # Defer benchmark submission and stop_sut() while any jobs exist,
+                    # whether still running or succeeded-but-not-yet-cleaned-up.
+                    # end_benchmarking() runs in the second loop below; stop_sut() must
+                    # not fire until that loop has processed all completed jobs and
+                    # deleted them, so we continue here for any non-empty job list.
+                    _active_jobs = self.cluster.get_jobs(app, component, self.code, configuration=config.configuration)
+                    if _active_jobs:
+                        if any(not self.cluster.get_job_status(j) for j in _active_jobs):
+                            print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
+                    if _use_experiment_dict and config.client <= len(config.experiment_dict["benchmarker"]):
+                        # experiment dict path: submit all parallel entries in this client round
+                        client = str(config.client)
+                        experimentRun = str(config.num_experiment_to_apply_done + 1)
+                        client_round = config.experiment_dict["benchmarker"][config.client - 1]
+                        config.client += 1
+                        if config.client > self.client:
+                            print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
+                            self.client = config.client
+                            redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
+                            self.cluster.set_pod_counter(queue=redisQueue, value=0)
+                        print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                        for bm_idx, bench_entry in enumerate(client_round):
+                            benchmark_index = bm_idx + 1
+                            connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
+                            print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
+                            if bench_entry.get("parameters"):
+                                # Assign directly to avoid the side effect in
+                                # set_benchmarking_parameters() that overwrites
+                                # experiment_dict["benchmarker"][0], which would
+                                # corrupt subsequent -nc repetitions.
+                                config.benchmarking_parameters = bench_entry["parameters"].copy()
+                            config.run_benchmarker_pod(
+                                connection=connection,
+                                configuration=config.configuration,
+                                client=client,
+                                parallelism=bench_entry["parallelism"],
+                                benchmark_run=str(benchmark_index),
+                                template_override=bench_entry.get("template", ""),
+                            )
+                        _benchmark_just_submitted = True
+                    elif not _use_experiment_dict and len(config.benchmark_list) > 0:
+                        # legacy benchmark_list path
+                        parallelism = config.benchmark_list.pop(0)
+                        client = str(config.client)
+                        config.client = config.client+1
+                        if config.client > self.client:
+                            # this is the first instance of the next benchmark run
+                            print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
+                            self.client = config.client
+                            # reset number of clients per experiment
+                            redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
+                            self.cluster.set_pod_counter(queue=redisQueue, value=0)
+                        print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                        if len(config.benchmarking_parameters_list) > 0:
+                            benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
+                            print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
+                            config.set_benchmarking_parameters(**benchmarking_parameters)
+                        connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                        print("{:30s}: start benchmarking".format(connection))
+                        config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
+                        _benchmark_just_submitted = True
                     else:
-                        if len(config.benchmark_list) > 0:
-                            # next element in list
-                            parallelism = config.benchmark_list.pop(0)
-                            client = str(config.client)
-                            config.client = config.client+1
-                            if config.client > self.client:
-                                # this is the first instance of the next benchmark run
-                                print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
-                                self.client = config.client
-                                # reset number of clients per experiment
-                                redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
-                                self.cluster.set_pod_counter(queue=redisQueue, value=0)
-                            print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
-                            if len(config.benchmarking_parameters_list) > 0:
-                                benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
-                                print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
-                                config.set_benchmarking_parameters(**benchmarking_parameters)
-                            # we now always add the experiment number to the connection name
-                            #if config.num_experiment_to_apply > 1:
-                            #    connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
-                            #else:
-                            #    connection = config.configuration+'-'+client
-                            connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
-                            print("{:30s}: start benchmarking".format(connection))
-                            config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
-                            #config.run_benchmarker_pod_hammerdb(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
-                        else:
-                            # no list element left
-                            if not stop_after_benchmarking:
-                                print("{:30s}: can be stopped".format(config.configuration))
-                                app = self.cluster.appname
-                                deployments = list(config.deployment_infos['deployment'].keys())
-                                for deployment in deployments:
-                                    #print("{:30s}: deployment {}".format(config.configuration, deployment))
-                                    pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
-                                    for pod in pods:
-                                        #print("{:30s}: store log and description of pod {}".format(config.configuration, pod))
-                                        for container in config.deployment_infos['deployment'][deployment]['containers']:
-                                            #print("{:30s}: store log of container {}".format(config.configuration, container))
-                                            self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                        if not self.cluster.pod_description_exists(pod_name=pod):
-                                            self.cluster.logger.debug("Store description of pod {}".format(pod))
-                                            self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                        restarts = config.get_host_restarts(pod)
-                                        print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
-                                statefulsets = list(config.deployment_infos['statefulset'].keys())
-                                for statefulset in statefulsets:
-                                    #print("{:30s}: stateful set {}".format(config.configuration, statefulset))
-                                    pods = config.get_worker_pods(component=statefulset)
-                                    for pod in pods: #config.deployment_infos['statefulset'][statefulset]['pods']:
-                                        #print("{:30s}: store log and description of pod {}".format(config.configuration, pod))
-                                        for container in config.deployment_infos['statefulset'][statefulset]['containers']:
-                                            #print("{:30s}: store log of container {}".format(config.configuration, container))
-                                            self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                        if not self.cluster.pod_description_exists(pod_name=pod):
-                                            self.cluster.logger.debug("Store description of pod {}".format(pod))
-                                            self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                        restarts = config.get_host_restarts(pod)
-                                        print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
-                                # old, static way of storing logs1
-                                """
-                                component = 'sut'
-                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                for pod_sut in pods:
-                                    for container in config.sut_containers_deployed:
-                                        self.cluster.store_pod_log(pod_sut, container)
-                                    if not self.cluster.pod_description_exists(pod_name=pod_sut):
-                                        self.cluster.logger.debug("Store description of pod {}".format(pod_sut))
-                                        self.cluster.store_pod_description(pod_name=pod_sut)
-                                    restarts = config.get_host_restarts(pod_sut)
-                                    print("{:30s}: had {} restarts at sut {}".format(config.configuration, str(restarts), pod_sut))
-                                    #self.cluster.store_pod_log(pod_sut, 'dbms')
-                                component = 'worker'
-                                #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                pods = config.get_worker_pods(component=component)
-                                for pod_worker in pods:
-                                    for container in config.worker_containers_deployed:
-                                        self.cluster.store_pod_log(pod_worker, container, number=config.num_experiment_to_apply_done+1)
-                                    if not self.cluster.pod_description_exists(pod_name=pod_worker):
-                                        self.cluster.logger.debug("Store description of pod {}".format(pod_worker))
-                                        self.cluster.store_pod_description(pod_name=pod_worker)
-                                    restarts = config.get_host_restarts(pod_worker)
-                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod_worker))
-                                    #self.cluster.store_pod_log(pod_worker, 'dbms')
-                                component = 'store'
-                                #pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                pods = config.get_worker_pods(component=component)
-                                for pod_store in pods:
-                                    for container in config.store_containers_deployed:
-                                        self.cluster.store_pod_log(pod_store, container, number=config.num_experiment_to_apply_done+1)
-                                    if not self.cluster.pod_description_exists(pod_name=pod_store):
-                                        self.cluster.logger.debug("Store description of pod {}".format(pod_store))
-                                        self.cluster.store_pod_description(pod_name=pod_store)
-                                    restarts = config.get_host_restarts(pod_store)
-                                    print("{:30s}: had {} restarts at store {}".format(config.configuration, str(restarts), pod_store))
-                                    #self.cluster.store_pod_log(pod_store, 'dbms')
-                                component = 'pool'
-                                pods = self.cluster.get_pods(app, component, self.code, config.configuration)
-                                for pod_pool in pods:
-                                    for container in config.pool_containers_deployed:
-                                        self.cluster.store_pod_log(pod_pool, container)
-                                    #self.cluster.store_pod_log(pod_worker, 'dbms')
-                                """
-                                config.stop_sut()
-                                config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
-                                if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                                    while config.sut_is_existing():
-                                        print("{:30s}: still being removed".format(config.configuration))
-                                        self.wait(30)
-                                    print("{:30s}: starts again".format(config.configuration))
-                                    # reset number of clients per experiment
-                                    #print("{:30s}: reset pod counter".format(config.configuration))
-                                    #redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
-                                    #self.cluster.set_pod_counter(queue=redisQueue, value=0)
-                                    # find next sequence of benchmarks
+                        # no list element left
+                        if not stop_after_benchmarking:
+                            print("{:30s}: can be stopped".format(config.configuration))
+                            app = self.cluster.appname
+                            deployments = list(config.deployment_infos['deployment'].keys())
+                            for deployment in deployments:
+                                pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
+                                for pod in pods:
+                                    for container in config.deployment_infos['deployment'][deployment]['containers']:
+                                        self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                    if not self.cluster.pod_description_exists(pod_name=pod):
+                                        self.cluster.logger.debug("Store description of pod {}".format(pod))
+                                        self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
+                                    restarts = config.get_host_restarts(pod)
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                            statefulsets = list(config.deployment_infos['statefulset'].keys())
+                            for statefulset in statefulsets:
+                                pods = config.get_worker_pods(component=statefulset)
+                                for pod in pods:
+                                    for container in config.deployment_infos['statefulset'][statefulset]['containers']:
+                                        self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                    if not self.cluster.pod_description_exists(pod_name=pod):
+                                        self.cluster.logger.debug("Store description of pod {}".format(pod))
+                                        self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
+                                    restarts = config.get_host_restarts(pod)
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                            config.stop_sut()
+                            config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
+                            if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                while config.sut_is_existing():
+                                    print("{:30s}: still being removed".format(config.configuration))
+                                    self.wait(30)
+                                print("{:30s}: starts again".format(config.configuration))
+                                # find next sequence of benchmarks
+                                if not config.experiment_dict["benchmarker"]:
                                     config.benchmark_list = config.benchmark_list_template.copy()
                                     config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
-                                    self.client = 0
-                                    # wait for PV to be gone completely
-                                    #self.wait(60)
-                                    config.reset_sut()
-                                    config.start_sut()
-                                    self.wait(10)
-                                else:
-                                    config.experiment_done = True
+                                self.client = 0
+                                config.reset_sut()
+                                config.start_sut()
+                                self.wait(10)
                             else:
-                                print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
-                                command = config.generate_port_forward()
-                                if not 'sut_service' in self.workload:
-                                    self.workload['sut_service'] = dict()
-                                self.workload['sut_service'][config.configuration] = config.get_service_sut(config.configuration)
-                                print("{:30s}: Ready: {}".format(config.configuration, command))
-                                #print(config.num_experiment_to_apply_done, config.num_experiment_to_apply)
-                                # if we reach this point for the first time: simulate benchmarking
-                                # this collects loading metrics and prepares a connection.config and a query.config
-                                # this allows summaries like for "real" benchmarking experiments
-                                if config.client == 1 and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                                    client = str(config.client)
-                                    config.client = config.client+1
-                                    if config.num_experiment_to_apply > 1:
-                                        connection=config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
-                                    else:
-                                        connection=config.configuration+'-'+client
-                                    #print("{:30s}: start benchmarking".format(connection))
-                                    config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
-                                    config.num_experiment_to_apply_done = config.num_experiment_to_apply
-                                #print("{} can be stopped, but we leave it running".format(config.configuration))
+                                config.experiment_done = True
+                        else:
+                            print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
+                            command = config.generate_port_forward()
+                            if 'sut_service' not in self.workload:
+                                self.workload['sut_service'] = dict()
+                            self.workload['sut_service'][config.configuration] = config.get_service_sut(config.configuration)
+                            print("{:30s}: Ready: {}".format(config.configuration, command))
+                            if config.client == 1 and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                client = str(config.client)
+                                config.client = config.client+1
+                                if config.num_experiment_to_apply > 1:
+                                    connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                                else:
+                                    connection = config.configuration+'-'+client
+                                config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
+                                config.num_experiment_to_apply_done = config.num_experiment_to_apply
                 else:
                     print("{:30s}: is loading".format(config.configuration))
+            _we_have_running_benchmarks = False
+            _we_have_incomplete_jobs = False
             for config in self.configurations:
                 # all jobs of configuration - benchmarker
                 #app = self.cluster.appname
@@ -1723,6 +1745,7 @@ class base():
                 pods = self.cluster.get_job_pods(app, component, self.code, configuration)
                 # status per job
                 for job in jobs:
+                    _we_have_running_benchmarks = True
                     # status per pod
                     for p in pods:
                         if not self.cluster.pod_log_exists(p):
@@ -1750,6 +1773,8 @@ class base():
                             #    #self.cluster.delete_pod(p)
                     success = self.cluster.get_job_status(job)
                     self.cluster.logger.debug('job {} has success status {}'.format(job, success))
+                    if not success:
+                        _we_have_incomplete_jobs = True
                     #print(job, success)
                     if success:
                         # status per pod
@@ -1782,22 +1807,54 @@ class base():
                         self.end_benchmarking(job, config)
                         self.cluster.delete_job(job)
                         config.check_volumes()
-            if len(pods) == 0 and len(jobs) == 0:
+            if _we_have_running_benchmarks: #len(pods) == 0 and len(jobs) == 0:
                 do = False
+                # A job was submitted this iteration: the Kubernetes API may not yet
+                # return it from get_jobs(), so _we_have_incomplete_jobs would be
+                # False even though the job is actually running.  Force another pass
+                # so the new job can be observed before the termination check fires.
+                if _benchmark_just_submitted:
+                    do = True
                 for config in self.configurations:
                     #if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
                     if config.sut_is_pending():
+                        #print("{} pending".format(config.configuration))
                         self.cluster.logger.debug("{} pending".format(config.configuration))
                         do = True
                     if not config.loading_started or not config.loading_finished:
+                        #print("{} not loaded".format(config.configuration))
                         self.cluster.logger.debug("{} not loaded".format(config.configuration))
                         do = True
-                    if len(config.benchmark_list) > 0:
-                        self.cluster.logger.debug("{} still benchmarks to run: {}".format(config.configuration, config.benchmark_list))
+                    #print(config.client, len(config.experiment_dict["benchmarker"]))
+                    _still_has_benchmarks = (
+                        (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
+                        or (not bool(config.experiment_dict["benchmarker"]) and len(config.benchmark_list) > 0)
+                    )
+                    if _still_has_benchmarks:
+                        #print("{} still benchmarks to run".format(config.configuration))
+                        self.cluster.logger.debug("{} still benchmarks to run".format(config.configuration))
+                        do = True
+                    # The else block (stop_sut + reset_sut + start_sut) is deferred to
+                    # the next iteration while active jobs exist.  When the last job of a
+                    # repetition was just processed, _still_has_benchmarks is False
+                    # (client counter not yet reset) but another repetition is pending.
+                    # Keep the loop running so the else block can fire next iteration.
+                    if not stop_after_benchmarking and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                        self.cluster.logger.debug("{} more repetitions pending: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                         do = True
                     if stop_after_starting:
                         if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                            #print("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
+                            self.cluster.logger.debug("{} still not done: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                             do = True
+                if _we_have_incomplete_jobs:
+                    self.cluster.logger.debug("there are still running benchmark jobs")
+                    do = True
+            else:
+                # No benchmarker jobs exist: stop the loop once every configuration
+                # has finished all its experiment repetitions.
+                if all(config.experiment_done for config in self.configurations):
+                    do = False
     def benchmark_list(self, list_clients):
         """
         DEPRECATED? Is not used anymore.
@@ -2020,7 +2077,7 @@ class base():
                         #print(config.benchmark.connections)
                         for k,c in enumerate(config.benchmark.connections):
                             #print(c['name'])
-                            if c['name'] == config.connection:
+                            if c['name'] == connection:
                                 config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
                                 print("{:30s}: found and updated times {}".format(c['name'], config.benchmarking_timespans))
                                 break
@@ -2038,10 +2095,10 @@ class base():
                         for name, deployment in config.deployment_infos['deployment'].items():
                             print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                             if name=='sut' and config.monitoring_sut:
-                                print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
+                                print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
                                 config.fetch_metrics(
                                     title=f"Execution phase: SUT deployment",
-                                    connection=config.current_benchmark_connection,
+                                    connection=connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
                                     #container="dbms",
@@ -2055,10 +2112,10 @@ class base():
                                     pod_dashboard=pod_dashboard
                                     )
                             elif name!='sut':
-                                print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
+                                print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
                                 config.fetch_metrics(
                                     title=f"Execution phase: component {name}",
-                                    connection=config.current_benchmark_connection,
+                                    connection=connection,
                                     connection_file=connection+'.config',
                                     container=deployment['containers'][0], #"dbms",
                                     #container="dbms",
@@ -2074,10 +2131,10 @@ class base():
                     if 'statefulset' in config.deployment_infos:
                         for name, statefulset in config.deployment_infos['statefulset'].items():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
-                            print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, config.current_benchmark_connection))
+                            print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
                             config.fetch_metrics(
                                 title=f"Execution phase: component {name}",
-                                connection=config.current_benchmark_connection,
+                                connection=connection,
                                 connection_file=connection+'.config',
                                 container="dbms",
                                 component=name,
@@ -2159,10 +2216,10 @@ class base():
                     # only if general monitoring is on
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
-                        print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, config.current_benchmark_connection))
+                        print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
                         config.fetch_metrics(
                             title=f"Execution phase: component benchmarker",
-                            connection=config.current_benchmark_connection,
+                            connection=connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",
                             component="benchmarker",
@@ -2193,7 +2250,16 @@ class base():
                         stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
                         """
-        self.evaluator.end_benchmarking(jobname)
+        if self.benchmarks:
+            try:
+                benchmark_run = int(jobname.split("-")[-1])
+                evaluator = self.benchmarks[benchmark_run - 1].evaluator
+            except (IndexError, ValueError):
+                evaluator = self.evaluator
+        else:
+            evaluator = self.evaluator
+        evaluator.end_benchmarking(jobname)
+
     def end_loading(self,
                     jobname: str) -> None:
         """
@@ -2203,7 +2269,15 @@ class base():
         :param jobname: Name of the job to clean
         """
         self.cluster.logger.debug('base.end_loading({})'.format(jobname))
-        self.evaluator.end_loading(jobname)
+        if self.benchmarks:
+            try:
+                benchmark_run = int(jobname.split("-")[-1])
+                evaluator = self.benchmarks[benchmark_run - 1].evaluator
+            except (IndexError, ValueError):
+                evaluator = self.evaluator
+        else:
+            evaluator = self.evaluator
+        evaluator.end_loading(jobname)
     def show_summary_header(self) -> tuple:
         """
         Print workload metadata and per-connection details, then return sorted connection list and monitoring data.

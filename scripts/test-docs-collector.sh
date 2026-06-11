@@ -10,40 +10,9 @@
 # See LICENSE for details.
 
 
-# Import functions from testfunctions.sh
 source ./scripts/testfunctions.sh
 
-# Config nodes and paths
 BEXHOMA_NODE_SUT="cl-worker38"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-
-# Check for file
-if [[ ! -f "cluster.config" ]]; then
-    echo "Error: cluster.config not found."
-    exit 1
-fi
-echo "Passed: ./cluster.config found."
-
-# Check for directories
-for dir in "experiments" "k8s"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Error: Directory '$dir' missing."
-        exit 1
-    fi
-done
-echo "Passed: ./experiments/ found."
-echo "Passed: ./k8s/ found."
-
-
-if ! prepare_logs; then
-    echo "Error: prepare_logs failed with code $?"
-    exit 1
-fi
-echo "Passed: $LOG_DIR/ found."
-
-echo "Checks passed. Proceeding..."
 
 
 
@@ -56,7 +25,7 @@ echo "Checks passed. Proceeding..."
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -79,7 +48,7 @@ echo "Checks passed. Proceeding..."
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma benchbase \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -rr 64Gi \
   -lr 64Gi \
@@ -101,10 +70,11 @@ bexhoma benchbase \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -127,7 +97,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma benchbase \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -rr 64Gi \
   -lr 64Gi \
@@ -149,10 +119,11 @@ bexhoma benchbase \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rr 64Gi                      RAM requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -172,7 +143,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma benchbase \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -rr 64Gi \
   -lr 64Gi \
@@ -191,6 +162,7 @@ bexhoma benchbase \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
@@ -249,6 +221,7 @@ bexhoma benchbase \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- DATABASE ----------------
@@ -297,6 +270,7 @@ bexhoma benchbase \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- CONTAINER ----------------
@@ -345,6 +319,7 @@ bexhoma benchbase \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log
 
+wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -398,6 +373,7 @@ bexhoma tpch \
   -m -mc -ma \
   run &>$LOG_DIR/doc_tpch_testcase_collector_1.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 1/3  sf=3"
 
 # -tr                           verify result meets basic sanity requirements
@@ -443,6 +419,7 @@ bexhoma tpch \
   -m -mc -ma \
   run &>$LOG_DIR/doc_tpch_testcase_collector_2.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 2/3  sf=6"
 
 
@@ -484,6 +461,7 @@ bexhoma tpch \
   -m -mc -ma \
   run &>$LOG_DIR/doc_tpch_testcase_collector_3.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 3/3  sf=6"
 
 
@@ -547,6 +525,7 @@ bexhoma tpch \
   -m -mc -ma \
   run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- DATABASE ----------------
@@ -601,6 +580,7 @@ bexhoma tpch \
   -m -mc -ma \
   run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- CONTAINER ----------------
@@ -655,6 +635,7 @@ bexhoma tpch \
   -m -mc -ma \
   run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log
 
+wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
@@ -664,7 +645,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 3                         scaling factor (number of records x 1000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
@@ -688,7 +669,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma ycsb \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -sf 3 \
   --workload a \
@@ -711,11 +692,12 @@ bexhoma ycsb \
   -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 3                         scaling factor (number of records x 1000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
@@ -739,7 +721,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma ycsb \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -sf 3 \
   --workload a \
@@ -762,10 +744,11 @@ bexhoma ycsb \
   -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 1                         scaling factor (number of records x 1000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
@@ -786,7 +769,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma ycsb \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -sf 1 \
   --workload a \
@@ -806,6 +789,7 @@ bexhoma ycsb \
   -m -mc -ma \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
 
+wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
@@ -817,7 +801,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
@@ -837,7 +821,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma hammerdb \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -sf 16 \
   -xlat \
@@ -856,10 +840,11 @@ bexhoma hammerdb \
   -m -mc -ma \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
 
+wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
@@ -879,7 +864,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma hammerdb \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -sf 16 \
   -xlat \
@@ -898,10 +883,11 @@ bexhoma hammerdb \
   -m -mc -ma \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
 
+wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms 1                         limit to 1 parallel DBMS configuration at a time
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
@@ -918,7 +904,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2
 # -mc                           collect metrics for all cluster nodes
 # -ma                           collect application-level metrics
 bexhoma hammerdb \
-  -ms 1 \
+  -ms $BEXHOMA_MS \
   -tr \
   -sf 16 \
   -xlat \
@@ -934,6 +920,7 @@ bexhoma hammerdb \
   -m -mc -ma \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
 
+wait_process "hammerdb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 

@@ -3,5 +3,5 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — MariaDB ColumnStore does not support secondary
+-- Purpose: Placeholder - MariaDB ColumnStore does not support secondary
 --          indexes. No statements are executed.

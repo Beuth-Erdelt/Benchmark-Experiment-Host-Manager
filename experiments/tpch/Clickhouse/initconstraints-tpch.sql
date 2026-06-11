@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder — ClickHouse does not support SQL primary key or
+-- Purpose: Placeholder - ClickHouse does not support SQL primary key or
 --          foreign key constraints. Referential integrity is handled by the
 --          ORDER BY clause in the MergeTree engine definition. No statements
 --          are executed.

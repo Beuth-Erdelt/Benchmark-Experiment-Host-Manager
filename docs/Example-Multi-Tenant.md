@@ -29,6 +29,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 ```
@@ -53,7 +54,7 @@ kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
 
 Example for power test with 2 tenants, each having a dedicated schema in the same database:
 ```bash
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 \
   --dbms PostgreSQL \
@@ -62,7 +63,7 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log
 ```
 
 test_tpch_run_postgresql_tenants_schema.log
@@ -329,7 +330,7 @@ kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
 
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
@@ -338,7 +339,7 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log
 ```
 
 test_tpch_run_postgresql_tenants_database.log
@@ -606,7 +607,7 @@ kubectl delete pvc bexhoma-storage-postgresql-1-2-tpch-1
 
 Example for power test with 2 tenants, each having a dedicated DBMS:
 ```bash
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
@@ -615,7 +616,7 @@ nohup python tpch.py -tr \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 5Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log
 ```
 
 test_tpch_run_postgresql_tenants_container.log
@@ -909,7 +910,7 @@ BEXHOMA_NUM_TENANTS_LOADER = 16
 
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
-nohup python tpch.py -tr \
+bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
@@ -918,7 +919,7 @@ nohup python tpch.py -tr \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_database_multiload.log &
+  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database_multiload.log
 ```
 
 test_tpch_run_postgresql_tenants_database_multiload.log
@@ -1248,7 +1249,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated schema in the same database.
 The execution phase is run twice.
 ```bash
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 -sd 5 -xkey \
@@ -1257,7 +1258,7 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 20Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log
 ```
 
 test_benchbase_run_postgresql_tenants_schema.log
@@ -1429,7 +1430,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated database in the same DBMS.
 The execution phase is run twice.
 ```bash
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -1438,7 +1439,7 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 20Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log
 ```
 
 test_benchbase_run_postgresql_tenants_database.log
@@ -1611,7 +1612,7 @@ kubectl delete pvc bexhoma-storage-postgresql-1-2-benchbase-tpcc-1
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS.
 The execution phase is run twice.
 ```bash
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
@@ -1620,7 +1621,7 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 10Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log &
+  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log
 ```
 
 test_benchbase_run_postgresql_tenants_container.log
@@ -1865,7 +1866,7 @@ kubectl delete pvc bexhoma-storage-mysql-benchbase-tpcc-1
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated database in the same DBMS.
 The execution phase is run twice.
 ```bash
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 -sd 5 -xkey \
@@ -1874,7 +1875,7 @@ nohup python benchbase.py \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log &
+  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log
 ```
 
 test_benchbase_run_mysql_tenants_database.log
@@ -1991,7 +1992,7 @@ kubectl delete pvc bexhoma-storage-mysql-1-2-benchbase-tpcc-1
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS.
 The execution phase is run twice.
 ```bash
-nohup python benchbase.py \
+bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 -sd 5 -xkey \
@@ -2000,7 +2001,7 @@ nohup python benchbase.py \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 50Gi -rsr \
-  run </dev/null &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log &
+  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log
 ```
 
 test_benchbase_run_mysql_tenants_container.log

@@ -75,6 +75,8 @@ class tpcc(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             vusers_loading = re.findall('HAMMERDB_NUM_VU (.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
+            benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
+            benchmark_run = benchmark_run[0] if benchmark_run else '1'
             timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
             allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
@@ -117,17 +119,17 @@ class tpcc(logger):
                 efficiency = round(100. * float(result_tuples[0][0][0]) / float(result_tuples[0][1]) / 1.286, 2)
             else:
                 efficiency = 0
-            connection = connection_name + '-' + child
+            connection = connection_name + '-' + client + '-' + benchmark_run + '-' + child
             phase = connection_name
             latency_values = list(extracted_data.values())
             rows = [
-                (connection, phase, configuration_name, experiment_run, client, child, pod_name, pod_count,
+                (connection, phase, configuration_name, experiment_run, client, benchmark_run, child, pod_name, pod_count,
                  code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
                  vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
                 for run_idx, (result, vuser) in enumerate(result_tuples)
             ]
             df = pd.DataFrame(rows)
-            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'child', 'pod',
+            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child', 'pod',
                          'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
                          'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             col_names.extend(list(extracted_data.keys()))
@@ -175,6 +177,7 @@ class tpcc(logger):
                 'experiment_run':'int',
                 'code':'int',
                 'client':'int',
+                'benchmark_run':'int',
                 'pod':'str',
                 'pod_count':'int',
                 'iterations':'int',
@@ -205,6 +208,7 @@ class tpcc(logger):
                 'experiment_run':'int',
                 'code':'int',
                 'client':'int',
+                'benchmark_run':'int',
                 'pod':'str',
                 'pod_count':'int',
                 'iterations':'int',
@@ -242,6 +246,7 @@ class tpcc(logger):
                 aggregate = {
                     'connection':'max',
                     'client':'max',
+                    'benchmark_run':'max',
                     'code':'max',
                     'pod':'sum',
                     'pod_count':'count',
@@ -269,6 +274,7 @@ class tpcc(logger):
                 aggregate = {
                     'code':'max',
                     'client':'max',
+                    'benchmark_run':'max',
                     'pod':'sum',
                     'pod_count':'count',
                     'iterations':'max',
@@ -315,9 +321,9 @@ class tpcc(logger):
         if not df.empty:
             if "P95 [ms]" in df:
                 # we have latencies
-                columns = ['experiment_run',"vusers","client", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+                columns = ['experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                columns = ['experiment_run',"vusers","client", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
+                columns = ['experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -349,10 +355,10 @@ class tpcc(logger):
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
             if "P95 [ms]" in df_aggregated:
                 # we have latencies
-                aggregated_list = ['experiment_run',"vusers","client","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                aggregated_list = ['experiment_run',"vusers","client","benchmark_run","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                aggregated_list = ['experiment_run',"vusers","client","pod_count", "efficiency"]
+                aggregated_list = ['experiment_run',"vusers","client","benchmark_run","pod_count", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:

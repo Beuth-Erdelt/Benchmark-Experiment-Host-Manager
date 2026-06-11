@@ -116,7 +116,7 @@ ALTER TABLE public.lineitem
 
 When removing a commented-out block that was an intentional exclusion
 (e.g. a FK that is deliberately not applied), replace it with a single
-`-- <table>→<table> FK not applied: <reason>` comment.
+`-- <table>-><table> FK not applied: <reason>` comment.
 
 ---
 
@@ -125,11 +125,11 @@ When removing a commented-out block that was an intentional exclusion
 ### TPC-H (`experiments/tpch/`)
 
 **TPC-H table set** (8 tables, in FK dependency order):
-`region → nation → part / supplier → partsupp / customer → orders → lineitem`
+`region -> nation -> part / supplier -> partsupp / customer -> orders -> lineitem`
 
-**supplier → nation FK**: part of the TPC-H DDL standard but not required
+**supplier -> nation FK**: part of the TPC-H DDL standard but not required
 by any query in the TPC-H workload; intentionally not applied in all DBMS
-variants. Document with: `-- supplier→nation FK not applied: not required by the TPC-H query workload`
+variants. Document with: `-- supplier->nation FK not applied: not required by the TPC-H query workload`
 
 **dummy column** (`initschemadummy-*`): each table gets a trailing `dummy CHAR(1)`
 column that absorbs the trailing `|` delimiter dbgen appends to every row in

@@ -203,6 +203,7 @@ class default():
         self.set_storage(**self.experiment.storage)
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
+        self.experiment_dict: dict = {"loader": [], "benchmarker": []}         #: Central experiment dict describing all loader and benchmarker jobs
         self.set_loading_parameters(**self.experiment.loading_parameters)
         self.set_sut_parameters(**self.experiment.sut_parameters)
         self.loading_patch = None                                               #: Patch dict applied to the loading job YAML manifest
@@ -241,7 +242,7 @@ class default():
         self.monitor_loading = True                                             #: Fetch metrics for the loading phase, if monítoring is active - this is set to False when loading is skipped due to PV
         self.monitoring_sut = True                                              #: Fetch metrics of SUT, if monítoring is active - this is set to False when a service outside of K8s is benchmarked
         self.jobtemplate_maintaining = ""                                       #: Name of YAML template file for the maintaining job
-        self.jobtemplate_loading = ""                                           #: Name of YAML template file for the loading job
+        self._jobtemplate_loading = ""                                          #: Name of YAML template file for the loading job
         self.storage_label = experiment.storage_label                           #: Kubernetes node label used to select the storage node for PVs
         self.experiment_done = False                                            #: True, iff the SUT has performed the experiment completely
         self.dockerimage = dockerimage                                          #: Name of the Docker image of the SUT
@@ -283,6 +284,33 @@ class default():
         self.connection = ""                                                    #: Name of the dbmsbenchmarker connection currently being executed
         self.current_benchmark_start = 0                                        #: Unix timestamp when the current benchmark run started
         self.volumeid = ""                                                      #: Identifier of the persistent volume claimed by this configuration
+
+    @property
+    def jobtemplate_loading(self) -> str:
+        """
+        Name of the YAML template file used for the loading job.
+
+        :return: Template file name.
+        :rtype: str
+        """
+        return self._jobtemplate_loading
+
+    @jobtemplate_loading.setter
+    def jobtemplate_loading(self, template: str) -> None:
+        """
+        Set the loading job template and keep the experiment dict in sync.
+
+        When a non-empty template is assigned, the ``template`` field of the
+        first loader entry in ``experiment_dict`` is updated so the persisted
+        experiment dict reflects the template that will actually be used.
+
+        :param template: YAML template file name.
+        :type template: str
+        """
+        self._jobtemplate_loading = template
+        if template and self.experiment_dict.get('loader'):
+            self.experiment_dict['loader'][0]['template'] = template
+
     def reset_sut(self):
         """
         Forget that the SUT has been loaded and benchmarked.
@@ -301,15 +329,46 @@ class default():
     def add_benchmark_list(self, list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
-        Example: `[1,2,1]` means sequentially we will have 1, then 2 and then 1 benchmarker instances.
+        Example: ``[1, 2, 1]`` means sequentially we will have 1, then 2 and then 1 benchmarker instances.
+
+        Also reconstructs ``experiment_dict["benchmarker"]`` so that each client round carries
+        the correct parallelism and the per-round parameters accumulated in
+        ``benchmarking_parameters_list`` (added via :meth:`add_benchmarking_parameters`).
 
         :param list_clients: List of (number of) benchmarker instances
         """
-        # this queue will be reduced when a job has finished
         self.benchmark_list = copy.deepcopy(list_clients)
-        # this queue will stay as a template for future copies of the configuration
         self.benchmark_list_template = copy.deepcopy(list_clients)
         self.benchmarking_parameters_list_template = copy.deepcopy(self.benchmarking_parameters_list)
+        if not list_clients:
+            # Empty list means no benchmarking (e.g. mode=start or mode=load).
+            # Clear the template-copied benchmarker section so _still_has_benchmarks
+            # evaluates to False and the orchestration loop terminates correctly.
+            self.experiment_dict['benchmarker'] = []
+            return
+        if self.experiment_dict['benchmarker']:
+            template_entries = self.experiment_dict['benchmarker'][0]
+            new_benchmarker = []
+            for i, parallelism in enumerate(list_clients):
+                per_round_params = (
+                    self.benchmarking_parameters_list[i]
+                    if i < len(self.benchmarking_parameters_list)
+                    else {}
+                )
+                round_entries = [
+                    {
+                        'name':        tmpl['name'],
+                        'benchmarker': tmpl['benchmarker'],
+                        'template':    tmpl['template'],
+                        'parallelism': int(parallelism),
+                        'num_pods':    int(parallelism),
+                        'target':      tmpl.get('target', 'sut'),
+                        'parameters':  {**tmpl['parameters'], **per_round_params},
+                    }
+                    for tmpl in template_entries
+                ]
+                new_benchmarker.append(round_entries)
+            self.experiment_dict['benchmarker'] = new_benchmarker
     def wait(self, sec, silent=False):
         """
         Function for waiting some time and inform via output about this
@@ -436,10 +495,13 @@ class default():
         """
         Sets ENV for loading components.
         Can be set by experiment before creation of configuration.
+        Also updates the first loader entry in ``experiment_dict`` when present.
 
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.loading_parameters = kwargs
+        if self.experiment_dict['loader']:
+            self.experiment_dict['loader'][0]['parameters'].update(kwargs)
     def patch_loading(self, patch):
         """
         Patches YAML of loading components.
@@ -460,19 +522,59 @@ class default():
         """
         Sets ENV for benchmarking components.
         Can be set by experiment before creation of configuration.
+        Also updates the first benchmarker entry in ``experiment_dict`` when present.
 
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.benchmarking_parameters = kwargs
-    def add_benchmarking_parameters(self, **kwargs):
+        if self.experiment_dict['benchmarker'] and self.experiment_dict['benchmarker'][0]:
+            for entry in self.experiment_dict['benchmarker'][0]:
+                entry['parameters'].update(kwargs)
+
+    def OLD_add_benchmarking_parameters(self, **kwargs):
         """
-        Sets ENV for benchmarking components.
-        Can be set by experiment before creation of configuration.
-        This generates a list, where each entry corresponds to a set of clients in a sequence of benchmarkers.
+        Appends per-round benchmarking parameters to ``benchmarking_parameters_list``.
+
+        Deprecated in favour of :meth:`add_benchmarking_parameters`, which writes
+        to the experiment dict.  Retained for reference.
 
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.benchmarking_parameters_list.append(kwargs)
+
+    def add_benchmarking_parameters(self, parallelism: int = None, **env_vars) -> None:
+        """
+        Add a new sequential client round to the experiment dict.
+
+        Clones the first benchmarker entry's header keys (``name``, ``template``,
+        ``benchmarker``, ``target``) and merges ``env_vars`` on top of that entry's
+        parameters.  When ``parallelism`` is ``None``, inherits the template entry's
+        parallelism.
+
+        Also appends ``env_vars`` to ``benchmarking_parameters_list`` for backward
+        compatibility with the old ``work_benchmark_list`` path.
+
+        :param parallelism: Pod count for this client round; inherits template if ``None``.
+        :param env_vars: ENV vars injected into the job container for this round.
+        """
+        self.benchmarking_parameters_list.append(env_vars)
+        if not self.experiment_dict['benchmarker'] or not self.experiment_dict['benchmarker'][0]:
+            return
+        template_entries = self.experiment_dict['benchmarker'][0]
+        pod_count = parallelism if parallelism is not None else template_entries[0]['parallelism']
+        round_entries = [
+            {
+                'name':        tmpl['name'],
+                'benchmarker': tmpl['benchmarker'],
+                'template':    tmpl['template'],
+                'parallelism': pod_count,
+                'num_pods':    pod_count,
+                'target':      tmpl.get('target', 'sut'),
+                'parameters':  {**tmpl['parameters'], **env_vars},
+            }
+            for tmpl in template_entries
+        ]
+        self.experiment_dict['benchmarker'].append(round_entries)
     def set_loading(self, parallel, num_pods=None):
         """
         Sets job parameters for loading components: Number of parallel pods and optionally (if different) total number of pods.
@@ -490,6 +592,78 @@ class default():
         # total number at least number of parallel
         if self.num_loading_pods < self.num_loading:
             self.num_loading_pods = self.num_loading
+        if self.experiment_dict['loader']:
+            self.experiment_dict['loader'][0]['parallelism'] = self.num_loading
+            self.experiment_dict['loader'][0]['num_pods'] = self.num_loading_pods
+
+    def set_experiment_dict(self, d: dict) -> None:
+        """
+        Replace the entire experiment dict.
+
+        :param d: New experiment dict with ``"loader"`` and ``"benchmarker"`` keys.
+        :type d: dict
+        """
+        self.experiment_dict = d
+
+    def add_parallel_benchmark(self, name: str, template: str, benchmarker: str,
+                                parallelism: int = 1, target: str = 'sut',
+                                **env_vars) -> None:
+        """
+        Add a parallel benchmark to the last client round.
+
+        Creates a new ``benchmark_index`` entry inside the last inner list of
+        ``experiment_dict["benchmarker"]``, enabling multiple benchmarks to run
+        simultaneously within one client round.
+
+        :param name: Short identifier for this benchmark entry.
+        :param template: K8s job template filename.
+        :param benchmarker: Tool name (``'ycsb'``, ``'hammerdb'``, ``'benchbase'``,
+            ``'dbmsbenchmarker'``).
+        :param parallelism: Number of pods.
+        :param target: Component the job runs against (default ``'sut'``).
+        :param env_vars: ENV vars injected into the container.
+        """
+        if not self.experiment_dict['benchmarker']:
+            self.experiment_dict['benchmarker'].append([])
+        entry = {
+            'name':        name,
+            'benchmarker': benchmarker,
+            'template':    template,
+            'parallelism': parallelism,
+            'num_pods':    parallelism,
+            'target':      target,
+            'parameters':  env_vars,
+        }
+        self.experiment_dict['benchmarker'][-1].append(entry)
+
+    def add_loading_parameters(self, name: str, template: str, benchmarker: str,
+                                parallelism: int = 1, num_pods: int = None,
+                                target: str = 'sut', **env_vars) -> None:
+        """
+        Add a parallel loader entry to the experiment dict.
+
+        All loader entries run simultaneously during the loading phase.
+
+        :param name: Short identifier for this loader entry.
+        :param template: K8s job template filename.
+        :param benchmarker: Tool name — identifies the evaluator's ``log_to_df_loading()``.
+        :param parallelism: Max concurrent pods (K8s ``spec.parallelism``).
+        :param num_pods: Total pods that must complete (K8s ``spec.completions``).
+            Defaults to ``parallelism``.
+        :param target: Component the job runs against (default ``'sut'``).
+        :param env_vars: ENV vars injected into the container.
+        """
+        entry = {
+            'name':        name,
+            'benchmarker': benchmarker,
+            'template':    template,
+            'parallelism': parallelism,
+            'num_pods':    num_pods if num_pods is not None else parallelism,
+            'target':      target,
+            'parameters':  env_vars,
+        }
+        self.experiment_dict['loader'].append(entry)
+
     def set_nodes(self, **kwargs):
         """
         Sets parameters for nodes for the components of an experiment.
@@ -744,6 +918,8 @@ class default():
         for i in range(1, self.num_loading+1):
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
         # reset number of clients per job
+        redisQueue = '{}-{}-{}-{}'.format(app, 'generator-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
         self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
         # start job
@@ -773,29 +949,44 @@ class default():
             if delay > 0:
                 self.delay(delay)
             return True
-    def generate_component_name(self, app='', component='', experiment='', configuration='', experimentRun='', client=''):
+    def generate_component_name(self, app='', component='', experiment='', configuration='', experimentRun='', client='', benchmarkRun=''):
         """
         Generate a name for the component.
-        Basically this is `{app}-{component}-{configuration}-{experiment}-{client}`
 
-        :param app: app the component belongs to
-        :param component: Component, for example sut or monitoring
-        :param experiment: Unique identifier of the experiment
-        :param configuration: Name of the dbms configuration
-        :param client: Number of the client, if it comes from a sequence of same components (in particular benchmarker)
+        Format: ``{app}-{component}-{configuration}-{experiment}[-{experimentRun}][-{client}[-{benchmarkRun}]]``
+
+        :param app: App the component belongs to.
+        :param component: Component type, e.g. ``'sut'`` or ``'benchmarker'``.
+        :param experiment: Unique experiment identifier.
+        :param configuration: DBMS configuration name.
+        :param experimentRun: Repetition index (omitted when empty).
+        :param client: Sequential client-round index (omitted when empty).
+        :param benchmarkRun: Parallel benchmark index within a client round (omitted when empty).
+        :return: Lower-case component name string.
+        :rtype: str
         """
-        if len(app)==0:
+        if len(app) == 0:
             app = self.appname
         if len(configuration) == 0:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
         if len(experimentRun) != 0:
-            experimentRun = '-'+experimentRun
+            experimentRun = '-' + experimentRun
         if len(client) > 0:
-            name = "{app}-{component}-{configuration}-{experiment}{experimentRun}-{client}".format(app=app, component=component, configuration=configuration, experiment=experiment, experimentRun=experimentRun, client=client).lower()
+            if len(benchmarkRun) > 0:
+                name = "{app}-{component}-{configuration}-{experiment}{experimentRun}-{client}-{benchmarkRun}".format(
+                    app=app, component=component, configuration=configuration,
+                    experiment=experiment, experimentRun=experimentRun,
+                    client=client, benchmarkRun=benchmarkRun).lower()
+            else:
+                name = "{app}-{component}-{configuration}-{experiment}{experimentRun}-{client}".format(
+                    app=app, component=component, configuration=configuration,
+                    experiment=experiment, experimentRun=experimentRun, client=client).lower()
         else:
-            name = "{app}-{component}-{configuration}-{experiment}{experimentRun}".format(app=app, component=component, configuration=configuration, experiment=experiment, experimentRun=experimentRun).lower()
+            name = "{app}-{component}-{configuration}-{experiment}{experimentRun}".format(
+                app=app, component=component, configuration=configuration,
+                experiment=experiment, experimentRun=experimentRun).lower()
         return name
     def start_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, num_pods=1):
         """
@@ -2675,7 +2866,9 @@ scrape_configs:
         configuration='',
         client='1',
         parallelism=1,
-        only_prepare=False):
+        only_prepare=False,
+        benchmark_run: str = '',
+        template_override: str = ''):
         """
         Runs the benchmarker job.
         Sets meta data in the connection.config.
@@ -2692,6 +2885,8 @@ scrape_configs:
         :param client: Number of benchmarker this is in a sequence of
         :param parallelism: Number of parallel benchmarker pods we want to have
         :param only_prepare: benchmarker pods will not be started. this makes a dry run
+        :param benchmark_run: 1-based parallel benchmark index within one client round; injected as ``BEXHOMA_BENCHMARK_RUN``.
+        :param template_override: When non-empty, overrides the default YAML job template.
         """
         self.logger.debug('configuration.run_benchmarker_pod()')
         resultfolder = self.experiment.cluster.config['benchmarker']['resultfolder']
@@ -2743,6 +2938,7 @@ scrape_configs:
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
         c['parameter']['numExperiment'] = experimentRun
+        c['parameter']['numBenchmark'] = benchmark_run
         c['parameter']['num_worker'] = self.num_worker
         c['parameter']['dockerimage'] = self.dockerimage
         c['parameter']['connection_parameter'] = self.connection_parameter
@@ -2838,7 +3034,7 @@ scrape_configs:
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
         if not only_prepare:
             # create pods
-            yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism)
+            yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism, benchmark_run=benchmark_run, template_override=template_override)
             # start pod
             self.experiment.cluster.create_object_from_file(yamlfile)
             pods = []
@@ -3596,7 +3792,7 @@ scrape_configs:
         else:
             servicename = self.generate_component_name(app=app, component='sut', experiment=self.get_experiment_name(), configuration=configuration)
         return servicename
-    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml=''):#, jobname=''):
+    def create_manifest_job(self, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, env={}, template='', nodegroup='', num_pods=1, connection='', patch_yaml='', benchmark_run: str = '', template_override: str = ''):#, jobname=''):
         """
         Creates a job and sets labels (component/ experiment/ configuration).
 
@@ -3611,13 +3807,17 @@ scrape_configs:
         :param template: Template name of the job manifest
         :param nodegroup: Nodegroup of the pods of the job
         :param num_pods: Number of pods that run in total
+        :param benchmark_run: 1-based parallel benchmark index within one client round; injected as ``BEXHOMA_BENCHMARK_RUN`` and appended to the job name.
+        :param template_override: When non-empty, used as the YAML template instead of ``template``.
         """
         if len(app) == 0:
             app = self.appname
         code = str(int(experiment))
         if not experimentRun:
             experimentRun = str(self.num_experiment_to_apply_done+1)
-        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client))
+        if template_override:
+            template = template_override
+        jobname = self.generate_component_name(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=str(client), benchmarkRun=benchmark_run)
         servicename = self.get_service_sut(configuration=configuration)
         # start (create) time of the job
         now = datetime.utcnow()
@@ -3634,6 +3834,7 @@ scrape_configs:
         env_default = dict()
         env_default['BEXHOMA_HOST'] = servicename
         env_default['BEXHOMA_CLIENT'] = int(self.client)-1
+        env_default['BEXHOMA_BENCHMARK_RUN'] = benchmark_run if benchmark_run else '1'
         env_default['BEXHOMA_EXPERIMENT'] = experiment
         env_default['BEXHOMA_CONNECTION'] = configuration
         env_default['BEXHOMA_CONFIGURATION'] = configuration
@@ -3776,14 +3977,13 @@ scrape_configs:
             except yaml.YAMLError as exc:
                 print(exc)
         return job_experiment
-    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template='', num_pods=1):
+    def create_manifest_benchmarking(self, connection, app='', component='benchmarker', experiment='', configuration='', experimentRun='', client='1', parallelism=1, alias='', env={}, template='', num_pods=1, benchmark_run: str = '', template_override: str = ''):
         """
         Creates a job template for the benchmarker.
         This sets meta data in the template and ENV.
 
-        The YAML template is resolved in priority order:
-        the ``template`` argument > ``self.experiment.jobtemplate_benchmarking`` >
-        the default ``"jobtemplate-benchmarking-dbmsbenchmarker.yml"``.
+        Template resolution priority: ``template_override`` > ``template`` argument >
+        ``self.experiment.jobtemplate_benchmarking`` > default ``"jobtemplate-benchmarking-dbmsbenchmarker.yml"``.
 
         :param app: app the job belongs to
         :param component: Component, for example sut or monitoring
@@ -3795,6 +3995,8 @@ scrape_configs:
         :param env: Optional extra environment variables merged into the job ENV
         :param template: Optional override for the YAML job template filename
         :param num_pods: Total number of pods in the job
+        :param benchmark_run: 1-based parallel benchmark index; forwarded to :meth:`create_manifest_job`.
+        :param template_override: When non-empty, takes precedence over all other template resolution.
         :return: Name of file in YAML format containing the benchmarker job
         """
         if len(app) == 0:
@@ -3823,7 +4025,7 @@ scrape_configs:
                 template = self.experiment.jobtemplate_benchmarking
             else:
                 template = "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=client, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='benchmarking', connection=connection, patch_yaml=self.benchmarking_patch, benchmark_run=benchmark_run, template_override=template_override)
     def create_manifest_maintaining(self, app='', component='maintaining', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
         """
         Creates a job template for maintaining.
@@ -3862,7 +4064,7 @@ scrape_configs:
         if len(self.experiment.jobtemplate_maintaining) > 0:
             template = self.experiment.jobtemplate_maintaining
         return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, num_pods=num_pods, nodegroup='maintaining', connection=connection)#, jobname=jobname)
-    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection=''):
+    def create_manifest_loading(self, app='', component='loading', experiment='', configuration='', parallelism=1, alias='', num_pods=1, connection='', benchmark_run: str = '', template_override: str = ''):
         """
         Creates a job template for loading.
         This sets meta data in the template and ENV.
@@ -3872,6 +4074,9 @@ scrape_configs:
         :param experiment: Unique identifier of the experiment
         :param configuration: Name of the dbms configuration
         :param parallelism: Number of parallel pods in job
+        :param num_pods: Total number of pods that must complete.
+        :param benchmark_run: 1-based loader index; forwarded to :meth:`create_manifest_job`.
+        :param template_override: When non-empty, takes precedence over stored template resolution.
         :return: Name of file in YAML format containing the loading job
         """
         if len(app) == 0:
@@ -3903,7 +4108,7 @@ scrape_configs:
             template = self.experiment.jobtemplate_loading
         if len(self.jobtemplate_loading) > 0:
             template = self.jobtemplate_loading
-        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch)
+        return self.create_manifest_job(app=app, component=component, experiment=experiment, configuration=configuration, experimentRun=experimentRun, client=1, parallelism=parallelism, env=env, template=template, nodegroup='loading', num_pods=num_pods, connection=connection, patch_yaml=self.loading_patch, benchmark_run=benchmark_run, template_override=template_override)
     def get_worker_name(self, component='worker'):
         """
         Returns a template for the worker names.

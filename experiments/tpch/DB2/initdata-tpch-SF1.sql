@@ -3,7 +3,7 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Load TPC-H data at scale factor 1 (SF1 ≈ 1 GB) into the tpch schema.
+-- Purpose: Load TPC-H data at scale factor 1 (SF1 ~ 1 GB) into the tpch schema.
 --          Uses DB2 IMPORT with DEL (delimited) format and pipe as column delimiter.
 
 CONNECT TO testdb USER db2inst1 USING root1234ROOT;

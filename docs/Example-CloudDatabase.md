@@ -103,6 +103,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
+BEXHOMA_MS=2
 
 mkdir -p $LOG_DIR
 ```
@@ -111,7 +112,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -126,7 +127,7 @@ nohup python ycsb.py -ms 2 -tr \
   -nbf 4 \
   -ne 1 \
   -nc 1 \
-  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_1.log &
+  run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
 ```
 
 This
@@ -269,7 +270,7 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-nohup python ycsb.py -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -286,7 +287,7 @@ nohup python ycsb.py -ms 2 -tr \
   -nc 1 \
   -m -mc \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_2.log &
+  run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
@@ -384,7 +385,7 @@ Persistent Storage is not managed by bexhoma, but by the Cloud service.
 We can add the request for a PVC to the experiment setup:
 
 ```bash
-nohup python ycsb.py -ms 2 -tr \
+bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 5 \
   -sfo 10 \
   --workload a \
@@ -401,7 +402,7 @@ nohup python ycsb.py -ms 2 -tr \
   -nc 1 \
   -m -mc \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_ycsb_databaseservice_3.log &
+  run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
 ```
 
 This will add a PVC to the Dummy DBMS.
@@ -595,7 +596,7 @@ Watch for
 ## Benchbase's TPC-C
 
 ```bash
-nohup python benchbase.py -ms 2 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -604,7 +605,7 @@ nohup python benchbase.py -ms 2 -tr \
   -nbf 16 \
   -tb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_1.log &
+  run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
 ```
 
 yields
@@ -715,7 +716,7 @@ BEXHOMA_DATABASE = 'postgres',
 This time we skip loading (`-sl`), since the database is already present.
 
 ```bash
-nohup python benchbase.py -ms 2 -tr \
+bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -725,7 +726,7 @@ nohup python benchbase.py -ms 2 -tr \
   -tb 1024 \
   -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_benchbase_databaseservice_2.log &
+  run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
 ```
 
 yields
@@ -835,7 +836,7 @@ At first we run a simple power test against SF=3.
 Components are monitored.
 
 ```bash
-nohup python tpch.py -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -844,7 +845,7 @@ nohup python tpch.py -ms 2 -dt -tr \
   -t 1200 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
 ```
 
 yields
@@ -976,7 +977,7 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 Now loading is skipped (`-sl`) as data is already present in the Cloud system.
 
 ```bash
-nohup python tpch.py -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -986,7 +987,7 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sl \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
 ```
 
 yields
@@ -1136,7 +1137,7 @@ sleep 10
 ### Ingestion with Persistent Storage
 
 ```bash
-nohup python tpch.py -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -1146,7 +1147,7 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
 ```
 
 yields
@@ -1284,7 +1285,7 @@ The persistent volume helps to memorize this.
 We can rerun the experiment without explicitly skipping ingestion (no `-sl`).
 
 ```bash
-nohup python tpch.py -ms 2 -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -1294,7 +1295,7 @@ nohup python tpch.py -ms 2 -dt -tr \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 1Gi \
-  run </dev/null &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log &
+  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
 ```
 
 yields
