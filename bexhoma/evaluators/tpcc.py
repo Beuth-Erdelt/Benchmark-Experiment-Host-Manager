@@ -119,17 +119,18 @@ class tpcc(logger):
                 efficiency = round(100. * float(result_tuples[0][0][0]) / float(result_tuples[0][1]) / 1.286, 2)
             else:
                 efficiency = 0
-            connection = connection_name + '-' + client + '-' + benchmark_run + '-' + child
-            phase = connection_name
+            phase = configuration_name + '-' + experiment_run + '-' + client
+            job = connection_name
+            connection = connection_name + '-' + child
             latency_values = list(extracted_data.values())
             rows = [
-                (connection, phase, configuration_name, experiment_run, client, benchmark_run, child, pod_name, pod_count,
+                (connection, phase, job, configuration_name, experiment_run, client, benchmark_run, child, pod_name, pod_count,
                  code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
                  vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
                 for run_idx, (result, vuser) in enumerate(result_tuples)
             ]
             df = pd.DataFrame(rows)
-            col_names = ['connection', 'phase', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child', 'pod',
+            col_names = ['connection', 'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child', 'pod',
                          'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
                          'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
             col_names.extend(list(extracted_data.keys()))
@@ -173,6 +174,8 @@ class tpcc(logger):
         if 'CALLS' in df:
             df_typed = df.astype({
                 'connection':'str',
+                'phase':'str',
+                'job':'str',
                 'configuration':'str',
                 'experiment_run':'int',
                 'code':'int',
@@ -204,6 +207,8 @@ class tpcc(logger):
         else:
             df_typed = df.astype({
                 'connection':'str',
+                'phase':'str',
+                'job':'str',
                 'configuration':'str',
                 'experiment_run':'int',
                 'code':'int',
@@ -227,14 +232,18 @@ class tpcc(logger):
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod TPC-C result rows into one row per job.
+        Aggregates parallel-pod TPC-C result rows into one row per group.
 
         Groups by ``columns`` and applies per-metric aggregation (NOPM/TPM averaged
         across pods, max for latency percentiles, etc.). Also recomputes efficiency for
         runs where vusers equal 10× the scale factor.
 
-        The default ``columns=['phase']`` groups by the job identifier stored in the
-        ``phase`` column, producing one row per benchmark job.
+        The ``phase`` column holds the phase identifier
+        (``configuration-experiment_run-client``) and the ``job`` column holds the
+        job identifier (``configuration-experiment_run-client-benchmark_run``).
+
+        The default ``columns=['phase']`` groups by phase, producing one row per phase.
+        To keep one row per job, pass ``columns=['job']``.
 
         :param df: Typed TPC-C benchmarking DataFrame.
         :type df: pandas.DataFrame
@@ -248,6 +257,7 @@ class tpcc(logger):
             if 'CALLS' in grp:
                 aggregate = {
                     'connection':'max',
+                    'job':'max',
                     'client':'max',
                     'benchmark_run':'max',
                     'code':'max',
@@ -276,6 +286,7 @@ class tpcc(logger):
             else:
                 aggregate = {
                     'code':'max',
+                    'job':'max',
                     'client':'max',
                     'benchmark_run':'max',
                     'pod':'sum',
@@ -296,6 +307,7 @@ class tpcc(logger):
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
+            dict_grp['job'] = grp['job'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=[key[0]])
             df_aggregated = pd.concat([df_aggregated, df_grp])
@@ -324,9 +336,9 @@ class tpcc(logger):
         if not df.empty:
             if "P95 [ms]" in df:
                 # we have latencies
-                columns = ['experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+                columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                columns = ['experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
+                columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -358,10 +370,10 @@ class tpcc(logger):
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
             if "P95 [ms]" in df_aggregated:
                 # we have latencies
-                aggregated_list = ['experiment_run',"vusers","client","benchmark_run","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                aggregated_list = ['phase', 'experiment_run',"vusers","client","benchmark_run","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                aggregated_list = ['experiment_run',"vusers","client","benchmark_run","pod_count", "efficiency"]
+                aggregated_list = ['phase', 'experiment_run',"vusers","client","benchmark_run","pod_count", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:

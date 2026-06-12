@@ -135,23 +135,17 @@ class base():
 
     def get_performance_aggregated_per_phase(self, type="stream"):
         """
-        Combines aggregated performance results from all experiment codes into one DataFrame.
+        Combines aggregated performance results per phase from all experiment codes.
 
-        For each code:
+        Groups by the ``phase`` column (``configuration-experiment_run-client``),
+        aggregating all parallel benchmark jobs within the same phase into a single row.
+        The ``job`` column is dropped from the output.  The result index is the
+        code-prefixed phase identifier
+        (``<code>-<configuration>-<experiment_run>-<client>``).
 
-        - initialises the evaluator and reads the workload configuration,
-        - retrieves and types the per-pod performance data,
-        - aggregates parallel pods grouped by job identifier (the ``phase`` column),
-        - prefixes ``phase``, ``configuration``, and the DataFrame index with the experiment code.
-
-        Groups by the job identifier (``configuration-experiment_run-client-benchmark_run``),
-        producing one row per benchmark job.  When every phase has a single job
-        (``benchmark_run = 1``) the result contains one row per phase.
-
-        :param type: Component type passed to the aggregation call (currently unused in this method).
+        :param type: Component type passed to the aggregation call (currently unused).
         :type type: str
-        :return: Combined DataFrame of aggregated performance metrics for all experiments,
-                 indexed by the code-prefixed job identifier.
+        :return: Combined DataFrame of aggregated performance metrics, one row per phase.
         :rtype: pandas.DataFrame
         """
         df_performance = pd.DataFrame()
@@ -159,13 +153,54 @@ class base():
             evaluation = self.get_evaluator(code)
             df = self.get_performance_single(evaluation)
             df = evaluation.benchmarking_set_datatypes(df)
-            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(df, columns=['phase']) #, 'benchmark_run'])
-            df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
-            df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
-            df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
-            df_aggregated.drop('connection', axis=1, inplace=True)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(
+                df, columns=['phase']
+            )
             if df_aggregated.empty:
                 continue
+            df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
+            df_aggregated['phase'] = evaluation.code + '-' + df_aggregated['phase'].astype(str)
+            df_aggregated['configuration'] = evaluation.code + '-' + df_aggregated['configuration'].astype(str)
+            df_aggregated.drop('connection', axis=1, inplace=True)
+            df_aggregated.drop('job', axis=1, inplace=True, errors='ignore')
+            df_aggregated['code'] = df_aggregated['code'].astype(str)
+            df_aggregated = df_aggregated.drop(columns=['pod'])
+            df_performance = pd.concat([df_performance, df_aggregated])
+        return df_performance
+
+    def get_performance_aggregated_per_job(self, type="stream"):
+        """
+        Combines aggregated performance results per job from all experiment codes.
+
+        Groups by the ``job`` column
+        (``configuration-experiment_run-client-benchmark_run``), keeping parallel
+        benchmark jobs within the same phase as separate rows.  Both ``phase``
+        (code-prefixed phase identifier) and ``job`` (code-prefixed job identifier)
+        are included in the output.
+
+        The result index is the code-prefixed job identifier
+        (``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``).
+
+        :param type: Component type passed to the aggregation call (currently unused).
+        :type type: str
+        :return: Combined DataFrame of aggregated performance metrics, one row per job.
+        :rtype: pandas.DataFrame
+        """
+        df_performance = pd.DataFrame()
+        for code in self.codes:
+            evaluation = self.get_evaluator(code)
+            df = self.get_performance_single(evaluation)
+            df = evaluation.benchmarking_set_datatypes(df)
+            df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(
+                df, columns=['job']
+            )
+            if df_aggregated.empty:
+                continue
+            df_aggregated.index = evaluation.code + '-' + df_aggregated.index.astype(str)
+            df_aggregated['phase'] = evaluation.code + '-' + df_aggregated['phase'].astype(str)
+            df_aggregated['job'] = evaluation.code + '-' + df_aggregated['job'].astype(str)
+            df_aggregated['configuration'] = evaluation.code + '-' + df_aggregated['configuration'].astype(str)
+            df_aggregated.drop('connection', axis=1, inplace=True)
             df_aggregated['code'] = df_aggregated['code'].astype(str)
             df_aggregated = df_aggregated.drop(columns=['pod'])
             df_performance = pd.concat([df_performance, df_aggregated])
@@ -214,19 +249,19 @@ class base():
         """
         Combines aggregated multi-tenant monitoring metrics from all experiment codes into one DataFrame.
 
-        Calls :meth:`get_monitoring_aggregated_per_phase` to collect the raw monitoring data,
+        Calls :meth:`get_monitoring_aggregated_per_job` to collect the per-job monitoring data,
         enriches it with connection metadata via :meth:`add_metadata`, then groups by
         ``(code, experiment_run, client, type_tenants, num_tenants)`` and reduces each
         metric column using ``'max'`` for ratio metrics and ``'sum'`` for counter metrics.
         ``'Total I/O Wait Time [s]'`` is always reduced with ``'max'``.
 
-        :param type: Component type forwarded to :meth:`get_monitoring_aggregated_per_phase`.
+        :param type: Component type forwarded to :meth:`get_monitoring_aggregated_per_job`.
         :type type: str
         :return: DataFrame of grouped multi-tenant monitoring metrics indexed by the
                  underscore-joined group key.
         :rtype: pandas.DataFrame
         """
-        df = self.get_monitoring_aggregated_per_phase(type)
+        df = self.get_monitoring_aggregated_per_job(type)
         df_metadata = self.add_metadata(df)
         metric_cols = df.columns
         filtered_agg_dict = {
@@ -241,39 +276,6 @@ class base():
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
         return df_metadata
 
-    def get_performance_aggregated_per_job(self, type="stream"):
-        """
-        Aggregates parallel pods within each job and returns one row per job.
-
-        Explicit alias for :meth:`get_performance_aggregated_per_phase` with semantically
-        clearer naming.  Groups by the job identifier
-        (``configuration-experiment_run-client-benchmark_run``); the index is the
-        code-prefixed job identifier.
-
-        :param type: Component type (currently unused).
-        :type type: str
-        :return: Combined DataFrame of aggregated performance metrics for all experiments,
-                 indexed by the code-prefixed job identifier.
-        :rtype: pandas.DataFrame
-        """
-        return self.get_performance_aggregated_per_phase(type=type)
-
-    def get_monitoring_aggregated_per_job(self, type="stream"):
-        """
-        Aggregates monitoring metrics per job and returns one row per job.
-
-        Explicit alias for :meth:`get_monitoring_aggregated_per_phase` with semantically
-        clearer naming.  The index is the code-prefixed job identifier
-        (``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``).
-
-        :param type: Component type to filter monitoring metrics (default ``'stream'``).
-        :type type: str
-        :return: Combined DataFrame of aggregated monitoring metrics for all experiments,
-                 indexed by the code-prefixed job identifier, or an empty DataFrame when
-                 monitoring is disabled.
-        :rtype: pandas.DataFrame
-        """
-        return self.get_monitoring_aggregated_per_phase(type=type)
 
     def get_performance_per_connection(self):
         """
@@ -349,8 +351,8 @@ class base():
         ``evaluation`` is provided, returns only the connections for that experiment.
 
         Key columns in the returned DataFrame:
-        ``phase`` (code-prefixed job identifier), ``code``, ``connection``,
-        ``configuration``, ``experiment_run``, ``benchmark_run``, ``client``,
+        ``phase`` (code-prefixed job identifier: ``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``),
+        ``code``, ``connection``, ``configuration``, ``experiment_run``, ``benchmark_run``, ``client``,
         ``type_tenants``, ``num_tenants``, ``vol_tenants``.
 
         :param evaluation: Evaluator instance. If provided, only that experiment is queried.
@@ -428,23 +430,22 @@ class base():
         df.index = code + '-' + df.index.astype(str)
         return df.T
 
-    def get_monitoring_aggregated_per_phase(self, type="stream"):
+    def get_monitoring_aggregated_per_job(self, type="stream"):
         """
         Combines aggregated monitoring metrics from all experiment codes into one DataFrame.
 
         For each code, calls :meth:`show_summary_monitoring_table` and concatenates the
-        results.  The ``connection`` column is dropped from the combined result because
-        it is no longer meaningful across experiments.
+        results.  The ``connection`` column is dropped because it is no longer meaningful
+        across experiments.
 
-        The index of the returned DataFrame is the code-prefixed job identifier
+        The result index is the code-prefixed job identifier
         (``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``), producing
         one row per benchmark job.
 
         :param type: Component type to filter monitoring metrics (default ``'stream'``).
         :type type: str
-        :return: Combined DataFrame of aggregated monitoring metrics for all experiments,
-                 indexed by the code-prefixed job identifier, or an empty DataFrame when
-                 monitoring is disabled.
+        :return: Combined DataFrame of aggregated monitoring metrics, one row per job,
+                 or an empty DataFrame when monitoring is disabled.
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:
@@ -458,6 +459,53 @@ class base():
                 df_monitoring_all = pd.concat([df_monitoring_all, df_monitoring.copy()])
         df_monitoring_all.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_monitoring_all
+
+    def get_monitoring_aggregated_per_phase(self, type="stream"):
+        """
+        Combines aggregated monitoring metrics per phase from all experiment codes.
+
+        Builds on :meth:`get_monitoring_aggregated_per_job` and further aggregates
+        by phase (``configuration-experiment_run-client``), collapsing parallel benchmark
+        jobs within the same phase into a single row.
+
+        Aggregation per metric type: ratio → ``max``, counter → ``sum``, others → ``mean``.
+        ``'Total I/O Wait Time [s]'`` is always reduced with ``max``.
+
+        The result index is the code-prefixed phase identifier
+        (``<code>-<configuration>-<experiment_run>-<client>``).
+
+        :param type: Component type to filter monitoring metrics (default ``'stream'``).
+        :type type: str
+        :return: Combined DataFrame of aggregated monitoring metrics, one row per phase,
+                 or an empty DataFrame when monitoring is disabled.
+        :rtype: pandas.DataFrame
+        """
+        if not self.with_monitoring:
+            return pd.DataFrame()
+        df = self.get_monitoring_aggregated_per_job(type)
+        if df.empty:
+            return df
+        df_with_meta = self.add_metadata(df)
+        if df_with_meta is None or df_with_meta.empty:
+            return df
+        metric_cols = [c for c in df.columns if c in df_with_meta.columns]
+        agg_dict = {}
+        for col in metric_cols:
+            matches = self.df_metrics[self.df_metrics['title'] == col]
+            if matches.empty:
+                continue
+            metric_type = matches['metric'].iloc[0]
+            agg_dict[col] = 'max' if metric_type == 'ratio' else ('sum' if metric_type == 'counter' else 'mean')
+        if 'Total I/O Wait Time [s]' in agg_dict:
+            agg_dict['Total I/O Wait Time [s]'] = 'max'
+        group_cols = ['code', 'configuration', 'experiment_run', 'client']
+        if not all(c in df_with_meta.columns for c in group_cols):
+            return df
+        df_phase = df_with_meta.groupby(group_cols).agg(agg_dict)
+        df_phase.index = [
+            '{}-{}-{}-{}'.format(*t) for t in df_phase.index
+        ]
+        return df_phase
 
     def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="stream"):
         """
@@ -489,8 +537,9 @@ class base():
         Attempts to merge ``df`` with the connection metadata using one of several
         strategies, tried in order:
 
-        1. **Index × phase column** — when ``df``'s index intersects
-           ``df_connections['phase']``.
+        1. **Index × job column** — when ``df``'s index intersects
+           ``df_connections['job']`` (monitoring DataFrames are indexed by the
+           code-prefixed job identifier).
         2. **Shared index** — when both DataFrames share common index values.
         3. **Phase column join** — when both DataFrames have a ``phase`` column.
         4. **Multi-tenant key join** — when both DataFrames have
@@ -504,19 +553,19 @@ class base():
         :rtype: pandas.DataFrame
         """
         df_connections = self.get_connections()
-        intersection = df.index.intersection(df_connections['phase'])
+        intersection = df.index.intersection(df_connections['job'])
         if not intersection.empty:
-            print("add_metadata: combine on index and column 'phase'")
-            if 'phase' in df.columns:
-                df.drop('phase', axis=1, inplace=True)
-            cols_to_use = [c for c in df_connections.columns if c not in df.columns or c == 'phase']
+            print("add_metadata: combine on index and column 'job'")
+            if 'job' in df.columns:
+                df.drop('job', axis=1, inplace=True)
+            cols_to_use = [c for c in df_connections.columns if c not in df.columns or c == 'job']
             result = df.merge(
-                df_connections[cols_to_use].drop_duplicates('phase'),
+                df_connections[cols_to_use].drop_duplicates('job'),
                 left_index=True,
-                right_on='phase',
+                right_on='job',
                 how='inner'
-            ).set_index('phase').copy()
-            result['phase'] = result.index
+            ).set_index('job').copy()
+            result['job'] = result.index
             result.drop('connection', axis=1, inplace=True, errors='ignore')
             return result
 
@@ -621,12 +670,12 @@ class base():
             )
             df_long['metric'] = metric
             df_long['component'] = component
-            df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
+            df_long = pd.merge(df_long, df_connections, left_on='series', right_on='job', how='left')
             df_timeseries = pd.concat([df_timeseries, df_long])
         df_sum = (
             df_timeseries
             .groupby(
-                ["timestamp", "code", "phase", "experiment_run", "client", "benchmark_run",
+                ["timestamp", "code", "job", "experiment_run", "client", "benchmark_run",
                  "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"],
                 as_index=False
             )["value"]
@@ -669,7 +718,7 @@ class base():
             )
             df_long['metric'] = metric
             df_long['component'] = component
-            df_long = pd.merge(df_long, df_connections, left_on='series', right_on='phase', how='left')
+            df_long = pd.merge(df_long, df_connections, left_on='series', right_on='job', how='left')
             if workload['tenant_per'] == 'container':
                 # one time series per container tenant
                 pass

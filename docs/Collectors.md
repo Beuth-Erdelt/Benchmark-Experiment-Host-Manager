@@ -48,6 +48,7 @@ In collectors, all job and connection identifiers are prefixed with the experime
 
 | Collector-context identifier | Pattern | Example |
 |---|---|---|
+| code-prefixed phase | `<code>-<phase>` | `1775855486-PostgreSQL-1-2-3` |
 | code-prefixed job | `<code>-<job>` | `1775855486-PostgreSQL-1-2-3-4` |
 | code-prefixed connection | `<code>-<connection>` | `1775855486-PostgreSQL-1-2-3-4-5` |
 
@@ -84,9 +85,9 @@ Multi-tenancy adds a further dimension: a single service provider may map to sev
 
 | Method | Returns | Index |
 |---|---|---|
-| `get_monitoring_aggregated_per_phase(component)` | One scalar per metric per job, all codes combined | job name |
-| `get_monitoring_aggregated_per_job(component)` | Same — explicit alias with clearer semantics | job name |
-| `get_monitoring_aggregated_per_phase_multitenant(component)` | Same, additionally aggregated across tenants | `code_run_client_typetenant_numtenant` |
+| `get_monitoring_aggregated_per_phase(component)` | One scalar per metric per phase (all jobs merged) | phase name |
+| `get_monitoring_aggregated_per_job(component)` | One scalar per metric per job (jobs kept separate) | job name |
+| `get_monitoring_aggregated_per_phase_multitenant(component)` | Per-job aggregation, additionally grouped across tenants | `code_run_client_typetenant_numtenant` |
 
 ### Monitoring — Time Series
 
@@ -102,9 +103,9 @@ Multi-tenancy adds a further dimension: a single service provider may map to sev
 | Method | Returns | Index |
 |---|---|---|
 | `get_performance_per_connection()` | Unaggregated per-pod results, all codes | connection name |
-| `get_performance_aggregated_per_phase()` | Aggregated across pods, grouped by job | job name |
-| `get_performance_aggregated_per_job()` | Same — explicit alias with clearer semantics | job name |
-| `get_performance_aggregated_per_phase_multitenant()` | Same, with tenant metadata columns | job name |
+| `get_performance_aggregated_per_phase()` | Aggregated per phase (all jobs in a phase merged) | phase name |
+| `get_performance_aggregated_per_job()` | Aggregated per job (jobs in a phase kept separate) | job name |
+| `get_performance_aggregated_per_phase_multitenant()` | Per-job aggregation with tenant metadata columns | job name |
 
 ### Performance — Loading
 
@@ -145,7 +146,7 @@ For experiments that ran multiple benchmark tools in sequence, use `collectors.m
 
 **`get_connections()`**  
 Returns a DataFrame of connection metadata for all experiments.  
-Columns include: `phase` (code-prefixed job identifier), `code`, `connection`, `configuration`, `experiment_run`, `benchmark_run`, `client`, `type_tenants`, `num_tenants`, `vol_tenants`.
+Columns include: `phase` (code-prefixed phase identifier: `<code>-<configuration>-<experiment_run>-<client>`), `job` (code-prefixed job identifier: `<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>`), `code`, `connection`, `configuration`, `experiment_run`, `benchmark_run`, `client`, `type_tenants`, `num_tenants`, `vol_tenants`.
 
 **`get_metrics_metadata()`**  
 Returns a DataFrame listing all hardware metrics defined in the experiment, with columns `title`, `active`, `type`, `metric`.
@@ -160,14 +161,14 @@ Returns the benchmark-specific evaluator for the given experiment code. Used int
 
 ### Monitoring — Aggregated
 
-**`get_monitoring_aggregated_per_phase(component='stream')`**  
-Returns one row per job across all codes. Each metric column is reduced to a scalar using the metric-type aggregation rule (counter → delta, ratio → max, other → mean).
-
 **`get_monitoring_aggregated_per_job(component='stream')`**  
-Explicit alias for `get_monitoring_aggregated_per_phase()` with clearer semantics. Prefer this method in new code.
+Returns one row per benchmark job across all codes. Each metric column is reduced to a scalar using the metric-type aggregation rule (counter → sum of deltas, ratio → max, other → mean). Index is the code-prefixed job identifier.
+
+**`get_monitoring_aggregated_per_phase(component='stream')`**  
+Returns one row per phase across all codes. Calls `get_monitoring_aggregated_per_job()` and further reduces by grouping on `(code, configuration, experiment_run, client)`, collapsing all parallel jobs within a phase. Aggregation rules: ratio → max, counter → sum, other → mean. Index is the code-prefixed phase identifier.
 
 **`get_monitoring_aggregated_per_phase_multitenant(component='stream')`**  
-Extends the above by grouping across tenants. Ratio metrics are reduced with `max`; counter metrics with `sum` (except *Total I/O Wait Time*, which uses `max`). Index is the underscore-joined group key.
+Extends `get_monitoring_aggregated_per_job()` by grouping across tenants. Ratio metrics are reduced with `max`; counter metrics with `sum` (except *Total I/O Wait Time*, which uses `max`). Index is the underscore-joined group key.
 
 ---
 
@@ -192,14 +193,14 @@ Like `get_monitoring_timeseries_all` but annotates each row with tenant metadata
 **`get_performance_per_connection()`**  
 Unaggregated per-pod results concatenated across all codes. Job, connection, and configuration columns are prefixed with the experiment code.
 
-**`get_performance_aggregated_per_phase()`**  
-Aggregates parallel pods within each job for each code, then concatenates all codes. Groups by the job identifier (`phase-benchmark_run`), producing one row per job. When `benchmark_run` is always 1 the result contains one row per phase.
-
 **`get_performance_aggregated_per_job()`**  
-Explicit alias for `get_performance_aggregated_per_phase()` with clearer semantics. Prefer this method in new code.
+Aggregates parallel pods within each job, then concatenates all codes. Groups by the job identifier (`configuration-experiment_run-client-benchmark_run`), producing one row per benchmark job. Index is the code-prefixed job identifier.
+
+**`get_performance_aggregated_per_phase()`**  
+Aggregates parallel pods and all parallel jobs within each phase, then concatenates all codes. Groups by the phase identifier (`configuration-experiment_run-client`), collapsing all `benchmark_run` values. Index is the code-prefixed phase identifier.
 
 **`get_performance_aggregated_per_phase_multitenant()`**  
-Same as above but adds `type_tenants`, `num_tenants`, and `vol_tenants` columns from the workload configuration. Groups by `(code, experiment_run, client, benchmark_run, type_tenants, num_tenants)`, producing one row per job within each tenant group.
+Per-job aggregation with tenant metadata. Adds `type_tenants`, `num_tenants`, and `vol_tenants` columns from the workload configuration. Groups by `(code, experiment_run, client, benchmark_run, type_tenants, num_tenants)`, producing one row per job within each tenant group.
 
 ---
 
@@ -224,9 +225,9 @@ Same as above but fetches the multi-tenant variant from the evaluator, which inc
 **`add_metadata(df)`**  
 Enriches a DataFrame with connection metadata by attempting four join strategies in order:
 
-1. **Index × `phase` column** — when `df`'s index intersects `df_connections['phase']`. Used for monitoring DataFrames whose index is the code-prefixed job identifier. Because each job (`phase-benchmark_run`) has a distinct identifier, this strategy correctly distinguishes parallel benchmark jobs without an explicit `benchmark_run` join key.
+1. **Index × `job` column** — when `df`'s index intersects `df_connections['job']`. Used for per-job monitoring DataFrames (from `get_monitoring_aggregated_per_job()`) whose index is the code-prefixed job identifier. Each job has a distinct identifier, so parallel benchmark jobs are correctly distinguished.
 2. **Shared index** — when `df`'s index intersects `df_connections`'s index.
-3. **`phase` column join** — when both DataFrames have a `phase` column. Used for merged performance + monitoring DataFrames. The code-prefixed job identifier is unique per `benchmark_run`, ensuring correct matching.
+3. **`phase` column join** — when both DataFrames have a `phase` column. Used for merged performance + monitoring DataFrames where results are already aggregated to phase granularity.
 4. **Multi-tenant key join** on `(code, experiment_run, client, type_tenants, num_tenants)` — used after `get_monitoring_aggregated_per_phase_multitenant()` has already aggregated away the `benchmark_run` dimension via its groupby, so omitting `benchmark_run` from the key is intentional.
 5. **Loading key join** on `(code, configuration, experiment_run)`.
 
@@ -388,10 +389,16 @@ collect = collectors.benchbase(path, codes)
 df_conn = collect.get_connections()
 collectors.get_non_constant(df_conn)
 
-# Benchmarking throughput, one row per phase
+# Benchmarking throughput, one row per job (benchmark_run kept separate)
+collect.get_performance_aggregated_per_job()
+
+# Benchmarking throughput, one row per phase (all benchmark_runs merged)
 collect.get_performance_aggregated_per_phase()
 
-# Hardware monitoring summary
+# Hardware monitoring summary, one row per job
+collect.get_monitoring_aggregated_per_job("stream")
+
+# Hardware monitoring summary, one row per phase
 collect.get_monitoring_aggregated_per_phase("stream")
 
 # CPU time-series across all codes (long format)

@@ -99,18 +99,17 @@ class ycsb(logger):
                 cells = line.split(", ")
                 if cells[0] and cells[0][0] == "[":
                     parsed_rows.append(line.split(", "))
-            phase = connection_name
-            #connection = configuration_name + '-' + experiment_run + '-' + child
+            phase = configuration_name + '-' + experiment_run + '-' + client
+            job = connection_name
             connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
-            #connection = connection_name + '-' + child
             col_names = [value[0] + "." + value[1] for value in parsed_rows if len(value) > 1]
             measure_values = [value[2] for value in parsed_rows if len(value) > 1]
-            row_values = [code, phase, connection, configuration_name, experiment_run, client,
+            row_values = [code, phase, job, connection, configuration_name, experiment_run, client,
                           benchmark_run, pod_name, pod_count, threads, target, sf, workload,
                           operations, batchsize, exceptions, child]
             row_values.extend(measure_values)
             df = pd.DataFrame(row_values).T
-            columns = ['code', 'phase', 'connection', 'configuration', 'experiment_run', 'client',
+            columns = ['code', 'phase', 'job', 'connection', 'configuration', 'experiment_run', 'client',
                        'benchmark_run', 'pod', 'pod_count', 'threads', 'target', 'SF', 'workload',
                        'operations', 'batchsize', 'exceptions', 'child']
             columns.extend(col_names)
@@ -140,6 +139,8 @@ class ycsb(logger):
             df.fillna(0, inplace=True)
             df_typed = df.astype({
                 'code':'int',
+                'phase':'str',
+                'job':'str',
                 'connection':'str',
                 'configuration':'str',
                 'experiment_run':'int',
@@ -274,13 +275,17 @@ class ycsb(logger):
             return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod YCSB benchmarking rows into one row per job.
+        Aggregates parallel-pod YCSB benchmarking rows into one row per group.
 
         Groups by ``columns`` and sums counts/throughput, takes mean for average
         latencies, and max for percentile/max latencies.
 
-        The default ``columns=['phase']`` groups by the job identifier stored in the
-        ``phase`` column, producing one row per benchmark job.
+        The ``phase`` column holds the phase identifier
+        (``configuration-experiment_run-client``) and the ``job`` column holds the
+        job identifier (``configuration-experiment_run-client-benchmark_run``).
+
+        The default ``columns=['phase']`` groups by phase, producing one row per phase.
+        To keep one row per job, pass ``columns=['job']``.
 
         :param df: Typed YCSB benchmarking DataFrame.
         :type df: pandas.DataFrame
@@ -293,6 +298,7 @@ class ycsb(logger):
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
                 'code':'max',
+                'job':'max',
                 'client':'max',
                 'benchmark_run':'max',
                 'pod':'sum',
@@ -421,6 +427,7 @@ class ycsb(logger):
             dict_grp = dict()
             dict_grp['connection'] = key[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
+            dict_grp['job'] = grp['job'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
@@ -474,8 +481,10 @@ class ycsb(logger):
         """
         Aggregates parallel-pod YCSB loading rows into one row per job.
 
-        The default ``columns=['phase']`` groups by the job identifier stored in
-        the ``phase`` column, producing one row per loading job.
+        The ``phase`` column stores ``BEXHOMA_CONNECTION``, which is the job identifier
+        (``configuration-experiment_run-client-benchmark_run``).  The default
+        ``columns=['phase']`` therefore groups by job identifier, producing one row per job.
+        To aggregate per phase, pass ``columns=['configuration', 'experiment_run', 'client']``.
 
         :param df: Typed YCSB loading DataFrame.
         :type df: pandas.DataFrame
@@ -874,7 +883,7 @@ class ycsb(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             columns = [
-            'configuration', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","pod_count","exceptions",
+            'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","pod_count","exceptions",
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
             "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
@@ -920,7 +929,7 @@ class ycsb(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"threads","target","benchmark_run","pod_count","exceptions"]].copy()
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"threads","target","benchmark_run","pod_count","exceptions"]].copy()
             columns = [
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
