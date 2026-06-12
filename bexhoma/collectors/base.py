@@ -505,6 +505,7 @@ class base():
         df_phase.index = [
             '{}-{}-{}-{}'.format(*t) for t in df_phase.index
         ]
+        df_phase['phase'] = df_phase.index
         return df_phase
 
     def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="stream"):
@@ -538,11 +539,15 @@ class base():
         strategies, tried in order:
 
         1. **Index × job column** — when ``df``'s index intersects
-           ``df_connections['job']`` (monitoring DataFrames are indexed by the
-           code-prefixed job identifier).
-        2. **Shared index** — when both DataFrames share common index values.
-        3. **Phase column join** — when both DataFrames have a ``phase`` column.
-        4. **Multi-tenant key join** — when both DataFrames have
+           ``df_connections['job']`` (job-level monitoring DataFrames indexed by the
+           code-prefixed 4-part job identifier).
+        2. **Index × phase column** — when ``df``'s index intersects
+           ``df_connections['phase']`` (phase-level timeseries DataFrames indexed by the
+           code-prefixed 3-part phase identifier).
+        3. **Shared index** — when both DataFrames share common index values.
+        4. **Phase column join** — when both DataFrames have a ``phase`` column
+           (phase-aggregated DataFrames that carry ``phase`` as a regular column).
+        5. **Multi-tenant key join** — when both DataFrames have
            ``(code, experiment_run, client, type_tenants, num_tenants)`` columns.
 
         If none of the strategies match, a warning is printed and ``None`` is returned.
@@ -553,8 +558,9 @@ class base():
         :rtype: pandas.DataFrame
         """
         df_connections = self.get_connections()
-        intersection = df.index.intersection(df_connections['job'])
-        if not intersection.empty:
+        intersection_job = df.index.intersection(df_connections['job'])
+        intersection_phase = df.index.intersection(df_connections['phase'])
+        if not intersection_job.empty:
             print("add_metadata: combine on index and column 'job'")
             if 'job' in df.columns:
                 df.drop('job', axis=1, inplace=True)
@@ -566,6 +572,21 @@ class base():
                 how='inner'
             ).set_index('job').copy()
             result['job'] = result.index
+            result.drop('connection', axis=1, inplace=True, errors='ignore')
+            return result
+
+        if not intersection_phase.empty:
+            print("add_metadata: combine on index and column 'phase'")
+            if 'phase' in df.columns:
+                df.drop('phase', axis=1, inplace=True)
+            cols_to_use = [c for c in df_connections.columns if c not in df.columns or c == 'phase']
+            result = df.merge(
+                df_connections[cols_to_use].drop_duplicates('phase'),
+                left_index=True,
+                right_on='phase',
+                how='inner'
+            ).set_index('phase').copy()
+            result['phase'] = result.index
             result.drop('connection', axis=1, inplace=True, errors='ignore')
             return result
 

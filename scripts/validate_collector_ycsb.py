@@ -62,9 +62,11 @@ for code in codes:
         with zipfile.ZipFile(zip_file, "r") as zf:
             zf.extractall(path)
 
-HEADER_COLS = ["phase", "code", "configuration", "experiment_run",
+# phase = configuration-experiment_run-client (3-part identifier)
+# job   = phase-benchmark_run            (4-part identifier)
+HEADER_COLS = ["phase", "job", "code", "configuration", "experiment_run",
                "benchmark_run", "client", "type_tenants", "num_tenants", "vol_tenants"]
-TS_COLS     = ["timestamp", "phase", "value", "code", "metric", "component"]
+TS_COLS     = ["timestamp", "phase", "job", "value", "code", "metric", "component"]
 LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
 
 failures = []
@@ -82,15 +84,12 @@ def check_df(df, label, required_cols=None):
         ok = False
     else:
         print(f"  OK    {label}: shape={df.shape}")
-    if required_cols:
+    if ok and required_cols:
         missing = [c for c in required_cols if c not in df.columns]
         if missing:
             print(f"  FAIL  {label}: missing columns {missing}")
             failures.append(f"{label}: missing columns {missing}")
             ok = False
-    if ok:
-        #print(df.head())
-        pass
     return ok
 
 
@@ -119,10 +118,20 @@ sep("get_monitoring_aggregated_per_phase('stream') + add_metadata")
 try:
     df = collect.get_monitoring_aggregated_per_phase("stream")
     df = collect.add_metadata(df)
-    check_df(df, "monitoring_aggregated_stream", HEADER_COLS)
+    check_df(df, "monitoring_aggregated_per_phase", HEADER_COLS)
 except Exception:
     traceback.print_exc()
     failures.append("get_monitoring_aggregated_per_phase() exception")
+
+# ── MONITORING AGGREGATED PER JOB ─────────────────────────────────────────────
+sep("get_monitoring_aggregated_per_job('stream') + add_metadata")
+try:
+    df = collect.get_monitoring_aggregated_per_job("stream")
+    df = collect.add_metadata(df)
+    check_df(df, "monitoring_aggregated_per_job", HEADER_COLS)
+except Exception:
+    traceback.print_exc()
+    failures.append("get_monitoring_aggregated_per_job() exception")
 
 # ── MONITORING TIMESERIES PER PHASE ───────────────────────────────────────────
 sep("get_monitoring_timeseries_per_phase() + add_metadata")
@@ -158,10 +167,20 @@ sep("get_performance_aggregated_per_phase()")
 try:
     df_performance = collect.get_performance_aggregated_per_phase()
     df_performance.dropna(inplace=True)
-    check_df(df_performance, "performance_aggregated_per_phase", ["client"])
+    check_df(df_performance, "performance_aggregated_per_phase", ["phase", "client"])
 except Exception:
     traceback.print_exc()
     failures.append("get_performance_aggregated_per_phase() exception")
+
+# ── PERFORMANCE AGGREGATED PER JOB ────────────────────────────────────────────
+sep("get_performance_aggregated_per_job()")
+try:
+    df_performance = collect.get_performance_aggregated_per_job()
+    df_performance.dropna(inplace=True)
+    check_df(df_performance, "performance_aggregated_per_job", ["phase", "job", "client"])
+except Exception:
+    traceback.print_exc()
+    failures.append("get_performance_aggregated_per_job() exception")
 
 # ── LOADING PER RUN ───────────────────────────────────────────────────────────
 sep("get_loading_per_run()")
@@ -171,6 +190,15 @@ try:
 except Exception:
     traceback.print_exc()
     failures.append("get_loading_per_run() exception")
+
+# ── LOADING PER CONNECTION ────────────────────────────────────────────────────
+sep("get_loading_per_connection()")
+try:
+    df = collect.get_loading_per_connection()
+    check_df(df, "loading_per_connection", LOAD_COLS)
+except Exception:
+    traceback.print_exc()
+    failures.append("get_loading_per_connection() exception")
 
 # ── LOADING PER POD ───────────────────────────────────────────────────────────
 sep("get_loading_per_pod()")
@@ -228,6 +256,26 @@ try:
 except Exception:
     traceback.print_exc()
     failures.append("get_benchmark_timeseries_all() exception")
+
+# ── EVALUATOR: SUMMARY PER PHASE ──────────────────────────────────────────────
+sep("evaluator.get_summary_benchmark_per_phase()")
+try:
+    ev = collect.get_evaluator(codes[0])
+    df = ev.get_summary_benchmark_per_phase()
+    check_df(df, "evaluator_summary_per_phase", ["phase"])
+except Exception:
+    traceback.print_exc()
+    failures.append("evaluator.get_summary_benchmark_per_phase() exception")
+
+# ── EVALUATOR: SUMMARY PER CONNECTION ─────────────────────────────────────────
+sep("evaluator.get_summary_benchmark_per_connection()")
+try:
+    ev = collect.get_evaluator(codes[0])
+    df = ev.get_summary_benchmark_per_connection()
+    check_df(df, "evaluator_summary_per_connection", ["phase", "job"])
+except Exception:
+    traceback.print_exc()
+    failures.append("evaluator.get_summary_benchmark_per_connection() exception")
 
 # ── BOTTOM LINE ───────────────────────────────────────────────────────────────
 print(f"\n{'='*60}")
