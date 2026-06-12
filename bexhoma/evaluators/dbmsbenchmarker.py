@@ -200,7 +200,7 @@ class dbmsbenchmarker(logger):
             df_row['benchmark_end'] = connection_props['times']['total'][conn_name]['time_end']
             df_timing_rows = pd.concat([df_timing_rows, df_row])
         df_timing = df_timing_rows.sort_index()
-        group_keys = ['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client', 'benchmark_run']
+        group_keys = ['configuration', 'connection', 'phase', 'job', 'SF', 'experiment_run', 'client', 'benchmark_run']
         benchmark_start = df_timing.groupby(group_keys)['benchmark_start'].min()
         benchmark_end = df_timing.groupby(group_keys)['benchmark_end'].max()
         df_benchmark = (benchmark_end - benchmark_start).to_frame(name='time [s]').round(2)
