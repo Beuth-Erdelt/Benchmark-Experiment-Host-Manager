@@ -168,3 +168,71 @@ local variable `storageConfiguration` (see design decisions above).
 - All instance attributes are declared in `__init__` before first use, even those
   later overwritten by `reset_sut()` or `set_*` / `patch_*` helpers.
 - Attribute comments use `#:` (Sphinx autodoc) so they appear in generated docs.
+
+---
+
+## Pod synchronization counters
+
+All Kubernetes pods (generators, loaders, benchmarkers) synchronize their start using
+Redis count-down counters before executing their workload.  The mechanism was redesigned
+in issue #720 to eliminate race conditions between multi-configuration experiments.
+
+### Semantics
+
+Python initializes each counter to its target `N`.  Each pod decrements the counter by 1
+on startup, then polls until the value is `<= 0`.  Using `<= 0` instead of `== 0` makes
+the mechanism restart-safe: a restarted pod that decrements again drives the counter
+further negative, but the wait condition is still satisfied immediately.
+
+### Three counter levels
+
+| Level | Scope | Key format |
+|---|---|---|
+| **Job** | All pods within one Kubernetes Job | `bexhoma-{type}-podcount-job-{CONNECTION}-{EXPERIMENT}` |
+| **Round** | All benchmarker pods across all parallel jobs in the same client round | `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{EXPERIMENT}` |
+| **Experiment** | All pods of all configurations in the same phase; container tenancy only | `bexhoma-{type}-podcount-exp-{EXPERIMENT}` |
+
+`{type}` is `benchmarker`, `loader`, or `generator`.  `{CONNECTION}` maps to
+`self.configuration` / `$BEXHOMA_CONNECTION`.  `{EXPERIMENT}` maps to `self.code` /
+`$BEXHOMA_EXPERIMENT`.
+
+The round counter key is unique per `(EXPERIMENT_RUN, CLIENT, EXPERIMENT)` triple, which
+prevents stale counter values from one round affecting the next (the core fix for #720).
+
+### Rules per pod type
+
+**Benchmarker pods** always wait for all three counters, in order:
+
+1. Job counter — unconditional.
+2. Round counter — unconditional.
+3. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
+
+**Loader pods** wait conditionally on `BEXHOMA_SYNCH_LOAD > 0`:
+
+1. Job counter.
+2. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
+
+**Generator pods** wait conditionally on `BEXHOMA_SYNCH_GENERATE > 0`
+(TPC-H/TPC-DS) or `BEXHOMA_SYNCH_LOAD != 0` (YCSB, Benchbase):
+
+1. Job counter.
+2. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
+
+The experiment counter for generators uses the `generator-podcount-exp` key;
+for loaders (including the YCSB generator which does `ycsb load`) it uses the
+`loader-podcount-exp` key.
+
+### Python initialization points
+
+| Counter | Method | Value |
+|---|---|---|
+| Loader job counter | `configurations.py::start_loading_pod()` | `num_pods` |
+| Generator job counter | `configurations.py::start_loading_pod()` | `num_pods` |
+| Benchmarker job counter | `configurations.py::run_benchmarker_pod()` | `parallelism` |
+| Round counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client` | Sum of `parallelism` across all configs for this round |
+| Loader/generator experiment counter | `experiments/base.py::work_benchmark_list()` when all container-tenancy configs are ready to load | Sum of `num_loading_pods` across all active configs |
+| Benchmarker experiment counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client`, when `self.tenant_per == 'container'` | Same as round counter value |
+
+The loader and generator experiment counters are both initialized to `total_loading_pods`
+so that each key can be independently decremented by its own pod type without one type's
+counter interfering with the other's.

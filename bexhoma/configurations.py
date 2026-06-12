@@ -917,11 +917,11 @@ class default():
         redisQueue = '{}-{}-{}-{}'.format(app, component, self.configuration, self.code)
         for i in range(1, self.num_loading+1):
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        # reset number of clients per job
-        redisQueue = '{}-{}-{}-{}'.format(app, 'generator-podcount', self.configuration, self.code)
-        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
-        redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
-        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
+        # initialize job-level pod counters to target count (count-down to zero)
+        redisQueue = '{}-{}-job-{}-{}'.format(app, 'generator-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=num_pods)
+        redisQueue = '{}-{}-job-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=num_pods)
         # start job
         job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
@@ -3032,6 +3032,9 @@ scrape_configs:
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
         for i in range(1, parallelism+1):
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+        # initialize job-level pod counter to target count (count-down to zero)
+        job_counter_key = '{}-{}-podcount-job-{}-{}'.format(app, component, connection, self.code)
+        self.experiment.cluster.set_pod_counter(queue=job_counter_key, value=parallelism)
         if not only_prepare:
             # create pods
             yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism, benchmark_run=benchmark_run, template_override=template_override)
