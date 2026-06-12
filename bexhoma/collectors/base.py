@@ -675,7 +675,7 @@ class base():
         df_sum = (
             df_timeseries
             .groupby(
-                ["timestamp", "code", "job", "experiment_run", "client", "benchmark_run",
+                ["timestamp", "code", "phase", "job", "experiment_run", "client", "benchmark_run",
                  "type_tenants", 'vol_tenants', "num_tenants", "metric", "component"],
                 as_index=False
             )["value"]
