@@ -274,10 +274,13 @@ class ycsb(logger):
             return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod YCSB benchmarking rows into one row per phase.
+        Aggregates parallel-pod YCSB benchmarking rows into one row per job.
 
         Groups by ``columns`` and sums counts/throughput, takes mean for average
         latencies, and max for percentile/max latencies.
+
+        The default ``columns=['phase']`` groups by the job identifier stored in the
+        ``phase`` column, producing one row per benchmark job.
 
         :param df: Typed YCSB benchmarking DataFrame.
         :type df: pandas.DataFrame
@@ -469,7 +472,10 @@ class ycsb(logger):
         return df_typed
     def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod YCSB loading rows into one row per phase.
+        Aggregates parallel-pod YCSB loading rows into one row per job.
+
+        The default ``columns=['phase']`` groups by the job identifier stored in
+        the ``phase`` column, producing one row per loading job.
 
         :param df: Typed YCSB loading DataFrame.
         :type df: pandas.DataFrame

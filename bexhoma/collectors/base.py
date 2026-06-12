@@ -140,13 +140,18 @@ class base():
         For each code:
 
         - initialises the evaluator and reads the workload configuration,
-        - retrieves and types the per-client performance data,
-        - aggregates across parallel pods grouped by phase,
+        - retrieves and types the per-pod performance data,
+        - aggregates parallel pods grouped by job identifier (the ``phase`` column),
         - prefixes ``phase``, ``configuration``, and the DataFrame index with the experiment code.
+
+        Groups by the job identifier (``configuration-experiment_run-client-benchmark_run``),
+        producing one row per benchmark job.  When every phase has a single job
+        (``benchmark_run = 1``) the result contains one row per phase.
 
         :param type: Component type passed to the aggregation call (currently unused in this method).
         :type type: str
-        :return: Combined DataFrame of aggregated performance metrics for all experiments.
+        :return: Combined DataFrame of aggregated performance metrics for all experiments,
+                 indexed by the code-prefixed job identifier.
         :rtype: pandas.DataFrame
         """
         df_performance = pd.DataFrame()
@@ -172,7 +177,9 @@ class base():
 
         Extends :meth:`get_performance_aggregated_per_phase` by annotating each row with
         tenant metadata (``type_tenants``, ``num_tenants``, ``vol_tenants``) read from the
-        workload configuration before aggregation.
+        workload configuration before aggregation.  Groups by
+        ``(code, experiment_run, client, benchmark_run, type_tenants, num_tenants)``,
+        producing one row per job within each tenant group.
 
         :param type: Component type passed to the aggregation call (currently unused in this method).
         :type type: str
@@ -233,6 +240,40 @@ class base():
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
         return df_metadata
+
+    def get_performance_aggregated_per_job(self, type="stream"):
+        """
+        Aggregates parallel pods within each job and returns one row per job.
+
+        Explicit alias for :meth:`get_performance_aggregated_per_phase` with semantically
+        clearer naming.  Groups by the job identifier
+        (``configuration-experiment_run-client-benchmark_run``); the index is the
+        code-prefixed job identifier.
+
+        :param type: Component type (currently unused).
+        :type type: str
+        :return: Combined DataFrame of aggregated performance metrics for all experiments,
+                 indexed by the code-prefixed job identifier.
+        :rtype: pandas.DataFrame
+        """
+        return self.get_performance_aggregated_per_phase(type=type)
+
+    def get_monitoring_aggregated_per_job(self, type="stream"):
+        """
+        Aggregates monitoring metrics per job and returns one row per job.
+
+        Explicit alias for :meth:`get_monitoring_aggregated_per_phase` with semantically
+        clearer naming.  The index is the code-prefixed job identifier
+        (``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``).
+
+        :param type: Component type to filter monitoring metrics (default ``'stream'``).
+        :type type: str
+        :return: Combined DataFrame of aggregated monitoring metrics for all experiments,
+                 indexed by the code-prefixed job identifier, or an empty DataFrame when
+                 monitoring is disabled.
+        :rtype: pandas.DataFrame
+        """
+        return self.get_monitoring_aggregated_per_phase(type=type)
 
     def get_performance_per_connection(self):
         """
@@ -308,9 +349,9 @@ class base():
         ``evaluation`` is provided, returns only the connections for that experiment.
 
         Key columns in the returned DataFrame:
-        ``phase``, ``code``, ``connection``, ``configuration``,
-        ``experiment_run``, ``client``, ``type_tenants``, ``num_tenants``,
-        ``vol_tenants``.
+        ``phase`` (code-prefixed job identifier), ``code``, ``connection``,
+        ``configuration``, ``experiment_run``, ``benchmark_run``, ``client``,
+        ``type_tenants``, ``num_tenants``, ``vol_tenants``.
 
         :param evaluation: Evaluator instance. If provided, only that experiment is queried.
         :type evaluation: object, optional
@@ -395,10 +436,15 @@ class base():
         results.  The ``connection`` column is dropped from the combined result because
         it is no longer meaningful across experiments.
 
+        The index of the returned DataFrame is the code-prefixed job identifier
+        (``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``), producing
+        one row per benchmark job.
+
         :param type: Component type to filter monitoring metrics (default ``'stream'``).
         :type type: str
         :return: Combined DataFrame of aggregated monitoring metrics for all experiments,
-                 or an empty DataFrame when monitoring is disabled.
+                 indexed by the code-prefixed job identifier, or an empty DataFrame when
+                 monitoring is disabled.
         :rtype: pandas.DataFrame
         """
         if not self.with_monitoring:

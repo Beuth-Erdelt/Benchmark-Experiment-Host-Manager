@@ -188,12 +188,18 @@ class benchbase(logger):
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod result rows into one row per phase.
+        Aggregates parallel-pod result rows into one row per job.
 
         Groups the typed benchmarking DataFrame by ``columns`` and applies
         per-metric aggregation functions (sum for throughput, max for latency
         percentiles, etc.). Also recomputes the efficiency metric for TPC-C runs
         where vusers equal 10× the scale factor.
+
+        The default ``columns=['phase']`` groups by the job identifier stored in
+        the ``phase`` column (``configuration-experiment_run-client-benchmark_run``),
+        producing one row per benchmark job.  Pass
+        ``columns=['configuration', 'experiment_run', 'client']`` to aggregate all
+        parallel jobs within the same phase into a single row.
 
         :param df: Typed benchmarking DataFrame (output of :meth:`benchmarking_set_datatypes`).
         :type df: pandas.DataFrame
@@ -429,15 +435,15 @@ class benchbase(logger):
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
-        Returns benchmarking results aggregated over parallel pods, one row per phase.
+        Returns benchmarking results aggregated over parallel pods, one row per job.
 
         Applies :meth:`benchmarking_set_datatypes`, aggregates via
         :meth:`benchmarking_aggregate_by_parallel_pods`, and selects the columns
-        used for the per-phase summary table (experiment run, terminals, target,
+        used for the per-job summary table (experiment run, terminals, target,
         pod count, time, errors, throughput, goodput, efficiency, and latency
         percentiles), sorted by ``(experiment_run, target, pod_count)``.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per phase, or an
+        :return: DataFrame indexed as ``"DBMS"`` with one row per job, or an
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """

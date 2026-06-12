@@ -40,17 +40,34 @@ A **configuration** is a named DBMS variant, for example `PostgreSQL` or `Postgr
 All components belonging to one configuration — the SUT pod, loader pods, benchmarker pods, storage volume — share a configuration label in Kubernetes.
 This label is the primary key for grouping and comparing results.
 
-### Connection
-
-A **connection** identifies the result produced by a single driver pod for a specific (configuration, run, client) triple.
-Its full name is `<configuration>-<experiment_run>-<client>-<pod>`, prefixed with the experiment code to be globally unique.
-
-Example: `1775855486-PostgreSQL-1-2-3` — experiment 1775855486, first run, second client phase, third pod.
-
-### Phase (Client)
+### Phase
 
 A **phase** (also called *client* in result files) is a discrete step within an experiment run that uses a fixed driver concurrency.
 Experiments can sweep across multiple concurrency levels by defining several phases, e.g., first with one benchmarker pod, then with eight.
+
+A phase is identified by `<configuration>-<experiment_run>-<client>`.
+
+Example: `PostgreSQL-1-2-3` — first PostgreSQL instance, second experiment run, third client phase.
+
+### Job
+
+A **job** is one benchmark job executing within a phase.
+Multiple jobs can run in parallel within the same phase; the 1-based index of each parallel job is called `benchmark_run`.
+A job is identified by `<phase>-<benchmark_run>`, i.e. `<configuration>-<experiment_run>-<client>-<benchmark_run>`.
+
+Example: `PostgreSQL-1-2-3-4` — fourth parallel benchmark job in phase `PostgreSQL-1-2-3`.
+
+Most phases have a single job (`benchmark_run = 1`), in which case the job name is always `<phase>-1`.
+
+### Connection
+
+A **connection** is a single driver pod executing within a benchmark job.
+Its identifier is `<job>-<pod>`, i.e. `<configuration>-<experiment_run>-<client>-<benchmark_run>-<pod>`.
+
+Example: `PostgreSQL-1-2-3-4-5` — fifth pod of the fourth benchmark job in phase `PostgreSQL-1-2-3`.
+
+In collectors, which aggregate results from multiple experiments, all identifiers are prefixed with the
+experiment code: `<code>-<connection>` and `<code>-<job>`.
 
 ### Host Setting
 

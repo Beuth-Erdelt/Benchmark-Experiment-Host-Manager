@@ -227,11 +227,14 @@ class tpcc(logger):
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod TPC-C result rows into one row per phase.
+        Aggregates parallel-pod TPC-C result rows into one row per job.
 
-        Groups by ``columns`` and applies per-metric aggregation (sum for vusers/NOPM/TPM
-        means, max for latency percentiles, etc.). Also recomputes efficiency for runs
-        where vusers equal 10× the scale factor.
+        Groups by ``columns`` and applies per-metric aggregation (NOPM/TPM averaged
+        across pods, max for latency percentiles, etc.). Also recomputes efficiency for
+        runs where vusers equal 10× the scale factor.
+
+        The default ``columns=['phase']`` groups by the job identifier stored in the
+        ``phase`` column, producing one row per benchmark job.
 
         :param df: Typed TPC-C benchmarking DataFrame.
         :type df: pandas.DataFrame

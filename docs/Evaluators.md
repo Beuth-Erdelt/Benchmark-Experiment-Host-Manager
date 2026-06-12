@@ -82,9 +82,9 @@ ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
 | Method | Defined in | Description |
 |---|---|---|
 | `benchmarking_set_datatypes(df)` | all subclasses | Cast benchmarking DataFrame to correct dtypes |
-| `benchmarking_aggregate_by_parallel_pods(df)` | all subclasses | Reduce parallel pods → one row per phase |
+| `benchmarking_aggregate_by_parallel_pods(df)` | all subclasses | Reduce parallel pods → one row per job |
 | `loading_set_datatypes(df)` | `ycsb` | Cast loading DataFrame to correct dtypes |
-| `loading_aggregate_by_parallel_pods(df)` | `ycsb` | Reduce parallel loading pods → one row per phase |
+| `loading_aggregate_by_parallel_pods(df)` | `ycsb` | Reduce parallel loading pods → one row per job |
 
 ### Loading Throughput
 
@@ -134,17 +134,22 @@ and the connection-metadata helpers that underpin all downstream aggregation.
 Returns a DataFrame of connection/pod metadata read from `connections.config`.
 One row per pod (when `orig_name` is present) or per client (otherwise).
 
-Key columns: `phase`, `code`, `connection`, `configuration`, `experiment_run`,
-`benchmark_run`, `client`, `pods`, `time_load`, `time_preload`, `time_generate`,
-`time_ingest`, `time_postload`, `type_tenants`, `num_tenants`, `vol_tenants`,
-plus flattened `host_*`, `loading_parameters_*`, `benchmarking_parameters_*`,
-`sut_parameters_*`, and `arg_*` fields.
+Key columns: `phase` (job identifier, see note below), `code`, `connection`,
+`configuration`, `experiment_run`, `benchmark_run`, `client`, `pods`,
+`time_load`, `time_preload`, `time_generate`, `time_ingest`, `time_postload`,
+`type_tenants`, `num_tenants`, `vol_tenants`, plus flattened `host_*`,
+`loading_parameters_*`, `benchmarking_parameters_*`, `sut_parameters_*`, and
+`arg_*` fields.
 
-`benchmark_run` (`numBenchmark`) is the 1-based sequence number of the benchmark
-session within a single experiment run.  Each benchmark session produces its own
-connection entry with a unique name — and therefore a unique `phase` string — so
-different `benchmark_run` values are always distinguishable without using
-`benchmark_run` as an explicit join key.
+`benchmark_run` (`numBenchmark`) is the 1-based index of the parallel benchmark job
+within a phase.  Each job produces its own connection entry with a unique name —
+and therefore a unique `phase` string (= `<code>-<job>`) — so different
+`benchmark_run` values are always distinguishable without using `benchmark_run` as
+an explicit join key.
+
+Note: the `phase` column in this DataFrame holds the **job** identifier prefixed
+with the experiment code (`<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>`).
+See [Concepts](Concepts.md) for the definition of *phase* vs *job*.
 
 ### `get_workload()`
 
@@ -243,13 +248,15 @@ Casts a benchmarking DataFrame to the correct column types.
 
 ### `benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])`
 
-Reduces parallel pods to one row per group (default: per `phase`).
+Reduces parallel pods within each job to one aggregated row.
+The default `columns=['phase']` groups by the job identifier (stored in the
+`phase` column as `configuration-experiment_run-client-benchmark_run`), so the
+result has one row per job.
 Throughput and goodput are summed; latency percentiles use `max`; minimum
 latency uses `min`; average latency uses `mean`.
 
-Pass `columns=['phase', 'benchmark_run']` to preserve the `benchmark_run`
-dimension and produce one row per `(phase, benchmark_run)` pair instead of
-collapsing all benchmark sessions into one.
+Pass `columns=['configuration', 'experiment_run', 'client']` to aggregate all
+parallel jobs within the same phase into a single row.
 
 ### `parse_benchbase_log_file(file_path)`
 
@@ -298,7 +305,7 @@ throughput, goodput, efficiency, and latency percentiles), sorted by
 ### `get_summary_benchmark_per_phase()`
 
 Returns benchmarking results aggregated over parallel pods (via
-`benchmarking_aggregate_by_parallel_pods`), one row per phase, filtered to the
+`benchmarking_aggregate_by_parallel_pods`), one row per job, filtered to the
 same display columns as the per-connection view plus `pod_count`.
 Used by `show_summary()`.
 
@@ -330,9 +337,9 @@ the optional latency columns.
 
 ### `benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])`
 
-Reduces parallel pods to one row per group.  NOPM and TPM are averaged
-(not summed) across pods; efficiency is recomputed after aggregation using the
-tpxNOPM formula.
+Reduces parallel pods within each job to one aggregated row (default: groups by
+the job identifier in the `phase` column).  NOPM and TPM are averaged (not summed)
+across pods; efficiency is recomputed after aggregation using the tpxNOPM formula.
 
 ---
 
@@ -360,7 +367,7 @@ Unknown operation types are handled gracefully by conditional type application.
 
 ### `benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])`
 
-Reduces parallel benchmarking pods to one row per group.  Throughput is summed;
+Reduces parallel benchmarking pods within each job to one aggregated row.  Throughput is summed;
 average latency uses mean; percentile latency uses max; minimum uses min.
 
 ### `loading_aggregate_by_parallel_pods(df, columns=['phase'])`
@@ -462,7 +469,7 @@ Returns a combined DataFrame of throughput and timing metrics:
 
 ### `benchmarking_aggregate_by_parallel_pods(df, columns=['phase'])`
 
-Reduces parallel pods to one row per group.  Geometric mean is used for
+Reduces parallel pods within each job to one aggregated row.  Geometric mean is used for
 `total_timer_execution` and `Power@Size`; `Throughput@Size` is recomputed
 from the aggregated timing.
 
@@ -494,7 +501,7 @@ ev = evaluators.benchbase(code="1777285093", path="/data/benchmarks")
 # All benchmarking results
 df_bench = ev.get_df_benchmarking()
 
-# Aggregate parallel pods → one row per phase
+# Aggregate parallel pods → one row per job
 df_bench = ev.benchmarking_set_datatypes(df_bench)
 df_agg   = ev.benchmarking_aggregate_by_parallel_pods(df_bench)
 
