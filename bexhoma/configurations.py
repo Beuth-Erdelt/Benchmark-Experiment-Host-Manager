@@ -326,6 +326,8 @@ class default():
         self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are
         self.is_sut_ready = False
         self.are_worker_ready = False
+        self.tenant_ready_to_load = False
+        self.tenant_started_to_load = False
     def add_benchmark_list(self, list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
