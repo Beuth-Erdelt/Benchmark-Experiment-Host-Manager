@@ -72,6 +72,8 @@ LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
 PERF_COLS   = ["Goodput (requests/second)",
                "Latency Distribution.Average Latency (microseconds)"]
 
+PREVIEW = '--preview' in sys.argv
+
 failures = []
 
 
@@ -93,6 +95,8 @@ def check_df(df, label, required_cols=None):
             print(f"  FAIL  {label}: missing columns {missing}")
             failures.append(f"{label}: missing columns {missing}")
             ok = False
+    if ok and PREVIEW:
+        print(df.head())
     return ok
 
 

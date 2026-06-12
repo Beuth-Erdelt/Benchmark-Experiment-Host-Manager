@@ -11,7 +11,7 @@
 
 . .\scripts\testfunctions.ps1
 
-$BEXHOMA_NODE_SUT = "cl-worker38"
+$BEXHOMA_NODE_SUT = "cl-worker36"
 
 
 
