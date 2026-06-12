@@ -47,7 +47,7 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
-BEXHOMA_MS=1
+BEXHOMA_MS=1        # number of parallel experiment management processes
 
 mkdir -p $LOG_DIR
 ```
@@ -102,7 +102,7 @@ kubectl delete all -l app=bexhoma,usecase=<label>
 ## YCSB
 
 YCSB is a key-value workload generator.
-The configuration name encodes concurrency and target throughput: `PostgreSQL-<threads>-<pods>-<target>`.
+Configurations are numbered sequentially per DBMS — the first configuration is `PostgreSQL-1`, the second `PostgreSQL-2`, and so on.
 
 ### Start DBMS
 
@@ -123,7 +123,6 @@ The summary confirms the SUT is running and shows the port-forward command.
 ### Start DBMS and Load Data
 
 Starts PostgreSQL and imports YCSB data using 8 parallel loader pods with 64 threads each.
-The data volume is created and marked as loaded; subsequent `run` invocations with the same parameters will skip this step.
 
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
@@ -169,7 +168,7 @@ The **Workflow** section confirms the actual pod count matched the plan.
 ## Benchbase (TPC-C)
 
 Benchbase runs TPC-C transactions.
-The configuration name encodes concurrency and target: `PostgreSQL-<pods>-<pods>-<target>`.
+Configurations are numbered sequentially per DBMS — `PostgreSQL-1`, `PostgreSQL-2`, etc.
 
 ### Start DBMS
 
@@ -219,7 +218,7 @@ The **Execution** table reports:
 ## HammerDB (TPC-C)
 
 HammerDB runs TPC-C using virtual users (vusers).
-The configuration name encodes virtual users and clients: `PostgreSQL-BHT-<vusers>-<clients>`.
+Configurations are numbered sequentially per DBMS — `PostgreSQL-1`, `PostgreSQL-2`, etc.
 
 ### Start DBMS
 
