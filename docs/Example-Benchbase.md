@@ -103,7 +103,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -354,7 +354,7 @@ The result looks something like
 
 doc_benchbase_testcase_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -516,7 +516,7 @@ The result looks something like
 
 doc_benchbase_testcase_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -647,7 +647,7 @@ bexhoma benchbase -ms $BEXHOMA_MS -tr \
 
 doc_benchbase_testcase_keytime.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=160

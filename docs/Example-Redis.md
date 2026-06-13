@@ -118,7 +118,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_redis_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -251,7 +251,7 @@ yields something like
 
 doc_ycsb_redis_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -404,7 +404,7 @@ yields something like
 
 doc_ycsb_redis_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -600,7 +600,7 @@ The result looks something like
 
 doc_ycsb_redis_4.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -761,7 +761,7 @@ The result looks something like
 
 doc_ycsb_redis_5.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
