@@ -67,7 +67,7 @@ for code in codes:
 HEADER_COLS = ["phase", "job", "code", "configuration", "experiment_run",
                "benchmark_run", "client", "type_tenants", "num_tenants", "vol_tenants"]
 TS_COLS     = ["timestamp", "phase", "job", "value", "code", "metric", "component"]
-LOAD_COLS   = ["SF", "time_load", "time_ingest", "Throughput [SF/h]"]
+LOAD_COLS   = ["sf", "[OVERALL].RunTime(ms)", "Throughput [SF/h]"]
 
 PREVIEW = '--preview' in sys.argv
 

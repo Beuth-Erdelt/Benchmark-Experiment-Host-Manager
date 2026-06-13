@@ -37,8 +37,8 @@ def _code_from_log(filename):
 
 codes = [c for c in [
     _code_from_log("doc_hammerdb_testcase_collector_1.log"),
-    #_code_from_log("doc_hammerdb_testcase_collector_2.log"),
-    #_code_from_log("doc_hammerdb_testcase_collector_3.log"),
+    _code_from_log("doc_hammerdb_testcase_collector_2.log"),
+    _code_from_log("doc_hammerdb_testcase_collector_3.log"),
 ] if c is not None]
 if not codes:
     print("ERROR: no experiment codes found in logs_tests/ — run test-docs-collector first.", file=sys.stderr)
