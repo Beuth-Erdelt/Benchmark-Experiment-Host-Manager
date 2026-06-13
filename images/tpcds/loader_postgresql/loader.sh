@@ -18,6 +18,19 @@ echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
 echo "SF $SF"
 
+######################## Read per-pod config from Redis ########################
+BEXHOMA_POD_CONFIG_KEY="bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-config-$BEXHOMA_CHILD"
+echo "Querying per-pod config at $BEXHOMA_POD_CONFIG_KEY"
+BEXHOMA_POD_CONFIG_JSON="$(redis-cli -h 'bexhoma-messagequeue' get "$BEXHOMA_POD_CONFIG_KEY")"
+if [ -z "$BEXHOMA_POD_CONFIG_JSON" ] || [ "$BEXHOMA_POD_CONFIG_JSON" = "nil" ]; then
+    echo "No per-pod config found in Redis."
+else
+    eval "$(echo "$BEXHOMA_POD_CONFIG_JSON" \
+      | tr -d '{}' \
+      | tr ',' '\n' \
+      | awk 'BEGIN{FS="\""} NF>=4 && $2!="" {print "export BEXHOMA_POD_"$2"=\""$4"\""; print "echo \"BEXHOMA_POD_"$2"="$4"\""}')"
+fi
+
 ######################## Destination of raw data ########################
 if test $STORE_RAW_DATA -gt 0
 then

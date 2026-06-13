@@ -20,6 +20,7 @@ import psutil
 import logging
 import socket
 import ast
+import json
 import urllib.request
 import urllib.parse
 from pprint import pprint
@@ -2028,6 +2029,32 @@ class Kubernetes():
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
         redis_command = f'redis-cli set {queue} {value} '
+        self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+
+    def set_pod_config(self, key: str, config: dict) -> None:
+        """
+        Store per-pod configuration as a JSON string in Redis.
+
+        The JSON object is stored at ``key`` and can be retrieved by shell
+        scripts running inside pods using ``redis-cli get <key>``.  The value
+        is then expanded into ``BEXHOMA_POD_``-prefixed environment variables
+        by ``bexhoma-pod-env.sh``.
+
+        :param key: Redis key to store the configuration under.
+        :type key: str
+        :param config: Dict mapping parameter names to their values.
+        :type config: dict
+        """
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if pods_messagequeue:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        json_str = json.dumps(config)
+        # Escape single quotes so the JSON can be safely wrapped in single quotes
+        escaped = json_str.replace("'", "'\\''")
+        redis_command = f"redis-cli set {key} '{escaped}'"
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
     def get_service_endpoints(self, service_name="bexhoma-service-monitoring-default"):
