@@ -213,8 +213,12 @@ class base():
         Extends :meth:`get_performance_aggregated_per_phase` by annotating each row with
         tenant metadata (``type_tenants``, ``num_tenants``, ``vol_tenants``) read from the
         workload configuration before aggregation.  Groups by
-        ``(code, experiment_run, client, benchmark_run, type_tenants, num_tenants)``,
-        producing one row per job within each tenant group.
+        ``(code, experiment_run, client, benchmark_run, type_tenants, num_tenants, tenant_id)``,
+        producing one row per tenant per job.
+
+        ``tenant_id`` is added to the per-connection DataFrame by
+        :meth:`~bexhoma.evaluators.base.benchmarking_set_datatypes` (default ``-1`` for
+        experiments without explicit tenant assignment).
 
         :param type: Component type passed to the aggregation call (currently unused in this method).
         :type type: str
@@ -231,7 +235,7 @@ class base():
             df['num_tenants'] = workload['num_tenants']
             df['vol_tenants'] = workload['multi_tenant_volume']
             df_aggregated = evaluation.benchmarking_aggregate_by_parallel_pods(
-                df, columns=['code', 'experiment_run', 'client', 'benchmark_run', 'type_tenants', 'num_tenants']
+                df, columns=['code', 'experiment_run', 'client', 'benchmark_run', 'type_tenants', 'num_tenants', 'tenant_id']
             )
             df_aggregated['phase'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['phase'].astype(str)
             df_aggregated['configuration'] = df_aggregated['code'].astype(str) + "-" + df_aggregated['configuration'].astype(str)
@@ -710,7 +714,7 @@ class base():
 
         Behaves like :meth:`get_monitoring_timeseries_all` but additionally annotates each
         row with tenant metadata (``type_tenants``, ``num_tenants``, ``vol_tenants``) from
-        the workload configuration.  For non-container tenancy, the ``tenant`` column is
+        the workload configuration.  For non-container tenancy, the ``tenant_id`` column is
         set to ``"0"`` to indicate a single shared DBMS.
 
         The final DataFrame is grouped by ``(timestamp, code, experiment_run, client,
@@ -745,7 +749,7 @@ class base():
                 pass
             else:
                 # one shared DBMS — collapse tenant dimension
-                df_long['tenant'] = "0"
+                df_long['tenant_id'] = "0"
             df_long['type_tenants'] = workload['tenant_per']
             df_long['num_tenants'] = workload['num_tenants']
             df_long['vol_tenants'] = workload['multi_tenant_volume']

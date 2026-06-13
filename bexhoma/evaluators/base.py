@@ -351,7 +351,7 @@ class base:
                 if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'] if 'HAMMERDB_VUSERS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
-            'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
+            'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
             'num_worker': int(c['parameter']['num_worker']),
             'type_tenants': c['parameter']['TENANT_BY'] if 'TENANT_BY' in c['parameter'] else 'None',
             'num_tenants': int(c['parameter']['TENANT_NUM']) if 'TENANT_NUM' in c['parameter'] else 0,
@@ -455,7 +455,7 @@ class base:
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
             'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
-            'tenant', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
+            'tenant_id', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         return df[selected_cols].copy()
     def get_loading_per_run(self):
@@ -483,22 +483,29 @@ class base:
         return df
     def get_loading_per_run_multitenant(self):
         """
-        Returns loading metrics aggregated per ``(code, experiment_run, type_tenants,
-        vol_tenants, num_tenants)`` for multi-tenant experiments.
+        Returns loading metrics aggregated per
+        ``(code, experiment_run, type_tenants, vol_tenants, num_tenants, tenant_id)``
+        for multi-tenant experiments.
 
         Takes the per-connection DataFrame from :meth:`get_loading_per_connection` and
-        reduces it by taking the max within each tenancy group, then recomputes
-        ``'Throughput [SF/h]'`` from the aggregated load time.
+        reduces it by taking the max within each (tenancy group, tenant_id) combination,
+        then recomputes ``'Throughput [SF/h]'`` from the aggregated load time.
 
-        :return: DataFrame with one row per tenant group per experiment run.
+        For container tenancy the ``tenant_id`` key distinguishes individual tenant
+        loading times.  For schema/database tenancy ``tenant_id`` is an empty string
+        for all connections, so the result collapses to one row per experiment run
+        (same behaviour as before).
+
+        :return: DataFrame with one row per tenant per experiment run.
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_connection()
-        df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants"]).max()
+        df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants", "tenant_id"]).max()
         df = df.reset_index()
-        df.index = df['code'].astype(str) + "-" + \
-                   df['configuration'].astype(str) + "-" + \
-                   df['experiment_run'].astype(str)
+        df.index = (df['code'].astype(str) + "-" +
+                    df['configuration'].astype(str) + "-" +
+                    df['experiment_run'].astype(str) + "-" +
+                    df['tenant_id'].astype(str))
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx

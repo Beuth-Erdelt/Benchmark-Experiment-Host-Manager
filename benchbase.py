@@ -195,6 +195,7 @@ if __name__ == '__main__':
                                 BENCHBASE_YCSB_WORKLOAD = workload,
                                 BEXHOMA_TENANT_BY = config.tenant_per,
                                 BEXHOMA_TENANT_NUM = config.num_tenants,
+                                BEXHOMA_TENANT_ID = tenant,
                                 )
                             config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                             config.set_eval_parameters(
@@ -238,6 +239,7 @@ if __name__ == '__main__':
                                                 BENCHBASE_YCSB_WORKLOAD = workload,
                                                 BEXHOMA_TENANT_BY = config.tenant_per,
                                                 BEXHOMA_TENANT_NUM = config.num_tenants,
+                                                BEXHOMA_TENANT_ID = tenant,
                                                 )
                             #print(executor_list)
                             config.add_benchmark_list(executor_list)
@@ -270,6 +272,7 @@ if __name__ == '__main__':
                             BENCHBASE_YCSB_WORKLOAD = workload,
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
+                            BEXHOMA_TENANT_ID = 0,
                             )
                         if config.num_tenants > 0:
                             config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
@@ -319,6 +322,7 @@ if __name__ == '__main__':
                                             BENCHBASE_YCSB_WORKLOAD = workload,
                                             BEXHOMA_TENANT_BY = config.tenant_per,
                                             BEXHOMA_TENANT_NUM = config.num_tenants,
+                                            BEXHOMA_TENANT_ID = 0,
                                             )
                         #print(executor_list)
                         config.add_benchmark_list(executor_list)

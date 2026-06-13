@@ -187,6 +187,7 @@ if __name__ == '__main__':
                             TPCH_TABLE = limit_import_table,
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
+                            BEXHOMA_TENANT_ID = tenant,
                             )
                         config.set_benchmarking_parameters(
                             SF = SF,
@@ -197,6 +198,7 @@ if __name__ == '__main__':
                             TENANT_NUM = config.num_tenants,
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
+                            BEXHOMA_TENANT_ID = tenant,
                             )
                         config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
                         config.set_eval_parameters(
@@ -233,6 +235,7 @@ if __name__ == '__main__':
                         TPCH_TABLE = limit_import_table,
                         BEXHOMA_TENANT_BY = config.tenant_per,
                         BEXHOMA_TENANT_NUM = config.num_tenants,
+                        BEXHOMA_TENANT_ID = 0,
                         )
                     config.set_benchmarking_parameters(
                         SF = SF,
@@ -243,6 +246,7 @@ if __name__ == '__main__':
                         TENANT_NUM = config.num_tenants,
                         BEXHOMA_TENANT_BY = config.tenant_per,
                         BEXHOMA_TENANT_NUM = config.num_tenants,
+                        BEXHOMA_TENANT_ID = 0,
                         )
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
                     if config.tenant_per == 'schema':
