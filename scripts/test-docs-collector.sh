@@ -647,7 +647,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 #### YCSB Monitoring (Example-YCSB.md)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -sf 3                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records x 100000)
+# -sfo 1                        scaling factor for operations (number of operations x 100000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
 # -dbms PostgreSQL              DBMS under test
 # -tb 16384                     base ops/s used to compute throughput targets (2^14)
@@ -672,6 +673,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -sf 3 \
+  -sfo 1 \
   --workload a \
   -dbms PostgreSQL \
   -tb 16384 \
@@ -699,7 +701,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 #### YCSB Monitoring (Example-YCSB.md)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -sf 3                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records x 100000)
+# -sfo 1                        scaling factor for operations (number of operations x 100000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
 # -dbms PostgreSQL              DBMS under test
 # -tb 16384                     base ops/s used to compute throughput targets (2^14)
@@ -724,6 +727,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -sf 3 \
+  -sfo 1 \
   --workload a \
   -dbms PostgreSQL \
   -tb 16384 \
@@ -750,7 +754,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 #### YCSB Monitoring (Example-YCSB.md)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records x 100000)
+# -sfo 1                        scaling factor for operations (number of operations x 100000)
 # --workload a                  YCSB workload template (a = 50% read / 50% update)
 # -dbms PostgreSQL              DBMS under test
 # -tb 16384                     base ops/s used to compute throughput targets (2^14)
@@ -771,7 +776,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
-  -sf 1 \
+  -sf 3 \
+  -sfo 1 \
   --workload a \
   -dbms PostgreSQL \
   -tb 16384 \

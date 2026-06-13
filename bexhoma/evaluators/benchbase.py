@@ -94,10 +94,13 @@ class benchbase(logger):
             sf = re.findall('SF (.+?)\n', stdout)[0]
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
+            phase = configuration_name + '-' + experiment_run + '-' + client
+            job = connection_name
             connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
             header = {
-                'connection': connection, #connection_name + '-' + child,
-                'phase': connection_name,
+                'connection': connection,
+                'phase': phase,
+                'job': job,
                 'configuration': configuration_name,
                 'experiment_run': experiment_run,
                 'code': code,
@@ -148,6 +151,7 @@ class benchbase(logger):
         df_typed = df.astype({
             'connection':'str',
             'phase':'str',
+            'job':'str',
             'configuration':'str',
             'experiment_run':'int',
             'duration':'int',
@@ -188,12 +192,19 @@ class benchbase(logger):
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod result rows into one row per phase.
+        Aggregates parallel-pod result rows into one row per group.
 
         Groups the typed benchmarking DataFrame by ``columns`` and applies
         per-metric aggregation functions (sum for throughput, max for latency
-        percentiles, etc.). Also recomputes the efficiency metric for TPC-C runs
-        where vusers equal 10× the scale factor.
+        percentiles, etc.).
+
+        The ``phase`` column holds the phase identifier
+        (``configuration-experiment_run-client``) and the ``job`` column holds the
+        job identifier (``configuration-experiment_run-client-benchmark_run``).
+
+        The default ``columns=['phase']`` groups by phase, producing one row per phase
+        (all jobs within a phase merged).  To keep one row per job, pass
+        ``columns=['job']``.
 
         :param df: Typed benchmarking DataFrame (output of :meth:`benchmarking_set_datatypes`).
         :type df: pandas.DataFrame
@@ -206,6 +217,7 @@ class benchbase(logger):
         for key, grp in df.groupby(columns):
             aggregate = {
                 'connection':'max',
+                'job':'max',
                 'client':'max',
                 'benchmark_run':'max',
                 'code':'max',
@@ -242,6 +254,7 @@ class benchbase(logger):
             }
             dict_grp = dict()
             dict_grp['phase'] = grp['phase'].iloc[0]
+            dict_grp['job'] = grp['job'].iloc[0]
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
@@ -418,7 +431,7 @@ class benchbase(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             #print(df)
-            columns = ["experiment_run","terminals","target","client","benchmark_run", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["phase", "job", "experiment_run","terminals","target","client","benchmark_run", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -433,7 +446,7 @@ class benchbase(logger):
 
         Applies :meth:`benchmarking_set_datatypes`, aggregates via
         :meth:`benchmarking_aggregate_by_parallel_pods`, and selects the columns
-        used for the per-phase summary table (experiment run, terminals, target,
+        used for the per-phase summary table (phase, experiment run, terminals, target,
         pod count, time, errors, throughput, goodput, efficiency, and latency
         percentiles), sorted by ``(experiment_run, target, pod_count)``.
 
@@ -448,7 +461,7 @@ class benchbase(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['experiment_run',"terminals","target","benchmark_run","pod_count"]].copy()
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"terminals","target","benchmark_run","pod_count"]].copy()
             columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:

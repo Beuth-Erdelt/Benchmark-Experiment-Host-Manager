@@ -69,34 +69,65 @@ else
     echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi
 
+######################## Read per-pod config from Redis ########################
+BEXHOMA_POD_CONFIG_KEY="bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-config-$BEXHOMA_CHILD"
+echo "Querying per-pod config at $BEXHOMA_POD_CONFIG_KEY"
+BEXHOMA_POD_CONFIG_JSON="$(redis-cli -h 'bexhoma-messagequeue' get "$BEXHOMA_POD_CONFIG_KEY")"
+if [ -z "$BEXHOMA_POD_CONFIG_JSON" ] || [ "$BEXHOMA_POD_CONFIG_JSON" = "nil" ]; then
+    echo "No per-pod config found in Redis."
+else
+    eval "$(echo "$BEXHOMA_POD_CONFIG_JSON" \
+      | tr -d '{}' \
+      | tr ',' '\n' \
+      | awk 'BEGIN{FS="\""} NF>=4 && $2!="" {print "export BEXHOMA_POD_"$2"=\""$4"\""; print "echo \"BEXHOMA_POD_"$2"="$4"\""}')"
+fi
+
 ######################## Wait until all pods of job are ready ########################
-echo "Querying counter bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-# add this pod to counter
-redis-cli -h 'bexhoma-messagequeue' incr "bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-# wait for number of pods to be as expected
+echo "Decrementing job counter bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 while : ; do
-    PODS_RUNNING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
-    echo "Found $PODS_RUNNING / $BEXHOMA_NUM_PODS running pods"
-    if [[ "$PODS_RUNNING" =~ ^[0-9]+$ ]]
+    PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+    echo "Pods still missing in job: $PODS_MISSING"
+    if [[ "$PODS_MISSING" =~ ^-?[0-9]+$ ]] && test "$PODS_MISSING" -le 0
     then
-        echo "PODS_RUNNING contains a number."
-    else
-        echo "PODS_RUNNING does not contain a number."
-        exit 0
-    fi
-    if  test "$PODS_RUNNING" == $BEXHOMA_NUM_PODS
-    then
-        echo "OK, found $BEXHOMA_NUM_PODS ready pods."
+        echo "OK, all pods in job are ready."
         break
-    elif test "$PODS_RUNNING" -gt $BEXHOMA_NUM_PODS
-    then
-        echo "Too many pods! Restart occured?"
-        exit 0
     else
-        echo "We have to wait"
         sleep 1
     fi
 done
+
+######################## Wait until all pods of round are ready ########################
+echo "Decrementing round counter bexhoma-benchmarker-podcount-round-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_CLIENT-$BEXHOMA_EXPERIMENT"
+redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-benchmarker-podcount-round-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_CLIENT-$BEXHOMA_EXPERIMENT"
+while : ; do
+    PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-round-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_CLIENT-$BEXHOMA_EXPERIMENT)"
+    echo "Pods still missing in round: $PODS_MISSING"
+    if [[ "$PODS_MISSING" =~ ^-?[0-9]+$ ]] && test "$PODS_MISSING" -le 0
+    then
+        echo "OK, all pods in round are ready."
+        break
+    else
+        sleep 1
+    fi
+done
+
+######################## Wait until all pods of experiment are ready ########################
+if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
+    echo "Decrementing experiment counter bexhoma-benchmarker-podcount-exp-$BEXHOMA_EXPERIMENT"
+    redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-benchmarker-podcount-exp-$BEXHOMA_EXPERIMENT"
+    while : ; do
+        PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-benchmarker-podcount-exp-$BEXHOMA_EXPERIMENT)"
+        echo "Pods still missing in experiment: $PODS_MISSING"
+        if [[ "$PODS_MISSING" =~ ^-?[0-9]+$ ]] && test "$PODS_MISSING" -le 0
+        then
+            echo "OK, all pods in experiment are ready."
+            break
+        else
+            sleep 1
+        fi
+    done
+fi
 
 ######################## Show more parameters ########################
 echo "BEXHOMA_CHILD $BEXHOMA_CHILD"

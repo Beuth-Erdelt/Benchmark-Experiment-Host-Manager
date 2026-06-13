@@ -337,6 +337,7 @@ class base:
             'connection': c['name'],
             'configuration': c['configuration'] if 'configuration' in c else '',
             'phase': c['phase'],
+            'job': c['job'],
             'experiment_run': c['parameter']['numExperiment'],
             'benchmark_run': int(c['parameter'].get('numBenchmark', 0)),
             'client': int(c['parameter']['client']),
@@ -386,10 +387,14 @@ class base:
         Returns connection metadata for a single experiment.
 
         Reads ``connections.config`` and builds a row per pod/client with the
-        following key columns: ``phase``, ``code``, ``connection``, ``configuration``,
-        ``experiment_run``, ``client``, ``type_tenants``, ``num_tenants``,
-        ``vol_tenants``, plus flattened host-system, loading-parameter,
-        benchmarking-parameter, and SUT-parameter fields.
+        following key columns: ``phase`` (code-prefixed phase identifier,
+        ``<code>-<configuration>-<experiment_run>-<client>``), ``job``
+        (code-prefixed job identifier,
+        ``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``),
+        ``code``, ``connection``, ``configuration``, ``experiment_run``, ``client``,
+        ``type_tenants``, ``num_tenants``, ``vol_tenants``, plus flattened
+        host-system, loading-parameter, benchmarking-parameter, and SUT-parameter
+        fields.
 
         When a connection entry carries ``orig_name``, the entry represents an
         individual pod; otherwise a synthetic row is generated for each parallel
@@ -403,20 +408,33 @@ class base:
         connections_sorted = sorted(connections, key=lambda conn: conn['name'])
         result = dict()
         for conn in connections_sorted:
+            code = conn['parameter']['code']
+            benchmark_run_num = str(int(conn['parameter'].get('numBenchmark', 0)))
             if 'orig_name' in conn:
                 # entry represents an individual pod — use the pod name as connection id
                 name = conn['name']
-                conn['phase'] = "{code}-{connection}".format(code=conn['parameter']['code'], connection=conn['orig_name'])
-                connection_id = "{code}-{connection}".format(code=conn['parameter']['code'], connection=name)
+                job_id = conn['orig_name']
+                if benchmark_run_num and job_id.endswith('-' + benchmark_run_num):
+                    phase_id = job_id[:-len('-' + benchmark_run_num)]
+                else:
+                    phase_id = job_id
+                conn['phase'] = f"{code}-{phase_id}"
+                conn['job'] = f"{code}-{job_id}"
+                connection_id = f"{code}-{name}"
                 self.add_connection_to_result(conn, connection_id, result)
             else:
                 # no per-pod entries — synthesise one row per parallel client
                 num_clients = int(conn['parameter']['parallelism'])
-                name = conn['name']
+                job_id = conn['name']
+                if benchmark_run_num and job_id.endswith('-' + benchmark_run_num):
+                    phase_id = job_id[:-len('-' + benchmark_run_num)]
+                else:
+                    phase_id = job_id
                 for client_idx in range(1, num_clients + 1):
-                    conn['name'] = "{code}-{phase}-{client}".format(code=conn['parameter']['code'], phase=name, client=client_idx)
-                    conn['phase'] = "{code}-{phase}".format(code=conn['parameter']['code'], phase=name)
-                    connection_id = "{code}-{phase}-{client}".format(code=conn['parameter']['code'], phase=name, client=client_idx)
+                    conn['name'] = f"{code}-{job_id}-{client_idx}"
+                    conn['phase'] = f"{code}-{phase_id}"
+                    conn['job'] = f"{code}-{job_id}"
+                    connection_id = f"{code}-{job_id}-{client_idx}"
                     self.add_connection_to_result(conn, connection_id, result)
         return pd.DataFrame(result).T
     def get_loading_per_connection(self):

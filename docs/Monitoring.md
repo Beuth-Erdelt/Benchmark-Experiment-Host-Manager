@@ -191,3 +191,39 @@ Two configuration keys in `cluster.config` compensate for this:
 | `shift` | Shifts the entire interval forward: `[t, t']` → `[t + shift, t' + shift]`. Useful when container clocks are systematically ahead of the Prometheus clock. |
 
 See [Config.md](Config.md) for how to set these values.
+
+---
+
+## Monitoring Summary Tables
+
+After each experiment, `show_summary()` prints one monitoring table per registered component (e.g. *Loading phase: SUT deployment*, *Execution phase: SUT deployment*).
+Each row corresponds to one **benchmark job** and the `DBMS` column holds the job identifier:
+
+```
+<configuration>-<experiment_run>-<client>-<benchmark_run>
+```
+
+| Segment | Meaning | Example |
+|---|---|---|
+| `configuration` | Name of the SUT instance (`<docker>-<counter>`) | `PostgreSQL-1` |
+| `experiment_run` | 1-based repetition index (set by `-ne`) | `1`, `2` |
+| `client` | 1-based sequential client index within a run | `1`, `2` |
+| `benchmark_run` | 1-based parallel benchmark job index within a client phase | `1` |
+
+Example with two sequential clients and two experiment runs (`-ne 1,2`):
+
+| DBMS | CPU [CPUs] | … |
+|---|---|---|
+| `PostgreSQL-1-1-1-1` | … | experiment_run=1, client=1, benchmark_run=1 |
+| `PostgreSQL-1-1-2-1` | … | experiment_run=1, client=2, benchmark_run=1 |
+| `PostgreSQL-1-2-1-1` | … | experiment_run=2, client=1, benchmark_run=1 |
+| `PostgreSQL-1-2-2-1` | … | experiment_run=2, client=2, benchmark_run=1 |
+
+### Loading phase tables
+
+Loading phase metrics are fetched at the start of each benchmark job using the SUT's loading time window (`timeLoadingStart`–`timeLoadingEnd`).
+This means:
+
+- Every benchmark job produces one row in the loading phase table, even though the data was loaded only once.
+- Rows that share the same loading window (e.g. all clients in the same experiment run) will show **identical values** — the SUT experienced the same load regardless of how many client sequences followed.
+- The second experiment run re-deploys and re-loads the SUT, so its rows cover a different time window and may differ.

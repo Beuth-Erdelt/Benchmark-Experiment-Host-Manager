@@ -11,7 +11,7 @@
 
 . .\scripts\testfunctions.ps1
 
-$BEXHOMA_NODE_SUT = "cl-worker38"
+$BEXHOMA_NODE_SUT = "cl-worker36"
 
 
 
@@ -405,7 +405,8 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container 
 bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 3                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records x 100000) #> `
+  -sfo 1                        <# scaling factor for operations (number of operations x 100000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
@@ -435,7 +436,8 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/3 
 bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 3                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records x 100000) #> `
+  -sfo 1                        <# scaling factor for operations (number of operations x 100000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
@@ -465,7 +467,8 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/3 
 bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records x 100000) #> `
+  -sfo 1                        <# scaling factor for operations (number of operations x 100000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `

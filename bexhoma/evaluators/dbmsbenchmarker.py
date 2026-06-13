@@ -174,9 +174,15 @@ class dbmsbenchmarker(logger):
             conn_name = connection_data['name']
             orig_name = connection_data['orig_name']
             configuration = connection_data.get('configuration', '-')
+            benchmark_run_num = str(int(connection_data['parameter'].get('numBenchmark', 0)))
+            if benchmark_run_num and orig_name.endswith('-' + benchmark_run_num):
+                phase_id = orig_name[:-len('-' + benchmark_run_num)]
+            else:
+                phase_id = orig_name
             connection_props = self.evaluation.get_experiment_connection_properties(conn_name)
             df_row = pd.DataFrame(index=[conn_name])
-            df_row['phase'] = orig_name
+            df_row['phase'] = phase_id
+            df_row['job'] = orig_name
             df_row['connection'] = conn_name
             df_row['configuration'] = configuration
             df_row['SF'] = float(connection_data['parameter']['connection_parameter']['loading_parameters']['SF'])
@@ -194,7 +200,7 @@ class dbmsbenchmarker(logger):
             df_row['benchmark_end'] = connection_props['times']['total'][conn_name]['time_end']
             df_timing_rows = pd.concat([df_timing_rows, df_row])
         df_timing = df_timing_rows.sort_index()
-        group_keys = ['configuration', 'connection', 'phase', 'SF', 'experiment_run', 'client', 'benchmark_run']
+        group_keys = ['configuration', 'connection', 'phase', 'job', 'SF', 'experiment_run', 'client', 'benchmark_run']
         benchmark_start = df_timing.groupby(group_keys)['benchmark_start'].min()
         benchmark_end = df_timing.groupby(group_keys)['benchmark_end'].max()
         df_benchmark = (benchmark_end - benchmark_start).to_frame(name='time [s]').round(2)
@@ -213,7 +219,7 @@ class dbmsbenchmarker(logger):
         df.drop('total_timer_execution', axis=1, inplace=True)
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
-        df = df[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client',
+        df = df[['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client',
                   'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
                   'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df
@@ -232,11 +238,18 @@ class dbmsbenchmarker(logger):
         return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
-        Aggregates parallel-pod DBMSBenchmarker result rows into one row per phase.
+        Aggregates parallel-pod DBMSBenchmarker result rows into one row per group.
 
         Groups by ``columns`` and applies geo-mean for timing/power metrics and
         max/sum for count metrics. Recomputes ``Throughput@Size`` from the aggregated
         values.
+
+        The ``phase`` column holds the phase identifier
+        (``configuration-experiment_run-client``) and the ``job`` column holds the
+        job identifier (``configuration-experiment_run-client-benchmark_run``).
+
+        The default ``columns=['phase']`` groups by phase, producing one row per phase.
+        To keep one row per job, pass ``columns=['job']``.
 
         :param df: Benchmarking DataFrame (output of :meth:`get_df_benchmarking`).
         :type df: pandas.DataFrame
@@ -265,6 +278,7 @@ class dbmsbenchmarker(logger):
         for group_key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
                 'connection': 'max',
+                'job': 'max',
                 'Geo Times [s]': safe_gmean,
                 'Power@Size [~Q/h]': safe_gmean,
                 'code': 'max',
@@ -281,6 +295,7 @@ class dbmsbenchmarker(logger):
                 'configuration': grp['configuration'].iloc[0],
                 'experiment_run': grp['experiment_run'].iloc[0],
                 'phase': grp['phase'].iloc[0],
+                'job': grp['job'].iloc[0],
             }
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             group_key_str = "_".join(map(str, group_key))
@@ -288,7 +303,7 @@ class dbmsbenchmarker(logger):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"
-        df_aggregated = df_aggregated[['code', 'configuration', 'phase', 'connection', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
+        df_aggregated = df_aggregated[['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
         return df_aggregated
     def get_total_warnings(self, query_titles=False):
         """
@@ -365,7 +380,7 @@ class dbmsbenchmarker(logger):
             df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('phase', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
             return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
@@ -385,7 +400,6 @@ class dbmsbenchmarker(logger):
         df = self.get_df_benchmarking()
         df.drop('code', axis=1, inplace=True, errors='ignore')
         df.drop('connection', axis=1, inplace=True, errors='ignore')
-        df.drop('phase', axis=1, inplace=True, errors='ignore')
         return df
     def get_summary_loading_per_run(self):
         """

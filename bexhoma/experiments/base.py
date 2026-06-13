@@ -1542,6 +1542,18 @@ class base():
                             ready = ready and config_tmp.tenant_ready_to_load
                         if ready:
                             print("#### Starting to load")
+                            # Initialize experiment-level loader counter to total loading pods
+                            # across all configurations (count-down to zero).
+                            total_loading_pods = sum(
+                                config_tmp.num_loading_pods
+                                for config_tmp in self.configurations
+                                if config_tmp.loading_active
+                            )
+                            app_name = self.cluster.appname
+                            exp_loader_key = '{}-loader-podcount-exp-{}'.format(app_name, self.code)
+                            self.cluster.set_pod_counter(queue=exp_loader_key, value=total_loading_pods)
+                            exp_gen_key = '{}-generator-podcount-exp-{}'.format(app_name, self.code)
+                            self.cluster.set_pod_counter(queue=exp_gen_key, value=total_loading_pods)
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_load = True
                                 if config_tmp.loading_active:
@@ -1622,8 +1634,21 @@ class base():
                         if config.client > self.client:
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
                             self.client = config.client
-                            redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
-                            self.cluster.set_pod_counter(queue=redisQueue, value=0)
+                            # Initialize round counter: total pods across all configs for this client round.
+                            # Unique per (experimentRun, client, code) to avoid cross-round contamination.
+                            round_idx = config.client - 2  # 0-based index of the round just started
+                            total_round_pods = 0
+                            for c in self.configurations:
+                                benchmarker_rounds = c.experiment_dict.get("benchmarker") or []
+                                if round_idx < len(benchmarker_rounds):
+                                    total_round_pods += sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
+                            round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}'.format(app, experimentRun, client, self.code)
+                            self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
+                            print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
+                            if self.tenant_per == 'container':
+                                exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+                                self.cluster.set_pod_counter(queue=exp_bm_key, value=total_round_pods)
+                                print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_round_pods))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         for bm_idx, bench_entry in enumerate(client_round):
                             benchmark_index = bm_idx + 1
@@ -1648,14 +1673,19 @@ class base():
                         # legacy benchmark_list path
                         parallelism = config.benchmark_list.pop(0)
                         client = str(config.client)
+                        experimentRun = str(config.num_experiment_to_apply_done + 1)
                         config.client = config.client+1
                         if config.client > self.client:
                             # this is the first instance of the next benchmark run
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
                             self.client = config.client
-                            # reset number of clients per experiment
-                            redisQueue = '{}-{}-{}'.format(app, 'benchmarker-podcount', self.code)
-                            self.cluster.set_pod_counter(queue=redisQueue, value=0)
+                            # Initialize round counter for this client round (legacy path uses parallelism of this config only)
+                            round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}'.format(app, experimentRun, client, self.code)
+                            self.cluster.set_pod_counter(queue=round_counter_key, value=parallelism)
+                            if self.tenant_per == 'container':
+                                exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+                                self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
+                                print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)

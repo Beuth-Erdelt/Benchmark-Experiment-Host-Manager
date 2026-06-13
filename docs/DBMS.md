@@ -97,9 +97,9 @@ PostgreSQL is the primary test target for analytical benchmarks (TPC-H, TPC-DS) 
 
 **Deployment template:** [`k8s/deploymenttemplate-PostgreSQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml)
 
-The default deployment ships with an extensive set of tuned startup arguments covering connection limits, memory allocation, parallelism, WAL behaviour, autovacuum, and planner cost constants — optimised for a shared-filesystem (CephFS) environment.
-Notable defaults include `max_connections=1500`, `max_parallel_workers=64`, `shared_buffers=256GB`, `synchronous_commit=off`, and `checkpoint_completion_target=0.9`.
-All of these can be overridden at experiment time using `--set`.
+The default deployment uses a minimal, near-standard PostgreSQL configuration.
+The only active startup argument is `max_connections=640`; all other parameters use PostgreSQL defaults.
+The template includes an extensive set of **commented-out** tuning knobs (memory, parallelism, WAL, autovacuum, planner cost constants) as a reference — uncomment or override individual parameters at experiment time using `--set`.
 
 **Configuration** (from `cluster.config`):
 

@@ -326,6 +326,8 @@ class default():
         self.client = 1 #: If we have a sequence of benchmarkers, this tells at which position we are
         self.is_sut_ready = False
         self.are_worker_ready = False
+        self.tenant_ready_to_load = False
+        self.tenant_started_to_load = False
     def add_benchmark_list(self, list_clients):
         """
         Add a list of (number of) benchmarker instances, that are to benchmark the current SUT.
@@ -896,6 +898,32 @@ class default():
             if status == "Pending":
                 return True
         return False
+    def _push_pod_configs(self, queue_key: str, num_pods: int, parameters: dict, pod_parameters: list) -> None:
+        """
+        Push per-pod merged configurations to Redis.
+
+        For each pod index 1..num_pods, merges ``parameters`` with the
+        corresponding entry from ``pod_parameters`` (if present and non-empty)
+        and stores the result as a JSON string at
+        ``{queue_key}-config-{i}``.  Shell scripts retrieve their entry after
+        popping their child index from the same base queue.
+
+        :param queue_key: Base Redis queue key used for the child-number queue.
+        :type queue_key: str
+        :param num_pods: Number of pods in this job.
+        :type num_pods: int
+        :param parameters: Default parameter dict shared by all pods.
+        :type parameters: dict
+        :param pod_parameters: Per-pod override dicts; may be empty or shorter than ``num_pods``.
+        :type pod_parameters: list
+        """
+        for i in range(1, num_pods + 1):
+            merged = dict(parameters)
+            if pod_parameters and i - 1 < len(pod_parameters):
+                merged.update(pod_parameters[i - 1])
+            config_key = f"{queue_key}-config-{i}"
+            self.experiment.cluster.set_pod_config(key=config_key, config=merged)
+
     def start_loading_pod(self, app='', component='loading', experiment='', configuration='', parallelism=1, num_pods=1):
         """
         Starts a job for parallel data ingestion.
@@ -917,11 +945,20 @@ class default():
         redisQueue = '{}-{}-{}-{}'.format(app, component, self.configuration, self.code)
         for i in range(1, self.num_loading+1):
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        # reset number of clients per job
-        redisQueue = '{}-{}-{}-{}'.format(app, 'generator-podcount', self.configuration, self.code)
-        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
-        redisQueue = '{}-{}-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
-        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=0)
+        # push per-pod config (merged defaults + optional per-pod overrides) to Redis
+        if self.experiment_dict['loader']:
+            loader_entry = self.experiment_dict['loader'][0]
+            self._push_pod_configs(
+                queue_key=redisQueue,
+                num_pods=self.num_loading,
+                parameters=loader_entry.get('parameters', {}),
+                pod_parameters=loader_entry.get('pod_parameters', []),
+            )
+        # initialize job-level pod counters to target count (count-down to zero)
+        redisQueue = '{}-{}-job-{}-{}'.format(app, 'generator-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=num_pods)
+        redisQueue = '{}-{}-job-{}-{}'.format(app, 'loader-podcount', self.configuration, self.code)
+        self.experiment.cluster.set_pod_counter(queue=redisQueue, value=num_pods)
         # start job
         job = self.create_manifest_loading(app=app, component='loading', experiment=experiment, configuration=configuration, parallelism=parallelism, num_pods=num_pods)
         self.logger.debug("Deploy "+job)
@@ -3032,6 +3069,23 @@ scrape_configs:
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, self.code)
         for i in range(1, parallelism+1):
             self.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+        # push per-pod config (merged defaults + optional per-pod overrides) to Redis
+        round_index = int(client) - 1
+        benchmark_run_index = (int(benchmark_run) - 1) if benchmark_run else 0
+        benchmarker_rounds = self.experiment_dict.get('benchmarker', [])
+        if round_index < len(benchmarker_rounds):
+            round_entries = benchmarker_rounds[round_index]
+            if benchmark_run_index < len(round_entries):
+                bm_entry = round_entries[benchmark_run_index]
+                self._push_pod_configs(
+                    queue_key=redisQueue,
+                    num_pods=parallelism,
+                    parameters=bm_entry.get('parameters', {}),
+                    pod_parameters=bm_entry.get('pod_parameters', []),
+                )
+        # initialize job-level pod counter to target count (count-down to zero)
+        job_counter_key = '{}-{}-podcount-job-{}-{}'.format(app, component, connection, self.code)
+        self.experiment.cluster.set_pod_counter(queue=job_counter_key, value=parallelism)
         if not only_prepare:
             # create pods
             yamlfile = self.create_manifest_benchmarking(connection=connection, component=component, configuration=configuration, experiment=self.code, experimentRun=experimentRun, client=client, parallelism=parallelism, alias=c['alias'], num_pods=parallelism, benchmark_run=benchmark_run, template_override=template_override)

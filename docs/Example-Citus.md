@@ -117,7 +117,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_citus_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -348,7 +348,7 @@ The result looks something like
 
 doc_ycsb_citus_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -644,7 +644,7 @@ bexhoma benchbase -ms $BEXHOMA_MS -tr \
 
 doc_benchbase_citus_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -831,7 +831,7 @@ bexhoma benchbase -ms $BEXHOMA_MS -tr \
 
 doc_benchbase_citus_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1270,7 +1270,7 @@ bexhoma benchbase -ms $BEXHOMA_MS -tr \
 
 doc_benchbase_citus_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1971,7 +1971,7 @@ bexhoma hammerdb -ms $BEXHOMA_MS -tr \
 
 doc_hammerdb_citus_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -2088,7 +2088,7 @@ bexhoma hammerdb -ms $BEXHOMA_MS -tr \
 
 doc_hammerdb_citus_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=128 (warehouses for TPC-C)
@@ -2509,7 +2509,7 @@ bexhoma hammerdb -ms $BEXHOMA_MS -tr \
 
 doc_hammerdb_citus_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=500 (warehouses for TPC-C)
@@ -3191,7 +3191,7 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
 
 test_tpch_testcase_citus_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -3378,7 +3378,7 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
 
 test_tpch_testcase_citus_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -3807,7 +3807,7 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
 
 test_tpch_testcase_citus_3.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
