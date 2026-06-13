@@ -514,3 +514,17 @@ class base:
         df.drop('client', axis=1, inplace=True, errors='ignore')
         df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
+    def get_summary_loading_per_run_multitenant(self):
+        """
+        Returns loading metrics per tenant per experiment run, with housekeeping columns removed.
+
+        Wraps :meth:`get_loading_per_run_multitenant` and drops ``code`` and
+        ``configuration`` so the result is ready to display in :meth:`show_summary`.
+
+        :return: DataFrame with one row per ``(tenant_id, experiment_run)`` combination.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_loading_per_run_multitenant()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
+        return df

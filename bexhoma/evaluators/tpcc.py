@@ -229,6 +229,8 @@ class tpcc(logger):
                 'efficiency':'float',
                 'dbms':'str',
             })
+        if 'tenant_id' not in df_typed.columns:
+            df_typed = df_typed.assign(tenant_id=-1)
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
@@ -282,6 +284,7 @@ class tpcc(logger):
                     'P99 [ms]':'max',
                     'P95 [ms]':'max',
                     'P50 [ms]':'max',
+                    'tenant_id': 'min',
                 }
             else:
                 aggregate = {
@@ -302,6 +305,7 @@ class tpcc(logger):
                     'TPM':'mean',
                     'efficiency':'min',
                     'dbms':'max',
+                    'tenant_id': 'min',
                 }
             dict_grp = dict()
             dict_grp['configuration'] = grp['configuration'].iloc[0]
@@ -309,7 +313,7 @@ class tpcc(logger):
             dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['job'] = grp['job'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
-            df_grp = pd.DataFrame(dict_grp, index=[key[0]])
+            df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid when vusers == 10 × SF (standard TPC-C convention)
         df_aggregated['efficiency'] = 0.
@@ -379,6 +383,36 @@ class tpcc(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            return df_aggregated_reduced
+    def get_summary_benchmark_per_phase_multitenant(self):
+        """
+        Returns TPC-C benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
+
+        Like :meth:`get_summary_benchmark_per_phase` but groups by
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'pod_count']).round(2)
+            if "P95 [ms]" in df_aggregated:
+                aggregated_list = ['phase', 'experiment_run', "vusers", "client", "benchmark_run", "pod_count", "tenant_id", "P95 [ms]", "P99 [ms]", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors", "P95 [ms]", "P99 [ms]"]
+            else:
+                aggregated_list = ['phase', 'experiment_run', "vusers", "client", "benchmark_run", "pod_count", "tenant_id", "efficiency"]
+                columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
+            df_aggregated_reduced = df_aggregated[[c for c in aggregated_list if c in df_aggregated.columns]].copy()
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
             return df_aggregated_reduced
     def get_summary_loading_per_run(self):
