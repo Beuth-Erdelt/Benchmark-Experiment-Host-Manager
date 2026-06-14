@@ -160,11 +160,13 @@ class base():
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
         self.maintaining_parameters = {}                                # dict of parameters for maintaining component
         self.loading_parameters = {}                                    # dict of parameters for loading component
+        self.default_loading_parameters = {}                            # default ENV for all loading components, merged before per-config overrides
         self.sut_parameters = {}                                        # dict of parameters for sut and worker component
         self.loading_patch = ""                                         # YAML to patch manifest for loading component
         self.benchmarking_active = True                                 # Bool, tells if benchmarking is active (False for mode=start and mode=load)
         self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
+        self.default_benchmarking_parameters = {}                       # default ENV for all benchmarking components, merged before per-config overrides
         self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
         self.jobtemplate_loading = ""                                   # name of YAML manifest for loading component
         self.jobtemplate_benchmarking = ""                              # name of YAML manifest for benchmarking component
@@ -917,6 +919,26 @@ class base():
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
         self.benchmarking_parameters = kwargs
+    def set_default_loading_parameters(self, **kwargs) -> None:
+        """
+        Sets experiment-wide default ENV for loading components.
+
+        These defaults are merged into every per-configuration loading parameter
+        dict before per-configuration kwargs are applied (per-configuration values win).
+
+        :param kwargs: Default ENV vars shared across all configurations of this experiment.
+        """
+        self.default_loading_parameters = kwargs
+    def set_default_benchmarking_parameters(self, **kwargs) -> None:
+        """
+        Sets experiment-wide default ENV for benchmarking components.
+
+        These defaults are merged into every per-configuration benchmarking parameter
+        dict before per-configuration kwargs are applied (per-configuration values win).
+
+        :param kwargs: Default ENV vars shared across all configurations of this experiment.
+        """
+        self.default_benchmarking_parameters = kwargs
     def add_configuration(self,
                           configuration: object) -> None:
         """

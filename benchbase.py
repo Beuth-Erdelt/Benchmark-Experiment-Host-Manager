@@ -159,6 +159,24 @@ if __name__ == '__main__':
         #users_loading=scaling_users,
         #users_benchmarking=str(num_virtual_users),
         )
+    experiment.set_default_loading_parameters(
+        SF = SF,
+        BENCHBASE_BENCH = type_of_benchmark,
+        BENCHBASE_TIME = SD,
+        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+        BENCHBASE_BATCHSIZE = extra_batchsize,
+        BENCHBASE_STATUS_INTERVAL = scaling_logging,
+        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+    )
+    experiment.set_default_benchmarking_parameters(
+        SF = SF,
+        BENCHBASE_BENCH = type_of_benchmark,
+        BENCHBASE_TIME = SD,
+        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
+        BENCHBASE_BATCHSIZE = extra_batchsize,
+        BENCHBASE_STATUS_INTERVAL = scaling_logging,
+        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+    )
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -179,18 +197,8 @@ if __name__ == '__main__':
                                 storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                                 )
                             config.set_loading_parameters(
-                                #PARALLEL = str(loading_pods), # =1
-                                SF = SF,
-                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                 BENCHBASE_PROFILE = 'postgres',
-                                BEXHOMA_DATABASE = 'postgres',
-                                #BENCHBASE_TARGET = int(target),
                                 BENCHBASE_TERMINALS = loading_threads_per_pod,
-                                BENCHBASE_TIME = SD,
-                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                BENCHBASE_BATCHSIZE = extra_batchsize,
-                                BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                 BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                 BENCHBASE_YCSB_WORKLOAD = workload,
                                 BEXHOMA_TENANT_BY = config.tenant_per,
@@ -223,18 +231,9 @@ if __name__ == '__main__':
                                             """
                                             executor_list.append(benchmarking_pods_scaled)
                                             config.add_benchmarking_parameters(
-                                                #PARALLEL = str(benchmarking_pods_scaled),
-                                                SF = SF,
-                                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                                 BENCHBASE_PROFILE = 'postgres',
-                                                BEXHOMA_DATABASE = 'postgres',
                                                 BENCHBASE_TARGET = benchmarking_target_per_pod,
                                                 BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                                BENCHBASE_TIME = SD,
-                                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                                BENCHBASE_BATCHSIZE = extra_batchsize,
-                                                BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                                BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                                 BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                                 BENCHBASE_YCSB_WORKLOAD = workload,
                                                 BEXHOMA_TENANT_BY = config.tenant_per,
@@ -256,18 +255,8 @@ if __name__ == '__main__':
                                 storageConfiguration = 'postgresql'
                                 )
                         config.set_loading_parameters(
-                            #PARALLEL = str(loading_pods), # =1
-                            SF = SF,
-                            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                             BENCHBASE_PROFILE = 'postgres',
-                            BEXHOMA_DATABASE = 'postgres',
-                            #BENCHBASE_TARGET = int(target),
                             BENCHBASE_TERMINALS = loading_threads_per_pod,
-                            BENCHBASE_TIME = SD,
-                            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                            BENCHBASE_BATCHSIZE = extra_batchsize,
-                            BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                            BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                             BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                             BENCHBASE_YCSB_WORKLOAD = workload,
                             BEXHOMA_TENANT_BY = config.tenant_per,
@@ -306,18 +295,9 @@ if __name__ == '__main__':
                                         """
                                         executor_list.append(benchmarking_pods_scaled)
                                         config.add_benchmarking_parameters(
-                                            #PARALLEL = str(benchmarking_pods_scaled),
-                                            SF = SF,
-                                            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                             BENCHBASE_PROFILE = 'postgres',
-                                            BEXHOMA_DATABASE = 'postgres',
                                             BENCHBASE_TARGET = benchmarking_target_per_pod,
                                             BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                            BENCHBASE_TIME = SD,
-                                            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                            BENCHBASE_BATCHSIZE = extra_batchsize,
-                                            BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                            BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                             BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                             BENCHBASE_YCSB_WORKLOAD = workload,
                                             BEXHOMA_TENANT_BY = config.tenant_per,
@@ -335,18 +315,9 @@ if __name__ == '__main__':
                         storageConfiguration = 'cedardb'
                         )
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
                         BEXHOMA_DATABASE = 'postgres',
-                        #BENCHBASE_TARGET = int(target),
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                         BENCHBASE_YCSB_WORKLOAD = workload,
                         )
@@ -370,18 +341,10 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
                                         BEXHOMA_DATABASE = 'postgres',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                         BENCHBASE_YCSB_WORKLOAD = workload,
                                         )
@@ -423,18 +386,9 @@ if __name__ == '__main__':
                                     storageConfiguration = 'postgresql'
                                     )
                                 config.set_loading_parameters(
-                                    #PARALLEL = str(loading_pods), # =1
-                                    SF = SF,
-                                    BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                     BENCHBASE_PROFILE = 'postgres',
                                     BEXHOMA_DATABASE = 'postgres',
-                                    #BENCHBASE_TARGET = int(target),
                                     BENCHBASE_TERMINALS = loading_threads_per_pod,
-                                    BENCHBASE_TIME = SD,
-                                    BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                    BENCHBASE_BATCHSIZE = extra_batchsize,
-                                    BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                    BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                     BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                     )
                                 config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -457,18 +411,10 @@ if __name__ == '__main__':
                                                 """
                                                 executor_list.append(benchmarking_pods_scaled)
                                                 config.add_benchmarking_parameters(
-                                                    #PARALLEL = str(benchmarking_pods_scaled),
-                                                    SF = SF,
-                                                    BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                                     BENCHBASE_PROFILE = 'postgres',
                                                     BEXHOMA_DATABASE = 'postgres',
                                                     BENCHBASE_TARGET = benchmarking_target_per_pod,
                                                     BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                                    BENCHBASE_TIME = SD,
-                                                    BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                                    BENCHBASE_BATCHSIZE = extra_batchsize,
-                                                    BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                                    BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                                     BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
                                                     )
                                 #print(executor_list)
@@ -487,20 +433,9 @@ if __name__ == '__main__':
                                 MYSQL_DATABASE = 'benchbase',
                                 )
                             config.set_loading_parameters(
-                                #PARALLEL = str(loading_pods), # =1
-                                SF = SF,
-                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                 BENCHBASE_PROFILE = 'mysql',
                                 BEXHOMA_DATABASE = 'benchbase',
-                                #BENCHBASE_TARGET = int(target),
                                 BENCHBASE_TERMINALS = loading_threads_per_pod,
-                                BENCHBASE_TIME = SD,
-                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                BENCHBASE_BATCHSIZE = extra_batchsize,
-                                BEXHOMA_USER = "root",
-                                BEXHOMA_PASSWORD = "root",
-                                BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                 BEXHOMA_TENANT_BY = config.tenant_per,
                                 BEXHOMA_TENANT_NUM = config.num_tenants,
                                 )
@@ -530,18 +465,10 @@ if __name__ == '__main__':
                                             """
                                             executor_list.append(benchmarking_pods_scaled)
                                             config.add_benchmarking_parameters(
-                                                #PARALLEL = str(benchmarking_pods_scaled),
-                                                SF = SF,
-                                                BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                                 BENCHBASE_PROFILE = 'mysql',
                                                 BEXHOMA_DATABASE = 'benchbase',
                                                 BENCHBASE_TARGET = benchmarking_target_per_pod,
                                                 BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                                BENCHBASE_TIME = SD,
-                                                BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                                BENCHBASE_BATCHSIZE = extra_batchsize,
-                                                BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                                BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                                 BEXHOMA_TENANT_BY = config.tenant_per,
                                                 BEXHOMA_TENANT_NUM = config.num_tenants,
                                                 )
@@ -563,20 +490,9 @@ if __name__ == '__main__':
                             MYSQL_DATABASE = 'benchbase',
                             )
                         config.set_loading_parameters(
-                            #PARALLEL = str(loading_pods), # =1
-                            SF = SF,
-                            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                             BENCHBASE_PROFILE = 'mysql',
                             BEXHOMA_DATABASE = 'benchbase',
-                            #BENCHBASE_TARGET = int(target),
                             BENCHBASE_TERMINALS = loading_threads_per_pod,
-                            BENCHBASE_TIME = SD,
-                            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                            BENCHBASE_BATCHSIZE = extra_batchsize,
-                            BEXHOMA_USER = "root",
-                            BEXHOMA_PASSWORD = "root",
-                            BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                            BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
                             )
@@ -612,18 +528,10 @@ if __name__ == '__main__':
                                         """
                                         executor_list.append(benchmarking_pods_scaled)
                                         config.add_benchmarking_parameters(
-                                            #PARALLEL = str(benchmarking_pods_scaled),
-                                            SF = SF,
-                                            BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                             BENCHBASE_PROFILE = 'mysql',
                                             BEXHOMA_DATABASE = 'benchbase',
                                             BENCHBASE_TARGET = benchmarking_target_per_pod,
                                             BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                            BENCHBASE_TIME = SD,
-                                            BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                            BENCHBASE_BATCHSIZE = extra_batchsize,
-                                            BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                            BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                             BEXHOMA_TENANT_BY = config.tenant_per,
                                             BEXHOMA_TENANT_NUM = config.num_tenants,
                                             )
@@ -638,20 +546,9 @@ if __name__ == '__main__':
                         storageConfiguration = 'mariadb'
                         )
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'mariadb',
                         BEXHOMA_DATABASE = 'benchbase',
-                        #BENCHBASE_TARGET = int(target),
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BEXHOMA_USER = "bexhoma",
-                        BEXHOMA_PASSWORD = "password",
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_sut_parameters(
                         MARIADB_DATABASE = "benchbase",
@@ -676,20 +573,10 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'mariadb',
                                         BEXHOMA_DATABASE = 'benchbase',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        BEXHOMA_USER = "bexhoma",
-                                        BEXHOMA_PASSWORD = "password",
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -799,21 +686,9 @@ if __name__ == '__main__':
                         return metric.format(host=host, gpuid=gpuid, configuration=component, experiment='')
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
-                        BEXHOMA_DATABASE = 'yugabyte',
-                        #BENCHBASE_TARGET = int(target),
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BEXHOMA_USER = "yugabyte",
-                        BEXHOMA_PASSWORD = "",
                         BEXHOMA_PORT = 5433,
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                        BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_CREATE_SCHEMA = create_schema,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -836,21 +711,10 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'yugabyte',
+                                        BEXHOMA_PORT = 5433,
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        BEXHOMA_USER = "yugabyte",
-                                        BEXHOMA_PASSWORD = "",
-                                        BEXHOMA_PORT = 5433,
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -880,21 +744,9 @@ if __name__ == '__main__':
                         BEXHOMA_WORKERS = num_worker
                         )
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'cockroachdb',
-                        BEXHOMA_DATABASE = 'defaultdb',
-                        #BENCHBASE_TARGET = int(target),
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BEXHOMA_USER = "root",
-                        BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                        BENCHBASE_TERMINALS = loading_threads_per_pod,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -916,21 +768,10 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'cockroachdb',
-                                        BEXHOMA_DATABASE = 'defaultdb',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        BEXHOMA_USER = "root",
-                                        BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -962,21 +803,9 @@ if __name__ == '__main__':
                         BEXHOMA_WORKERS = num_worker
                         )
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'mysql',
-                        BEXHOMA_DATABASE = 'test',
-                        #BENCHBASE_TARGET = int(target),
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BEXHOMA_USER = "root",
-                        BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
+                        BENCHBASE_TERMINALS = loading_threads_per_pod,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -998,21 +827,10 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'mysql',
-                                        BEXHOMA_DATABASE = 'test',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        BEXHOMA_USER = "root",
-                                        BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -1029,19 +847,10 @@ if __name__ == '__main__':
                         storageConfiguration = 'dbs'
                         )
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
                         BEXHOMA_DATABASE = 'postgres',
                         BEXHOMA_HOST = 'bexhoma-service.perdelt.svc.cluster.local',
-                        #BENCHBASE_TARGET = int(target),
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -1063,19 +872,11 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
                                         BEXHOMA_DATABASE = 'postgres',
                                         BEXHOMA_HOST = 'bexhoma-service.perdelt.svc.cluster.local',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -1107,22 +908,10 @@ if __name__ == '__main__':
                         BEXHOMA_WORKERS = num_worker
                         )
                     config.set_loading_parameters(
-                        #PARALLEL = str(loading_pods), # =1
-                        SF = SF,
-                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                         BENCHBASE_PROFILE = 'postgres',
-                        BEXHOMA_DATABASE = 'postgres',
-                        #BENCHBASE_TARGET = int(target),
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_TIME = SD,
-                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                        #BEXHOMA_USER = "root",
-                        #BEXHOMA_PASSWORD = "",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BENCHBASE_CREATE_SCHEMA = create_schema,
-                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -1144,21 +933,10 @@ if __name__ == '__main__':
                                     """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
-                                        #PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BENCHBASE_BENCH = type_of_benchmark,#'tpcc',
                                         BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'postgres',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_TIME = SD,
-                                        BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
-                                        BENCHBASE_BATCHSIZE = extra_batchsize,
-                                        #BEXHOMA_USER = "root",
-                                        #BEXHOMA_PASSWORD = "",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        BENCHBASE_STATUS_INTERVAL = scaling_logging, #10*1000,
-                                        BENCHBASE_KEY_AND_THINK = BENCHBASE_KEY_AND_THINK,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

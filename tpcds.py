@@ -137,6 +137,21 @@ if __name__ == '__main__':
         usecase="tpc-ds",
         experiment_design="parallel-loading"
     )
+    experiment.set_default_loading_parameters(
+        SF = SF,
+        STORE_RAW_DATA = 1,
+        STORE_RAW_DATA_RECREATE = 0,
+        BEXHOMA_SYNCH_LOAD = 1,
+        BEXHOMA_SYNCH_GENERATE = 1,
+        TRANSFORM_RAW_DATA = 1,
+        TPCDS_TABLE = limit_import_table,
+    )
+    experiment.set_default_benchmarking_parameters(
+        SF = SF,
+        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+        DBMSBENCHMARKER_DEV = debugging,
+    )
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -158,22 +173,10 @@ if __name__ == '__main__':
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpcds-PostgreSQL.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCDS_TABLE = limit_import_table,
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
@@ -185,22 +188,10 @@ if __name__ == '__main__':
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpcds-MonetDB.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCDS_TABLE = limit_import_table,
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                 # MariaDB
@@ -212,25 +203,11 @@ if __name__ == '__main__':
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpcds-MariaDB.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCDS_TABLE = limit_import_table,
                     MYSQL_LOADING_FROM = "LOCAL",
-                    BEXHOMA_USER = "bexhoma",
-                    BEXHOMA_PASSWORD = "password",
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_sut_parameters(
                     MARIADB_DATABASE = "tpcds",
                     )
@@ -248,24 +225,12 @@ if __name__ == '__main__':
                         )
                     config.jobtemplate_loading = "jobtemplate-loading-tpcds-MySQL.yml"
                     config.set_loading_parameters(
-                        SF = SF,
                         PODS_TOTAL = str(loading_pods_total),
                         PODS_PARALLEL = str(split_portion),
-                        STORE_RAW_DATA = 1,
-                        STORE_RAW_DATA_RECREATE = 0,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        BEXHOMA_SYNCH_GENERATE = 1,
-                        TRANSFORM_RAW_DATA = 1,
                         MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
                         MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
-                        TPCDS_TABLE = limit_import_table,
                         )
-                    config.set_benchmarking_parameters(
-                        SF = SF,
-                        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                        DBMSBENCHMARKER_DEV = debugging,
-                        )
+                    config.set_benchmarking_parameters()
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     ##############
     ### wait for necessary nodegroups to have planned size

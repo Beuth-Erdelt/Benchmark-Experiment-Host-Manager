@@ -149,6 +149,21 @@ if __name__ == '__main__':
         usecase="tpc-h",
         experiment_design="parallel-loading"
     )
+    experiment.set_default_loading_parameters(
+        SF = SF,
+        STORE_RAW_DATA = 1,
+        STORE_RAW_DATA_RECREATE = 0,
+        BEXHOMA_SYNCH_LOAD = 1,
+        BEXHOMA_SYNCH_GENERATE = 1,
+        TRANSFORM_RAW_DATA = 1,
+        TPCH_TABLE = limit_import_table,
+    )
+    experiment.set_default_benchmarking_parameters(
+        SF = SF,
+        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
+        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
+        DBMSBENCHMARKER_DEV = debugging,
+    )
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -176,24 +191,13 @@ if __name__ == '__main__':
                             config.loading_deactivated = True
                         config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                         config.set_loading_parameters(
-                            SF = SF,
                             PODS_TOTAL = str(loading_pods_total),
                             PODS_PARALLEL = str(split_portion),
-                            STORE_RAW_DATA = 1,
-                            STORE_RAW_DATA_RECREATE = 0,
-                            BEXHOMA_SYNCH_LOAD = 1,
-                            BEXHOMA_SYNCH_GENERATE = 1,
-                            TRANSFORM_RAW_DATA = 1,
-                            TPCH_TABLE = limit_import_table,
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
                             BEXHOMA_TENANT_ID = tenant,
                             )
                         config.set_benchmarking_parameters(
-                            SF = SF,
-                            DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                            DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                            DBMSBENCHMARKER_DEV = debugging,
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
                             BEXHOMA_TENANT_BY = config.tenant_per,
@@ -224,24 +228,13 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                     config.set_loading_parameters(
-                        SF = SF,
                         PODS_TOTAL = str(loading_pods_total),
                         PODS_PARALLEL = str(split_portion),
-                        STORE_RAW_DATA = 1,
-                        STORE_RAW_DATA_RECREATE = 0,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        BEXHOMA_SYNCH_GENERATE = 1,
-                        TRANSFORM_RAW_DATA = 1,
-                        TPCH_TABLE = limit_import_table,
                         BEXHOMA_TENANT_BY = config.tenant_per,
                         BEXHOMA_TENANT_NUM = config.num_tenants,
                         BEXHOMA_TENANT_ID = 0,
                         )
                     config.set_benchmarking_parameters(
-                        SF = SF,
-                        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                        DBMSBENCHMARKER_DEV = debugging,
                         TENANT_BY = config.tenant_per,
                         TENANT_NUM = config.num_tenants,
                         BEXHOMA_TENANT_BY = config.tenant_per,
@@ -268,22 +261,10 @@ if __name__ == '__main__':
                     config.loading_deactivated = True
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
@@ -297,22 +278,10 @@ if __name__ == '__main__':
                     config.loading_deactivated = True
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-MonetDB.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MariaDB" in args.dbms or len(args.dbms) == 0):
                 # MariaDB
@@ -326,25 +295,11 @@ if __name__ == '__main__':
                     config.loading_deactivated = True
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
                     MYSQL_LOADING_FROM = "LOCAL",
-                    BEXHOMA_USER = "bexhoma",
-                    BEXHOMA_PASSWORD = "password",
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_sut_parameters(
                     MARIADB_DATABASE = "tpch",
                     )
@@ -363,24 +318,12 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.jobtemplate_loading = "jobtemplate-loading-tpch-MySQL.yml"
                     config.set_loading_parameters(
-                        SF = SF,
                         PODS_TOTAL = str(loading_pods_total),
                         PODS_PARALLEL = str(split_portion),
-                        STORE_RAW_DATA = 1,
-                        STORE_RAW_DATA_RECREATE = 0,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        BEXHOMA_SYNCH_GENERATE = 1,
-                        TRANSFORM_RAW_DATA = 1,
                         MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
                         MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
-                        TPCH_TABLE = limit_import_table,
                         )
-                    config.set_benchmarking_parameters(
-                        SF = SF,
-                        DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                        DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                        DBMSBENCHMARKER_DEV = debugging,
-                        )
+                    config.set_benchmarking_parameters()
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
                 # DatabaseService
@@ -395,23 +338,11 @@ if __name__ == '__main__':
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
                     BEXHOMA_HOST = 'bexhoma-service',
                     )
-                config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
-                    )
+                config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("Citus" in args.dbms):
                 # PostgreSQL
@@ -442,22 +373,11 @@ if __name__ == '__main__':
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
                 config.set_loading_parameters(
-                    SF = SF,
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),
-                    STORE_RAW_DATA = 1,
-                    STORE_RAW_DATA_RECREATE = 0,
-                    BEXHOMA_SYNCH_LOAD = 1,
-                    BEXHOMA_SYNCH_GENERATE = 1,
-                    TRANSFORM_RAW_DATA = 1,
-                    TPCH_TABLE = limit_import_table,
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     )
                 config.set_benchmarking_parameters(
-                    SF = SF,
-                    DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
-                    DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
-                    DBMSBENCHMARKER_DEV = debugging,
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)

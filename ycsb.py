@@ -156,6 +156,26 @@ if __name__ == '__main__':
         operations=ycsb_operations,
         workload=workload,
         )
+    experiment.set_default_loading_parameters(
+        SF = SF,
+        BEXHOMA_SYNCH_LOAD = 1,
+        YCSB_STATUS = 1,
+        YCSB_WORKLOAD = workload,
+        YCSB_ROWS = ycsb_rows,
+        YCSB_BATCHSIZE = batchsize,
+        YCSB_STATUS_INTERVAL = scaling_logging,
+        YCSB_INSERTORDER = extra_insert_order,
+    )
+    experiment.set_default_benchmarking_parameters(
+        SF = SF,
+        BEXHOMA_SYNCH_LOAD = 1,
+        YCSB_STATUS = 1,
+        YCSB_WORKLOAD = workload,
+        YCSB_ROWS = ycsb_rows,
+        YCSB_BATCHSIZE = batchsize,
+        YCSB_STATUS_INTERVAL = scaling_logging,
+        YCSB_INSERTORDER = extra_insert_order,
+    )
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -176,19 +196,11 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -201,31 +213,14 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -239,19 +234,11 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -264,31 +251,14 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
                                         YCSB_MEASUREMENT_TYPE = "hdrhistogram",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -329,18 +299,10 @@ if __name__ == '__main__':
                                     )
                                 config.set_loading_parameters(
                                     PARALLEL = str(loading_pods),
-                                    SF = SF,
-                                    BEXHOMA_SYNCH_LOAD = 1,
                                     YCSB_THREADCOUNT = loading_threads_per_pod,
                                     YCSB_TARGET = loading_target_per_pod,
-                                    YCSB_STATUS = 1,
-                                    YCSB_WORKLOAD = workload,
-                                    YCSB_ROWS = ycsb_rows,
                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                    YCSB_BATCHSIZE = batchsize,
-                                    YCSB_STATUS_INTERVAL = scaling_logging,
                                     BEXHOMA_DBMS_TYPE = "jdbc",
-                                    YCSB_INSERTORDER = extra_insert_order,
                                     )
                                 config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                                 executor_list = []
@@ -356,18 +318,10 @@ if __name__ == '__main__':
                                                 executor_list.append(benchmarking_pods_scaled)
                                                 config.add_benchmarking_parameters(
                                                     PARALLEL = str(benchmarking_pods_scaled),
-                                                    SF = SF,
-                                                    BEXHOMA_SYNCH_LOAD = 1,
                                                     YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                                     YCSB_TARGET = benchmarking_target_per_pod,
-                                                    YCSB_STATUS = 1,
-                                                    YCSB_WORKLOAD = workload,
-                                                    YCSB_ROWS = ycsb_rows,
                                                     YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                                    YCSB_BATCHSIZE = batchsize,
-                                                    YCSB_STATUS_INTERVAL = scaling_logging,
                                                     BEXHOMA_DBMS_TYPE = "jdbc",
-                                                    YCSB_INSERTORDER = extra_insert_order,
                                                     )
                                 #print(executor_list)
                                 config.add_benchmark_list(executor_list)
@@ -381,18 +335,10 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -405,30 +351,13 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -442,18 +371,10 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_sut_parameters(
                         MARIADB_DATABASE = "ycsb",
@@ -469,30 +390,13 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -600,18 +504,10 @@ if __name__ == '__main__':
                     config.set_metric_of_config = types.MethodType(set_metric_of_config, config)
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -624,30 +520,13 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(num_executor*benchmarking_pods),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -678,19 +557,11 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -703,31 +574,14 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(num_executor*benchmarking_pods),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -760,21 +614,11 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
-                        BEXHOMA_USER = "root",
-                        BEXHOMA_PASSWORD = "",
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -787,33 +631,14 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(num_executor*benchmarking_pods),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
-                                        BEXHOMA_USER = "root",
-                                        BEXHOMA_PASSWORD = "",
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -831,18 +656,10 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = "jdbc",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -858,18 +675,10 @@ if __name__ == '__main__':
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(num_executor*benchmarking_pods),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -912,19 +721,11 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     def get_worker_name(self, component='worker'):
                         """
@@ -967,31 +768,14 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -1027,19 +811,11 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
-                        YCSB_STATUS_INTERVAL = scaling_logging,
                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                         BEXHOMA_REPLICAS = num_worker_replicas,
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     def get_worker_name(self, component='worker'):
                         """
@@ -1082,31 +858,14 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(benchmarking_pods_scaled),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                                         BEXHOMA_REPLICAS = num_worker_replicas,
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
@@ -1135,20 +894,13 @@ if __name__ == '__main__':
                         )
                     config.set_loading_parameters(
                         PARALLEL = str(loading_pods),
-                        SF = SF,
-                        BEXHOMA_SYNCH_LOAD = 1,
                         YCSB_THREADCOUNT = loading_threads_per_pod,
                         YCSB_TARGET = loading_target_per_pod,
-                        YCSB_STATUS = 1,
-                        YCSB_WORKLOAD = workload,
-                        YCSB_ROWS = ycsb_rows,
                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                        YCSB_BATCHSIZE = batchsize,
                         YCSB_STATUS_INTERVAL = 10,
                         BEXHOMA_DBMS_TYPE = "jdbc",
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         YCSB_USE_HOSTLIST = "true",
-                        YCSB_INSERTORDER = extra_insert_order,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
@@ -1161,32 +913,15 @@ if __name__ == '__main__':
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                     ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
                                     benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("ycsb_operations_per_pod", ycsb_operations_per_pod)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
                                     executor_list.append(benchmarking_pods_scaled)
                                     config.add_benchmarking_parameters(
                                         PARALLEL = str(num_executor*benchmarking_pods),
-                                        SF = SF,
-                                        BEXHOMA_SYNCH_LOAD = 1,
                                         YCSB_THREADCOUNT = benchmarking_threads_per_pod,
                                         YCSB_TARGET = benchmarking_target_per_pod,
-                                        YCSB_STATUS = 1,
-                                        YCSB_WORKLOAD = workload,
-                                        YCSB_ROWS = ycsb_rows,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
-                                        YCSB_BATCHSIZE = batchsize,
-                                        YCSB_STATUS_INTERVAL = scaling_logging,
                                         BEXHOMA_DBMS_TYPE = "jdbc",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         YCSB_USE_HOSTLIST = "true",
-                                        YCSB_INSERTORDER = extra_insert_order,
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)

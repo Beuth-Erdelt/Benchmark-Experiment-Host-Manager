@@ -145,6 +145,22 @@ if __name__ == '__main__':
         #users_loading=scaling_users,
         #users_benchmarking=str(num_virtual_users),
         )
+    experiment.set_default_loading_parameters(
+        SF = SF,
+        HAMMERDB_DURATION = str(SD),
+        HAMMERDB_RAMPUP = str(num_rampup),
+        HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+        HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
+        HAMMERDB_NUM_VU = 1,
+    )
+    experiment.set_default_benchmarking_parameters(
+        SF = SF,
+        BEXHOMA_SYNCH_LOAD = 1,
+        HAMMERDB_DURATION = str(SD),
+        HAMMERDB_RAMPUP = str(num_rampup),
+        HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
+        HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
+    )
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -161,14 +177,8 @@ if __name__ == '__main__':
                     storageConfiguration = 'postgresql'
                 )
                 config.set_loading_parameters(
-                    HAMMERDB_NUM_VU = 1,
-                    SF = SF,
-                    HAMMERDB_DURATION = str(SD),
-                    HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "postgresql",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
-                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -191,14 +201,8 @@ if __name__ == '__main__':
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
                                     HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    SF = SF,
-                                    BEXHOMA_SYNCH_LOAD = 1,
-                                    HAMMERDB_DURATION = str(SD),
-                                    HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "postgresql",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
@@ -213,17 +217,9 @@ if __name__ == '__main__':
                 )
                 #config.num_loading = 1
                 config.set_loading_parameters(
-                    HAMMERDB_NUM_VU = 1,
-                    SF = SF,
-                    HAMMERDB_DURATION = str(SD),
-                    HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "mysql",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                    BEXHOMA_USER = "root",
-                    BEXHOMA_PASSWORD = "root",
-                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -246,17 +242,9 @@ if __name__ == '__main__':
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
                                     HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    SF = SF,
-                                    BEXHOMA_SYNCH_LOAD = 1,
-                                    HAMMERDB_DURATION = str(SD),
-                                    HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "mysql",
                                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                                    BEXHOMA_USER = "root",
-                                    BEXHOMA_PASSWORD = "root",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
@@ -271,17 +259,9 @@ if __name__ == '__main__':
                 )
                 #config.num_loading = 1
                 config.set_loading_parameters(
-                    HAMMERDB_NUM_VU = 1,
-                    SF = SF,
-                    HAMMERDB_DURATION = str(SD),
-                    HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "mariadb",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                    BEXHOMA_USER = "bexhoma",
-                    BEXHOMA_PASSWORD = "password",
-                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_sut_parameters(
                     MARIADB_DATABASE = "tpcc",
@@ -307,17 +287,9 @@ if __name__ == '__main__':
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
                                     HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    SF = SF,
-                                    BEXHOMA_SYNCH_LOAD = 1,
-                                    HAMMERDB_DURATION = str(SD),
-                                    HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "mariadb",
                                     HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                                    BEXHOMA_USER = "bexhoma",
-                                    BEXHOMA_PASSWORD = "password",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)
@@ -346,17 +318,11 @@ if __name__ == '__main__':
                 if skip_loading:
                     config.loading_deactivated = True
                 config.set_loading_parameters(
-                    HAMMERDB_NUM_VU = 1,
-                    SF = SF,
-                    HAMMERDB_DURATION = str(SD),
-                    HAMMERDB_RAMPUP = str(num_rampup),
                     HAMMERDB_TYPE = "citus",
                     HAMMERDB_VUSERS = loading_threads_per_pod,
                     BEXHOMA_USER = "postgres",
                     BEXHOMA_PASSWORD = "password1234",
                     BEXHOMA_DATABASE = "postgres",
-                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                 )
                 config.set_loading(parallel=1, num_pods=1)
                 executor_list = []
@@ -379,17 +345,11 @@ if __name__ == '__main__':
                                 executor_list.append(benchmarking_pods_scaled)
                                 config.add_benchmarking_parameters(
                                     HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    SF = SF,
-                                    BEXHOMA_SYNCH_LOAD = 1,
-                                    HAMMERDB_DURATION = str(SD),
-                                    HAMMERDB_RAMPUP = str(num_rampup),
                                     HAMMERDB_TYPE = "citus",
                                     HAMMERDB_VUSERS = benchmarking_threads_per_pod,
                                     BEXHOMA_USER = "postgres",
                                     BEXHOMA_PASSWORD = "password1234",
                                     BEXHOMA_DATABASE = "postgres",
-                                    HAMMERDB_KEYANDTHINK = HAMMERDB_KEYANDTHINK,
-                                    HAMMERDB_TIMEPROFILE = HAMMERDB_TIMEPROFILE,
                                     )
                 #print(executor_list)
                 config.add_benchmark_list(executor_list)

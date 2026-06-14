@@ -499,11 +499,13 @@ class default():
         Can be set by experiment before creation of configuration.
         Also updates the first loader entry in ``experiment_dict`` when present.
 
+        Merges experiment-wide defaults first; per-configuration ``kwargs`` win on conflict.
+
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
-        self.loading_parameters = kwargs
+        self.loading_parameters = {**self.experiment.default_loading_parameters, **kwargs}
         if self.experiment_dict['loader']:
-            self.experiment_dict['loader'][0]['parameters'].update(kwargs)
+            self.experiment_dict['loader'][0]['parameters'].update(self.loading_parameters)
     def patch_loading(self, patch):
         """
         Patches YAML of loading components.
@@ -526,12 +528,14 @@ class default():
         Can be set by experiment before creation of configuration.
         Also updates the first benchmarker entry in ``experiment_dict`` when present.
 
+        Merges experiment-wide defaults first; per-configuration ``kwargs`` win on conflict.
+
         :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
         """
-        self.benchmarking_parameters = kwargs
+        self.benchmarking_parameters = {**self.experiment.default_benchmarking_parameters, **kwargs}
         if self.experiment_dict['benchmarker'] and self.experiment_dict['benchmarker'][0]:
             for entry in self.experiment_dict['benchmarker'][0]:
-                entry['parameters'].update(kwargs)
+                entry['parameters'].update(self.benchmarking_parameters)
 
     def OLD_add_benchmarking_parameters(self, **kwargs):
         """
@@ -559,7 +563,8 @@ class default():
         :param parallelism: Pod count for this client round; inherits template if ``None``.
         :param env_vars: ENV vars injected into the job container for this round.
         """
-        self.benchmarking_parameters_list.append(env_vars)
+        merged_env_vars = {**self.experiment.default_benchmarking_parameters, **env_vars}
+        self.benchmarking_parameters_list.append(merged_env_vars)
         if not self.experiment_dict['benchmarker'] or not self.experiment_dict['benchmarker'][0]:
             return
         template_entries = self.experiment_dict['benchmarker'][0]
@@ -572,7 +577,7 @@ class default():
                 'parallelism': pod_count,
                 'num_pods':    pod_count,
                 'target':      tmpl.get('target', 'sut'),
-                'parameters':  {**tmpl['parameters'], **env_vars},
+                'parameters':  {**tmpl['parameters'], **merged_env_vars},
             }
             for tmpl in template_entries
         ]
