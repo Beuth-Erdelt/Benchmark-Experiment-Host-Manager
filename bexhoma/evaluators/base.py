@@ -481,25 +481,73 @@ class base:
         df.drop('client', axis=1, inplace=True, errors='ignore')
         df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
+    def _get_tenant_loading_from_logs(self) -> dict:
+        """
+        Reads per-pod sensor log files and extracts per-tenant loading durations.
+
+        Parses ``BEXHOMA_TENANT_ID <N>`` (space-separated, echoed by the loader
+        script) and ``BEXHOMA_DURATION:N`` from every
+        ``bexhoma-loading-*.sensor.log`` file in the experiment result folder.
+        When multiple pods serve the same tenant (parallel loading), the maximum
+        duration across those pods is kept so that the returned value reflects
+        the full tenant loading span.
+
+        :return: Dict mapping tenant_id (int) to loading duration in seconds (int).
+        :rtype: dict
+        """
+        tenant_durations: dict = {}
+        pattern = os.path.join(self.path, "bexhoma-loading-*.sensor.log")
+        for log_path in glob.glob(pattern):
+            try:
+                with open(log_path) as f:
+                    content = f.read()
+                tenant_match = re.search(r'BEXHOMA_TENANT_ID\s+(\d+)', content)
+                duration_match = re.search(r'BEXHOMA_DURATION:(\d+)', content)
+                if tenant_match and duration_match:
+                    tenant_id = int(tenant_match.group(1))
+                    duration = int(duration_match.group(1))
+                    tenant_durations[tenant_id] = max(tenant_durations.get(tenant_id, 0), duration)
+            except Exception:
+                pass
+        return tenant_durations
+
     def get_loading_per_run_multitenant(self):
         """
         Returns loading metrics aggregated per
         ``(code, experiment_run, type_tenants, vol_tenants, num_tenants, tenant_id)``
         for multi-tenant experiments.
 
-        Takes the per-connection DataFrame from :meth:`get_loading_per_connection` and
-        reduces it by taking the max within each (tenancy group, tenant_id) combination,
-        then recomputes ``'Throughput [SF/h]'`` from the aggregated load time.
-
         For container tenancy the ``tenant_id`` key distinguishes individual tenant
-        loading times.  For schema/database tenancy ``tenant_id`` is an empty string
-        for all connections, so the result collapses to one row per experiment run
-        (same behaviour as before).
+        loading times.
+
+        For schema/database tenancy, reads per-pod sensor log files via
+        :meth:`_get_tenant_loading_from_logs` to expand the single shared
+        connection row into one row per tenant.  Each row carries the tenant's
+        own loading duration (``time_ingest`` / ``time_load``) and a matching
+        ``tenant_id``.  If the sensor logs are absent the result collapses to
+        one row with ``tenant_id = ''`` (same as before).
 
         :return: DataFrame with one row per tenant per experiment run.
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_connection()
+        if (df['type_tenants'].isin(['schema', 'database'])).any():
+            tenant_durations = self._get_tenant_loading_from_logs()
+            if tenant_durations:
+                expanded = []
+                for _, row in df.iterrows():
+                    if row['type_tenants'] in ('schema', 'database'):
+                        for tid, duration in tenant_durations.items():
+                            new_row = row.copy()
+                            new_row['tenant_id'] = str(tid)
+                            new_row['time_ingest'] = float(duration)
+                            new_row['time_load'] = float(duration)
+                            sf = float(row['SF'])
+                            new_row['Throughput [SF/h]'] = sf * 3600.0 / duration if duration > 0 else 0.0
+                            expanded.append(new_row)
+                    else:
+                        expanded.append(row)
+                df = pd.DataFrame(expanded)
         df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants", "tenant_id"]).max()
         df = df.reset_index()
         df.index = (df['code'].astype(str) + "-" +

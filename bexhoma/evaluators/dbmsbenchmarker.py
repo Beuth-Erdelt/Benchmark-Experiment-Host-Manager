@@ -190,10 +190,20 @@ class dbmsbenchmarker(logger):
             loading_params = connection_data['parameter']['connection_parameter'].get('loading_parameters', {})
             df_row['SF'] = float(loading_params['SF'])
             df_row['pods'] = int(loading_params['PODS_PARALLEL'])
-            df_row['tenant_id'] = int(loading_params.get('BEXHOMA_TENANT_ID', -1))
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
             df_row['benchmark_run'] = int(connection_data['parameter']['numBenchmark'])
-            df_row['client'] = int(connection_data['parameter']['client'])
+            client = int(connection_data['parameter']['client'])
+            df_row['client'] = client
+            tenant_by = loading_params.get('BEXHOMA_TENANT_BY', '')
+            tenant_num = int(loading_params.get('BEXHOMA_TENANT_NUM', 0))
+            if tenant_by in ('schema', 'database') and tenant_num > 0:
+                # For schema/database tenancy the BEXHOMA_TENANT_ID in loading_params
+                # is the Python default (0), not the per-pod value computed at runtime.
+                # Use the DBMSBenchmarker client sub-folder index (0-based) instead,
+                # which is unique per tenant pod.
+                df_row['tenant_id'] = client - 1
+            else:
+                df_row['tenant_id'] = int(loading_params.get('BEXHOMA_TENANT_ID', -1))
             #last_segment = conn_name.rsplit('-', 1)[-1]
             #df_row['benchmark_run'] = int(last_segment) if last_segment.isdigit() else 1
             df_row['code'] = int(connection_data['parameter']['code'])
