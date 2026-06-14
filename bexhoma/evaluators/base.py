@@ -23,7 +23,6 @@ import traceback
 import ast
 from dbmsbenchmarker import monitor
 from datetime import datetime
-import glob
 from pathlib import Path
 
 def natural_sort(l):
@@ -486,8 +485,8 @@ class base:
         Reads per-pod sensor log files and extracts per-tenant loading durations.
 
         Parses ``BEXHOMA_TENANT_ID <N>`` (space-separated, echoed by the loader
-        script) and ``BEXHOMA_DURATION:N`` from every
-        ``bexhoma-loading-*.sensor.log`` file in the experiment result folder.
+        script) and ``BEXHOMA_DURATION:N`` from every loader sensor log file
+        (``bexhoma-loading-*.sensor.log``) in the experiment result folder.
         When multiple pods serve the same tenant (parallel loading), the maximum
         duration across those pods is kept so that the returned value reflects
         the full tenant loading span.
@@ -496,19 +495,26 @@ class base:
         :rtype: dict
         """
         tenant_durations: dict = {}
-        pattern = os.path.join(self.path, "bexhoma-loading-*.sensor.log")
-        for log_path in glob.glob(pattern):
-            try:
-                with open(log_path) as f:
-                    content = f.read()
-                tenant_match = re.search(r'BEXHOMA_TENANT_ID\s+(\d+)', content)
-                duration_match = re.search(r'BEXHOMA_DURATION:(\d+)', content)
-                if tenant_match and duration_match:
-                    tenant_id = int(tenant_match.group(1))
-                    duration = int(duration_match.group(1))
-                    tenant_durations[tenant_id] = max(tenant_durations.get(tenant_id, 0), duration)
-            except Exception:
-                pass
+        try:
+            directory = os.fsencode(self.path)
+            for file in os.listdir(directory):
+                filename = os.fsdecode(file)
+                if not (filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log")):
+                    continue
+                log_path = os.path.join(self.path, filename)
+                try:
+                    with open(log_path, encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                    tenant_match = re.search(r'BEXHOMA_TENANT_ID\s+(\d+)', content)
+                    duration_match = re.search(r'BEXHOMA_DURATION:(\d+)', content)
+                    if tenant_match and duration_match:
+                        tenant_id = int(tenant_match.group(1))
+                        duration = int(duration_match.group(1))
+                        tenant_durations[tenant_id] = max(tenant_durations.get(tenant_id, 0), duration)
+                except Exception:
+                    pass
+        except Exception:
+            pass
         return tenant_durations
 
     def get_loading_per_run_multitenant(self):
