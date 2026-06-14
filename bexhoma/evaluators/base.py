@@ -23,7 +23,6 @@ import traceback
 import ast
 from dbmsbenchmarker import monitor
 from datetime import datetime
-import glob
 from pathlib import Path
 
 def natural_sort(l):
@@ -351,7 +350,7 @@ class base:
                 if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'] if 'HAMMERDB_VUSERS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
-            'tenant': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
+            'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
             'num_worker': int(c['parameter']['num_worker']),
             'type_tenants': c['parameter']['TENANT_BY'] if 'TENANT_BY' in c['parameter'] else 'None',
             'num_tenants': int(c['parameter']['TENANT_NUM']) if 'TENANT_NUM' in c['parameter'] else 0,
@@ -455,7 +454,7 @@ class base:
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
             'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
-            'tenant', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
+            'tenant_id', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         return df[selected_cols].copy()
     def get_loading_per_run(self):
@@ -481,24 +480,86 @@ class base:
         df.drop('client', axis=1, inplace=True, errors='ignore')
         df.drop('pods', axis=1, inplace=True, errors='ignore')
         return df
+    def _get_tenant_loading_from_logs(self) -> dict:
+        """
+        Reads per-pod sensor log files and extracts per-tenant loading durations.
+
+        Parses ``BEXHOMA_TENANT_ID <N>`` (space-separated, echoed by the loader
+        script) and ``BEXHOMA_DURATION:N`` from every loader sensor log file
+        (``bexhoma-loading-*.sensor.log``) in the experiment result folder.
+        When multiple pods serve the same tenant (parallel loading), the maximum
+        duration across those pods is kept so that the returned value reflects
+        the full tenant loading span.
+
+        :return: Dict mapping tenant_id (int) to loading duration in seconds (int).
+        :rtype: dict
+        """
+        tenant_durations: dict = {}
+        try:
+            directory = os.fsencode(self.path)
+            for file in os.listdir(directory):
+                filename = os.fsdecode(file)
+                if not (filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log")):
+                    continue
+                log_path = os.path.join(self.path, filename)
+                try:
+                    with open(log_path, encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                    tenant_match = re.search(r'BEXHOMA_TENANT_ID\s+(\d+)', content)
+                    duration_match = re.search(r'BEXHOMA_DURATION:(\d+)', content)
+                    if tenant_match and duration_match:
+                        tenant_id = int(tenant_match.group(1))
+                        duration = int(duration_match.group(1))
+                        tenant_durations[tenant_id] = max(tenant_durations.get(tenant_id, 0), duration)
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        return tenant_durations
+
     def get_loading_per_run_multitenant(self):
         """
-        Returns loading metrics aggregated per ``(code, experiment_run, type_tenants,
-        vol_tenants, num_tenants)`` for multi-tenant experiments.
+        Returns loading metrics aggregated per
+        ``(code, experiment_run, type_tenants, vol_tenants, num_tenants, tenant_id)``
+        for multi-tenant experiments.
 
-        Takes the per-connection DataFrame from :meth:`get_loading_per_connection` and
-        reduces it by taking the max within each tenancy group, then recomputes
-        ``'Throughput [SF/h]'`` from the aggregated load time.
+        For container tenancy the ``tenant_id`` key distinguishes individual tenant
+        loading times.
 
-        :return: DataFrame with one row per tenant group per experiment run.
+        For schema/database tenancy, reads per-pod sensor log files via
+        :meth:`_get_tenant_loading_from_logs` to expand the single shared
+        connection row into one row per tenant.  Each row carries the tenant's
+        own loading duration (``time_ingest`` / ``time_load``) and a matching
+        ``tenant_id``.  If the sensor logs are absent the result collapses to
+        one row with ``tenant_id = ''`` (same as before).
+
+        :return: DataFrame with one row per tenant per experiment run.
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_connection()
-        df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants"]).max()
+        if (df['type_tenants'].isin(['schema', 'database'])).any():
+            tenant_durations = self._get_tenant_loading_from_logs()
+            if tenant_durations:
+                expanded = []
+                for _, row in df.iterrows():
+                    if row['type_tenants'] in ('schema', 'database'):
+                        for tid, duration in tenant_durations.items():
+                            new_row = row.copy()
+                            new_row['tenant_id'] = str(tid)
+                            new_row['time_ingest'] = float(duration)
+                            new_row['time_load'] = float(duration)
+                            sf = float(row['SF'])
+                            new_row['Throughput [SF/h]'] = sf * 3600.0 / duration if duration > 0 else 0.0
+                            expanded.append(new_row)
+                    else:
+                        expanded.append(row)
+                df = pd.DataFrame(expanded)
+        df = df.groupby(["code", "experiment_run", "type_tenants", 'vol_tenants', "num_tenants", "tenant_id"]).max()
         df = df.reset_index()
-        df.index = df['code'].astype(str) + "-" + \
-                   df['configuration'].astype(str) + "-" + \
-                   df['experiment_run'].astype(str)
+        df.index = (df['code'].astype(str) + "-" +
+                    df['configuration'].astype(str) + "-" +
+                    df['experiment_run'].astype(str) + "-" +
+                    df['tenant_id'].astype(str))
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx
@@ -506,4 +567,18 @@ class base:
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('client', axis=1, inplace=True, errors='ignore')
         df.drop('pods', axis=1, inplace=True, errors='ignore')
+        return df
+    def get_summary_loading_per_run_multitenant(self):
+        """
+        Returns loading metrics per tenant per experiment run, with housekeeping columns removed.
+
+        Wraps :meth:`get_loading_per_run_multitenant` and drops ``code`` and
+        ``configuration`` so the result is ready to display in :meth:`show_summary`.
+
+        :return: DataFrame with one row per ``(tenant_id, experiment_run)`` combination.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_loading_per_run_multitenant()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
         return df

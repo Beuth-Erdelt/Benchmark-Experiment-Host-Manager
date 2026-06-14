@@ -148,10 +148,14 @@ class DBMSBenchmarkerBenchmark(Benchmark):
                 print("\n#### Planned\n")
                 for c in workflow_planned:
                     print("* DBMS", c, "- Pods", workflow_planned[c])
+        is_multitenant = experiment.num_tenants > 0
         if experiment.loading_is_active():
             print("\n### Loading")
             print("\n#### Per Run\n")
-            df = self.evaluator.get_summary_loading_per_run()
+            if is_multitenant:
+                df = self.evaluator.get_summary_loading_per_run_multitenant()
+            else:
+                df = self.evaluator.get_summary_loading_per_run()
             print(df.to_markdown(index=True, floatfmt=".2f"))
         if experiment.benchmarking_is_active():
             print("\n### Execution")
@@ -161,7 +165,10 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             df.drop('pod', axis=1, inplace=True, errors='ignore')
             print(df.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Phase\n")
-            df = self.evaluator.get_summary_benchmark_per_phase()
+            if is_multitenant:
+                df = self.evaluator.get_summary_benchmark_per_phase_multitenant()
+            else:
+                df = self.evaluator.get_summary_benchmark_per_phase()
             print(df.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df.copy()
             print("\n### Latency of Timer Execution [ms]")

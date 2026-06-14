@@ -144,13 +144,17 @@ class YCSB(Benchmark):
                 print("\n#### Planned\n")
                 for c in workflow_planned:
                     print("* DBMS", c, "- Pods", workflow_planned[c])
+        is_multitenant = experiment.num_tenants > 0
         df_loading = self.evaluator.get_summary_loading_per_connection()
         if experiment.loading_is_active() and not df_loading.empty:
             print("\n### Loading")
             print("\n#### Per Connection\n")
             print(df_loading.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Run\n")
-            df_aggregated_loaded = self.evaluator.get_summary_loading_per_run()
+            if is_multitenant:
+                df_aggregated_loaded = self.evaluator.get_summary_loading_per_run_multitenant()
+            else:
+                df_aggregated_loaded = self.evaluator.get_summary_loading_per_run()
             print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f"))
             test_loading = True
         else:
@@ -162,7 +166,10 @@ class YCSB(Benchmark):
             df = self.evaluator.get_summary_benchmark_per_connection()
             print(df.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Phase\n")
-            df = self.evaluator.get_summary_benchmark_per_phase()
+            if is_multitenant:
+                df = self.evaluator.get_summary_benchmark_per_phase_multitenant()
+            else:
+                df = self.evaluator.get_summary_benchmark_per_phase()
             print(df.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df.copy()
         else:

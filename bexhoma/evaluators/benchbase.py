@@ -51,9 +51,10 @@ class benchbase(logger):
         """
         Parses a Benchbase pod log file into a single-row DataFrame.
 
-        Extracts connection metadata, benchmark parameters, and the JSON result block
-        embedded between ``####BEXHOMA####`` markers. Returns an empty DataFrame when
-        the log is incomplete (e.g. the start time has already passed).
+        Extracts connection metadata (including ``tenant_id`` from the
+        ``BEXHOMA_TENANT_ID`` stdout line), benchmark parameters, and the JSON result
+        block embedded between ``####BEXHOMA####`` markers. Returns an empty DataFrame
+        when the log is incomplete (e.g. the start time has already passed).
 
         :param filename: Absolute path to the log file.
         :type filename: str
@@ -92,6 +93,8 @@ class benchbase(logger):
             keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
             sf = re.findall('SF (.+?)\n', stdout)[0]
+            tenant_id_match = re.findall(r'BEXHOMA_TENANT_ID (\d+)', stdout)
+            tenant_id = int(tenant_id_match[0]) if tenant_id_match else -1
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
             phase = configuration_name + '-' + experiment_run + '-' + client
@@ -118,6 +121,7 @@ class benchbase(logger):
                 'duration': duration,
                 'efficiency': 0.0,
                 'child': child,
+                'tenant_id': tenant_id,
             }
             df_header = pd.DataFrame(header, index=[0])
             if True: # num_errors == 0:
@@ -143,11 +147,16 @@ class benchbase(logger):
         """
         Casts all benchmarking result columns to their appropriate data types.
 
+        Adds a ``tenant_id`` column (value ``-1``) when the column is absent so that
+        DataFrames loaded from older pickles remain compatible.
+
         :param df: DataFrame of raw benchmarking results.
         :type df: pandas.DataFrame
         :return: DataFrame with columns cast to correct types.
         :rtype: pandas.DataFrame
         """
+        if 'tenant_id' not in df.columns:
+            df = df.assign(tenant_id=-1)
         df_typed = df.astype({
             'connection':'str',
             'phase':'str',
@@ -164,7 +173,6 @@ class benchbase(logger):
             'profile':'str',
             'target':'int',
             'time':'float',
-            #'terminals':'int',
             'batchsize':'int',
             'sf':'int',
             'num_errors':'int',
@@ -188,6 +196,7 @@ class benchbase(logger):
             'Latency Distribution.Average Latency (microseconds)':'float',
             'efficiency': 'float',
             'child': 'int',
+            'tenant_id': 'int',
         })
         return df_typed
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
@@ -251,6 +260,7 @@ class benchbase(logger):
                 'Latency Distribution.Average Latency (microseconds)':'mean',
                 'efficiency': 'sum',
                 'child': 'count',
+                'tenant_id': 'min',
             }
             dict_grp = dict()
             dict_grp['phase'] = grp['phase'].iloc[0]
@@ -431,7 +441,7 @@ class benchbase(logger):
         df = self.get_df_benchmarking()
         if not df.empty:
             #print(df)
-            columns = ["phase", "job", "experiment_run","terminals","target","client","benchmark_run", "child", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["phase", "job", "experiment_run","terminals","target","client","benchmark_run", "child", "tenant_id", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -461,11 +471,37 @@ class benchbase(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"terminals","target","benchmark_run","pod_count"]].copy()
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"terminals","target","benchmark_run","pod_count","tenant_id"]].copy()
             columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            return df_aggregated_reduced
+    def get_summary_benchmark_per_phase_multitenant(self):
+        """
+        Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
+
+        Like :meth:`get_summary_benchmark_per_phase` but groups by
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'target', 'pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run', "terminals", "target", "benchmark_run", "pod_count", "tenant_id"]].copy()
+            columns = ["time", "num_errors", "Throughput (requests/second)", "Goodput (requests/second)", "efficiency", "Latency Distribution.95th Percentile Latency (microseconds)", "Latency Distribution.Average Latency (microseconds)"]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
             return df_aggregated_reduced

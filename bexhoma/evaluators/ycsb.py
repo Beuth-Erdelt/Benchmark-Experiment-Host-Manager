@@ -269,6 +269,8 @@ class ycsb(logger):
                     '[READ-MODIFY-WRITE-FAILED].95thPercentileLatency(us)':'float',
                     '[READ-MODIFY-WRITE-FAILED].99thPercentileLatency(us)':'float',
                 })
+            if 'tenant_id' not in df_typed.columns:
+                df_typed = df_typed.assign(tenant_id=-1)
             return df_typed
         except Exception as exc:
             print(exc)
@@ -311,6 +313,7 @@ class ycsb(logger):
                 'exceptions':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
+                'tenant_id': 'min',
             }
             if '[CLEANUP].Operations' in grp.columns:
                 aggregate = {**aggregate, **{
@@ -973,6 +976,45 @@ class ycsb(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+            return df_aggregated_reduced
+    def get_summary_benchmark_per_phase_multitenant(self):
+        """
+        Returns YCSB benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
+
+        Like :meth:`get_summary_benchmark_per_phase` but groups by
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'target', 'pod_count']).round(2)
+            base_cols = ['phase', 'experiment_run', "threads", "target", "benchmark_run", "pod_count", "tenant_id", "exceptions"]
+            df_aggregated_reduced = df_aggregated[[c for c in base_cols if c in df_aggregated.columns]].copy()
+            columns = [
+                "[OVERALL].Throughput(ops/sec)", "[OVERALL].RunTime(ms)",
+                "[INSERT].Return=OK", "[INSERT].99thPercentileLatency(us)",
+                "[READ].Return=OK", "[READ].99thPercentileLatency(us)",
+                "[UPDATE].Return=OK", "[UPDATE].99thPercentileLatency(us)",
+                "[SCAN].Return=OK", "[SCAN].99thPercentileLatency(us)",
+                "[READ-MODIFY-WRITE].Operations", "[READ-MODIFY-WRITE].99thPercentileLatency(us)",
+                "[INSERT-FAILED].Operations",
+                "[READ-FAILED].Operations",
+                "[UPDATE-FAILED].Operations",
+                "[SCAN-FAILED].Operations",
+                "[READ-MODIFY-WRITE-FAILED].Operations",
+            ]
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
             return df_aggregated_reduced

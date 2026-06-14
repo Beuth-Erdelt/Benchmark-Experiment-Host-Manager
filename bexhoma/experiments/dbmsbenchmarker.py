@@ -134,7 +134,10 @@ class dbmsbenchmarker(mixed):
         if self.loading_is_active():
             print("\n### Loading")
             print("\n#### Per Run\n")
-            df = self.evaluator.get_summary_loading_per_run()
+            if self.workload.get('num_tenants', 0) > 0:
+                df = self.evaluator.get_summary_loading_per_run_multitenant()
+            else:
+                df = self.evaluator.get_summary_loading_per_run()
             print(df.to_markdown(index=True, floatfmt=".2f"))
         if self.benchmarking_is_active():
             print("\n### Execution")

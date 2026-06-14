@@ -150,10 +150,14 @@ class Benchbase(Benchmark):
                 print("\n#### Planned\n")
                 for c in workflow_planned:
                     print("* DBMS", c, "- Pods", workflow_planned[c])
+        is_multitenant = experiment.num_tenants > 0
         if experiment.loading_is_active():
             print("\n### Loading")
             print("\n#### Per Run\n")
-            df_loading = self.evaluator.get_summary_loading_per_run()
+            if is_multitenant:
+                df_loading = self.evaluator.get_summary_loading_per_run_multitenant()
+            else:
+                df_loading = self.evaluator.get_summary_loading_per_run()
             print(df_loading.to_markdown(index=True, floatfmt=".2f"))
         if experiment.benchmarking_is_active():
             print("\n### Execution")
@@ -161,7 +165,10 @@ class Benchbase(Benchmark):
             df_conn = self.evaluator.get_summary_benchmark_per_connection()
             print(df_conn.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Phase\n")
-            df_phase = self.evaluator.get_summary_benchmark_per_phase()
+            if is_multitenant:
+                df_phase = self.evaluator.get_summary_benchmark_per_phase_multitenant()
+            else:
+                df_phase = self.evaluator.get_summary_benchmark_per_phase()
             print(df_phase.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df_phase.copy()
         else:

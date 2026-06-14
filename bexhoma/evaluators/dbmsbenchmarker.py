@@ -143,6 +143,8 @@ class dbmsbenchmarker(logger):
 
         Combines per-query latency statistics, geo-mean execution times, and per-connection
         timing data from the DBMSBenchmarker inspector into a single DataFrame.
+        Includes ``tenant_id`` read from the ``BEXHOMA_TENANT_ID`` loading parameter
+        (``-1`` when absent).
 
         :return: DataFrame with one row per connection/pod, or empty DataFrame on failure.
         :rtype: pandas.DataFrame
@@ -185,11 +187,23 @@ class dbmsbenchmarker(logger):
             df_row['job'] = orig_name
             df_row['connection'] = conn_name
             df_row['configuration'] = configuration
-            df_row['SF'] = float(connection_data['parameter']['connection_parameter']['loading_parameters']['SF'])
-            df_row['pods'] = int(connection_data['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
+            loading_params = connection_data['parameter']['connection_parameter'].get('loading_parameters', {})
+            df_row['SF'] = float(loading_params['SF'])
+            df_row['pods'] = int(loading_params['PODS_PARALLEL'])
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
             df_row['benchmark_run'] = int(connection_data['parameter']['numBenchmark'])
-            df_row['client'] = int(connection_data['parameter']['client'])
+            client = int(connection_data['parameter']['client'])
+            df_row['client'] = client
+            tenant_by = loading_params.get('BEXHOMA_TENANT_BY', '')
+            tenant_num = int(loading_params.get('BEXHOMA_TENANT_NUM', 0))
+            if tenant_by in ('schema', 'database') and tenant_num > 0:
+                # For schema/database tenancy the BEXHOMA_TENANT_ID in loading_params
+                # is the Python default (0), not the per-pod value computed at runtime.
+                # Use the DBMSBenchmarker client sub-folder index (0-based) instead,
+                # which is unique per tenant pod.
+                df_row['tenant_id'] = client - 1
+            else:
+                df_row['tenant_id'] = int(loading_params.get('BEXHOMA_TENANT_ID', -1))
             #last_segment = conn_name.rsplit('-', 1)[-1]
             #df_row['benchmark_run'] = int(last_segment) if last_segment.isdigit() else 1
             df_row['code'] = int(connection_data['parameter']['code'])
@@ -205,6 +219,7 @@ class dbmsbenchmarker(logger):
         benchmark_end = df_timing.groupby(group_keys)['benchmark_end'].max()
         df_benchmark = (benchmark_end - benchmark_start).to_frame(name='time [s]').round(2)
         df_benchmark['pod_count'] = df_timing.groupby(group_keys)['benchmark_end'].count()
+        df_benchmark['tenant_id'] = df_timing.groupby(group_keys)['tenant_id'].first()
         df_benchmark['SF2'] = df_benchmark.index.get_level_values('SF')
         df_benchmark['num_of_queries'] = num_of_queries
         df_benchmark['Throughput@Size'] = (
@@ -219,22 +234,27 @@ class dbmsbenchmarker(logger):
         df.drop('total_timer_execution', axis=1, inplace=True)
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
-        df = df[['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client',
-                  'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
-                  'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
+        _columns = ['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client',
+                    'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
+                    'Power@Size [~Q/h]', 'Throughput@Size', 'tenant_id', 'pod']
+        df = df[[c for c in _columns if c in df.columns]]
         return df
     def benchmarking_set_datatypes(self, df):
         """
-        Returns the DataFrame unchanged.
+        Returns the DataFrame, adding a ``tenant_id`` column (value ``-1``) when
+        the column is absent so that DataFrames loaded from older pickles remain
+        compatible with aggregation code that expects the column.
 
-        DBMSBenchmarker results are already typed by the inspector; no conversion
-        is needed.
+        DBMSBenchmarker results are otherwise already typed by the inspector;
+        no other conversion is needed.
 
         :param df: DataFrame of results.
         :type df: pandas.DataFrame
-        :return: The same DataFrame, unmodified.
+        :return: DataFrame with ``tenant_id`` guaranteed to be present.
         :rtype: pandas.DataFrame
         """
+        if 'tenant_id' not in df.columns:
+            return df.assign(tenant_id=-1)
         return df
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """
@@ -275,6 +295,7 @@ class dbmsbenchmarker(logger):
             df_stats.index = df_stats.index.map(map_index_to_queryname)
             num_of_queries = len(df_stats.index)
         df_aggregated = pd.DataFrame()
+        has_tenant_id = 'tenant_id' in df.columns
         for group_key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
                 'connection': 'max',
@@ -291,6 +312,8 @@ class dbmsbenchmarker(logger):
                 'Throughput@Size': 'max',
                 'num_of_queries': 'sum',
             }
+            if has_tenant_id:
+                aggregate['tenant_id'] = 'min'
             dict_grp = {
                 'configuration': grp['configuration'].iloc[0],
                 'experiment_run': grp['experiment_run'].iloc[0],
@@ -303,7 +326,10 @@ class dbmsbenchmarker(logger):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"
-        df_aggregated = df_aggregated[['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'pod']]
+        _columns = ['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client',
+                    'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
+                    'Power@Size [~Q/h]', 'Throughput@Size', 'tenant_id', 'pod']
+        df_aggregated = df_aggregated[[c for c in _columns if c in df_aggregated.columns]]
         return df_aggregated
     def get_total_warnings(self, query_titles=False):
         """
@@ -376,6 +402,31 @@ class dbmsbenchmarker(logger):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
+            df_aggregated_reduced = df_aggregated.copy()
+            df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
+            return df_aggregated_reduced
+    def get_summary_benchmark_per_phase_multitenant(self):
+        """
+        Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
+
+        Like :meth:`get_summary_benchmark_per_phase` but groups by
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'pod_count']).round(2)
             df_aggregated_reduced = df_aggregated.copy()
             df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
