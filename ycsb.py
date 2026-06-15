@@ -40,6 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('-xli',   '--xlogging-interval', help='status logging interval in seconds', default=10, dest='scaling_logging')
     parser.add_argument('-xio',   '--extra-insert-order', help='key insertion order: hashed (uniform) or ordered (sequential)', default='hashed', choices=['hashed', 'ordered'])
     parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnlf/-xnbf factors to get per-pod target', default="16384", dest='target_base')
+    parser.add_argument('-xmet',  '--xmax-execution-time', help='maximum execution time in seconds for loading and benchmarking (0 = no limit)', default=0, type=int, dest='max_execution_time')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -94,6 +95,7 @@ if __name__ == '__main__':
     scaling_logging = int(args.scaling_logging) # ycsb expects seconds? *1000 # adjust unit to miliseconds
     extra_insert_order = args.extra_insert_order                 # insert keys by ordering or by hashed value
     workload = args.workload
+    max_execution_time = int(args.max_execution_time)
     ##############
     ### set cluster
     ##############
@@ -164,6 +166,7 @@ if __name__ == '__main__':
         YCSB_BATCHSIZE = batchsize,
         YCSB_STATUS_INTERVAL = scaling_logging,
         YCSB_INSERTORDER = extra_insert_order,
+        YCSB_MAX_EXECUTION = max_execution_time,
     )
     experiment.set_default_benchmarking_parameters(
         SF = SF,
@@ -174,6 +177,7 @@ if __name__ == '__main__':
         YCSB_BATCHSIZE = batchsize,
         YCSB_STATUS_INTERVAL = scaling_logging,
         YCSB_INSERTORDER = extra_insert_order,
+        YCSB_MAX_EXECUTION = max_execution_time,
     )
     ##############
     ### add configs of dbms to be tested
