@@ -34,12 +34,16 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
-  -rr 64Gi -lr 64Gi \
+bexhoma tpch \
+  -sf 1 \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
   -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_compare.log
 ```
@@ -412,14 +416,19 @@ options:
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -rr 64Gi -lr 64Gi \
+  -sf 10 \
   -nlp 8 \
   -nlt 8 \
-  -sf 10 \
   -xii -xic -xis \
-  -m -mc \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 ```
@@ -598,14 +607,17 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -nlp 8 \
-  -nlt 8 \
   -sf 1 \
-  -xii -xic -xis \
   -nc 1 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 ```
@@ -772,14 +784,18 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
+  -sf 1 \
+  -nc 2 \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
   -xii -xic -xis \
-  -nc 2 \
-  -rst shared -rss 50Gi \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_storage.log
 ```
@@ -966,14 +982,19 @@ TPC-H supports scaling factors that are fractional.
 Example: SF=0.1
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
+  -sf 0.1 \
+  -nc 2 \
   -nlp 8 \
   -nlt 8 \
-  -sf 0.1 \
   -xii -xic -xis \
-  -nc 2 \
-  -rst shared -rss 5Gi -rsr \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 5Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 ```
@@ -1173,16 +1194,24 @@ BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 
-bexhoma tpch -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 100 \
-  -xii -xic -xis \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+bexhoma tpch \
   -dbms MonetDB \
-  -t 3600 -xdt \
-  -rst shared -rss 1000Gi \
+  -sf 100 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 3600 \
+  -lr 256Gi \
+  -rr 256Gi \
+  -rss 1000Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 ```
 
@@ -1400,16 +1429,24 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-bexhoma tpch -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 100 \
-  -xii -xic -xis \
-  -nlp 8 -nlt 8 \
-  -nc 2 -ne 1,1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+bexhoma tpch \
   -dbms MonetDB \
-  -t 3600 -xdt \
-  -rst shared -rss 1000Gi \
+  -sf 100 \
+  -nc 2 \
+  -ne 1,1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 3600 \
+  -lr 256Gi \
+  -rr 256Gi \
+  -rss 1000Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 ```
 
@@ -1620,16 +1657,24 @@ BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 
-bexhoma tpch -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 100 \
-  -xii -xic -xis \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,3 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+bexhoma tpch \
   -dbms MonetDB \
-  -t 3600 -xdt \
-  -rst shared -rss 1000Gi \
+  -sf 100 \
+  -nc 1 \
+  -ne 1,1,3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 3600 \
+  -lr 256Gi \
+  -rr 256Gi \
+  -rss 1000Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 ```
 

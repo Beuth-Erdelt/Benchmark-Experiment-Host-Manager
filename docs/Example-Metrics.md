@@ -26,14 +26,19 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -dbms PostgreSQL \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 160 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 ```
@@ -213,15 +218,19 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
-  -xsd 5 \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -m -mc -ma \
+  -xlat \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log
 ```
@@ -343,14 +352,20 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
+bexhoma tpch \
   -dbms PostgreSQL \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
+  -xdt \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
 ```
@@ -537,14 +552,20 @@ No warnings
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
+bexhoma tpcds \
   -dbms PostgreSQL \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
+  -xdt \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
 ```
@@ -809,20 +830,24 @@ No warnings
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
+  -sf 3 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 2,3 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -xnbf 2,3 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log
 ```
@@ -1025,14 +1050,19 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MySQL \
   -sf 16 \
   -xsd 5 \
-  -dbms MySQL \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 160 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 ```
@@ -1197,15 +1227,20 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr -lr 64Gi \
-  -sf 16 \
-  -xlat \
-  -xsd 5 \
+bexhoma hammerdb \
   -dbms MySQL \
+  -sf 16 \
+  -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -m -mc -ma \
+  -xlat \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log
 ```
@@ -1327,14 +1362,20 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
+bexhoma tpch \
   -dbms MySQL \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
+  -xdt \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
 ```
@@ -1487,15 +1528,21 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
-  -rr 64Gi -lr 64Gi \
+bexhoma tpcds \
   -dbms MySQL \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
+  -xdt \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
 ```
@@ -1716,20 +1763,25 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr -lr 64Gi \
-  -sf 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms MySQL \
+  -sf 3 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 2,3 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -xnbf 2,3 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log
 ```
@@ -1917,24 +1969,28 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xop 10 \
-  -nw 3 \
-  -nwr 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms CockroachDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 10 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -nw 3 \
+  -nwr 3 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log
 ```
 
@@ -2111,17 +2167,21 @@ YCSB SF=10
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms CockroachDB \
   -sf 16 \
   -xsd 5 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -m -mc -ma \
+  -nw 3 \
+  -nwr 3 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
 ```
@@ -2320,24 +2380,27 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma ycsb -tr \
-  -sf 1 \
-  -xop 10 \
-  -nw 3 \
-  -nwr 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms Redis \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -nw 3 \
+  -nwr 1 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log
 ```
 
@@ -2509,24 +2572,28 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 1 \
-  -nw 3 \
-  -nwr 3 \
-  -xnsr 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms TiDB \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -xnsr 3 \
+  -nw 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   run &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log
 ```
 
@@ -2778,18 +2845,21 @@ YCSB SF=1
 Example:
 ```bash
 
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms TiDB \
   -sf 16 \
   -xsd 5 \
-  -nw 3 \
-  -nwr 3 \
-  -xnsr 3 \
-  -dbms TiDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -m -mc -ma \
+  -xnsr 3 \
+  -nw 3 \
+  -nwr 3 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 ```
 
@@ -3122,26 +3192,31 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xop 16 \
-  --workload c \
+bexhoma ycsb \
   -dbms PGBouncer \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rr 64Gi -lr 64Gi \
+  -sf 16 \
+  -xwl c \
   -xtb 16384 \
+  -xnbf 11 \
+  -xnlf 11 \
+  -nc 1 \
+  -ne 1 \
   -nlp 16 \
   -nlt 64 \
-  -xnlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -xnbf 11 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
   -xnpp 4 \
   -xnpi 128 \
   -xnpo 64 \
+  -xop 16 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 ```
 
@@ -3274,19 +3349,23 @@ TEST passed: Execution Phase: contains no FAILED column
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PGBouncer \
   -sf 16 \
   -xsd 10 \
-  -xconn \
-  -dbms PGBouncer \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
   -xnpp 2 \
   -xnpi 32 \
   -xnpo 32 \
-  -m -mc -ma \
+  -xconn \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
 ```
@@ -3453,21 +3532,25 @@ Make sure to have YugabyteDB installed [externally](https://bexhoma.readthedocs.
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms YugabyteDB \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 ```
 
@@ -3619,15 +3702,19 @@ YCSB SF=1
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms YugabyteDB \
   -sf 16 \
   -xsd 5 \
-  -dbms YugabyteDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -m -mc -ma \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 ```
 

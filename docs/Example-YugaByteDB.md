@@ -108,22 +108,25 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 ```
 
@@ -299,23 +302,26 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -sl \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 ```
 
@@ -424,23 +430,27 @@ Persistent Storage is not managed by bexhoma, but by YugabyteDB.
 We can add the request for a PVC to the experiment setup.
 Make sure to reset the database before this test as it should not contain data from previous test runs.
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms YugabyteDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 1Gi \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 ```
 This will add a PVC to the Dummy DBMS.
@@ -654,16 +664,19 @@ Watch for
 TPC-C is performed at 16 warehouses. The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms YugabyteDB \
   -sf 16 \
   -xsd 5 \
-  -dbms YugabyteDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 ```
 
@@ -815,18 +828,21 @@ Make sure to reset the database before this test as it should not contain data f
 
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 128 \
-  -xli 30 \
-  -xsd 20 \
-  -xkey \
+bexhoma benchbase \
   -dbms YugabyteDB \
+  -sf 128 \
+  -xsd 20 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,5,10 \
   -nbt 1280 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -xkey \
+  -xli 30 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 ```
 

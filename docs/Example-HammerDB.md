@@ -41,13 +41,15 @@ For performing the experiment we can run the [hammerdb file](https://github.com/
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_scale.log
 ```
@@ -320,15 +322,18 @@ We in the following also activate measurement of latencies with `-xlat`.
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -xlat \
-  -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -m -mc \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log
 ```
@@ -474,16 +479,21 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
+  -nc 2 \
+  -ne 1 \
   -nlt 8 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -xlat \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_storage.log
 ```
 
@@ -619,20 +629,24 @@ kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 The keying and thinking times can be activated via `-xkey`:
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 160 \
-  -xsd 30 \
-  -xlat \
-  -xkey \
+bexhoma hammerdb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -nlt 8 \
-  -nbp 1,2,5,10 \
-  -nbt 1600 \
+  -sf 16 \
+  -xsd 20 \
+  -nc 2 \
   -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 160 \
+  -xkey \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_keytime.log
 ```
 

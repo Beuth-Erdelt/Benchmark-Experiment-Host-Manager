@@ -42,25 +42,28 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
+bexhoma ycsb \
+  -dbms Citus \
   -sf 1 \
-  -xop 10 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
-  --workload a \
-  -dbms Citus \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -xnlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
   run &>$LOG_DIR/doc_ycsb_citus_1.log
 ```
 
@@ -294,26 +297,30 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
+bexhoma ycsb \
+  -dbms Citus \
   -sf 1 \
-  -xop 10 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 2 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
-  --workload a \
-  -dbms Citus \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 50Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 16384 \
-  -nlp 8 \
-  -nlt 64 \
-  -xnlf 4 \
-  -nbp 1 \
-  -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 50Gi \
   run &>$LOG_DIR/doc_ycsb_citus_2.log
 ```
 The following status shows we have one volume of type `shared`.
@@ -625,17 +632,19 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 Citus has 3 workers.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms Citus \
   -sf 16 \
   -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2 \
+  -nbt 16 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
-  -dbms Citus \
-  -nbp 1,2 \
-  -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_1.log
 ```
@@ -810,20 +819,24 @@ kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-3
 The benchmark is run via
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms Citus \
   -sf 128 \
   -xsd 20 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2,4,8 \
+  -nbt 64 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -dbms Citus \
-  -nbp 1,2,4,8 \
-  -nbt 64 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 100Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 100Gi \
   run &>$LOG_DIR/doc_benchbase_citus_2.log
 ```
 
@@ -1246,23 +1259,27 @@ Each thread also gets assigned a fixed range of districts per warehouse.
 Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms Citus \
   -sf 128 \
   -xsd 20 \
-  -xli 30 \
+  -xtb 1024 \
+  -xnbf 4 \
+  -nc 2 \
+  -nbp 1,2,5,10 \
+  -nbt 1280 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
   -xkey \
-  -dbms Citus \
-  -nbp 1,2,5,10 \
-  -nbt 1280 \
-  -xnbf 4 \
-  -xtb 1024 \
-  -m -mc \
-  -nc 2 \
+  -xli 30 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 100Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 100Gi \
   run &>$LOG_DIR/doc_benchbase_citus_3.log
 ```
 
@@ -1951,19 +1968,21 @@ Citus has 3 workers.
 
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms Citus \
-  -nw 3 \
-  -nwr 1 \
-  -nws 48 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
+  -nc 1 \
+  -ne 1 \
   -nlt 8 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  -xlat \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_1.log
 ```
 
@@ -2064,23 +2083,27 @@ TEST passed: Workflow as planned
 ### HammerDB More Complex Example
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms Citus \
   -sf 128 \
   -xsd 30 \
-  -xlat \
-  -nw 4 \
-  -nwr 1 \
-  -nws 48 \
-  -dbms Citus \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 1 \
+  -ne 1 \
   -nlp 1 \
   -nlt 128 \
   -nbp 1,2,4,8 \
   -nbt 128 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 50Gi \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_2.log
 ```
 
@@ -2486,22 +2509,27 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s 
 
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms Citus \
   -sf 500 \
   -xsd 20 \
-  -nw 4 \
-  -nwr 1 \
-  -nws 48 \
-  -dbms Citus \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -nc 2 \
+  -ne 1 \
   -nlp 1 \
   -nlt 250 \
   -nbp 1,2,5,10 \
   -nbt 250 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 200Gi \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 200Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_3.log
 ```
 
@@ -3169,20 +3197,22 @@ In a correlated subquery there cannot be a replicated table, so we have to rewri
 
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
+bexhoma tpch \
+  -dbms Citus \
   -sf 1 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nbp 1 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -xdt \
-  -t 1200 \
-  -dbms Citus \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -xii -xic -xis \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
-  -nc 1 \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_1.log
 ```
 
@@ -3356,21 +3386,26 @@ Then we run TPC-H Power Test at SF=10.
 Note that this takes a lot of disk space including for indexes.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
+bexhoma tpch \
+  -dbms Citus \
   -sf 10 \
+  -nc 2 \
+  -ne 1,1 \
+  -nlp 8 \
+  -nbp 1 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -xdt \
-  -t 7200 \
-  -dbms Citus \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -xii -xic -xis \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1,1 \
-  -nc 2 \
-  -rst shared -rss 50Gi \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 14400 \
+  -tr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_2.log
 ```
 
@@ -3785,21 +3820,26 @@ kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 The experiment runs like this:
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
+bexhoma tpch \
+  -dbms Citus \
   -sf 10 \
+  -nc 2 \
+  -ne 1,1 \
+  -nlp 8 \
+  -nbp 1 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -xdt \
-  -t 7200 \
-  -dbms Citus \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -xcol \
-  -nlp 8 \
-  -nbp 1 \
-  -ne 1,1 \
-  -nc 2 \
-  -rst shared -rss 50Gi \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 14400 \
+  -tr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_3.log
 ```
 

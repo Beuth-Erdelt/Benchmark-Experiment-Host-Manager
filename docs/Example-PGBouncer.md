@@ -38,25 +38,30 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xop 16 \
-  --workload c \
+bexhoma ycsb \
   -dbms PGBouncer \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
+  -xwl c \
   -xtb 16384 \
+  -xnbf 11 \
+  -xnlf 11 \
+  -nc 1 \
+  -ne 1 \
   -nlp 16 \
   -nlt 64 \
-  -xnlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -xnbf 11 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
   -xnpp 4 \
   -xnpi 128 \
   -xnpo 64 \
+  -xop 16 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
 ```
 
@@ -263,26 +268,33 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xop 16 \
-  --workload c \
+bexhoma ycsb \
   -dbms PGBouncer \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
+  -xwl c \
   -xtb 16384 \
+  -xnbf 11 \
+  -xnlf 11 \
+  -nc 2 \
+  -ne 1 \
   -nlp 16 \
   -nlt 64 \
-  -xnlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -xnbf 11 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
   -xnpp 4 \
   -xnpi 128 \
   -xnpo 64 \
-  -rst shared -rss 100Gi \
+  -xop 16 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 ```
 The following status shows we have one volume of type `shared`.
@@ -515,15 +527,17 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 We activate the new-connection-per-transaction feature with `-xconn`.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 10 \
-  -xconn \
-  -dbms PostgreSQL \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -xconn \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 ```
@@ -631,18 +645,20 @@ We activate the new-connection-per-transaction feature.
 This time there will be a connection pool of size 32, handled by 2 pods of PGBouncer.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PGBouncer \
   -sf 16 \
   -xsd 10 \
-  -xconn \
-  -dbms PGBouncer \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
   -xnpp 2 \
   -xnpi 32 \
   -xnpo 32 \
+  -xconn \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 ```

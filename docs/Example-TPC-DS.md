@@ -53,13 +53,17 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr \
-  -rr 64Gi -lr 64Gi \
+bexhoma tpcds \
+  -sf 1 \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
-  -t 1200 \
   -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_compare.log
 ```
@@ -535,15 +539,20 @@ options:
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpcds \
   -dbms MonetDB \
-  -rr 64Gi -lr 64Gi \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
 ```
@@ -798,15 +807,18 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpcds \
   -dbms MonetDB \
-  -nlp 8 \
-  -nlt 8 \
   -sf 1 \
-  -t 1200 \
-  -xii -xic -xis \
   -nc 1 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
 ```
@@ -1048,15 +1060,19 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpcds \
   -dbms MonetDB \
+  -sf 1 \
+  -nc 2 \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
-  -t 1200 \
   -xii -xic -xis \
-  -nc 2 \
-  -rst shared -rss 10Gi \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rss 10Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 ```
@@ -1326,17 +1342,23 @@ Here, we run it at TPC-DS SF=10 in MonetDB:
 
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr \
+bexhoma tpcds \
   -dbms MonetDB \
-  -rr 64Gi -lr 64Gi \
+  -sf 10 \
+  -ne 1,1 \
   -nlp 8 \
   -nlt 8 \
-  -sf 10 \
   -xii -xic -xis \
-  -ne 1,1 \
-  -m -mc \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 50Gi \
   profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
 ```
 
@@ -1950,16 +1972,24 @@ BEXHOMA_MS=1
 
 mkdir -p $LOG_DIR
 
-bexhoma tpcds -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 30 \
-  -xii -xic -xis \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1 \
+bexhoma tpcds \
   -dbms MonetDB \
-  -rr 1024Gi -lr 1024Gi \
-  -t 14400 -xdt \
-  -rst shared -rss 1000Gi -rsr \
+  -sf 30 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 14400 \
+  -lr 1024Gi \
+  -rr 1024Gi \
+  -rsr \
+  -rss 1000Gi \
+  -rst shared \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 ```
 
@@ -2206,16 +2236,23 @@ We then run two power tests, one after the other (`-ne 1,1`), and shut down the 
 This is repeated 2 times (`-nc`).
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 30 \
-  -xii -xic -xis \
-  -nlp 8 -nlt 8 \
-  -nc 2 -ne 1,1 \
+bexhoma tpcds \
   -dbms MonetDB \
-  -rr 1024Gi -lr 1024Gi \
-  -t 14400 -xdt \
-  -rst shared -rss 1000Gi \
+  -sf 30 \
+  -nc 2 \
+  -ne 1,1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 14400 \
+  -lr 1024Gi \
+  -rr 1024Gi \
+  -rss 1000Gi \
+  -rst shared \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 ```
 
@@ -2499,16 +2536,23 @@ We then run two power tests, one after the other, and then a throughput test wit
 
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 30 \
-  -xii -xic -xis \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,3 \
+bexhoma tpcds \
   -dbms MonetDB \
-  -rr 1024Gi -lr 1024Gi \
-  -t 14400 -xdt \
-  -rst shared -rss 1000Gi \
+  -sf 30 \
+  -nc 1 \
+  -ne 1,1,3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 14400 \
+  -lr 1024Gi \
+  -rr 1024Gi \
+  -rss 1000Gi \
+  -rst shared \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 ```
 

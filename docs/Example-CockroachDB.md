@@ -48,24 +48,27 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  -nw 3 \
-  -nwr 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms CockroachDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -nw 3 \
+  -nwr 3 \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
 ```
 
@@ -277,25 +280,30 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 1 \
-  -nw 3 \
-  -nwr 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms CockroachDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 50Gi -rsr \
+  -nw 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
 ```
 The following status shows we have one volume of type `shared`.
@@ -513,24 +521,27 @@ It can be activated by `-m -mc -ma`.
 See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for some example definitions.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xop 10 \
-  -nw 3 \
-  -nwr 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms CockroachDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 10 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -nw 3 \
+  -nwr 3 \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
 ```
 
@@ -730,16 +741,18 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 CockroachDB has 3 workers.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms CockroachDB \
   -sf 16 \
   -xsd 5 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -nw 3 \
+  -nwr 3 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 ```
@@ -902,18 +915,22 @@ TPC-C is performed at 128 warehouses.
 The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms CockroachDB \
   -sf 128 \
   -xsd 10 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,4,8 \
   -nbt 1280 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -nw 3 \
+  -nwr 3 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
 ```
 
@@ -1236,19 +1253,25 @@ TPC-C is performed at 128 warehouses.
 The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms CockroachDB \
   -sf 128 \
   -xsd 10 \
-  -nw 3 \
-  -nwr 3 \
-  -dbms CockroachDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,4,8 \
   -nbt 1280 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -nw 3 \
+  -nwr 3 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 100Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc -ma \
-  -rst shared -rss 100Gi -rsr \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
 ```
 

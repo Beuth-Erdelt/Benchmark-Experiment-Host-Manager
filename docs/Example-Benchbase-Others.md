@@ -42,15 +42,17 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xsd 5 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xbt twitter \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -xbt twitter \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 ```
@@ -166,17 +168,22 @@ You can find the output of the files in the result folder.
 
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 1600 \
-  -xsd 20 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1600 \
+  -xbt twitter \
+  -xsd 20 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,4,8 \
   -nbt 160 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -xbt twitter \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 ```
 
@@ -409,15 +416,17 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xsd 5 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 10 \
+  -xbt chbenchmark \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1 \
   -nbt 100 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -xbt chbenchmark \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 ```
@@ -533,15 +542,19 @@ You can find the output of the files in the result folder.
 
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 100 \
-  -xsd 20 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 100 \
+  -xbt chbenchmark \
+  -xsd 20 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,5,10 \
   -nbt 100 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -xbt chbenchmark \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 ```
@@ -725,17 +738,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -xsd 5 \
-  --benchmark ycsb \
-  --workload c \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl c \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 ```
@@ -860,17 +874,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -xsd 5 \
-  --benchmark ycsb \
-  --workload a \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl a \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 ```
@@ -979,17 +994,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -xsd 5 \
-  --benchmark ycsb \
-  --workload b \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl b \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 ```
@@ -1100,17 +1116,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -xsd 5 \
-  --benchmark ycsb \
-  --workload d \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl d \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 ```
@@ -1203,17 +1220,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -xsd 5 \
-  --benchmark ycsb \
-  --workload e \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl e \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 ```
@@ -1306,17 +1324,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -xsd 5 \
-  --benchmark ycsb \
-  --workload f \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl f \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 ```

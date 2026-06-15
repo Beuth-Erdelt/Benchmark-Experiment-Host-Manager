@@ -47,24 +47,27 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 1 \
-  -nw 3 \
-  -nwr 3 \
-  -xnsr 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms TiDB \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xnsr 3 \
+  -nw 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   run &>$LOG_DIR/doc_ycsb_tidb_1.log
 ```
 
@@ -389,18 +392,21 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 TiDB has 3 workers (TiDB, PD and TiKV).
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms TiDB \
   -sf 16 \
   -xsd 5 \
-  -nw 3 \
-  -nwr 3 \
-  -xnsr 3 \
-  -dbms TiDB \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -m -mc \
+  -xnsr 3 \
+  -nw 3 \
+  -nwr 3 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   run &>$LOG_DIR/doc_benchbase_tidb_1.log
 ```
 

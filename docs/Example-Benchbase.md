@@ -44,14 +44,16 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -dbms PostgreSQL \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 160 \
-  -xnbf 16 \
-  -xtb 1024 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 ```
@@ -337,15 +339,18 @@ options:
 Example:
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -dbms PostgreSQL \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 160 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 ```
@@ -484,16 +489,19 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -dbms PostgreSQL \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nc 2 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 16 \
-  -xtb 1024 \
-  -nc 2 \
-  -rst shared -rss 50Gi \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 ```
@@ -625,21 +633,26 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
 ```
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -rr 128Gi -lr 128Gi \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 160 \
   -xsd 30 \
-  -xkey \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms PostgreSQL \
   -xtb 1024 \
+  -xnbf 1 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1,2,5,10 \
   -nbt 1600 \
-  -xnbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -xkey \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rss 100Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 ```
 

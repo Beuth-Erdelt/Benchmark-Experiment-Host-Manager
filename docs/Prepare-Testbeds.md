@@ -110,10 +110,13 @@ Starts PostgreSQL without loading any data.
 After this completes you can connect to the instance and run queries manually.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  --workload c \
-  -m -mc \
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -xwl c \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/test_ycsb_start_postgresql.log
 ```
@@ -125,11 +128,15 @@ The summary confirms the SUT is running and shows the port-forward command.
 Starts PostgreSQL and imports YCSB data using 8 parallel loader pods with 64 threads each.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  --workload c \
-  -m -mc \
-  -nlp 8 -nlt 64 \
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -xwl c \
+  -nlp 8 \
+  -nlt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_ycsb_load_postgresql.log
 ```
@@ -146,11 +153,18 @@ The **Ingestion** tables show how much CPU and RAM the SUT and loader consumed.
 Full experiment: loads data and then runs YCSB workload C with 8 benchmarker pods.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  --workload c \
-  -m -mc \
-  -nlp 8 -nlt 64 -nbp 8 -nbt 64 -ss \
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -xwl c \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 8 \
+  -nbt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -ss \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_run_postgresql.log
 ```
@@ -173,9 +187,12 @@ Configurations are numbered sequentially per DBMS — `PostgreSQL-1`, `PostgreSQ
 ### Start DBMS
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/test_benchbase_start_postgresql.log
 ```
@@ -185,10 +202,14 @@ bexhoma benchbase -ms $BEXHOMA_MS -tr \
 Imports TPC-C data (scale factor 1) using 8 parallel loader pods.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -nlp 8 -nlt 64 \
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -nlp 8 \
+  -nlt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_benchbase_load_postgresql.log
 ```
@@ -200,10 +221,17 @@ The **Loading** table reports `Throughput [SF/h]` — scale factors loaded per h
 Loads data with 1 pod (Benchbase loads serially by design) and runs the workload with 8 benchmarker pods for 5 minutes.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -nlp 1 -nlt 64 -nbp 8 -nbt 64 -ss \
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 64 \
+  -nbp 8 \
+  -nbt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -ss \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_postgresql.log
 ```
@@ -223,9 +251,12 @@ Configurations are numbered sequentially per DBMS — `PostgreSQL-1`, `PostgreSQ
 ### Start DBMS
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
+bexhoma hammerdb \
+  -dbms PostgreSQL \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/test_hammerdb_start_postgresql.log
 ```
@@ -236,10 +267,14 @@ Imports TPC-C data (1 warehouse = scale factor 1) using a single loader pod.
 HammerDB's loader is inherently single-threaded, so `-nlp 1 -nlt 1` is typical.
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -nlp 1 -nlt 1 \
+bexhoma hammerdb \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_hammerdb_load_postgresql.log
 ```
@@ -251,10 +286,17 @@ The **Loading** table reports `Imported warehouses [1/h]`.
 Loads data and runs TPC-C for 5 minutes with 64 virtual users.
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
+bexhoma hammerdb \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -ss \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_run_postgresql.log
 ```
@@ -272,9 +314,12 @@ After loading, the DBMSBenchmarker tool runs the 22 queries and records per-quer
 ### Start DBMS
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
+bexhoma tpch \
+  -dbms PostgreSQL \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/test_tpch_start_postgresql.log
 ```
@@ -285,10 +330,15 @@ Generates and loads TPC-H data at scale factor 1.
 The flags `-xii -xic -xis` trigger index creation, constraint application, and statistics gathering after the raw data is ingested.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -xii -xic -xis -nlp 1 -nlt 1 \
+bexhoma tpch \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpch_load_postgresql.log
 ```
@@ -308,10 +358,18 @@ The **Loading** table breaks down time into phases:
 Loads TPC-H data and runs all 22 queries once.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -xii -xic -xis -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+bexhoma tpch \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -xii -xic -xis \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -ss \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_run_postgresql.log
 ```
@@ -334,9 +392,12 @@ Its structure mirrors TPC-H: `dbgen2` generates data, a loader imports it, DBMSB
 ### Start DBMS
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
+bexhoma tpcds \
+  -dbms PostgreSQL \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/test_tpcds_start_postgresql.log
 ```
@@ -344,10 +405,15 @@ bexhoma tpcds -ms $BEXHOMA_MS -tr \
 ### Start DBMS and Load Data
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -xii -xic -xis -nlp 1 -nlt 1 \
+bexhoma tpcds \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpcds_load_postgresql.log
 ```
@@ -358,10 +424,18 @@ Loads TPC-DS data and runs all 99 queries.
 Some queries may fail on certain DBMS (e.g., Q90 raises a division-by-zero on PostgreSQL at SF=1); these are flagged in the **Errors** section and in **Tests**.
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  --dbms PostgreSQL \
-  -m -mc \
-  -xii -xic -xis -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+bexhoma tpcds \
+  -dbms PostgreSQL \
+  -nlp 1 \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -xii -xic -xis \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -ss \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_run_postgresql.log
 ```

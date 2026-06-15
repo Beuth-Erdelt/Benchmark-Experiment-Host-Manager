@@ -46,22 +46,24 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms Redis \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xop 10 \
+  -m \
+  -mc \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_1.log
 ```
 
@@ -227,23 +229,25 @@ In the following example, this means that used memory, CPU time, etc. are summed
 
 If you want to deploy Redis as a cluster, you can adjust the number of workers `-nw` when calling the script:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  -nw 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms Redis \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -nw 3 \
+  -xop 10 \
+  -m \
+  -mc \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_2.log
 ```
 
@@ -379,24 +383,26 @@ We can set the number of replicas with the parameter `-nwr`.
 Note that Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` creates 6 worker nodes, 3 for sharding and another 3 for the (single) replicas.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  -nw 3 \
-  -nwr 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms Redis \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -nw 3 \
+  -nwr 1 \
+  -xop 10 \
+  -m \
+  -mc \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_3.log
 ```
 
@@ -562,23 +568,27 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms Redis \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 50Gi \
+  -xop 10 \
+  -m \
+  -mc \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_4.log
 ```
 
@@ -711,24 +721,28 @@ Similarly we can make a Redis cluster to store the database in persistent storag
 Here, we remove existing storage via `-rsr` to start with a clean copy.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xop 10 \
-  -nw 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms Redis \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 1 \
+  -xwl a \
   -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -xnbf 4 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 50Gi -rsr \
+  -nw 3 \
+  -xop 10 \
+  -m \
+  -mc \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_5.log
 ```
 
