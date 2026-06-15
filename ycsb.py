@@ -20,27 +20,26 @@ urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
-    description = """Perform YCSB benchmarks in a Kubernetes cluster.
-    Number of rows and operations is SF*1,000,000.
-    This installs a clean copy for each target and split of the driver.
-    Optionally monitoring is activated.
+    description = """Run YCSB key-value benchmarks against a DBMS in Kubernetes.
+    SF controls dataset size: SF million rows and (by default) SF million operations.
+    Supports throughput targets, connection pooling, and multiple workload types.
     """
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
-    parser.add_argument('mode', help='import YCSB data or run YCSB queries', choices=['run', 'start', 'load', 'summary'], default='run')
-    parser.add_argument('-dbms', '--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB', 'Dragonfly'], default=[], nargs='*')
-    parser.add_argument('-xnlf',  '--xnum-loading-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1", dest='num_loading_target_factors')
-    parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of sut pods per configuration', default=1, dest='num_sut_replicas')
-    parser.add_argument('-xnbf',  '--xnum-benchmarking-target-factors', help='comma separated list of factors of 16384 ops as target - default range(1,9)', default="1", dest='num_benchmarking_target_factors')
-    parser.add_argument('-xnpp',  '--xnum-pooling-pods', help='comma separated list of number of pooling pods per configuration', default="", dest='num_pooling_pods')
-    parser.add_argument('-xnpi',  '--xnum-pooling-in', help='comma separated list of max connections into a connection pooler', default="", dest='num_pooling_in')
-    parser.add_argument('-xnpo',  '--xnum-pooling-out', help='comma separated list of max connections out of a connection pooler', default="", dest='num_pooling_out')
-    parser.add_argument('-xwl',   '--xworkload', help='YCSB default workload', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='', dest='workload')
-    parser.add_argument('-xop',   '--xnum-operations', help='number of operations in millions (=SF if not set)', default=None, dest='scaling_factor_operations')
-    parser.add_argument('-xsbs',  '--xscaling-batchsize', help='batch size', default="", dest='scaling_batchsize')
-    parser.add_argument('-xli',   '--xlogging-interval', help='logging status interval in seconds', default=10, dest='scaling_logging')
-    parser.add_argument('-xio',   '--extra-insert-order', help='how to insert keys', default='hashed', choices=['hashed', 'ordered'])
-    parser.add_argument('-xtb',   '--xtarget-base', help='ops as target, base for factors - default 16384 = 2**14', default="16384", dest='target_base')
+    parser.add_argument('mode', help='experiment phase: load data, run the benchmark, start SUT only, or summarize results', choices=['run', 'start', 'load', 'summary'], default='run')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB', 'Dragonfly'], default=[], nargs='*')
+    parser.add_argument('-xnlf',  '--xnum-loading-target-factors', help='comma-separated multipliers for the loading ops target (target = -xtb × factor)', default="1", dest='num_loading_target_factors')
+    parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
+    parser.add_argument('-xnbf',  '--xnum-benchmarking-target-factors', help='comma-separated multipliers for the benchmarking ops target (target = -xtb × factor)', default="1", dest='num_benchmarking_target_factors')
+    parser.add_argument('-xnpp',  '--xnum-pooling-pods', help='comma-separated list of connection-pooler pod counts', default="", dest='num_pooling_pods')
+    parser.add_argument('-xnpi',  '--xnum-pooling-in', help='comma-separated list of max inbound connections per pooler pod', default="", dest='num_pooling_in')
+    parser.add_argument('-xnpo',  '--xnum-pooling-out', help='comma-separated list of max outbound connections per pooler pod (to the DBMS)', default="", dest='num_pooling_out')
+    parser.add_argument('-xwl',   '--xworkload', help='YCSB workload letter (a=read-heavy, b=read-mostly, c=read-only, d=read-latest, e=scan, f=read-modify-write)', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='', dest='workload')
+    parser.add_argument('-xop',   '--xnum-operations', help='total operation count in millions (overrides SF for operations; default: use SF)', default=None, dest='scaling_factor_operations')
+    parser.add_argument('-xsbs',  '--xscaling-batchsize', help='batch size for insert operations', default="", dest='scaling_batchsize')
+    parser.add_argument('-xli',   '--xlogging-interval', help='status logging interval in seconds', default=10, dest='scaling_logging')
+    parser.add_argument('-xio',   '--extra-insert-order', help='key insertion order: hashed (uniform) or ordered (sequential)', default='hashed', choices=['hashed', 'ordered'])
+    parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnlf/-xnbf factors to get per-pod target', default="16384", dest='target_base')
     # evaluate args
     args = parser.parse_args()
     if args.debug:

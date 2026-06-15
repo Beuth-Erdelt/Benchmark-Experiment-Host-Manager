@@ -29,21 +29,24 @@ urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 if __name__ == '__main__':
-    description = """Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk)."""
+    description = """Run TPC-H benchmark queries against a DBMS in Kubernetes.
+    Data is generated on a shared distributed filesystem and loaded in parallel.
+    Supports optional index, constraint, and statistics creation; multi-stream query ordering.
+    """
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
-    parser.add_argument('mode', help='profile the import or run the TPC-H queries', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='DBMS', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB'], default=[], nargs='*')
-    parser.add_argument('-xlit',  '--xlimit-import-table', help='limit import to one table, name of this table', default='', dest='limit_import_table')
-    parser.add_argument('-xdt',   '--xdata-transfer', help='activates transfer of data per query (not only execution)', action='store_true', default=False, dest='datatransfer')
-    parser.add_argument('-xqr',   '--xnum-query-runs', help='number of runs per query', default=1, dest='num_run')
-    parser.add_argument('-xnls',  '--xnum-loading-split', help='portion of loaders that should run in parallel', default="1", dest='num_loading_split')
-    parser.add_argument('-xii',   '--xinit-indexes', help='adds indexes to tables after ingestion', action='store_true', default=False, dest='init_indexes')
-    parser.add_argument('-xic',   '--xinit-constraints', help='adds constraints to tables after ingestion', action='store_true', default=False, dest='init_constraints')
-    parser.add_argument('-xis',   '--xinit-statistics', help='recomputes statistics of tables after ingestion', action='store_true', default=False, dest='init_statistics')
-    parser.add_argument('-xcol',  '--xinit-columns', help='uses columnar storage (for Citus)', action='store_true', default=False, dest='init_columns')
-    parser.add_argument('-xrcp',  '--xrecreate-parameter', help='recreate parameter for randomized queries', action='store_true', default=False, dest='recreate_parameter')
-    parser.add_argument('-xshq',  '--xshuffle-queries', help='have different orderings per stream', action='store_true', default=False, dest='shuffle_queries')
+    parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (useful for partial re-loads)', default='', dest='limit_import_table')
+    parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
+    parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
+    parser.add_argument('-xnls',  '--xnum-loading-split', help='number of parallel loader batches (total loaders ÷ this = batch size)', default="1", dest='num_loading_split')
+    parser.add_argument('-xii',   '--xinit-indexes', help='create indexes on all tables after loading', action='store_true', default=False, dest='init_indexes')
+    parser.add_argument('-xic',   '--xinit-constraints', help='add primary-key and foreign-key constraints after loading', action='store_true', default=False, dest='init_constraints')
+    parser.add_argument('-xis',   '--xinit-statistics', help='run ANALYZE / UPDATE STATISTICS after loading', action='store_true', default=False, dest='init_statistics')
+    parser.add_argument('-xcol',  '--xinit-columns', help='use columnar storage (Citus only)', action='store_true', default=False, dest='init_columns')
+    parser.add_argument('-xrcp',  '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
+    parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
