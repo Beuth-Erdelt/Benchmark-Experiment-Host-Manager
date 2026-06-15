@@ -28,13 +28,13 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 1,8                      <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 1,4                      <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 1,4                      <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -53,13 +53,13 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2,3                      <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2,3                      <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -78,13 +78,13 @@ bexhoma ycsb `
   -sf 3                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2,3                      <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2,3                      <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -110,13 +110,13 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2,3                      <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2,3                      <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -rst shared                   <# storage class for persistent volumes #> `
@@ -137,13 +137,13 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 1                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 1                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   '--set' 'deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64' `
@@ -165,13 +165,13 @@ bexhoma ycsb `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -194,13 +194,13 @@ bexhoma ycsb `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload b                  <# YCSB workload template (b = 95% read / 5% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -223,13 +223,13 @@ bexhoma ycsb `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload c                  <# YCSB workload template (c = 100% read) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -253,13 +253,13 @@ bexhoma ycsb `
   --workload d                  <# YCSB workload template (d = read latest) #> `
   -xio hashed                   <# index order strategy (hashed / ordered) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -283,13 +283,13 @@ bexhoma ycsb `
   --workload e                  <# YCSB workload template (e = scan) #> `
   -xio ordered                  <# index order strategy (hashed / ordered) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -312,13 +312,13 @@ bexhoma ycsb `
   -sf 10                        <# scaling factor (number of records x 1000) #> `
   --workload f                  <# YCSB workload template (f = read-modify-write) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `

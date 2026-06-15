@@ -24,7 +24,7 @@ source ./scripts/testfunctions.sh
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -dbms PostgreSQL              DBMS under test
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
@@ -34,7 +34,7 @@ source ./scripts/testfunctions.sh
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
@@ -51,7 +51,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -dbms PostgreSQL              DBMS under test
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
@@ -64,7 +64,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
@@ -87,7 +87,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
 # -xlat                         collect per-operation latency histograms
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -dbms PostgreSQL              DBMS under test
 # -nlt 8                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
@@ -102,7 +102,7 @@ sleep 30
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nlt 8 \
   -nbp 1 \
@@ -126,7 +126,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (number of warehouses)
-# -sd 20                        benchmark duration in minutes
+# -xsd 20                        benchmark duration in minutes
 # -xlat                         collect per-operation latency histograms
 # -xkey                         simulate user think time and keying delays
 # -dbms PostgreSQL              DBMS under test
@@ -144,7 +144,7 @@ sleep 30
 # -rss 30Gi                     size of the persistent volume claim
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 20 \
+  -xsd 20 \
   -xlat \
   -xkey \
   -dbms PostgreSQL \

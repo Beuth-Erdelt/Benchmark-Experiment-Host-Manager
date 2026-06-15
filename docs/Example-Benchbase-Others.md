@@ -44,13 +44,13 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
-  -b twitter \
+  -xnbf 16 \
+  -xtb 1024 \
+  -xbt twitter \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 ```
@@ -63,10 +63,10 @@ This
   * imports data for scale factor 16 (`-sf`) (i.e., 16 * 500 the number of users) into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of twitter queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -168,13 +168,13 @@ You can find the output of the files in the result folder.
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 1600 \
-  -sd 20 \
+  -xsd 20 \
   -dbms PostgreSQL \
   -nbp 1,2,4,8 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
-  -b twitter \
+  -xnbf 16 \
+  -xtb 1024 \
+  -xbt twitter \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
@@ -411,13 +411,13 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 10 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1 \
   -nbt 100 \
-  -nbf 16 \
-  -tb 1024 \
-  -b chbenchmark \
+  -xnbf 16 \
+  -xtb 1024 \
+  -xbt chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 ```
@@ -430,10 +430,10 @@ This
   * imports data for scale factor 16 (`-sf`) (i.e., 16 * 500 the number of users) into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of twitter queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -535,13 +535,13 @@ You can find the output of the files in the result folder.
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 100 \
-  -sd 20 \
+  -xsd 20 \
   -dbms PostgreSQL \
   -nbp 1,2,5,10 \
   -nbt 100 \
-  -nbf 16 \
-  -tb 1024 \
-  -b chbenchmark \
+  -xnbf 16 \
+  -xtb 1024 \
+  -xbt chbenchmark \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 ```
@@ -727,15 +727,15 @@ Example:
 ```bash
 bexhoma benchbase -tr \
   -sf 1000 \
-  -sd 5 \
+  -xsd 5 \
   --benchmark ycsb \
   --workload c \
   -dbms PostgreSQL \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 ```
@@ -748,10 +748,10 @@ This
   * imports data for scale factor 1000 (`-sf`) (i.e., 1000 * 1000 the number of rows) into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of ycsb (`--benchmark`) queries (per DBMS) workload c (`--workload`)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 32 threads to simulate 32 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -862,15 +862,15 @@ Example:
 ```bash
 bexhoma benchbase -tr \
   -sf 1000 \
-  -sd 5 \
+  -xsd 5 \
   --benchmark ycsb \
   --workload a \
   -dbms PostgreSQL \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 ```
@@ -981,15 +981,15 @@ Example:
 ```bash
 bexhoma benchbase -tr \
   -sf 1000 \
-  -sd 5 \
+  -xsd 5 \
   --benchmark ycsb \
   --workload b \
   -dbms PostgreSQL \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 ```
@@ -1102,15 +1102,15 @@ Example:
 ```bash
 bexhoma benchbase -tr \
   -sf 1000 \
-  -sd 5 \
+  -xsd 5 \
   --benchmark ycsb \
   --workload d \
   -dbms PostgreSQL \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 ```
@@ -1205,15 +1205,15 @@ Example:
 ```bash
 bexhoma benchbase -tr \
   -sf 1000 \
-  -sd 5 \
+  -xsd 5 \
   --benchmark ycsb \
   --workload e \
   -dbms PostgreSQL \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 ```
@@ -1308,15 +1308,15 @@ Example:
 ```bash
 bexhoma benchbase -tr \
   -sf 1000 \
-  -sd 5 \
+  -xsd 5 \
   --benchmark ycsb \
   --workload f \
   -dbms PostgreSQL \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 ```

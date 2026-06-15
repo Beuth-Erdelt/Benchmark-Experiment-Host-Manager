@@ -50,19 +50,19 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -82,7 +82,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (`-sfo`)
+      * 10.000.000 operations (`-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -279,19 +279,19 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -515,19 +515,19 @@ See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -732,14 +732,14 @@ CockroachDB has 3 workers.
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 ```
@@ -904,14 +904,14 @@ The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 10 \
+  -xsd 10 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 1280 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
@@ -1238,14 +1238,14 @@ The 1280 threads of the client are split into a cascading sequence of 1,2,4 and 
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 10 \
+  -xsd 10 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 1280 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
   -rst shared -rss 100Gi -rsr \

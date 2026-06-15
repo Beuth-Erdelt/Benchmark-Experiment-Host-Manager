@@ -26,7 +26,7 @@ bexhoma hammerdb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -46,7 +46,7 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -73,7 +73,7 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 8                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -101,7 +101,7 @@ bexhoma hammerdb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
-  -sd 20                        <# benchmark duration in minutes #> `
+  -xsd 20                        <# benchmark duration in minutes #> `
   -xlat                         <# collect per-operation latency histograms #> `
   -xkey                         <# simulate user think time and keying delays #> `
   -dbms PostgreSQL              <# DBMS under test #> `

@@ -44,8 +44,8 @@ config = configurations.default(experiment=experiment, docker='PostgreSQL', conf
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```
-usage: tpch.py [-h] [-db] [-c CONNECTION] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-ms MAX_SUT] [-dt]
-               [-md MONITORING_DELAY] [-nr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-sf SCALING_FACTOR]
+usage: tpch.py [-h] [-db] [-c CONNECTION] [-cx CONTEXT] [-e EXPERIMENT] [-d] [-m] [-ms MAX_SUT] [-xdt]
+               [-md MONITORING_DELAY] [-xqr NUM_RUN] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-sf SCALING_FACTOR]
                [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
                [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
                [-rnn REQUEST_NODE_NAME]
@@ -74,10 +74,10 @@ optional arguments:
   -m, --monitoring      activates monitoring
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
+  -xdt, --datatransfer   activates datatransfer
   -md MONITORING_DELAY, --monitoring-delay MONITORING_DELAY
                         time to wait [s] before execution of the runs of a query
-  -nr NUM_RUN, --num-run NUM_RUN
+  -xqr NUM_RUN, --num-run NUM_RUN
                         number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration

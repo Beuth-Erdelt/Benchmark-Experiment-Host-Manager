@@ -30,13 +30,13 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 16                        <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
-  -slg 10                       <# log status to stdout every x seconds #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
+  -xli 10                       <# log status to stdout every x seconds #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -59,13 +59,13 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 16                        <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
-  -slg 10                       <# log status to stdout every x seconds #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
+  -xli 10                       <# log status to stdout every x seconds #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 4,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
-  -nbf 20                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 20                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -88,13 +88,13 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 16                        <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
-  -slg 10                       <# log status to stdout every x seconds #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
+  -xli 10                       <# log status to stdout every x seconds #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 4,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
-  -nbf 20                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 20                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -124,7 +124,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -153,7 +153,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -182,7 +182,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -218,9 +218,9 @@ bexhoma tpch `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 8                        <# number of data loader pods #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
@@ -245,9 +245,9 @@ bexhoma tpch `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 6                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 8                        <# number of data loader pods #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
@@ -272,9 +272,9 @@ bexhoma tpch `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 6                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 8                        <# number of data loader pods #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
@@ -308,9 +308,9 @@ bexhoma tpch `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp $BEXHOMA_NUM_TENANTS     <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -340,9 +340,9 @@ bexhoma tpch `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp $BEXHOMA_NUM_TENANTS     <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -372,9 +372,9 @@ bexhoma tpch `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -406,16 +406,16 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 100000) #> `
-  -sfo 1                        <# scaling factor for operations (number of operations x 100000) #> `
+  -xop 1                        <# scaling factor for operations (number of operations x 100000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -437,16 +437,16 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 100000) #> `
-  -sfo 1                        <# scaling factor for operations (number of operations x 100000) #> `
+  -xop 1                        <# scaling factor for operations (number of operations x 100000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -468,16 +468,16 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 3                         <# scaling factor (number of records x 100000) #> `
-  -sfo 1                        <# scaling factor for operations (number of operations x 100000) #> `
+  -xop 1                        <# scaling factor for operations (number of operations x 100000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                        <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 3                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -505,7 +505,7 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -531,7 +531,7 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -557,7 +557,7 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xlat                         <# collect per-operation latency histograms #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `

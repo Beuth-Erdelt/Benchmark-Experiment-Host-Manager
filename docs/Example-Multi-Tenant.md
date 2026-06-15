@@ -58,7 +58,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -334,7 +334,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -611,7 +611,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 1 -nlt 1 -nbp 1  -nlt 64 \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -914,7 +914,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_NUM_TENANTS_LOADER -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1252,7 +1252,7 @@ The execution phase is run twice.
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
@@ -1433,7 +1433,7 @@ The execution phase is run twice.
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
@@ -1615,7 +1615,7 @@ The execution phase is run twice.
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne 1,1 \
@@ -1869,7 +1869,7 @@ The execution phase is run twice.
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms MySQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
@@ -1995,7 +1995,7 @@ The execution phase is run twice.
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms MySQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne 1,1 \

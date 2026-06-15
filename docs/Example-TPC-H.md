@@ -34,12 +34,12 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_compare.log
 ```
@@ -58,10 +58,10 @@ This
   * with a loading container each
     * importing TPC-H data from the distributed filesystem
     * MySQL: only one pod active and it loads with 8 threads (`-nlt`)
-* creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`) in each DBMS after ingestion
+* creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`) in each DBMS after ingestion
 * runs 1 stream of TPC-H queries per DBMS
   * all DBMS use the same parameters
-  * data transfer is also measured (`-dt`)
+  * data transfer is also measured (`-xdt`)
 * shows a summary
 
 
@@ -324,10 +324,10 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```bash
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL,MariaDB}] [-lit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG]
-               [-ne NUM_QUERY_EXECUTORS] [-nls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS] [-sf SCALING_FACTOR]
+usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL,MariaDB}] [-xlit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-xdt] [-xqr NUM_RUN] [-nc NUM_CONFIG]
+               [-ne NUM_QUERY_EXECUTORS] [-xnls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS] [-sf SCALING_FACTOR]
                [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
-               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-ii] [-ic] [-is] [-rcp] [-shq]
+               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-xii] [-xic] [-xis] [-xrcp] [-xshq]
                {profiling,run,start,load,empty,summary}
 
 Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
@@ -341,7 +341,7 @@ options:
   -aws, --aws           fix components to node groups at AWS
   -dbms {PostgreSQL,MonetDB,MySQL,MariaDB}, --dbms {PostgreSQL,MonetDB,MySQL,MariaDB}
                         DBMS
-  -lit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
+  -xlit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
                         limit import to one table, name of this table
   -db, --debug          dump debug informations
   -cx CONTEXT, --context CONTEXT
@@ -353,14 +353,14 @@ options:
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates transfer of data per query (not only execution)
-  -nr NUM_RUN, --num-run NUM_RUN
+  -xdt, --datatransfer   activates transfer of data per query (not only execution)
+  -xqr NUM_RUN, --num-run NUM_RUN
                         number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration
   -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
                         comma separated list of number of parallel clients
-  -nls NUM_LOADING_SPLIT, --num-loading-split NUM_LOADING_SPLIT
+  -xnls NUM_LOADING_SPLIT, --num-loading-split NUM_LOADING_SPLIT
                         portion of loaders that should run in parallel
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
@@ -395,14 +395,14 @@ options:
   -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
                         request a specific node for benchmarking pods
   -tr, --test-result    test if result fulfills some basic requirements
-  -ii, --init-indexes   adds indexes to tables after ingestion
-  -ic, --init-constraints
+  -xii, --init-indexes   adds indexes to tables after ingestion
+  -xic, --init-constraints
                         adds constraints to tables after ingestion
-  -is, --init-statistics
+  -xis, --init-statistics
                         recomputes statistics of tables after ingestion
-  -rcp, --recreate-parameter
+  -xrcp, --recreate-parameter
                         recreate parameter for randomized queries
-  -shq, --shuffle-queries
+  -xshq, --shuffle-queries
                         have different orderings per stream
 ```
 
@@ -412,13 +412,13 @@ options:
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms PostgreSQL \
   -rr 64Gi -lr 64Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 10 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
@@ -598,12 +598,12 @@ For performing the experiment we can run the [tpch file](https://github.com/Beut
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nc 1 \
   -ne 1,2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -762,8 +762,8 @@ All executions use the same database, so loading times are the same.
 
 Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
 You can change this via
-* `-rcp`: Each stream has it's own random parameters
-* `-shq`: Use the ordering per stream as required by the TPC-H specification
+* `-xrcp`: Each stream has it's own random parameters
+* `-xshq`: Use the ordering per stream as required by the TPC-H specification
 
 ## Use Persistent Storage
 
@@ -772,12 +772,12 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
   -sf 1 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nc 2 \
   -rst shared -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -966,12 +966,12 @@ TPC-H supports scaling factors that are fractional.
 Example: SF=0.1
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
   -sf 0.1 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nc 2 \
   -rst shared -rss 5Gi -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1156,10 +1156,10 @@ The purpose of this example is to illustrate the usage of bexhoma and to show ho
 At first we generate TPC-H data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
 The generated data is stored at the shared disk `data`.
 Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
-Afterwards the script creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`).
+Afterwards the script creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`).
 The database is located in another shared disk of storageClass shared (`-rst`) and of size 300Gi (`-rss`).
 
-The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-dt`) once (`-nc` set to 1).
+The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
 To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).
 Monitoring is activated (`-m`) for all components (`-mc`).
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
@@ -1176,12 +1176,12 @@ mkdir -p $LOG_DIR
 bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 3600 -dt \
+  -t 3600 -xdt \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 ```
@@ -1403,12 +1403,12 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 -nlt 8 \
   -nc 2 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 3600 -dt \
+  -t 3600 -xdt \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 ```
@@ -1623,12 +1623,12 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 3600 -dt \
+  -t 3600 -xdt \
   -rst shared -rss 1000Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 ```

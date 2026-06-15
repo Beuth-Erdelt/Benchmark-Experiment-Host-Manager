@@ -20,10 +20,10 @@ The purpose of this example is to illustrate the usage of bexhoma and to show ho
 At first we generate TPC-H data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
 The generated data is stored at the shared disk `data`.
 Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
-Afterwards the script creates contraints (`-ic`) and indexes (`-ii`) and updates table statistics (`-is`).
+Afterwards the script creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`).
 The database is located in another shared disk of storageClass shared (`-rst`) and of size 300Gi (`-rss`).
 
-The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-dt`) once (`-nc` set to 1).
+The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
 To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).
 Monitoring is activated (`-m`) for all components (`-mc`).
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
@@ -40,12 +40,12 @@ mkdir -p $LOG_DIR
 bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 1200 -xdt \
   -rst shared -rss 300Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 ```
@@ -250,12 +250,12 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 -nlt 8 \
   -nc 2 -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 1200 -xdt \
   -rst shared -rss 300Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 ```
@@ -450,12 +450,12 @@ BEXHOMA_NODE_BENCHMARK="cl-worker19"
 bexhoma tpch -ms $BEXHOMA_MS \
   -m -mc \
   -sf 100 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 -nlt 8 \
   -nc 1 -ne 1,1,3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MonetDB \
-  -t 1200 -dt \
+  -t 1200 -xdt \
   -rst shared -rss 300Gi \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 ```

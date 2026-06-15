@@ -24,16 +24,16 @@
 #### TCP-H Compare (Example-TPC-H.md)
 bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -46,7 +46,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H compare  sf=1
 #### TCP-H Monitoring (Example-TPC-H.md)
 bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -54,9 +54,9 @@ bexhoma tpch `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -71,15 +71,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H monitoring  s
 #### TCP-H Throughput (Example-TPC-H.md)
 bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -99,15 +99,15 @@ Start-Sleep -Seconds 30
 #### TCP-H Persistent Storage (Example-TPC-H.md)
 bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 30Gi                     <# size of the persistent volume claim #> `
@@ -123,15 +123,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H storage  sf=1
 #### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
 bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -sf 0.1                       <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 5Gi                      <# size of the persistent volume claim #> `
@@ -161,9 +161,9 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -nc 1                         <# number of repeated runs per configuration #> `
@@ -175,7 +175,7 @@ bexhoma tpch `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -t 3600                       <# query timeout in seconds #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_1.log" -Encoding utf8
@@ -190,9 +190,9 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -nc 2                         <# number of repeated runs per configuration #> `
@@ -204,7 +204,7 @@ bexhoma tpch `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -t 3600                       <# query timeout in seconds #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_2.log" -Encoding utf8
@@ -219,9 +219,9 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -nc 1                         <# number of repeated runs per configuration #> `
@@ -233,7 +233,7 @@ bexhoma tpch `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -t 3600                       <# query timeout in seconds #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -rst shared                   <# storage class for persistent volumes #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_3.log" -Encoding utf8

@@ -69,7 +69,7 @@ for i in {1..10}; do
     export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
 
     # Run schema mode
-    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -83,7 +83,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -97,7 +97,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 50Gi size)
-    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -ma -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -144,7 +144,7 @@ for i in {1..10}; do
     export BEXHOMA_LIMIT_RAM_TOTAL="${BEXHOMA_RAM}Gi"
 
     # Run database mode
-    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM_TOTAL -lc 0 -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms MySQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -158,7 +158,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 0 -rr $BEXHOMA_LIMIT_RAM -lc 0 -lr $BEXHOMA_LIMIT_RAM -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms MySQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -208,7 +208,7 @@ for i in {1..10}; do
     echo "CPU per tenant: ${cpuPerTenant}"
 
     # Run schema mode
-    python ./benchbase.py run -rc $BEXHOMA_CPU -lc $BEXHOMA_CPU -rr $BEXHOMA_LIMIT_RAM_TOTAL -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc $BEXHOMA_CPU -lc $BEXHOMA_CPU -rr $BEXHOMA_LIMIT_RAM_TOTAL -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -222,7 +222,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc $BEXHOMA_CPU -lc $BEXHOMA_CPU -rr $BEXHOMA_LIMIT_RAM_TOTAL -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc $BEXHOMA_CPU -lc $BEXHOMA_CPU -rr $BEXHOMA_LIMIT_RAM_TOTAL -lr $BEXHOMA_LIMIT_RAM_TOTAL -m -mc -ma -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -236,7 +236,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5=Gi size)
-    python ./benchbase.py run -rc $cpuPerTenant -lc $cpuPerTenant -rr $ramPerTenant -lr $ramPerTenant -m -mc -ma -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc $cpuPerTenant -lc $cpuPerTenant -rr $ramPerTenant -lr $ramPerTenant -m -mc -ma -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -274,7 +274,7 @@ for i in {1..10}; do
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
-    python ./benchbase.py load -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py load -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -288,7 +288,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py load -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py load -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -302,7 +302,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py load -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py load -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -342,7 +342,7 @@ for i in {1..10}; do
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -356,7 +356,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -370,7 +370,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -413,7 +413,7 @@ for i in {1..10}; do
     echo "TENANTS=$BEXHOMA_TENANTS SIZE=$BEXHOMA_SIZE_ALL LIMIT_RAM=$BEXHOMA_LIMIT_RAM"
 
     # Run schema mode
-    python ./benchbase.py run -rc 2 -lr 480Gi -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -lr 480Gi -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -427,7 +427,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc 2 -lr 480Gi -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -lr 480Gi -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -441,7 +441,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -478,7 +478,7 @@ for i in {1..10}; do
     export BEXHOMA_SIZE_ALL="${sizeInGi}Gi"
 
     # Run schema mode
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -491,7 +491,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -504,7 +504,7 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 5Gi size)
-    python ./benchbase.py run -rc 2 -m -mc -tb $BEXHOMA_TARGET -sf $BEXHOMA_SF -sd $BEXHOMA_DURATION \
+    python ./benchbase.py run -rc 2 -m -mc -xtb $BEXHOMA_TARGET -sf $BEXHOMA_SF -xsd $BEXHOMA_DURATION \
         --dbms PostgreSQL \
         -rnn "$BEXHOMA_NODE_SUT" \
         -rnl "$BEXHOMA_NODE_LOAD" \
@@ -523,11 +523,11 @@ done
 BEXHOMA_TENANTS=2
 BEXHOMA_SF=1
 
-nohup python tpch.py run -rcp -shq -nr 5 \
+nohup python tpch.py run -xrcp -xshq -xqr 5 \
   -mtn $BEXHOMA_TENANTS -mtb schema \
   -sf $BEXHOMA_SF \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_TENANTS -nbp 1 \
   -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -ss \
@@ -555,11 +555,11 @@ for i in {1..10}; do
     echo "TENANTS=$BEXHOMA_TENANTS SIZE=$BEXHOMA_SIZE_ALL LIMIT_RAM=$BEXHOMA_LIMIT_RAM"
 
     # Run schema mode
-    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb schema \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp $BEXHOMA_TENANTS -nbp 1 \
       -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -569,11 +569,11 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb database \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp $BEXHOMA_TENANTS -nbp 1 \
       -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -583,11 +583,11 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 50Gi size)
-    nohup python tpch.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb container \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp 1 -nbp 1 \
       -ne 1,1 \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -623,11 +623,11 @@ for i in {1..10}; do
     echo "TENANTS=$BEXHOMA_TENANTS SIZE=$BEXHOMA_SIZE_ALL LIMIT_RAM=$BEXHOMA_LIMIT_RAM"
 
     # Run schema mode
-    nohup python tpch.py load -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py load -rc 2 -lr 480Gi -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb schema \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp $BEXHOMA_TENANTS -nbp 1 \
       -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -637,11 +637,11 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    nohup python tpch.py load -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py load -rc 2 -lr 480Gi -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb database \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp $BEXHOMA_TENANTS -nbp 1 \
       -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -651,11 +651,11 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 50Gi size)
-    nohup python tpch.py load -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py load -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb container \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp 1 -nbp 1 \
       -ne 1,1 \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -690,11 +690,11 @@ for i in {1..10}; do
     echo "TENANTS=$BEXHOMA_TENANTS SIZE=$BEXHOMA_SIZE_ALL LIMIT_RAM=$BEXHOMA_LIMIT_RAM"
 
     # Run schema mode
-    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb schema \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp $BEXHOMA_TENANTS -nbp 1 \
       -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -704,11 +704,11 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run database mode
-    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr 480Gi -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb database \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp $BEXHOMA_TENANTS -nbp 1 \
       -ne "$BEXHOMA_TENANTS,$BEXHOMA_TENANTS" \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -718,11 +718,11 @@ for i in {1..10}; do
     bexperiments stop
 
     # Run container mode (fixed 50Gi size)
-    nohup python tpch.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -rcp -shq -t 3600 -nr $BEXHOMA_NUM_RUN \
+    nohup python tpch.py run -rc 2 -lr $BEXHOMA_LIMIT_RAM -m -mc -xrcp -xshq -t 3600 -xqr $BEXHOMA_NUM_RUN \
       -mtn $BEXHOMA_TENANTS -mtb container \
       -sf $BEXHOMA_SF \
       --dbms PostgreSQL \
-      -ii -ic -is \
+      -xii -xic -xis \
       -nlp 1 -nbp 1 \
       -ne 1,1 \
       -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

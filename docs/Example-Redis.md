@@ -48,17 +48,17 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -78,7 +78,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (i.e., SF=10, `-sfo`)
+      * 10.000.000 operations (i.e., SF=10, `-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -229,18 +229,18 @@ If you want to deploy Redis as a cluster, you can adjust the number of workers `
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   --workload a \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -381,19 +381,19 @@ Note that Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` 
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 1 \
   --workload a \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -564,17 +564,17 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -713,18 +713,18 @@ Here, we remove existing storage via `-rsr` to start with a clean copy.
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   --workload a \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \

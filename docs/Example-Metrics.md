@@ -28,12 +28,12 @@ Example:
 ```bash
 bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 ```
@@ -48,10 +48,10 @@ This
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of TPC-C queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -216,7 +216,7 @@ Example:
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
   -xlat \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
@@ -343,13 +343,13 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
   -t 1200 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
@@ -537,13 +537,13 @@ No warnings
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
+bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
   -dbms PostgreSQL \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
   -t 1200 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
@@ -813,13 +813,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
+  -xnbf 2,3 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -1027,12 +1027,12 @@ Example:
 ```bash
 bexhoma benchbase -m -mc -ma -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms MySQL \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 ```
@@ -1047,10 +1047,10 @@ This
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of TPC-C queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -1200,7 +1200,7 @@ Example:
 bexhoma hammerdb -ms $BEXHOMA_MS -tr -lr 64Gi \
   -sf 16 \
   -xlat \
-  -sd 5 \
+  -xsd 5 \
   -dbms MySQL \
   -nlt 16 \
   -nbp 1,2 \
@@ -1327,13 +1327,13 @@ TEST passed: Workflow as planned
 
 Example:
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
   -t 1200 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
@@ -1487,14 +1487,14 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 
 Example:
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -dt -tr -lr 64Gi \
+bexhoma tpcds -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
   -rr 64Gi -lr 64Gi \
   -dbms MySQL \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
   -t 1200 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
@@ -1720,13 +1720,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr -lr 64Gi \
   -sf 3 \
   --workload a \
   -dbms MySQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
+  -xnbf 2,3 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -1919,19 +1919,19 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -2113,14 +2113,14 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
@@ -2322,19 +2322,19 @@ Example:
 ```bash
 bexhoma ycsb -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 1 \
   --workload a \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -2511,19 +2511,19 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 3 \
-  -nsr 3 \
+  -xnsr 3 \
   --workload a \
   -dbms TiDB \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -2780,15 +2780,15 @@ Example:
 
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -nw 3 \
   -nwr 3 \
-  -nsr 3 \
+  -xnsr 3 \
   -dbms TiDB \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 ```
@@ -3124,24 +3124,24 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rr 64Gi -lr 64Gi \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 16 \
   -nlt 64 \
-  -nlf 11 \
+  -xnlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -nbf 11 \
+  -xnbf 11 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
-  -npp 4 \
-  -npi 128 \
-  -npo 64 \
+  -xnpp 4 \
+  -xnpi 128 \
+  -xnpo 64 \
   run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 ```
 
@@ -3276,16 +3276,16 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 10 \
+  -xsd 10 \
   -xconn \
   -dbms PGBouncer \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
-  -npp 2 \
-  -npi 32 \
-  -npo 32 \
+  -xnbf 16 \
+  -xtb 1024 \
+  -xnpp 2 \
+  -xnpi 32 \
+  -xnpo 32 \
   -m -mc -ma \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
@@ -3455,16 +3455,16 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms YugabyteDB \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -3621,12 +3621,12 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms YugabyteDB \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 ```

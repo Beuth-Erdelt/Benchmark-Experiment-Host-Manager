@@ -41,7 +41,7 @@ For more details about the format see https://dbmsbenchmarker.readthedocs.io/en/
 
 ## Run Experiment
 
-Example: Run `python example.py run -dbms Dummy -ne 5 -nr 100` to run experiment with 5 parallel benchmarkers and repeat each query 100 times.
+Example: Run `python example.py run -dbms Dummy -ne 5 -xqr 100` to run experiment with 5 parallel benchmarkers and repeat each query 100 times.
 
 ## Background Information
 

@@ -49,19 +49,19 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 3 \
-  -nsr 3 \
+  -xnsr 3 \
   --workload a \
   -dbms TiDB \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -70,7 +70,7 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
 
 This
 * loops over `n` in [8] and `t` in [4]
-  * starts a clean instance of TiDB (`-dbms`) with 3 workers (`-nw`), i.e., PD and TiKV, with 3 main pods (`-nsr`), i.e. TiDB, and replication factor 3 (`-nwr`)
+  * starts a clean instance of TiDB (`-dbms`) with 3 workers (`-nw`), i.e., PD and TiKV, with 3 main pods (`-xnsr`), i.e. TiDB, and replication factor 3 (`-nwr`)
     * data directory inside a Docker container
   * creates YCSB schema in each database
   * starts `n` loader pods per DBMS
@@ -81,7 +81,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [1]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 1.000.000 operations (`-sfo`)
+      * 1.000.000 operations (`-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -391,15 +391,15 @@ TiDB has 3 workers (TiDB, PD and TiKV).
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -nw 3 \
   -nwr 3 \
-  -nsr 3 \
+  -xnsr 3 \
   -dbms TiDB \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -m -mc \
   run &>$LOG_DIR/doc_benchbase_tidb_1.log
 ```

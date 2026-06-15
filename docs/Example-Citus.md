@@ -44,20 +44,20 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -77,7 +77,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (`-sfo`)
+      * 10.000.000 operations (`-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -296,20 +296,20 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
   --workload a \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -627,15 +627,15 @@ Citus has 3 workers.
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
   -dbms Citus \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_1.log
 ```
@@ -812,15 +812,15 @@ The benchmark is run via
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 20 \
+  -xsd 20 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
   -dbms Citus \
   -nbp 1,2,4,8 \
   -nbt 64 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rst shared -rss 100Gi \
@@ -1248,8 +1248,8 @@ Please also note, that this is not compliant to the TPC-C specifications, which 
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 20 \
-  -slg 30 \
+  -xsd 20 \
+  -xli 30 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -1257,8 +1257,8 @@ bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -dbms Citus \
   -nbp 1,2,5,10 \
   -nbt 1280 \
-  -nbf 4 \
-  -tb 1024 \
+  -xnbf 4 \
+  -xtb 1024 \
   -m -mc \
   -nc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2066,7 +2066,7 @@ TEST passed: Workflow as planned
 ```bash
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 30 \
+  -xsd 30 \
   -xlat \
   -nw 4 \
   -nwr 1 \
@@ -2488,7 +2488,7 @@ Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s 
 ```bash
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 500 \
-  -sd 20 \
+  -xsd 20 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
@@ -3174,11 +3174,11 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -3361,11 +3361,11 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -dt \
+  -xdt \
   -t 7200 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,1 \
@@ -3769,7 +3769,7 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 ### TPC-H Test Columnar Storage
 
 Citus provides the option to make a table using columnar storage via `USING COLUMNAR`.
-For Bexhoma's TPC-H, you can activate makeing the distributed tables `orders` and `lineitem` use columnar storage via `-icol`.
+For Bexhoma's TPC-H, you can activate makeing the distributed tables `orders` and `lineitem` use columnar storage via `-xcol`.
 Note that this also means there will be no foreign key constraints and no indexes on these tables.
 
 At first we remove possibly existing PVC:
@@ -3790,11 +3790,11 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -dt \
+  -xdt \
   -t 7200 \
   -dbms Citus \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -icol \
+  -xcol \
   -nlp 8 \
   -nbp 1 \
   -ne 1,1 \

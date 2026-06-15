@@ -114,17 +114,17 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   --workload a \
   -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
@@ -143,7 +143,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (`-sfo`)
+      * 10.000.000 operations (`-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -272,17 +272,17 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -387,17 +387,17 @@ We can add the request for a PVC to the experiment setup:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 5 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms DatabaseService \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -598,12 +598,12 @@ Watch for
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms DatabaseService \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
 ```
@@ -718,12 +718,12 @@ This time we skip loading (`-sl`), since the database is already present.
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms DatabaseService \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
@@ -836,12 +836,12 @@ At first we run a simple power test against SF=3.
 Components are monitored.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -t 1200 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -977,12 +977,12 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 Now loading is skipped (`-sl`) as data is already present in the Cloud system.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -t 1200 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1137,12 +1137,12 @@ sleep 10
 ### Ingestion with Persistent Storage
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -t 1200 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1285,12 +1285,12 @@ The persistent volume helps to memorize this.
 We can rerun the experiment without explicitly skipping ingestion (no `-sl`).
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch -ms $BEXHOMA_MS -xdt -tr \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
   -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -t 1200 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

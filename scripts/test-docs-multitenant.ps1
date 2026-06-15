@@ -26,9 +26,9 @@ bexhoma tpch `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp $BEXHOMA_NUM_TENANTS     <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -51,9 +51,9 @@ bexhoma tpch `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp $BEXHOMA_NUM_TENANTS     <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -76,9 +76,9 @@ bexhoma tpch `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   --dbms PostgreSQL             <# DBMS under test #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -110,7 +110,7 @@ bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -134,7 +134,7 @@ bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -158,7 +158,7 @@ bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms PostgreSQL             <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -191,7 +191,7 @@ bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms MySQL                  <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -215,7 +215,7 @@ bexhoma benchbase `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -sf 1                         <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -xkey                         <# simulate user think time and keying delays #> `
   --dbms MySQL                  <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `

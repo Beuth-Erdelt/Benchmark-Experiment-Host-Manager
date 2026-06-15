@@ -46,12 +46,12 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 ```
@@ -64,10 +64,10 @@ This
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of TPC-C queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -247,9 +247,9 @@ You maybe want to adjust some of the parameters that are set in the file: `pytho
 ```bash
 usage: benchbase.py [-h] [-aws] [-dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,DatabaseService,Citus} ...]] [-db] [-sl] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG]
                     [-ne NUM_QUERY_EXECUTORS] [-nw NUM_WORKER] [-nwr NUM_WORKER_REPLICAS] [-nws NUM_WORKER_SHARDS] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS]
-                    [-nbt NUM_BENCHMARKING_THREADS] [-nbf NUM_BENCHMARKING_TARGET_FACTORS] [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-slg SCALING_LOGGING] [-xkey] [-t TIMEOUT] [-rr REQUEST_RAM]
+                    [-nbt NUM_BENCHMARKING_THREADS] [-xnbf NUM_BENCHMARKING_TARGET_FACTORS] [-sf SCALING_FACTOR] [-xsd SCALING_DURATION] [-xli SCALING_LOGGING] [-xkey] [-t TIMEOUT] [-rr REQUEST_RAM]
                     [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME]
-                    [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-b {tpcc,twitter}] [-tb TARGET_BASE]
+                    [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-xbt {tpcc,twitter}] [-xtb TARGET_BASE]
                     {run,start,load}
 
 Perform TPC-C inspired benchmarks based on Benchbase in a Kubernetes cluster. Optionally monitoring is actived. User can also choose some parameters like number of warehouses and request some resources.
@@ -291,13 +291,13 @@ options:
                         comma separated list of number of benchmarkers per configuration
   -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
                         total number of threads per benchmarking process
-  -nbf NUM_BENCHMARKING_TARGET_FACTORS, --num-benchmarking-target-factors NUM_BENCHMARKING_TARGET_FACTORS
+  -xnbf NUM_BENCHMARKING_TARGET_FACTORS, --num-benchmarking-target-factors NUM_BENCHMARKING_TARGET_FACTORS
                         comma separated list of factors of 16384 ops as target - default range(1,9)
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of warehouses
-  -sd SCALING_DURATION, --scaling-duration SCALING_DURATION
+  -xsd SCALING_DURATION, --scaling-duration SCALING_DURATION
                         scaling factor = duration in minutes
-  -slg SCALING_LOGGING, --scaling-logging SCALING_LOGGING
+  -xli SCALING_LOGGING, --scaling-logging SCALING_LOGGING
                         logging status every x seconds
   -xkey, --extra-keying
                         activate keying and waiting time
@@ -324,9 +324,9 @@ options:
   -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
                         request a specific node
   -tr, --test-result    test if result fulfills some basic requirements
-  -b {tpcc,twitter}, --benchmark {tpcc,twitter}
+  -xbt {tpcc,twitter}, --benchmark {tpcc,twitter}
                         type of benchmark
-  -tb TARGET_BASE, --target-base TARGET_BASE
+  -xtb TARGET_BASE, --target-base TARGET_BASE
                         ops as target, base for factors - default 1024 = 2**10
 ```
 
@@ -339,12 +339,12 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -m -mc \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
@@ -486,12 +486,12 @@ Example:
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -nc 2 \
   -rst shared -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -628,14 +628,14 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-160
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -rr 128Gi -lr 128Gi \
   -sf 160 \
-  -sd 30 \
+  -xsd 30 \
   -xkey \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1,2,5,10 \
   -nbt 1600 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -m -mc \

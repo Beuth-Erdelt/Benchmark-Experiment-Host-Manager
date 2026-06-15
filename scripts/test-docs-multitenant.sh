@@ -26,9 +26,9 @@ BEXHOMA_NUM_TENANTS=2
 # -mtb schema                   tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size in GB)
 # --dbms PostgreSQL             DBMS under test
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp $BEXHOMA_NUM_TENANTS     number of data loader pods
 # -nlt 1                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
@@ -44,7 +44,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -59,9 +59,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_
 # -mtb database                 tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size in GB)
 # --dbms PostgreSQL             DBMS under test
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp $BEXHOMA_NUM_TENANTS     number of data loader pods
 # -nlt 1                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
@@ -77,7 +77,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -92,9 +92,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NU
 # -mtb container                tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size in GB)
 # --dbms PostgreSQL             DBMS under test
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp 1                        number of data loader pods
 # -nlt 1                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
@@ -110,7 +110,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 1 -nlt 1 -nbp 1 -nlt 64 \
   -ne 1,1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -134,7 +134,7 @@ BEXHOMA_NUM_TENANTS=2
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -mtb schema                   tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -xkey                         simulate user think time and keying delays
 # --dbms PostgreSQL             DBMS under test
 # -nlp 1                        number of data loader pods
@@ -150,7 +150,7 @@ BEXHOMA_NUM_TENANTS=2
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
@@ -166,7 +166,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -mtb database                 tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -xkey                         simulate user think time and keying delays
 # --dbms PostgreSQL             DBMS under test
 # -nlp 1                        number of data loader pods
@@ -182,7 +182,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
@@ -198,7 +198,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOM
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -mtb container                tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -xkey                         simulate user think time and keying delays
 # --dbms PostgreSQL             DBMS under test
 # -nlp 1                        number of data loader pods
@@ -214,7 +214,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOM
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms PostgreSQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne 1,1 \
@@ -239,7 +239,7 @@ BEXHOMA_NUM_TENANTS=2
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -mtb database                 tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -xkey                         simulate user think time and keying delays
 # --dbms MySQL                  DBMS under test
 # -nlp 1                        number of data loader pods
@@ -255,7 +255,7 @@ BEXHOMA_NUM_TENANTS=2
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms MySQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
@@ -271,7 +271,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -mtb container                tenant isolation level (schema / database / container)
 # -sf 1                         scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -xkey                         simulate user think time and keying delays
 # --dbms MySQL                  DBMS under test
 # -nlp 1                        number of data loader pods
@@ -287,7 +287,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$
 bexhoma benchbase \
   -rr 64Gi -lr 64Gi \
   -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -sf 1 -sd 5 -xkey \
+  -sf 1 -xsd 5 -xkey \
   --dbms MySQL \
   -nlp 1 -nbp 1 -nbt 10 \
   -ne 1,1 \

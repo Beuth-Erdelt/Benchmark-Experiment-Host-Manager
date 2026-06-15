@@ -75,11 +75,11 @@ wait_process "ycsb"
 ### TPC-H Power Test - only MySQL (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -98,11 +98,11 @@ wait_process "tpch"
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
   -rr 128Gi -lr 128Gi \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -126,11 +126,11 @@ sleep 30
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
   -rr 128Gi -lr 128Gi \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -146,14 +146,14 @@ nohup python tpch.py -ms 1 -tr \
 #sleep 1200
 wait_process "tpch"
 
-nohup python tpch.py -ms 1 -dt -tr \
+nohup python tpch.py -ms 1 -xdt -tr \
   -dbms MySQL \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 10 \
   -t 1200 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc -ma \
   -rnn "$BEXHOMA_NODE_SUT" \
   -rnl "$BEXHOMA_NODE_LOAD" \
@@ -173,11 +173,11 @@ wait_process "tpch"
 ### TPC-H Power Test - only PostgreSQL (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -193,11 +193,11 @@ wait_process "tpch"
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
   -rr 128Gi -lr 128Gi \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -218,11 +218,11 @@ sleep 30
 nohup python tpch.py -ms 1 -tr \
   -sf 10 \
   -rr 128Gi -lr 128Gi \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -252,11 +252,11 @@ wait_process "tpch"
 ### TPC-H Power Test - only MariaDB (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -274,11 +274,11 @@ wait_process "tpch"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -302,11 +302,11 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -323,14 +323,14 @@ nohup python tpch.py -ms 1 -tr \
 #sleep 1200
 wait_process "tpch"
 
-nohup python tpch.py -ms 1 -dt -tr -lr 64Gi \
+nohup python tpch.py -ms 1 -xdt -tr -lr 64Gi \
   -dbms MariaDB \
   -rr 128Gi -lr 128Gi \
   -nlp 8 \
   -nlt 8 \
   -sf 10 \
   -t 1200 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc -ma \
   -rnn "$BEXHOMA_NODE_SUT" \
   -rnl "$BEXHOMA_NODE_LOAD" \
@@ -358,11 +358,11 @@ wait_process "tpch"
 ### TPC-H Power Test - only MySQL (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -380,11 +380,11 @@ wait_process "tpcds"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 10 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -407,11 +407,11 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 10 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -439,11 +439,11 @@ wait_process "tpcds"
 ### TPC-H Power Test - only PostgreSQL (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -458,11 +458,11 @@ wait_process "tpcds"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 10 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -482,11 +482,11 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 10 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -516,11 +516,11 @@ wait_process "tpcds"
 ### TPC-H Power Test - only MariaDB (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -538,11 +538,11 @@ wait_process "tpcds"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -566,11 +566,11 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpcds.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -598,13 +598,13 @@ wait_process "tpcds"
 #### Benchbase Simple (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
@@ -623,13 +623,13 @@ sleep 30
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 1 \
+  -xsd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -644,13 +644,13 @@ wait_process "benchbase"
 ### Benchbase Monitoring (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -665,13 +665,13 @@ wait_process "benchbase"
 ### Benchbase Complex (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
@@ -698,13 +698,13 @@ wait_process "benchbase"
 #### Benchbase Simple (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MySQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_1.log &
@@ -725,13 +725,13 @@ sleep 30
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 1 \
+  -xsd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MySQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -748,13 +748,13 @@ wait_process "benchbase"
 ### Benchbase Monitoring (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MySQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -771,13 +771,13 @@ wait_process "benchbase"
 ### Benchbase Complex (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MySQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
@@ -808,13 +808,13 @@ wait_process "benchbase"
 #### Benchbase Simple (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MariaDB \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_1.log &
@@ -835,13 +835,13 @@ sleep 30
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 1 \
+  -xsd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MariaDB \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -858,13 +858,13 @@ wait_process "benchbase"
 ### Benchbase Monitoring (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MariaDB \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -881,13 +881,13 @@ wait_process "benchbase"
 ### Benchbase Complex (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms MariaDB \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1,2 \
   -nbt 160 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
@@ -959,7 +959,7 @@ wait_process "hammerdb"
 ### HammerDB Complex (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -1037,7 +1037,7 @@ wait_process "hammerdb"
 ### HammerDB Complex (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -1120,7 +1120,7 @@ wait_process "hammerdb"
 ### HammerDB Complex (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
@@ -1164,13 +1164,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 4,8 \
   -nlt 32,64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
@@ -1192,13 +1192,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
@@ -1216,13 +1216,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 50Gi \
@@ -1240,13 +1240,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload e \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 50Gi \
@@ -1264,13 +1264,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 50Gi \
@@ -1301,13 +1301,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 4,8 \
   -nlt 32,64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_1.log &
@@ -1332,13 +1332,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
@@ -1359,13 +1359,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 50Gi \
@@ -1386,13 +1386,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload e \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 50Gi \
@@ -1413,13 +1413,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MySQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 50Gi \
@@ -1457,13 +1457,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 4,8 \
   -nlt 32,64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_1.log &
@@ -1488,13 +1488,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -1514,13 +1514,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -1540,13 +1540,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload e \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 30Gi \
@@ -1566,13 +1566,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms MariaDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 1024 \
+  -xtb 1024 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 30Gi \

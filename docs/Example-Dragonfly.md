@@ -47,17 +47,17 @@ Example:
 ```bash
 bexhoma ycsb -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -78,7 +78,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (i.e., SF=10, `-sfo`)
+      * 10.000.000 operations (i.e., SF=10, `-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -265,18 +265,18 @@ If you want to deploy Dragonfly as a cluster, you can adjust the number of worke
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   --workload a \
   -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -444,19 +444,19 @@ Whenever `-nwr` is greater than 0, it is set to the number of workers minus 1.
 ```bash
 bexhoma ycsb -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 2 \
   --workload a \
   -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -624,17 +624,17 @@ Example:
 ```bash
 bexhoma ycsb -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   --workload a \
   -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc -ma \
@@ -672,18 +672,18 @@ Here, we remove existing storage via `-rsr` to start with a clean copy.
 ```bash
 bexhoma ycsb -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   --workload a \
   -dbms Dragonfly \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc -ma \

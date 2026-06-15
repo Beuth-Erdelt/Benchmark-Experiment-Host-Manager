@@ -45,13 +45,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 1,8 \
   -nlt 64 \
-  -nlf 1,4 \
+  -xnlf 1,4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 2 \
+  -xnbf 2 \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -294,8 +294,8 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-wl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
-               [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
+usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-xwl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-xop SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
+               [-xsbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-xtb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
                [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
                {run,start,load,summary}
 
@@ -328,19 +328,19 @@ options:
                         number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
-  -wl {a,b,c,e,f}, --workload {a,b,c,e,f}
+  -xwl {a,b,c,e,f}, --workload {a,b,c,e,f}
                         YCSB default workload
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of rows in millions
-  -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
+  -xop SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
                         scaling factor = number of operations in millions (=SF if not set)
   -su SCALING_USERS, --scaling-users SCALING_USERS
                         scaling factor = number of total threads
-  -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
+  -xsbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
                         batch size
   -ltf LIST_TARGET_FACTORS, --list-target-factors LIST_TARGET_FACTORS
                         comma separated list of factors of 16384 ops as target - default range(1,9)
-  -tb TARGET_BASE, --target-base TARGET_BASE
+  -xtb TARGET_BASE, --target-base TARGET_BASE
                         ops as target, base for factors - default 16384 = 2**14
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
@@ -380,13 +380,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
+  -xnbf 2,3 \
   -ne 1 \
   -nc 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -525,13 +525,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 3 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
+  -xnbf 2,3 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -720,13 +720,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
+  -xnbf 2,3 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 50Gi \
@@ -965,13 +965,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 1 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 2 \
+  -xnbf 2 \
   -ne 1 \
   -nc 1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
@@ -1064,13 +1064,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -1286,13 +1286,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload b \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -1441,13 +1441,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload c \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -1605,13 +1605,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   --workload d \
   -xio hashed \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -1747,13 +1747,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   --workload e \
   -xio ordered \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -1882,13 +1882,13 @@ bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
   --workload f \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \

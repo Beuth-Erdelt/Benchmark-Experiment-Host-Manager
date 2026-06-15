@@ -261,9 +261,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 # --dbms PostgreSQL             DBMS under test
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp 1                        number of data loader pods
 # -nlt 1                        threads per loader pod
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -271,7 +271,7 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 \
+  -xii -xic -xis -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpch_load_postgresql.log
 
@@ -285,9 +285,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 # --dbms PostgreSQL             DBMS under test
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp 1                        number of data loader pods
 # -nlt 1                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
@@ -299,7 +299,7 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
+  -xii -xic -xis -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_run_postgresql.log
 
@@ -338,9 +338,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 # --dbms PostgreSQL             DBMS under test
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp 1                        number of data loader pods
 # -nlt 1                        threads per loader pod
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -348,7 +348,7 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 \
+  -xii -xic -xis -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpcds_load_postgresql.log
 
@@ -362,9 +362,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 # --dbms PostgreSQL             DBMS under test
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                           create indexes after data load
+# -xic                           enforce constraints after data load
+# -xis                           run ANALYZE after data load
 # -nlp 1                        number of data loader pods
 # -nlt 1                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
@@ -376,7 +376,7 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
+  -xii -xic -xis -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_run_postgresql.log
 

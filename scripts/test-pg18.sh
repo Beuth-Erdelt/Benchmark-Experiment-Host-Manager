@@ -74,16 +74,16 @@ wait_process "ycsb"
 
 nohup python ycsb.py -tr \
   -sf 100 \
-  -sfo 5 \
+  -xop 5 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 16 \
   -nlt 128 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -rr 64Gi -lr 64Gi \
@@ -107,16 +107,16 @@ wait_process "ycsb"
 
 nohup python ycsb.py -tr \
   -sf 100 \
-  -sfo 5 \
+  -xop 5 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 16 \
   -nlt 128 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -rr 64Gi -lr 64Gi \
@@ -140,16 +140,16 @@ wait_process "ycsb"
 
 nohup python ycsb.py -tr \
   -sf 100 \
-  -sfo 5 \
+  -xop 5 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 16 \
   -nlt 128 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -rr 64Gi -lr 64Gi \

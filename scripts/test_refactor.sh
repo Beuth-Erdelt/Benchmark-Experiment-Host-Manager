@@ -94,16 +94,16 @@ remove_yugabytedb() {
 #### YCSB Persistent Storage (Example-YCSB.md)
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   --workload a \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -m -mc -ma \
@@ -122,23 +122,23 @@ wait_process "ycsb"
 #### YCSB Persistent Storage (Example-YCSB.md)
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   --workload a \
   -dbms PGBouncer \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -m -mc -ma \
   -rst shared -rss 30Gi -rsr \
-  -npi 64 \
-  -npo 64 \
-  -npp 2 \
+  -xnpi 64 \
+  -xnpo 64 \
+  -xnpp 2 \
   run </dev/null &>$LOG_DIR/refactor_ycsb_pgbouncer_1.log &
 
 #### Wait so that next experiment receives a different code
@@ -152,19 +152,19 @@ wait_process "ycsb"
 #### YCSB Persistent Storage (Example-YCSB.md)
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 3 \
-  -nsr 3 \
+  -xnsr 3 \
   --workload a \
   -dbms TiDB \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -m -mc -ma \
@@ -181,18 +181,18 @@ wait_process "ycsb"
 #### YCSB Persistent Storage (Example-YCSB.md)
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -m -mc -ma \
@@ -212,19 +212,19 @@ wait_process "ycsb"
 #### YCSB Persistent Storage (Example-YCSB.md)
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
   --workload a \
   -dbms Citus \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -240,17 +240,17 @@ wait_process "ycsb"
 
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   --workload a \
   -dbms Redis \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -285,13 +285,13 @@ nohup python ycsb.py -tr \
   -sf 1 \
   --workload a \
   -dbms YugabyteDB \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -327,16 +327,16 @@ sleep 10
 #### YCSB Ingestion (Example-CloudDatabase.md)
 nohup python ycsb.py -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   --workload a \
   -dbms DatabaseService \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/refactor_ycsb_databaseservice_1.log &
@@ -369,12 +369,12 @@ sleep 30
 
 nohup python benchbase.py -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nbp 1 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -nc 2 \
   -rst shared -rss 30Gi -rsr \
   -m -mc -ma \
@@ -386,14 +386,14 @@ wait_process "benchbase"
 
 nohup python benchbase.py -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms CockroachDB \
   -nw 3 \
   -nwr 1 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -nc 2 \
   -rst shared -rss 30Gi -rsr \
   -m -mc -ma \
@@ -405,15 +405,15 @@ wait_process "benchbase"
 
 nohup python benchbase.py -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms Citus \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -nc 2 \
   -rst shared -rss 30Gi -rsr \
   -m -mc -ma \
@@ -425,15 +425,15 @@ wait_process "benchbase"
 
 nohup python benchbase.py -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PGBouncer \
-  -npi 64 \
-  -npo 64 \
-  -npp 2 \
+  -xnpi 64 \
+  -xnpo 64 \
+  -xnpp 2 \
   -nbp 1 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -nc 2 \
   -rst shared -rss 30Gi -rsr \
   -m -mc -ma \
@@ -450,12 +450,12 @@ sleep 30
 
 nohup python benchbase.py -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms YugabyteDB \
   -nbp 1 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -nc 2 \
   -rst shared -rss 30Gi -rsr \
   -m -mc -ma \

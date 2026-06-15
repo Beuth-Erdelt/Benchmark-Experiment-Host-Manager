@@ -40,23 +40,23 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 16 \
   -nlt 64 \
-  -nlf 11 \
+  -xnlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -nbf 11 \
+  -xnbf 11 \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -npp 4 \
-  -npi 128 \
-  -npo 64 \
+  -xnpp 4 \
+  -xnpi 128 \
+  -xnpo 64 \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
 ```
 
@@ -73,11 +73,11 @@ This
       * imports it into the DBMS
   * loops over `m` in [16] and `s` in [11]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 16.000.000 operations (`-sfo`)
+      * 16.000.000 operations (`-xop`)
       * workload C = 100% (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
-      * PGBouncer has 4 instances (`-npp`) with 128 inbound connections (`-npi`) and 64 outbound connections (`-npo`)
+      * PGBouncer has 4 instances (`-xnpp`) with 128 inbound connections (`-xnpi`) and 64 outbound connections (`-xnpo`)
     * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * monitors (`-m`) all components (`-mc`)
@@ -265,23 +265,23 @@ Example:
 ```bash
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 16 \
   -nlt 64 \
-  -nlf 11 \
+  -xnlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -nbf 11 \
+  -xnbf 11 \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -npp 4 \
-  -npi 128 \
-  -npo 64 \
+  -xnpp 4 \
+  -xnpi 128 \
+  -xnpo 64 \
   -rst shared -rss 100Gi \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 ```
@@ -517,13 +517,13 @@ We activate the new-connection-per-transaction feature with `-xconn`.
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 10 \
+  -xsd 10 \
   -xconn \
   -dbms PostgreSQL \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 ```
@@ -633,16 +633,16 @@ This time there will be a connection pool of size 32, handled by 2 pods of PGBou
 ```bash
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 10 \
+  -xsd 10 \
   -xconn \
   -dbms PGBouncer \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
-  -npp 2 \
-  -npi 32 \
-  -npo 32 \
+  -xnbf 16 \
+  -xtb 1024 \
+  -xnpp 2 \
+  -xnpi 32 \
+  -xnpo 32 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 ```

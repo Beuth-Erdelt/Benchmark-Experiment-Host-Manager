@@ -282,13 +282,13 @@ bexhoma tpch -ms $BEXHOMA_MS -tr \
 ### Start DBMS and Load Data
 
 Generates and loads TPC-H data at scale factor 1.
-The flags `-ii -ic -is` trigger index creation, constraint application, and statistics gathering after the raw data is ingested.
+The flags `-xii -xic -xis` trigger index creation, constraint application, and statistics gathering after the raw data is ingested.
 
 ```bash
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 \
+  -xii -xic -xis -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpch_load_postgresql.log
 ```
@@ -311,7 +311,7 @@ Loads TPC-H data and runs all 22 queries once.
 bexhoma tpch -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -xii -xic -xis -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_run_postgresql.log
 ```
@@ -347,7 +347,7 @@ bexhoma tpcds -ms $BEXHOMA_MS -tr \
 bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 \
+  -xii -xic -xis -nlp 1 -nlt 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpcds_load_postgresql.log
 ```
@@ -361,7 +361,7 @@ Some queries may fail on certain DBMS (e.g., Q90 raises a division-by-zero on Po
 bexhoma tpcds -ms $BEXHOMA_MS -tr \
   --dbms PostgreSQL \
   -m -mc \
-  -ii -ic -is -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -xii -xic -xis -nlp 1 -nlt 1 -nbp 1 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_run_postgresql.log
 ```

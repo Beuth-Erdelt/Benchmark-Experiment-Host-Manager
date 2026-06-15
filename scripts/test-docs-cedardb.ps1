@@ -17,15 +17,15 @@
 #### TCP-H Monitoring (Example-TPC-H.md)
 bexhoma tpch `
   -ms 5                         <# limit to 5 parallel DBMS configurations at a time #> `
-  -dt                           <# disable result type checking #> `
+  -xdt                           <# disable result type checking #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -dbms CedarDB                 <# DBMS under test #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
-  -ii                           <# create indexes after data load #> `
-  -ic                           <# enforce constraints after data load #> `
-  -is                           <# run ANALYZE after data load #> `
+  -xii                           <# create indexes after data load #> `
+  -xic                           <# enforce constraints after data load #> `
+  -xis                           <# run ANALYZE after data load #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -44,13 +44,13 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms CedarDB                 <# DBMS under test #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 1,8                      <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 1,4                      <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 1,4                      <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -nbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -67,13 +67,13 @@ bexhoma benchbase `
   -ms 2                         <# limit to 2 parallel DBMS configurations at a time #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms CedarDB                 <# DBMS under test #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 100                      <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -b chbenchmark                <# Benchbase benchmark type #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xbt chbenchmark                <# Benchbase benchmark type #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

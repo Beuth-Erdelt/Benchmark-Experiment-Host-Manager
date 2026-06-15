@@ -24,7 +24,7 @@ source ./scripts/testfunctions.sh
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 1                         scaling factor (number of records x 1000)
-# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (x 1000)
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
 # --workload a                  YCSB workload template (a = 50%% read / 50%% update)
@@ -32,32 +32,32 @@ source ./scripts/testfunctions.sh
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -xtb 16384                     base ops/s used to compute throughput targets (2^14)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
-# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -xnlf 4                        loading throughput target as a multiple of the base ops/s
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -nbf 4                        throughput target as a multiple of the base ops/s
+# -xnbf 4                        throughput target as a multiple of the base ops/s
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nc 1                         number of repeated runs per configuration
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -71,7 +71,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 1                         scaling factor (number of records x 1000)
-# -sfo 1                        number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (x 1000)
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
 # --workload a                  YCSB workload template (a = 50%% read / 50%% update)
@@ -79,13 +79,13 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -xtb 16384                     base ops/s used to compute throughput targets (2^14)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
-# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -xnlf 4                        loading throughput target as a multiple of the base ops/s
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -nbf 4                        throughput target as a multiple of the base ops/s
+# -xnbf 4                        throughput target as a multiple of the base ops/s
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nc 2                         number of repeated runs per configuration
 # -m                            collect SUT resource metrics
@@ -95,19 +95,19 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=
 # -rsr                          delete and recreate the PVC at experiment start
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 1 \
-  -sfo 1 \
+  -xop 1 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -122,7 +122,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1 
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 10                        scaling factor (number of records x 1000)
-# -sfo 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (x 1000)
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
 # --workload a                  YCSB workload template (a = 50%% read / 50%% update)
@@ -130,32 +130,32 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1 
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -tb 16384                     base ops/s used to compute throughput targets (2^14)
+# -xtb 16384                     base ops/s used to compute throughput targets (2^14)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
-# -nlf 4                        loading throughput target as a multiple of the base ops/s
+# -xnlf 4                        loading throughput target as a multiple of the base ops/s
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -nbf 4                        throughput target as a multiple of the base ops/s
+# -xnbf 4                        throughput target as a multiple of the base ops/s
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nc 1                         number of repeated runs per configuration
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 bexhoma ycsb -ms $BEXHOMA_MS -tr \
   -sf 10 \
-  -sfo 10 \
+  -xop 10 \
   -nw 3 \
   -nwr 3 \
   --workload a \
   -dbms CockroachDB \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -169,27 +169,27 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 16                        scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
+# -xsd 5                         benchmark duration in minutes
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
 # -dbms CockroachDB             DBMS under test
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
-# -nbf 16                       throughput target as a multiple of the base ops/s
-# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                       throughput target as a multiple of the base ops/s
+# -xtb 1024                      base ops/s used to compute the throughput target (2^10)
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 
@@ -201,14 +201,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  n
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 128                       scaling factor (controls database size)
-# -sd 10                        benchmark duration in minutes
+# -xsd 10                        benchmark duration in minutes
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
 # -dbms CockroachDB             DBMS under test
 # -nbp 1,2,4,8                  benchmarking pod counts to sweep (comma-separated)
 # -nbt 1280                     threads per benchmarking pod
-# -nbf 16                       throughput target as a multiple of the base ops/s
-# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                       throughput target as a multiple of the base ops/s
+# -xtb 1024                      base ops/s used to compute the throughput target (2^10)
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -217,14 +217,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  n
 # -ma                           collect application-level metrics
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 10 \
+  -xsd 10 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 1280 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
@@ -237,14 +237,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128 
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -sf 128                       scaling factor (controls database size)
-# -sd 10                        benchmark duration in minutes
+# -xsd 10                        benchmark duration in minutes
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
 # -dbms CockroachDB             DBMS under test
 # -nbp 1,2,4,8                  benchmarking pod counts to sweep (comma-separated)
 # -nbt 1280                     threads per benchmarking pod
-# -nbf 16                       throughput target as a multiple of the base ops/s
-# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                       throughput target as a multiple of the base ops/s
+# -xtb 1024                      base ops/s used to compute the throughput target (2^10)
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -256,14 +256,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128 
 # -rsr                          delete and recreate the PVC at experiment start
 bexhoma benchbase -ms $BEXHOMA_MS -tr \
   -sf 128 \
-  -sd 10 \
+  -xsd 10 \
   -nw 3 \
   -nwr 3 \
   -dbms CockroachDB \
   -nbp 1,2,4,8 \
   -nbt 1280 \
-  -nbf 16 \
-  -tb 1024 \
+  -xnbf 16 \
+  -xtb 1024 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -m -mc -ma \
   -rst shared -rss 100Gi -rsr \

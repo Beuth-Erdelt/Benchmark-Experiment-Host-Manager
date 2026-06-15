@@ -33,12 +33,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='start sut, also load data or also run the TPC-C queries', choices=['run', 'start', 'load', 'summary'])
     parser.add_argument('-dbms', '--dbms', help='DBMS to load the data', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'Citus'], default=[], nargs='*')
-    parser.add_argument('-dt',   '--datatransfer', help='activates datatransfer', action='store_true', default=False)
-    parser.add_argument('-nr',   '--num-run', help='number of runs per query', default=1)
-    parser.add_argument('-nrt',  '--num-rampup-time', help='Rampup time in minutes', default=2)
-    parser.add_argument('-sd',   '--scaling-duration', help='scaling factor = duration in minutes', default=5)
-    parser.add_argument('-xlat', '--extra-latency', help='also log latencies', action='store_true', default=False)
-    parser.add_argument('-xkey', '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
+    parser.add_argument('-xdt',   '--xdata-transfer', help='activates datatransfer', action='store_true', default=False, dest='datatransfer')
+    parser.add_argument('-xqr',   '--xnum-query-runs', help='number of runs per query', default=1, dest='num_run')
+    parser.add_argument('-xrt',   '--xrampup-time', help='Rampup time in minutes', default=2, dest='num_rampup_time')
+    parser.add_argument('-xsd',   '--xscaling-duration', help='scaling factor = duration in minutes', default=5, dest='scaling_duration')
+    parser.add_argument('-xlat',  '--extra-latency', help='also log latencies', action='store_true', default=False)
+    parser.add_argument('-xkey',  '--extra-keying', help='activate keying and waiting time', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
     if args.debug:

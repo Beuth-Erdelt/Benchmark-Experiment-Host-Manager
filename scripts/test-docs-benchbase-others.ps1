@@ -26,13 +26,13 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 16                        <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 16                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -b twitter                    <# Benchbase benchmark type #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xbt twitter                    <# Benchbase benchmark type #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -49,13 +49,13 @@ bexhoma benchbase `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -sf 1600                      <# scaling factor (controls database size) #> `
-  -sd 20                        <# benchmark duration in minutes #> `
+  -xsd 20                        <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 1,2,4,8                  <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -b twitter                    <# Benchbase benchmark type #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xbt twitter                    <# Benchbase benchmark type #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -72,13 +72,13 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 10                        <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 100                      <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -b chbenchmark                <# Benchbase benchmark type #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xbt chbenchmark                <# Benchbase benchmark type #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -95,13 +95,13 @@ bexhoma benchbase `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -sf 100                       <# scaling factor (controls database size) #> `
-  -sd 20                        <# benchmark duration in minutes #> `
+  -xsd 20                        <# benchmark duration in minutes #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nbp 1,2,5,10                 <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 100                      <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -b chbenchmark                <# Benchbase benchmark type #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xbt chbenchmark                <# Benchbase benchmark type #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -115,15 +115,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase chbenchma
 bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1000                      <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   --benchmark ycsb              <# Benchbase benchmark type #> `
   --workload c                  <# YCSB workload template (c = 100% read) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -137,15 +137,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB work
 bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1000                      <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   --benchmark ycsb              <# Benchbase benchmark type #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -159,15 +159,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB work
 bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1000                      <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   --benchmark ycsb              <# Benchbase benchmark type #> `
   --workload b                  <# YCSB workload template (b = 95% read / 5% update) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -181,15 +181,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB work
 bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1000                      <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   --benchmark ycsb              <# Benchbase benchmark type #> `
   --workload d                  <# YCSB workload template (d = read latest) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -203,15 +203,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB work
 bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1000                      <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   --benchmark ycsb              <# Benchbase benchmark type #> `
   --workload e                  <# YCSB workload template (e = scan) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -225,15 +225,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB work
 bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1000                      <# scaling factor (controls database size) #> `
-  -sd 5                         <# benchmark duration in minutes #> `
+  -xsd 5                         <# benchmark duration in minutes #> `
   --benchmark ycsb              <# Benchbase benchmark type #> `
   --workload f                  <# YCSB workload template (f = read-modify-write) #> `
   -dbms PostgreSQL              <# DBMS under test #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -nbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -tb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
+  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

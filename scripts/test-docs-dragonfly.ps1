@@ -25,19 +25,19 @@
 bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
-  -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms Dragonfly               <# DBMS under test #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -56,20 +56,20 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
-  -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
   -nw 3                         <# number of worker nodes #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms Dragonfly               <# DBMS under test #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -87,7 +87,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly clus
 bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
-  -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 1                        <# replication factor #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
@@ -95,13 +95,13 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -117,19 +117,19 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly clus
 bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
-  -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms Dragonfly               <# DBMS under test #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `
@@ -150,20 +150,20 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly sing
 bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
-  -sfo 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
   -nw 3                         <# number of worker nodes #> `
   --workload a                  <# YCSB workload template (a = 50% read / 50% update) #> `
   -dbms Dragonfly               <# DBMS under test #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -tb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
+  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
-  -nlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
+  -xnlf 12                       <# loading throughput target as a multiple of the base ops/s #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -nbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 4                        <# benchmarking throughput target as a multiple of the base ops/s #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -m                            <# collect SUT resource metrics #> `

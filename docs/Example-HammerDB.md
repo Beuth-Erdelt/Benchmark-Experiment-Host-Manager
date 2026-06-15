@@ -43,7 +43,7 @@ Example:
 ```bash
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -dbms PostgreSQL \
   -nlt 16 \
   -nbp 1,2 \
@@ -60,7 +60,7 @@ This
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using 16 (`-nlt`) threads
 * runs streams of TPC-C queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
 * with a maximum of 1 DBMS per time (`-ms`)
@@ -228,9 +228,9 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python hammerdb.py -h`
 
 ```bash
-usage: hammerdb.py [-h] [-aws] [-dbms [{PostgreSQL,MySQL,MariaDB,Citus} ...]] [-db] [-sl] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG]
+usage: hammerdb.py [-h] [-aws] [-dbms [{PostgreSQL,MySQL,MariaDB,Citus} ...]] [-db] [-sl] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-xdt] [-xqr NUM_RUN] [-nc NUM_CONFIG]
                    [-ne NUM_QUERY_EXECUTORS] [-nw NUM_WORKER] [-nwr NUM_WORKER_REPLICAS] [-nws NUM_WORKER_SHARDS] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS]
-                   [-nbt NUM_BENCHMARKING_THREADS] [-nrt NUM_RAMPUP_TIME] [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-xlat] [-xkey] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
+                   [-nbt NUM_BENCHMARKING_THREADS] [-xrt NUM_RAMPUP_TIME] [-sf SCALING_FACTOR] [-xsd SCALING_DURATION] [-xlat] [-xkey] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
                    [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
                    [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
                    {run,start,load,summary}
@@ -257,8 +257,8 @@ options:
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
-  -nr NUM_RUN, --num-run NUM_RUN
+  -xdt, --datatransfer   activates datatransfer
+  -xqr NUM_RUN, --num-run NUM_RUN
                         number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration
@@ -278,11 +278,11 @@ options:
                         comma separated list of number of benchmarkers per configuration
   -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
                         total number of threads per benchmarking process
-  -nrt NUM_RAMPUP_TIME, --num-rampup-time NUM_RAMPUP_TIME
+  -xrt NUM_RAMPUP_TIME, --num-rampup-time NUM_RAMPUP_TIME
                         Rampup time in minutes
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of warehouses
-  -sd SCALING_DURATION, --scaling-duration SCALING_DURATION
+  -xsd SCALING_DURATION, --scaling-duration SCALING_DURATION
                         scaling factor = duration in minutes
   -xlat, --extra-latency
                         also log latencies
@@ -322,7 +322,7 @@ Example:
 ```bash
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -xlat \
   -dbms PostgreSQL \
   -nlt 16 \
@@ -621,7 +621,7 @@ The keying and thinking times can be activated via `-xkey`:
 ```bash
 bexhoma hammerdb -ms $BEXHOMA_MS -tr \
   -sf 160 \
-  -sd 30 \
+  -xsd 30 \
   -xlat \
   -xkey \
   -dbms PostgreSQL \
