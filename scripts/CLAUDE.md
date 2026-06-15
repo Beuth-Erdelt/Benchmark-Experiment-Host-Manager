@@ -68,12 +68,40 @@ comments cannot follow a `` ` ``).
 - Call `wait_process "<name>"` / `Wait-BexhomaProcess "<name>"` after every `bexhoma` invocation.
 
 ### Bash-specific
-- One CLI parameter per continuation line (each ending with `\`).
-- Precede every `bexhoma` call with a heading comment block: one `# -flag [value]   description` line per parameter, in the same order they appear in the call. Each flag is listed separately even when multiple flags share a continuation line in the call (e.g., `-ii -ic -is`).
+- The `bexhoma <name>` command line carries no inline flags — all flags appear on their own continuation lines (each ending with `\`).
+- Two exceptions to one-flag-per-line: post-load init flags (`-xii`, `-xic`, `-xis`, and/or `-xcol`) may share one line; node-pinning flags (`-rnn`, `-rnl`, `-rnb`) always share one line.
+- Precede every `bexhoma` call with a heading comment block: one `# -flag [value]   description` line per flag, **in the same order** as the flags in the call (including flags that share a command line — each gets its own comment line).
 - Redirect both stdout and stderr with `&>$LOG_DIR/<logfile>`.
 
 ### PowerShell-specific
+- The `bexhoma <name>` command line carries no inline flags — all flags appear on their own lines (each followed by `` ` ``).
 - One CLI parameter per line, each followed by a `<# description #>` comment.
 - All `<#` comments aligned to column 32 (pad with spaces; use `1` space minimum for overlong prefixes).
 - Use backtick `` ` `` for line continuation; it must be the absolute last character on the line.
 - Redirect both stdout and stderr with `2>&1 | Out-File <log> -Encoding utf8`.
+
+## Flag ordering
+
+Use this canonical order for every `bexhoma` call in every test script.
+Flags not used by a particular benchmark are simply omitted.
+Within each group the flags are listed alphabetically except where noted.
+
+| Group | Flags | Notes |
+|---|---|---|
+| A — Target | `-dbms`, `-sf` | what to test and at what scale |
+| B — Benchmark identity | `-xbt`, `-xwl` | suite type, workload letter |
+| C — Benchmark timing | `-xqr`, `-xrt`, `-xsd` | query repeats, ramp-up, duration |
+| D — Throughput targets | `-xtb`, `-xnbf`, `-xnlf` | base target, then multiplier factors |
+| E — Sweep dimensions | `-nc`, `-ne` | repetitions, parallel client counts |
+| F — Loading parallelism | `-nlp`, `-nlt` | pods then threads |
+| G — Benchmarking parallelism | `-nbp`, `-nbt` | pods then threads |
+| H — SUT topology | `-xnsr`, `-nw`, `-nwr`, `-nws` | replicas, worker nodes/replicas/shards |
+| I — Connection pooling | `-xnpp`, `-xnpi`, `-xnpo` | pod count, inbound, outbound |
+| J — Post-load init | `-xii`, `-xic`, `-xis`, `-xcol` | **logical order** (indexes → constraints → statistics → columnar) |
+| K — Query/load modifiers | `-xlit`, `-xnls`, `-xrcp`, `-xshq` | alphabetical |
+| L — Extra features | `-xbatch`, `-xconn`, `-xdt`, `-xio`, `-xkey`, `-xlat`, `-xli`, `-xmet`, `-xop`, `-xsbs` | alphabetical |
+| M — Monitoring | `-m`, `-ma`, `-mc` | alphabetical |
+| N — Experiment control | `-ms`, `-sl`, `-ss`, `-t`, `-tr` | alphabetical |
+| O — SUT resources | `-lc`, `-lr`, `-rc`, `-rr` / `-rct`, `-rg`, `-rgt` / `-rsr`, `-rss`, `-rst` | three sub-groups: RAM+CPU, node labels, storage — alphabetical within each |
+| P — Multi-tenancy | `-mtb`, `-mtn`, `-mtv` | alphabetical |
+| Q — Node pinning | `-rnn`, `-rnl`, `-rnb` | **flow order** (SUT → loaders → benchmarkers); always on one line in `.sh` |

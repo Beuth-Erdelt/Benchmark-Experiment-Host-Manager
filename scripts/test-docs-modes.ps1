@@ -20,12 +20,12 @@
 
 
 bexhoma ycsb `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  --workload c                  <# YCSB workload template (c = 100% read) #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\test_ycsb_start_postgresql.log" -Encoding utf8
 
@@ -35,14 +35,14 @@ kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
 bexhoma ycsb `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  --workload c                  <# YCSB workload template (c = 100% read) #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\test_ycsb_load_postgresql.log" -Encoding utf8
@@ -53,17 +53,17 @@ kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
 bexhoma ycsb `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  --workload c                  <# YCSB workload template (c = 100% read) #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 8                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -83,11 +83,11 @@ kubectl delete all -l app=bexhoma,usecase=ycsb
 
 
 bexhoma benchbase `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\test_benchbase_start_postgresql.log" -Encoding utf8
 
@@ -97,13 +97,13 @@ kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
 bexhoma benchbase `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\test_benchbase_load_postgresql.log" -Encoding utf8
@@ -114,16 +114,16 @@ kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
 bexhoma benchbase `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 8                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -143,11 +143,11 @@ kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
 
 bexhoma hammerdb `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\test_hammerdb_start_postgresql.log" -Encoding utf8
 
@@ -157,13 +157,13 @@ kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 bexhoma hammerdb `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\test_hammerdb_load_postgresql.log" -Encoding utf8
@@ -174,16 +174,16 @@ kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 bexhoma hammerdb `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod (virtual users) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -203,11 +203,11 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
 
 bexhoma tpch `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\test_tpch_start_postgresql.log" -Encoding utf8
 
@@ -217,16 +217,16 @@ kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 bexhoma tpch `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -xii                           <# create indexes after data load #> `
-  -xic                           <# enforce constraints after data load #> `
-  -xis                           <# run ANALYZE after data load #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\test_tpch_load_postgresql.log" -Encoding utf8
@@ -237,19 +237,19 @@ kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 bexhoma tpch `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -xii                           <# create indexes after data load #> `
-  -xic                           <# enforce constraints after data load #> `
-  -xis                           <# run ANALYZE after data load #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -269,11 +269,11 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 
 
 bexhoma tpcds `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\test_tpcds_start_postgresql.log" -Encoding utf8
 
@@ -283,16 +283,16 @@ kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
 bexhoma tpcds `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -xii                           <# create indexes after data load #> `
-  -xic                           <# enforce constraints after data load #> `
-  -xis                           <# run ANALYZE after data load #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\test_tpcds_load_postgresql.log" -Encoding utf8
@@ -303,19 +303,19 @@ kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
 bexhoma tpcds `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  --dbms PostgreSQL             <# DBMS under test #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -xii                           <# create indexes after data load #> `
-  -xic                           <# enforce constraints after data load #> `
-  -xis                           <# run ANALYZE after data load #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

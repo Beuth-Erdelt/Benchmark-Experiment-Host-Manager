@@ -22,31 +22,31 @@
 
 
 bexhoma ycsb `
+  -dbms PGBouncer               <# DBMS under test #> `
+  -sf 16                        <# scaling factor (number of records x 1000) #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 11                      <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 16                       <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 16                       <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 128                      <# threads per benchmarking pod #> `
+  -xnpp 4                       <# number of PGBouncer pool instances #> `
+  -xnpi 128                     <# pool size (incoming connections) #> `
+  -xnpo 64                      <# pool size (outgoing connections) #> `
+  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 16                        <# scaling factor (number of records x 1000) #> `
-  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
-  --workload c                  <# YCSB workload template (c = 100% read) #> `
-  -dbms PGBouncer               <# DBMS under test #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -lr 64Gi                      <# RAM limit for the SUT container #> `
-  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
-  -nlp 16                       <# number of data loader pods #> `
-  -nlt 64                       <# threads per loader pod #> `
-  -xnlf 11                       <# loading throughput target as a multiple of the base ops/s #> `
-  -nbp 16                       <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 128                      <# threads per benchmarking pod #> `
-  -xnbf 11                       <# benchmarking throughput target as a multiple of the base ops/s #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -xnpp 4                        <# number of PGBouncer pool instances #> `
-  -xnpi 128                      <# pool size (incoming connections) #> `
-  -xnpo 64                       <# pool size (outgoing connections) #> `
   run 2>&1 | Out-File "$LOG_DIR\test_ycsb_testcase_pgbouncer_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
@@ -54,34 +54,34 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=
 
 
 bexhoma ycsb `
+  -dbms PGBouncer               <# DBMS under test #> `
+  -sf 16                        <# scaling factor (number of records x 1000) #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 11                      <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 16                       <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 16                       <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 128                      <# threads per benchmarking pod #> `
+  -xnpp 4                       <# number of PGBouncer pool instances #> `
+  -xnpi 128                     <# pool size (incoming connections) #> `
+  -xnpo 64                      <# pool size (outgoing connections) #> `
+  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 16                        <# scaling factor (number of records x 1000) #> `
-  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
-  --workload c                  <# YCSB workload template (c = 100% read) #> `
-  -dbms PGBouncer               <# DBMS under test #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 100Gi                    <# size of the persistent volume claim #> `
+  -rst shared                   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -lr 64Gi                      <# RAM limit for the SUT container #> `
-  -xtb 16384                     <# base ops/s used to compute throughput targets (2^14) #> `
-  -nlp 16                       <# number of data loader pods #> `
-  -nlt 64                       <# threads per loader pod #> `
-  -xnlf 11                       <# loading throughput target as a multiple of the base ops/s #> `
-  -nbp 16                       <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 128                      <# threads per benchmarking pod #> `
-  -xnbf 11                       <# benchmarking throughput target as a multiple of the base ops/s #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -xnpp 4                        <# number of PGBouncer pool instances #> `
-  -xnpi 128                      <# pool size (incoming connections) #> `
-  -xnpo 64                       <# pool size (outgoing connections) #> `
-  -rst shared                   <# storage class for persistent volumes #> `
-  -rss 100Gi                    <# size of the persistent volume claim #> `
-  -rsr                          <# delete and recreate the PVC at experiment start #> `
   run 2>&1 | Out-File "$LOG_DIR\test_ycsb_testcase_pgbouncer_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "ycsb"
@@ -94,16 +94,16 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer stor
 
 
 bexhoma benchbase `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 16                        <# scaling factor (controls database size) #> `
-  -xsd 10                        <# benchmark duration in minutes #> `
-  -xconn                        <# collect new-connection latency #> `
   -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -xsd 10                       <# benchmark duration in minutes #> `
+  -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
+  -xconn                        <# collect new-connection latency #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -115,19 +115,19 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-conne
 
 #### Benchbase PGBouncer (Example-PGBouncer.md)
 bexhoma benchbase `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  -sf 16                        <# scaling factor (controls database size) #> `
-  -xsd 10                        <# benchmark duration in minutes #> `
-  -xconn                        <# collect new-connection latency #> `
   -dbms PGBouncer               <# DBMS under test #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -xsd 10                       <# benchmark duration in minutes #> `
+  -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
-  -xnbf 16                       <# throughput target as a multiple of the base ops/s #> `
-  -xtb 1024                      <# base ops/s used to compute the throughput target (2^10) #> `
-  -xnpp 2                        <# number of PGBouncer pool instances #> `
-  -xnpi 32                       <# pool size (incoming connections) #> `
-  -xnpo 32                       <# pool size (outgoing connections) #> `
+  -xnpp 2                       <# number of PGBouncer pool instances #> `
+  -xnpi 32                      <# pool size (incoming connections) #> `
+  -xnpo 32                      <# pool size (outgoing connections) #> `
+  -xconn                        <# collect new-connection latency #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
