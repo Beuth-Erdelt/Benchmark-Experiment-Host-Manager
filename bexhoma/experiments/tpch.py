@@ -102,6 +102,30 @@ class tpch(dbmsbenchmarker):
             ]],
         }
 
+    def enable_refresh_stream(self, template: str = "jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml") -> None:
+        """
+        Add a TPC-H RF1/RF2 refresh stream that runs in parallel with the query stream.
+
+        The refresh stream becomes ``benchmark_run=2`` within each client round.
+        Call :meth:`set_default_benchmarking_parameters` with ``TPCH_REFRESH_STREAMS``
+        and ``TPCH_REFRESH_STREAM_OFFSET`` before calling this method so those values
+        reach both the generator initContainer and the loader main container.
+
+        :param template: k8s job-template file for the refresh benchmarker job.
+            Choose the variant matching the target DBMS
+            (``jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml`` or
+            ``jobtemplate-benchmarking-tpch-refresh-MySQL.yml``).
+        """
+        self.experiment_dict_template["benchmarker"][0].append({
+            "name":        "tpch-refresh",
+            "benchmarker": "tpch_refresh",
+            "template":    template,
+            "parallelism": 1,
+            "num_pods":    1,
+            "target":      "sut",
+            "parameters":  {},
+        })
+
     def set_queries_full(self) -> None:
         """Switch to the full TPC-H query file covering all 22 queries."""
         self.set_queryfile('queries-tpch.config')

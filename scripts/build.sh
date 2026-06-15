@@ -268,6 +268,39 @@ build_and_push_ycsb() {
 }
 
 ###########
+build_and_push_tpch_refresh() {
+  local version="$1"
+  if [[ -z "$version" ]]; then
+    echo "Usage: build_and_push_tpch_refresh <image_tag>"
+    return 1
+  fi
+
+  (
+    set -e
+    cd images/tpch_refresh/generator
+    docker build -f Dockerfile -t "bexhoma/generator_tpch_refresh:$version" .
+    docker push "bexhoma/generator_tpch_refresh:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/generator_tpch_refresh:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_postgresql
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_postgresql:$version" .
+    docker push "bexhoma/loader_tpch_refresh_postgresql:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_postgresql:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_mysql
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_mysql:$version" .
+    docker push "bexhoma/loader_tpch_refresh_mysql:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_mysql:$version"
+}
+
+###########
 build_and_push_benchbase() {
   local version="$1"
   if [[ -z "$version" ]]; then
@@ -303,6 +336,7 @@ echo "$version"
 
 build_and_push_dbmsbenchmarker "$dbmsbenchmarker" "$version"
 build_and_push_tpch "$version"
+build_and_push_tpch_refresh "$version"
 build_and_push_tpcds "$version"
 build_and_push_monitoring "$version"
 build_and_push_hammerdb "$version"
@@ -317,6 +351,7 @@ echo "$version"
 
 build_and_push_dbmsbenchmarker "$dbmsbenchmarker" "$version"
 build_and_push_tpch "$version"
+build_and_push_tpch_refresh "$version"
 build_and_push_tpcds "$version"
 build_and_push_monitoring "$version"
 build_and_push_hammerdb "$version"

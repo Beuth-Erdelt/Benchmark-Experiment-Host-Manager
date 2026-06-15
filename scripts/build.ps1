@@ -125,6 +125,24 @@ function Build-AndPush-Tpch {
     _BgDockerJob "bexhoma/loader_tpch_monetdb:$Version"     "images/tpch/loader_monetdb"    "loader_tpch_monetdb"     $Version
 }
 
+function Build-AndPush-TpchRefresh {
+    param([string]$Version)
+    if (-not $Version) { Write-Host "Usage: Build-AndPush-TpchRefresh <image_tag>"; return }
+    # Generator needs dbgen/dists.dss/tpc_eula.txt copied from images/tpch/generator first.
+    $rootDir = $script:RootDir
+    $job = Start-Job -ScriptBlock {
+        param($rootDir, $version)
+        Set-Location (Join-Path $rootDir "images/tpch_refresh/generator")
+        & docker build -f Dockerfile -t "bexhoma/generator_tpch_refresh:${version}" .
+        if ($LASTEXITCODE -ne 0) { throw "docker build failed (exit $LASTEXITCODE)" }
+        & docker push "bexhoma/generator_tpch_refresh:${version}"
+        if ($LASTEXITCODE -ne 0) { throw "docker push failed (exit $LASTEXITCODE)" }
+    } -ArgumentList $rootDir, $Version
+    $script:Jobs.Add(@{ Job = $job; Label = "bexhoma/generator_tpch_refresh:$Version" })
+    _BgDockerJob "bexhoma/loader_tpch_refresh_postgresql:$Version" "images/tpch_refresh/loader_postgresql" "loader_tpch_refresh_postgresql" $Version
+    _BgDockerJob "bexhoma/loader_tpch_refresh_mysql:$Version"      "images/tpch_refresh/loader_mysql"      "loader_tpch_refresh_mysql"      $Version
+}
+
 function Build-AndPush-Monitoring {
     param([string]$Version)
     if (-not $Version) { Write-Host "Usage: Build-AndPush-Monitoring <image_tag>"; return }
@@ -160,12 +178,13 @@ $version = (pip show bexhoma | Select-String "^Version:" | ForEach-Object { ($_ 
 Write-Output $version
 
 Build-AndPush-Dbmsbenchmarker $dbmsbenchmarker $version
-Build-AndPush-Tpch    $version
-Build-AndPush-Tpcds   $version
-Build-AndPush-Monitoring $version
-Build-AndPush-Hammerdb   $version
-Build-AndPush-Ycsb       $version
-Build-AndPush-Benchbase  $version
+Build-AndPush-Tpch          $version
+Build-AndPush-TpchRefresh   $version
+Build-AndPush-Tpcds         $version
+Build-AndPush-Monitoring    $version
+Build-AndPush-Hammerdb      $version
+Build-AndPush-Ycsb          $version
+Build-AndPush-Benchbase     $version
 
 _WaitAll
 Write-Output "All version builds and pushes completed."
@@ -174,12 +193,13 @@ $version = "latest"
 Write-Output $version
 
 Build-AndPush-Dbmsbenchmarker $dbmsbenchmarker $version
-Build-AndPush-Tpch    $version
-Build-AndPush-Tpcds   $version
-Build-AndPush-Monitoring $version
-Build-AndPush-Hammerdb   $version
-Build-AndPush-Ycsb       $version
-Build-AndPush-Benchbase  $version
+Build-AndPush-Tpch          $version
+Build-AndPush-TpchRefresh   $version
+Build-AndPush-Tpcds         $version
+Build-AndPush-Monitoring    $version
+Build-AndPush-Hammerdb      $version
+Build-AndPush-Ycsb          $version
+Build-AndPush-Benchbase     $version
 
 _WaitAll
 Write-Output "All latest builds and pushes completed."
