@@ -64,6 +64,20 @@ cp /tmp/dists.dss ./dists.dss
 echo "./dbgen -s $SF -U $LAST_SET"
 time ./dbgen -s $SF -U $LAST_SET
 
+######################## Remove last character per line ###################
+if test $TRANSFORM_RAW_DATA -gt 0
+then
+	echo "Remove last character per line"
+	for i in $destination_raw/delete.*; do
+		echo "$i"
+	    time sed 's/.$//' -i $i
+	done
+	for i in $destination_raw/*.tbl.*; do
+		echo "$i"
+	    time sed 's/.$//' -i $i
+	done
+fi
+
 ######################## Remove generator executables ########################
 rm ./dbgen ./dists.dss
 

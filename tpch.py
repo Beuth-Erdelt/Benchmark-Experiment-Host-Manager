@@ -176,6 +176,7 @@ if __name__ == '__main__':
         experiment.set_default_benchmarking_parameters(
             TPCH_REFRESH_STREAMS = num_refresh_streams,
             TPCH_REFRESH_STREAM_OFFSET = num_refresh_stream_offset,
+            TRANSFORM_RAW_DATA = 1,
             STORE_RAW_DATA = 1,
         )
         refresh_templates = {
