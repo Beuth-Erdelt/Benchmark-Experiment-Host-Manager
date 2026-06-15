@@ -166,7 +166,7 @@ if __name__ == '__main__':
         YCSB_BATCHSIZE = batchsize,
         YCSB_STATUS_INTERVAL = scaling_logging,
         YCSB_INSERTORDER = extra_insert_order,
-        YCSB_MAX_EXECUTION = max_execution_time,
+        YCSB_MAX_EXECUTION = 0, #max_execution_time, # we always load the full dataset
     )
     experiment.set_default_benchmarking_parameters(
         SF = SF,
