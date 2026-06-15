@@ -2875,10 +2875,15 @@ scrape_configs:
                 schema=schema,
                 )
         return c
-    def fetch_metrics(self, connection, connection_file, container, component, component_type, title, experiment, time_start, time_end, metrics_type, pod_dashboard):
+    def fetch_metrics(self, connection, connection_file, container, component, component_type, title, experiment, time_start, time_end, metrics_type, pod_dashboard, optional: bool = False):
         if not 'monitoring_components' in self.experiment.workload:
             self.experiment.workload['monitoring_components'] = {}
         self.experiment.workload['monitoring_components'][component_type] = title
+        if optional:
+            if 'optional_monitoring_components' not in self.experiment.workload:
+                self.experiment.workload['optional_monitoring_components'] = []
+            if component_type not in self.experiment.workload['optional_monitoring_components']:
+                self.experiment.workload['optional_monitoring_components'].append(component_type)
         config_folder = '/results/'+self.code
         cmd = {}
         metrics = self.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]
@@ -3189,7 +3194,8 @@ scrape_configs:
                             time_start=self.timeLoadingStart,
                             time_end=self.timeLoadingEnd,
                             metrics_type="metrics",
-                            pod_dashboard=pod_dashboard
+                            pod_dashboard=pod_dashboard,
+                            optional=True,
                             )
                     # data injector container "sensor"
                     print("{:30s}: collecting metrics of data injector at connection {}".format(connection, self.current_benchmark_connection))

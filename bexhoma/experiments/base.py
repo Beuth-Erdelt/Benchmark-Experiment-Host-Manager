@@ -174,6 +174,7 @@ class base():
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
         self.workload['monitoring_components'] = {}                     # dict for infos about which components are monitored
+        self.workload['optional_monitoring_components'] = []            # component types whose empty/zero CPU metrics are not a test failure
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
         self.monitor_app_active = True                                  # Bool, tells if application-level metrics are monitored
         self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrics
@@ -2682,6 +2683,7 @@ class base():
         """
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             print("\n### Monitoring")
+            optional_components = self.workload.get('optional_monitoring_components', [])
             for component, title in self.workload['monitoring_components'].items():
                 df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
                 if len(df_monitoring) > 0:
@@ -2691,8 +2693,12 @@ class base():
                     df.index.names = ["DBMS"]
                     print(df.to_markdown(index=True, floatfmt=".2f"))
                     passed = self.evaluator.test_results_column(df, "CPU [CPUs]")
-                    suffix = "no 0 or NaN" if passed else "0 or NaN"
-                    self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
+                    if not passed and component in optional_components:
+                        # Data generator produces no CPU load when data is pre-existing; skip test.
+                        print(f"* TEST skipped: {title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
+                    else:
+                        suffix = "no 0 or NaN" if passed else "0 or NaN"
+                        self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
     def OLD_show_summary_monitoring(self):
         test_results = ""
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
