@@ -359,13 +359,16 @@ class default():
                 )
                 round_entries = [
                     {
-                        'name':        tmpl['name'],
-                        'benchmarker': tmpl['benchmarker'],
-                        'template':    tmpl['template'],
-                        'parallelism': int(parallelism),
-                        'num_pods':    int(parallelism),
-                        'target':      tmpl.get('target', 'sut'),
-                        'parameters':  {**tmpl['parameters'], **per_round_params},
+                        'name':             tmpl['name'],
+                        'benchmarker':      tmpl['benchmarker'],
+                        'template':         tmpl['template'],
+                        # Entries with fixed_parallelism=True keep their template value;
+                        # others scale with the client count (e.g. -ne N query streams).
+                        'parallelism':      tmpl['parallelism'] if tmpl.get('fixed_parallelism') else int(parallelism),
+                        'num_pods':         tmpl['num_pods']    if tmpl.get('fixed_parallelism') else int(parallelism),
+                        'target':           tmpl.get('target', 'sut'),
+                        'parameters':       {**tmpl['parameters'], **per_round_params},
+                        'fixed_parallelism': tmpl.get('fixed_parallelism', False),
                     }
                     for tmpl in template_entries
                 ]

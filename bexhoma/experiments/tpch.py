@@ -117,13 +117,14 @@ class tpch(dbmsbenchmarker):
             ``jobtemplate-benchmarking-tpch-refresh-MySQL.yml``).
         """
         self.experiment_dict_template["benchmarker"][0].append({
-            "name":        "tpch-refresh",
-            "benchmarker": "tpch_refresh",
-            "template":    template,
-            "parallelism": 1,
-            "num_pods":    1,
-            "target":      "sut",
-            "parameters":  {},
+            "name":             "tpch-refresh",
+            "benchmarker":      "tpch_refresh",
+            "template":         template,
+            "parallelism":      1,
+            "num_pods":         1,
+            "fixed_parallelism": True,
+            "target":           "sut",
+            "parameters":       {},
         })
 
     def set_queries_full(self) -> None:

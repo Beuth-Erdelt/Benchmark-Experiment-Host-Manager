@@ -22,7 +22,7 @@ spec:
         imagePullPolicy: Always
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-mysql-1234567890'}
-        - {name: BEXHOMA_PORT, value: '3306'}
+        - {name: BEXHOMA_PORT, value: '9091'}
         - {name: BEXHOMA_CONNECTION, value: 'mysql'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234567890'}
         - {name: SF, value: '100'}
