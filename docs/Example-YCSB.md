@@ -41,19 +41,21 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 2 \
+  -xnlf 1,4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 1,8 \
   -nlt 64 \
-  -nlf 1,4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 2 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_loading.log
 ```
@@ -294,8 +296,8 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python ycsb.py -h`
 
 ```bash
-usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-wl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-sfo SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
-               [-sbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-tb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
+usage: ycsb.py [-h] [-aws] [-dbms {PostgreSQL,MySQL}] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nl NUM_LOADING] [-nlp NUM_LOADING_PODS] [-xwl {a,b,c,e,f}] [-sf SCALING_FACTOR] [-xop SCALING_FACTOR_OPERATIONS] [-su SCALING_USERS]
+               [-xsbs SCALING_BATCHSIZE] [-ltf LIST_TARGET_FACTORS] [-xtb TARGET_BASE] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
                [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
                {run,start,load,summary}
 
@@ -328,19 +330,19 @@ options:
                         number of parallel loaders per configuration
   -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         total number of loaders per configuration
-  -wl {a,b,c,e,f}, --workload {a,b,c,e,f}
+  -xwl {a,b,c,e,f}, --workload {a,b,c,e,f}
                         YCSB default workload
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of rows in millions
-  -sfo SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
+  -xop SCALING_FACTOR_OPERATIONS, --scaling-factor-operations SCALING_FACTOR_OPERATIONS
                         scaling factor = number of operations in millions (=SF if not set)
   -su SCALING_USERS, --scaling-users SCALING_USERS
                         scaling factor = number of total threads
-  -sbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
+  -xsbs SCALING_BATCHSIZE, --scaling-batchsize SCALING_BATCHSIZE
                         batch size
   -ltf LIST_TARGET_FACTORS, --list-target-factors LIST_TARGET_FACTORS
                         comma separated list of factors of 16384 ops as target - default range(1,9)
-  -tb TARGET_BASE, --target-base TARGET_BASE
+  -xtb TARGET_BASE, --target-base TARGET_BASE
                         ops as target, base for factors - default 16384 = 2**14
   -t TIMEOUT, --timeout TIMEOUT
                         timeout for a run of a query
@@ -376,19 +378,21 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 2,3 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
 ```
@@ -521,20 +525,23 @@ YCSB SF=1
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 3 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 2,3 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
 ```
@@ -716,20 +723,23 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 2,3 \
+  -xnlf 4 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 2,3 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 50Gi \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_storage.log
 ```
@@ -961,19 +971,21 @@ In special cases (for example a batch of benchmarks) you may want to set a param
 Here is an example for how to use `--set` for PostgreSQL 18. This sets `effective_io_concurrency` to 64.
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 2 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1 \
   -nlp 1 \
   -nlt 64 \
-  -nlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 2 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
   run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
 ```
@@ -1060,20 +1072,25 @@ Workload A is 50% READ and 50% UPDATE.
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 10 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_a.log
 ```
@@ -1282,20 +1299,25 @@ Workload B is 95% READ and 5% UPDATE.
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload b \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 10 \
+  -xwl b \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_b.log
 ```
@@ -1437,20 +1459,25 @@ Workload C is 100% READ.
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload c \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 10 \
+  -xwl c \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_c.log
 ```
@@ -1600,21 +1627,26 @@ It assumes the keyspace is filled completely up to some `recordcount` and new da
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload d \
-  -xio hashed \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 10 \
+  -xwl d \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xio hashed \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_d.log
 ```
@@ -1742,21 +1774,26 @@ Scans might be done over empty keyspaces.
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload e \
-  -xio ordered \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 10 \
+  -xwl e \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xio ordered \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_e.log
 ```
@@ -1878,20 +1915,25 @@ Workload F is 50% READ and 50% READ-MODIFY-WRITE.
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload f \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -tb 16384 \
+  -sf 10 \
+  -xwl f \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_f.log
 ```

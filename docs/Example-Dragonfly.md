@@ -45,23 +45,27 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms Dragonfly \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
-  -rr 64Gi -lr 64Gi \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_1.log
 ```
 
@@ -78,7 +82,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (i.e., SF=10, `-sfo`)
+      * 10.000.000 operations (i.e., SF=10, `-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -263,24 +267,29 @@ In the following example, this means that used memory, CPU time, etc. are summed
 
 If you want to deploy Dragonfly as a cluster, you can adjust the number of workers `-nw` when calling the script:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms Dragonfly \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
-  -rr 64Gi -lr 64Gi \
+  -nw 3 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_2.log
 ```
 
@@ -442,24 +451,27 @@ However, only the basic master-copy replication is implemented in bexhoma.
 Whenever `-nwr` is greater than 0, it is set to the number of workers minus 1.
 
 ```bash
-bexhoma ycsb -tr \
-  -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  -nwr 2 \
-  --workload a \
+bexhoma ycsb \
   -dbms Dragonfly \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc -ma \
+  -nw 3 \
+  -nwr 1 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_3.log
 ```
 
@@ -622,24 +634,30 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms Dragonfly \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc -ma \
-  -rst shared -rss 50Gi -rsr \
-  -rr 64Gi -lr 64Gi \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_4.log
 ```
 
@@ -670,25 +688,31 @@ Similarly we can make a Dragonfly cluster to store the database in persistent st
 Here, we remove existing storage via `-rsr` to start with a clean copy.
 
 ```bash
-bexhoma ycsb -tr \
-  -sf 1 \
-  -sfo 10 \
-  -nw 3 \
-  --workload a \
+bexhoma ycsb \
   -dbms Dragonfly \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc -ma \
-  -rst shared -rss 50Gi -rsr \
-  -rr 64Gi -lr 64Gi \
+  -nw 3 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_5.log
 ```
 

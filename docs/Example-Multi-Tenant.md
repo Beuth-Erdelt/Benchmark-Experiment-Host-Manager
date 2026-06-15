@@ -54,15 +54,22 @@ kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
 
 Example for power test with 2 tenants, each having a dedicated schema in the same database:
 ```bash
-bexhoma tpch -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
+bexhoma tpch \
+  -dbms PostgreSQL \
   -sf 1 \
-  --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp $BEXHOMA_NUM_TENANTS \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -xii -xic -xis \
+  -tr \
+  -rsr \
+  -rss 10Gi \
+  -rst shared \
+  -mtb schema \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi -rsr \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log
 ```
 
@@ -330,15 +337,22 @@ kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
 
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
-bexhoma tpch -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+bexhoma tpch \
+  -dbms PostgreSQL \
   -sf 1 \
-  --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp $BEXHOMA_NUM_TENANTS \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -xii -xic -xis \
+  -tr \
+  -rsr \
+  -rss 10Gi \
+  -rst shared \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi -rsr \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log
 ```
 
@@ -607,15 +621,21 @@ kubectl delete pvc bexhoma-storage-postgresql-1-2-tpch-1
 
 Example for power test with 2 tenants, each having a dedicated DBMS:
 ```bash
-bexhoma tpch -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
+bexhoma tpch \
+  -dbms PostgreSQL \
   -sf 1 \
-  --dbms PostgreSQL \
-  -ii -ic -is \
-  -nlp 1 -nlt 1 -nbp 1  -nlt 64 \
   -ne 1,1 \
+  -nlp 1 \
+  -nlt 1 \
+  -nbp 1 \
+  -xii -xic -xis \
+  -tr \
+  -rsr \
+  -rss 5Gi \
+  -rst shared \
+  -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 5Gi -rsr \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log
 ```
 
@@ -914,7 +934,7 @@ bexhoma tpch -tr \
   -mtn $BEXHOMA_NUM_TENANTS -mtb database \
   -sf 1 \
   --dbms PostgreSQL \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp $BEXHOMA_NUM_TENANTS_LOADER -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1250,14 +1270,22 @@ Example for run with 2 tenants for 5 minutes, keying and thinking time activated
 The execution phase is run twice.
 ```bash
 bexhoma benchbase \
-  -rr 64Gi -lr 64Gi \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb schema \
-  -sf 1 -sd 5 -xkey \
-  --dbms PostgreSQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xsd 5 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
+  -xkey \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 20Gi \
+  -rst shared \
+  -mtb schema \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 20Gi -rsr \
   run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log
 ```
 
@@ -1431,14 +1459,22 @@ Example for run with 2 tenants for 5 minutes, keying and thinking time activated
 The execution phase is run twice.
 ```bash
 bexhoma benchbase \
-  -rr 64Gi -lr 64Gi \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -sf 1 -sd 5 -xkey \
-  --dbms PostgreSQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xsd 5 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
+  -xkey \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 20Gi \
+  -rst shared \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 20Gi -rsr \
   run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log
 ```
 
@@ -1613,14 +1649,22 @@ Example for run with 2 tenants for 5 minutes, keying and thinking time activated
 The execution phase is run twice.
 ```bash
 bexhoma benchbase \
-  -rr 64Gi -lr 64Gi \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -sf 1 -sd 5 -xkey \
-  --dbms PostgreSQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xsd 5 \
   -ne 1,1 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
+  -xkey \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 10Gi \
+  -rst shared \
+  -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi -rsr \
   run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log
 ```
 
@@ -1867,14 +1911,22 @@ Example for run with 2 tenants for 5 minutes, keying and thinking time activated
 The execution phase is run twice.
 ```bash
 bexhoma benchbase \
-  -rr 64Gi -lr 64Gi \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
-  -sf 1 -sd 5 -xkey \
-  --dbms MySQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -dbms MySQL \
+  -sf 1 \
+  -xsd 5 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
+  -xkey \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 50Gi -rsr \
   run &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log
 ```
 
@@ -1993,14 +2045,22 @@ Example for run with 2 tenants for 5 minutes, keying and thinking time activated
 The execution phase is run twice.
 ```bash
 bexhoma benchbase \
-  -rr 64Gi -lr 64Gi \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb container \
-  -sf 1 -sd 5 -xkey \
-  --dbms MySQL \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -dbms MySQL \
+  -sf 1 \
+  -xsd 5 \
   -ne 1,1 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
+  -xkey \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst shared \
+  -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 50Gi -rsr \
   run &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log
 ```
 

@@ -79,23 +79,23 @@ wait_process "ycsb"
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 4,16,32 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -npp 4 \
-  -npi 64 \
-  -npo 64 \
+  -xnpp 4 \
+  -xnpi 64 \
+  -xnpo 64 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log &
 
 
@@ -105,17 +105,17 @@ wait_process "ycsb"
 ### YCSB Execution Test for Scaling the Driver (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 4,16,32 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -128,17 +128,17 @@ wait_process "ycsb"
 ### YCSB Execution Test for Scaling the Driver with PVC (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 4,16,32 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 50Gi \
@@ -152,17 +152,17 @@ wait_process "ycsb"
 ### YCSB Loader Test for Scaling the Pooler with 64 connections (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -nci 64 \
@@ -177,17 +177,17 @@ wait_process "ycsb"
 ### YCSB Loader Test for Scaling the Pooler with 128 connections (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -nci 128 \
@@ -202,17 +202,17 @@ wait_process "ycsb"
 ### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -nci 16,32,64,128,256 \
@@ -227,17 +227,17 @@ wait_process "ycsb"
 ### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 16 \
-  -sfo 16 \
+  -xop 16 \
   --workload c \
   -dbms PGBouncer \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -nci 64 \
@@ -281,17 +281,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 12 \
+  -xnbf 12 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -310,17 +310,17 @@ wait_process "ycsb"
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
-  -nbf 6,7,8,9,10,11,12,13,14 \
+  -xnbf 6,7,8,9,10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -339,17 +339,17 @@ wait_process "ycsb"
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
-  -nbf 6,7,8,9,10,11,12,13,14 \
+  -xnbf 6,7,8,9,10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -369,17 +369,17 @@ wait_process "ycsb"
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c2 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
-  -nbf 6,7,8,9,10,11,12,13,14 \
+  -xnbf 6,7,8,9,10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -400,17 +400,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Set target and threads
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 12 \
+  -xnbf 12 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -431,17 +431,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Size possible?
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 12 \
+  -xnbf 12 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -465,17 +465,17 @@ BEXHOMA_YCSB_SF_OPS=64
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 48,56,64,72,80,88,96,104,112,120 \
-  -nbf 6,7,8,9,10,11,12,13,14 \
+  -xnbf 6,7,8,9,10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -499,17 +499,17 @@ BEXHOMA_YCSB_SF_OPS=128
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 104,112,120,128,136 \
-  -nbf 10,11,12,13,14 \
+  -xnbf 10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -534,17 +534,17 @@ BEXHOMA_YCSB_SF_OPS=256
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 104,112,120,128,136 \
-  -nbf 10,11,12,13,14 \
+  -xnbf 10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -569,17 +569,17 @@ BEXHOMA_YCSB_SF_OPS=512
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8 \
   -nbt 104,112,120,128,136 \
-  -nbf 10,11,12,13,14 \
+  -xnbf 10,11,12,13,14 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -602,17 +602,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Size possible?
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,16 \
   -nbt 64 \
-  -nbf 12 \
+  -xnbf 12 \
   -ne 2 \
   -nc 2 \
   -m -mc \
@@ -637,17 +637,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Size possible?
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 0 \
+  -xnlf 0 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 0 \
+  -xnbf 0 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -675,17 +675,17 @@ BEXHOMA_YCSB_SF_OPS=512
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8,16 \
   -nbt 96,104,112,120,128,136 \
-  -nbf 0 \
+  -xnbf 0 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -713,17 +713,17 @@ BEXHOMA_YCSB_SF_OPS=256
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,1,8,16 \
   -nbt 80,96,112,128,144,160,176,192 \
-  -nbf 0,9,10,11,12,13,14,15,16 \
+  -xnbf 0,9,10,11,12,13,14,15,16 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -751,17 +751,17 @@ BEXHOMA_YCSB_SF_OPS=256
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c2 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,1,8,16 \
   -nbt 80,96,112,128,144,160,176,192 \
-  -nbf 0,9,10,11,12,13,14,15,16 \
+  -xnbf 0,9,10,11,12,13,14,15,16 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -785,17 +785,17 @@ BEXHOMA_YCSB_SF_OPS=256
 #-p hdrhistogram.fileoutput=true
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,1,8,16 \
   -nbt 128 \
-  -nbf 11 \
+  -xnbf 11 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -818,17 +818,17 @@ BEXHOMA_YCSB_SF_OPS=64
 ### repeat for 1 driver and 8 drivers and 16 drivers
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,1,8 \
   -nbt 128 \
-  -nbf 0 \
+  -xnbf 0 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -851,17 +851,17 @@ BEXHOMA_YCSB_SF_OPS=64
 ### repeat for 1 driver and 8 drivers and 16 drivers
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms Redis \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 1,2,4,8,16,32,48,64,96,128 \
-  -nbf 0 \
+  -xnbf 0 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -890,17 +890,17 @@ BEXHOMA_YCSB_SF_OPS=256
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8,16 \
   -nbt 80,96,112,128,144,160,176,192 \
-  -nbf 0,9,10,11,12,13,14,15,16 \
+  -xnbf 0,9,10,11,12,13,14,15,16 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -927,17 +927,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1,8,16 \
   -nbt 64 \
-  -nbf 12 \
+  -xnbf 12 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -964,17 +964,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8,16 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \
@@ -998,17 +998,17 @@ BEXHOMA_YCSB_SF_OPS=16
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
 nohup python ycsb.py -ms 1 -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
+  -xnlf 4 \
   -nbp 1,8,16 \
   -nbt 64 \
-  -nbf 4 \
+  -xnbf 4 \
   -ne 1 \
   -nc 2 \
   -m -mc \

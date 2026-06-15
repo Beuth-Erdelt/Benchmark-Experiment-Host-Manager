@@ -41,13 +41,15 @@ For performing the experiment we can run the [hammerdb file](https://github.com/
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_scale.log
 ```
@@ -60,7 +62,7 @@ This
   * imports data for 16 (`-sf`) warehouses into the DBMS
   * using 16 (`-nlt`) threads
 * runs streams of TPC-C queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
 * with a maximum of 1 DBMS per time (`-ms`)
@@ -228,9 +230,9 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python hammerdb.py -h`
 
 ```bash
-usage: hammerdb.py [-h] [-aws] [-dbms [{PostgreSQL,MySQL,MariaDB,Citus} ...]] [-db] [-sl] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-dt] [-nr NUM_RUN] [-nc NUM_CONFIG]
+usage: hammerdb.py [-h] [-aws] [-dbms [{PostgreSQL,MySQL,MariaDB,Citus} ...]] [-db] [-sl] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-xdt] [-xqr NUM_RUN] [-nc NUM_CONFIG]
                    [-ne NUM_QUERY_EXECUTORS] [-nw NUM_WORKER] [-nwr NUM_WORKER_REPLICAS] [-nws NUM_WORKER_SHARDS] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS]
-                   [-nbt NUM_BENCHMARKING_THREADS] [-nrt NUM_RAMPUP_TIME] [-sf SCALING_FACTOR] [-sd SCALING_DURATION] [-xlat] [-xkey] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
+                   [-nbt NUM_BENCHMARKING_THREADS] [-xrt NUM_RAMPUP_TIME] [-sf SCALING_FACTOR] [-xsd SCALING_DURATION] [-xlat] [-xkey] [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
                    [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE] [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING]
                    [-rnb REQUEST_NODE_BENCHMARKING] [-tr]
                    {run,start,load,summary}
@@ -257,8 +259,8 @@ options:
                         activates monitoring for all nodes of cluster
   -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of parallel DBMS configurations, default is no limit
-  -dt, --datatransfer   activates datatransfer
-  -nr NUM_RUN, --num-run NUM_RUN
+  -xdt, --datatransfer   activates datatransfer
+  -xqr NUM_RUN, --num-run NUM_RUN
                         number of runs per query
   -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of runs per configuration
@@ -278,11 +280,11 @@ options:
                         comma separated list of number of benchmarkers per configuration
   -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
                         total number of threads per benchmarking process
-  -nrt NUM_RAMPUP_TIME, --num-rampup-time NUM_RAMPUP_TIME
+  -xrt NUM_RAMPUP_TIME, --num-rampup-time NUM_RAMPUP_TIME
                         Rampup time in minutes
   -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor (SF) = number of warehouses
-  -sd SCALING_DURATION, --scaling-duration SCALING_DURATION
+  -xsd SCALING_DURATION, --scaling-duration SCALING_DURATION
                         scaling factor = duration in minutes
   -xlat, --extra-latency
                         also log latencies
@@ -320,15 +322,18 @@ We in the following also activate measurement of latencies with `-xlat`.
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
-  -xlat \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -m -mc \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log
 ```
@@ -474,16 +479,21 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
+  -nc 2 \
+  -ne 1 \
   -nlt 8 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -xlat \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_storage.log
 ```
 
@@ -619,20 +629,24 @@ kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
 The keying and thinking times can be activated via `-xkey`:
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 160 \
-  -sd 30 \
-  -xlat \
-  -xkey \
+bexhoma hammerdb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -nlt 8 \
-  -nbp 1,2,5,10 \
-  -nbt 1600 \
+  -sf 16 \
+  -xsd 20 \
+  -nc 2 \
   -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -nlt 8 \
+  -nbp 1,2 \
+  -nbt 160 \
+  -xkey \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_keytime.log
 ```
 

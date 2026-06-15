@@ -38,25 +38,30 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sfo 16 \
-  --workload c \
+bexhoma ycsb \
   -dbms PGBouncer \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 16 \
+  -xwl c \
+  -xtb 16384 \
+  -xnbf 11 \
+  -xnlf 11 \
+  -nc 1 \
+  -ne 1 \
   -nlp 16 \
   -nlt 64 \
-  -nlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -nbf 11 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -npp 4 \
-  -npi 128 \
-  -npo 64 \
+  -xnpp 4 \
+  -xnpi 128 \
+  -xnpo 64 \
+  -xop 16 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
 ```
 
@@ -73,11 +78,11 @@ This
       * imports it into the DBMS
   * loops over `m` in [16] and `s` in [11]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 16.000.000 operations (`-sfo`)
+      * 16.000.000 operations (`-xop`)
       * workload C = 100% (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
-      * PGBouncer has 4 instances (`-npp`) with 128 inbound connections (`-npi`) and 64 outbound connections (`-npo`)
+      * PGBouncer has 4 instances (`-xnpp`) with 128 inbound connections (`-xnpi`) and 64 outbound connections (`-xnpo`)
     * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * monitors (`-m`) all components (`-mc`)
@@ -263,26 +268,33 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 
 Example:
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sfo 16 \
-  --workload c \
+bexhoma ycsb \
   -dbms PGBouncer \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 16 \
+  -xwl c \
+  -xtb 16384 \
+  -xnbf 11 \
+  -xnlf 11 \
+  -nc 2 \
+  -ne 1 \
   -nlp 16 \
   -nlt 64 \
-  -nlf 11 \
   -nbp 16 \
   -nbt 128 \
-  -nbf 11 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -npp 4 \
-  -npi 128 \
-  -npo 64 \
-  -rst shared -rss 100Gi \
+  -xnpp 4 \
+  -xnpi 128 \
+  -xnpo 64 \
+  -xop 16 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 ```
 The following status shows we have one volume of type `shared`.
@@ -515,15 +527,17 @@ The 16 threads of the client are split into a cascading sequence of 1 and 2 pods
 We activate the new-connection-per-transaction feature with `-xconn`.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 10 \
-  -xconn \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 10 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -xconn \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 ```
@@ -631,18 +645,20 @@ We activate the new-connection-per-transaction feature.
 This time there will be a connection pool of size 32, handled by 2 pods of PGBouncer.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 10 \
-  -xconn \
+bexhoma benchbase \
   -dbms PGBouncer \
+  -sf 16 \
+  -xsd 10 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
-  -npp 2 \
-  -npi 32 \
-  -npo 32 \
+  -xnpp 2 \
+  -xnpi 32 \
+  -xnpo 32 \
+  -xconn \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 ```

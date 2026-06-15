@@ -112,21 +112,23 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -sfo 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
 ```
 
@@ -143,7 +145,7 @@ This
       * imports it into the DBMS
   * loops over `m` in [1] and `s` in [4]
     * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (`-sfo`)
+      * 10.000.000 operations (`-xop`)
       * workload A = 50% read / 50% write (`--workload`)
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
@@ -270,23 +272,26 @@ For performing the experiment we can run the [ycsb file](https://github.com/Beut
 
 Example: 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -sl \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
 ```
 
@@ -385,23 +390,27 @@ Persistent Storage is not managed by bexhoma, but by the Cloud service.
 We can add the request for a PVC to the experiment setup:
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 5 \
-  -sfo 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 5 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 1Gi \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
 ```
 
@@ -596,14 +605,16 @@ Watch for
 ## Benchbase's TPC-C
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma benchbase \
   -dbms DatabaseService \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
 ```
@@ -716,15 +727,17 @@ BEXHOMA_DATABASE = 'postgres',
 This time we skip loading (`-sl`), since the database is already present.
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma benchbase \
   -dbms DatabaseService \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -ms $BEXHOMA_MS \
   -sl \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
 ```
@@ -836,14 +849,18 @@ At first we run a simple power test against SF=3.
 Components are monitored.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -t 1200 \
-  -m -mc \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
 ```
@@ -977,16 +994,20 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 Now loading is skipped (`-sl`) as data is already present in the Cloud system.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
-  -t 1200 \
-  -m -mc \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -sl \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
 ```
 
@@ -1137,16 +1158,21 @@ sleep 10
 ### Ingestion with Persistent Storage
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -t 1200 \
-  -m -mc \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
 ```
 
@@ -1285,16 +1311,21 @@ The persistent volume helps to memorize this.
 We can rerun the experiment without explicitly skipping ingestion (no `-sl`).
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -t 1200 \
-  -m -mc \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
 ```
 

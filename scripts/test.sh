@@ -76,11 +76,11 @@ wait_process "ycsb"
 ### TPC-H Power Test - only PostgreSQL (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 1 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -98,11 +98,11 @@ wait_process "tpch"
 ### TPC-H Monitoring (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 3 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1 \
@@ -125,11 +125,11 @@ sleep 30
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
   -sf 3 \
-  -dt \
+  -xdt \
   -t 1200 \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ii -ic -is \
+  -xii -xic -xis \
   -nlp 8 \
   -nbp 1 \
   -ne 1,2 \
@@ -164,13 +164,13 @@ wait_process "tpch"
 #### Benchbase Simple (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 16 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log &
@@ -190,13 +190,13 @@ sleep 30
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 1 \
+  -xsd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 16 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -213,13 +213,13 @@ wait_process "benchbase"
 ### Benchbase Monitoring (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 5 \
+  -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1 \
   -nbt 16 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1 \
   -nc 1 \
   -m -mc \
@@ -236,13 +236,13 @@ wait_process "benchbase"
 ### Benchbase Complex (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -dbms PostgreSQL \
-  -tb 1024 \
+  -xtb 1024 \
   -nbp 1,2 \
   -nbt 8 \
-  -nbf 8 \
+  -xnbf 8 \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
@@ -310,7 +310,7 @@ wait_process "hammerdb"
 ### HammerDB Complex (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
   -sf 16 \
-  -sd 2 \
+  -xsd 2 \
   -xlat \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -359,13 +359,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 4,8 \
   -nlt 32,64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log &
@@ -389,13 +389,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -416,13 +416,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
   -rst shared -rss 30Gi \
@@ -443,13 +443,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload e \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 30Gi \
@@ -470,13 +470,13 @@ nohup python ycsb.py -ms 1 -tr \
   --workload a \
   -dbms PostgreSQL \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 131072 \
+  -xtb 131072 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 1 \
+  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -nbf 1 \
+  -xnbf 1 \
   -ne 1 \
   -nc 1 \
   -rst shared -rss 50Gi \

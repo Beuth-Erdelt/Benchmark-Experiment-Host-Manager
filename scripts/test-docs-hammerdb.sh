@@ -21,24 +21,26 @@ source ./scripts/testfunctions.sh
 
 
 #### HammerDB Scale (Example-HammerDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 16                        scaling factor (number of warehouses)
-# -sd 5                         benchmark duration in minutes
 # -dbms PostgreSQL              DBMS under test
+# -sf 16                        scaling factor (number of warehouses)
+# -xsd 5                        benchmark duration in minutes
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod (virtual users)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_scale.log
 
@@ -47,29 +49,32 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 16                        scaling factor (number of warehouses)
-# -xlat                         collect per-operation latency histograms
-# -sd 5                         benchmark duration in minutes
 # -dbms PostgreSQL              DBMS under test
+# -sf 16                        scaling factor (number of warehouses)
+# -xsd 5                        benchmark duration in minutes
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod (virtual users)
+# -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
-  -sd 5 \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -m -mc \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log
 
@@ -83,33 +88,36 @@ sleep 30
 
 
 #### HammerDB Persistent Storage (Example-HammerDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 16                        scaling factor (number of warehouses)
-# -xlat                         collect per-operation latency histograms
-# -sd 5                         benchmark duration in minutes
 # -dbms PostgreSQL              DBMS under test
+# -sf 16                        scaling factor (number of warehouses)
+# -xsd 5                        benchmark duration in minutes
+# -nc 2                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlt 8                        threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod (virtual users)
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 2                         number of repeated runs per configuration
-# -rst shared                   storage class for persistent volumes
+# -xlat                         collect per-operation latency histograms
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
-  -sd 5 \
+bexhoma hammerdb \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
+  -nc 2 \
+  -ne 1 \
   -nlt 8 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -xlat \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_storage.log
 
@@ -123,39 +131,43 @@ sleep 30
 
 
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 16                        scaling factor (number of warehouses)
-# -sd 20                        benchmark duration in minutes
-# -xlat                         collect per-operation latency histograms
-# -xkey                         simulate user think time and keying delays
 # -dbms PostgreSQL              DBMS under test
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -sf 16                        scaling factor (number of warehouses)
+# -xsd 20                       benchmark duration in minutes
+# -nc 2                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlt 8                        threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod (virtual users)
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 2                         number of repeated runs per configuration
+# -xkey                         simulate user think time and keying delays
+# -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -rst shared                   storage class for persistent volumes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 20 \
-  -xlat \
-  -xkey \
+# -rst shared                   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hammerdb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
+  -xsd 20 \
+  -nc 2 \
+  -ne 1 \
   -nlt 8 \
   -nbp 1,2 \
   -nbt 160 \
-  -ne 1 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -xkey \
+  -xlat \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_keytime.log
 
 wait_process "hammerdb"

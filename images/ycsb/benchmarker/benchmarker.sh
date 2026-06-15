@@ -167,6 +167,7 @@ echo "YCSB_WORKLOAD $YCSB_WORKLOAD"
 echo "YCSB_BATCHSIZE:$YCSB_BATCHSIZE"
 echo "YCSB_MEASUREMENT_TYPE:$YCSB_MEASUREMENT_TYPE"
 echo "YCSB_INSERTORDER:$YCSB_INSERTORDER"
+echo "YCSB_MAX_EXECUTION:$YCSB_MAX_EXECUTION"
 
 ######################## Generate driver file ########################
 # Redis or JDBC
@@ -234,31 +235,38 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
+######################## Build optional flags ###################
+if [ "${YCSB_MAX_EXECUTION:-0}" -gt 0 ]; then
+    YCSB_MAXEXECTIME_FLAG="-p maxexecutiontime=$YCSB_MAX_EXECUTION"
+else
+    YCSB_MAXEXECTIME_FLAG=""
+fi
+
 ######################## Execute workload ###################
 # to force "new" method of measurement: -p measurementtype=hdrhistogram
 if [[ "$BEXHOMA_DBMS_TYPE" == "redis" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s
     else
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG
     fi
 elif [[ "$BEXHOMA_DBMS_TYPE" == "redis-cluster" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true -s
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG -s
     else
-        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true
+        time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG
     fi
 else
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -s
+        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s
     else
-        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR
+        time bin/ycsb run jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG
     fi
 fi
 

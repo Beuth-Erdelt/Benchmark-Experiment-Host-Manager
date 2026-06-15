@@ -21,26 +21,30 @@ source ./scripts/testfunctions.sh
 
 
 #### TCP-H Compare (Example-TPC-H.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
-# -rr 64Gi                      RAM requested for the SUT container
-# -lr 64Gi                      RAM limit for the SUT container
+# -sf 1                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 1                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
-  -rr 64Gi -lr 64Gi \
+bexhoma tpch \
+  -sf 1 \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_compare.log
 
@@ -49,31 +53,36 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms PostgreSQL              DBMS under test
-# -rr 64Gi                      RAM requested for the SUT container
-# -lr 64Gi                      RAM limit for the SUT container
+# -sf 10                        scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 10                        scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -rr 64Gi -lr 64Gi \
+  -sf 10 \
   -nlp 8 \
   -nlt 8 \
-  -sf 10 \
-  -ii -ic -is \
-  -m -mc \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 
@@ -82,29 +91,32 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms PostgreSQL              DBMS under test
-# -nlp 8                        number of data loader pods
-# -nlt 8                        threads per loader pod
 # -sf 1                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
 # -nc 1                         number of repeated runs per configuration
 # -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -nlp 8 \
-  -nlt 8 \
   -sf 1 \
-  -ii -ic -is \
   -nc 1 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 
@@ -118,30 +130,34 @@ sleep 30
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 1                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -nc 2                         number of repeated runs per configuration
-# -rst shared                   storage class for persistent volumes
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
+  -sf 1 \
+  -nc 2 \
   -nlp 8 \
   -nlt 8 \
-  -sf 1 \
-  -ii -ic -is \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 30Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_storage.log
 
@@ -150,31 +166,36 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
 
 #### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms PostgreSQL              DBMS under test
+# -sf 0.1                       scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 0.1                       scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -nc 2                         number of repeated runs per configuration
-# -rst shared                   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
+# -rss 5Gi                      size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms PostgreSQL \
+  -sf 0.1 \
+  -nc 2 \
   -nlp 8 \
   -nlt 8 \
-  -sf 0.1 \
-  -ii -ic -is \
-  -nc 2 \
-  -rst shared -rss 5Gi -rsr \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 5Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 
@@ -193,38 +214,45 @@ sleep 30
 
 
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
+# -dbms MonetDB                 DBMS under test
 # -sf 100                       scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -nlp 8                        number of data loader pods
-# -nlt 8                        threads per loader pod
 # -nc 1                         number of repeated runs per configuration
 # -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 3600                       query timeout in seconds
+# -lr 256Gi                     RAM limit for the SUT container
+# -rr 256Gi                     RAM requested for the SUT container
+# -rss 1000Gi                   size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -dbms MonetDB                 DBMS under test
-# -rr 256Gi                     RAM requested for the SUT container
-# -lr 256Gi                     RAM limit for the SUT container
-# -t 3600                       query timeout in seconds
-# -dt                           disable result type checking
-# -rst shared                   storage class for persistent volumes
-# -rss 1000Gi                   size of the persistent volume claim
-bexhoma tpch -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+bexhoma tpch \
   -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 3600 -dt \
-  -rst shared -rss 1000Gi \
+  -sf 100 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 3600 \
+  -lr 256Gi \
+  -rr 256Gi \
+  -rss 1000Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 
 wait_process "tpch"
@@ -232,38 +260,45 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=
 
 
 #### TCP-H Power 100 repeated (Example-Result-TPC-H-MonetDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
+# -dbms MonetDB                 DBMS under test
 # -sf 100                       scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -nlp 8                        number of data loader pods
-# -nlt 8                        threads per loader pod
 # -nc 2                         number of repeated runs per configuration
 # -ne 1,1                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 3600                       query timeout in seconds
+# -lr 256Gi                     RAM limit for the SUT container
+# -rr 256Gi                     RAM requested for the SUT container
+# -rss 1000Gi                   size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -dbms MonetDB                 DBMS under test
-# -rr 256Gi                     RAM requested for the SUT container
-# -lr 256Gi                     RAM limit for the SUT container
-# -t 3600                       query timeout in seconds
-# -dt                           disable result type checking
-# -rst shared                   storage class for persistent volumes
-# -rss 1000Gi                   size of the persistent volume claim
-bexhoma tpch -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 2 -ne 1,1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+bexhoma tpch \
   -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 3600 -dt \
-  -rst shared -rss 1000Gi \
+  -sf 100 \
+  -nc 2 \
+  -ne 1,1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 3600 \
+  -lr 256Gi \
+  -rr 256Gi \
+  -rss 1000Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 
 wait_process "tpch"
@@ -271,38 +306,45 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=
 
 
 #### TCP-H Throughput 100 (Example-Result-TPC-H-MonetDB.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
+# -dbms MonetDB                 DBMS under test
 # -sf 100                       scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -nlp 8                        number of data loader pods
-# -nlt 8                        threads per loader pod
 # -nc 1                         number of repeated runs per configuration
 # -ne 1,1,3                     parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 3600                       query timeout in seconds
+# -lr 256Gi                     RAM limit for the SUT container
+# -rr 256Gi                     RAM requested for the SUT container
+# -rss 1000Gi                   size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -dbms MonetDB                 DBMS under test
-# -rr 256Gi                     RAM requested for the SUT container
-# -lr 256Gi                     RAM limit for the SUT container
-# -t 3600                       query timeout in seconds
-# -dt                           disable result type checking
-# -rst shared                   storage class for persistent volumes
-# -rss 1000Gi                   size of the persistent volume claim
-bexhoma tpch -ms $BEXHOMA_MS \
-  -m -mc \
-  -sf 100 \
-  -ii -ic -is \
-  -nlp 8 -nlt 8 \
-  -nc 1 -ne 1,1,3 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+bexhoma tpch \
   -dbms MonetDB \
-  -rr 256Gi -lr 256Gi \
-  -t 3600 -dt \
-  -rst shared -rss 1000Gi \
+  -sf 100 \
+  -nc 1 \
+  -ne 1,1,3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 3600 \
+  -lr 256Gi \
+  -rr 256Gi \
+  -rss 1000Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 
 wait_process "tpch"

@@ -34,39 +34,41 @@ sleep 10
 
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
+# -dbms DatabaseService         DBMS under test
+# -sf 1                         scaling factor (number of records x 1000)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 1                        number of operations for the benchmark phase (x 1000)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -sf 1                         scaling factor (number of records x 1000)
-# -sfo 1                        number of operations for the benchmark phase (x 1000)
-# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
-# -dbms DatabaseService         DBMS under test
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -tb 16384                     base ops/s used to compute throughput targets (2^14)
-# -nlp 8                        number of data loader pods
-# -nlt 64                       threads per loader pod
-# -nlf 4                        loading throughput target as a multiple of the base ops/s
-# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
-# -nbt 64                       threads per benchmarking pod
-# -nbf 4                        throughput target as a multiple of the base ops/s
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 1                         number of repeated runs per configuration
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -sfo 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
 
 wait_process "ycsb"
@@ -74,44 +76,47 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService ingestion  sf=1  
 
 
 #### YCSB Execution (Example-CloudDatabase.md)
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 1                         scaling factor (number of records x 1000)
-# -sfo 10                       number of operations for the benchmark phase (x 1000)
-# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
 # -dbms DatabaseService         DBMS under test
+# -sf 1                         scaling factor (number of records x 1000)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -sl                           skip loading phase (reuse existing data)
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -tb 16384                     base ops/s used to compute throughput targets (2^14)
-# -nlp 8                        number of data loader pods
-# -nlt 64                       threads per loader pod
-# -nlf 4                        loading throughput target as a multiple of the base ops/s
-# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
-# -nbt 64                       threads per benchmarking pod
-# -nbf 4                        throughput target as a multiple of the base ops/s
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 1                         number of repeated runs per configuration
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -sl                           skip loading phase (reuse existing data)
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -sfo 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -sl \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
 
 wait_process "ycsb"
@@ -136,45 +141,49 @@ sleep 10
 
 
 #### YCSB Persistent Storage (Example-CloudDatabase.md)
+# -dbms DatabaseService         DBMS under test
+# -sf 5                         scaling factor (number of records x 1000)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -sf 5                         scaling factor (number of records x 1000)
-# -sfo 10                       number of operations for the benchmark phase (x 1000)
-# --workload a                  YCSB workload template (a = 50%% read / 50%% update)
-# -dbms DatabaseService         DBMS under test
+# -rss 1Gi                      size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -tb 16384                     base ops/s used to compute throughput targets (2^14)
-# -nlp 8                        number of data loader pods
-# -nlt 64                       threads per loader pod
-# -nlf 4                        loading throughput target as a multiple of the base ops/s
-# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
-# -nbt 64                       threads per benchmarking pod
-# -nbf 4                        throughput target as a multiple of the base ops/s
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nc 1                         number of repeated runs per configuration
-# -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
-# -rst shared                   storage class for persistent volumes
-# -rss 1Gi                      size of the persistent volume claim
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 5 \
-  -sfo 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms DatabaseService \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -tb 16384 \
+  -sf 5 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 4 \
   -nbp 1 \
   -nbt 64 \
-  -nbf 4 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 1Gi \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
 
 wait_process "ycsb"
@@ -201,26 +210,28 @@ sleep 10
 
 
 # no PVC
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 16                        scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
 # -dbms DatabaseService         DBMS under test
+# -sf 16                        scaling factor (controls database size)
+# -xsd 5                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                      throughput target as a multiple of the base ops/s
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
-# -nbf 16                       throughput target as a multiple of the base ops/s
-# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma benchbase \
   -dbms DatabaseService \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
 
@@ -228,28 +239,30 @@ wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -sf 16                        scaling factor (controls database size)
-# -sd 5                         benchmark duration in minutes
 # -dbms DatabaseService         DBMS under test
+# -sf 16                        scaling factor (controls database size)
+# -xsd 5                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                      throughput target as a multiple of the base ops/s
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
-# -nbf 16                       throughput target as a multiple of the base ops/s
-# -tb 1024                      base ops/s used to compute the throughput target (2^10)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -sl                           skip loading phase (reuse existing data)
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma benchbase \
   -dbms DatabaseService \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
+  -ms $BEXHOMA_MS \
   -sl \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
 
@@ -277,30 +290,34 @@ sleep 10
 
 
 #### TCP-H Monitoring (Example-CloudDatabase.md) — no PVC
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms DatabaseService         DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 3                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -t 1200                       query timeout in seconds
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -t 1200 \
-  -m -mc \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
 
@@ -309,33 +326,37 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md) — no PVC, skip loading
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms DatabaseService         DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 3                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -t 1200                       query timeout in seconds
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -sl                           skip loading phase (reuse existing data)
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -sl                           skip loading phase (reuse existing data)
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
-  -t 1200 \
-  -m -mc \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -sl \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
 
 wait_process "tpch"
@@ -360,34 +381,39 @@ sleep 10
 
 
 #### TCP-H Monitoring (Example-TPC-H.md) — with PVC, ingestion
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms DatabaseService         DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 3                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -t 1200                       query timeout in seconds
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -rss 1Gi                      size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -rst shared                   storage class for persistent volumes
-# -rss 1Gi                      size of the persistent volume claim
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -t 1200 \
-  -m -mc \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
 
 wait_process "tpch"
@@ -395,34 +421,39 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  s
 
 
 #### TCP-H Monitoring (Example-TPC-H.md) — with PVC, execution only
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -dt                           disable result type checking
-# -tr                           verify result meets basic sanity requirements
 # -dbms DatabaseService         DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
-# -sf 3                         scaling factor (controls database size in GB)
-# -ii                           create indexes after data load
-# -ic                           enforce constraints after data load
-# -is                           run ANALYZE after data load
-# -t 1200                       query timeout in seconds
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -rss 1Gi                      size of the persistent volume claim
+# -rst shared                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -rst shared                   storage class for persistent volumes
-# -rss 1Gi                      size of the persistent volume claim
-bexhoma tpch -ms $BEXHOMA_MS -dt -tr \
+bexhoma tpch \
   -dbms DatabaseService \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -ii -ic -is \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
   -t 1200 \
-  -m -mc \
+  -tr \
+  -rss 1Gi \
+  -rst shared \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 1Gi \
   run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
 
 wait_process "tpch"

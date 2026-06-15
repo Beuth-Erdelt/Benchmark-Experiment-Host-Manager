@@ -108,6 +108,15 @@ by `sed` at container startup:
 | `YCSB_MEASUREMENT_TYPE` | Measurement type (`hdrhistogram` / `histogram`) |
 | `YCSB_INSERTORDER` | Insert order (`hashed` / `ordered`) |
 
+## Command-line flags built at runtime
+
+These environment variables are not substituted into the workload file but are
+used to build optional `-p` arguments passed directly to the `bin/ycsb` command:
+
+| Variable | YCSB property | Notes |
+|---|---|---|
+| `YCSB_MAX_EXECUTION` | `maxexecutiontime` | Seconds; 0 (default) means no limit; flag is omitted when 0 |
+
 ---
 
 ## Style conventions

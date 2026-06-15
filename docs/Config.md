@@ -217,14 +217,14 @@ Experiment scripts (`tpch.py`, `ycsb.py`, etc.) reference these by the volume ke
 ### `initscripts` — named script sequences
 
 Each entry under `initscripts` is a named list of files.
-Experiment CLI flags (`-ii`, `-ic`, `-is`) control which sets are executed and when:
+Experiment CLI flags (`-xii`, `-xic`, `-xis`) control which sets are executed and when:
 
 | Flag | Typical script set | When it runs |
 |---|---|---|
 | (none) | `Schema` | Before data ingestion: creates the empty schema |
-| `-ii` | `Index` | After data ingestion: creates indexes |
-| `-ic` | `Index_and_Constraints` | After data ingestion: creates indexes and foreign key constraints |
-| `-is` | `Index_and_Constraints_and_Statistics` | After indexes/constraints: refreshes query planner statistics |
+| `-xii` | `Index` | After data ingestion: creates indexes |
+| `-xic` | `Index_and_Constraints` | After data ingestion: creates indexes and foreign key constraints |
+| `-xis` | `Index_and_Constraints_and_Statistics` | After indexes/constraints: refreshes query planner statistics |
 
 Scripts are executed in list order.
 The file suffix determines how they are executed:

@@ -66,8 +66,8 @@ Monitor progress with `bexperiments status` while running.
 ### YCSB
 
 ```bash
-bexhoma ycsb run -ms 1 -tr -sf 1 --workload a -dbms PostgreSQL \
-  -tb 16384 -nlp 1 -nlt 64 -nlf 4 -nbp 1,8 -nbt 64 -nbf 2,3
+bexhoma ycsb run -ms 1 -tr -sf 1 -xwl a -dbms PostgreSQL \
+  -xtb 16384 -nlp 1 -nlt 64 -xnlf 4 -nbp 1,8 -nbt 64 -xnbf 2,3
 ```
 
 Loads 1 million rows, then runs workload A (50% reads / 50% updates, 1 million operations) targeting 32,768 ops/s (16,384 × 2) and 49,152 ops/s (16,384 × 3). Each target is tested with 64 driver threads as a single pod and again split across 8 pods.
@@ -77,7 +77,7 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
 ### TPC-C (HammerDB)
 
 ```bash
-bexhoma hammerdb run -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL \
+bexhoma hammerdb run -ms 1 -tr -sf 16 -xsd 5 -dbms PostgreSQL \
   -nlt 16 -nbp 1,2 -nbt 16
 ```
 
@@ -88,8 +88,8 @@ See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.ht
 ### TPC-C (Benchbase)
 
 ```bash
-bexhoma benchbase run -ms 1 -tr -sf 16 -sd 5 -dbms PostgreSQL \
-  -nbp 1,2 -nbt 16 -nbf 16 -tb 1024
+bexhoma benchbase run -ms 1 -tr -sf 16 -xsd 5 -dbms PostgreSQL \
+  -nbp 1,2 -nbt 16 -xnbf 16 -xtb 1024
 ```
 
 Loads a TPC-C schema with 16 warehouses, then benchmarks for 5 minutes targeting 16,384 ops/s (1,024 × 16) with 16 threads — first in a single pod, then split across 2 pods.

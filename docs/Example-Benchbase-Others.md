@@ -42,15 +42,17 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -sd 5 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 16 \
+  -xbt twitter \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1 \
   -nbt 16 \
-  -nbf 16 \
-  -tb 1024 \
-  -b twitter \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 ```
@@ -63,10 +65,10 @@ This
   * imports data for scale factor 16 (`-sf`) (i.e., 16 * 500 the number of users) into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of twitter queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -166,17 +168,22 @@ You can find the output of the files in the result folder.
 
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 1600 \
-  -sd 20 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1600 \
+  -xbt twitter \
+  -xsd 20 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,4,8 \
   -nbt 160 \
-  -nbf 16 \
-  -tb 1024 \
-  -b twitter \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -m -mc \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 ```
 
@@ -409,15 +416,17 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -sd 5 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 10 \
+  -xbt chbenchmark \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1 \
   -nbt 100 \
-  -nbf 16 \
-  -tb 1024 \
-  -b chbenchmark \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 ```
@@ -430,10 +439,10 @@ This
   * imports data for scale factor 16 (`-sf`) (i.e., 16 * 500 the number of users) into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of twitter queries (per DBMS)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 16 threads to simulate 16 users (`-nbt`)
     * `-nbp`: first stream 1 pod
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -533,15 +542,19 @@ You can find the output of the files in the result folder.
 
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
-  -sf 100 \
-  -sd 20 \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 100 \
+  -xbt chbenchmark \
+  -xsd 20 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nbp 1,2,5,10 \
   -nbt 100 \
-  -nbf 16 \
-  -tb 1024 \
-  -b chbenchmark \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 ```
@@ -725,17 +738,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -sd 5 \
-  --benchmark ycsb \
-  --workload c \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl c \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 ```
@@ -748,10 +762,10 @@ This
   * imports data for scale factor 1000 (`-sf`) (i.e., 1000 * 1000 the number of rows) into the DBMS
   * using all threads of driver machine (benchbase setting)
 * runs streams of ycsb (`--benchmark`) queries (per DBMS) workload c (`--workload`)
-    * running for 5 (`-sd`) minutes
+    * running for 5 (`-xsd`) minutes
     * each stream (pod) having 32 threads to simulate 32 users (`-nbt`)
     * `-nbp`: first stream 1 pod, second stream 2 pods
-    * target is 16x(`-ltf`) 1024 (`-tb`) ops
+    * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
 * tests if results match workflow (`-tr`)
 * shows a summary
@@ -860,17 +874,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -sd 5 \
-  --benchmark ycsb \
-  --workload a \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl a \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 ```
@@ -979,17 +994,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -sd 5 \
-  --benchmark ycsb \
-  --workload b \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl b \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 ```
@@ -1100,17 +1116,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -sd 5 \
-  --benchmark ycsb \
-  --workload d \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl d \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 ```
@@ -1203,17 +1220,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -sd 5 \
-  --benchmark ycsb \
-  --workload e \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl e \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 ```
@@ -1306,17 +1324,18 @@ For performing the experiment we can run the [benchbase file](https://github.com
 
 Example:
 ```bash
-bexhoma benchbase -tr \
-  -sf 1000 \
-  -sd 5 \
-  --benchmark ycsb \
-  --workload f \
+bexhoma benchbase \
   -dbms PostgreSQL \
+  -sf 1000 \
+  -xbt ycsb \
+  -xwl f \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -nbf 16 \
-  -tb 1024 \
+  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 ```

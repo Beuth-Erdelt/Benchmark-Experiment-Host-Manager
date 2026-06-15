@@ -72,7 +72,7 @@ wait_process "ycsb"
 
 nohup python tpch.py -ms 5 -tr \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp 2 -nlt 1 -nbp 1 -nbt 64 -ss  \
+  -xii -xic -xis -nlp 2 -nlt 1 -nbp 1 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   load </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
 
@@ -81,7 +81,7 @@ wait_process "tpch"
 
 nohup python tpch.py -ms 5 -tr \
   --dbms PostgreSQL \
-  -ii -ic -is -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ss  \
+  -xii -xic -xis -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   load </dev/null &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log &
 
@@ -126,13 +126,13 @@ ready_nodes=($(
 # MonetDB profiles TPC-DS @SF=30
 for node in "${ready_nodes[@]}"; do
   echo "Ready node: $node"
-  nohup python tpcds.py -dt -tr \
+  nohup python tpcds.py -xdt -tr \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
   -ne 1,1 \
   -sf 30 \
-  -ii -ic -is \
+  -xii -xic -xis \
   -m -mc \
   -rnn $node \
   profiling </dev/null &>$LOG_DIR/doc_tpcds_testcase_profiling_30_$node.log &
@@ -154,17 +154,17 @@ node="cl-worker36"
 
 python ycsb.py -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $node \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 11 \
+  -xnbf 11 \
   -ne 1,1 \
   -nc 1 \
   -m -mc \
@@ -175,17 +175,17 @@ python ycsb.py -tr \
 for node in "${ready_nodes[@]}"; do
   nohup python ycsb.py -tr \
   -sf $BEXHOMA_YCSB_SF_DATA \
-  -sfo $BEXHOMA_YCSB_SF_OPS \
+  -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
   -dbms PostgreSQL \
   -rnn $node \
-  -tb 16384 \
+  -xtb 16384 \
   -nlp 8 \
   -nlt 64 \
-  -nlf 12 \
+  -xnlf 12 \
   -nbp 1 \
   -nbt 128 \
-  -nbf 11 \
+  -xnbf 11 \
   -ne 1,1 \
   -nc 1 \
   -m -mc \
@@ -204,7 +204,7 @@ done
 # Single test
 nohup python hammerdb.py -tr \
   -sf 16 \
-  -sd 20 \
+  -xsd 20 \
   -xlat \
   -dbms PostgreSQL \
   -nlt 16 \
@@ -226,7 +226,7 @@ nohup python hammerdb.py -tr \
 for node in "${ready_nodes[@]}"; do
   nohup python hammerdb.py -tr \
   -sf 16 \
-  -sd 20 \
+  -xsd 20 \
   -xlat \
   -dbms PostgreSQL \
   -nlt 16 \
