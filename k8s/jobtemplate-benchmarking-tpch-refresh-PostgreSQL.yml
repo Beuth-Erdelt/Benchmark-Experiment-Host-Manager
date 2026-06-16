@@ -39,7 +39,7 @@ spec:
         imagePullPolicy: Always
         env:
         - {name: BEXHOMA_HOST, value: 'bexhoma-sut-postgresql-1234567890'}
-        - {name: BEXHOMA_PORT, value: '5432'}
+        - {name: BEXHOMA_PORT, value: '9091'}
         - {name: BEXHOMA_USER, value: 'postgres'}
         - {name: BEXHOMA_PASSWORD, value: 'postgres'}
         - {name: BEXHOMA_DATABASE, value: 'tpch'}
