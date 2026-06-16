@@ -1976,12 +1976,15 @@ class base():
                                     jobname: str) -> list:
         """
         Extracts start and end times from a benchmarking job.
-        This uses extract_job_timing() and sets container to 'dbmsbenchmarker'
+        Tries the 'dbmsbenchmarker' container first; falls back to 'sensor' for
+        jobs whose main container is not named 'dbmsbenchmarker' (e.g. refresh-stream loaders).
 
         :param jobname: Name of the job
         :return: List of pairs (start,end) per pod
         """
         timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
+        if not timing_benchmarker:
+            timing_benchmarker = self.extract_job_timing(jobname, container="sensor")
         return timing_benchmarker
     def get_job_timing_loading(self,
                                jobname: str) -> tuple:
@@ -2075,6 +2078,9 @@ class base():
             # get pairs (start,end) of benchmarking pods
             timing_benchmarker = self.get_job_timing_benchmarking(jobname)
             #print("timing_benchmarker", timing_benchmarker)
+            if not timing_benchmarker:
+                print("{:30s}: no timing data found for job {}".format(jobname, jobname))
+                return
             # Unzip the pairs into two separate lists: firsts and seconds
             firsts, seconds = zip(*timing_benchmarker)
             # Find the minimum of the first entries and the maximum of the second entries
