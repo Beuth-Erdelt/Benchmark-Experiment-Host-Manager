@@ -182,6 +182,8 @@ if __name__ == '__main__':
         refresh_templates = {
             'PostgreSQL': 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml',
             'MySQL':      'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
+            'MariaDB':    'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
+            'MonetDB':    'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml',
         }
         dbms_list = args.dbms if args.dbms else ['PostgreSQL']
         refresh_template = refresh_templates.get(dbms_list[0], 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml')

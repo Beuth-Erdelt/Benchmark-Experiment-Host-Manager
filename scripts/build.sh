@@ -298,6 +298,22 @@ build_and_push_tpch_refresh() {
     docker push "bexhoma/loader_tpch_refresh_mysql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_mysql:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_mariadb
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_mariadb:$version" .
+    docker push "bexhoma/loader_tpch_refresh_mariadb:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_mariadb:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_monetdb
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_monetdb:$version" .
+    docker push "bexhoma/loader_tpch_refresh_monetdb:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_monetdb:$version"
 }
 
 ###########

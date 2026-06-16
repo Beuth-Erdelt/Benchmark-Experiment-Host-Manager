@@ -198,8 +198,8 @@ spec:
           #- "commit_delay=10000"                     # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-COMMIT-DELAY
           #- "-c"
           #- "synchronous_commit=on"                   # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT
-          #- "-c"
-          #- "max_wal_size=32GB"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE
+          - "-c"
+          - "max_wal_size=32GB"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE
           #- "-c"
           #- "min_wal_size=32GB"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MIN-WAL-SIZE
           #- "-c"

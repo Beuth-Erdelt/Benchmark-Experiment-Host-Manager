@@ -141,6 +141,8 @@ function Build-AndPush-TpchRefresh {
     $script:Jobs.Add(@{ Job = $job; Label = "bexhoma/generator_tpch_refresh:$Version" })
     _BgDockerJob "bexhoma/loader_tpch_refresh_postgresql:$Version" "images/tpch_refresh/loader_postgresql" "loader_tpch_refresh_postgresql" $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_mysql:$Version"      "images/tpch_refresh/loader_mysql"      "loader_tpch_refresh_mysql"      $Version
+    _BgDockerJob "bexhoma/loader_tpch_refresh_mariadb:$Version"    "images/tpch_refresh/loader_mariadb"    "loader_tpch_refresh_mariadb"    $Version
+    _BgDockerJob "bexhoma/loader_tpch_refresh_monetdb:$Version"    "images/tpch_refresh/loader_monetdb"    "loader_tpch_refresh_monetdb"    $Version
 }
 
 function Build-AndPush-Monitoring {

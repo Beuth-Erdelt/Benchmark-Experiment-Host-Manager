@@ -19,9 +19,17 @@ images/tpch_refresh/
 │   ├── Dockerfile         — PostgreSQL loader image (alpine + psql + redis-cli)
 │   ├── loader.sh          — applies RF1 via \COPY, RF2 via temp table + bulk DELETE
 │   └── README.md
-└── loader_mysql/
-    ├── Dockerfile         — MySQL loader image (debian:stable-slim + mysql-client + redis-cli)
-    ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via temp table + DELETE
+├── loader_mysql/
+│   ├── Dockerfile         — MySQL loader image (debian:stable-slim + mysql-client + redis-cli)
+│   ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via temp table + DELETE
+│   └── README.md
+├── loader_mariadb/
+│   ├── Dockerfile         — MariaDB loader image (debian:stable-slim + mariadb-client + redis-cli)
+│   ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via temp table + DELETE
+│   └── README.md
+└── loader_monetdb/
+    ├── Dockerfile         — MonetDB loader image (monetdb/monetdb:Dec2025 + redis + yum)
+    ├── loader.sh          — applies RF1 via mclient COPY FROM STDIN, RF2 via piped session
     └── README.md
 ```
 
@@ -62,7 +70,8 @@ images/tpch_refresh/
 | Overwrite existing lower sets without guard | `dbgen` is deterministic: same SF + same set number → identical bytes; overwriting is harmless |
 | Fast-exit check on `delete.$LAST_SET` | The last file is the most likely to be missing when LAST_SET grows; checking it is sufficient |
 | Loader uses benchmarker Redis counters | The loader runs as `benchmark_run=2`, not as a loader pod; it must synchronise with the round counter to start in parallel with the query stream |
-| MySQL uses `BEXHOMA_VOLUME` as database name | Matches the existing MySQL loader convention in `images/tpch/loader_mysql/` |
+| MySQL/MariaDB use `BEXHOMA_VOLUME` as database name | Matches the existing MySQL/MariaDB loader convention in `images/tpch/loader_mysql/` and `images/tpch/loader_mariadb/` |
+| MonetDB RF2 uses a single piped mclient session | `mclient` reads the N data records from stdin immediately after `COPY N RECORDS INTO ... FROM STDIN`, then continues reading SQL from the same stdin stream; the temporary table therefore persists across statements |
 
 ## Build note
 
@@ -82,3 +91,5 @@ or reload the database before repeating.
 |---|---|---|---|
 | PostgreSQL | `psql \COPY` | `\COPY orders/lineitem FROM file` | temp table + `DELETE ... IN (SELECT ...)` via heredoc |
 | MySQL | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
+| MariaDB | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
+| MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | count lines, pipe file to mclient per table | all statements in one stdin pipeline; temp table persists within the session |
