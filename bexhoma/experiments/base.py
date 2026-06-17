@@ -2093,6 +2093,20 @@ class base():
                 config.benchmarking_timespans['benchmarker'] = timing_benchmarker
             start_time_job = int(job_labels[jobname]['start_time'])
             connection = job_labels[jobname]['connection']
+            # Persist timing in the per-connection config file immediately, unconditionally
+            # of the dashboard pod, so it survives even if the combined connections.config
+            # is later overwritten (e.g. by dbmsbenchmarker's benchmark.py expansion).
+            if config is not None:
+                individual_config_path = self.path + "/" + connection + ".config"
+                if os.path.exists(individual_config_path):
+                    with open(individual_config_path, 'r') as f:
+                        individual_conns = ast.literal_eval(f.read())
+                    for ki, ci in enumerate(individual_conns):
+                        if ci['name'] == connection:
+                            individual_conns[ki]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                            break
+                    with open(individual_config_path, 'w') as f:
+                        f.write(str(individual_conns))
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
             #self.experiment.cluster.logger.debug("LOADING LABELS")
