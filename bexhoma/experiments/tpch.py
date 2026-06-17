@@ -126,6 +126,35 @@ class tpch(dbmsbenchmarker):
             "target":           "sut",
             "parameters":       {},
         })
+        self.add_benchmark(benchmarks.RefreshStreamBenchmark(name='tpch_refresh', SF=self.SF))
+
+    def show_summary(self) -> None:
+        """
+        Print the TPC-H experiment summary, including the refresh stream section.
+
+        Calls :meth:`dbmsbenchmarker.show_summary` for the query-stream output,
+        then appends a refresh-stream timing table when one was run.
+
+        When :meth:`enable_refresh_stream` was called during the live run,
+        :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is already in
+        ``self.benchmarks`` and the loop inside
+        :meth:`dbmsbenchmarker.show_summary` handles it automatically.
+
+        When ``show_summary`` is called post-hoc via ``bexperiments summary``
+        (which does not call :meth:`enable_refresh_stream`), a
+        :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is created on the
+        fly with a fresh evaluator so that connections with ``benchmark_run=2``
+        whose timing was written to their ``.config`` file are displayed.
+        """
+        super().show_summary()
+        if any(isinstance(bm, benchmarks.RefreshStreamBenchmark) for bm in self.benchmarks):
+            return
+        refresh_bm = benchmarks.RefreshStreamBenchmark(name='tpch_refresh', SF=str(self.SF))
+        refresh_bm.benchmark_index = 2
+        refresh_bm.evaluator = refresh_bm.create_evaluator(
+            self.code, self.cluster.resultfolder, 2
+        )
+        refresh_bm.show_summary_section(self)
 
     def set_queries_full(self) -> None:
         """Switch to the full TPC-H query file covering all 22 queries."""

@@ -33,7 +33,7 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
       containers:
-      - name: sensor
+      - name: dbmsbenchmarker
         image: bexhoma/loader_tpch_refresh_mariadb:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         env:

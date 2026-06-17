@@ -1976,16 +1976,13 @@ class base():
                                     jobname: str) -> list:
         """
         Extracts start and end times from a benchmarking job.
-        Tries the 'dbmsbenchmarker' container first; falls back to 'sensor' for
-        jobs whose main container is not named 'dbmsbenchmarker' (e.g. refresh-stream loaders).
+        All benchmarker containers (including refresh-stream loaders) must be named
+        ``dbmsbenchmarker`` so the log file ends with ``.dbmsbenchmarker.log``.
 
         :param jobname: Name of the job
         :return: List of pairs (start,end) per pod
         """
-        timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
-        if not timing_benchmarker:
-            timing_benchmarker = self.extract_job_timing(jobname, container="sensor")
-        return timing_benchmarker
+        return self.extract_job_timing(jobname, container="dbmsbenchmarker")
     def get_job_timing_loading(self,
                                jobname: str) -> tuple:
         """
@@ -2099,14 +2096,20 @@ class base():
             if config is not None:
                 individual_config_path = self.path + "/" + connection + ".config"
                 if os.path.exists(individual_config_path):
-                    with open(individual_config_path, 'r') as f:
-                        individual_conns = ast.literal_eval(f.read())
-                    for ki, ci in enumerate(individual_conns):
-                        if ci['name'] == connection:
-                            individual_conns[ki]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
-                            break
-                    with open(individual_config_path, 'w') as f:
-                        f.write(str(individual_conns))
+                    try:
+                        with open(individual_config_path, 'r') as f:
+                            individual_conns = ast.literal_eval(f.read())
+                        for ki, ci in enumerate(individual_conns):
+                            if ci['name'] == connection:
+                                individual_conns[ki]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                                break
+                        with open(individual_config_path, 'w') as f:
+                            f.write(str(individual_conns))
+                        print("{:30s}: wrote benchmarking_timespans to {}".format(connection, individual_config_path))
+                    except Exception as exc:
+                        print("{:30s}: WARNING - could not update {}: {}".format(connection, individual_config_path, exc))
+                else:
+                    print("{:30s}: WARNING - individual config not found: {}".format(connection, individual_config_path))
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
             #self.experiment.cluster.logger.debug("LOADING LABELS")

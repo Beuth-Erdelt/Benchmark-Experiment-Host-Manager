@@ -63,9 +63,25 @@ class Benchmark:
         """
         Print a Markdown-formatted benchmark-specific summary.
 
+        Called for the first (primary) benchmark in the round; prints the
+        full experiment header followed by this benchmark's result tables.
+
         :param experiment: The owning experiment object.
         """
         raise NotImplementedError
+
+    def show_summary_section(self, experiment) -> None:
+        """
+        Print a benchmark-specific section inside a multi-benchmark summary.
+
+        Called for every registered benchmark after the primary benchmark's
+        :meth:`show_summary` has already printed the experiment header.
+        Override in subclasses that need to display results for a co-running
+        secondary benchmarker.  The default implementation is a no-op so that
+        benchmarks used only as primaries do not need to override this method.
+
+        :param experiment: The owning experiment object.
+        """
 
     def test_results(self, experiment) -> None:
         """
@@ -171,17 +187,10 @@ class DBMSBenchmarkerBenchmark(Benchmark):
                 df = self.evaluator.get_summary_benchmark_per_phase()
             print(df.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df.copy()
-            registered_runs = {b.benchmark_index for b in experiment.benchmarks}
-            df_conn = self.evaluator.get_connections_of_experiment()
-            timing_cols = [c for c in ('experiment_run', 'client', 'benchmark_begin', 'benchmark_end', 'benchmark_duration') if c in df_conn.columns]
-            if timing_cols and 'benchmark_run' in df_conn.columns and 'benchmark_duration' in df_conn.columns:
-                df_sidecar = df_conn[
-                    ~df_conn['benchmark_run'].astype(int).isin(registered_runs)
-                    & df_conn['benchmark_duration'].notna()
-                ][timing_cols]
-                if not df_sidecar.empty:
-                    print("\n### Refresh Stream\n")
-                    print(df_sidecar.to_markdown(index=True))
+            for bm in experiment.benchmarks:
+                if bm.benchmark_index == self.benchmark_index:
+                    continue
+                bm.show_summary_section(experiment)
             print("\n### Latency of Timer Execution [ms]")
             num_of_queries = 0
             df_latencies = self.evaluator.get_query_latencies(query_titles=True)
