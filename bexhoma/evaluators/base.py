@@ -241,40 +241,73 @@ class base:
         :rtype: pandas.DataFrame
         """
         return pd.DataFrame()
-    def reconstruct_workflow(self, df):
+    def reconstruct_workflow(self, df: 'pd.DataFrame') -> dict:
         """
-        Reconstructs the experiment workflow structure from a benchmarking results DataFrame.
+        Reconstructs the actual experiment workflow from connection metadata.
 
-        Returns a nested dict mapping each configuration name to a list of runs, where each
-        run is a list of result counts per client — for example::
+        Reads ``benchmark_sequence`` from ``queries.config`` to map each
+        ``benchmark_run`` index to its benchmarker type, then groups the
+        DataFrame by ``(configuration, experiment_run, client, benchmark_run)``
+        to produce a structure that mirrors the planned workflow format::
 
-            {'MySQL-24-4-1024': [[1, 2], [1, 2]]}
+            {
+                'MySQL-24-4-1024': [
+                    [  # experiment run 1
+                        [  # client round 1
+                            {'type': 'dbmsbenchmarker', 'pods': 4},
+                            {'type': 'tpch_refresh',    'pods': 1},
+                        ],
+                        [  # client round 2
+                            {'type': 'dbmsbenchmarker', 'pods': 8},
+                            {'type': 'tpch_refresh',    'pods': 1},
+                        ],
+                    ],
+                ],
+            }
 
-        means 2 experiment runs, each consisting of client 1 (1 result) then client 2
-        (2 results, i.e. 2 pods in parallel).
-
-        :param df: Benchmarking DataFrame with columns ``configuration``, ``experiment_run``,
-                   and ``client`` (pods already aggregated).
+        :param df: Connection metadata DataFrame returned by
+                   :meth:`get_connections_of_experiment`, with at least the
+                   columns ``configuration``, ``experiment_run``, ``client``,
+                   ``benchmark_run``, and ``pods``.
         :type df: pandas.DataFrame
-        :return: Workflow dict mapping configuration name to per-run client result counts.
+        :return: Workflow dict mapping configuration name to the nested structure.
         :rtype: dict
         """
-        configs = dict()
+        workload = self.get_workload()
+        bm_sequence = {
+            entry['index']: entry['type']
+            for entry in workload.get('benchmark_sequence', [])
+        }
+        configs: dict = {}
         for _, row in df.iterrows():
             config_name = row['configuration']
+            experiment_run = row['experiment_run']
+            client = int(row['client'])
+            benchmark_run = int(row['benchmark_run'])
+            pods = int(row['pods'])
             if config_name not in configs:
-                configs[config_name] = dict()
-            if row['experiment_run'] not in configs[config_name]:
-                configs[config_name][row['experiment_run']] = dict()
-            if row['client'] not in configs[config_name][row['experiment_run']]:
-                configs[config_name][row['experiment_run']][row['client']] = {'result_count': 0}
-            configs[config_name][row['experiment_run']][row['client']]['result_count'] += 1
-        workflow = dict()
+                configs[config_name] = {}
+            if experiment_run not in configs[config_name]:
+                configs[config_name][experiment_run] = {}
+            if client not in configs[config_name][experiment_run]:
+                configs[config_name][experiment_run][client] = {}
+            if benchmark_run not in configs[config_name][experiment_run][client]:
+                configs[config_name][experiment_run][client][benchmark_run] = {
+                    'type': bm_sequence.get(benchmark_run, str(benchmark_run)),
+                    'pods': pods,
+                }
+        workflow: dict = {}
         for config_name, run_dict in configs.items():
-            workflow[config_name] = []
-            for _run_num, client_dict in run_dict.items():
-                client_counts = [client_data['result_count'] for client_data in client_dict.values()]
-                workflow[config_name].append(client_counts)
+            workflow[config_name] = [
+                [
+                    [
+                        run_dict[exp_run][client][bm_run]
+                        for bm_run in sorted(run_dict[exp_run][client])
+                    ]
+                    for client in sorted(run_dict[exp_run])
+                ]
+                for exp_run in sorted(run_dict)
+            ]
         return workflow
     def test_results(self):
         """

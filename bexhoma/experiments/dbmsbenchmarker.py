@@ -120,17 +120,29 @@ class dbmsbenchmarker(mixed):
         df = self.evaluator.get_df_benchmarking()
         if self.benchmarking_is_active():
             print("\n### Workflow")
-            df = self.evaluator.get_summary_benchmark_per_connection()
-            workflow_actual = self.evaluator.reconstruct_workflow(df)
+            df_conn = self.evaluator.get_connections_of_experiment()
+            workflow_actual = self.evaluator.reconstruct_workflow(df_conn)
             workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
+            if workflow_actual:
                 print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
+                for config, runs in workflow_actual.items():
+                    for exp_i, run in enumerate(runs, 1):
+                        for client_j, client_round in enumerate(run, 1):
+                            jobs_str = ', '.join(
+                                f"{job['type']} ({job['pods']} pods)"
+                                for job in client_round
+                            )
+                            print(f"* DBMS {config} - Experiment {exp_i} Client {client_j}: {jobs_str}")
+            if workflow_planned:
                 print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
+                for config, runs in workflow_planned.items():
+                    for exp_i, run in enumerate(runs, 1):
+                        for client_j, client_round in enumerate(run, 1):
+                            jobs_str = ', '.join(
+                                f"{job['type']} ({job['pods']} pods)"
+                                for job in client_round
+                            )
+                            print(f"* DBMS {config} - Experiment {exp_i} Client {client_j}: {jobs_str}")
         if self.loading_is_active():
             print("\n### Loading")
             print("\n#### Per Run\n")

@@ -1264,24 +1264,45 @@ class base():
             config.add_benchmark_list(list_clients)
     def get_workflow_list(self):
         """
-        Returns benchmarking workflow as dict of lists of lists.
-        Keys are connection names.
-        Values are lists of lists.
-        Each inner list is for example added by add_benchmark_list(), c.f.
-        Inner lists are repeated according to self.num_experiment_to_apply.
-        Example: {'PostgreSQL-24-1-16384': [[1, 2]], 'MySQL-24-1-16384': [[1, 2]], 'PostgreSQL-24-1-32768': [[1, 2]], 'MySQL-24-1-32768': [[1, 2]]}
+        Returns the planned benchmarking workflow extracted from ``experiment_dict``.
 
-        :return: Dict of benchmarking workflow
+        The workflow is a dict keyed by configuration name.  Each value is a list of
+        experiment runs (length ``num_experiment_to_apply``), where each run is a list
+        of client rounds, and each client round is a list of job descriptors::
+
+            {
+                'PostgreSQL-1-1-1': [
+                    [  # experiment run 1
+                        [  # client round 1
+                            {'type': 'dbmsbenchmarker', 'pods': 3},
+                            {'type': 'tpch_refresh',    'pods': 1},
+                        ],
+                    ],
+                ],
+            }
+
+        When ``workflow_planned`` is already present in ``self.workload`` (e.g. because
+        ``store_workflow_results()`` was already called), that stored value is returned
+        unchanged to preserve idempotency.
+
+        :return: Dict mapping configuration name to the nested workflow structure.
+        :rtype: dict
         """
-        # planned workflow is part of the workload
         if 'workflow_planned' in self.workload:
             return self.workload['workflow_planned']
-        # planned workflow is given by cli arguments and must be constructed
         workflow = {}
         for configuration in self.configurations:
-            workflow[configuration.configuration] = [configuration.benchmark_list_template for i in range(configuration.num_experiment_to_apply)]
+            rounds = [
+                [
+                    {'type': entry['benchmarker'], 'pods': entry['parallelism']}
+                    for entry in round_entries
+                ]
+                for round_entries in configuration.experiment_dict['benchmarker']
+            ]
+            workflow[configuration.configuration] = [
+                rounds for _ in range(configuration.num_experiment_to_apply)
+            ]
         self.cluster.logger.debug('base.get_workflow_list({})'.format(workflow))
-        #print(workflow)
         return workflow
     def store_workflow_results(self):
         """
@@ -1307,23 +1328,36 @@ class base():
                       workflow_1: dict,
                       workflow_2: dict) -> bool:
         """
-        Compares two workflow dicts.
-        A workflow is a dict (connection is key, lists of lists are values).
-        Ignores the ordering inside the lists of lists.
+        Compares two workflow dicts for equality.
+
+        Each workflow maps a configuration name to a list of experiment runs,
+        where each run is a list of client rounds, and each round is a list of
+        job descriptors ``{'type': str, 'pods': int}``.
+
+        The comparison is order-sensitive across experiment runs and client rounds
+        (their sequence matters) but order-insensitive within a single client round
+        (parallel jobs may be scheduled in any order).
+
+        :param workflow_1: First workflow dict.
+        :type workflow_1: dict
+        :param workflow_2: Second workflow dict.
+        :type workflow_2: dict
+        :return: ``True`` if the two workflows are equivalent.
+        :rtype: bool
         """
-        def compare_lists(list1, list2):
-            if len(list1) != len(list2):
-                return False
-            # sort inner lists to ignore ordering
-            sorted_list1 = sorted([sorted(sublist) for sublist in list1])
-            sorted_list2 = sorted([sorted(sublist) for sublist in list2])
-            return sorted_list1 == sorted_list2
         if workflow_1.keys() != workflow_2.keys():
             return False
+        sort_key = lambda job: (job['type'], job['pods'])
         for key in workflow_1:
-            # compare lists, ignoring the ordering
-            if not compare_lists(workflow_1[key], workflow_2[key]):
+            runs_1, runs_2 = workflow_1[key], workflow_2[key]
+            if len(runs_1) != len(runs_2):
                 return False
+            for round_list_1, round_list_2 in zip(runs_1, runs_2):
+                if len(round_list_1) != len(round_list_2):
+                    return False
+                for jobs_1, jobs_2 in zip(round_list_1, round_list_2):
+                    if sorted(jobs_1, key=sort_key) != sorted(jobs_2, key=sort_key):
+                        return False
         return True
     def _record_test(self, passed: bool, label: str) -> bool:
         """
