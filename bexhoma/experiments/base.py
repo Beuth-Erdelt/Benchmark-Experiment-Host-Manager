@@ -2106,6 +2106,10 @@ class base():
                         with open(individual_config_path, 'w') as f:
                             f.write(str(individual_conns))
                         print("{:30s}: wrote benchmarking_timespans to {}".format(connection, individual_config_path))
+                        # Upload the individual config to the pod so that evaluate_results()'s
+                        # experimentdownload_file('') does not later overwrite it with the
+                        # stale pod copy (which was written at job-submission time with {}).
+                        self.experimentupload_file(filename=connection + '.config')
                     except Exception as exc:
                         print("{:30s}: WARNING - could not update {}: {}".format(connection, individual_config_path, exc))
                 else:

@@ -369,10 +369,19 @@ class base():
             for code in self.codes:
                 evaluation = self.get_evaluator(code)
                 df_connection = evaluation.get_connections_of_experiment()
+                if not df_connection.empty:
+                    code_str = str(evaluation.code)
+                    df_connection['phase'] = code_str + '-' + df_connection['phase'].astype(str)
+                    df_connection['job'] = code_str + '-' + df_connection['job'].astype(str)
                 df_connections = pd.concat([df_connections, df_connection])
             return df_connections
         else:
-            return evaluation.get_connections_of_experiment()
+            df = evaluation.get_connections_of_experiment()
+            if not df.empty:
+                code_str = str(evaluation.code)
+                df['phase'] = code_str + '-' + df['phase'].astype(str)
+                df['job'] = code_str + '-' + df['job'].astype(str)
+            return df
 
     def show_summary_monitoring_table(self, evaluation, type='stream'):
         """

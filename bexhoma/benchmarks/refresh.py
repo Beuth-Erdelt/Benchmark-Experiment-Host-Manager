@@ -100,8 +100,10 @@ class RefreshStreamBenchmark(Benchmark):
 
         Reads :meth:`~bexhoma.evaluators.base.base.get_connections_of_experiment`
         from the base evaluator, filters to rows whose ``benchmark_run`` equals
-        :attr:`benchmark_index`, and prints ``experiment_run``, ``client``,
-        ``benchmark_begin``, ``benchmark_end``, and ``benchmark_duration``.
+        :attr:`benchmark_index`, and prints ``phase``, ``job``,
+        ``experiment_run``, ``client``, ``benchmark_run``, ``pod_count``
+        (from the ``pods`` column), ``benchmark_begin``, ``benchmark_end``,
+        and ``benchmark_duration``.
 
         Timing is available only when the k8s job template names the main
         container ``dbmsbenchmarker``, so that
@@ -115,17 +117,22 @@ class RefreshStreamBenchmark(Benchmark):
         df_conn = self.evaluator.get_connections_of_experiment()
         if 'benchmark_run' not in df_conn.columns or 'benchmark_duration' not in df_conn.columns:
             return
-        timing_cols = [
-            col for col in ('connection', 'experiment_run', 'client', 'benchmark_begin', 'benchmark_end', 'benchmark_duration')
+        display_cols = [
+            col for col in (
+                'connection', 'phase', 'job',
+                'experiment_run', 'client', 'benchmark_run', 'pods',
+                'benchmark_begin', 'benchmark_end', 'benchmark_duration',
+            )
             if col in df_conn.columns
         ]
         df_section = df_conn[
             (df_conn['benchmark_run'].astype(int) == self.benchmark_index)
             & df_conn['benchmark_duration'].notna()
-        ][timing_cols]
+        ][display_cols]
         if df_section.empty:
             return
         if 'connection' in df_section.columns:
             df_section = df_section.set_index('connection')
+        df_section = df_section.rename(columns={'pods': 'pod_count'})
         print(f"\n### {self.name}\n")
         print(df_section.to_markdown(index=True))

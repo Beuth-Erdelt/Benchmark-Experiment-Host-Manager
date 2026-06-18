@@ -448,8 +448,8 @@ class base:
                     phase_id = job_id[:-len('-' + benchmark_run_num)]
                 else:
                     phase_id = job_id
-                conn['phase'] = f"{code}-{phase_id}"
-                conn['job'] = f"{code}-{job_id}"
+                conn['phase'] = phase_id
+                conn['job'] = job_id
                 connection_id = f"{code}-{name}"
                 self.add_connection_to_result(conn, connection_id, result)
             else:
@@ -462,10 +462,15 @@ class base:
                     phase_id = job_id
                 for client_idx in range(1, num_clients + 1):
                     conn['name'] = f"{code}-{job_id}-{client_idx}"
-                    conn['phase'] = f"{code}-{phase_id}"
-                    conn['job'] = f"{code}-{job_id}"
+                    conn['phase'] = phase_id
+                    conn['job'] = job_id
                     connection_id = f"{code}-{job_id}-{client_idx}"
                     self.add_connection_to_result(conn, connection_id, result)
+                    # add_connection_to_result copies the mutated conn['name'] which
+                    # carries the code prefix.  Use the pod-level name without the
+                    # code prefix so callers see "PostgreSQL-1-1-1-2-1" not
+                    # "1781731967-PostgreSQL-1-1-1-2-1".
+                    result[connection_id]['connection'] = f"{job_id}-{client_idx}"
         return pd.DataFrame(result).T
     def get_loading_per_connection(self):
         """

@@ -132,29 +132,30 @@ class tpch(dbmsbenchmarker):
         """
         Print the TPC-H experiment summary, including the refresh stream section.
 
-        Calls :meth:`dbmsbenchmarker.show_summary` for the query-stream output,
-        then appends a refresh-stream timing table when one was run.
-
         When :meth:`enable_refresh_stream` was called during the live run,
         :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is already in
-        ``self.benchmarks`` and the loop inside
-        :meth:`dbmsbenchmarker.show_summary` handles it automatically.
+        ``self.benchmarks`` and the generic loop inside
+        :meth:`dbmsbenchmarker.show_summary` places the section right after
+        ``### Execution → Per Phase``.
 
-        When ``show_summary`` is called post-hoc via ``bexperiments summary``
-        (which does not call :meth:`enable_refresh_stream`), a
-        :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is created on the
-        fly with a fresh evaluator so that connections with ``benchmark_run=2``
-        whose timing was written to their ``.config`` file are displayed.
+        When called post-hoc via ``bexperiments summary`` (no
+        :meth:`enable_refresh_stream`), a temporary
+        :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is appended to
+        ``self.benchmarks`` before delegating to ``super()``, so the same loop
+        positions it identically.  The temporary entry is removed afterwards.
         """
+        refresh_added = False
+        if not any(isinstance(bm, benchmarks.RefreshStreamBenchmark) for bm in self.benchmarks):
+            refresh_bm = benchmarks.RefreshStreamBenchmark(name='tpch_refresh', SF=str(self.SF))
+            refresh_bm.benchmark_index = 2
+            refresh_bm.evaluator = refresh_bm.create_evaluator(
+                self.code, self.cluster.resultfolder, 2
+            )
+            self.benchmarks.append(refresh_bm)
+            refresh_added = True
         super().show_summary()
-        if any(isinstance(bm, benchmarks.RefreshStreamBenchmark) for bm in self.benchmarks):
-            return
-        refresh_bm = benchmarks.RefreshStreamBenchmark(name='tpch_refresh', SF=str(self.SF))
-        refresh_bm.benchmark_index = 2
-        refresh_bm.evaluator = refresh_bm.create_evaluator(
-            self.code, self.cluster.resultfolder, 2
-        )
-        refresh_bm.show_summary_section(self)
+        if refresh_added:
+            self.benchmarks.pop()
 
     def set_queries_full(self) -> None:
         """Switch to the full TPC-H query file covering all 22 queries."""

@@ -189,7 +189,12 @@ config.benchmarking_timespans = {'benchmarker': list(zip(firsts, seconds))}
 
 It then writes these timespans to:
 - The `benchmarking_timespans` field of the matching entry in `connections.config`.
-- The individual `{connection}.config` file (durable backup).
+- The individual `{connection}.config` file (durable backup), then **immediately
+  uploads that file back to the pod** via `self.experimentupload_file(connection + '.config')`.
+  This upload is required because `evaluate_results()` later calls
+  `experimentdownload_file('')` which downloads all pod files and would otherwise
+  overwrite the locally-updated individual config with the stale pod copy (written
+  at job-submission time with `benchmarking_timespans: {}`).
 - The dashboard pod copy (if a dashboard is active).
 
 If `timing_benchmarker` is empty (log not found, pod crashed before emitting
@@ -261,8 +266,13 @@ library's own result files (pickle/JSON cubes built inside the dashboard pod by
 **Dashboard cube expansion note**: `benchmark.py read` inside the dashboard pod
 rewrites `connections.config` by expanding single-connection entries into
 per-pod sub-entries.  `get_connections_of_experiment()` supplements missing
-connections from individual `{connection}.config` files, which is why
-`end_benchmarking()` always writes to both files immediately.
+connections from individual `{connection}.config` files.
+
+`end_benchmarking()` therefore writes timing to BOTH files and immediately
+uploads the individual file back to the pod so that `experimentdownload_file('')`
+— called later by `evaluate_results()` — cannot overwrite the locally-updated
+copy with the stale pod version (written at job-submission time with
+`benchmarking_timespans: {}`).
 
 ---
 
@@ -491,11 +501,18 @@ After the round, `connections.config` contains (among entries from other rounds)
 The MRO for `tpch` is: `tpch → dbmsbenchmarker → mixed → base`.
 
 `tpch` overrides `show_summary()` (at `experiments/tpch.py`):
-1. Calls `super().show_summary()` — which is `dbmsbenchmarker.show_summary()`.
-2. If no `RefreshStreamBenchmark` is already in `self.benchmarks` (the post-hoc
-   `bexperiments summary` case where `enable_refresh_stream()` was not called),
-   creates one on the fly with a fresh evaluator and calls
-   `show_summary_section(self)`.
+1. If no `RefreshStreamBenchmark` is in `self.benchmarks` (post-hoc
+   `bexperiments summary` — `enable_refresh_stream()` was not called), creates
+   one on the fly with a fresh evaluator and **temporarily appends it** to
+   `self.benchmarks`.
+2. Calls `super().show_summary()` — which is `dbmsbenchmarker.show_summary()`.
+3. Removes the temporary benchmark (if it was added) so `self.benchmarks`
+   is restored to its original state.
+
+Appending before `super()` rather than calling `show_summary_section()` after
+ensures that the generic benchmark loop inside `dbmsbenchmarker.show_summary()`
+places the section right after `### Execution → Per Phase` and before
+`### Latency`, consistent with the live-run position.
 
 `dbmsbenchmarker.show_summary()` (at `experiments/dbmsbenchmarker.py:108`) does
 NOT delegate to `mixed.show_summary()` (which loops over `self.benchmarks`).
@@ -591,12 +608,18 @@ only the refresh-stream entries, so the output is:
 ```
 ### tpch_refresh
 
-| connection          |   experiment_run |   client | benchmark_begin     | benchmark_end       |   benchmark_duration |
-|:--------------------|-----------------:|---------:|:--------------------|:--------------------|---------------------:|
-| PostgreSQL-1-1-1-2  |                1 |        1 | 2026-06-16 05:03:06 | 2026-06-16 05:03:12 |                    6 |
-| PostgreSQL-1-2-1-2  |                2 |        1 | …                   | …                   |                    … |
-| PostgreSQL-1-3-1-2  |                3 |        1 | …                   | …                   |                    … |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count | benchmark_begin     | benchmark_end       |   benchmark_duration |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|:--------------------|:--------------------|---------------------:|
+| PostgreSQL-1-1-1-2-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-2 |                1 |        1 |               2 |           1 | 2026-06-16 05:03:06 | 2026-06-16 05:03:12 |                    6 |
+| PostgreSQL-1-2-1-2-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-2 |                2 |        1 |               2 |           1 | …                   | …                   |                    … |
+| PostgreSQL-1-3-1-2-1 | PostgreSQL-1-3-1 | PostgreSQL-1-3-1-2 |                3 |        1 |               2 |           1 | …                   | …                   |                    … |
 ```
+
+The trailing `-1` in `connection` is the pod index within the job (synthesised from
+`parallelism` when `benchmark.py read` has not produced per-pod sub-entries with
+`orig_name`).  The refresh stream always has `parallelism = 1`, so this index is
+always `1`.  `phase` and `job` contain no code prefix; the collector's
+``get_connections()`` prepends the code when joining with monitoring data.
 
 ### 9e. Adding a new co-running benchmarker type
 
