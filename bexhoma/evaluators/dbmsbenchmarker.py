@@ -471,3 +471,41 @@ class dbmsbenchmarker(logger):
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('pod', axis=1, inplace=True, errors='ignore')
         return df
+
+    def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
+                     workflow_actual: dict, workflow_planned: dict, **extra) -> None:
+        """
+        Record DBMSBenchmarker pass/fail tests.
+
+        Tests query metric columns (Geo Times, Power@Size, Throughput@Size),
+        SQL error and warning counts supplied by ``_show_extra_sections``, and
+        workflow completeness.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame (unused here).
+        :param df_reduced: Per-phase execution DataFrame.
+        :param workflow_actual: Reconstructed actual workflow dict.
+        :param workflow_planned: Planned workflow dict from workload config.
+        :param extra: Must contain ``num_errors`` and ``num_warnings`` from
+                      :meth:`~bexhoma.benchmarks.base.DBMSBenchmarkerBenchmark._show_extra_sections`.
+        """
+        if experiment.benchmarking_is_active():
+            experiment._test_column(df_reduced, "Geo Times [s]")
+            experiment._test_column(df_reduced, "Power@Size [~Q/h]")
+            experiment._test_column(df_reduced, "Throughput@Size")
+            num_errors = extra.get("num_errors", 0)
+            num_warnings = extra.get("num_warnings", 0)
+            passed_errors = num_errors == 0
+            experiment._record_test(
+                passed_errors,
+                "No SQL errors" if passed_errors else "SQL errors"
+            )
+            passed_warnings = num_warnings == 0
+            experiment._record_test(
+                passed_warnings,
+                "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)"
+            )
+            experiment._record_test(
+                experiment.test_workflow(workflow_actual, workflow_planned),
+                "Workflow as planned"
+            )

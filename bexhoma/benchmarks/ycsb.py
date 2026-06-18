@@ -123,28 +123,16 @@ class YCSB(Benchmark):
         else:
             print("Result workflow not complete")
 
-    def show_summary(self, experiment) -> None:
+    def _show_loading_sections(self, experiment, is_multitenant: bool) -> 'pd.DataFrame':
         """
-        Print a Markdown-formatted summary of a YCSB experiment.
+        Print Per Connection and Per Run loading tables for YCSB.
 
         :param experiment: The owning experiment object.
+        :param is_multitenant: Whether the experiment runs in multitenant mode.
+        :return: Per-run loading DataFrame, or an empty DataFrame when no loading
+                 data is available.
+        :rtype: pandas.DataFrame
         """
-        experiment._test_results = []
-        connections_sorted, monitoring_applications = experiment.show_summary_header()
-        df = self.evaluator.get_df_benchmarking()
-        if experiment.benchmarking_is_active():
-            print("\n### Workflow")
-            workflow_actual = self.evaluator.reconstruct_workflow(df)
-            workflow_planned = experiment.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-        is_multitenant = experiment.num_tenants > 0
         df_loading = self.evaluator.get_summary_loading_per_connection()
         if experiment.loading_is_active() and not df_loading.empty:
             print("\n### Loading")
@@ -156,40 +144,5 @@ class YCSB(Benchmark):
             else:
                 df_aggregated_loaded = self.evaluator.get_summary_loading_per_run()
             print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f"))
-            test_loading = True
-        else:
-            df_aggregated_loaded = pd.DataFrame()
-            test_loading = False
-        if experiment.benchmarking_is_active():
-            print("\n### Execution")
-            print("\n#### Per Connection\n")
-            df = self.evaluator.get_summary_benchmark_per_connection()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-            print("\n#### Per Phase\n")
-            if is_multitenant:
-                df = self.evaluator.get_summary_benchmark_per_phase_multitenant()
-            else:
-                df = self.evaluator.get_summary_benchmark_per_phase()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-            df_aggregated_reduced = df.copy()
-        else:
-            df_aggregated_reduced = pd.DataFrame()
-        contains_failed = any('FAILED' in col for col in df_aggregated_reduced.columns)
-        experiment.show_summary_monitoring()
-        if len(monitoring_applications) > 0:
-            print("\n### Application Metrics")
-            for title, metrics in monitoring_applications.items():
-                print("\n#### " + title + "\n")
-                metrics.index.names = ["DBMS"]
-                print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        if test_loading:
-            experiment._test_column(df_aggregated_loaded, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
-        experiment._test_column(df_aggregated_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
-        if experiment.benchmarking_is_active():
-            experiment._record_test(experiment.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
-        experiment._record_test(
-            not contains_failed,
-            "Execution Phase: contains no FAILED column" if not contains_failed else "Execution Phase: contains FAILED column",
-        )
-        experiment._print_test_summary()
-        return not contains_failed
+            return df_aggregated_loaded
+        return pd.DataFrame()

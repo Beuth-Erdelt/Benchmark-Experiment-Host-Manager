@@ -1079,5 +1079,35 @@ class ycsb(logger):
         else:
             return df
 
+    def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
+                     workflow_actual: dict, workflow_planned: dict, **extra) -> None:
+        """
+        Record YCSB pass/fail tests.
+
+        Tests overall throughput for the loading phase (when data is available)
+        and the execution phase, workflow completeness, and absence of FAILED
+        operation columns.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame; empty if loading was not active.
+        :param df_reduced: Per-phase execution DataFrame.
+        :param workflow_actual: Reconstructed actual workflow dict.
+        :param workflow_planned: Planned workflow dict from workload config.
+        """
+        if not df_loading.empty:
+            experiment._test_column(df_loading, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
+        experiment._test_column(df_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
+        if experiment.benchmarking_is_active():
+            experiment._record_test(
+                experiment.test_workflow(workflow_actual, workflow_planned),
+                "Workflow as planned"
+            )
+        contains_failed = any('FAILED' in col for col in df_reduced.columns)
+        experiment._record_test(
+            not contains_failed,
+            "Execution Phase: contains no FAILED column" if not contains_failed
+            else "Execution Phase: contains FAILED column",
+        )
+
 
 

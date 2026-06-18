@@ -365,4 +365,24 @@ class logger(base):
             connections = ast.literal_eval(f.read())
         return sorted(connections, key=lambda conn: conn['name'])
 
+    def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
+                     workflow_actual: dict, workflow_planned: dict, **extra) -> None:
+        """
+        Record pass/fail test results for this benchmark.
+
+        Default: tests only that the workflow matches the plan. Override in
+        benchmark-specific evaluator subclasses to test metric columns.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame.
+        :param df_reduced: Per-phase execution DataFrame.
+        :param workflow_actual: Reconstructed actual workflow dict.
+        :param workflow_planned: Planned workflow dict from workload config.
+        """
+        if experiment.benchmarking_is_active():
+            experiment._record_test(
+                experiment.test_workflow(workflow_actual, workflow_planned),
+                "Workflow as planned"
+            )
+
 

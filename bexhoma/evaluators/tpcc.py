@@ -432,4 +432,22 @@ class tpcc(logger):
         df.drop('configuration', axis=1, inplace=True, errors='ignore')
         return df
 
+    def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
+                     workflow_actual: dict, workflow_planned: dict, **extra) -> None:
+        """
+        Record TPC-C pass/fail tests: NOPM throughput and workflow completeness.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame (unused here).
+        :param df_reduced: Per-phase execution DataFrame.
+        :param workflow_actual: Reconstructed actual workflow dict.
+        :param workflow_planned: Planned workflow dict from workload config.
+        """
+        if experiment.benchmarking_is_active():
+            experiment._test_column(df_reduced, "NOPM")
+            experiment._record_test(
+                experiment.test_workflow(workflow_actual, workflow_planned),
+                "Workflow as planned"
+            )
+
 

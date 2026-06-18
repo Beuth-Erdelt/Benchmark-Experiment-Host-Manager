@@ -107,121 +107,13 @@ class dbmsbenchmarker(mixed):
         self.experimentupload_file(filename='')
     def show_summary(self) -> None:
         """
-        Print a Markdown-formatted summary of a DBMSBenchmarker experiment.
+        Print the experiment summary by delegating to the primary benchmark.
 
-        Covers workflow, loading times, per-connection and per-phase execution stats,
-        query latencies, SQL errors, SQL warnings, monitoring metrics, and
-        pass/fail test assertions.
+        Finds the benchmark with ``benchmark_index == 1`` and calls its
+        :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary` template method,
+        passing this experiment as the context object.
         """
-        self._test_results = []
-        self.evaluator.load_inspector()
-        connections_sorted, monitoring_applications = self.show_summary_header()
-        #####################
-        df = self.evaluator.get_df_benchmarking()
-        if self.benchmarking_is_active():
-            print("\n### Workflow")
-            df_conn = self.evaluator.get_connections_of_experiment()
-            workflow_actual = self.evaluator.reconstruct_workflow(df_conn)
-            workflow_planned = self.workload['workflow_planned']
-            if workflow_actual:
-                print("\n#### Actual\n")
-                for config, runs in workflow_actual.items():
-                    for exp_i, run in enumerate(runs, 1):
-                        for client_j, client_round in enumerate(run, 1):
-                            jobs_str = ', '.join(
-                                f"{job['type']} ({job['pods']} pods)"
-                                for job in client_round
-                            )
-                            print(f"* DBMS {config} - Experiment {exp_i} Client {client_j}: {jobs_str}")
-            if workflow_planned:
-                print("\n#### Planned\n")
-                for config, runs in workflow_planned.items():
-                    for exp_i, run in enumerate(runs, 1):
-                        for client_j, client_round in enumerate(run, 1):
-                            jobs_str = ', '.join(
-                                f"{job['type']} ({job['pods']} pods)"
-                                for job in client_round
-                            )
-                            print(f"* DBMS {config} - Experiment {exp_i} Client {client_j}: {jobs_str}")
-        if self.loading_is_active():
-            print("\n### Loading")
-            print("\n#### Per Run\n")
-            if self.workload.get('num_tenants', 0) > 0:
-                df = self.evaluator.get_summary_loading_per_run_multitenant()
-            else:
-                df = self.evaluator.get_summary_loading_per_run()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-        if self.benchmarking_is_active():
-            print("\n### Execution")
-            print("\n#### Per Connection\n")
-            df = self.evaluator.get_summary_benchmark_per_connection()
-            df.drop('configuration', axis=1, inplace=True, errors='ignore')
-            df.drop('pod', axis=1, inplace=True, errors='ignore')
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-            print("\n#### Per Phase\n")
-            df = self.evaluator.get_summary_benchmark_per_phase()
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-            df_aggregated_reduced = df.copy()
-            for bm in self.benchmarks:
-                if bm.benchmark_index == 1:
-                    continue
-                bm.show_summary_section(self)
-            print("\n### Latency of Timer Execution [ms]")
-            num_of_queries = 0
-            df = self.evaluator.get_query_latencies(query_titles=True)
-            if not df is None:
-                df = df.sort_index().T.round(2)
-                df.index.names = ["Queries"]
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-                num_of_queries = len(df.index)
-            print("\n### Errors (failed queries)\n")
-            df = self.evaluator.get_total_errors(query_titles=False)
-            num_errors = df.sum().sum()
-            if num_errors > 0:
-                df_errors = df.copy()
-                df_errors = df_errors[~(df_errors == False).all(axis=1)]
-                df_errors = df_errors.loc[:, ~(df_errors == False).all(axis=0)]
-                list_error_queries = list(df_errors.T.index)
-                # remove only False rows
-                df = self.evaluator.get_total_errors(query_titles=True)
-                df = df[~(df == False).all(axis=1)]
-                print(df.T.to_markdown(index=True, floatfmt=".2f"))
-                for error in list_error_queries:
-                    numQuery = error[1:]        # remove the leading "Q"
-                    list_errors = self.evaluator.evaluation.get_error(numQuery)
-                    list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
-                    print("* "+error)
-                    for k,v in list_errors.items():
-                        print("  * {}: {}".format(k,v))
-            else:
-                print("No errors")
-            print("\n### Warnings (result mismatch)\n")
-            df = self.evaluator.get_total_warnings(query_titles=True)
-            num_warnings = df.sum().sum()
-            if num_warnings > 0:
-                # remove only False rows
-                df = df[~(df == False).all(axis=1)]
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-            else:
-                print("No warnings")
-        else:
-            df_aggregated_reduced = pd.DataFrame()
-        #####################
-        self.show_summary_monitoring()
-        if len(monitoring_applications) > 0:
-            print("\n### Application Metrics")
-            for title, metrics in monitoring_applications.items():
-                print("\n#### "+title+"\n")
-                print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        if self.benchmarking_is_active():
-            self._test_column(df_aggregated_reduced, "Geo Times [s]")
-            self._test_column(df_aggregated_reduced, "Power@Size [~Q/h]")
-            self._test_column(df_aggregated_reduced, "Throughput@Size")
-            passed_errors = num_errors == 0
-            self._record_test(passed_errors, "No SQL errors" if passed_errors else "SQL errors")
-            passed_warnings = num_warnings == 0
-            self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
-            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
-        self._print_test_summary()
+        primary = next(bm for bm in self.benchmarks if bm.benchmark_index == 1)
+        primary.show_summary(self)
 
 

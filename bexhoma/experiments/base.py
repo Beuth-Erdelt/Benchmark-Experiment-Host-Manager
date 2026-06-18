@@ -1380,6 +1380,16 @@ class base():
         """
         self._test_results.append((passed, label))
         return passed
+    def _record_skipped_test(self, label: str) -> None:
+        """
+        Append a skipped-test entry to the internal collector.
+
+        Use when a test is intentionally not run (e.g. data pre-existing).
+
+        :param label: Human-readable description of what was skipped.
+        :type label: str
+        """
+        self._test_results.append((None, label))
     def _test_column(self, df, column: str, title: str = '') -> bool:
         """
         Call evaluator.test_results_column and record the result.
@@ -1400,7 +1410,12 @@ class base():
         """Print all results collected in _test_results as a single summary block."""
         print("\n### Tests")
         for passed, label in self._test_results:
-            status = "passed" if passed else "failed"
+            if passed is None:
+                status = "skipped"
+            elif passed:
+                status = "passed"
+            else:
+                status = "failed"
             print(f"* TEST {status}: {label}")
     def update_workload(self):
         """
@@ -2764,7 +2779,7 @@ class base():
                     passed = self.evaluator.test_results_column(df, "CPU [CPUs]")
                     if not passed and component in optional_components:
                         # Data generator produces no CPU load when data is pre-existing; skip test.
-                        print(f"* TEST skipped: {title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
+                        self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
                     else:
                         suffix = "no 0 or NaN" if passed else "0 or NaN"
                         self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
