@@ -183,15 +183,20 @@ class logger(base):
         Reads from the combined pickle file, triggering :meth:`evaluate_results`
         to generate it on first access if it does not yet exist.
 
+        Ensures a ``pods`` column is present: when the pickle was written before
+        this column was added (older runs), it is derived from ``pod_count``.
+
         :return: DataFrame of benchmarking results, or empty DataFrame when unavailable.
         :rtype: pandas.DataFrame
         """
         pickle_path = self.path + "/" + self._pickle_name_benchmarking()
+        if not os.path.isfile(pickle_path):
+            self.evaluate_results()
         if os.path.isfile(pickle_path):
-            return pd.read_pickle(pickle_path)
-        self.evaluate_results()
-        if os.path.isfile(pickle_path):
-            return pd.read_pickle(pickle_path)
+            df = pd.read_pickle(pickle_path)
+            if 'pods' not in df.columns and 'pod_count' in df.columns:
+                df['pods'] = df['pod_count']
+            return df
         return pd.DataFrame()
 
     def get_df_loading(self):
@@ -263,40 +268,6 @@ class logger(base):
             plt.legend(loc='best')
             plt.tight_layout()
             plt.show()
-    def reconstruct_workflow(self, df):
-        """
-        Reconstructs the experiment workflow structure from a benchmarking results DataFrame.
-
-        Extends the base implementation by tracking individual pod names, so each
-        client entry records the number of distinct pods that contributed results.
-
-        :param df: Benchmarking DataFrame with columns ``configuration``,
-                   ``experiment_run``, ``client``, and ``pod``.
-        :type df: pandas.DataFrame
-        :return: Workflow dict mapping configuration name to per-run pod counts per client.
-        :rtype: dict
-        """
-        configs = dict()
-        for _, row in df.iterrows():
-            config_name = row['configuration']
-            if config_name not in configs:
-                configs[config_name] = dict()
-            if row['experiment_run'] not in configs[config_name]:
-                configs[config_name][row['experiment_run']] = dict()
-            if row['client'] not in configs[config_name][row['experiment_run']]:
-                configs[config_name][row['experiment_run']][row['client']] = {
-                    'pods': dict(),
-                    'result_count': 0,
-                }
-            configs[config_name][row['experiment_run']][row['client']]['pods'][row['pod']] = True
-            configs[config_name][row['experiment_run']][row['client']]['result_count'] += 1
-        workflow = dict()
-        for config_name, run_dict in configs.items():
-            workflow[config_name] = []
-            for _run_num, client_dict in run_dict.items():
-                pod_counts = [len(client_data['pods']) for client_data in client_dict.values()]
-                workflow[config_name].append(pod_counts)
-        return workflow
     def test_results(self):
         """
         Validates results by loading and reconstructing the workflow.

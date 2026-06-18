@@ -1274,8 +1274,8 @@ class base():
                 'PostgreSQL-1-1-1': [
                     [  # experiment run 1
                         [  # client round 1
-                            {'type': 'dbmsbenchmarker', 'pods': 3},
-                            {'type': 'tpch_refresh',    'pods': 1},
+                            {'type': 'tpch',         'pods': 3},
+                            {'type': 'tpch_refresh', 'pods': 1},
                         ],
                     ],
                 ],
@@ -1290,12 +1290,20 @@ class base():
         """
         if 'workflow_planned' in self.workload:
             return self.workload['workflow_planned']
+        bm_name_by_index = (
+            {bm.benchmark_index: bm.name for bm in self.benchmarks}
+            if getattr(self, 'benchmarks', None)
+            else {}
+        )
         workflow = {}
         for configuration in self.configurations:
             rounds = [
                 [
-                    {'type': entry['benchmarker'], 'pods': entry['parallelism']}
-                    for entry in round_entries
+                    {
+                        'type': bm_name_by_index.get(i + 1, entry['benchmarker']),
+                        'pods': entry['parallelism'],
+                    }
+                    for i, entry in enumerate(round_entries)
                 ]
                 for round_entries in configuration.experiment_dict['benchmarker']
             ]
