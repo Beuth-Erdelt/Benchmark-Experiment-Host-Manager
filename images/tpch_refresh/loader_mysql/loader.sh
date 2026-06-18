@@ -43,7 +43,9 @@ echo "Found these refresh files:"
 ls $destination_raw -lh
 
 ######################## MySQL connection options ########################
-MYSQL_OPTS="-h $BEXHOMA_HOST -P $BEXHOMA_PORT -u $BEXHOMA_USER -p$BEXHOMA_PASSWORD --local-infile=1"
+# --skip-ssl: the Debian default-mysql-client is the MariaDB client, which can fail
+# SSL negotiation with MySQL 8.x; --skip-ssl disables SSL, matching the loading loader.
+MYSQL_OPTS="-h $BEXHOMA_HOST -P $BEXHOMA_PORT -u $BEXHOMA_USER -p$BEXHOMA_PASSWORD --local-infile=1 --skip-ssl"
 
 ######################## Wait until all pods of job are ready ########################
 echo "Decrementing job counter bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
