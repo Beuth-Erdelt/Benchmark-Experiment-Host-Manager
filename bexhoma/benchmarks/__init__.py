@@ -17,6 +17,7 @@ from .tpcc import TPCC
 from .tpch import TPCH
 from .tpcds import TPCDS
 from .benchbase import Benchbase
+from .refresh import RefreshStreamBenchmark
 
 __all__ = [
     "Benchmark",
@@ -26,4 +27,5 @@ __all__ = [
     "TPCH",
     "TPCDS",
     "Benchbase",
+    "RefreshStreamBenchmark",
 ]

@@ -1976,13 +1976,13 @@ class base():
                                     jobname: str) -> list:
         """
         Extracts start and end times from a benchmarking job.
-        This uses extract_job_timing() and sets container to 'dbmsbenchmarker'
+        All benchmarker containers (including refresh-stream loaders) must be named
+        ``dbmsbenchmarker`` so the log file ends with ``.dbmsbenchmarker.log``.
 
         :param jobname: Name of the job
         :return: List of pairs (start,end) per pod
         """
-        timing_benchmarker = self.extract_job_timing(jobname, container="dbmsbenchmarker")
-        return timing_benchmarker
+        return self.extract_job_timing(jobname, container="dbmsbenchmarker")
     def get_job_timing_loading(self,
                                jobname: str) -> tuple:
         """
@@ -2075,6 +2075,9 @@ class base():
             # get pairs (start,end) of benchmarking pods
             timing_benchmarker = self.get_job_timing_benchmarking(jobname)
             #print("timing_benchmarker", timing_benchmarker)
+            if not timing_benchmarker:
+                print("{:30s}: no timing data found for job {}".format(jobname, jobname))
+                return
             # Unzip the pairs into two separate lists: firsts and seconds
             firsts, seconds = zip(*timing_benchmarker)
             # Find the minimum of the first entries and the maximum of the second entries
@@ -2087,6 +2090,30 @@ class base():
                 config.benchmarking_timespans['benchmarker'] = timing_benchmarker
             start_time_job = int(job_labels[jobname]['start_time'])
             connection = job_labels[jobname]['connection']
+            # Persist timing in the per-connection config file immediately, unconditionally
+            # of the dashboard pod, so it survives even if the combined connections.config
+            # is later overwritten (e.g. by dbmsbenchmarker's benchmark.py expansion).
+            if config is not None:
+                individual_config_path = self.path + "/" + connection + ".config"
+                if os.path.exists(individual_config_path):
+                    try:
+                        with open(individual_config_path, 'r') as f:
+                            individual_conns = ast.literal_eval(f.read())
+                        for ki, ci in enumerate(individual_conns):
+                            if ci['name'] == connection:
+                                individual_conns[ki]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                                break
+                        with open(individual_config_path, 'w') as f:
+                            f.write(str(individual_conns))
+                        print("{:30s}: wrote benchmarking_timespans to {}".format(connection, individual_config_path))
+                        # Upload the individual config to the pod so that evaluate_results()'s
+                        # experimentdownload_file('') does not later overwrite it with the
+                        # stale pod copy (which was written at job-submission time with {}).
+                        self.experimentupload_file(filename=connection + '.config')
+                    except Exception as exc:
+                        print("{:30s}: WARNING - could not update {}: {}".format(connection, individual_config_path, exc))
+                else:
+                    print("{:30s}: WARNING - individual config not found: {}".format(connection, individual_config_path))
             #self.timeLoadingEnd = default_timer()
             #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
             #self.experiment.cluster.logger.debug("LOADING LABELS")

@@ -47,6 +47,8 @@ if __name__ == '__main__':
     parser.add_argument('-xcol',  '--xinit-columns', help='use columnar storage (Citus only)', action='store_true', default=False, dest='init_columns')
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
+    parser.add_argument('-xrs',   '--xnum-refresh-streams', help='enable a TPC-H RF1/RF2 refresh stream running in parallel with the query streams; value is the number of RF1+RF2 pairs applied per benchmarking round (set equal to the number of parallel query streams for a spec-compliant throughput test; 0 = disabled)', default=0, type=int, dest='num_refresh_streams')
+    parser.add_argument('-xrso',  '--xrefresh-stream-offset', help='start the refresh stream at set OFFSET+1, so that sets 1..OFFSET are skipped (use to continue from a previous run without re-applying already-applied sets)', default=0, type=int, dest='num_refresh_stream_offset')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -100,6 +102,9 @@ if __name__ == '__main__':
     limit_import_table = args.limit_import_table
     # columnar storage
     init_columns = args.init_columns
+    # refresh stream
+    num_refresh_streams = args.num_refresh_streams
+    num_refresh_stream_offset = args.num_refresh_stream_offset
     ##############
     ### set cluster
     ##############
@@ -167,6 +172,22 @@ if __name__ == '__main__':
         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
         DBMSBENCHMARKER_DEV = debugging,
     )
+    if num_refresh_streams > 0:
+        experiment.set_default_benchmarking_parameters(
+            TPCH_REFRESH_STREAMS = num_refresh_streams,
+            TPCH_REFRESH_STREAM_OFFSET = num_refresh_stream_offset,
+            TRANSFORM_RAW_DATA = 1,
+            STORE_RAW_DATA = 1,
+        )
+        refresh_templates = {
+            'PostgreSQL': 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml',
+            'MySQL':      'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
+            'MariaDB':    'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
+            'MonetDB':    'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml',
+        }
+        dbms_list = args.dbms if args.dbms else ['PostgreSQL']
+        refresh_template = refresh_templates.get(dbms_list[0], 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml')
+        experiment.enable_refresh_stream(template=refresh_template)
     ##############
     ### add configs of dbms to be tested
     ##############

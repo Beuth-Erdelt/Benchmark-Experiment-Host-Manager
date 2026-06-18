@@ -381,6 +381,13 @@ class base:
                 if "=" in arg:
                     arg_key, arg_value = arg.split("=", 1)
                     result[connection_id][f'arg_{arg_key}'] = arg_value
+        pairs = c['hostsystem'].get('benchmarking_timespans', {}).get('benchmarker', [])
+        if pairs:
+            begin_ts = min(p[0] for p in pairs)
+            end_ts = max(p[1] for p in pairs)
+            result[connection_id]['benchmark_begin'] = datetime.fromtimestamp(begin_ts).strftime('%Y-%m-%d %H:%M:%S')
+            result[connection_id]['benchmark_end'] = datetime.fromtimestamp(end_ts).strftime('%Y-%m-%d %H:%M:%S')
+            result[connection_id]['benchmark_duration'] = end_ts - begin_ts
     def get_connections_of_experiment(self):
         """
         Returns connection metadata for a single experiment.
@@ -404,6 +411,30 @@ class base:
         """
         with open(self.path + "/connections.config", 'r') as f:
             connections = ast.literal_eval(f.read())
+        # Collect names already covered (both current name and orig_name for per-pod entries)
+        covered_names = set()
+        for conn in connections:
+            covered_names.add(conn['name'])
+            if 'orig_name' in conn:
+                covered_names.add(conn['orig_name'])
+        # Supplement with individual {connection}.config files for connections absent from the
+        # combined file (e.g. the refresh stream after dbmsbenchmarker expands connections.config).
+        for entry in sorted(os.listdir(self.path)):
+            if not entry.endswith('.config') or entry in ('connections.config', 'queries.config'):
+                continue
+            conn_name = entry[:-len('.config')]
+            if conn_name in covered_names:
+                continue
+            try:
+                with open(self.path + "/" + entry, 'r') as f:
+                    indiv_conns = ast.literal_eval(f.read())
+                for indiv_conn in indiv_conns:
+                    if indiv_conn.get('name') == conn_name:
+                        connections.append(indiv_conn)
+                        covered_names.add(conn_name)
+                        break
+            except Exception:
+                pass
         connections_sorted = sorted(connections, key=lambda conn: conn['name'])
         result = dict()
         for conn in connections_sorted:
@@ -417,8 +448,8 @@ class base:
                     phase_id = job_id[:-len('-' + benchmark_run_num)]
                 else:
                     phase_id = job_id
-                conn['phase'] = f"{code}-{phase_id}"
-                conn['job'] = f"{code}-{job_id}"
+                conn['phase'] = phase_id
+                conn['job'] = job_id
                 connection_id = f"{code}-{name}"
                 self.add_connection_to_result(conn, connection_id, result)
             else:
@@ -431,10 +462,15 @@ class base:
                     phase_id = job_id
                 for client_idx in range(1, num_clients + 1):
                     conn['name'] = f"{code}-{job_id}-{client_idx}"
-                    conn['phase'] = f"{code}-{phase_id}"
-                    conn['job'] = f"{code}-{job_id}"
+                    conn['phase'] = phase_id
+                    conn['job'] = job_id
                     connection_id = f"{code}-{job_id}-{client_idx}"
                     self.add_connection_to_result(conn, connection_id, result)
+                    # add_connection_to_result copies the mutated conn['name'] which
+                    # carries the code prefix.  Use the pod-level name without the
+                    # code prefix so callers see "PostgreSQL-1-1-1-2-1" not
+                    # "1781731967-PostgreSQL-1-1-1-2-1".
+                    result[connection_id]['connection'] = f"{job_id}-{client_idx}"
         return pd.DataFrame(result).T
     def get_loading_per_connection(self):
         """

@@ -150,6 +150,10 @@ class dbmsbenchmarker(mixed):
             df = self.evaluator.get_summary_benchmark_per_phase()
             print(df.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df.copy()
+            for bm in self.benchmarks:
+                if bm.benchmark_index == 1:
+                    continue
+                bm.show_summary_section(self)
             print("\n### Latency of Timer Execution [ms]")
             num_of_queries = 0
             df = self.evaluator.get_query_latencies(query_titles=True)

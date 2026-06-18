@@ -63,9 +63,25 @@ class Benchmark:
         """
         Print a Markdown-formatted benchmark-specific summary.
 
+        Called for the first (primary) benchmark in the round; prints the
+        full experiment header followed by this benchmark's result tables.
+
         :param experiment: The owning experiment object.
         """
         raise NotImplementedError
+
+    def show_summary_section(self, experiment) -> None:
+        """
+        Print a benchmark-specific section inside a multi-benchmark summary.
+
+        Called for every registered benchmark after the primary benchmark's
+        :meth:`show_summary` has already printed the experiment header.
+        Override in subclasses that need to display results for a co-running
+        secondary benchmarker.  The default implementation is a no-op so that
+        benchmarks used only as primaries do not need to override this method.
+
+        :param experiment: The owning experiment object.
+        """
 
     def test_results(self, experiment) -> None:
         """
@@ -171,6 +187,10 @@ class DBMSBenchmarkerBenchmark(Benchmark):
                 df = self.evaluator.get_summary_benchmark_per_phase()
             print(df.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df.copy()
+            for bm in experiment.benchmarks:
+                if bm.benchmark_index == self.benchmark_index:
+                    continue
+                bm.show_summary_section(experiment)
             print("\n### Latency of Timer Execution [ms]")
             num_of_queries = 0
             df_latencies = self.evaluator.get_query_latencies(query_titles=True)
