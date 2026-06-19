@@ -1,11 +1,11 @@
 """
 Base collector class for aggregating results from multiple bexhoma experiments.
 
-Provides :func:`get_non_constant` and :class:`base`, which handles reading
+Provides :func:`get_non_constant` and :class:`CollectorBase`, which handles reading
 workload and connection configurations, collecting performance metrics per
 client and per phase, and aggregating monitoring time-series data across
 experiment codes — including multi-tenant variants. Subclasses override
-:meth:`base.get_evaluator` to supply the benchmark-specific evaluator.
+:meth:`CollectorBase.get_evaluator` to supply the benchmark-specific evaluator.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -43,7 +43,7 @@ def get_non_constant(df):
     return df.loc[:, df.apply(is_not_constant)]
 
 
-class base():
+class CollectorBase():
     """
     Base class for collecting and aggregating results from several experiments.
 

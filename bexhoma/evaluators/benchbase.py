@@ -1,7 +1,7 @@
 """
 Evaluator for Benchbase experiments.
 
-Provides :class:`benchbase`, which extends :class:`logger` to parse and
+Provides :class:`BenchbaseEvaluator`, which extends :class:`LogEvaluator` to parse and
 aggregate throughput and latency results produced by the Benchbase
 benchmarking tool.
 
@@ -28,11 +28,11 @@ import glob
 from pathlib import Path
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
 
 
 
-class benchbase(logger):
+class BenchbaseEvaluator(LogEvaluator):
     """
     Evaluator for a Benchbase experiment.
 
@@ -62,7 +62,7 @@ class benchbase(logger):
         :rtype: pandas.DataFrame
         """
         # test for known errors
-        logger.log_to_df(self, filename)
+        LogEvaluator.log_to_df(self, filename)
         df_header = pd.DataFrame()
         # extract status and result fields
         try:

@@ -1,11 +1,11 @@
 """
 Base experiment class and general-purpose experiment types.
 
-Provides :class:`DictToObject`, :class:`base` (the core experiment class
-plugged into a cluster object to manage the full lifecycle of a bexhoma
-experiment), and derived types :class:`iot`, :class:`tsbs`,
-:class:`example`, and :class:`tpcxai`. Each experiment folder must contain
-a query file and per-DBMS schema subfolders.
+Provides :class:`DictToObject`, :class:`ExperimentBase` (the core experiment
+class plugged into a cluster object to manage the full lifecycle of a bexhoma
+experiment), and derived types :class:`IotExperiment`, :class:`TsbsExperiment`,
+:class:`ExampleExperiment`, and :class:`TpcxaiExperiment`. Each experiment
+folder must contain a query file and per-DBMS schema subfolders.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -38,11 +38,11 @@ logging.basicConfig(level=logging.ERROR)
 __all__ = [
     "DictToObject",
     "parse_set_arg",
-    "base",
-    "iot",
-    "tsbs",
-    "example",
-    "tpcxai",
+    "ExperimentBase",
+    "IotExperiment",
+    "TsbsExperiment",
+    "ExampleExperiment",
+    "TpcxaiExperiment",
 ]
 
 
@@ -97,7 +97,7 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     return d, value.strip()
 
 
-class base():
+class ExperimentBase():
     """
     Class for defining an experiment.
     Settings are set generally.
@@ -129,7 +129,7 @@ class base():
             makedirs(self.path)
         self.detached = detached                                        # if orchestrator is living in the cloud (only True is supported)
         self.cluster.set_code(code=self.code)
-        self.set_connectionmanagement(
+        self.set_connection_management(
             numProcesses = 1,
             runsPerConnection = 0,
             timeout = timeout,
@@ -170,7 +170,7 @@ class base():
         self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
         self.jobtemplate_loading = ""                                   # name of YAML manifest for loading component
         self.jobtemplate_benchmarking = ""                              # name of YAML manifest for benchmarking component
-        self.querymanagement = {}                                       # parameters for query.config
+        self.query_management = {}                                      # parameters for query.config
         self.additional_labels = dict()                                 # dict of additional labels for components
         self.workload = {}                                              # dict containing workload infos - will be written to query.config
         self.workload['monitoring_components'] = {}                     # dict for infos about which components are monitored
@@ -202,7 +202,7 @@ class base():
         self.configurations = []                                        # list of configurations (i.e., dbms to test)
         self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
-        self.evaluator = evaluators.logger(                               # set evaluator for experiment - default uses base
+        self.evaluator = evaluators.LogEvaluator(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
         self.evaluators: dict = {}                                        # benchmark.name → evaluator instance
@@ -346,7 +346,7 @@ class base():
             return path.as_posix()
         else:
             return str(path)
-    def experimentupload_file(self, filename: str) -> str:
+    def upload_experiment_file(self, filename: str) -> str:
         """
         Upload a result file to the dashboard pod.
 
@@ -362,7 +362,7 @@ class base():
         filename_local = self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
-    def experimentdownload_file(self, filename: str) -> str:
+    def download_experiment_file(self, filename: str) -> str:
         """
         Download a result file from the dashboard pod.
 
@@ -698,16 +698,6 @@ class base():
         #print("done")
         if sec > 0:
             return self.cluster.wait(sec, silent)
-    def delay(self,
-              sec: int,
-              silent: bool = False) -> None:
-        """
-        Wait for a given number of seconds. Alias for :meth:`wait`.
-
-        :param sec: Number of seconds to wait.
-        :param silent: If True, suppress output during the wait.
-        """
-        self.wait(sec, silent)
     def set_queryfile(self,
                       queryfile: str) -> None:
         """
@@ -745,18 +735,18 @@ class base():
         :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
         """
         self.workload = {**self.workload, **kwargs}
-    def set_querymanagement(self,
-                            **kwargs) -> None:
+    def set_query_management(self,
+                             **kwargs) -> None:
         """
         Sets query management data for the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
 
         :param kwargs: Dict of meta data, example 'numRun' => 3
         """
-        self.querymanagement = kwargs
+        self.query_management = kwargs
     # the following can be overwritten by configuration
-    def set_connectionmanagement(self,
-                                 **kwargs) -> None:
+    def set_connection_management(self,
+                                  **kwargs) -> None:
         """
         Sets connection management data for the experiment.
         This is for the benchmarker component (dbmsbenchmarker).
@@ -764,7 +754,7 @@ class base():
 
         :param kwargs: Dict of meta data, example 'timout' => 60
         """
-        self.connectionmanagement = kwargs
+        self.connection_management = kwargs
     def set_resources(self,
                       **kwargs) -> None:
         """
@@ -983,7 +973,7 @@ class base():
         :param numRun: Number of runs per query (this is for the benchmarker component)
         :param datatransfer: If data should we retrieved and compared
         """
-        self.set_querymanagement(
+        self.set_query_management(
             numWarmup = 0,
             numCooldown = 0,
             numRun = numRun,
@@ -1020,7 +1010,7 @@ class base():
         :param delay: Number of seconds to wait between queries (this is for the benchmarker component)
         :param datatransfer: If data should we retrieved and compared
         """
-        self.set_querymanagement(
+        self.set_query_management(
             numWarmup = 0,
             numCooldown = 0,
             numRun = numRun,
@@ -1128,9 +1118,9 @@ class base():
                 self.cluster.logger.debug(stdout)
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentdownload_file(filename='')
+        self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentupload_file(filename='')
+        self.upload_experiment_file(filename='')
     def stop_maintaining(self):
         """
         Stop all maintaining jobs of this experiment.
@@ -1441,7 +1431,7 @@ class base():
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
         filename_remote = self.result_filename_remote(filename)
-        self.experimentupload_file(filename=filename)
+        self.upload_experiment_file(filename=filename)
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
         #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
         #self.cluster.kubectl(cmd['upload_results'])
@@ -1649,7 +1639,7 @@ class base():
                             print("#### Starting to index")
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_index = True
-                                config_tmp.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.timeLoading, time_start_int=config_tmp.timeLoadingStart, script_type='indexed')
+                                config_tmp.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
@@ -2164,20 +2154,13 @@ class base():
                             f.write(str(individual_conns))
                         print("{:30s}: wrote benchmarking_timespans to {}".format(connection, individual_config_path))
                         # Upload the individual config to the pod so that evaluate_results()'s
-                        # experimentdownload_file('') does not later overwrite it with the
+                        # download_experiment_file('') does not later overwrite it with the
                         # stale pod copy (which was written at job-submission time with {}).
-                        self.experimentupload_file(filename=connection + '.config')
+                        self.upload_experiment_file(filename=connection + '.config')
                     except Exception as exc:
                         print("{:30s}: WARNING - could not update {}: {}".format(connection, individual_config_path, exc))
                 else:
                     print("{:30s}: WARNING - individual config not found: {}".format(connection, individual_config_path))
-            #self.timeLoadingEnd = default_timer()
-            #self.timeLoading = float(self.timeLoadingEnd) - float(self.timeLoadingStart)
-            #self.experiment.cluster.logger.debug("LOADING LABELS")
-            #self.experiment.cluster.logger.debug(self.timeLoading)
-            #self.experiment.cluster.logger.debug(float(self.timeLoadingEnd))
-            #self.experiment.cluster.logger.debug(float(self.timeLoadingStart))
-            #self.timeLoading = float(self.timeLoading) + float(timeLoading)
             now = datetime.utcnow()
             now_string = now.strftime('%Y-%m-%d %H:%M:%S')
             time_now = str(datetime.now())
@@ -2192,9 +2175,6 @@ class base():
             self.cluster.logger.debug("start_time: "+str(start_time))
             self.cluster.logger.debug("end_time: "+str(end_time))
             self.cluster.logger.debug("duration: "+str(end_time-start_time))
-            #fullcommand = 'label pods '+pod_sut+' --overwrite loaded=True timeLoadingEnd="{}" timeLoading={}'.format(time_now_int, self.timeLoading)
-            #print(fullcommand)
-            #self.experiment.cluster.kubectl(fullcommand)
             # copy config to pod - dashboard
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
@@ -2222,7 +2202,7 @@ class base():
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
-                        stdout = self.experimentupload_file(filename=filename)
+                        stdout = self.upload_experiment_file(filename=filename)
                         #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         #stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)
@@ -2698,7 +2678,7 @@ class base():
             #print(df_time)
             df_time.index.names = ["DBMS"]
             print(df_time.to_markdown(index=True, floatfmt=".2f"))
-            workflow_actual = evaluators.base.reconstruct_workflow(self.evaluator, df_time)
+            workflow_actual = evaluators.EvaluatorBase.reconstruct_workflow(self.evaluator, df_time)
             #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
             workflow_planned = self.workload['workflow_planned']
             if len(workflow_actual) > 0:
@@ -2861,14 +2841,10 @@ class base():
 
 
 
-"""
-############################################################################
-Simple IoT example experiment
-############################################################################
-"""
+# Simple IoT example experiment
 
 
-class iot(base):
+class IotExperiment(ExperimentBase):
     """
     Class for defining an TSBS experiment.
     This sets
@@ -2885,7 +2861,7 @@ class iot(base):
             num_experiment_to_apply = 1,
             timeout = 7200,
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.set_experiment(volume='iot')
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/iot')
@@ -2906,25 +2882,20 @@ class iot(base):
             numRun=128,
             delay=5,
             datatransfer=False):
-        self.set_querymanagement(
+        self.set_query_management(
             numWarmup = 0,
             numCooldown = 0,
             numRun = numRun,
             delay = delay,
             )
-        #self.monitoring_active = True
         self.maintaining_active = True
 
 
 
-"""
-############################################################################
-TSBS
-############################################################################
-"""
+# TSBS experiment
 
 
-class tsbs(base):
+class TsbsExperiment(ExperimentBase):
     """
     Class for defining an TSBS experiment.
     This sets
@@ -2941,7 +2912,7 @@ class tsbs(base):
             num_experiment_to_apply = 1,
             timeout = 7200,
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.set_experiment(volume='tsbs')
         self.set_experiment(script='SF'+str(SF)+'-index')
         self.cluster.set_experiments_configfolder('experiments/tsbs')
@@ -2963,20 +2934,19 @@ class tsbs(base):
             numRun=128,
             delay=5,
             datatransfer=False):
-        self.set_querymanagement(
+        self.set_query_management(
             numWarmup = 0,
             numCooldown = 0,
             numRun = numRun,
             delay = delay,
             )
-        #self.monitoring_active = True
         self.maintaining_active = True
 
 
 
 # Example experiment class
 
-class example(base):
+class ExampleExperiment(ExperimentBase):
     """
     Class for defining a custom example experiment.
     This sets
@@ -2992,7 +2962,7 @@ class example(base):
             timeout = 7200,
             script=None,
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         if script is None:
             script = 'empty'
         self.set_experiment(volume='example')
@@ -3008,7 +2978,7 @@ class example(base):
 
 # TPCx-AI experiment class
 
-class tpcxai(base):
+class TpcxaiExperiment(ExperimentBase):
     """
     Class for defining an TPCx-AI experiment.
     This sets
@@ -3026,7 +2996,7 @@ class tpcxai(base):
             timeout = 7200,
             script=None,
             ):
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         if script is None:
             script = 'SF'+str(SF)+'-index'
         self.set_experiment(volume='tpcxai')

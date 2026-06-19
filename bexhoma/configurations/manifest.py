@@ -223,8 +223,8 @@ class ManifestBuilder:
             template = template_override
         jobname = cfg.generate_component_name(
             app=app, component=component, experiment=experiment,
-            configuration=configuration, experimentRun=experimentRun,
-            client=str(client), benchmarkRun=benchmark_run)
+            configuration=configuration, experiment_run=experimentRun,
+            client=str(client), benchmark_run=benchmark_run)
         servicename = cfg.get_service_sut(configuration=configuration)
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -233,10 +233,10 @@ class ManifestBuilder:
             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
         c = copy.deepcopy(cfg.dockertemplate['template'])
         c['connectionmanagement'] = {}
-        c['connectionmanagement']['numProcesses'] = cfg.connectionmanagement['numProcesses']
-        c['connectionmanagement']['runsPerConnection'] = cfg.connectionmanagement['runsPerConnection']
-        c['connectionmanagement']['timeout'] = cfg.connectionmanagement['timeout']
-        c['connectionmanagement']['singleConnection'] = cfg.connectionmanagement.get('singleConnection', True)
+        c['connectionmanagement']['numProcesses'] = cfg.connection_management['numProcesses']
+        c['connectionmanagement']['runsPerConnection'] = cfg.connection_management['runsPerConnection']
+        c['connectionmanagement']['timeout'] = cfg.connection_management['timeout']
+        c['connectionmanagement']['singleConnection'] = cfg.connection_management.get('singleConnection', True)
         env_default = dict()
         env_default['BEXHOMA_HOST'] = servicename
         env_default['BEXHOMA_CLIENT'] = int(cfg.client) - 1

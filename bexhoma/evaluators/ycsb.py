@@ -1,7 +1,7 @@
 """
 Evaluator for YCSB experiments.
 
-Provides :class:`ycsb`, which extends :class:`logger` to parse and aggregate
+Provides :class:`YcsbEvaluator`, which extends :class:`LogEvaluator` to parse and aggregate
 operation throughput and latency results produced by the Yahoo Cloud Serving
 Benchmark (YCSB) tool.
 
@@ -27,11 +27,11 @@ from pathlib import Path
 from bexhoma import evaluators
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
 
 
 
-class ycsb(logger):
+class YcsbEvaluator(LogEvaluator):
     """
     Evaluator for a YCSB experiment.
 
@@ -68,7 +68,7 @@ class ycsb(logger):
         :return: Single-row DataFrame of YCSB results, or empty on parse failure.
         :rtype: pandas.DataFrame
         """
-        logger.log_to_df(self, filename)
+        LogEvaluator.log_to_df(self, filename)
         try:
             with open(filename) as f:
                 lines = f.readlines()

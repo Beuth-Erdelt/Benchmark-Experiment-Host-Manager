@@ -1,8 +1,9 @@
 """
 Experiment class for YCSB benchmarks.
 
-Provides :class:`ycsb`, which extends :class:`mixed` to orchestrate
-Yahoo Cloud Serving Benchmark (YCSB) workloads inside a Kubernetes cluster.
+Provides :class:`YcsbExperiment`, which extends :class:`MixedExperiment` to
+orchestrate Yahoo Cloud Serving Benchmark (YCSB) workloads inside a Kubernetes
+cluster.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -14,21 +15,23 @@ import logging
 import urllib3
 
 from bexhoma import benchmarks
-from .mixed import mixed
+from .mixed import MixedExperiment
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["ycsb"]
+__all__ = ["YcsbExperiment"]
 
 
-class ycsb(mixed):
+class YcsbExperiment(MixedExperiment):
     """
     YCSB experiment: orchestrates loading and benchmarking via the Yahoo Cloud
     Serving Benchmark tool inside a Kubernetes cluster.
 
     Registers a :class:`~bexhoma.benchmarks.ycsb.YCSB` benchmark object and
     pre-populates the experiment dict template with YCSB-specific job templates.
+
+    Extends :class:`MixedExperiment`.
     """
 
     def __init__(self,
@@ -44,7 +47,7 @@ class ycsb(mixed):
         :param num_experiment_to_apply: Repetition count.
         :param timeout: Per-query timeout in seconds.
         """
-        mixed.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        MixedExperiment.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.SF = SF
         self.set_experiment(volume='ycsb')
         self.set_experiment(script='Schema')
@@ -119,6 +122,6 @@ class ycsb(mixed):
                 _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentdownload_file(filename='')
+        self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentupload_file(filename='')
+        self.upload_experiment_file(filename='')

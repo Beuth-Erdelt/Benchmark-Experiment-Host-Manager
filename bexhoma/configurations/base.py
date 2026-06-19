@@ -120,8 +120,8 @@ class SutConfiguration:
         self.set_resources(**self.experiment.resources)
         self.set_ddl_parameters(**self.experiment.ddl_parameters)
         self.set_eval_parameters(**self.experiment.eval_parameters)
-        self.connectionmanagement = {}                                           #: Dict of connection management parameters.
-        self.set_connectionmanagement(**self.experiment.connectionmanagement)
+        self.connection_management = {}                                          #: Dict of connection management parameters.
+        self.set_connection_management(**self.experiment.connection_management)
         self.set_storage(**self.experiment.storage)
         self.set_nodes(**self.experiment.nodes)
         self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
@@ -171,18 +171,18 @@ class SutConfiguration:
         self.sut_template = "deploymenttemplate-" + self.docker + ".yml"        #: Name of YAML manifest in k8s/ for SUT deployment.
         self.path_experiment_docker = self.docker                                #: Experiment subfolder matching the docker image name.
         self.connection_parameter = {}                                           #: Collects parameters that may be interesting for result evaluation.
-        self.timeLoading = 0                                                     #: Seconds taken for the initial data load.
-        self.timeGenerating = 0                                                  #: Seconds taken for data generation.
-        self.timeIngesting = 0                                                   #: Seconds taken for ingesting existing data.
-        self.timeSchema = 0                                                      #: Seconds taken for schema creation.
-        self.timeIndex = 0                                                       #: Seconds taken for index creation.
+        self.time_loading = 0                                                     #: Seconds taken for the initial data load.
+        self.time_generating = 0                                                  #: Seconds taken for data generation.
+        self.time_ingesting = 0                                                   #: Seconds taken for ingesting existing data.
+        self.time_schema = 0                                                      #: Seconds taken for schema creation.
+        self.time_index = 0                                                       #: Seconds taken for index creation.
         self.times_scripts = {}                                                  #: Per-script timing dict.
         self.loading_started = False                                             #: True once loading has been initiated.
         self.loading_after_time = None                                           #: Optional unix timestamp after which loading should start.
         self.loading_finished = False                                            #: True once loading has completed.
         self.client = 1                                                          #: Current position in the benchmarker sequence.
-        self.timeLoadingStart = 0                                                #: Unix timestamp when loading started.
-        self.timeLoadingEnd = 0                                                  #: Unix timestamp when loading ended.
+        self.time_loading_start = 0                                                #: Unix timestamp when loading started.
+        self.time_loading_end = 0                                                  #: Unix timestamp when loading ended.
         self.loading_timespans = {}                                              #: Per-container (start, end) pairs for loading pods.
         self.benchmarking_timespans = {}                                         #: Per-container (start, end) pairs for benchmarking pods.
         self.sut_service_name = ""                                               #: Fixed service name for SUTs not controlled by bexhoma.
@@ -252,11 +252,11 @@ class SutConfiguration:
 
     def reset_sut(self) -> None:
         """Forget that the SUT has been loaded and benchmarked."""
-        self.timeLoading = 0
-        self.timeGenerating = 0
-        self.timeIngesting = 0
-        self.timeSchema = 0
-        self.timeIndex = 0
+        self.time_loading = 0
+        self.time_generating = 0
+        self.time_ingesting = 0
+        self.time_schema = 0
+        self.time_index = 0
         self.loading_started = False
         self.loading_after_time = None
         self.loading_finished = False
@@ -436,24 +436,16 @@ class SutConfiguration:
         """
         return self.experiment.cluster.wait(sec, silent)
 
-    def delay(self, sec: int, silent: bool = False) -> None:
-        """Wait for a number of seconds (alias for :meth:`wait`).
-
-        :param sec: Number of seconds to wait.
-        :param silent: When True, suppress output.
-        """
-        self.wait(sec, silent)
-
     # ------------------------------------------------------------------
     # Parameter setters
     # ------------------------------------------------------------------
 
-    def set_connectionmanagement(self, **kwargs) -> None:
+    def set_connection_management(self, **kwargs) -> None:
         """Set connection management data for the benchmarker component.
 
         :param kwargs: Dict of connection management parameters, e.g. ``timeout=60``.
         """
-        self.connectionmanagement = kwargs
+        self.connection_management = kwargs
 
     def set_resources(self, **kwargs) -> None:
         """Set Kubernetes resource requests/limits for the SUT.
@@ -642,21 +634,21 @@ class SutConfiguration:
         component: str = '',
         experiment: str = '',
         configuration: str = '',
-        experimentRun: str = '',
+        experiment_run: str = '',
         client: str = '',
-        benchmarkRun: str = '',
+        benchmark_run: str = '',
     ) -> str:
         """Generate a Kubernetes-compatible name for a component.
 
-        Format: ``{app}-{component}-{configuration}-{experiment}[-{experimentRun}][-{client}[-{benchmarkRun}]]``
+        Format: ``{app}-{component}-{configuration}-{experiment}[-{experiment_run}][-{client}[-{benchmark_run}]]``
 
         :param app: App the component belongs to.
         :param component: Component type, e.g. ``'sut'`` or ``'benchmarker'``.
         :param experiment: Unique experiment identifier.
         :param configuration: DBMS configuration name.
-        :param experimentRun: Repetition index (omitted when empty).
+        :param experiment_run: Repetition index (omitted when empty).
         :param client: Sequential client-round index (omitted when empty).
-        :param benchmarkRun: Parallel benchmark index within a client round (omitted when empty).
+        :param benchmark_run: Parallel benchmark index within a client round (omitted when empty).
         :return: Lower-case component name string.
         :rtype: str
         """
@@ -666,21 +658,21 @@ class SutConfiguration:
             configuration = self.configuration
         if len(experiment) == 0:
             experiment = self.code
-        if len(experimentRun) != 0:
-            experimentRun = '-' + experimentRun
+        if len(experiment_run) != 0:
+            experiment_run = '-' + experiment_run
         if len(client) > 0:
-            if len(benchmarkRun) > 0:
+            if len(benchmark_run) > 0:
                 name = (
                     f"{app}-{component}-{configuration}-{experiment}"
-                    f"{experimentRun}-{client}-{benchmarkRun}"
+                    f"{experiment_run}-{client}-{benchmark_run}"
                 ).lower()
             else:
                 name = (
                     f"{app}-{component}-{configuration}-{experiment}"
-                    f"{experimentRun}-{client}"
+                    f"{experiment_run}-{client}"
                 ).lower()
         else:
-            name = f"{app}-{component}-{configuration}-{experiment}{experimentRun}".lower()
+            name = f"{app}-{component}-{configuration}-{experiment}{experiment_run}".lower()
         return name
 
     def get_experiment_name(self) -> str:
@@ -915,21 +907,21 @@ class SutConfiguration:
         return self.experiment.cluster.execute_command_in_pod(
             command=command, pod=pod, container=container, params=params)
 
-    def experimentupload_file(self, filename: str):
+    def upload_experiment_file(self, filename: str):
         """Upload a file to the experiment's result storage.
 
         :param filename: Path of the file to upload.
         :return: Result of the upload operation.
         """
-        return self.experiment.experimentupload_file(filename)
+        return self.experiment.upload_experiment_file(filename)
 
-    def experimentdownload_file(self, filename: str):
+    def download_experiment_file(self, filename: str):
         """Download a file from the experiment's result storage.
 
         :param filename: Path of the file to download.
         :return: Result of the download operation.
         """
-        return self.experiment.experimentdownload_file(filename)
+        return self.experiment.download_experiment_file(filename)
 
     # ------------------------------------------------------------------
     # SUT lifecycle helpers

@@ -1,10 +1,10 @@
 """
 Logger evaluator: reads benchmark log files into DataFrames.
 
-Provides :class:`logger`, which extends :class:`base` by parsing
+Provides :class:`LogEvaluator`, which extends :class:`EvaluatorBase` by parsing
 bexhoma benchmarker log files produced by Kubernetes pods and
 transforming them into structured pandas DataFrames. All
-benchmark-specific evaluators inherit from :class:`logger`.
+benchmark-specific evaluators inherit from :class:`LogEvaluator`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -26,10 +26,10 @@ from datetime import datetime
 import glob
 from pathlib import Path
 
-from .base import base, natural_sort
+from .base import EvaluatorBase, natural_sort
 
 
-class logger(base):
+class LogEvaluator(EvaluatorBase):
     """
     Evaluator base that reads benchmark log files into DataFrames.
 

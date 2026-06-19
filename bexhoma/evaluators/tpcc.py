@@ -1,7 +1,7 @@
 """
 Evaluator for HammerDB TPC-C experiments.
 
-Provides :class:`tpcc`, which extends :class:`logger` to parse and aggregate
+Provides :class:`TpccEvaluator`, which extends :class:`LogEvaluator` to parse and aggregate
 transactions-per-minute (TPM) and throughput results produced by HammerDB.
 
 Authors: Patrick K. Erdelt
@@ -26,10 +26,10 @@ from pathlib import Path
 
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
 
 
-class tpcc(logger):
+class TpccEvaluator(LogEvaluator):
     """
     Evaluator for a HammerDB TPC-C experiment.
 
@@ -58,7 +58,7 @@ class tpcc(logger):
         :rtype: pandas.DataFrame
         """
         # test for known errors
-        logger.log_to_df(self, filename)
+        LogEvaluator.log_to_df(self, filename)
         # extract status and result fields
         try:
             with open(filename) as f:

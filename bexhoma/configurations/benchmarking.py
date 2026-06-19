@@ -82,7 +82,7 @@ class BenchmarkRunner:
         if len(dialect) == 0 and len(cfg.dialect) > 0:
             dialect = cfg.dialect
         experimentRun = str(cfg.num_experiment_to_apply_done + 1)
-        tools.query.template = cfg.experiment.querymanagement
+        tools.query.template = cfg.experiment.query_management
         cfg.current_benchmark_connection = connection
         cfg.logger.debug(
             'BenchmarkRunner.run_pod(current_benchmark_connection = {})'.format(
@@ -178,7 +178,7 @@ class BenchmarkRunner:
             'delay': 0,
             'step': "runBenchmarks",
             'connection': connection,
-            'connectionmanagement': cfg.connectionmanagement.copy(),
+            'connectionmanagement': cfg.connection_management.copy(),
         }
         cfg.experiment.cluster.log_experiment(experiment_log)
         pods = cfg.experiment.cluster.get_pods(component='dashboard')
@@ -187,11 +187,11 @@ class BenchmarkRunner:
             cmd_prepare_log = 'mkdir -p /results/' + str(cfg.code)
             cfg.experiment.cluster.execute_command_in_pod(
                 command=cmd_prepare_log, pod=pod_dashboard, container="dashboard")
-            cfg.experimentupload_file('queries.config')
-            cfg.experimentupload_file(c['name'] + '.config')
-            cfg.experimentupload_file(c['name'] + '.config')
-            cfg.experimentupload_file('connections.config')
-            cfg.experimentupload_file('protocol.json')
+            cfg.upload_experiment_file('queries.config')
+            cfg.upload_experiment_file(c['name'] + '.config')
+            cfg.upload_experiment_file(c['name'] + '.config')
+            cfg.upload_experiment_file('connections.config')
+            cfg.upload_experiment_file('protocol.json')
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, cfg.code)
         for i in range(1, parallelism + 1):
             cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
@@ -261,8 +261,8 @@ class BenchmarkRunner:
                                 component=name,
                                 component_type="loading",
                                 experiment=cfg.code,
-                                time_start=cfg.timeLoadingStart,
-                                time_end=cfg.timeLoadingEnd,
+                                time_start=cfg.time_loading_start,
+                                time_end=cfg.time_loading_end,
                                 metrics_type="metrics",
                                 pod_dashboard=pod_dashboard,
                             )
@@ -277,8 +277,8 @@ class BenchmarkRunner:
                                 component=name,
                                 component_type=f"{name}loading",
                                 experiment=cfg.code,
-                                time_start=cfg.timeLoadingStart,
-                                time_end=cfg.timeLoadingEnd,
+                                time_start=cfg.time_loading_start,
+                                time_end=cfg.time_loading_end,
                                 metrics_type="metrics",
                                 pod_dashboard=pod_dashboard,
                             )
@@ -294,8 +294,8 @@ class BenchmarkRunner:
                             component=name,
                             component_type=f"{name}loading",
                             experiment=cfg.code,
-                            time_start=cfg.timeLoadingStart,
-                            time_end=cfg.timeLoadingEnd,
+                            time_start=cfg.time_loading_start,
+                            time_end=cfg.time_loading_end,
                             metrics_type=f"metrics_{name}",
                             pod_dashboard=pod_dashboard,
                         )
@@ -313,8 +313,8 @@ class BenchmarkRunner:
                             component="datagenerator",
                             component_type="datagenerator",
                             experiment=cfg.code,
-                            time_start=cfg.timeLoadingStart,
-                            time_end=cfg.timeLoadingEnd,
+                            time_start=cfg.time_loading_start,
+                            time_end=cfg.time_loading_end,
                             metrics_type="metrics",
                             pod_dashboard=pod_dashboard,
                             optional=True,
@@ -329,8 +329,8 @@ class BenchmarkRunner:
                         component="loader",
                         component_type="loader",
                         experiment=cfg.code,
-                        time_start=cfg.timeLoadingStart,
-                        time_end=cfg.timeLoadingEnd,
+                        time_start=cfg.time_loading_start,
+                        time_end=cfg.time_loading_end,
                         metrics_type="metrics",
                         pod_dashboard=pod_dashboard,
                     )

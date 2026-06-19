@@ -1,14 +1,15 @@
 """
 General-purpose mixed-workload experiment class.
 
-Provides :class:`mixed`, which extends :class:`base` to support multiple
-registered :class:`~bexhoma.benchmarks.base.Benchmark` objects, a central
-``experiment_dict_template`` copied to each new configuration, and delegation
-of workload configuration, summary display, and result validation to the
-individual benchmark objects.
+Provides :class:`MixedExperiment`, which extends :class:`ExperimentBase` to
+support multiple registered :class:`~bexhoma.benchmarks.base.Benchmark` objects,
+a central ``experiment_dict_template`` copied to each new configuration, and
+delegation of workload configuration, summary display, and result validation to
+the individual benchmark objects.
 
-All named single-benchmark experiment classes (``ycsb``, ``tpcc``, ``tpch``,
-``tpcds``, ``benchbase``) are subclasses of :class:`mixed`.
+All named single-benchmark experiment classes (``YcsbExperiment``,
+``TpccExperiment``, ``TpchExperiment``, ``TpcdsExperiment``,
+``BenchbaseExperiment``) are subclasses of :class:`MixedExperiment`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -19,15 +20,15 @@ import copy
 import logging
 import urllib3
 
-from .base import base
+from .base import ExperimentBase
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["mixed"]
+__all__ = ["MixedExperiment"]
 
 
-class mixed(base):
+class MixedExperiment(ExperimentBase):
     """
     General experiment class supporting multiple parallel or sequential benchmarks.
 
@@ -37,8 +38,8 @@ class mixed(base):
     interpretation.
 
     Named single-benchmark experiments (YCSB, TPC-C, TPC-H, TPC-DS, Benchbase)
-    subclass :class:`mixed` and pre-populate the template in ``__init__``.
-    Direct use of :class:`mixed` is intended for fully custom experiment dicts.
+    subclass :class:`MixedExperiment` and pre-populate the template in ``__init__``.
+    Direct use of :class:`MixedExperiment` is intended for fully custom experiment dicts.
 
     :param cluster: Cluster object, typically referring to a Kubernetes cluster.
     :param code: Unique experiment identifier; generated from current time if ``None``.
@@ -57,7 +58,7 @@ class mixed(base):
         :param num_experiment_to_apply: Repetition count.
         :param timeout: Per-query timeout in seconds.
         """
-        base.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.benchmarks: list = []
         self.evaluators: dict = {}
         self.experiment_dict_template: dict = {"loader": [], "benchmarker": []}
@@ -103,7 +104,7 @@ class mixed(base):
 
     def prepare_testbed(self, parameter: dict) -> None:
         """
-        Configure all registered benchmarks and then delegate to :meth:`base.prepare_testbed`.
+        Configure all registered benchmarks and then delegate to :meth:`ExperimentBase.prepare_testbed`.
 
         Calls :meth:`~bexhoma.benchmarks.base.Benchmark.configure_workload` on every
         registered benchmark in registration order before forwarding to the parent.
@@ -112,7 +113,7 @@ class mixed(base):
         """
         for benchmark in self.benchmarks:
             benchmark.configure_workload(self, parameter)
-        base.prepare_testbed(self, parameter)
+        ExperimentBase.prepare_testbed(self, parameter)
 
     def show_summary(self) -> None:
         """

@@ -1,7 +1,7 @@
 """
 Evaluator for DBMSBenchmarker experiments.
 
-Provides :class:`dbmsbenchmarker`, which extends :class:`logger` to parse
+Provides :class:`DbmsBenchmarkerEvaluator`, which extends :class:`LogEvaluator` to parse
 and aggregate per-query performance results, warnings, errors, and latency
 statistics produced by the DBMSBenchmarker tool.
 
@@ -29,7 +29,7 @@ from scipy.stats import gmean
 import numpy as np
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
 
 def map_index_to_queryname(numQuery):
     """
@@ -53,7 +53,7 @@ def map_index_to_queryname(numQuery):
     return numQuery
 
 
-class dbmsbenchmarker(logger):
+class DbmsBenchmarkerEvaluator(LogEvaluator):
     """
     Evaluator for a DBMSBenchmarker experiment.
 

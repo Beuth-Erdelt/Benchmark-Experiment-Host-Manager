@@ -136,16 +136,16 @@ class Kubernetes():
         self.experiments_configfolder = experiments_configfolder
         self.resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         self.queryfile = queryfile
-        self.timeLoading = 0
+        self.time_loading = 0
         self.resources = {}
         self.ddl_parameters = {}
-        self.connectionmanagement = {
+        self.connection_management = {
             'numProcesses': None,
             'runsPerConnection': None,
             'timeout': None,
             'singleConnection': False,
         }
-        self.querymanagement = {}
+        self.query_management = {}
         self.workload = {}
         self.monitoring_active = True
         self.monitor_app_active = True
@@ -239,15 +239,15 @@ class Kubernetes():
         """
         self.workload = kwargs
 
-    def set_querymanagement(self, **kwargs):
+    def set_query_management(self, **kwargs):
         """
         Set DBMSBenchmarker query-management parameters.
 
         :param kwargs: Key/value pairs forwarded to DBMSBenchmarker (e.g. ``numRun=3``).
         """
-        self.querymanagement = kwargs
+        self.query_management = kwargs
 
-    def set_connectionmanagement(self, **kwargs):
+    def set_connection_management(self, **kwargs):
         """
         Set DBMSBenchmarker connection-management parameters.
 
@@ -255,7 +255,7 @@ class Kubernetes():
 
         :param kwargs: Key/value pairs (e.g. ``timeout=60``, ``numProcesses=4``).
         """
-        self.connectionmanagement = kwargs
+        self.connection_management = kwargs
 
     def set_resources(self, **kwargs):
         """

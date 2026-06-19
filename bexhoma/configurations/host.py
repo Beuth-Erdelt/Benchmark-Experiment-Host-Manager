@@ -262,7 +262,7 @@ class HostProbe:
         _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
         return stdout.replace('|', '').replace('\n', '').strip()
 
-    def getTimediff(self) -> int:
+    def get_time_diff(self) -> int:
         """Return clock skew in seconds between the SUT pod and the local host.
 
         Runs ``date +"%s"`` inside the SUT pod and locally, then returns
@@ -271,7 +271,7 @@ class HostProbe:
         :return: Clock difference in seconds (positive means remote is ahead).
         :rtype: int
         """
-        self._config.logger.debug('HostProbe.getTimediff()')
+        self._config.logger.debug('HostProbe.get_time_diff()')
         command = 'date +"%s"'
         _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
         timestamp_remote = stdout

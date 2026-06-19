@@ -64,11 +64,11 @@ class MetricsCollector:
         c['docker'] = cfg.docker
         c['script'] = cfg.script
         c['info'] = info
-        c['timeLoad'] = cfg.timeLoading
-        c['timeGenerate'] = cfg.timeGenerating
-        c['timeIngesting'] = cfg.timeIngesting
-        c['timeSchema'] = cfg.timeSchema
-        c['timeIndex'] = cfg.timeIndex
+        c['timeLoad'] = cfg.time_loading
+        c['timeGenerate'] = cfg.time_generating
+        c['timeIngesting'] = cfg.time_ingesting
+        c['timeSchema'] = cfg.time_schema
+        c['timeIndex'] = cfg.time_index
         c['script_times'] = cfg.times_scripts
         c['priceperhourdollar'] = 0.0 + cfg.dockertemplate['priceperhourdollar']
         # collect host information
@@ -117,10 +117,10 @@ class MetricsCollector:
             c['hostsystem']['limits_cpu'] = 0
             c['hostsystem']['limits_memory'] = 0
         c['connectionmanagement'] = {}
-        c['connectionmanagement']['numProcesses'] = cfg.connectionmanagement['numProcesses']
-        c['connectionmanagement']['runsPerConnection'] = cfg.connectionmanagement['runsPerConnection']
-        c['connectionmanagement']['timeout'] = cfg.connectionmanagement['timeout']
-        c['connectionmanagement']['singleConnection'] = cfg.connectionmanagement.get(
+        c['connectionmanagement']['numProcesses'] = cfg.connection_management['numProcesses']
+        c['connectionmanagement']['runsPerConnection'] = cfg.connection_management['runsPerConnection']
+        c['connectionmanagement']['timeout'] = cfg.connection_management['timeout']
+        c['connectionmanagement']['singleConnection'] = cfg.connection_management.get(
             'singleConnection', True)
         c['deployment_infos'] = cfg.deployment_infos
         c['monitoring'] = {}
@@ -303,5 +303,5 @@ class MetricsCollector:
         cfg.logger.debug(stderr)
         # re-upload connections.config because metrics.py may have overwritten it
         filename = 'connections.config'
-        stdout = cfg.experimentupload_file(filename)
+        stdout = cfg.upload_experiment_file(filename)
         cfg.logger.debug(stdout)

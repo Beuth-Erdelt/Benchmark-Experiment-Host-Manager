@@ -1,9 +1,10 @@
 """
 Experiment class for TPC-H benchmarks.
 
-Provides :class:`tpch`, which extends :class:`dbmsbenchmarker` to orchestrate
-TPC-H data generation, loading, and query execution via the DBMSBenchmarker
-tool inside a Kubernetes cluster.
+Provides :class:`TpchExperiment`, which extends
+:class:`DbmsBenchmarkerExperiment` to orchestrate TPC-H data generation,
+loading, and query execution via the DBMSBenchmarker tool inside a Kubernetes
+cluster.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -15,15 +16,15 @@ import logging
 import urllib3
 
 from bexhoma import benchmarks
-from .dbmsbenchmarker import dbmsbenchmarker
+from .dbmsbenchmarker import DbmsBenchmarkerExperiment
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["tpch"]
+__all__ = ["TpchExperiment"]
 
 
-class tpch(dbmsbenchmarker):
+class TpchExperiment(DbmsBenchmarkerExperiment):
     """
     TPC-H experiment: orchestrates data generation, loading, and
     DBMSBenchmarker query execution inside a Kubernetes cluster.
@@ -32,6 +33,8 @@ class tpch(dbmsbenchmarker):
     pre-populates the experiment dict template.  Workload configuration
     (modes, info strings, indexing strategies) is delegated to
     :meth:`~bexhoma.benchmarks.tpch.TPCH.configure_workload`.
+
+    Extends :class:`DbmsBenchmarkerExperiment`.
     """
 
     def __init__(self,
@@ -51,7 +54,7 @@ class tpch(dbmsbenchmarker):
         :param timeout: Per-query timeout in seconds.
         :param script: Init-script collection name; defaults to ``'SF{SF}-index'``.
         """
-        dbmsbenchmarker.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
+        DbmsBenchmarkerExperiment.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
         self.SF = SF
         self.use_distributed_datasource = False
         if script is None:

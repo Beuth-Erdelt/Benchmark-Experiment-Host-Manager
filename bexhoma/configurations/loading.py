@@ -300,7 +300,7 @@ class LoadingCoordinator:
             if not cfg.loading_started:
                 self.load_data(scripts=cfg.initscript)
             if delay > 0:
-                cfg.delay(delay)
+                cfg.wait(delay)
             return True
 
     def get_list_of_pvc(self) -> list:
@@ -343,7 +343,7 @@ class LoadingCoordinator:
             print("{:30s}: will be labeling {}".format(cfg.configuration, volume))
         return volume
 
-    def copyLog(self) -> None:
+    def copy_log(self) -> None:
         """Copy the DBMS log file from the SUT pod to the result folder."""
         cfg = self._config
         print("copyLog")
@@ -551,13 +551,13 @@ class LoadingCoordinator:
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
                         if 'timeLoadingStart' in pod_labels[pod]:
-                            cfg.timeLoadingStart = int(pod_labels[pod]['timeLoadingStart'])
+                            cfg.time_loading_start = int(pod_labels[pod]['timeLoadingStart'])
                         if 'timeLoadingEnd' in pod_labels[pod]:
-                            cfg.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
+                            cfg.time_loading_end = int(pod_labels[pod]['timeLoadingEnd'])
                         if 'timeLoading' in pod_labels[pod]:
-                            cfg.timeLoading = float(pod_labels[pod]['timeLoading'])
+                            cfg.time_loading = float(pod_labels[pod]['timeLoading'])
                         if 'timeIndex' in pod_labels[pod]:
-                            cfg.timeIndex = float(pod_labels[pod]['timeIndex'])
+                            cfg.time_index = float(pod_labels[pod]['timeIndex'])
                         for key, value in pod_labels[pod].items():
                             if key.startswith("time_"):
                                 time_type = key[len("time_"):]
@@ -635,26 +635,26 @@ class LoadingCoordinator:
                         time_now = str(datetime.now())
                         time_now_int = int(datetime.timestamp(
                             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
-                        cfg.timeLoadingEnd = int(time_now_int)
-                        cfg.timeSchema = cfg.timeLoading
+                        cfg.time_loading_end = int(time_now_int)
+                        cfg.time_schema = cfg.time_loading
                         if total_time > 0:
-                            cfg.timeLoading = ceil(total_time + cfg.timeLoading)
+                            cfg.time_loading = ceil(total_time + cfg.time_loading)
                         else:
-                            cfg.timeLoading = ceil(
-                                int(cfg.timeLoadingEnd) - int(cfg.timeLoadingStart)
-                                + cfg.timeLoading)
-                        cfg.timeGenerating = generator_time
-                        cfg.timeIngesting = loader_time
+                            cfg.time_loading = ceil(
+                                int(cfg.time_loading_end) - int(cfg.time_loading_start)
+                                + cfg.time_loading)
+                        cfg.time_generating = generator_time
+                        cfg.time_ingesting = loader_time
                         cfg.experiment.cluster.logger.debug("LOADING LABELS")
-                        cfg.experiment.cluster.logger.debug(cfg.timeLoadingStart)
-                        cfg.experiment.cluster.logger.debug(cfg.timeLoadingEnd)
-                        cfg.experiment.cluster.logger.debug(cfg.timeLoading)
+                        cfg.experiment.cluster.logger.debug(cfg.time_loading_start)
+                        cfg.experiment.cluster.logger.debug(cfg.time_loading_end)
+                        cfg.experiment.cluster.logger.debug(cfg.time_loading)
                         fullcommand = (
                             'label pods ' + pod_sut
                             + ' --overwrite loaded=True timeLoadingEnd="{}" timeLoadingStart="{}"'
                               ' time_ingested={} timeLoading={} time_generated={}'.format(
-                                cfg.timeLoadingEnd, cfg.timeLoadingStart,
-                                loader_time, cfg.timeLoading, generator_time))
+                                cfg.time_loading_end, cfg.time_loading_start,
+                                loader_time, cfg.time_loading, generator_time))
                         cfg.experiment.cluster.kubectl(fullcommand)
                         use_storage = cfg.use_storage()
                         use_ramdisk = cfg.use_ramdisk()
@@ -666,8 +666,8 @@ class LoadingCoordinator:
                                     + ' --overwrite loaded=True timeLoadingEnd="{}"'
                                       ' timeLoadingStart="{}" time_ingested={}'
                                       ' timeLoading={} time_generated={}'.format(
-                                        cfg.timeLoadingEnd, cfg.timeLoadingStart,
-                                        loader_time, cfg.timeLoading, generator_time))
+                                        cfg.time_loading_end, cfg.time_loading_start,
+                                        loader_time, cfg.time_loading, generator_time))
                                 cfg.experiment.cluster.kubectl(fullcommand)
                     if len(cfg.indexscript):
                         if cfg.tenant_per == 'container' and not cfg.loading_finished:
@@ -675,8 +675,8 @@ class LoadingCoordinator:
                         else:
                             self.load_data(
                                 scripts=cfg.indexscript,
-                                time_offset=cfg.timeLoading,
-                                time_start_int=cfg.timeLoadingStart,
+                                time_offset=cfg.time_loading,
+                                time_start_int=cfg.time_loading_start,
                                 script_type='indexed')
         else:
             loading_pods_active = False
@@ -692,7 +692,7 @@ class LoadingCoordinator:
                 else:
                     cfg.loading_finished = False
                 if 'time_indexed' in pod_labels[pod]:
-                    cfg.timeIndex = float(pod_labels[pod]['time_indexed'])
+                    cfg.time_index = float(pod_labels[pod]['time_indexed'])
             else:
                 if not loading_pods_active:
                     if 'loaded' in pod_labels[pod]:
@@ -701,17 +701,17 @@ class LoadingCoordinator:
                     else:
                         cfg.loading_started = False
             if 'timeLoadingStart' in pod_labels[pod]:
-                cfg.timeLoadingStart = int(pod_labels[pod]['timeLoadingStart'])
+                cfg.time_loading_start = int(pod_labels[pod]['timeLoadingStart'])
             if 'timeLoadingEnd' in pod_labels[pod]:
-                cfg.timeLoadingEnd = int(pod_labels[pod]['timeLoadingEnd'])
+                cfg.time_loading_end = int(pod_labels[pod]['timeLoadingEnd'])
             if 'timeLoading' in pod_labels[pod]:
-                cfg.timeLoading = float(pod_labels[pod]['timeLoading'])
+                cfg.time_loading = float(pod_labels[pod]['timeLoading'])
             if 'time_loaded' in pod_labels[pod]:
-                cfg.timeSchema = float(pod_labels[pod]['time_loaded'])
+                cfg.time_schema = float(pod_labels[pod]['time_loaded'])
             if 'time_generated' in pod_labels[pod]:
-                cfg.timeGenerating = float(pod_labels[pod]['time_generated'])
+                cfg.time_generating = float(pod_labels[pod]['time_generated'])
             if 'time_ingested' in pod_labels[pod]:
-                cfg.timeIngesting = float(pod_labels[pod]['time_ingested'])
+                cfg.time_ingesting = float(pod_labels[pod]['time_ingested'])
             for key, value in pod_labels[pod].items():
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]

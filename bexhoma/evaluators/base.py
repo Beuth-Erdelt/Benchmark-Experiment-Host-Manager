@@ -1,10 +1,10 @@
 """
 Base evaluator class for bexhoma experiments.
 
-Provides :func:`natural_sort` and :class:`base`, which loads an experiment
+Provides :func:`natural_sort` and :class:`EvaluatorBase`, which loads an experiment
 result folder, parses workflow state and connection configuration, and
-exposes monitoring data. All other evaluators inherit from :class:`base`
-via :class:`logger`.
+exposes monitoring data. All other evaluators inherit from :class:`EvaluatorBase`
+via :class:`LogEvaluator`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -41,7 +41,7 @@ def natural_sort(l):
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
     return sorted(l, key=alphanum_key)
 
-class base:
+class EvaluatorBase:
     """
     Base evaluator for a single bexhoma experiment.
 

@@ -1,8 +1,9 @@
 """
 Public API of the bexhoma.evaluators package.
 
-Exports :class:`base`, :class:`logger`, :class:`dbmsbenchmarker`,
-:class:`benchbase`, :class:`tpcc`, and :class:`ycsb` evaluator classes,
+Exports :class:`EvaluatorBase`, :class:`LogEvaluator`,
+:class:`DbmsBenchmarkerEvaluator`, :class:`BenchbaseEvaluator`,
+:class:`TpccEvaluator`, and :class:`YcsbEvaluator` evaluator classes,
 plus the :func:`natural_sort` utility from :mod:`base`.
 
 Authors: Patrick K. Erdelt
@@ -10,11 +11,24 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from .base import base, natural_sort
-from .logger import logger
-from .dbmsbenchmarker import dbmsbenchmarker
-from .benchbase import benchbase
-from .tpcc import tpcc
-from .ycsb import ycsb
+from .base import EvaluatorBase, natural_sort
+from .logger import LogEvaluator
+from .dbmsbenchmarker import DbmsBenchmarkerEvaluator
+from .benchbase import BenchbaseEvaluator
+from .tpcc import TpccEvaluator
+from .ycsb import YcsbEvaluator
 
-__all__ = ["base", "logger", "dbmsbenchmarker", "tpcc", "benchbase", "ycsb"]
+# backward-compat aliases
+base = EvaluatorBase
+logger = LogEvaluator
+dbmsbenchmarker = DbmsBenchmarkerEvaluator
+benchbase = BenchbaseEvaluator
+tpcc = TpccEvaluator
+ycsb = YcsbEvaluator
+
+__all__ = [
+    "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
+    "BenchbaseEvaluator", "TpccEvaluator", "YcsbEvaluator", "natural_sort",
+    # backward-compat aliases
+    "base", "logger", "dbmsbenchmarker", "tpcc", "benchbase", "ycsb",
+]
