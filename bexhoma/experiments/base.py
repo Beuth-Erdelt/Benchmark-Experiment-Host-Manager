@@ -1139,7 +1139,7 @@ class base():
         """
         if len(self.configurations) > 0:
             for config in self.configurations:
-                config.stop_maintaining()
+                config.lifecycle.stop_maintaining()
         else:
             app = self.cluster.appname
             component = 'maintaining'
@@ -1162,7 +1162,7 @@ class base():
         """
         if len(self.configurations) > 0:
             for config in self.configurations:
-                config.stop_loading()
+                config.lifecycle.stop_loading()
         else:
             app = self.cluster.appname
             component = 'loading'
@@ -1185,7 +1185,7 @@ class base():
         """
         if len(self.configurations) > 0:
             for config in self.configurations:
-                config.stop_monitoring()
+                config.lifecycle.stop_monitoring()
         else:
             app = self.cluster.appname
             component = 'monitoring'
@@ -1222,13 +1222,13 @@ class base():
         Start monitoring for all dbms configurations of this experiment.
         """
         for config in self.configurations:
-            config.start_monitoring()
+            config.lifecycle.start_monitoring()
     def start_sut(self):
         """
         Start all dbms configurations of this experiment.
         """
         for config in self.configurations:
-            config.start_sut()
+            config.lifecycle.start_sut()
     def stop_sut(self):
         """
         Stop all SUT deployments of this experiment.
@@ -1237,7 +1237,7 @@ class base():
         """
         if len(self.configurations) > 0:
             for config in self.configurations:
-                config.stop_sut()
+                config.lifecycle.stop_sut()
         else:
             app = self.cluster.appname
             component = 'sut'
@@ -1250,7 +1250,7 @@ class base():
         Tells all dbms configurations of this experiment to start loading data.
         """
         for config in self.configurations:
-            config.start_loading()
+            config.loader.start_exec()
     def add_benchmark_list(self,
                            list_clients: list) -> None:
         """
@@ -1487,10 +1487,10 @@ class base():
             num_pods_pending_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Pending'))
             for config in self.configurations:
                 # check if sut is running
-                if not config.sut_is_running():
+                if not config.status.sut_running():
                     #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
-                        if not config.sut_is_pending():
+                        if not config.status.sut_pending():
                             #print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
                             if self.cluster.max_sut is not None or self.max_sut is not None:
                                 we_can_start_new_sut = True
@@ -1509,12 +1509,12 @@ class base():
                                         we_can_start_new_sut = False
                                 if we_can_start_new_sut:
                                     print("{:30s}: will start now".format(config.configuration))
-                                    config.start_sut()
+                                    config.lifecycle.start_sut()
                                     num_pods_pending_experiment = num_pods_pending_experiment + 1
                                     num_pods_pending_cluster = num_pods_pending_cluster + 1
                             else:
                                 print("{:30s}: will start now".format(config.configuration))
-                                config.start_sut()
+                                config.lifecycle.start_sut()
                                 num_pods_pending_experiment = num_pods_pending_experiment + 1
                                 num_pods_pending_cluster = num_pods_pending_cluster + 1
                                 #self.wait(10)
@@ -1522,7 +1522,7 @@ class base():
                             print("{:30s}: is pending".format(config.configuration))
                     continue
                 # check if loading is done
-                config.check_load_data()
+                config.loader.check()
                 # start loading
                 if not config.loading_started:
                     # check if monitoring has started
@@ -1531,18 +1531,18 @@ class base():
                         or len(config.benchmark_list) > 0
                     )
                     if _has_benchmarks:
-                        if config.monitoring_active and not config.monitoring_is_running():
+                        if config.monitoring_active and not config.status.monitoring_running():
                             print("{:30s}: waits for monitoring".format(config.configuration))
-                            if not config.monitoring_is_pending():
-                                config.start_monitoring()
+                            if not config.status.monitoring_pending():
+                                config.lifecycle.start_monitoring()
                             continue
                     # check if SUT is healthy
-                    if config.sut_is_running():
-                        if not config.sut_is_healthy():
+                    if config.status.sut_running():
+                        if not config.status.sut_healthy():
                             # we wait for health check
                             print("{:30s}: waits for health check to succeed".format(config.configuration))
                             continue
-                        if not config.workers_are_healthy():
+                        if not config.status.workers_healthy():
                             # we wait for health check
                             print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
@@ -1555,10 +1555,10 @@ class base():
                                 config.tenant_ready_to_load = True
                             else:
                                 if config.loading_active:
-                                    config.start_loading()
-                                    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                                    config.loader.start_exec()
+                                    config.loader.start_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
                                 else:
-                                    config.start_loading()
+                                    config.loader.start_exec()
                         else:
                             print("{:30s}: will start loading but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                             continue
@@ -1578,26 +1578,26 @@ class base():
                                 config.tenant_ready_to_load = True
                             else:
                                 if config.loading_active:
-                                    config.start_loading()
-                                    config.start_loading_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
+                                    config.loader.start_exec()
+                                    config.loader.start_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
                                 else:
-                                    config.start_loading()
+                                    config.loader.start_exec()
                 # check if maintaining
                 _has_benchmarks_maintaining = (
                     (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
                     or len(config.benchmark_list) > 0
                 )
                 if config.loading_finished and _has_benchmarks_maintaining:
-                    if config.monitoring_active and not config.monitoring_is_running():
+                    if config.monitoring_active and not config.status.monitoring_running():
                         print("{:30s}: waits for monitoring".format(config.configuration))
-                        if not config.monitoring_is_pending():
-                            config.start_monitoring()
+                        if not config.status.monitoring_pending():
+                            config.lifecycle.start_monitoring()
                         continue
                     if config.maintaining_active:
-                        if not config.maintaining_is_running():
+                        if not config.status.maintaining_running():
                             print("{:30s}: is not maintained yet".format(config.configuration))
-                            if not config.maintaining_is_pending():
-                                config.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
+                            if not config.status.maintaining_pending():
+                                config.lifecycle.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
                             else:
                                 print("{:30s}: has pending maintaining".format(config.configuration))
                 # store logs of successful init job pods
@@ -1654,12 +1654,12 @@ class base():
                 if config.loading_finished:
                     now = datetime.utcnow()
                     # check if SUT is healthy
-                    if config.sut_is_running():
-                        if not config.sut_is_healthy():
+                    if config.status.sut_running():
+                        if not config.status.sut_healthy():
                             # we wait for health check
                             print("{:30s}: waits for health check to succeed".format(config.configuration))
                             continue
-                        if not config.workers_are_healthy():
+                        if not config.status.workers_healthy():
                             # we wait for health check
                             print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
@@ -1685,12 +1685,12 @@ class base():
                         or len(config.benchmark_list) > 0
                     )
                     if _has_more_rounds:
-                        if config.monitoring_active and not config.monitoring_is_running():
+                        if config.monitoring_active and not config.status.monitoring_running():
                             print("{:30s}: waits for monitoring".format(config.configuration))
-                            if not config.monitoring_is_pending():
-                                config.start_monitoring()
+                            if not config.status.monitoring_pending():
+                                config.lifecycle.start_monitoring()
                             continue
-                        if config.maintaining_active and not config.maintaining_is_running():
+                        if config.maintaining_active and not config.status.maintaining_running():
                             print("{:30s}: waits for maintaining".format(config.configuration))
                             continue
                     app = self.cluster.appname
@@ -1740,7 +1740,7 @@ class base():
                                 # experiment_dict["benchmarker"][0], which would
                                 # corrupt subsequent -nc repetitions.
                                 config.benchmarking_parameters = bench_entry["parameters"].copy()
-                            config.run_benchmarker_pod(
+                            config.runner.run_pod(
                                 connection=connection,
                                 configuration=config.configuration,
                                 client=client,
@@ -1773,7 +1773,7 @@ class base():
                             config.set_benchmarking_parameters(**benchmarking_parameters)
                         connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                         print("{:30s}: start benchmarking".format(connection))
-                        config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
+                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
                         _benchmark_just_submitted = True
                     else:
                         # no list element left
@@ -1789,7 +1789,7 @@ class base():
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.get_host_restarts(pod)
+                                    restarts = config.host.get_host_restarts(pod)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
                             for statefulset in statefulsets:
@@ -1800,12 +1800,12 @@ class base():
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.get_host_restarts(pod)
+                                    restarts = config.host.get_host_restarts(pod)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
-                            config.stop_sut()
+                            config.lifecycle.stop_sut()
                             config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                             if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                                while config.sut_is_existing():
+                                while config.status.sut_exists():
                                     print("{:30s}: still being removed".format(config.configuration))
                                     self.wait(30)
                                 print("{:30s}: starts again".format(config.configuration))
@@ -1815,13 +1815,13 @@ class base():
                                     config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
                                 self.client = 0
                                 config.reset_sut()
-                                config.start_sut()
+                                config.lifecycle.start_sut()
                                 self.wait(10)
                             else:
                                 config.experiment_done = True
                         else:
                             print("{:30s}: can be stopped, but we leave it running".format(config.configuration))
-                            command = config.generate_port_forward()
+                            command = config.lifecycle.generate_port_forward()
                             if 'sut_service' not in self.workload:
                                 self.workload['sut_service'] = dict()
                             self.workload['sut_service'][config.configuration] = config.get_service_sut(config.configuration)
@@ -1833,7 +1833,7 @@ class base():
                                     connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                                 else:
                                     connection = config.configuration+'-'+client
-                                config.run_benchmarker_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
+                                config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply
                 else:
                     print("{:30s}: is loading".format(config.configuration))
@@ -1916,7 +1916,7 @@ class base():
                             #    self.cluster.delete_pod(p)
                         self.end_benchmarking(job, config)
                         self.cluster.delete_job(job)
-                        config.check_volumes()
+                        config.host.check_volumes()
             if _we_have_running_benchmarks: #len(pods) == 0 and len(jobs) == 0:
                 do = False
                 # A job was submitted this iteration: the Kubernetes API may not yet
@@ -1926,8 +1926,8 @@ class base():
                 if _benchmark_just_submitted:
                     do = True
                 for config in self.configurations:
-                    #if config.sut_is_pending() or config.loading_started or len(config.benchmark_list) > 0:
-                    if config.sut_is_pending():
+                    #if config.status.sut_pending() or config.loading_started or len(config.benchmark_list) > 0:
+                    if config.status.sut_pending():
                         #print("{} pending".format(config.configuration))
                         self.cluster.logger.debug("{} pending".format(config.configuration))
                         do = True
@@ -1977,18 +1977,18 @@ class base():
         for i, parallelism in enumerate(list_clients):
             client = str(i+1)
             for config in self.configurations:
-                if not config.sut_is_running():
+                if not config.status.sut_running():
                     continue
                 if not config.loading_started:
-                    config.start_loading()
+                    config.loader.start_exec()
                 else:
-                    config.run_benchmarker_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
+                    config.runner.run_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
             while True:
                 for config in self.configurations:
-                    if not config.sut_is_running():
+                    if not config.status.sut_running():
                         continue
                     if not config.loading_started:
-                        config.start_loading()
+                        config.loader.start_exec()
                 time.sleep(10)
                 # all jobs of configuration - benchmarker
                 app = self.cluster.appname
@@ -2233,7 +2233,7 @@ class base():
                             print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                             if name=='sut' and config.monitoring_sut:
                                 print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
-                                config.fetch_metrics(
+                                config.metrics.fetch(
                                     title=f"Execution phase: SUT deployment",
                                     connection=connection,
                                     connection_file=connection+'.config',
@@ -2250,7 +2250,7 @@ class base():
                                     )
                             elif name!='sut':
                                 print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
-                                config.fetch_metrics(
+                                config.metrics.fetch(
                                     title=f"Execution phase: component {name}",
                                     connection=connection,
                                     connection_file=connection+'.config',
@@ -2269,7 +2269,7 @@ class base():
                         for name, statefulset in config.deployment_infos['statefulset'].items():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                             print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
-                            config.fetch_metrics(
+                            config.metrics.fetch(
                                 title=f"Execution phase: component {name}",
                                 connection=connection,
                                 connection_file=connection+'.config',
@@ -2285,7 +2285,7 @@ class base():
                                 )
                     if config.monitoring_sut:
                         #print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, config.current_benchmark_connection))
-                        #config.fetch_metrics(
+                        #config.metrics.fetch(
                         #    connection=config.current_benchmark_connection,
                         #    connection_file=connection+'.config',
                         #    container="dbms",
@@ -2316,7 +2316,7 @@ class base():
                         if config.sut_has_pool:
                             pass
                             #print("{:30s}: collecting execution metrics of pooler at connection {}".format(connection, config.current_benchmark_connection))
-                            #config.fetch_metrics(
+                            #config.metrics.fetch(
                             #    connection=config.current_benchmark_connection,
                             #    connection_file=connection+'.config',
                             #    container="pool",
@@ -2354,7 +2354,7 @@ class base():
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
-                        config.fetch_metrics(
+                        config.metrics.fetch(
                             title=f"Execution phase: component benchmarker",
                             connection=connection,
                             connection_file=connection+'.config',

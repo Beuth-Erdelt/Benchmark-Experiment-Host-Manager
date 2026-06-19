@@ -68,7 +68,7 @@ relied upon in new code:
 ### Public name contract
 
 Do **not** rename any public class, attribute, or method — they are referenced
-by name from `configurations.py`, experiment notebooks, and external scripts.
+by name from `configurations/`, experiment notebooks, and external scripts.
 `testbed` no longer exists; it was merged into `Kubernetes` in v0.9.6.
 Internal (local variable) names may be changed freely.
 
@@ -82,41 +82,68 @@ Internal (local variable) names may be changed freely.
 
 ---
 
-## configurations.py
+## configurations/ (subpackage)
 
 ### Overview
 
-`configurations.py` defines the DBMS configuration layer for Bexhoma experiments.
-A configuration object is plugged into an experiment object to define how a specific
-DBMS is deployed, loaded, and benchmarked.
+`configurations/` is a subpackage that defines the DBMS configuration layer for Bexhoma
+experiments via **composition**.  `configurations.py` no longer exists; import paths remain
+the same (`from bexhoma import configurations`).
 
-Public module-level helpers:
+The module-level alias `configurations.default = SutConfiguration` is kept for backward
+compatibility with all entry scripts.
 
-| Helper | Role |
+### Files
+
+| File | Contents |
 |---|---|
-| `find_workloads(doc, kind, name)` | Matches a YAML document by Kubernetes kind and metadata name |
-| `ensure_arg_pairs(args_list, updates)` | Updates or appends `-c key=value` pairs in a container args list |
-| `patch_container(doc, container_name, param, value)` | Patches a single container's args in a Deployment/StatefulSet doc |
-| `load_data_asynch(...)` | Module-level function run in a thread to execute loading scripts inside the SUT pod |
+| `__init__.py` | Re-exports all public symbols; defines `default = SutConfiguration` alias |
+| `base.py` | `SutConfiguration` — the primary class; all `__init__` attributes, `set_*`/`patch_*`/`add_*` helpers, worker-naming methods, direct pod helpers |
+| `status.py` | `ComponentStatus` — SUT/monitoring/loading/maintaining readiness predicates |
+| `host.py` | `HostProbe` — `get_host_*` and `check_volumes()` methods |
+| `manifest.py` | `ManifestBuilder` — YAML template creation for loading/benchmarking jobs; module-level helpers `find_workloads`, `ensure_arg_pairs`, `patch_container` |
+| `metrics.py` | `MetricsCollector` — Prometheus metric fetching |
+| `loading.py` | `LoadingCoordinator` — loading pod lifecycle; module-level `load_data_asynch` thread function |
+| `benchmarking.py` | `BenchmarkRunner` — benchmarker pod lifecycle (`run_pod()`) |
+| `lifecycle.py` | `LifecycleManager` — SUT start/stop, monitoring, port-forward; contains `start_sut()` |
 
-### Class hierarchy
+### Composition pattern
 
+Each helper class is instantiated in `SutConfiguration.__init__` and holds a
+`self._config` back-reference to the owning `SutConfiguration`:
+
+```python
+self.status  = ComponentStatus(self)
+self.host    = HostProbe(self)
+self.lifecycle = LifecycleManager(self)
+self.loader  = LoadingCoordinator(self)
+self.runner  = BenchmarkRunner(self)
+self.metrics = MetricsCollector(self)
+self.manifest = ManifestBuilder(self)
 ```
-default
-├── hammerdb
-├── ycsb
-├── benchbase
-├── yugabytedb
-└── kinetica
-```
 
-Subclasses override `create_manifest_benchmarking()` to inject benchmark-tool-specific
-ENV variables into the job template. `yugabytedb` and `kinetica` also override
-`get_service_sut()` to return a fixed external service name.
+Call sites in `experiments/base.py` use the helper attributes:
+`config.lifecycle.start_sut()`, `config.loader.start_pod(...)`, `config.runner.run_pod(...)`, etc.
+
+### Branching attributes for DBMS-specific behaviour
+
+Rather than monkey-patching methods in entry scripts, `SutConfiguration` provides three
+instance attributes that change the behaviour of existing methods:
+
+| Attribute | Default | Effect when set |
+|---|---|---|
+| `worker_name_app` | `''` | `get_worker_name()` uses this instead of `self.appname` and also substitutes `experiment_name` for `storage_label` |
+| `worker_name_component` | `''` | `get_worker_name()` uses this as the component label |
+| `worker_metric_strip_container` | `False` | `set_metric_of_config()` strips the `container="dbms"` PromQL filter (YugabyteDB) |
+
+`statefulset_name` (declared in `__init__`, not new) causes `get_worker_pods()` to call
+`cluster.get_stateful_set_pods()` and `get_worker_endpoints()` to return bare pod names.
+
+Entry scripts set these attributes instead of defining `types.MethodType` monkey patches.
 
 ### Constructor attributes
 
-All instance attributes of `default` are declared in `default.__init__`.
+All instance attributes of `SutConfiguration` are declared in `SutConfiguration.__init__`.
 `reset_sut()` is called from `__init__` and resets a subset of attributes —
 this is intentional; the attributes are still declared in `__init__` first.
 
@@ -135,6 +162,7 @@ Key attribute groups:
 | State | `is_sut_ready`, `are_worker_ready`, `loading_started`, `loading_finished`, `experiment_done` |
 | Deployment bookkeeping | `deployment_infos`, `statefulset_name`, `sut_service_name`, `sut_pod_name`, `volumeid`, `service` |
 | Benchmark sequencing | `benchmark_list`, `benchmark_list_template`, `benchmarking_parameters_list`, `benchmarking_parameters_list_template`, `client`, `connection`, `current_benchmark_start`, `current_benchmark_connection` |
+| DBMS branching | `worker_name_app`, `worker_name_component`, `worker_metric_strip_container` |
 
 ### Key design decisions
 
@@ -226,9 +254,9 @@ for loaders (including the YCSB generator which does `ycsb load`) it uses the
 
 | Counter | Method | Value |
 |---|---|---|
-| Loader job counter | `configurations.py::start_loading_pod()` | `num_pods` |
-| Generator job counter | `configurations.py::start_loading_pod()` | `num_pods` |
-| Benchmarker job counter | `configurations.py::run_benchmarker_pod()` | `parallelism` |
+| Loader job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | `num_pods` |
+| Generator job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | `num_pods` |
+| Benchmarker job counter | `configurations/benchmarking.py::BenchmarkRunner.run_pod()` | `parallelism` |
 | Round counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client` | Sum of `parallelism` across all configs for this round |
 | Loader/generator experiment counter | `experiments/base.py::work_benchmark_list()` when all container-tenancy configs are ready to load | Sum of `num_loading_pods` across all active configs |
 | Benchmarker experiment counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client`, when `self.tenant_per == 'container'` | Same as round counter value |
