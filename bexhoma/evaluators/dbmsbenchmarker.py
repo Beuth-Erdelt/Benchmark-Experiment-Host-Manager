@@ -87,15 +87,15 @@ class dbmsbenchmarker(logger):
 
         Creates an :class:`inspector.inspector` rooted at ``self.path_base``,
         loads the experiment identified by ``self.code``, and stores the result
-        in ``self.evaluation``.
+        in ``self.evaluation``.  Sets ``self.evaluation`` to ``None`` if loading
+        fails so callers can detect the uninitialized state.
         """
         try:
             self.evaluation = inspector.inspector(self.path_base)
             self.evaluation.load_experiment(code=self.code, silent=True)
             self.evaluation.code = self.code
-        except Exception as e:
-            # it fails silently - experiment not completed
-            pass
+        except Exception:
+            self.evaluation = None
     def get_df_loading(self):
         """
         Returns the DataFrame containing all loading-phase timing results.
@@ -108,6 +108,8 @@ class dbmsbenchmarker(logger):
         """
         if self.evaluation is None:
             self.load_inspector()
+        if self.evaluation is None:
+            return pd.DataFrame()
         loading_times = {}
         for conn_name, connection in self.evaluation.benchmarks.dbms.items():
             loading_times[conn_name] = {}
@@ -151,6 +153,8 @@ class dbmsbenchmarker(logger):
         """
         if self.evaluation is None:
             self.load_inspector()
+        if self.evaluation is None:
+            return pd.DataFrame()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
@@ -197,15 +201,16 @@ class dbmsbenchmarker(logger):
             tenant_by = loading_params.get('BEXHOMA_TENANT_BY', '')
             tenant_num = int(loading_params.get('BEXHOMA_TENANT_NUM', 0))
             if tenant_by in ('schema', 'database') and tenant_num > 0:
-                # For schema/database tenancy the BEXHOMA_TENANT_ID in loading_params
-                # is the Python default (0), not the per-pod value computed at runtime.
-                # Use the DBMSBenchmarker client sub-folder index (0-based) instead,
-                # which is unique per tenant pod.
-                df_row['tenant_id'] = client - 1
+                # BEXHOMA_TENANT_ID in loading_params is always 0 for schema/database
+                # tenancy; the actual per-pod tenant is assigned at runtime by pod
+                # sequence within the job (pod 1 → tenant 0, pod 2 → tenant 1, …).
+                bm_parallelism = int(connection_data['parameter'].get('parallelism', tenant_num))
+                pods_per_tenant = max(1, bm_parallelism // tenant_num)
+                last_segment = conn_name.rsplit('-', 1)[-1]
+                pod_seq = int(last_segment) if last_segment.isdigit() else 1
+                df_row['tenant_id'] = (pod_seq - 1) // pods_per_tenant
             else:
                 df_row['tenant_id'] = int(loading_params.get('BEXHOMA_TENANT_ID', -1))
-            #last_segment = conn_name.rsplit('-', 1)[-1]
-            #df_row['benchmark_run'] = int(last_segment) if last_segment.isdigit() else 1
             df_row['code'] = int(connection_data['parameter']['code'])
             df_row['pod'] = pod_idx
             df_row['benchmark_start'] = connection_props['times']['total'][conn_name]['time_start']
@@ -286,6 +291,8 @@ class dbmsbenchmarker(logger):
             return float(res) if np.isscalar(res) or res.size == 1 else float(res[0])
         if self.evaluation is None:
             self.load_inspector()
+        if self.evaluation is None:
+            return pd.DataFrame()
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
