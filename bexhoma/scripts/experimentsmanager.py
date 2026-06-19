@@ -86,6 +86,8 @@ def manage():
                         experiment = experiments.tpcc(cluster=cluster, code=code)
                     case 'tpch':
                         experiment = experiments.tpch(cluster=cluster, code=code)
+                    case 'tpcds':
+                        experiment = experiments.tpcds(cluster=cluster, code=code)
                     case 'benchbase':
                         experiment = experiments.benchbase(cluster=cluster, code=code)
                     case _:

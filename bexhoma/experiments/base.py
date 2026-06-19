@@ -2524,7 +2524,17 @@ class base():
         return connections_sorted, monitoring_applications
     def show_summary(self):
         """
-        Show a summary of an experiment of type dbmsbenchmarker.
+        Print a basic experiment summary using the DBMSBenchmarker inspector directly.
+
+        .. deprecated::
+            Probably unused in practice.  All named experiment types (``tpch``,
+            ``tpcds``, ``benchbase``, ``ycsb``, ``tpcc``) override this via
+            :meth:`~bexhoma.experiments.dbmsbenchmarker.dbmsbenchmarker.show_summary`,
+            which delegates to the :mod:`bexhoma.benchmarks` pipeline.
+            This implementation is only reachable for legacy result folders whose
+            ``queries.config`` still contains ``type='dbmsbenchmarker'`` — a value
+            written by ``experiments.base`` before the named experiment subclasses
+            existed.
         """
         self._test_results = []
         self.cluster.logger.debug('base.show_summary()')
