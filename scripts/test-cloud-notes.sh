@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Test runs for cloud-hosted managed database services.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -82,7 +82,7 @@ nohup python tpcds.py -ms 4 -xdt -tr \
   -t 1200 \
   -xii -xic -xis \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_mysql_storage.log &
 
@@ -102,7 +102,7 @@ nohup python tpcds.py -ms 4 -xdt -tr \
   -t 1200 \
   -xii -xic -xis \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_postgresql_storage.log &
 
@@ -122,7 +122,7 @@ nohup python tpcds.py -ms 4 -xdt -tr \
   -t 1200 \
   -xii -xic -xis \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_mariadb_storage.log &
 
@@ -142,7 +142,7 @@ nohup python tpcds.py -ms 4 -xdt -tr \
   -t 1200 \
   -xii -xic -xis \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run </dev/null &>$LOG_DIR/doc_tpcds_testcase_monetdb_storage.log &
 

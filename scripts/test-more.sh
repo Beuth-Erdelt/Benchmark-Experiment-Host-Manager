@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Extended test runs covering additional DBMS and parameter combinations.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -136,7 +136,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi -rsr \
+  -rst cephcsi -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
@@ -228,7 +228,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi -rsr \
+  -rst cephcsi -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
 
 
@@ -312,7 +312,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
@@ -417,7 +417,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst cephcsi -rss 100Gi \
   run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
@@ -492,7 +492,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst cephcsi -rss 100Gi \
   run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log &
 
 
@@ -576,7 +576,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 100Gi \
+  -rst cephcsi -rss 100Gi \
   run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
@@ -632,7 +632,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
 
 
@@ -675,7 +675,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
 
 
@@ -734,7 +734,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_2.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mysql_2.log
@@ -781,7 +781,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mysql_4.log
@@ -844,7 +844,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mariadb_2.log
@@ -891,7 +891,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mariadb_4.log
@@ -948,7 +948,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
 
 
@@ -968,7 +968,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
 
 
@@ -1023,7 +1023,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_2.log
@@ -1046,7 +1046,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_3.log
@@ -1106,7 +1106,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_2.log
@@ -1129,7 +1129,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_3.log
@@ -1201,7 +1201,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
 
 
@@ -1225,7 +1225,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
 
 
@@ -1249,7 +1249,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
 
 
@@ -1273,7 +1273,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log &
 
@@ -1341,7 +1341,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_2.log
@@ -1368,7 +1368,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_3.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_3.log
@@ -1395,7 +1395,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_4.log
@@ -1422,7 +1422,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_5.log &
 
@@ -1497,7 +1497,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_2.log
@@ -1523,7 +1523,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_3.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_3.log
@@ -1549,7 +1549,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_4.log
@@ -1575,7 +1575,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 30Gi \
+  -rst cephcsi -rss 30Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_5.log &
 

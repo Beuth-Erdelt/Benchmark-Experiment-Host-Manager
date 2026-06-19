@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for PGBouncer experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -98,7 +98,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=16  nbp=16"
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 100Gi                    size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -127,7 +127,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rsr \
   -rss 100Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 

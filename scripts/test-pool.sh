@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Test runs comparing PostgreSQL with and without PGBouncer connection pooling.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -141,7 +141,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_3.log &
 
@@ -167,7 +167,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -nci 64 \
   -nco 1,2,4,8,16 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_4.log &
 
 
@@ -192,7 +192,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -nci 128 \
   -nco 4,8,16,32 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_6.log &
 
 
@@ -217,7 +217,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -nci 16,32,64,128,256 \
   -nco 16,32,64,128,256 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_7.log &
 
 
@@ -242,7 +242,7 @@ nohup python ycsb.py -ms 1 -tr \
   -nc 1 \
   -nci 64 \
   -nco 64 \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_tmp_8.log &
 
 
@@ -295,7 +295,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_0.log &
 
 
@@ -353,7 +353,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_2.log &
 
 
@@ -383,7 +383,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_3.log &
 
 
@@ -414,7 +414,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 10Gi \
+  -rst cephcsi -rss 10Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_4.log &
 
 
@@ -445,7 +445,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 200Gi \
+  -rst cephcsi -rss 200Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_5.log &
 
 
@@ -479,7 +479,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 200Gi \
+  -rst cephcsi -rss 200Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_6.log &
 
 
@@ -513,7 +513,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 200Gi \
+  -rst cephcsi -rss 200Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_7.log &
 
 
@@ -548,7 +548,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_8.log &
 
 
@@ -583,7 +583,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_9.log &
 
 
@@ -616,7 +616,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 2 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_10.log &
 
 
@@ -651,7 +651,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_11.log &
 
 
@@ -689,7 +689,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_12.log &
 
 
@@ -727,7 +727,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_13.log &
 
 
@@ -765,7 +765,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_14.log &
 
 
@@ -799,7 +799,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_15.log &
 
 
@@ -832,7 +832,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_16.log &
 
 
@@ -865,7 +865,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_17.log &
 
 
@@ -904,7 +904,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_cn_18.log &
 
 
@@ -941,7 +941,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a2.log &
 
 
@@ -978,7 +978,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a3.log &
 
 
@@ -1012,7 +1012,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 2 \
   -m -mc \
-  -rst shared -rss 50Gi \
+  -rst cephcsi -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_workload_a4.log &
 
 

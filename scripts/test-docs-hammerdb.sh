@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Generates documentation summaries for HammerDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -100,7 +100,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -117,7 +117,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 30Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_storage.log
 
@@ -146,7 +146,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -166,7 +166,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 30Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_keytime.log
 

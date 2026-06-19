@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Test runs for PostgreSQL 18 configurations and features.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -87,7 +87,7 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -rr 64Gi -lr 64Gi \
-  -rst shared -rss 500Gi -rsr \
+  -rst cephcsi -rss 500Gi -rsr \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=16GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=32MB \
@@ -120,7 +120,7 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -rr 64Gi -lr 64Gi \
-  -rst shared -rss 500Gi \
+  -rst cephcsi -rss 500Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=16GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=32MB \
@@ -153,7 +153,7 @@ nohup python ycsb.py -tr \
   -ne 1 \
   -nc 1 \
   -rr 64Gi -lr 64Gi \
-  -rst shared -rss 500Gi \
+  -rst cephcsi -rss 500Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=16GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
   --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=32MB \
