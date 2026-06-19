@@ -85,9 +85,188 @@ This information appears in the **Connections** section of every experiment summ
 
 Every DBMS needs a Kubernetes manifest template at `k8s/deploymenttemplate-<Key>.yml`.
 The key must match the `dockers` key in `cluster.config` exactly.
+See [Deployment Template Conventions](#deployment-template-conventions) for the full authoring rules.
 
 Resource requests, limits, and node selectors can be overridden at runtime via CLI parameters (`-rnn`, `-rnl`, `-rnb`) or programmatically via `experiment.set_resources(...)`.
 See [Deployments](Deployments.md) for details.
+
+---
+
+## Deployment Template Conventions
+
+This section describes the rules that every `k8s/deploymenttemplate-<Key>.yml` file must follow.
+`start_sut()` in `configurations/lifecycle.py` reads these files and applies the conventions at runtime to generate the actual Kubernetes resource names and inject environment variables.
+The full reference (including job templates and non-SUT manifests) is in [`k8s/README.md`](../k8s/README.md).
+
+### File naming
+
+The template filename is derived automatically from the `dockers` key:
+
+```
+k8s/deploymenttemplate-{Key}.yml
+```
+
+The `Key` must exactly match the key in the `dockers` section of `cluster.config` and the value passed as `docker=` to `configurations.default(...)`.
+Casing matters: `PostgreSQL` → `deploymenttemplate-PostgreSQL.yml`.
+
+### Document structure
+
+A SUT deployment template is a **multi-document YAML** file (documents separated by `---`).
+`start_sut()` processes all documents in the file.
+Each document must be one of the following Kubernetes kinds:
+
+| Kind | Required? | Notes |
+|---|---|---|
+| `PersistentVolumeClaim` | Optional | Omit when `use_storage=False`; removed automatically when `use_ramdisk=True` |
+| `Service` | Optional | Used for the SUT port and, optionally, for worker headless services |
+| `Deployment` | At least one required | The main DBMS container |
+| `StatefulSet` | Optional | One per distributed worker role (e.g. TiKV, PD) |
+
+Recommended order within the file: PVC first, then Service(s), then Deployment/StatefulSet(s).
+
+### Mandatory labels
+
+Every document in the template must carry these labels on `metadata.labels` (and on `spec.template.metadata.labels` for pod-creating resources):
+
+| Label | Placeholder value | Runtime value |
+|---|---|---|
+| `app` | `bexhoma` | Always `bexhoma` |
+| `component` | role-specific (see below) | **Never overwritten** — used as routing key by `start_sut()` |
+| `configuration` | `default` | DBMS configuration name (e.g. `PostgreSQL`) |
+| `experiment` | `default` | Unique experiment code (timestamp-based string) |
+
+Use exactly these placeholder values in the template file; `start_sut()` replaces all of them at runtime except `component`.
+
+### The `component` label
+
+The `component` label value on each document tells `start_sut()` what kind of resource it is and how to name and wire it.
+Do not change the `component` value at runtime — it is an identity, not a parameter.
+
+| `component` value | Applied to | What `start_sut()` does |
+|---|---|---|
+| `sut` | Deployment, Service, PVC | Names all resources using `generate_component_name(component='sut', ...)`; the resulting name becomes the SUT service hostname |
+| `storage` | PVC | Names the PVC using `generate_component_name(component='storage', ...)`; labels it with load status |
+| `worker` | StatefulSet, Service | Names the StatefulSet using `get_worker_name(component='worker')`; injects `BEXHOMA_WORKER_*` env vars into all containers |
+| `store` | StatefulSet, Service | Same as `worker` but injects `BEXHOMA_STORE_*` env vars |
+| `pd` | StatefulSet, Service | Same pattern; injects `BEXHOMA_PD_*` env vars (used by TiDB) |
+| `pool` | Deployment, Service | Connection pool sidecar (e.g. PGBouncer); named using `generate_component_name(component='pool', ...)` |
+
+For every StatefulSet with `component: X`, `start_sut()` automatically injects these env vars into all containers:
+
+| Env var | Content |
+|---|---|
+| `BEXHOMA_{X}_NAME` | StatefulSet name |
+| `BEXHOMA_{X}_SERVICE` | Headless service name |
+| `BEXHOMA_{X}_LIST` | Comma-separated DNS addresses of all pods (`{name}-{i}.{service}`) |
+| `BEXHOMA_{X}_LIST_SPACE` | Same, space-separated |
+
+(`X` is the uppercased component value, e.g. `worker` → `BEXHOMA_WORKER_NAME`.)
+
+### Runtime name generation
+
+All resource `name:` fields in the template are placeholders; `start_sut()` always overwrites them.
+The generated names follow this formula (from `generate_component_name()` in `configurations/base.py`):
+
+```
+{app}-{component}-{configuration}-{experiment}
+```
+
+All lowercase.  For workers the formula draws from the storage label rather than the experiment code.
+Worker PVCs from `volumeClaimTemplates` follow the fixed prefix `bxw-{worker_name}-{i}`.
+
+Example SUT name: `bexhoma-sut-postgresql-1717000000`
+
+### Reserved container names
+
+The `name:` of every container inside a pod spec is read by `start_sut()` and the evaluator pipeline.
+These names must be used exactly:
+
+| Container name | Pod type | Role |
+|---|---|---|
+| `dbms` | SUT Deployment / StatefulSet | Primary DBMS process. `start_sut()` reads its `args` for the summary and manages its volume mounts. |
+| `monitor-application` | SUT Deployment | Application metrics exporter (e.g. postgres-exporter). Removed when app monitoring is disabled. |
+| `cadvisor` | SUT / worker (sidecar) | Node metrics. Removed when cluster-level monitoring already exists. |
+| `dcgm-exporter` | SUT / worker (sidecar) | GPU metrics. Removed when cluster-level monitoring already exists. |
+| `pool` | Connection-pool Deployment | PGBouncer or equivalent. |
+
+For **job templates** (loading and benchmarking) the reserved names are `datagenerator` (initContainer), `sensor` (loader), and `dbmsbenchmarker` (benchmarker).
+See [`k8s/README.md`](../k8s/README.md) for details.
+
+### Reserved volume names
+
+The following volume names in pod specs are matched by name in `start_sut()`:
+
+| Volume name | Purpose | Removed when |
+|---|---|---|
+| `benchmark-storage-volume` | Mounts the per-experiment DBMS storage PVC | `use_storage=False` |
+| `benchmark-data-volume` | Mounts the shared read-only dataset PVC (`bexhoma-data`) | `use_distributed_datasource=False` |
+| `bxw` | Worker-node storage in StatefulSet `volumeClaimTemplates` | `use_storage=False` |
+| `dshm` | Shared-memory `emptyDir` | Never removed |
+
+### Service port names
+
+`start_sut()` strips Service ports by name when monitoring is disabled.
+Always name the DBMS connection port `port-dbms` so it is never stripped.
+
+| Port name | Always kept |
+|---|---|
+| `port-dbms` | Yes |
+| `port-bus` | Yes (cluster bus for distributed DBMSs) |
+| `port-web` | Yes |
+| `port-monitoring` | Stripped when monitoring inactive |
+| `port-monitoring-application` | Stripped when app monitoring inactive |
+
+### Minimal SUT template skeleton
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      containers:
+      - name: dbms
+        image: mydbms:latest
+        ports:
+        - {containerPort: 5432}
+        volumeMounts:
+        - {mountPath: /var/lib/mydbms/data, name: benchmark-storage-volume}
+      volumes:
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+```
+
+Copy [`k8s/deploymenttemplate-Dummy.yml`](../k8s/deploymenttemplate-Dummy.yml) as a starting point for a new DBMS.
 
 ---
 
