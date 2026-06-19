@@ -86,10 +86,15 @@ def manage():
                         experiment = experiments.tpcc(cluster=cluster, code=code)
                     case 'tpch':
                         experiment = experiments.tpch(cluster=cluster, code=code)
+                    case 'tpcds':
+                        experiment = experiments.tpcds(cluster=cluster, code=code)
                     case 'benchbase':
                         experiment = experiments.benchbase(cluster=cluster, code=code)
                     case _:
                         experiment = experiments.base(cluster=cluster, code=code)
+                experiment.num_tenants = workload_properties.get('num_tenants', 0)
+                experiment.tenant_per = workload_properties.get('tenant_per', '')
+                experiment.multi_tenant_volume = workload_properties.get('multi_tenant_volume', False)
                 # regenerate results - only for debugging
                 #experiment.evaluate_results()
                 #experiment.store_workflow_results()
