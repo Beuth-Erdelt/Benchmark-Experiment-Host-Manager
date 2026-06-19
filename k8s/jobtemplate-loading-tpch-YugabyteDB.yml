@@ -17,12 +17,10 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
-      tolerations:
       initContainers:
       - name: datagenerator
         image: bexhoma/generator_tpch:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
         #securityContext:
         #  allowPrivilegeEscalation: false
         #  runAsNonRoot: true
@@ -53,7 +51,6 @@ spec:
       - name: sensor
         image: bexhoma/loader_tpch_yugabytedb:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
         #securityContext:
         #  allowPrivilegeEscalation: false
         #  runAsNonRoot: true

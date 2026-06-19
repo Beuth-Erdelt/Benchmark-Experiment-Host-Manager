@@ -14,7 +14,6 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       nodeSelector: 
       tolerations:
       #- key: "nvidia.com/gpu"
@@ -22,7 +21,6 @@ spec:
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_hammerdb:BEXHOMA_PACKAGE_VERSION
-        #image: bexhoma/benchmarker_hammerdb:4.12
         imagePullPolicy: Always
         env:
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
@@ -50,11 +48,7 @@ spec:
           #, memory: 16Gi}
         #securityContext:
         #  privileged: true
+        # HammerDB writes results to stdout; no results PVC needed
         volumeMounts:
-        #- name: bexhoma-results
-        #  mountPath: /results
       restartPolicy: Never
       volumes:
-      #- name: bexhoma-results
-      #  persistentVolumeClaim:
-      #    claimName: bexhoma-results

@@ -45,7 +45,6 @@ spec:
       #  effect: "NoSchedule"
       containers:
       - name: dbms
-        #image: yugabytedb/yugabyte:2.17.1.0-b439
         image: postgres:15.0
         env:
         - name: POSTGRES_HOST_AUTH_METHOD

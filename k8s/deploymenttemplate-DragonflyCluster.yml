@@ -56,8 +56,6 @@ spec:
             exec dragonfly --logtostderr --admin_port=8080 --maxmemory=64GiB
         ports:
           - containerPort: 6379
-        ports:
-          - containerPort: 6379
             name: server
         livenessProbe:
           tcpSocket:

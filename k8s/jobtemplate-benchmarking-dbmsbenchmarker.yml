@@ -21,10 +21,7 @@ spec:
       containers:
       - name: dbmsbenchmarker
         image: bexhoma/benchmarker_dbmsbenchmarker:BEXHOMA_PACKAGE_VERSION
-        #image: bexhoma/benchmarker_dbmsbenchmarker:v0.13.7
-        #image: bexhoma/benchmarker_dbmsbenchmarker:dev
         imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
         - {name: DBMSBENCHMARKER_CLIENT, value: '1'}
