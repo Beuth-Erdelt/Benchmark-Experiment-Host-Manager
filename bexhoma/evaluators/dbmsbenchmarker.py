@@ -433,7 +433,7 @@ class dbmsbenchmarker(logger):
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
-            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'pod_count']).round(2)
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'client', 'tenant_id']).round(2)
             df_aggregated_reduced = df_aggregated.copy()
             df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
