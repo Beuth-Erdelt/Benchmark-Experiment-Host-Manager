@@ -1627,10 +1627,10 @@ class ExperimentBase():
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_load = True
                                 if config_tmp.loading_active:
-                                    config_tmp.start_loading()
-                                    config_tmp.start_loading_pod(parallelism=config_tmp.num_loading, num_pods=config_tmp.num_loading_pods)
+                                    config_tmp.loader.start_exec()
+                                    config_tmp.loader.start_pod(parallelism=config_tmp.num_loading, num_pods=config_tmp.num_loading_pods)
                                 else:
-                                    config_tmp.start_loading()
+                                    config_tmp.loader.start_exec()
                     elif not config.tenant_started_to_index:
                         ready = True
                         for config_tmp in self.configurations:

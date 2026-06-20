@@ -415,7 +415,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -440,7 +440,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
         """
         Returns benchmarking results with one row per pod, filtered to the key

@@ -478,7 +478,7 @@ class BenchbaseEvaluator(LogEvaluator):
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -504,7 +504,7 @@ class BenchbaseEvaluator(LogEvaluator):
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_loading_per_run(self):
         """
         Returns loading metrics aggregated per experiment run.
