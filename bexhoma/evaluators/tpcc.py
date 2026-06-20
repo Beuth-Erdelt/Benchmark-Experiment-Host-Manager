@@ -28,6 +28,8 @@ from pathlib import Path
 from .base import natural_sort
 from .logger import LogEvaluator
 
+__all__ = ["TpccEvaluator"]
+
 
 class TpccEvaluator(LogEvaluator):
     """

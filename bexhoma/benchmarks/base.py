@@ -69,7 +69,7 @@ class Benchmark:
         :param experiment: The owning experiment object.
         """
 
-    def _show_loading_sections(self, experiment, is_multitenant: bool) -> 'pd.DataFrame':
+    def _show_loading_sections(self, experiment, is_multitenant: bool) -> pd.DataFrame:
         """
         Print the loading section and return the per-run loading DataFrame.
 
@@ -93,7 +93,7 @@ class Benchmark:
             return df
         return pd.DataFrame()
 
-    def _show_extra_sections(self, experiment, df_aggregated_reduced: 'pd.DataFrame') -> dict:
+    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> dict:
         """
         Print benchmark-specific sections after ``### Execution → Per Phase``.
 
@@ -256,7 +256,7 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         """
         self.evaluator.load_inspector()
 
-    def _show_extra_sections(self, experiment, df_aggregated_reduced: 'pd.DataFrame') -> dict:
+    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> dict:
         """
         Print secondary-benchmark sections, query latency, SQL errors, and warnings.
 
@@ -281,9 +281,8 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         df_errors = self.evaluator.get_total_errors(query_titles=True)
         num_errors = df_errors.sum().sum()
         if num_errors > 0:
-            df_error_rows = df_errors[~(df_errors == False).all(axis=1)]
-            list_error_queries = list(df_error_rows.index)
-            df_errors = df_errors[~(df_errors == False).all(axis=1)]
+            df_errors = df_errors[~(df_errors == 0).all(axis=1)]
+            list_error_queries = list(df_errors.index)
             print(df_errors.to_markdown(index=True, floatfmt=".2f"))
             for error in list_error_queries:
                 numQuery = error[1:]
@@ -291,14 +290,14 @@ class DBMSBenchmarkerBenchmark(Benchmark):
                 list_errors = {k: v for k, v in list_errors.items() if len(v) > 0}
                 print("* " + error)
                 for k, v in list_errors.items():
-                    print("  * {}: {}".format(k, v))
+                    print(f"  * {k}: {v}")
         else:
             print("No errors")
         print("\n### Warnings (result mismatch)\n")
         df_warnings = self.evaluator.get_total_warnings(query_titles=True)
         num_warnings = df_warnings.sum().sum()
         if num_warnings > 0:
-            df_warnings = df_warnings[~(df_warnings == False).all(axis=1)]
+            df_warnings = df_warnings[~(df_warnings == 0).all(axis=1)]
             print(df_warnings.to_markdown(index=True, floatfmt=".2f"))
         else:
             print("No warnings")

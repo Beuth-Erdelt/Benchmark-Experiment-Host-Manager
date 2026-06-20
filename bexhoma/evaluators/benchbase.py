@@ -14,8 +14,6 @@ import pandas as pd
 import os
 import re
 import matplotlib.pyplot as plt
-
-from bexhoma import evaluators
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
 import pickle
@@ -30,6 +28,7 @@ from pathlib import Path
 from .base import natural_sort
 from .logger import LogEvaluator
 
+__all__ = ["BenchbaseEvaluator"]
 
 
 class BenchbaseEvaluator(LogEvaluator):
@@ -476,7 +475,7 @@ class BenchbaseEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
@@ -502,7 +501,7 @@ class BenchbaseEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_summary_loading_per_run(self):

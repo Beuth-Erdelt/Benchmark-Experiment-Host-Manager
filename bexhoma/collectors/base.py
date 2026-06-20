@@ -28,6 +28,8 @@ from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
 
+__all__ = ["CollectorBase", "get_non_constant"]
+
 
 def get_non_constant(df):
     """
@@ -43,7 +45,7 @@ def get_non_constant(df):
     return df.loc[:, df.apply(is_not_constant)]
 
 
-class CollectorBase():
+class CollectorBase:
     """
     Base class for collecting and aggregating results from several experiments.
 

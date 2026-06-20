@@ -28,6 +28,8 @@ from pathlib import Path
 
 from .base import EvaluatorBase, natural_sort
 
+__all__ = ["LogEvaluator"]
+
 
 class LogEvaluator(EvaluatorBase):
     """

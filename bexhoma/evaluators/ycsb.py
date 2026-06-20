@@ -24,11 +24,11 @@ from dbmsbenchmarker import monitor
 from datetime import datetime
 import glob
 from pathlib import Path
-from bexhoma import evaluators
 
 from .base import natural_sort
 from .logger import LogEvaluator
 
+__all__ = ["YcsbEvaluator"]
 
 
 class YcsbEvaluator(LogEvaluator):
@@ -936,7 +936,7 @@ class YcsbEvaluator(LogEvaluator):
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
             #print(df_plot_filtered)
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['configuration', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
-            #df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            #df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
@@ -976,7 +976,7 @@ class YcsbEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
@@ -1015,7 +1015,7 @@ class YcsbEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_summary_loading_per_connection(self):
@@ -1043,7 +1043,7 @@ class YcsbEvaluator(LogEvaluator):
                 df_plot_filtered['sf'] = df_plot['SF']
                 df_plot_filtered['Throughput [SF/h]'] = df_plot['SF'] * 3_600_000.0 / df_plot['[OVERALL].RunTime(ms)']
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
-            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
         else:
@@ -1073,7 +1073,7 @@ class YcsbEvaluator(LogEvaluator):
             select_cols = ['experiment_run',"threads","target","pod_count","exceptions","sf","Throughput [SF/h]","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
             df_plot_filtered = df_aggregated[[c for c in select_cols if c in df_aggregated.columns]]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
-            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
         else:

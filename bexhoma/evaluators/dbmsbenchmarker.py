@@ -31,6 +31,9 @@ import numpy as np
 from .base import natural_sort
 from .logger import LogEvaluator
 
+__all__ = ["DbmsBenchmarkerEvaluator", "map_index_to_queryname"]
+
+
 def map_index_to_queryname(numQuery):
     """
     Maps a query index string (e.g., ``'q1'``) to a human-readable title from the

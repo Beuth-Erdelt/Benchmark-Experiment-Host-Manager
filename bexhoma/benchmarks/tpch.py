@@ -52,14 +52,14 @@ class TPCH(DBMSBenchmarkerBenchmark):
         if mode == 'run':
             experiment.set_queryfile('queries-tpch.config')
             experiment.set_workload(
-                name='TPC-H Queries SF=' + str(SF),
+                name=f'TPC-H Queries SF={SF}',
                 info='This experiment compares run time and resource consumption of TPC-H queries in different DBMS.',
                 type='tpch',
                 defaultParameters={'SF': SF},
             )
         elif mode == 'load':
             experiment.set_workload(
-                name='TPC-H Data Loading SF=' + str(SF),
+                name=f'TPC-H Data Loading SF={SF}',
                 info='This imports TPC-H data sets.',
                 type='tpch',
                 defaultParameters={'SF': SF},
@@ -75,7 +75,7 @@ class TPCH(DBMSBenchmarkerBenchmark):
         elif mode == 'empty':
             experiment.set_queryfile('queries-tpch-empty.config')
             experiment.set_workload(
-                name='TPC-H Data Dummy SF=' + str(SF),
+                name=f'TPC-H Data Dummy SF={SF}',
                 info='This experiment is for testing loading. It just runs a SELECT 1 query.',
                 type='tpch',
                 defaultParameters={'SF': SF},
@@ -83,7 +83,7 @@ class TPCH(DBMSBenchmarkerBenchmark):
         else:
             experiment.set_queryfile('queries-tpch-profiling.config')
             experiment.set_workload(
-                name='TPC-H Data Profiling SF=' + str(SF),
+                name=f'TPC-H Data Profiling SF={SF}',
                 info='This experiment compares imported TPC-H data sets in different DBMS.',
                 type='tpch',
                 defaultParameters={'SF': SF},
@@ -91,7 +91,7 @@ class TPCH(DBMSBenchmarkerBenchmark):
         experiment.loading_active = True
         experiment.use_distributed_datasource = True
         if experiment.loading_is_active():
-            experiment.workload['info'] += "\nTPC-H (SF={}) data is loaded and benchmark is executed.".format(SF)
+            experiment.workload['info'] += f"\nTPC-H (SF={SF}) data is loaded and benchmark is executed."
         if experiment.benchmarking_is_active():
             if shuffle_queries:
                 experiment.workload['info'] += "\nQuery ordering is as required by the TPC."
@@ -101,7 +101,7 @@ class TPCH(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nAll instances use different query parameters."
             else:
                 experiment.workload['info'] += "\nAll instances use the same query parameters."
-            experiment.workload['info'] += "\nTimeout per query is {}.".format(timeout)
+            experiment.workload['info'] += f"\nTimeout per query is {timeout}."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:
@@ -115,4 +115,4 @@ class TPCH(DBMSBenchmarkerBenchmark):
                     init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
                 experiment.workload['info'] += init_scripts
             if len(limit_import_table):
-                experiment.workload['info'] += "\nImport is limited to table {}.".format(limit_import_table)
+                experiment.workload['info'] += f"\nImport is limited to table {limit_import_table}."

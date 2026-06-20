@@ -27,6 +27,8 @@ from dbmsbenchmarker import parameter, inspector
 from bexhoma import evaluators
 from .base import CollectorBase
 
+__all__ = ["DbmsBenchmarkerCollector", "map_index_to_queryname"]
+
 
 def map_index_to_queryname(numQuery):
     """

@@ -53,14 +53,14 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         if mode == 'run':
             experiment.set_queryfile('queries-tpcds.config')
             experiment.set_workload(
-                name='TPC-DS Queries SF=' + str(SF),
+                name=f'TPC-DS Queries SF={SF}',
                 info='This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.',
                 type='tpcds',
                 defaultParameters={'SF': SF},
             )
         elif mode == 'load':
             experiment.set_workload(
-                name='TPC-DS Data Loading SF=' + str(SF),
+                name=f'TPC-DS Data Loading SF={SF}',
                 info='This imports TPC-DS data sets.',
                 type='tpcds',
                 defaultParameters={'SF': SF},
@@ -76,7 +76,7 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         elif mode == 'empty':
             experiment.set_queryfile('queries-tpcds-empty.config')
             experiment.set_workload(
-                name='TPC-DS Data Dummy SF=' + str(SF),
+                name=f'TPC-DS Data Dummy SF={SF}',
                 info='This experiment is for testing loading. It just runs a SELECT 1 query.',
                 type='tpcds',
                 defaultParameters={'SF': SF},
@@ -84,7 +84,7 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         else:
             experiment.set_queryfile('queries-tpcds-profiling.config')
             experiment.set_workload(
-                name='TPC-DS Data Profiling SF=' + str(SF),
+                name=f'TPC-DS Data Profiling SF={SF}',
                 info='This experiment compares imported TPC-DS data sets in different DBMS.',
                 type='tpcds',
                 defaultParameters={'SF': SF},
@@ -92,7 +92,7 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         experiment.loading_active = True
         experiment.use_distributed_datasource = True
         if experiment.loading_is_active():
-            experiment.workload['info'] += "\nTPC-DS (SF={}) data is loaded and benchmark is executed.".format(SF)
+            experiment.workload['info'] += f"\nTPC-DS (SF={SF}) data is loaded and benchmark is executed."
         if experiment.benchmarking_is_active():
             if shuffle_queries:
                 experiment.workload['info'] += "\nQuery ordering is as required by the TPC."
@@ -104,7 +104,7 @@ class TPCDS(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nAll instances use the same query parameters."
             if init_columns:
                 experiment.workload['info'] += "\nStorage is set to columnar."
-            experiment.workload['info'] += "\nTimeout per query is {}.".format(timeout)
+            experiment.workload['info'] += f"\nTimeout per query is {timeout}."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:
@@ -118,4 +118,4 @@ class TPCDS(DBMSBenchmarkerBenchmark):
                     init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
                 experiment.workload['info'] += init_scripts
             if len(limit_import_table):
-                experiment.workload['info'] += "\nImport is limited to table {}.".format(limit_import_table)
+                experiment.workload['info'] += f"\nImport is limited to table {limit_import_table}."
