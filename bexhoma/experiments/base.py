@@ -1639,7 +1639,7 @@ class ExperimentBase():
                             print("#### Starting to index")
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_index = True
-                                config_tmp.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
