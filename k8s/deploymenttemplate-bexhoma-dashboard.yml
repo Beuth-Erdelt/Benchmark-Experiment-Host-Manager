@@ -26,7 +26,6 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       #nodeSelector: {type: auxiliary}
       #nodeName: cl-worker19
       #tolerations:
@@ -35,8 +34,6 @@ spec:
       containers:
       - name: dashboard
         image: bexhoma/evaluator_dbmsbenchmarker:BEXHOMA_PACKAGE_VERSION
-        #image: bexhoma/evaluator_dbmsbenchmarker:dev
-        #imagePullPolicy: IfNotPresent
         imagePullPolicy: Always
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'} # matplotlib
@@ -62,8 +59,6 @@ spec:
           mountPath: /data
       - name: jupyter
         image: bexhoma/evaluator_dbmsbenchmarker:BEXHOMA_PACKAGE_VERSION
-        #image: bexhoma/evaluator_dbmsbenchmarker:dev
-        #imagePullPolicy: IfNotPresent
         imagePullPolicy: Always
         env:
         - {name: MPLCONFIGDIR, value: '/tmp/'}

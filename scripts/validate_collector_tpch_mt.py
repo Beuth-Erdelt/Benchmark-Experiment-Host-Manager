@@ -85,7 +85,7 @@ def check_df(df, label, required_cols=None):
         ok = False
     else:
         print(f"  OK    {label}: shape={df.shape}")
-    if required_cols:
+    if required_cols and df is not None:
         missing = [c for c in required_cols if c not in df.columns]
         if missing:
             print(f"  FAIL  {label}: missing columns {missing}")

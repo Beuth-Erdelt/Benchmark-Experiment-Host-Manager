@@ -1,7 +1,7 @@
 """
 Evaluator for YCSB experiments.
 
-Provides :class:`ycsb`, which extends :class:`logger` to parse and aggregate
+Provides :class:`YcsbEvaluator`, which extends :class:`LogEvaluator` to parse and aggregate
 operation throughput and latency results produced by the Yahoo Cloud Serving
 Benchmark (YCSB) tool.
 
@@ -24,14 +24,14 @@ from dbmsbenchmarker import monitor
 from datetime import datetime
 import glob
 from pathlib import Path
-from bexhoma import evaluators
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
+
+__all__ = ["YcsbEvaluator"]
 
 
-
-class ycsb(logger):
+class YcsbEvaluator(LogEvaluator):
     """
     Evaluator for a YCSB experiment.
 
@@ -68,7 +68,7 @@ class ycsb(logger):
         :return: Single-row DataFrame of YCSB results, or empty on parse failure.
         :rtype: pandas.DataFrame
         """
-        logger.log_to_df(self, filename)
+        LogEvaluator.log_to_df(self, filename)
         try:
             with open(filename) as f:
                 lines = f.readlines()
@@ -936,7 +936,7 @@ class ycsb(logger):
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
             #print(df_plot_filtered)
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['configuration', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
-            #df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            #df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
@@ -976,9 +976,9 @@ class ycsb(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns YCSB benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -1015,9 +1015,9 @@ class ycsb(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_loading_per_connection(self):
         """
         Returns loading metrics aggregated per experiment run.
@@ -1043,7 +1043,7 @@ class ycsb(logger):
                 df_plot_filtered['sf'] = df_plot['SF']
                 df_plot_filtered['Throughput [SF/h]'] = df_plot['SF'] * 3_600_000.0 / df_plot['[OVERALL].RunTime(ms)']
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
-            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
         else:
@@ -1073,7 +1073,7 @@ class ycsb(logger):
             select_cols = ['experiment_run',"threads","target","pod_count","exceptions","sf","Throughput [SF/h]","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
             df_plot_filtered = df_aggregated[[c for c in select_cols if c in df_aggregated.columns]]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
-            df_plot_filtered = df_plot_filtered.reindex(index=evaluators.natural_sort(df_plot_filtered.index))
+            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             df_plot_filtered.drop('connection', axis=1, inplace=True, errors='ignore')
             return df_plot_filtered
         else:

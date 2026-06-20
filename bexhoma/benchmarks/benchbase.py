@@ -70,14 +70,14 @@ class Benchbase(Benchmark):
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             experiment.set_workload(
-                name='Benchbase Workload {} SF={}'.format(type_of_benchmark, SF),
+                name=f'Benchbase Workload {type_of_benchmark} SF={SF}',
                 info='This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
                 type='benchbase',
                 defaultParameters={'SF': SF},
             )
         elif mode == 'load':
             experiment.set_workload(
-                name='Benchbase Data {} Loading SF={}'.format(type_of_benchmark, SF),
+                name=f'Benchbase Data {type_of_benchmark} Loading SF={SF}',
                 info='This imports a Benchbase data set.',
                 type='benchbase',
                 defaultParameters={'SF': SF},
@@ -96,21 +96,21 @@ class Benchbase(Benchmark):
             experiment.workload['info'] += "\nBenchbase data is generated and loaded using several threads."
         if experiment.benchmarking_is_active():
             if len(type_of_benchmark):
-                experiment.workload['info'] += "\nBenchmark is '{}'.".format(type_of_benchmark)
+                experiment.workload['info'] += f"\nBenchmark is '{type_of_benchmark}'."
                 if type_of_benchmark == "ycsb":
-                    experiment.workload['info'] += " Workload is '{}'.".format(workload)
+                    experiment.workload['info'] += f" Workload is '{workload}'."
         if experiment.loading_is_active() or experiment.benchmarking_is_active():
             if SF:
-                experiment.workload['info'] += " Scaling factor is {}.".format(SF)
-            experiment.workload['info'] += " Target is based on multiples of '{}'.".format(target_base)
+                experiment.workload['info'] += f" Scaling factor is {SF}."
+            experiment.workload['info'] += f" Target is based on multiples of '{target_base}'."
         if experiment.benchmarking_is_active():
-            experiment.workload['info'] += " Factors for benchmarking are {}.".format(num_benchmarking_target_factors)
+            experiment.workload['info'] += f" Factors for benchmarking are {num_benchmarking_target_factors}."
             if extra_keying:
                 experiment.workload['info'] += " Benchmarking has keying and thinking times activated."
             if extra_new_connection:
                 experiment.workload['info'] += " There is a reconnect for each transaction."
             if SD:
-                experiment.workload['info'] += " Benchmarking runs for {} minutes.".format(int(SD / 60))
+                experiment.workload['info'] += f" Benchmarking runs for {int(SD / 60)} minutes."
 
     def test_results(self, experiment) -> None:
         """

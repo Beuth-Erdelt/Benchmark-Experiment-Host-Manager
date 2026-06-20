@@ -1,9 +1,10 @@
 """
 Experiment class for DBMSBenchmarker benchmarks.
 
-Provides :class:`dbmsbenchmarker`, which extends :class:`base` to orchestrate
-the DBMSBenchmarker tool inside a Kubernetes cluster, including loading,
-benchmarking, and result collection phases.
+Provides :class:`DbmsBenchmarkerExperiment`, which extends
+:class:`MixedExperiment` to orchestrate the DBMSBenchmarker tool inside a
+Kubernetes cluster, including loading, benchmarking, and result collection
+phases.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -15,15 +16,15 @@ import urllib3
 import pandas as pd
 
 from bexhoma import evaluators
-from .mixed import mixed
+from .mixed import MixedExperiment
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["dbmsbenchmarker"]
+__all__ = ["DbmsBenchmarkerExperiment"]
 
 
-class dbmsbenchmarker(mixed):
+class DbmsBenchmarkerExperiment(MixedExperiment):
     """
     Experiment class for DBMSBenchmarker-based benchmarks.
 
@@ -33,6 +34,8 @@ class dbmsbenchmarker(mixed):
 
     TPC-H and TPC-DS subclass this to add their own benchmark registration and
     experiment dict template.
+
+    Subclasses: :class:`TpchExperiment`, :class:`TpcdsExperiment`.
     """
 
     def __init__(self,
@@ -48,7 +51,7 @@ class dbmsbenchmarker(mixed):
         :param num_experiment_to_apply: Repetition count.
         :param timeout: Per-query timeout in seconds.
         """
-        mixed.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
+        MixedExperiment.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
         self.evaluator = evaluators.dbmsbenchmarker(
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
     def evaluate_results(self,
@@ -102,9 +105,9 @@ class dbmsbenchmarker(mixed):
         print("done!")
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentdownload_file(filename='')
+        self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentupload_file(filename='')
+        self.upload_experiment_file(filename='')
     def show_summary(self) -> None:
         """
         Print the experiment summary by delegating to the primary benchmark.

@@ -1,10 +1,10 @@
 """
 Base evaluator class for bexhoma experiments.
 
-Provides :func:`natural_sort` and :class:`base`, which loads an experiment
+Provides :func:`natural_sort` and :class:`EvaluatorBase`, which loads an experiment
 result folder, parses workflow state and connection configuration, and
-exposes monitoring data. All other evaluators inherit from :class:`base`
-via :class:`logger`.
+exposes monitoring data. All other evaluators inherit from :class:`EvaluatorBase`
+via :class:`LogEvaluator`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -25,23 +25,27 @@ from dbmsbenchmarker import monitor
 from datetime import datetime
 from pathlib import Path
 
-def natural_sort(l):
+__all__ = ["EvaluatorBase", "natural_sort"]
+
+
+def natural_sort(items):
     """
     Sorts a list in natural (human) order so that embedded digit runs are
     compared numerically rather than lexicographically.  Works for lists of
     strings, integers, or any mix whose elements have a meaningful ``str()``
     representation.
 
-    :param l: List to sort.
-    :type l: list
+    :param items: List to sort.
+    :type items: list
     :return: Sorted list.
     :rtype: list
     """
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
-    return sorted(l, key=alphanum_key)
+    return sorted(items, key=alphanum_key)
 
-class base:
+
+class EvaluatorBase:
     """
     Base evaluator for a single bexhoma experiment.
 
@@ -75,6 +79,7 @@ class base:
         self.workflow_errors = dict()
         self.num_missing_benchmarking_dfs = 0
         self.num_missing_loading_dfs = 0
+
     def log_to_df(self, filename):
         """
         Scans a pod log file for known errors and records them in ``self.workflow_errors``.
@@ -241,7 +246,7 @@ class base:
         :rtype: pandas.DataFrame
         """
         return pd.DataFrame()
-    def reconstruct_workflow(self, df: 'pd.DataFrame') -> dict:
+    def reconstruct_workflow(self, df: pd.DataFrame) -> dict:
         """
         Reconstructs the actual experiment workflow from connection metadata.
 

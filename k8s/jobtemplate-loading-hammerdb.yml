@@ -14,14 +14,12 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      #- name: private-registry-auth
       nodeSelector: 
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       containers:
       - name: sensor
-        #image: bexhoma/generator_hammerdb:4.12
         image: bexhoma/generator_hammerdb:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         env:

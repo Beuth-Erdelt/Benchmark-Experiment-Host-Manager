@@ -98,7 +98,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -124,7 +124,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_citus_2.log
 
@@ -194,7 +194,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 100Gi                    size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -214,7 +214,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 100Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_2.log
 
@@ -240,7 +240,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 100Gi                    size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -263,7 +263,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 100Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_3.log
 
@@ -338,7 +338,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -361,7 +361,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_2.log
 
@@ -394,7 +394,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 200Gi                    size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -417,7 +417,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 200Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_3.log
 
@@ -495,7 +495,7 @@ sleep 30
 # -t 14400                      query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -517,7 +517,7 @@ bexhoma tpch \
   -t 14400 \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_2.log
 
@@ -548,7 +548,7 @@ sleep 30
 # -t 14400                      query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -570,7 +570,7 @@ bexhoma tpch \
   -t 14400 \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_3.log
 

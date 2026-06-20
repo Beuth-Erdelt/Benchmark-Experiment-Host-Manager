@@ -60,8 +60,6 @@ spec:
       containers:
       - name: dbms
         image: postgres:16.1
-        #image: postgres:18beta1-alpine
-        #image: postgres:16.9
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
@@ -74,19 +72,7 @@ spec:
               command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
-              #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -D /var/lib/postgresql/data -m fast"]
-              #command: ["/bin/sh", "-c", "gosu postgres pg_ctl stop -m fast"]
-              #command: ["echo 'PRESTOP' ;", "/bin/sh", "-c", "gosu postgres pg_ctl stop -m smart -t 120"]
-              #command: ["/bin/sh", "-c", "echo 'Hello from the preStop handler'; gosu postgres pg_ctl stop -m smart -t 120"]
-              #command: ["gosu postgres", "pg_ctl stop -m smart -t 120"]
-              #command: ["/bin/sh", "-c"]
-              #args: ["gosu postgres pg_ctl stop -m smart -t 120"]
-              #command: ["/bin/sh", "-c", "gosu postgres 'pg_ctl stop -m smart -t 120'"]
-              #command: ["/bin/sh", "-c", "gosu postgres '/usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120'"]
-              #command: ["/bin/sh -c 'gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120'"]
               command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
-              #command: ["/bin/sh", "-c", "echo 'Hello from the preStop handler' > /usr/share/message && cat /usr/share/message"]
-        #command: ["sh", "-c", "trap 'gosu postgres pg_ctl stop -m smart' SIGTERM; gosu postgres postgres"] # trap: SIGTERM: bad trap
         readinessProbe:
           exec:
             command:

@@ -73,14 +73,14 @@ class YCSB(Benchmark):
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             experiment.set_workload(
-                name='YCSB SF=' + str(SF),
+                name=f'YCSB SF={SF}',
                 info='This experiment compares run time and resource consumption of YCSB queries.',
                 type='ycsb',
                 defaultParameters={'SF': SF},
             )
         elif mode == 'load':
             experiment.set_workload(
-                name='YCSB Data Loading SF=' + str(SF),
+                name=f'YCSB Data Loading SF={SF}',
                 info='This imports YCSB data sets.',
                 type='ycsb',
                 defaultParameters={'SF': SF},
@@ -95,19 +95,19 @@ class YCSB(Benchmark):
             )
         experiment.loading_active = True
         experiment.set_experiment(script='Schema')
-        experiment.workload['info'] += "\nWorkload is '{}'.".format(args.workload.upper())
+        experiment.workload['info'] += f"\nWorkload is '{args.workload.upper()}'."
         if experiment.loading_is_active():
-            experiment.workload['info'] += "\nNumber of rows to insert is {}.".format(ycsb_rows)
-            experiment.workload['info'] += "\nOrdering of inserts is {}.".format(extra_insert_order)
+            experiment.workload['info'] += f"\nNumber of rows to insert is {ycsb_rows}."
+            experiment.workload['info'] += f"\nOrdering of inserts is {extra_insert_order}."
         if experiment.benchmarking_is_active():
-            experiment.workload['info'] += "\nNumber of operations is {}.".format(ycsb_operations)
-            experiment.workload['info'] += "\nBatch size is '{}'.".format(batchsize)
+            experiment.workload['info'] += f"\nNumber of operations is {ycsb_operations}."
+            experiment.workload['info'] += f"\nBatch size is '{batchsize}'."
         if experiment.loading_is_active() or experiment.benchmarking_is_active():
-            experiment.workload['info'] += "\nTarget is based on multiples of '{}'.".format(target_base)
+            experiment.workload['info'] += f"\nTarget is based on multiples of '{target_base}'."
         if experiment.loading_is_active():
-            experiment.workload['info'] += "\nFactors for loading are {}.".format(num_loading_target_factors)
+            experiment.workload['info'] += f"\nFactors for loading are {num_loading_target_factors}."
         if experiment.benchmarking_is_active():
-            experiment.workload['info'] += "\nFactors for benchmarking are {}.".format(num_benchmarking_target_factors)
+            experiment.workload['info'] += f"\nFactors for benchmarking are {num_benchmarking_target_factors}."
 
     def test_results(self, experiment) -> None:
         """

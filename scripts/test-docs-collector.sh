@@ -43,7 +43,7 @@ BEXHOMA_NODE_SUT="cl-worker38"
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 100Gi                    size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -66,7 +66,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 100Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
 
@@ -92,7 +92,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 100Gi                    size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -115,7 +115,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 100Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
 
@@ -191,7 +191,7 @@ BEXHOMA_NUM_TENANTS=2
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 20Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -mtb schema                   tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -214,7 +214,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 20Gi \
-  -rst shared \
+  -rst cephcsi \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -239,7 +239,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 20Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -mtb database                 tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -262,7 +262,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 20Gi \
-  -rst shared \
+  -rst cephcsi \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -287,7 +287,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOM
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 10Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -mtb container                tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -310,7 +310,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst cephcsi \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -344,7 +344,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHO
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 30Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -364,7 +364,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rsr \
   -rss 30Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_1.log
 
@@ -388,7 +388,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 1/3  sf=3"
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 30Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -408,7 +408,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rsr \
   -rss 30Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_2.log
 
@@ -483,7 +483,7 @@ BEXHOMA_NUM_TENANTS=2
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 30Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -mtb schema                   tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -507,7 +507,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rsr \
   -rss 30Gi \
-  -rst shared \
+  -rst cephcsi \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -535,7 +535,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 30Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -mtb database                 tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -559,7 +559,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rsr \
   -rss 30Gi \
-  -rst shared \
+  -rst cephcsi \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -587,7 +587,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NU
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 15Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -mtb container                tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -611,7 +611,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rsr \
   -rss 15Gi \
-  -rst shared \
+  -rst cephcsi \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -647,7 +647,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 15Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -672,7 +672,7 @@ bexhoma ycsb \
   -tr \
   -rsr \
   -rss 15Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
 
@@ -701,7 +701,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 15Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -726,7 +726,7 @@ bexhoma ycsb \
   -tr \
   -rsr \
   -rss 15Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
 
@@ -804,7 +804,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 15Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -824,7 +824,7 @@ bexhoma hammerdb \
   -tr \
   -rsr \
   -rss 15Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
 
@@ -847,7 +847,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 15Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -867,7 +867,7 @@ bexhoma hammerdb \
   -tr \
   -rsr \
   -rss 15Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
 

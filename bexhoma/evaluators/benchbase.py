@@ -1,7 +1,7 @@
 """
 Evaluator for Benchbase experiments.
 
-Provides :class:`benchbase`, which extends :class:`logger` to parse and
+Provides :class:`BenchbaseEvaluator`, which extends :class:`LogEvaluator` to parse and
 aggregate throughput and latency results produced by the Benchbase
 benchmarking tool.
 
@@ -14,8 +14,6 @@ import pandas as pd
 import os
 import re
 import matplotlib.pyplot as plt
-
-from bexhoma import evaluators
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
 import pickle
@@ -28,11 +26,12 @@ import glob
 from pathlib import Path
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
+
+__all__ = ["BenchbaseEvaluator"]
 
 
-
-class benchbase(logger):
+class BenchbaseEvaluator(LogEvaluator):
     """
     Evaluator for a Benchbase experiment.
 
@@ -62,7 +61,7 @@ class benchbase(logger):
         :rtype: pandas.DataFrame
         """
         # test for known errors
-        logger.log_to_df(self, filename)
+        LogEvaluator.log_to_df(self, filename)
         df_header = pd.DataFrame()
         # extract status and result fields
         try:
@@ -476,9 +475,9 @@ class benchbase(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -502,9 +501,9 @@ class benchbase(logger):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
-            df_aggregated_reduced = df_aggregated_reduced.reindex(index=evaluators.natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_loading_per_run(self):
         """
         Returns loading metrics aggregated per experiment run.

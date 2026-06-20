@@ -14,27 +14,27 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from .base import base
-from .benchbase import benchbase as benchbase_collector
-from .ycsb import ycsb as ycsb_collector
-from .tpcc import tpcc as tpcc_collector
-from .dbmsbenchmarker import dbmsbenchmarker as dbmsbenchmarker_collector
+from .base import CollectorBase
+from .benchbase import BenchbaseCollector
+from .ycsb import YcsbCollector
+from .tpcc import TpccCollector
+from .dbmsbenchmarker import DbmsBenchmarkerCollector
 
-__all__ = ["mixed"]
+__all__ = ["MixedCollector"]
 
 # Maps the benchmark tool name stored in queries.config to its collector class.
 _COLLECTOR_FOR_TYPE: dict = {
-    'benchbase':       benchbase_collector,
-    'ycsb':            ycsb_collector,
-    'tpcc':            tpcc_collector,
-    'hammerdb':        tpcc_collector,
-    'dbmsbenchmarker': dbmsbenchmarker_collector,
-    'tpch':            dbmsbenchmarker_collector,
-    'tpcds':           dbmsbenchmarker_collector,
+    'benchbase':       BenchbaseCollector,
+    'ycsb':            YcsbCollector,
+    'tpcc':            TpccCollector,
+    'hammerdb':        TpccCollector,
+    'dbmsbenchmarker': DbmsBenchmarkerCollector,
+    'tpch':            DbmsBenchmarkerCollector,
+    'tpcds':           DbmsBenchmarkerCollector,
 }
 
 
-class mixed(base):
+class MixedCollector(CollectorBase):
     """
     Collector for experiments that contain multiple benchmark types.
 
@@ -58,11 +58,11 @@ class mixed(base):
         :raises KeyError: If ``queries.config`` for the first code does not contain
             ``'benchmark_sequence'``.
         """
-        base.__init__(self, path, codes)
+        CollectorBase.__init__(self, path, codes)
         workload = self.get_workload(codes[0])
         self.benchmark_sequence: list[dict] = workload.get('benchmark_sequence', [])
 
-    def get_typed_collector(self, benchmark_run: int) -> base:
+    def get_typed_collector(self, benchmark_run: int) -> CollectorBase:
         """
         Returns a typed sub-collector scoped to a single benchmark-run index.
 
@@ -72,7 +72,7 @@ class mixed(base):
         :param benchmark_run: 1-based benchmark-run index.
         :type benchmark_run: int
         :return: Typed collector instance filtered to ``benchmark_run``.
-        :rtype: base
+        :rtype: CollectorBase
         :raises StopIteration: If ``benchmark_run`` is not found in
             :attr:`benchmark_sequence`.
         :raises KeyError: If the benchmark type is not registered in

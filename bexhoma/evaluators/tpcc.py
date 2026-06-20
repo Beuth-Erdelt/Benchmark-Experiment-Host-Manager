@@ -1,7 +1,7 @@
 """
 Evaluator for HammerDB TPC-C experiments.
 
-Provides :class:`tpcc`, which extends :class:`logger` to parse and aggregate
+Provides :class:`TpccEvaluator`, which extends :class:`LogEvaluator` to parse and aggregate
 transactions-per-minute (TPM) and throughput results produced by HammerDB.
 
 Authors: Patrick K. Erdelt
@@ -26,10 +26,12 @@ from pathlib import Path
 
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
+
+__all__ = ["TpccEvaluator"]
 
 
-class tpcc(logger):
+class TpccEvaluator(LogEvaluator):
     """
     Evaluator for a HammerDB TPC-C experiment.
 
@@ -58,7 +60,7 @@ class tpcc(logger):
         :rtype: pandas.DataFrame
         """
         # test for known errors
-        logger.log_to_df(self, filename)
+        LogEvaluator.log_to_df(self, filename)
         # extract status and result fields
         try:
             with open(filename) as f:
@@ -384,7 +386,7 @@ class tpcc(logger):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns TPC-C benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -414,7 +416,7 @@ class tpcc(logger):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_loading_per_run(self):
         """
         Returns loading metrics aggregated per experiment run.

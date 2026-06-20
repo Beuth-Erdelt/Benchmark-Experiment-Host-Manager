@@ -1,7 +1,7 @@
 """
 Evaluator for DBMSBenchmarker experiments.
 
-Provides :class:`dbmsbenchmarker`, which extends :class:`logger` to parse
+Provides :class:`DbmsBenchmarkerEvaluator`, which extends :class:`LogEvaluator` to parse
 and aggregate per-query performance results, warnings, errors, and latency
 statistics produced by the DBMSBenchmarker tool.
 
@@ -29,7 +29,10 @@ from scipy.stats import gmean
 import numpy as np
 
 from .base import natural_sort
-from .logger import logger
+from .logger import LogEvaluator
+
+__all__ = ["DbmsBenchmarkerEvaluator", "map_index_to_queryname"]
+
 
 def map_index_to_queryname(numQuery):
     """
@@ -53,7 +56,7 @@ def map_index_to_queryname(numQuery):
     return numQuery
 
 
-class dbmsbenchmarker(logger):
+class DbmsBenchmarkerEvaluator(LogEvaluator):
     """
     Evaluator for a DBMSBenchmarker experiment.
 
@@ -415,7 +418,7 @@ class dbmsbenchmarker(logger):
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -440,7 +443,7 @@ class dbmsbenchmarker(logger):
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
-            return df_aggregated_reduced
+        return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
         """
         Returns benchmarking results with one row per pod, filtered to the key

@@ -1,7 +1,7 @@
 """
 Experiment class for Benchbase benchmarks.
 
-Provides :class:`benchbase`, which extends :class:`mixed` to orchestrate
+Provides :class:`BenchbaseExperiment`, which extends :class:`MixedExperiment` to orchestrate
 Benchbase workloads (e.g., TPC-C, SEATS, Twitter) inside a Kubernetes cluster.
 
 Authors: Patrick K. Erdelt
@@ -14,15 +14,15 @@ import logging
 import urllib3
 
 from bexhoma import benchmarks
-from .mixed import mixed
+from .mixed import MixedExperiment
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["benchbase"]
+__all__ = ["BenchbaseExperiment"]
 
 
-class benchbase(mixed):
+class BenchbaseExperiment(MixedExperiment):
     """
     Benchbase experiment: orchestrates Benchbase loading and benchmarking
     inside a Kubernetes cluster.
@@ -45,7 +45,7 @@ class benchbase(mixed):
         :param num_experiment_to_apply: Repetition count.
         :param timeout: Per-query timeout in seconds.
         """
-        mixed.__init__(self, cluster, code, num_experiment_to_apply, timeout)
+        MixedExperiment.__init__(self, cluster, code, num_experiment_to_apply, timeout)
         self.SF = SF
         self.set_experiment(volume='benchbase')
         self.set_experiment(script='Schema')
@@ -131,6 +131,6 @@ class benchbase(mixed):
                 _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         print("{:30s}: downloading partial results".format("Experiment"))
-        self.experimentdownload_file(filename='')
+        self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
-        self.experimentupload_file(filename='')
+        self.upload_experiment_file(filename='')

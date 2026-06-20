@@ -149,7 +149,7 @@ sleep 30
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -165,7 +165,7 @@ bexhoma tpcds \
   -t 1200 \
   -tr \
   -rss 10Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 
@@ -202,7 +202,7 @@ sleep 30
 # -rr 1024Gi                    RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 1000Gi                   size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 30 \
@@ -220,7 +220,7 @@ bexhoma tpcds \
   -rr 1024Gi \
   -rsr \
   -rss 1000Gi \
-  -rst shared \
+  -rst cephcsi \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 
 wait_process "tpcds"
@@ -245,7 +245,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 30 \
@@ -262,7 +262,7 @@ bexhoma tpcds \
   -lr 1024Gi \
   -rr 1024Gi \
   -rss 1000Gi \
-  -rst shared \
+  -rst cephcsi \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 
 wait_process "tpcds"
@@ -287,7 +287,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 30 \
@@ -304,7 +304,7 @@ bexhoma tpcds \
   -lr 1024Gi \
   -rr 1024Gi \
   -rss 1000Gi \
-  -rst shared \
+  -rst cephcsi \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 
 wait_process "tpcds"
@@ -333,7 +333,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
-# -rst shared                   storage class for persistent volumes
+# -rst cephcsi                   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -352,7 +352,7 @@ bexhoma tpcds \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rst shared \
+  -rst cephcsi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
 

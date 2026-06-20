@@ -1,8 +1,8 @@
 """
 Collector for DBMSBenchmarker experiments.
 
-Provides :func:`map_index_to_queryname` and :class:`dbmsbenchmarker`, which
-extends :class:`base` with query-level aggregation methods for warnings,
+Provides :func:`map_index_to_queryname` and :class:`DbmsBenchmarkerCollector`, which
+extends :class:`CollectorBase` with query-level aggregation methods for warnings,
 errors, and execution latencies across multiple experiment codes.
 
 Authors: Patrick K. Erdelt
@@ -25,7 +25,9 @@ import pprint
 from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
-from .base import base
+from .base import CollectorBase
+
+__all__ = ["DbmsBenchmarkerCollector", "map_index_to_queryname"]
 
 
 def map_index_to_queryname(numQuery):
@@ -50,11 +52,11 @@ def map_index_to_queryname(numQuery):
     return numQuery
 
 
-class dbmsbenchmarker(base):
+class DbmsBenchmarkerCollector(CollectorBase):
     """
     Collector for DBMSBenchmarker experiments.
 
-    Extends :class:`base` with query-level aggregation methods for warnings,
+    Extends :class:`CollectorBase` with query-level aggregation methods for warnings,
     errors, and latencies. Overrides :meth:`get_evaluator` to return a
     :class:`evaluators.dbmsbenchmarker` instance.
     """
@@ -68,7 +70,7 @@ class dbmsbenchmarker(base):
         :type benchmark_run: int
         """
         self.benchmark_run = benchmark_run
-        base.__init__(self, path, codes)
+        CollectorBase.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
         """

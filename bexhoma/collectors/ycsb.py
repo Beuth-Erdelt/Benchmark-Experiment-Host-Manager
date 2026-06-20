@@ -1,9 +1,9 @@
 """
 Collector for YCSB experiments.
 
-Provides :class:`ycsb`, a thin subclass of :class:`base` that wires up
+Provides :class:`YcsbCollector`, a thin subclass of :class:`CollectorBase` that wires up
 :class:`evaluators.ycsb` as the evaluator. All data collection and
-aggregation logic is inherited from :class:`base`.
+aggregation logic is inherited from :class:`CollectorBase`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -25,15 +25,17 @@ import pprint
 from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
-from .base import base
+from .base import CollectorBase
+
+__all__ = ["YcsbCollector"]
 
 
-class ycsb(base):
+class YcsbCollector(CollectorBase):
     """
     Collector for YCSB experiments.
 
     Overrides :meth:`get_evaluator` to return a :class:`evaluators.ycsb` instance.
-    All data collection and aggregation methods are inherited from :class:`base`.
+    All data collection and aggregation methods are inherited from :class:`CollectorBase`.
     """
     def __init__(self, path, codes, benchmark_run: int = 0):
         """
@@ -45,7 +47,7 @@ class ycsb(base):
         :type benchmark_run: int
         """
         self.benchmark_run = benchmark_run
-        base.__init__(self, path, codes)
+        CollectorBase.__init__(self, path, codes)
 
     def get_evaluator(self, code=''):
         """

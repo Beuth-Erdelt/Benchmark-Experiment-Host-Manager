@@ -2,205 +2,242 @@
 
 ### Workload
 TPC-DS Queries SF=3
-    Type: tpcds
-    Duration: 24521s 
-    Code: 1771584628
-    This includes the reading queries of TPC-DS.
-    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-    TPC-DS (SF=3) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q99.
-    All instances use the same query parameters.
-    Timeout per query is 1200.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.20.
-    System metrics are monitored by a cluster-wide installation.
-    Application metrics are monitored by sidecar containers.
-    Experiment is limited to DBMS ['MySQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [8] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpcds
+* Duration: 4004s 
+* Code: 1781468695
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=3) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.9.13.
+  * System metrics are monitored by a cluster-wide installation.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:541008474112
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:146007
-    datadisk:46385
-    cpu_list:0-63
-    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1771584628
+* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:252787
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1781468695
+
+### Workflow
+
+#### Actual
+
+* DBMS MySQL-1 - Pods [[1]]
+
+#### Planned
+
+* DBMS MySQL-1 - Pods [[1]]
+
+### Loading
+
+#### Per Run
+
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MySQL-1-1 |                1 |    3 |     2151.00 |           2.00 |            1.00 |        238.00 |         1903.00 |              8 |           0 |             | None           |             0 | False         |                5.02 |
+
+### Execution
+
+#### Per Connection
+
+|                 | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |       1665 |            2.79 |             3882.06 |            642.16 |          -1 |
+
+#### Per Phase
+
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |       1665 |            2.79 |             3882.06 |            642.16 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries       |   MySQL-1-1-1-1-1 |
+|:--------------|------------------:|
+| TPC-DS Q1     |             68.68 |
+| TPC-DS Q2     |          13646.06 |
+| TPC-DS Q3     |             24.53 |
+| TPC-DS Q4     |         130145.38 |
+| TPC-DS Q5     |          36280.40 |
+| TPC-DS Q6     |         302405.04 |
+| TPC-DS Q7     |           1239.93 |
+| TPC-DS Q8     |           1082.79 |
+| TPC-DS Q9     |          14441.72 |
+| TPC-DS Q10    |            244.11 |
+| TPC-DS Q11    |          81358.53 |
+| TPC-DS Q12    |            903.46 |
+| TPC-DS Q13    |           3977.42 |
+| TPC-DS Q14a+b |         133585.12 |
+| TPC-DS Q15    |            676.98 |
+| TPC-DS Q16    |            464.33 |
+| TPC-DS Q17    |           1533.39 |
+| TPC-DS Q18    |           1791.16 |
+| TPC-DS Q19    |           1077.69 |
+| TPC-DS Q20    |           1689.41 |
+| TPC-DS Q21    |          71182.57 |
+| TPC-DS Q22    |          12586.22 |
+| TPC-DS Q23a+b |         178036.43 |
+| TPC-DS Q24a+b |           6074.00 |
+| TPC-DS Q25    |            535.56 |
+| TPC-DS Q26    |            919.83 |
+| TPC-DS Q27    |           1024.27 |
+| TPC-DS Q28    |          11082.82 |
+| TPC-DS Q29    |            502.74 |
+| TPC-DS Q30    |           4904.70 |
+| TPC-DS Q31    |          40607.21 |
+| TPC-DS Q32    |            586.57 |
+| TPC-DS Q33    |            781.82 |
+| TPC-DS Q34    |           2167.75 |
+| TPC-DS Q35    |           8486.08 |
+| TPC-DS Q36    |           4809.33 |
+| TPC-DS Q37    |             21.36 |
+| TPC-DS Q38    |          25968.18 |
+| TPC-DS Q39a+b |           6149.33 |
+| TPC-DS Q40    |            536.23 |
+| TPC-DS Q41    |           6023.55 |
+| TPC-DS Q42    |            960.84 |
+| TPC-DS Q43    |              4.89 |
+| TPC-DS Q44    |              3.10 |
+| TPC-DS Q45    |            446.36 |
+| TPC-DS Q46    |           4204.75 |
+| TPC-DS Q47    |          11764.01 |
+| TPC-DS Q48    |           4653.84 |
+| TPC-DS Q49    |           1798.71 |
+| TPC-DS Q50    |             76.55 |
+| TPC-DS Q51    |          20381.38 |
+| TPC-DS Q52    |            981.64 |
+| TPC-DS Q53    |            740.55 |
+| TPC-DS Q54    |           8778.52 |
+| TPC-DS Q55    |            938.12 |
+| TPC-DS Q56    |            785.82 |
+| TPC-DS Q57    |          10805.37 |
+| TPC-DS Q58    |          20543.70 |
+| TPC-DS Q59    |          21638.50 |
+| TPC-DS Q60    |           1714.03 |
+| TPC-DS Q61    |           2208.16 |
+| TPC-DS Q62    |           9088.95 |
+| TPC-DS Q63    |            774.55 |
+| TPC-DS Q64    |           1238.58 |
+| TPC-DS Q65    |          23766.86 |
+| TPC-DS Q66    |           6998.86 |
+| TPC-DS Q67    |          27165.87 |
+| TPC-DS Q68    |           1036.31 |
+| TPC-DS Q69    |           1683.86 |
+| TPC-DS Q70    |          40588.79 |
+| TPC-DS Q71    |           1695.29 |
+| TPC-DS Q72    |          48356.36 |
+| TPC-DS Q73    |            941.51 |
+| TPC-DS Q74    |          18004.11 |
+| TPC-DS Q75    |           5967.71 |
+| TPC-DS Q76    |           1467.64 |
+| TPC-DS Q77    |          31422.89 |
+| TPC-DS Q78    |          41830.03 |
+| TPC-DS Q79    |           3200.76 |
+| TPC-DS Q80    |          29073.93 |
+| TPC-DS Q81    |           3708.45 |
+| TPC-DS Q82    |             86.01 |
+| TPC-DS Q83    |           2350.93 |
+| TPC-DS Q84    |            125.61 |
+| TPC-DS Q85    |            272.76 |
+| TPC-DS Q86    |           3590.40 |
+| TPC-DS Q87    |          26068.76 |
+| TPC-DS Q88    |          32857.42 |
+| TPC-DS Q89    |           7201.31 |
+| TPC-DS Q90    |           1272.61 |
+| TPC-DS Q91    |             58.97 |
+| TPC-DS Q92    |             87.19 |
+| TPC-DS Q93    |            134.55 |
+| TPC-DS Q94    |           1339.34 |
+| TPC-DS Q95    |          12762.98 |
+| TPC-DS Q96    |           2824.45 |
+| TPC-DS Q97    |          19786.22 |
+| TPC-DS Q98    |           3388.30 |
+| TPC-DS Q99    |          17564.79 |
 
 ### Errors (failed queries)
+
 No errors
 
 ### Warnings (result mismatch)
+
 No warnings
 
-### Latency of Timer Execution [ms]
-DBMS           MySQL-BHT-64-1-1
-TPC-DS Q1                 66.10
-TPC-DS Q2              60220.98
-TPC-DS Q3                137.65
-TPC-DS Q4             503216.44
-TPC-DS Q5             163976.58
-TPC-DS Q6            1192587.67
-TPC-DS Q7             121009.76
-TPC-DS Q8               3768.93
-TPC-DS Q9              48573.80
-TPC-DS Q10              1275.05
-TPC-DS Q11            307173.99
-TPC-DS Q12              4030.35
-TPC-DS Q13             13439.28
-TPC-DS Q14a+b         688603.48
-TPC-DS Q15              2526.26
-TPC-DS Q16              1417.31
-TPC-DS Q17              7777.87
-TPC-DS Q18              6189.38
-TPC-DS Q19              4165.34
-TPC-DS Q20              7502.47
-TPC-DS Q21            324885.54
-TPC-DS Q22             58184.25
-TPC-DS Q23a+b         450748.22
-TPC-DS Q24a+b          56284.81
-TPC-DS Q25              1968.09
-TPC-DS Q26              3136.60
-TPC-DS Q27             39105.28
-TPC-DS Q28             37904.14
-TPC-DS Q29              1980.07
-TPC-DS Q30             14123.61
-TPC-DS Q31            162051.11
-TPC-DS Q32              7073.27
-TPC-DS Q33              3151.79
-TPC-DS Q34             12652.11
-TPC-DS Q35             28830.66
-TPC-DS Q36             18518.01
-TPC-DS Q37                52.79
-TPC-DS Q38            115703.93
-TPC-DS Q39a+b          23416.22
-TPC-DS Q40              2450.99
-TPC-DS Q41             25096.43
-TPC-DS Q42              3247.70
-TPC-DS Q43                 4.08
-TPC-DS Q44                 2.50
-TPC-DS Q45              1797.58
-TPC-DS Q46             16107.99
-TPC-DS Q47             56185.08
-TPC-DS Q48             15909.86
-TPC-DS Q49              5017.69
-TPC-DS Q50               245.43
-TPC-DS Q51             84646.87
-TPC-DS Q52              3301.94
-TPC-DS Q53              4001.20
-TPC-DS Q54             36753.10
-TPC-DS Q55              4483.47
-TPC-DS Q56              2868.10
-TPC-DS Q57             49502.50
-TPC-DS Q58             92699.12
-TPC-DS Q59             93902.42
-TPC-DS Q60              6354.53
-TPC-DS Q61              7882.74
-TPC-DS Q62             41476.71
-TPC-DS Q63              3648.79
-TPC-DS Q64              4987.81
-TPC-DS Q65            108494.90
-TPC-DS Q66             30721.71
-TPC-DS Q67            122478.74
-TPC-DS Q68              3806.31
-TPC-DS Q69              5890.99
-TPC-DS Q70            180052.64
-TPC-DS Q71              7001.48
-TPC-DS Q72            193325.23
-TPC-DS Q73              4028.17
-TPC-DS Q74             71237.17
-TPC-DS Q75             22856.29
-TPC-DS Q76              7991.00
-TPC-DS Q77            127451.14
-TPC-DS Q78            158176.91
-TPC-DS Q79             11742.77
-TPC-DS Q80            117803.97
-TPC-DS Q81             61424.18
-TPC-DS Q82                70.30
-TPC-DS Q83             10457.95
-TPC-DS Q84               466.89
-TPC-DS Q85              2957.11
-TPC-DS Q86             16190.82
-TPC-DS Q87            117585.01
-TPC-DS Q88            145850.46
-TPC-DS Q89             28527.88
-TPC-DS Q90             19509.30
-TPC-DS Q91               189.89
-TPC-DS Q92               249.87
-TPC-DS Q93               412.04
-TPC-DS Q94              6060.08
-TPC-DS Q95             47188.21
-TPC-DS Q96              9758.15
-TPC-DS Q97             84372.43
-TPC-DS Q98             15624.73
-TPC-DS Q99             78621.16
+### Monitoring
 
-### Loading [s]
-                  timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MySQL-BHT-64-1-1           1.0          929.0         8.0    17291.0   18235.0
+### Loading phase: SUT deployment
 
-### Geometric Mean of Medians of Timer Run [s]
-                  Geo Times [s]
-DBMS                           
-MySQL-BHT-64-1-1          11.68
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |      4078.54 |      7.41 |          27.17 |                 54.75 |
 
-### Power@Size ((3600*SF)/(geo times))
-                  Power@Size [~Q/h]
-DBMS                               
-MySQL-BHT-64-1-1             926.25
+### Loading phase: component data generator
 
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                              time [s]  count   SF  Throughput@Size
-DBMS           SF  num_experiment num_client                                       
-MySQL-BHT-64-1 3.0 1              1               6894      1  3.0           155.09
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
-### Workflow
-                       orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MySQL-BHT-64-1-1  MySQL-BHT-64-1  3.0     8               1           1       1771602183     1771609077
+### Loading phase: component loader
 
-#### Actual
-DBMS MySQL-BHT-64 - Pods [[1]]
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |        14.39 |      0.37 |           0.01 |                  2.43 |
 
-#### Planned
-DBMS MySQL-BHT-64 - Pods [[1]]
+### Execution phase: SUT deployment
 
-### Ingestion - Loader
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1        11.1     0.02          0.01                 2.66
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |      1643.22 |      1.02 |          31.64 |                 59.45 |
 
-### Execution - SUT
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1    12119.43     2.07         52.82                 64.0
+### Execution phase: component benchmarker
 
-### Execution - Benchmarker
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1       32.71     0.32          0.43                 0.44
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |        25.31 |      0.53 |           0.40 |                  0.41 |
 
 ### Application Metrics
-                InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
-MySQL-BHT-64-1                          0.12                      0.66                     0.0               0.03                    0.0
+
+#### Loading phase: SUT deployment
+
+| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
+|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
+| MySQL-1-1-1-1 |                           1.00 |                       0.97 |                     0.01 |                0.04 |                    0.00 |
+
+#### Execution phase: SUT deployment
+
+| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
+|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
+| MySQL-1-1-1-1 |                           1.00 |                       0.81 |                     0.00 |                0.03 |                    0.00 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST passed: Workflow as planned
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Loading phase: component data generator contains 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

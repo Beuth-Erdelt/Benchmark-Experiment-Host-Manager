@@ -78,7 +78,7 @@ bexhoma ycsb `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
-  -rst shared                   <# storage class for persistent volumes #> `
+  -rst cephcsi                   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

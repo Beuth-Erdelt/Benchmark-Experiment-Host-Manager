@@ -79,7 +79,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_twitter_simple.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload twitter SF=16
@@ -191,7 +191,7 @@ bexhoma benchbase \
 
 doc_benchbase_testcase_twitter_scale.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload twitter SF=1600
@@ -453,7 +453,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_chbenchmark_simple.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload chbenchmark SF=10
@@ -563,7 +563,7 @@ bexhoma benchbase \
 
 doc_benchbase_testcase_chbenchmark_scale.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload chbenchmark SF=100
@@ -776,7 +776,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_c.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -897,7 +897,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_a.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1017,7 +1017,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_b.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1142,7 +1142,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_d.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1246,7 +1246,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_e.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000
@@ -1346,7 +1346,7 @@ At the end of a benchmark you will see a summary like
 
 doc_benchbase_testcase_ycsb_f.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload ycsb SF=1000

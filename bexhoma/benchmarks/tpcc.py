@@ -66,14 +66,14 @@ class TPCC(Benchmark):
         extra_keying = int(args.extra_keying)
         if mode == 'run':
             experiment.set_workload(
-                name='HammerDB Workload SF={} (warehouses for TPC-C)'.format(SF),
+                name=f'HammerDB Workload SF={SF} (warehouses for TPC-C)',
                 info='This experiment compares run time and resource consumption of TPC-C queries in different DBMS.',
                 type='tpcc',
                 defaultParameters={'SF': SF},
             )
         elif mode == 'load':
             experiment.set_workload(
-                name='HammerDB Data Loading SF={} (warehouses for TPC-C)'.format(SF),
+                name=f'HammerDB Data Loading SF={SF} (warehouses for TPC-C)',
                 info='This imports TPC-C data sets.',
                 type='tpcc',
                 defaultParameters={'SF': SF},
@@ -92,10 +92,10 @@ class TPCC(Benchmark):
             experiment.workload['info'] += "\nTPC-C data is generated and loaded using several threads."
         if experiment.loading_is_active() or experiment.benchmarking_is_active():
             if SF:
-                experiment.workload['info'] += "\nScaling factor (i.e., number of warehouses) is {}.".format(SF)
+                experiment.workload['info'] += f"\nScaling factor (i.e., number of warehouses) is {SF}."
         if experiment.benchmarking_is_active():
             if SD:
-                experiment.workload['info'] += " Benchmarking runs for {} minutes.".format(SD)
+                experiment.workload['info'] += f" Benchmarking runs for {SD} minutes."
             if extra_keying:
                 experiment.workload['info'] += " Benchmarking has keying and thinking times activated."
             if extra_latency:

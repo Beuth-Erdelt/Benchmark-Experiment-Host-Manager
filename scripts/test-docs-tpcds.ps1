@@ -114,7 +114,7 @@ bexhoma tpcds `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 10Gi                     <# size of the persistent volume claim #> `
-  -rst shared                   <# storage class for persistent volumes #> `
+  -rst cephcsi                   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -154,7 +154,7 @@ bexhoma tpcds `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst shared                   <# storage class for persistent volumes #> `
+  -rst cephcsi                   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_1.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpcds"
@@ -180,7 +180,7 @@ bexhoma tpcds `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst shared                   <# storage class for persistent volumes #> `
+  -rst cephcsi                   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_2.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpcds"
@@ -206,7 +206,7 @@ bexhoma tpcds `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst shared                   <# storage class for persistent volumes #> `
+  -rst cephcsi                   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_3.log" -Encoding utf8
 
 Wait-BexhomaProcess "tpcds"
@@ -236,7 +236,7 @@ bexhoma tpcds `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
-  -rst shared                   <# storage class for persistent volumes #> `
+  -rst cephcsi                   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

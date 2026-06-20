@@ -1,11 +1,11 @@
 """
 Base collector class for aggregating results from multiple bexhoma experiments.
 
-Provides :func:`get_non_constant` and :class:`base`, which handles reading
+Provides :func:`get_non_constant` and :class:`CollectorBase`, which handles reading
 workload and connection configurations, collecting performance metrics per
 client and per phase, and aggregating monitoring time-series data across
 experiment codes — including multi-tenant variants. Subclasses override
-:meth:`base.get_evaluator` to supply the benchmark-specific evaluator.
+:meth:`CollectorBase.get_evaluator` to supply the benchmark-specific evaluator.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -28,6 +28,8 @@ from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
 
+__all__ = ["CollectorBase", "get_non_constant"]
+
 
 def get_non_constant(df):
     """
@@ -43,7 +45,7 @@ def get_non_constant(df):
     return df.loc[:, df.apply(is_not_constant)]
 
 
-class base():
+class CollectorBase:
     """
     Base class for collecting and aggregating results from several experiments.
 
@@ -540,7 +542,10 @@ class base():
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluation = self.get_evaluator(code)
-        df = evaluation.get_monitoring_metric(metric=metric, component=component).T
+        df = evaluation.get_monitoring_metric(metric=metric, component=component)
+        if df.empty:
+            return pd.DataFrame()
+        df = df.T
         df.index = code + '-' + df.index.astype(str)
         return df
 
@@ -563,13 +568,15 @@ class base():
         5. **Multi-tenant key join** — when both DataFrames have
            ``(code, experiment_run, client, type_tenants, num_tenants)`` columns.
 
-        If none of the strategies match, a warning is printed and ``None`` is returned.
+        If none of the strategies match, a warning is printed and an empty DataFrame is returned.
 
         :param df: Monitoring DataFrame to enrich with connection metadata.
         :type df: pandas.DataFrame
-        :return: Enriched DataFrame with connection metadata columns added.
+        :return: Enriched DataFrame with connection metadata columns added, or empty on failure.
         :rtype: pandas.DataFrame
         """
+        if df is None or df.empty:
+            return pd.DataFrame()
         df_connections = self.get_connections()
         intersection_job = df.index.intersection(df_connections['job'])
         intersection_phase = df.index.intersection(df_connections['phase'])
@@ -672,6 +679,7 @@ class base():
 
         else:
             print("add_metadata: combine failed!")
+            return pd.DataFrame()
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
         """
