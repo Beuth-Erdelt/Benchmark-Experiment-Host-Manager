@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for TPC-H experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -39,7 +39,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_compare.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_compare.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H compare  sf=1"
 
 
@@ -64,7 +64,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_monitoring.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_monitoring.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H monitoring  sf=10"
 
 
@@ -87,7 +87,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_throughput.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_throughput.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
@@ -116,7 +116,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_storage.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_storage.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H storage  sf=1  nc=2"
 
 
@@ -141,7 +141,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_fractional.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_fractional.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
@@ -180,7 +180,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_monetdb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
@@ -209,7 +209,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_monetdb_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
@@ -238,7 +238,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_monetdb_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 

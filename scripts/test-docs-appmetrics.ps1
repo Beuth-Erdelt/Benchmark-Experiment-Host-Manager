@@ -40,7 +40,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_postgresql_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_run_postgresql_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -68,7 +68,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=1,8"
 
 
@@ -94,7 +94,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 
 
@@ -120,7 +120,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
+Wait-BexhomaLog "$LOG_DIR\doc_tpcds_testcase_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS PostgreSQL appmetrics  sf=3"
 
 
@@ -143,7 +143,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "hammerdb"
+Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_testcase_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -171,7 +171,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_mysql_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_run_mysql_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -200,7 +200,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_mysql_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_run_mysql_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 
 
@@ -226,7 +226,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_run_mysql_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_run_mysql_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL appmetrics  sf=3"
 
 
@@ -253,7 +253,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_run_mysql_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
+Wait-BexhomaLog "$LOG_DIR\doc_tpcds_run_mysql_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL appmetrics  sf=3"
 
 
@@ -277,7 +277,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_run_mysql_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "hammerdb"
+Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_run_mysql_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -312,7 +312,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_cockroachdb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_run_cockroachdb_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB appmetrics  sf=10  nbp=1"
 
 
@@ -337,7 +337,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_cockroachdb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_run_cockroachdb_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB appmetrics  sf=16  nbp=1,2"
 
 
@@ -371,7 +371,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_redis_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_run_redis_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
 
 
@@ -404,7 +404,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_tidb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_run_tidb_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB appmetrics  sf=1  nbp=1"
 
 
@@ -425,7 +425,7 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_tidb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_run_tidb_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=1,2"
 
 
@@ -463,7 +463,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_pgbouncer_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_run_pgbouncer_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=16"
 
 
@@ -490,7 +490,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_pgbouncer_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_run_pgbouncer_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase PGBouncer appmetrics  sf=16  nbp=1,2"
 
 

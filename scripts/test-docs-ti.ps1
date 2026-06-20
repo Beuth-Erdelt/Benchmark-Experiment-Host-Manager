@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for TiDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -45,7 +45,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_tidb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_tidb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB  sf=1  nbp=1"
 
 
@@ -66,7 +66,7 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_tidb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_tidb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 
 

@@ -54,7 +54,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_databaseservice_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
 
@@ -83,7 +83,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_databaseservice_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
 # delete database service placeholder
@@ -130,7 +130,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_databaseservice_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
 
@@ -169,7 +169,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_databaseservice_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_databaseservice_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
@@ -189,7 +189,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_databaseservice_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_databaseservice_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
 
@@ -232,7 +232,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_databaseservice_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService  sf=3"
 
 
@@ -257,7 +257,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_databaseservice_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
 
@@ -300,7 +300,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_databaseservice_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
 
@@ -326,7 +326,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_4.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_databaseservice_4.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 
 

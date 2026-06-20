@@ -58,7 +58,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
@@ -98,7 +98,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/test_tpch_run_postgresql_tenants_database.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
@@ -136,7 +136,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/test_tpch_run_postgresql_tenants_container.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -185,7 +185,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
@@ -225,7 +225,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
@@ -265,7 +265,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -314,7 +314,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/test_benchbase_run_mysql_tenants_database.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms MySQL                   DBMS under test
@@ -354,7 +354,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/test_benchbase_run_mysql_tenants_container.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 

@@ -56,7 +56,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_loading.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_loading.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading  sf=1  nlp=1,8"
 
 
@@ -96,7 +96,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_benchmarking.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
 
 
@@ -140,7 +140,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_monitoring.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB monitoring  sf=3  nbp=1,8"
 
 
@@ -189,7 +189,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_storage.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_storage.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
 
 
@@ -227,7 +227,7 @@ bexhoma ycsb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
   run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_loading_patch.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading patch  sf=1  nlp=1"
 
 
@@ -280,7 +280,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_a.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_a.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload a  sf=10  nbp=1,8"
 
 
@@ -328,7 +328,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_b.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_b.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload b  sf=10  nbp=1,8"
 
 
@@ -376,7 +376,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_c.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_c.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload c  sf=10  nbp=1,8"
 
 
@@ -426,7 +426,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_d.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_d.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload d  sf=10  nbp=1"
 
 
@@ -476,7 +476,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_e.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_e.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload e  sf=10  nbp=1"
 
 
@@ -524,7 +524,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_f.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_testcase_f.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload f  sf=10  nbp=1,8"
 
 

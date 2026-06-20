@@ -120,7 +120,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_yugabytedb_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 #### YCSB Execution (Example-YugaByteDB.md)
@@ -167,7 +167,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_yugabytedb_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
@@ -228,7 +228,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_yugabytedb_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
@@ -271,7 +271,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/doc_benchbase_yugabytedb_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
@@ -318,7 +318,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/doc_benchbase_yugabytedb_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
@@ -374,7 +374,7 @@ bexhoma ycsb \
   -tr \
   run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 
-wait_process "ycsb"
+wait_log "$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
@@ -415,7 +415,7 @@ bexhoma benchbase \
   -tr \
   run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 
-wait_process "benchbase"
+wait_log "$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 

@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for collector experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -49,7 +49,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_collector_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -78,7 +78,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_collector_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -104,7 +104,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_collector_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
@@ -143,7 +143,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_schema.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_collector_tenants_schema.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- DATABASE ----------------
@@ -172,7 +172,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_database.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_collector_tenants_database.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- CONTAINER ----------------
@@ -201,7 +201,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_container.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_collector_tenants_container.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -236,7 +236,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_collector_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 1/3  sf=3"
 
 bexhoma tpch `
@@ -263,7 +263,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_collector_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 2/3  sf=6"
 
 bexhoma tpch `
@@ -287,7 +287,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_collector_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 3/3  sf=6"
 
 
@@ -328,7 +328,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_schema.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_collector_tenants_schema.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- DATABASE ----------------
@@ -360,7 +360,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_database.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_collector_tenants_database.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- CONTAINER ----------------
@@ -392,7 +392,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_container.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
+Wait-BexhomaLog "$LOG_DIR\doc_tpch_testcase_collector_tenants_container.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
@@ -429,7 +429,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_collector_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -460,7 +460,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_collector_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -488,7 +488,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_collector_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
@@ -522,7 +522,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "hammerdb"
+Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_testcase_collector_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -548,7 +548,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "hammerdb"
+Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_testcase_collector_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -571,7 +571,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "hammerdb"
+Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_testcase_collector_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 

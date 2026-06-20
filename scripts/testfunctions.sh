@@ -20,11 +20,11 @@
 # Default variable values (override after sourcing if needed)
 # ---------------------------------------------------------------------------
 
-BEXHOMA_NODE_SUT="cl-worker14"
+BEXHOMA_NODE_SUT="cl-worker38"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
-BEXHOMA_MS=1
+BEXHOMA_MS=10
 
 
 # ---------------------------------------------------------------------------
@@ -54,6 +54,22 @@ wait_process() {
     done
 
     echo "$(date +"%Y-%m-%d %H:%M:%S"): Process python $process_name.py has terminated."
+}
+
+
+wait_log() {
+    local log_file=$1
+
+    while [[ ! -f "$log_file" ]]; do
+        sleep 2
+    done
+
+    while lsof "$log_file" > /dev/null 2>&1; do
+        echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for log to close: $log_file"
+        sleep 10
+    done
+
+    echo "$(date +"%Y-%m-%d %H:%M:%S"): Log closed: $log_file"
 }
 
 
@@ -118,8 +134,8 @@ echo "Checks passed. Proceeding..."
 # Wait for any pre-existing jobs
 # ---------------------------------------------------------------------------
 
-wait_process "tpch"
-wait_process "tpcds"
-wait_process "hammerdb"
-wait_process "benchbase"
-wait_process "ycsb"
+#wait_process "tpch"
+#wait_process "tpcds"
+#wait_process "hammerdb"
+#wait_process "benchbase"
+#wait_process "ycsb"

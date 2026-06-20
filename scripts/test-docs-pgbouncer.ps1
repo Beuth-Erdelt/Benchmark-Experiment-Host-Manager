@@ -49,7 +49,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_ycsb_testcase_pgbouncer_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\test_ycsb_testcase_pgbouncer_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=16  nbp=16"
 
 
@@ -84,7 +84,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_ycsb_testcase_pgbouncer_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
+Wait-BexhomaLog "$LOG_DIR\test_ycsb_testcase_pgbouncer_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
 
 
@@ -109,7 +109,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_newconn.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_newconn.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
@@ -133,7 +133,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_newconn_pool.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
+Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_newconn_pool.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 

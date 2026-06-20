@@ -48,7 +48,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_compare.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_testcase_compare.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
 
 
@@ -86,7 +86,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_testcase_monitoring.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
 
@@ -120,7 +120,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_testcase_throughput.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
@@ -161,7 +161,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_storage.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_testcase_storage.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
 
@@ -199,7 +199,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_testcase_fractional.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
@@ -255,7 +255,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_monetdb_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
@@ -301,7 +301,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_monetdb_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
@@ -347,7 +347,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 
-wait_process "tpch"
+wait_log "$LOG_DIR/doc_tpch_monetdb_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 
