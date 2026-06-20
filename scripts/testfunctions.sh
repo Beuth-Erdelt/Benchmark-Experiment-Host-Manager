@@ -64,8 +64,8 @@ wait_log() {
         sleep 2
     done
 
+    echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for log to close: $log_file"
     while lsof "$log_file" > /dev/null 2>&1; do
-        echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for log to close: $log_file"
         sleep 10
     done
 

@@ -46,18 +46,18 @@ function Wait-BexhomaLog {
     while (-not (Test-Path $LogFile)) {
         Start-Sleep -Seconds 2
     }
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for log to close: $LogFile"
     while ($true) {
         try {
             $stream = [System.IO.File]::Open(
                 $LogFile,
                 [System.IO.FileMode]::Open,
                 [System.IO.FileAccess]::ReadWrite,
-                [System.IO.FileShare]::None
+                [System.IO.FileShare]::Read
             )
             $stream.Close()
             break
         } catch [System.IO.IOException] {
-            Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for log to close: $LogFile"
             Start-Sleep -Seconds 10
         }
     }

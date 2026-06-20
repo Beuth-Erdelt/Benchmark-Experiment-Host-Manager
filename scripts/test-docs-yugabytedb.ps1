@@ -65,7 +65,7 @@ function Wait-BexhomaLog {
                 $LogFile,
                 [System.IO.FileMode]::Open,
                 [System.IO.FileAccess]::ReadWrite,
-                [System.IO.FileShare]::None
+                [System.IO.FileShare]::Read
             )
             $stream.Close()
             break
