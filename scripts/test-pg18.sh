@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Test runs for PostgreSQL 18 configurations and features.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to

@@ -1,676 +1,295 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1773304403
-Experiment                    : starts at 2026-03-12 09:33:26.552710 (100882.184642)
+Experiment                    : has code 1781467828
+Experiment                    : starts at 2026-06-14 22:10:29.670393 (333332.0580618)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.9.3.
+Experiment uses bexhoma version 0.9.13.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker14.
+SUT is fixed to cl-worker38.
 Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-MySQL-BHT-64                  : will start now
-MySQL-BHT-64                  : deployments ['sut']
-MySQL-BHT-64                  : stateful sets []
-MySQL-BHT-64                  : pvcs ['sut']
-MySQL-BHT-64                  : name of SUT pods = bexhoma-sut-mysql-bht-64-1773304403
-MySQL-BHT-64                  : name of SUT service = bexhoma-sut-mysql-bht-64-1773304403
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1781467828
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1781467828
 - waiting 30s -               : done
-MySQL-BHT-64                  : waits for monitoring
-MySQL-BHT-64                  : wants to monitor all components in cluster
-MySQL-BHT-64                  : starts monitoring with prometheus pod
-MySQL-BHT-64                  : need application monitoring for sut
+MySQL-1                       : waits for monitoring
+MySQL-1                       : wants to monitor all components in cluster
+MySQL-1                       : starts monitoring with prometheus pod
+MySQL-1                       : need application monitoring for sut
 - waiting 30s -               : done
-MySQL-BHT-64                  : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-64                  : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-64                  : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-64                  : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2026-03-12 08:39:24 (that is in 120 secs)
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-14 20:15:44 (that is in 120 secs)
 - waiting 30s -               : done
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2026-03-12 08:39:24
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-14 20:15:44
 - waiting 30s -               : done
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2026-03-12 08:39:24
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-14 20:15:44
 - waiting 30s -               : done
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : will start loading but not before 2026-03-12 08:39:24
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-14 20:15:44
 - waiting 30s -               : done
-MySQL-BHT-64                  : is not loaded yet
-MySQL-BHT-64                  : connect to pod bexhoma-sut-mysql-bht-64-1773304403-5b499bfd79-xpn2b to load scripts
-MySQL-BHT-64                  : start asynch loading scripts of type loaded
-MySQL-BHT-64                  : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1781467828-64fd8874c7-4xqq5 to load scripts
+MySQL-1                       : start asynch loading scripts of type loaded
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-64                  : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-64                  : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-64                  : is loading
+MySQL-1                       : showing loader times
+MySQL-1                       : generator times (start/end per pod and container) [(1781468195, 1781468195), (1781468195, 1781468195), (1781468196, 1781468196), (1781468172, 1781468172), (1781468174, 1781468174), (1781468193, 1781468193), (1781468193, 1781468193), (1781468194, 1781468194)]
+MySQL-1                       : loader times (start/end per pod and container) [(1781468200, 1781468250), (1781468200, 1781468253), (1781468200, 1781468246), (1781468200, 1781468252), (1781468200, 1781468253), (1781468201, 1781468253), (1781468200, 1781468254), (1781468200, 1781468254)]
+MySQL-1                       : total times (start/end per pod and container) [(1781468195, 1781468195), (1781468195, 1781468195), (1781468196, 1781468196), (1781468172, 1781468172), (1781468174, 1781468174), (1781468193, 1781468193), (1781468193, 1781468193), (1781468194, 1781468194), (1781468200, 1781468250), (1781468200, 1781468253), (1781468200, 1781468246), (1781468200, 1781468252), (1781468200, 1781468253), (1781468201, 1781468253), (1781468200, 1781468254), (1781468200, 1781468254)]
+MySQL-1                       : generator timespan (first to last [s]) = 24
+MySQL-1                       : loader timespan (first to last [s]) = 54
+MySQL-1                       : total timespan (first to last [s]) = 82
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1781467828-64fd8874c7-4xqq5 to load scripts
+MySQL-1                       : start asynch loading scripts of type indexed
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-64                  : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : showing loader times
-MySQL-BHT-64                  : generator times (start/end per pod and container) [(1773304841, 1773304842), (1773304833, 1773304833), (1773304836, 1773304836), (1773304832, 1773304832), (1773304831, 1773304831), (1773304831, 1773304831), (1773304839, 1773304839), (1773304830, 1773304830)]
-MySQL-BHT-64                  : loader times (start/end per pod and container) [(1773304848, 1773305425), (1773304848, 1773305426), (1773304848, 1773305494), (1773304848, 1773305496), (1773304848, 1773305499), (1773304848, 1773305499), (1773304848, 1773305476), (1773304849, 1773305499)]
-MySQL-BHT-64                  : total times (start/end per pod and container) [(1773304841, 1773304842), (1773304833, 1773304833), (1773304836, 1773304836), (1773304832, 1773304832), (1773304831, 1773304831), (1773304831, 1773304831), (1773304839, 1773304839), (1773304830, 1773304830), (1773304848, 1773305425), (1773304848, 1773305426), (1773304848, 1773305494), (1773304848, 1773305496), (1773304848, 1773305499), (1773304848, 1773305499), (1773304848, 1773305476), (1773304849, 1773305499)]
-MySQL-BHT-64                  : generator timespan (first to last [s]) = 12
-MySQL-BHT-64                  : loader timespan (first to last [s]) = 651
-MySQL-BHT-64                  : total timespan (first to last [s]) = 669
-MySQL-BHT-64                  : connect to pod bexhoma-sut-mysql-bht-64-1773304403-5b499bfd79-xpn2b to load scripts
-MySQL-BHT-64                  : start asynch loading scripts of type indexed
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
-- waiting 30s -               : done
-MySQL-BHT-64                  : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-MySQL-BHT-64                  : benchmarks done 0 of 1. This will be client 1
-MySQL-BHT-64-1                : start benchmarking
-MySQL-BHT-64-1                : needs monitoring (common metrics) for deployment sut
-MySQL-BHT-64                  : need application metrics for sut
-MySQL-BHT-64                  : load application metrics of type mysql
-MySQL-BHT-64                  : benchmarking results in folder D:\data\benchmarks/1773304403
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-1781467828 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 1
+MySQL-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1                       : need application metrics for sut
+MySQL-1                       : load application metrics of type mysql
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1781467828
 - waiting 10s -               : done
-MySQL-BHT-64                  : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-64-1773304403-1-1-qrlct: .found
-MySQL-BHT-64-1                : needs monitoring (common metrics) for deployment sut
-MySQL-BHT-64-1                : collecting loading metrics of SUT at connection MySQL-BHT-64-1
-MySQL-BHT-64-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-64-1773304403(.*)", pod=~"(.*)mysql-bht-64-1773304403(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MySQL-BHT-64-1                : collecting metrics of data generator at connection MySQL-BHT-64-1
-MySQL-BHT-64-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-64-1773304403(.*)", pod=~"(.*)mysql-bht-64-1773304403(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MySQL-BHT-64-1                : collecting metrics of data injector at connection MySQL-BHT-64-1
-MySQL-BHT-64-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-64-1773304403(.*)", pod=~"(.*)mysql-bht-64-1773304403(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1781467828-1-1-1-6bsgq: .found
+MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1-1-1-1                 : collecting loading metrics of SUT at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781467828(.*)", pod=~"(.*)mysql-1-1781467828(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : collecting metrics of data generator at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781467828(.*)", pod=~"(.*)mysql-1-1781467828(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : collecting metrics of data injector at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781467828(.*)", pod=~"(.*)mysql-1-1781467828(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
+MySQL-1-1-1-1                 : showing benchmarker times
+MySQL-1-1-1-1                 : benchmarker timespan job from 1781468400 to 1781468600
+MySQL-1-1-1-1                 : benchmarker timespan pods from 1781468413 to 1781468582
+MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 169
+MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1781468413, 1781468582)]
+MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1781468413, 1781468582)]}
+MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1-1-1-1                 : collecting execution metrics of SUT at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781467828(.*)", pod=~"(.*)mysql-1-1781467828(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : collecting metrics of benchmarker at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781467828(.*)", pod=~"(.*)mysql-1-1781467828(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-64                  : has running benchmarks
-timing_benchmarker [(1773312246, 1773312786)]
-MySQL-BHT-64-1                : showing benchmarker times
-MySQL-BHT-64-1                : benchmarker timespan job from 1773312230 to 1773312810
-MySQL-BHT-64-1                : benchmarker timespan pods from 1773312246 to 1773312786
-MySQL-BHT-64-1                : benchmarker timespan (start to end single container [s]) = 540
-MySQL-BHT-64-1                : benchmarker times (start/end per pod and container) = [(1773312246, 1773312786)]
-MySQL-BHT-64-1                : found and updated times {'benchmarker': [(1773312246, 1773312786)]}
-MySQL-BHT-64-1                : needs monitoring (common metrics) for deployment sut
-MySQL-BHT-64-1                : collecting execution metrics of SUT at connection MySQL-BHT-64-1
-MySQL-BHT-64-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-64-1773304403(.*)", pod=~"(.*)mysql-bht-64-1773304403(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MySQL-BHT-64-1                : collecting metrics of benchmarker at connection MySQL-BHT-64-1
-MySQL-BHT-64-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-64-1773304403(.*)", pod=~"(.*)mysql-bht-64-1773304403(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-- waiting 30s -               : done
-MySQL-BHT-64                  : can be stopped
-MySQL-BHT-64                  : had 0 0 restarts at worker bexhoma-sut-mysql-bht-64-1773304403-5b499bfd79-xpn2b
-Experiment                    : ends at 2026-03-12 11:54:31.697781 (109347.3292012) - 8465.14s total
-Join results done!
-Build evaluation cube done!
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1781467828-64fd8874c7-4xqq5
+Experiment                    : ends at 2026-06-14 22:24:06.409436 (334148.7972489) - 816.74s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
+Result workflow complete
 
 ## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
-    Type: tpch
-    Duration: 8466s 
-    Code: 1773304403
-    This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=3) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 1200.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.9.3.
-    System metrics are monitored by a cluster-wide installation.
-    Application metrics are monitored by sidecar containers.
-    Experiment is limited to DBMS ['MySQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [8] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpch
+* Duration: 817s 
+* Code: 1781467828
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=3) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.9.13.
+  * System metrics are monitored by a cluster-wide installation.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:541008474112
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:189236
-    cpu_list:0-63
-    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:16Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1773304403
+* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:246260
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1781467828
+
+### Workflow
+
+#### Actual
+
+* DBMS MySQL-1 - Pods [[1]]
+
+#### Planned
+
+* DBMS MySQL-1 - Pods [[1]]
+
+### Loading
+
+#### Per Run
+
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MySQL-1-1 |                1 |    3 |      284.00 |           1.00 |           24.00 |         54.00 |          201.00 |              8 |           0 |             | None           |             0 | False         |               38.03 |
+
+### Execution
+
+#### Per Connection
+
+|                 | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |        169 |            3.33 |             3346.01 |           1405.92 |          -1 |
+
+#### Per Phase
+
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |        169 |            3.33 |             3346.01 |           1405.92 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   MySQL-1-1-1-1-1 |
+|:----------------------------------------------------|------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |          22978.40 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            307.68 |
+| Shipping Priority (TPC-H Q3)                        |           4799.50 |
+| Order Priority Checking Query (TPC-H Q4)            |           1459.10 |
+| Local Supplier Volume (TPC-H Q5)                    |           5006.85 |
+| Forecasting Revenue Change (TPC-H Q6)               |           4363.84 |
+| Forecasting Revenue Change (TPC-H Q7)               |           2961.28 |
+| National Market Share (TPC-H Q8)                    |          10254.50 |
+| Product Type Profit Measure (TPC-H Q9)              |           7850.46 |
+| Forecasting Revenue Change (TPC-H Q10)              |           4576.51 |
+| Important Stock Identification (TPC-H Q11)          |            564.77 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |           6342.61 |
+| Customer Distribution (TPC-H Q13)                   |          19403.29 |
+| Forecasting Revenue Change (TPC-H Q14)              |           4502.62 |
+| Top Supplier Query (TPC-H Q15)                      |          44330.23 |
+| Parts/Supplier Relationship (TPC-H Q16)             |            996.19 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |            868.70 |
+| Large Volume Customer (TPC-H Q18)                   |           5139.17 |
+| Discounted Revenue (TPC-H Q19)                      |            411.65 |
+| Potential Part Promotion (TPC-H Q20)                |            831.02 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |          14619.70 |
+| Global Sales Opportunity Query (TPC-H Q22)          |            430.94 |
 
 ### Errors (failed queries)
+
 No errors
 
 ### Warnings (result mismatch)
+
 No warnings
 
-### Latency of Timer Execution [ms]
-DBMS                                                 MySQL-BHT-64-1-1
-Pricing Summary Report (TPC-H Q1)                            87517.97
-Minimum Cost Supplier Query (TPC-H Q2)                        1073.79
-Shipping Priority (TPC-H Q3)                                 13601.88
-Order Priority Checking Query (TPC-H Q4)                      4942.47
-Local Supplier Volume (TPC-H Q5)                             12617.82
-Forecasting Revenue Change (TPC-H Q6)                        12625.97
-Forecasting Revenue Change (TPC-H Q7)                        18603.43
-National Market Share (TPC-H Q8)                             28566.90
-Product Type Profit Measure (TPC-H Q9)                       21033.20
-Forecasting Revenue Change (TPC-H Q10)                       15816.28
-Important Stock Identification (TPC-H Q11)                    1525.58
-Shipping Modes and Order Priority (TPC-H Q12)                19426.31
-Customer Distribution (TPC-H Q13)                            72005.11
-Forecasting Revenue Change (TPC-H Q14)                       15487.35
-Top Supplier Query (TPC-H Q15)                              122059.78
-Parts/Supplier Relationship (TPC-H Q16)                       2630.19
-Small-Quantity-Order Revenue (TPC-H Q17)                      3800.74
-Large Volume Customer (TPC-H Q18)                            17741.37
-Discounted Revenue (TPC-H Q19)                                1232.37
-Potential Part Promotion (TPC-H Q20)                          2340.66
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          57842.46
-Global Sales Opportunity Query (TPC-H Q22)                    1508.25
+### Monitoring
 
-### Loading [s]
-                  timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MySQL-BHT-64-1-1          12.0          651.0         5.0     7370.0    8044.0
+### Loading phase: SUT deployment
 
-### Geometric Mean of Medians of Timer Run [s]
-                  Geo Times [s]
-DBMS                           
-MySQL-BHT-64-1-1          10.67
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |       571.85 |      6.85 |          13.14 |                 21.24 |
 
-### Power@Size ((3600*SF)/(geo times))
-                  Power@Size [~Q/h]
-DBMS                               
-MySQL-BHT-64-1-1            1024.33
+### Loading phase: component data generator
 
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                              time [s]  count   SF  Throughput@Size
-DBMS           SF  num_experiment num_client                                       
-MySQL-BHT-64-1 3.0 1              1                540      1  3.0            440.0
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
-### Workflow
-                       orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MySQL-BHT-64-1-1  MySQL-BHT-64-1  3.0     8               1           1       1773312249     1773312789
+### Loading phase: component loader
 
-#### Actual
-DBMS MySQL-BHT-64 - Pods [[1]]
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |        11.67 |      0.45 |           0.01 |                  0.28 |
 
-#### Planned
-DBMS MySQL-BHT-64 - Pods [[1]]
+### Execution phase: SUT deployment
 
-### Ingestion - SUT
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1     7623.06     3.43         31.48                 64.0
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |       142.48 |      1.01 |          13.18 |                 21.29 |
 
-### Ingestion - Loader
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1       14.93     0.03          0.01                 0.39
+### Execution phase: component benchmarker
 
-### Execution - SUT
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1      525.07     1.02         31.52                 64.0
-
-### Execution - Benchmarker
-                CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-64-1       18.84     0.25          0.37                 0.38
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |        14.07 |      0.02 |           0.31 |                  0.32 |
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
-                InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
-MySQL-BHT-64-1                           1.0                      0.99                    0.01               0.09                      0
+
+| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
+|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
+| MySQL-1-1-1-1 |                           1.00 |                       1.22 |                     0.01 |                0.04 |                    0.00 |
 
 #### Execution phase: SUT deployment
-                InnoDB Buffer Pool Hit Ratio  Queries Per Second (QPS)  Connection Usage Ratio  Slow Queries Rate  InnoDB Log Waits Rate
-MySQL-BHT-64-1                             0                      0.75                     0.0               0.04                      0
+
+| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
+|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
+| MySQL-1-1-1-1 |                           1.00 |                       1.52 |                     0.00 |                0.03 |                    0.00 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST passed: Workflow as planned
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Loading phase: component data generator contains 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

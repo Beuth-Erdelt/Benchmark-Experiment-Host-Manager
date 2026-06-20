@@ -75,7 +75,7 @@ bexhoma tpch \
 
 test_tpch_run_postgresql_tenants_schema.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -358,7 +358,7 @@ bexhoma tpch \
 
 test_tpch_run_postgresql_tenants_database.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -641,7 +641,7 @@ bexhoma tpch \
 
 test_tpch_run_postgresql_tenants_container.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -944,7 +944,7 @@ bexhoma tpch -tr \
 
 test_tpch_run_postgresql_tenants_database_multiload.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1291,7 +1291,7 @@ bexhoma benchbase \
 
 test_benchbase_run_postgresql_tenants_schema.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1480,7 +1480,7 @@ bexhoma benchbase \
 
 test_benchbase_run_postgresql_tenants_database.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1670,7 +1670,7 @@ bexhoma benchbase \
 
 test_benchbase_run_postgresql_tenants_container.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1932,7 +1932,7 @@ bexhoma benchbase \
 
 test_benchbase_run_mysql_tenants_database.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -2066,7 +2066,7 @@ bexhoma benchbase \
 
 test_benchbase_run_mysql_tenants_container.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1

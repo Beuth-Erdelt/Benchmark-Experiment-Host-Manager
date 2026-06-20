@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Test runs for cloud-hosted managed database services.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to

@@ -104,7 +104,7 @@ At the end of a benchmark you will see a summary like
 
 doc_tpch_testcase_compare.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -437,7 +437,7 @@ If monitoring is activated, the summary also contains a section like this:
 
 doc_tpch_testcase_monitoring.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -626,7 +626,7 @@ This runs 3 streams (`-ne`), the first one as a single stream and the following 
 
 doc_tpch_testcase_throughput.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -839,7 +839,7 @@ The result looks something like
 
 doc_tpch_testcase_storage.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -1003,7 +1003,7 @@ results in
 
 doc_tpch_testcase_fractional.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=0.1
@@ -1265,7 +1265,7 @@ At the end of a benchmark you will see a summary like
 
 doc_tpch_monetdb_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=100
@@ -1454,7 +1454,7 @@ bexhoma tpch \
 
 doc_tpch_monetdb_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=100
@@ -1682,7 +1682,7 @@ bexhoma tpch \
 
 doc_tpch_monetdb_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=100

@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Test runs comparing PostgreSQL with and without PGBouncer connection pooling.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to

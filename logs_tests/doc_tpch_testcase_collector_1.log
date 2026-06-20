@@ -2,15 +2,15 @@
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1781434878
-Experiment                    : starts at 2026-06-14 13:01:19.161385 (300383.4671738)
+Experiment                    : has code 1781936763
+Experiment                    : starts at 2026-06-20 08:26:06.241551 (334765.2633399)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 600.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.9.12.
+Experiment uses bexhoma version 0.9.16.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['PostgreSQL'].
@@ -18,7 +18,7 @@ Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
 SUT is fixed to cl-worker36.
-Database is persisted to disk of type shared and size 30Gi. Persistent storage is removed at experiment start.
+Database is persisted to disk of type cephcsi and size 30Gi. Persistent storage is removed at experiment start.
 Loading is tested with [1] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 2] times the number of benchmarking pods.
@@ -29,8 +29,8 @@ PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : found labels on pvc = []
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781434878
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781434878
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781936763
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781936763
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-tpch-3
 PostgreSQL-1                  : storage bexhoma-storage-postgresql-tpch-3 should be removed
 - waiting 10s -               : done
@@ -47,8 +47,10 @@ PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+- waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781434878-bbbd9c457-c5hd2 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781936763-75c5d787ff-gphj6 to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-tpch-3']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-tpch-3
 PostgreSQL-1                  : start asynch loading scripts of type loaded
@@ -60,22 +62,16 @@ PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
 PostgreSQL-1                  : showing loader times
-PostgreSQL-1                  : generator times (start/end per pod and container) [(1781435079, 1781435079), (1781435077, 1781435077), (1781435085, 1781435085), (1781435083, 1781435083), (1781435078, 1781435078), (1781435097, 1781435097), (1781435091, 1781435091), (1781435095, 1781435095)]
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1781435102, 1781435293), (1781435102, 1781435286), (1781435102, 1781435293), (1781435102, 1781435289), (1781435102, 1781435293), (1781435101, 1781435256), (1781435102, 1781435294), (1781435102, 1781435293)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1781435079, 1781435079), (1781435077, 1781435077), (1781435085, 1781435085), (1781435083, 1781435083), (1781435078, 1781435078), (1781435097, 1781435097), (1781435091, 1781435091), (1781435095, 1781435095), (1781435102, 1781435293), (1781435102, 1781435286), (1781435102, 1781435293), (1781435102, 1781435289), (1781435102, 1781435293), (1781435101, 1781435256), (1781435102, 1781435294), (1781435102, 1781435293)]
-PostgreSQL-1                  : generator timespan (first to last [s]) = 20
-PostgreSQL-1                  : loader timespan (first to last [s]) = 193
-PostgreSQL-1                  : total timespan (first to last [s]) = 217
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1781937019, 1781937019), (1781937004, 1781937004), (1781937026, 1781937026), (1781937009, 1781937009), (1781937023, 1781937023), (1781937022, 1781937022), (1781937007, 1781937007), (1781937015, 1781937015)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1781937030, 1781937115), (1781937029, 1781937115), (1781937029, 1781937101), (1781937030, 1781937112), (1781937030, 1781937117), (1781937030, 1781937117), (1781937030, 1781937115), (1781937029, 1781937112)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1781937019, 1781937019), (1781937004, 1781937004), (1781937026, 1781937026), (1781937009, 1781937009), (1781937023, 1781937023), (1781937022, 1781937022), (1781937007, 1781937007), (1781937015, 1781937015), (1781937030, 1781937115), (1781937029, 1781937115), (1781937029, 1781937101), (1781937030, 1781937112), (1781937030, 1781937117), (1781937030, 1781937117), (1781937030, 1781937115), (1781937029, 1781937112)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 22
+PostgreSQL-1                  : loader timespan (first to last [s]) = 88
+PostgreSQL-1                  : total timespan (first to last [s]) = 113
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-tpch-3']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-tpch-3
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781434878-bbbd9c457-c5hd2 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781936763-75c5d787ff-gphj6 to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-tpch-3']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-tpch-3
 PostgreSQL-1                  : start asynch loading scripts of type indexed
@@ -83,96 +79,74 @@ PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-- waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-1781434878 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-1781936763 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 1
 PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781434878
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781936763
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781434878-1-1-1-dh2tw: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781936763-1-1-1-b2sr5: found
 PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-1-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1-1            : collecting metrics of data generator at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1-1            : collecting metrics of data injector at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
+PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781936763/PostgreSQL-1-1-1-1.config
 PostgreSQL-1-1-1-1            : showing benchmarker times
-PostgreSQL-1-1-1-1            : benchmarker timespan job from 1781435597 to 1781435758
-PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1781435605 to 1781435722
-PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 117
-PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1781435605, 1781435722)]
-PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1781435605, 1781435722)]}
+PostgreSQL-1-1-1-1            : benchmarker timespan job from 1781937233 to 1781937292
+PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1781937243 to 1781937268
+PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 25
+PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1781937243, 1781937268)]
+PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1781937243, 1781937268)]}
 PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-1781434878 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-1781936763 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 2
 PostgreSQL-1-1-2-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781434878
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781936763
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781434878-1-2-1-b5rzf: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781936763-1-2-1-jxqbb: found
 PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-2-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2-1            : collecting metrics of data generator at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2-1            : collecting metrics of data injector at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
+PostgreSQL-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781936763/PostgreSQL-1-1-2-1.config
 PostgreSQL-1-1-2-1            : showing benchmarker times
-PostgreSQL-1-1-2-1            : benchmarker timespan job from 1781435815 to 1781436046
-PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1781435820 to 1781436020
-PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 200
-PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1781435820, 1781436019), (1781435821, 1781436020)]
-PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1781435820, 1781436019), (1781435821, 1781436020)]}
+PostgreSQL-1-1-2-1            : benchmarker timespan job from 1781937349 to 1781937413
+PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1781937356 to 1781937382
+PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 26
+PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1781937356, 1781937380), (1781937357, 1781937382)]
+PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1781937356, 1781937380), (1781937357, 1781937382)]}
 PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-2-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781434878-bbbd9c457-c5hd2
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781936763-75c5d787ff-gphj6
+PostgreSQL-1                  : still being removed
+- waiting 30s -               : done
+PostgreSQL-1                  : still being removed
+- waiting 30s -               : done
 PostgreSQL-1                  : still being removed
 - waiting 30s -               : done
 PostgreSQL-1                  : starts again
@@ -181,23 +155,23 @@ PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-tpch-3']
 PostgreSQL-1                  : storage bexhoma-storage-postgresql-tpch-3 exists
-PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '729', 'timeLoadingEnd': '1781435565', 'timeLoadingStart': '1781435055', 'time_generated': '20', 'time_indexed': '510', 'time_ingested': '193', 'time_initconstraints': '73', 'time_initindexes': '161', 'time_initschema': '1', 'time_initstatistics': '2', 'time_loaded': '2'}
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781434878
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781434878
+PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '325', 'timeLoadingEnd': '1781937188', 'timeLoadingStart': '1781936977', 'time_generated': '22', 'time_indexed': '211', 'time_ingested': '88', 'time_initconstraints': '23', 'time_initindexes': '10', 'time_initschema': '1', 'time_initstatistics': '3', 'time_loaded': '1'}
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781936763
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781936763
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-tpch-3
 PostgreSQL-1                  : copied label indexed = True
 PostgreSQL-1                  : copied label loaded = True
-PostgreSQL-1                  : copied label timeLoading = 729
-PostgreSQL-1                  : copied label timeLoadingEnd = 1781435565
-PostgreSQL-1                  : copied label timeLoadingStart = 1781435055
-PostgreSQL-1                  : copied label time_generated = 20
-PostgreSQL-1                  : copied label time_indexed = 510
-PostgreSQL-1                  : copied label time_ingested = 193
-PostgreSQL-1                  : copied label time_initconstraints = 73
-PostgreSQL-1                  : copied label time_initindexes = 161
+PostgreSQL-1                  : copied label timeLoading = 325
+PostgreSQL-1                  : copied label timeLoadingEnd = 1781937188
+PostgreSQL-1                  : copied label timeLoadingStart = 1781936977
+PostgreSQL-1                  : copied label time_generated = 22
+PostgreSQL-1                  : copied label time_indexed = 211
+PostgreSQL-1                  : copied label time_ingested = 88
+PostgreSQL-1                  : copied label time_initconstraints = 23
+PostgreSQL-1                  : copied label time_initindexes = 10
 PostgreSQL-1                  : copied label time_initschema = 1
-PostgreSQL-1                  : copied label time_initstatistics = 2
-PostgreSQL-1                  : copied label time_loaded = 2
+PostgreSQL-1                  : copied label time_initstatistics = 3
+PostgreSQL-1                  : copied label time_loaded = 1
 PostgreSQL-1                  : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
@@ -213,15 +187,15 @@ PostgreSQL-1                  : waits for health check to succeed
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-1781434878 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-1781936763 initialized to 1.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 1
 PostgreSQL-1-2-1-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-2-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781434878
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781936763
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781434878-2-1-1-gc682: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781936763-2-1-1-btzzw: found
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -229,60 +203,63 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-2-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781936763/PostgreSQL-1-2-1-1.config
 PostgreSQL-1-2-1-1            : showing benchmarker times
-PostgreSQL-1-2-1-1            : benchmarker timespan job from 1781436309 to 1781436454
-PostgreSQL-1-2-1-1            : benchmarker timespan pods from 1781436312 to 1781436443
-PostgreSQL-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 131
-PostgreSQL-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1781436312, 1781436443)]
-PostgreSQL-1-2-1-1            : found and updated times {'benchmarker': [(1781436312, 1781436443)]}
+PostgreSQL-1-2-1-1            : benchmarker timespan job from 1781937736 to 1781937917
+PostgreSQL-1-2-1-1            : benchmarker timespan pods from 1781937744 to 1781937881
+PostgreSQL-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 137
+PostgreSQL-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1781937744, 1781937881)]
+PostgreSQL-1-2-1-1            : found and updated times {'benchmarker': [(1781937744, 1781937881)]}
 PostgreSQL-1-2-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-2-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-2-1-1
-PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-2-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-2-1-1
-PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-1781434878 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-1781936763 initialized to 2.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 2
 PostgreSQL-1-2-2-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-2-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781434878
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781936763
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781434878-2-2-1-lfqmk: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781936763-2-2-1-dqppb: found
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
+PostgreSQL-1-2-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781936763/PostgreSQL-1-2-2-1.config
 PostgreSQL-1-2-2-1            : showing benchmarker times
-PostgreSQL-1-2-2-1            : benchmarker timespan job from 1781436510 to 1781436593
-PostgreSQL-1-2-2-1            : benchmarker timespan pods from 1781436515 to 1781436576
-PostgreSQL-1-2-2-1            : benchmarker timespan (start to end single container [s]) = 61
-PostgreSQL-1-2-2-1            : benchmarker times (start/end per pod and container) = [(1781436515, 1781436574), (1781436515, 1781436576)]
-PostgreSQL-1-2-2-1            : found and updated times {'benchmarker': [(1781436515, 1781436574), (1781436515, 1781436576)]}
+PostgreSQL-1-2-2-1            : benchmarker timespan job from 1781937974 to 1781938024
+PostgreSQL-1-2-2-1            : benchmarker timespan pods from 1781937982 to 1781938008
+PostgreSQL-1-2-2-1            : benchmarker timespan (start to end single container [s]) = 26
+PostgreSQL-1-2-2-1            : benchmarker times (start/end per pod and container) = [(1781937982, 1781938007), (1781937983, 1781938008)]
+PostgreSQL-1-2-2-1            : found and updated times {'benchmarker': [(1781937982, 1781938007), (1781937983, 1781938008)]}
 PostgreSQL-1-2-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-2-2-1            : collecting execution metrics of SUT at connection PostgreSQL-1-2-2-1
-PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-2-2-1            : collecting metrics of benchmarker at connection PostgreSQL-1-2-2-1
-PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781434878(.*)", pod=~"(.*)postgresql-1-1781434878(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781936763(.*)", pod=~"(.*)postgresql-1-1781936763(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781434878-79f5b9c478-6r2lv
-Experiment                    : ends at 2026-06-14 13:30:38.678034 (302142.9837965) - 1759.52s total
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781936763-57d866dfdd-pw89d
+Experiment                    : ends at 2026-06-20 08:47:50.034402 (336069.0564036) - 1303.79s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
+'pods'
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 1760s 
-* Code: 1781434878
+* Duration: 1304s 
+* Code: 1781936763
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -290,7 +267,7 @@ TPC-H Queries SF=3
   * All instances use the same query parameters.
   * Timeout per query is 600.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.9.12.
+  * Experiment uses bexhoma version 0.9.16.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -298,7 +275,7 @@ TPC-H Queries SF=3
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
   * SUT is fixed to cl-worker36.
-  * Database is persisted to disk of type shared and size 30Gi. Persistent storage is removed at experiment start.
+  * Database is persisted to disk of type cephcsi and size 30Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [1] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
@@ -311,106 +288,100 @@ TPC-H Queries SF=3
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102032
-  * volume_size:30G
-  * volume_used:5.8G
+  * disk:1297521
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781434878
+    * code:1781936763
 * PostgreSQL-1-1-2-1-1 uses docker image postgres:18.3
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102034
-  * volume_size:30G
-  * volume_used:5.8G
+  * disk:1297513
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781434878
+    * code:1781936763
 * PostgreSQL-1-1-2-1-2 uses docker image postgres:18.3
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102034
-  * volume_size:30G
-  * volume_used:5.8G
+  * disk:1297513
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781434878
+    * code:1781936763
 * PostgreSQL-1-2-1-1-1 uses docker image postgres:18.3
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102037
-  * volume_size:30G
-  * volume_used:5.8G
+  * disk:1297515
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781434878
+    * code:1781936763
 * PostgreSQL-1-2-2-1-1 uses docker image postgres:18.3
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102038
-  * volume_size:30G
-  * volume_used:5.8G
+  * disk:1297513
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781434878
+    * code:1781936763
 * PostgreSQL-1-2-2-1-2 uses docker image postgres:18.3
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102038
-  * volume_size:30G
-  * volume_used:5.8G
+  * disk:1297513
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781434878
+    * code:1781936763
 
 ### Workflow
 
 #### Actual
 
-* DBMS PostgreSQL-1 - Pods [[1, 2], [1, 2]]
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS PostgreSQL-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 2 Client 2: tpch (2 pods)
 
 #### Planned
 
-* DBMS PostgreSQL-1 - Pods [[1, 2], [1, 2]]
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS PostgreSQL-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 2 Client 2: tpch (2 pods)
 
 ### Loading
 
@@ -418,56 +389,56 @@ TPC-H Queries SF=3
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |    3 |      729.00 |           2.00 |           20.00 |        193.00 |          510.00 |              8 |           0 |             |                |             0 | False         |               14.81 |
-| PostgreSQL-1-2 |                2 |    3 |      729.00 |           2.00 |           20.00 |        193.00 |          510.00 |              8 |           0 |             |                |             0 | False         |               14.81 |
+| PostgreSQL-1-1 |                1 |    3 |      325.00 |           1.00 |           22.00 |         88.00 |          211.00 |              8 |           0 |             |                |             0 | False         |               33.23 |
+| PostgreSQL-1-2 |                2 |    3 |      325.00 |           1.00 |           22.00 |         88.00 |          211.00 |              8 |           0 |             |                |             0 | False         |               33.23 |
 
 ### Execution
 
 #### Per Connection
 
-|                      | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |        117 |            2.48 |             4360.02 |           2030.77 |           0 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |               1 |           1 | 3.00 |               22 |        199 |            4.24 |             2544.44 |           1193.97 |           0 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |               1 |           1 | 3.00 |               22 |        199 |            4.18 |             2581.10 |           1193.97 |           0 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |        1 |               1 |           1 | 3.00 |               22 |        131 |            2.45 |             4401.84 |           1813.74 |           0 |
-| PostgreSQL-1-2-2-1-1 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |        2 |               1 |           1 | 3.00 |               22 |         59 |            1.56 |             6931.03 |           4027.12 |           0 |
-| PostgreSQL-1-2-2-1-2 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |        2 |               1 |           1 | 3.00 |               22 |         61 |            1.73 |             6242.87 |           3895.08 |           0 |
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |         25 |            0.63 |            17216.26 |           9504.00 |           0 | PostgreSQL-1-1-1-1-1 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1    | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |               1 |           1 | 3.00 |               22 |         24 |            0.57 |            19106.25 |           9900.00 |           0 | PostgreSQL-1-1-2-1-1 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1    | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |               1 |           1 | 3.00 |               22 |         25 |            0.62 |            17414.47 |           9504.00 |           0 | PostgreSQL-1-1-2-1-2 |
+| PostgreSQL-1-2-1-1-1 | PostgreSQL-1    | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |        1 |               1 |           1 | 3.00 |               22 |        137 |            1.37 |             7885.59 |           1734.31 |           0 | PostgreSQL-1-2-1-1-1 |
+| PostgreSQL-1-2-2-1-1 | PostgreSQL-1    | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |        2 |               1 |           1 | 3.00 |               22 |         25 |            0.62 |            17501.71 |           9504.00 |           0 | PostgreSQL-1-2-2-1-1 |
+| PostgreSQL-1-2-2-1-2 | PostgreSQL-1    | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |        2 |               1 |           1 | 3.00 |               22 |         25 |            0.62 |            17434.08 |           9504.00 |           0 | PostgreSQL-1-2-2-1-2 |
 
 #### Per Phase
 
 |                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |        117 |            2.48 |             4360.02 |           2030.77 |           0 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |        2 |               1 |           2 | 3.00 |               44 |        199 |            4.21 |             2562.70 |           2387.94 |           0 |
-| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |        1 |               1 |           1 | 3.00 |               22 |        131 |            2.45 |             4401.84 |           1813.74 |           0 |
-| PostgreSQL-1-2-2 | PostgreSQL-1-2-2 |                2 |        2 |               1 |           2 | 3.00 |               44 |         61 |            1.64 |             6577.96 |           7790.16 |           0 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |         25 |            0.63 |            17216.26 |           9504.00 |           0 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |        2 |               1 |           2 | 3.00 |               44 |         25 |            0.59 |            18240.76 |          19008.00 |           0 |
+| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |        1 |               1 |           1 | 3.00 |               22 |        137 |            1.37 |             7885.59 |           1734.31 |           0 |
+| PostgreSQL-1-2-2 | PostgreSQL-1-2-2 |                2 |        2 |               1 |           2 | 3.00 |               44 |         25 |            0.62 |            17467.87 |          19008.00 |           0 |
 
 ### Latency of Timer Execution [ms]
 | Queries                                             |   PostgreSQL-1-1-1-1-1 |   PostgreSQL-1-1-2-1-1 |   PostgreSQL-1-1-2-1-2 |   PostgreSQL-1-2-1-1-1 |   PostgreSQL-1-2-2-1-1 |   PostgreSQL-1-2-2-1-2 |
 |:----------------------------------------------------|-----------------------:|-----------------------:|-----------------------:|-----------------------:|-----------------------:|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                5446.01 |                5151.99 |                4900.50 |               39435.20 |                5006.52 |                4914.22 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                1091.01 |                7519.95 |                7721.74 |               17466.20 |                1001.56 |                1308.93 |
-| Shipping Priority (TPC-H Q3)                        |                1290.96 |                9192.56 |                9189.24 |               17880.28 |                1795.01 |                1393.09 |
-| Order Priority Checking Query (TPC-H Q4)            |                1237.72 |                6850.90 |                6850.55 |                 926.18 |                 811.60 |                 794.29 |
-| Local Supplier Volume (TPC-H Q5)                    |                2077.94 |               21023.77 |               21023.89 |                2381.23 |                2275.26 |                2384.90 |
-| Forecasting Revenue Change (TPC-H Q6)               |                2040.62 |                1515.17 |                1505.93 |                1763.62 |                1857.72 |                1811.40 |
-| Forecasting Revenue Change (TPC-H Q7)               |                2158.15 |               16465.97 |               16472.58 |                2338.01 |                2495.24 |                2411.39 |
-| National Market Share (TPC-H Q8)                    |                1990.74 |                7099.77 |                7102.16 |                7101.80 |                 936.99 |                 790.05 |
-| Product Type Profit Measure (TPC-H Q9)              |               48040.02 |               67605.81 |               67619.23 |                6254.58 |                6758.67 |                6386.80 |
-| Forecasting Revenue Change (TPC-H Q10)              |                3125.60 |                2699.60 |                2657.89 |                3026.19 |                2320.24 |                2885.37 |
-| Important Stock Identification (TPC-H Q11)          |                4032.91 |                5894.48 |                5942.47 |                 800.94 |                 573.69 |                1301.64 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                2901.85 |                3033.13 |                3039.71 |                1703.67 |                2288.79 |                2478.99 |
-| Customer Distribution (TPC-H Q13)                   |                1843.93 |                1482.29 |                1623.14 |                1528.19 |                1217.51 |                1463.86 |
-| Forecasting Revenue Change (TPC-H Q14)              |                2280.87 |                1927.95 |                1943.72 |                1584.50 |                1177.17 |                1910.80 |
-| Top Supplier Query (TPC-H Q15)                      |                1838.43 |                1824.06 |                2009.14 |                1253.70 |                2330.11 |                1960.29 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                 534.65 |                 811.66 |                 493.64 |                 544.07 |                 550.98 |                 834.84 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                9816.69 |               10157.61 |               10036.19 |                6241.92 |                5732.66 |                5043.87 |
-| Large Volume Customer (TPC-H Q18)                   |               10936.27 |                8590.02 |                7897.99 |                8793.34 |                8781.08 |                8652.16 |
-| Discounted Revenue (TPC-H Q19)                      |                 921.38 |                 728.05 |                 724.25 |                 172.96 |                 161.25 |                 260.00 |
-| Potential Part Promotion (TPC-H Q20)                |                2103.17 |                4106.48 |                4473.81 |                1360.42 |                1015.24 |                1280.49 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                8007.27 |               12505.04 |               12650.91 |                5628.96 |                4998.72 |                5337.76 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                 221.73 |                 158.62 |                 162.71 |                 152.50 |                 153.45 |                 139.52 |
+| Pricing Summary Report (TPC-H Q1)                   |                1647.15 |                1661.82 |                1733.12 |               50884.55 |                1764.28 |                1730.56 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                 551.36 |                 532.51 |                 559.45 |               23309.64 |                 526.40 |                 643.84 |
+| Shipping Priority (TPC-H Q3)                        |                 578.44 |                 556.64 |                 561.55 |               26269.00 |                 566.39 |                 547.92 |
+| Order Priority Checking Query (TPC-H Q4)            |                 244.97 |                 251.67 |                 272.93 |                 269.92 |                 273.97 |                 297.34 |
+| Local Supplier Volume (TPC-H Q5)                    |                 547.38 |                 510.80 |                 581.81 |                1287.31 |                 603.32 |                 782.24 |
+| Forecasting Revenue Change (TPC-H Q6)               |                 311.68 |                 314.25 |                 303.54 |                 295.46 |                 306.70 |                 596.46 |
+| Forecasting Revenue Change (TPC-H Q7)               |                 723.06 |                 708.40 |                 724.90 |                 742.00 |                 896.86 |                 978.48 |
+| National Market Share (TPC-H Q8)                    |                 395.91 |                 350.56 |                 345.03 |               10641.88 |                 585.62 |                 389.34 |
+| Product Type Profit Measure (TPC-H Q9)              |                1002.44 |                 963.96 |                1015.01 |                4833.17 |                1208.46 |                1115.92 |
+| Forecasting Revenue Change (TPC-H Q10)              |                1223.90 |                1172.77 |                1175.42 |                1245.66 |                1175.16 |                1259.75 |
+| Important Stock Identification (TPC-H Q11)          |                 189.39 |                 214.63 |                 189.66 |                 192.21 |                 189.35 |                 182.25 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                 481.08 |                 491.66 |                 489.63 |                 494.60 |                 529.13 |                 441.36 |
+| Customer Distribution (TPC-H Q13)                   |                1983.57 |                2548.29 |                2445.71 |                2654.36 |                2021.08 |                2712.02 |
+| Forecasting Revenue Change (TPC-H Q14)              |                 537.82 |                 545.85 |                 539.50 |                 709.60 |                1029.95 |                 555.57 |
+| Top Supplier Query (TPC-H Q15)                      |                 419.93 |                 412.79 |                 418.60 |                 477.55 |                 481.13 |                 417.18 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                 403.80 |                 394.39 |                 405.32 |                 433.49 |                 441.06 |                 434.73 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                1678.46 |                1626.51 |                1724.15 |                1885.74 |                1512.10 |                1467.24 |
+| Large Volume Customer (TPC-H Q18)                   |                8459.44 |                8765.12 |                9435.53 |                8035.92 |                7944.65 |                7642.19 |
+| Discounted Revenue (TPC-H Q19)                      |                 237.18 |                  87.19 |                 160.95 |                 119.12 |                  86.10 |                  97.02 |
+| Potential Part Promotion (TPC-H Q20)                |                 796.92 |                 282.46 |                 716.77 |                 965.96 |                 345.04 |                 323.76 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 736.25 |                 554.57 |                 582.79 |                 522.87 |                 543.17 |                 523.63 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                 139.57 |                 136.33 |                 153.00 |                 196.83 |                 143.05 |                 144.56 |
 
 ### Errors (failed queries)
 
@@ -483,8 +454,8 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       126.47 |      0.64 |           0.29 |                  7.25 |
-| PostgreSQL-1-1-2-1 |       126.47 |      0.64 |           0.29 |                  7.25 |
+| PostgreSQL-1-1-1-1 |        97.08 |      1.18 |           5.16 |                  9.41 |
+| PostgreSQL-1-1-2-1 |        97.08 |      1.18 |           5.16 |                  9.41 |
 
 ### Loading phase: component data generator
 
@@ -497,26 +468,26 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        32.50 |      0.45 |           0.01 |                  0.39 |
-| PostgreSQL-1-1-2-1 |        32.50 |      0.45 |           0.01 |                  0.39 |
+| PostgreSQL-1-1-1-1 |        35.30 |      0.55 |           0.00 |                  0.39 |
+| PostgreSQL-1-1-2-1 |        35.30 |      0.55 |           0.00 |                  0.39 |
 
 ### Execution phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        95.35 |      1.07 |           0.29 |                  6.20 |
-| PostgreSQL-1-1-2-1 |       229.56 |      2.43 |           0.46 |                  8.89 |
-| PostgreSQL-1-2-1-1 |       513.16 |      1.70 |           0.23 |                  5.98 |
-| PostgreSQL-1-2-2-1 |       118.39 |      4.20 |           0.39 |                  5.47 |
+| PostgreSQL-1-1-1-1 |        11.43 |      0.36 |           4.34 |                  8.59 |
+| PostgreSQL-1-1-2-1 |        85.24 |      3.10 |           5.04 |                  9.29 |
+| PostgreSQL-1-2-1-1 |       384.88 |      0.35 |           4.89 |                  9.57 |
+| PostgreSQL-1-2-2-1 |        34.93 |      1.19 |           4.93 |                  9.28 |
 
 ### Execution phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        12.98 |      0.43 |           0.29 |                  0.29 |
-| PostgreSQL-1-1-2-1 |        25.41 |      0.75 |           0.29 |                  0.29 |
-| PostgreSQL-1-2-1-1 |        12.30 |      0.01 |           0.27 |                  0.28 |
-| PostgreSQL-1-2-2-1 |        24.31 |      0.92 |           0.29 |                  0.30 |
+| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+| PostgreSQL-1-1-2-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PostgreSQL-1-2-1-1 |        11.60 |      0.32 |           0.25 |                  0.25 |
+| PostgreSQL-1-2-2-1 |        25.11 |      0.00 |           0.30 |                  0.30 |
 
 ### Application Metrics
 
@@ -524,24 +495,24 @@ No warnings
 
 | DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
 |:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                       10.00 |                                    8.00 |
-| PostgreSQL-1-1-2-1 |                      1.00 |                                     0.00 |                                             0.00 |                       10.00 |                                    8.00 |
+| PostgreSQL-1-1-1-1 |                      0.00 |                                     0.00 |                                             0.00 |                        8.00 |                                    8.00 |
+| PostgreSQL-1-1-2-1 |                      0.00 |                                     0.00 |                                             0.00 |                        8.00 |                                    8.00 |
 
 #### Execution phase: SUT deployment
 
 | DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
 |:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      0.00 |                                     0.00 |                                             0.00 |                        4.00 |                                    3.00 |
-| PostgreSQL-1-1-2-1 |                      1.00 |                                     0.00 |                                             0.00 |                        6.00 |                                    6.00 |
-| PostgreSQL-1-2-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        4.00 |                                    3.00 |
-| PostgreSQL-1-2-2-1 |                      0.00 |                                     0.00 |                                             0.00 |                        6.00 |                                    6.00 |
+| PostgreSQL-1-1-1-1 |                      0.00 |                                     0.00 |                                             0.00 |                        7.00 |                                    7.00 |
+| PostgreSQL-1-1-2-1 |                      0.00 |                                     0.00 |                                             0.00 |                        5.00 |                                    5.00 |
+| PostgreSQL-1-2-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        7.00 |                                    7.00 |
+| PostgreSQL-1-2-2-1 |                      0.00 |                                     0.00 |                                             0.00 |                        0.00 |                                    0.00 |
 
 ### Tests
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Loading phase: component data generator contains 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN

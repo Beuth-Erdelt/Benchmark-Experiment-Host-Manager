@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Extended test runs covering additional DBMS and parameter combinations.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to

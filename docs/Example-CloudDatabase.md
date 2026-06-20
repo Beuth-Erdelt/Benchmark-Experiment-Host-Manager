@@ -184,7 +184,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_databaseservice_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -299,7 +299,7 @@ This skips loading (`-sl`), as data is already present in the database.
 
 doc_ycsb_databaseservice_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -436,7 +436,7 @@ This approach helps bexhoma to persist status information, but it does not persi
 
 doc_ycsb_databaseservice_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=5
@@ -623,7 +623,7 @@ yields
 
 doc_benchbase_databaseservice_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -746,7 +746,7 @@ yields
 
 doc_benchbase_databaseservice_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -869,7 +869,7 @@ yields
 
 doc_tpch_testcase_databaseservice_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -1015,7 +1015,7 @@ yields
 
 doc_tpch_testcase_databaseservice_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -1180,7 +1180,7 @@ yields
 
 doc_tpch_testcase_databaseservice_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -1333,7 +1333,7 @@ yields
 
 doc_tpch_testcase_databaseservice_4.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3

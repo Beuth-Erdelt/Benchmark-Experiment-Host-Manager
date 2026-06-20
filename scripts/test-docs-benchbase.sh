@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Generates documentation summaries for Benchbase experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to

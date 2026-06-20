@@ -120,7 +120,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -355,7 +355,7 @@ The result looks something like
 
 doc_ycsb_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -653,7 +653,7 @@ bexhoma benchbase \
 
 doc_benchbase_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -844,7 +844,7 @@ bexhoma benchbase \
 
 doc_benchbase_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1287,7 +1287,7 @@ bexhoma benchbase \
 
 doc_benchbase_citus_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1807,7 +1807,7 @@ Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and wil
 result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', 
 True)`
 In Zeile:1 Zeichen:1
-+ python benchbase.py -ms $BEXHOMA_MS -tr `
++ python benchbase.py -ms 1 -tr `
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (C:\Users\Patric...asting', True)`:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
@@ -1990,7 +1990,7 @@ bexhoma hammerdb \
 
 doc_hammerdb_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -2111,7 +2111,7 @@ bexhoma hammerdb \
 
 doc_hammerdb_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=128 (warehouses for TPC-C)
@@ -2537,7 +2537,7 @@ bexhoma hammerdb \
 
 doc_hammerdb_citus_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=500 (warehouses for TPC-C)
@@ -3221,7 +3221,7 @@ bexhoma tpch \
 
 test_tpch_testcase_citus_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -3413,7 +3413,7 @@ bexhoma tpch \
 
 test_tpch_testcase_citus_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
@@ -3847,7 +3847,7 @@ bexhoma tpch \
 
 test_tpch_testcase_citus_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
