@@ -2,9 +2,8 @@
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Cluster monitoring            : is running
-Experiment                    : has code 1781911752
-Experiment                    : starts at 2026-06-20 01:30:58.790110 (309857.8118943)
+Experiment                    : has code 1781965171
+Experiment                    : starts at 2026-06-20 16:19:32.401062 (363171.4228906)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
@@ -22,40 +21,23 @@ Benchmarking is tested with [10] threads, split into [1] pods.
 Benchmarking is run as [2, 2] times the number of benchmarking pods.
 Number of tenants is 2, one schema per tenant.
 Experiment is run 2 times.
+Cluster monitoring            : is running
 PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : found labels on pvc = []
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781911752
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781911752
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781965171
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781965171
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1 should be removed
+- waiting 10s -               : done
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1 is gone
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for monitoring
 PostgreSQL-1                  : wants to monitor all components in cluster
-PostgreSQL-1                  : cannot rely on preinstalled monitoring
 PostgreSQL-1                  : starts monitoring with prometheus pod
 PostgreSQL-1                  : need application monitoring for sut
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.223 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.230 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.98 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.144 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.229 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.173 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.121 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.194 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.36 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.232 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.24 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.242 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.59 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.159 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.159 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.115 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.41 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.51 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.86 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.104 (added to Prometheus) of daemonset
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
@@ -66,7 +48,7 @@ PostgreSQL-1                  : waits for health check to succeed
 PostgreSQL-1                  : is not loaded yet
 PostgreSQL-1                  : scripts for tenant #0
 PostgreSQL-1                  : scripts for tenant #1
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781911752-6d78bcbc89-24txd to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781965171-b554dd7f7-psqpf to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1
 PostgreSQL-1                  : start asynch loading scripts of type loaded
@@ -83,14 +65,14 @@ PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1781912035, 1781912184), (1781912036, 1781912185)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1781912035, 1781912184), (1781912036, 1781912185)]
-PostgreSQL-1                  : loader timespan (first to last [s]) = 150
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1781965361, 1781965497), (1781965360, 1781965497)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1781965361, 1781965497), (1781965360, 1781965497)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 137
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1
 PostgreSQL-1                  : scripts for tenant #0
 PostgreSQL-1                  : scripts for tenant #1
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781911752-6d78bcbc89-24txd to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1781965171-b554dd7f7-psqpf to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1
 PostgreSQL-1                  : start asynch loading scripts of type indexed
@@ -98,69 +80,20 @@ PostgreSQL-1                  : runs scripts ['checkschema-benchbase-schema.sql'
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-1781911752 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-1781965171 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 1
 PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781911752
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\queries.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/queries.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-1-1-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-1-1-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-1-1-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-1-1-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\protocol.json" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/protocol.json -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781965171
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781911752-1-1-1-f6wpk: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781965171-1-1-1-mpv94: found
 PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-1-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1-1            : collecting metrics of data injector at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -180,111 +113,34 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781911752/PostgreSQL-1-1-1-1.config
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-1-1-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-1-1-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781965171/PostgreSQL-1-1-1-1.config
 PostgreSQL-1-1-1-1            : showing benchmarker times
-PostgreSQL-1-1-1-1            : benchmarker timespan job from 1781912253 to 1781912609
-PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1781912256 to 1781912595
-PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 339
-PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1781912257, 1781912595), (1781912256, 1781912568)]
-PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1781912257, 1781912595), (1781912256, 1781912568)]}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-1-1            : benchmarker timespan job from 1781965576 to 1781965942
+PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1781965581 to 1781965908
+PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 327
+PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1781965581, 1781965906), (1781965581, 1781965908)]
+PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1781965581, 1781965906), (1781965581, 1781965908)]}
 PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-1-1
-PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-1781911752 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-1781965171 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 2
 PostgreSQL-1-1-2-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781911752
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\queries.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/queries.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-1-2-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-1-2-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-1-2-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-1-2-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\protocol.json" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/protocol.json -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781965171
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781911752-1-2-1-7gknc: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781965171-1-2-1-6xwgv: found
 PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-2-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2-1            : collecting metrics of data injector at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -306,49 +162,21 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781911752/PostgreSQL-1-1-2-1.config
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-1-2-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-1-2-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781965171/PostgreSQL-1-1-2-1.config
 PostgreSQL-1-1-2-1            : showing benchmarker times
-PostgreSQL-1-1-2-1            : benchmarker timespan job from 1781912659 to 1781913053
-PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1781912663 to 1781913029
-PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 366
-PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1781912663, 1781913029), (1781912663, 1781913007)]
-PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1781912663, 1781913029), (1781912663, 1781913007)]}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-2-1            : benchmarker timespan job from 1781965999 to 1781966394
+PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1781966004 to 1781966386
+PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 382
+PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1781966004, 1781966386), (1781966004, 1781966349)]
+PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1781966004, 1781966386), (1781966004, 1781966349)]}
 PostgreSQL-1-1-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1-2-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1-2-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-2-1
-PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-1-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781911752-6d78bcbc89-24txd
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781965171-b554dd7f7-psqpf
 PostgreSQL-1                  : still being removed
 - waiting 30s -               : done
 PostgreSQL-1                  : starts again
@@ -357,117 +185,45 @@ PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1']
 PostgreSQL-1                  : storage bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1 exists
-PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '337', 'timeLoadingEnd': '1781912211', 'timeLoadingStart': '1781912027', 'time_generated': '0', 'time_indexed': '184', 'time_ingested': '150', 'time_loaded': '3'}
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781911752
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781911752
+PostgreSQL-1                  : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '324', 'timeLoadingEnd': '1781965536', 'timeLoadingStart': '1781965351', 'time_generated': '0', 'time_indexed': '185', 'time_ingested': '137', 'time_loaded': '2'}
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1781965171
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1781965171
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-schema-2-benchbase-tpcc-1
 PostgreSQL-1                  : copied label indexed = True
 PostgreSQL-1                  : copied label loaded = True
-PostgreSQL-1                  : copied label timeLoading = 337
-PostgreSQL-1                  : copied label timeLoadingEnd = 1781912211
-PostgreSQL-1                  : copied label timeLoadingStart = 1781912027
+PostgreSQL-1                  : copied label timeLoading = 324
+PostgreSQL-1                  : copied label timeLoadingEnd = 1781965536
+PostgreSQL-1                  : copied label timeLoadingStart = 1781965351
 PostgreSQL-1                  : copied label time_generated = 0
-PostgreSQL-1                  : copied label time_indexed = 184
-PostgreSQL-1                  : copied label time_ingested = 150
-PostgreSQL-1                  : copied label time_loaded = 3
+PostgreSQL-1                  : copied label time_indexed = 185
+PostgreSQL-1                  : copied label time_ingested = 137
+PostgreSQL-1                  : copied label time_loaded = 2
 PostgreSQL-1                  : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+- waiting 30s -               : done
 PostgreSQL-1                  : waits for monitoring
 PostgreSQL-1                  : wants to monitor all components in cluster
-PostgreSQL-1                  : cannot rely on preinstalled monitoring
 PostgreSQL-1                  : starts monitoring with prometheus pod
 PostgreSQL-1                  : need application monitoring for sut
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.223 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.230 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.98 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.144 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.229 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.173 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.121 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.194 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.36 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.232 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.24 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.242 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.59 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.159 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.159 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.115 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.41 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.51 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.86 (added to Prometheus) of daemonset
-PostgreSQL-1                  : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.104 (added to Prometheus) of daemonset
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-1781911752 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-1781965171 initialized to 2.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 1
 PostgreSQL-1-2-1-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-2-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781911752
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\queries.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/queries.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-2-1-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-2-1-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-2-1-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-2-1-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\protocol.json" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/protocol.json -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781965171
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781911752-2-1-1-8xgrj: found
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781965171-2-1-1-9lr92: found
 - waiting 30s -               : done
 Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
 Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'dfa50b46-4f66-4298-8e15-efcfaa64143d', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 19 Jun 2026 23:59:47 GMT', 'Content-Length': '129'})
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'f2ffc531-c2eb-4d4e-a2ca-c3f0dc1def13', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sat, 20 Jun 2026 14:44:31 GMT', 'Content-Length': '129'})
 HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
 
 
@@ -478,92 +234,49 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-1-2-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781911752/PostgreSQL-1-2-1-1.config
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-2-1-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-2-1-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-2-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781965171/PostgreSQL-1-2-1-1.config
 PostgreSQL-1-2-1-1            : showing benchmarker times
-PostgreSQL-1-2-1-1            : benchmarker timespan job from 1781913309 to 1781913664
-PostgreSQL-1-2-1-1            : benchmarker timespan pods from 1781913312 to 1781913641
-PostgreSQL-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 329
-PostgreSQL-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1781913312, 1781913641), (1781913313, 1781913635)]
-PostgreSQL-1-2-1-1            : found and updated times {'benchmarker': [(1781913312, 1781913641), (1781913313, 1781913635)]}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-2-1-1            : benchmarker timespan job from 1781966627 to 1781967080
+PostgreSQL-1-2-1-1            : benchmarker timespan pods from 1781966632 to 1781967055
+PostgreSQL-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 423
+PostgreSQL-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1781966632, 1781966984), (1781966632, 1781967055)]
+PostgreSQL-1-2-1-1            : found and updated times {'benchmarker': [(1781966632, 1781966984), (1781966632, 1781967055)]}
 PostgreSQL-1-2-1-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-2-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-2-1-1
-PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-2-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-2-1-1
-PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-2-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-1781911752 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-1781965171 initialized to 2.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 2
 PostgreSQL-1-2-2-1            : start benchmarking (benchmark_run=1)
 PostgreSQL-1-2-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1                  : need application metrics for sut
 PostgreSQL-1                  : load application metrics of type postgresql
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781911752
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\queries.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/queries.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-2-2-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-2-2-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-2-2-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-2-2-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\protocol.json" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/protocol.json -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1781965171
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781911752-2-2-1-b25wd: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1781965171-2-2-1-22qzg: found
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -583,82 +296,35 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-1-2-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781911752/PostgreSQL-1-2-2-1.config
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\PostgreSQL-1-2-2-1.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/PostgreSQL-1-2-2-1.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-2-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1781965171/PostgreSQL-1-2-2-1.config
 PostgreSQL-1-2-2-1            : showing benchmarker times
-PostgreSQL-1-2-2-1            : benchmarker timespan job from 1781913713 to 1781914065
-PostgreSQL-1-2-2-1            : benchmarker timespan pods from 1781913717 to 1781914056
-PostgreSQL-1-2-2-1            : benchmarker timespan (start to end single container [s]) = 339
-PostgreSQL-1-2-2-1            : benchmarker times (start/end per pod and container) = [(1781913717, 1781914056), (1781913717, 1781914048)]
-PostgreSQL-1-2-2-1            : found and updated times {'benchmarker': [(1781913717, 1781914056), (1781913717, 1781914048)]}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-2-2-1            : benchmarker timespan job from 1781967138 to 1781967518
+PostgreSQL-1-2-2-1            : benchmarker timespan pods from 1781967142 to 1781967491
+PostgreSQL-1-2-2-1            : benchmarker timespan (start to end single container [s]) = 349
+PostgreSQL-1-2-2-1            : benchmarker times (start/end per pod and container) = [(1781967142, 1781967477), (1781967143, 1781967491)]
+PostgreSQL-1-2-2-1            : found and updated times {'benchmarker': [(1781967142, 1781967477), (1781967143, 1781967491)]}
 PostgreSQL-1-2-2-1            : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-2-2-1            : collecting execution metrics of SUT at connection PostgreSQL-1-2-2-1
-PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-2-2-1            : collecting metrics of benchmarker at connection PostgreSQL-1-2-2-1
-PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781911752(.*)", pod=~"(.*)postgresql-1-1781911752(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\connections.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/connections.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
+PostgreSQL-1-2-2-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1781965171(.*)", pod=~"(.*)postgresql-1-1781965171(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781911752-7dc6db4fc4-hlpjt
-Experiment                    : ends at 2026-06-20 02:08:25.009468 (312104.0314447) - 2246.22s total
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1781965171-54bfc7b85-p2ffl
+Experiment                    : ends at 2026-06-20 16:59:23.350690 (365562.3727778) - 2390.95s total
 Experiment                    : downloading partial results
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/ "\\localhost\D$\data\benchmarks\1781911752" -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
 Experiment                    : uploading full results
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/ -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
 Experiment                    : uploading workload file
-Command failed!
-Return code: 1
-Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1781911752\queries.config" bexhoma-dashboard-7966cc4f94-gmrl5:/results/1781911752/queries.config -c dashboard
-Raw output (bytes): b'error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")\n'
-Decoded with utf-8:
-error: Internal error occurred: unable to upgrade connection: container not found ("dashboard")
-
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
 * Type: benchbase
-* Duration: 2247s 
-* Code: 1781911752
+* Duration: 2391s 
+* Code: 1781965171
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads.
@@ -685,14 +351,14 @@ Benchbase Workload tpcc SF=1
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1299517
+  * disk:1323186
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781911752
+    * code:1781965171
     * TENANT_BY:schema
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -702,14 +368,14 @@ Benchbase Workload tpcc SF=1
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1299592
+  * disk:1324396
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781911752
+    * code:1781965171
     * TENANT_BY:schema
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -719,14 +385,14 @@ Benchbase Workload tpcc SF=1
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1305178
+  * disk:1323168
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781911752
+    * code:1781965171
     * TENANT_BY:schema
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -736,14 +402,14 @@ Benchbase Workload tpcc SF=1
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1299513
+  * disk:1323158
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781911752
+    * code:1781965171
     * TENANT_BY:schema
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -770,10 +436,10 @@ Benchbase Workload tpcc SF=1
 
 |                             |   experiment_run | type_tenants   | vol_tenants   |   num_tenants |   tenant_id |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals |   Throughput [SF/h] |
 |:----------------------------|-----------------:|:---------------|:--------------|--------------:|------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|--------------------:|
-| 1781911752-PostgreSQL-1-1-0 |                1 | schema         | False         |             2 |           0 |    1 |      149.00 |           3.00 |            0.00 |        149.00 |          184.00 |              2 |           1 |               24.16 |
-| 1781911752-PostgreSQL-1-1-1 |                1 | schema         | False         |             2 |           1 |    1 |      149.00 |           3.00 |            0.00 |        149.00 |          184.00 |              2 |           1 |               24.16 |
-| 1781911752-PostgreSQL-1-2-0 |                2 | schema         | False         |             2 |           0 |    1 |      149.00 |           3.00 |            0.00 |        149.00 |          184.00 |              2 |           1 |               24.16 |
-| 1781911752-PostgreSQL-1-2-1 |                2 | schema         | False         |             2 |           1 |    1 |      149.00 |           3.00 |            0.00 |        149.00 |          184.00 |              2 |           1 |               24.16 |
+| 1781965171-PostgreSQL-1-1-0 |                1 | schema         | False         |             2 |           0 |    1 |      137.00 |           2.00 |            0.00 |        137.00 |          185.00 |              2 |           1 |               26.28 |
+| 1781965171-PostgreSQL-1-1-1 |                1 | schema         | False         |             2 |           1 |    1 |      136.00 |           2.00 |            0.00 |        136.00 |          185.00 |              2 |           1 |               26.47 |
+| 1781965171-PostgreSQL-1-2-0 |                2 | schema         | False         |             2 |           0 |    1 |      137.00 |           2.00 |            0.00 |        137.00 |          185.00 |              2 |           1 |               26.28 |
+| 1781965171-PostgreSQL-1-2-1 |                2 | schema         | False         |             2 |           1 |    1 |      136.00 |           2.00 |            0.00 |        136.00 |          185.00 |              2 |           1 |               26.47 |
 
 ### Execution
 
@@ -781,30 +447,84 @@ Benchbase Workload tpcc SF=1
 
 | DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          10 |     1024 |        1 |               1 |       1 |           0 | 300.00 |            0 |                           0.52 |                        0.52 |       109.88 |                                                     107310.00 |                                              50473.00 |
-| PostgreSQL-1-1-1-1-2 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          10 |     1024 |        1 |               1 |       2 |           1 | 300.00 |            0 |                           0.43 |                        0.42 |        88.18 |                                                     100649.00 |                                              50689.00 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          10 |     1024 |        2 |               1 |       1 |           0 | 300.00 |            0 |                           0.45 |                        0.45 |        94.48 |                                                      79918.00 |                                              40442.00 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          10 |     1024 |        2 |               1 |       2 |           1 | 300.00 |            0 |                           0.47 |                        0.47 |        97.98 |                                                      78311.00 |                                              41127.00 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          10 |     1024 |        1 |               1 |       1 |           0 | 300.00 |            0 |                           0.44 |                        0.44 |        93.08 |                                                     482493.00 |                                             154608.00 |
-| PostgreSQL-1-2-1-1-2 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          10 |     1024 |        1 |               1 |       2 |           1 | 300.00 |            0 |                           0.46 |                        0.46 |        96.58 |                                                     292596.00 |                                             105922.00 |
-| PostgreSQL-1-2-2-1-1 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          10 |     1024 |        2 |               1 |       1 |           0 | 300.00 |            0 |                           0.49 |                        0.49 |       102.18 |                                                     461335.00 |                                             158443.00 |
-| PostgreSQL-1-2-2-1-2 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          10 |     1024 |        2 |               1 |       2 |           1 | 300.00 |            0 |                           0.46 |                        0.46 |        97.28 |                                                     307500.00 |                                             121624.00 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          10 |     1024 |        1 |               1 |       1 |           0 | 300.00 |            0 |                           0.46 |                        0.46 |        97.28 |                                                      78542.00 |                                              29969.00 |
+| PostgreSQL-1-1-1-1-2 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          10 |     1024 |        1 |               1 |       2 |           1 | 300.00 |            0 |                           0.44 |                        0.43 |        90.28 |                                                      79498.00 |                                              32454.00 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          10 |     1024 |        2 |               1 |       1 |           0 | 300.00 |            0 |                           0.44 |                        0.44 |        93.08 |                                                      26999.00 |                                              12835.00 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          10 |     1024 |        2 |               1 |       2 |           1 | 300.00 |            0 |                           0.50 |                        0.50 |       104.98 |                                                      57708.00 |                                              15838.00 |
+| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          10 |     1024 |        1 |               1 |       1 |           0 | 300.00 |            0 |                           0.47 |                        0.47 |        99.38 |                                                     475392.00 |                                             146520.00 |
+| PostgreSQL-1-2-1-1-2 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          10 |     1024 |        1 |               1 |       2 |           1 | 300.00 |            0 |                           0.47 |                        0.47 |        97.98 |                                                     303542.00 |                                             110335.00 |
+| PostgreSQL-1-2-2-1-1 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          10 |     1024 |        2 |               1 |       1 |           0 | 300.00 |            0 |                           0.47 |                        0.47 |        97.98 |                                                     160663.00 |                                              61604.00 |
+| PostgreSQL-1-2-2-1-2 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          10 |     1024 |        2 |               1 |       2 |           1 | 300.00 |            0 |                           0.52 |                        0.52 |       109.88 |                                                     133744.00 |                                              54965.00 |
 
 #### Per Phase
 
 | DBMS               | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-------------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-0 | PostgreSQL-1-1-1 |                1 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.52 |                        0.52 |       109.88 |                                                     107310.00 |                                              50473.00 |
-| PostgreSQL-1-1-1-1 | PostgreSQL-1-1-1 |                1 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.43 |                        0.42 |        88.18 |                                                     100649.00 |                                              50689.00 |
-| PostgreSQL-1-1-2-0 | PostgreSQL-1-1-2 |                1 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.45 |                        0.45 |        94.48 |                                                      79918.00 |                                              40442.00 |
-| PostgreSQL-1-1-2-1 | PostgreSQL-1-1-2 |                1 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.47 |                        0.47 |        97.98 |                                                      78311.00 |                                              41127.00 |
-| PostgreSQL-1-2-1-0 | PostgreSQL-1-2-1 |                2 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.44 |                        0.44 |        93.08 |                                                     482493.00 |                                             154608.00 |
-| PostgreSQL-1-2-1-1 | PostgreSQL-1-2-1 |                2 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.46 |                        0.46 |        96.58 |                                                     292596.00 |                                             105922.00 |
-| PostgreSQL-1-2-2-0 | PostgreSQL-1-2-2 |                2 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.49 |                        0.49 |       102.18 |                                                     461335.00 |                                             158443.00 |
-| PostgreSQL-1-2-2-1 | PostgreSQL-1-2-2 |                2 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.46 |                        0.46 |        97.28 |                                                     307500.00 |                                             121624.00 |
+| PostgreSQL-1-1-1-0 | PostgreSQL-1-1-1 |                1 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.46 |                        0.46 |        97.28 |                                                      78542.00 |                                              29969.00 |
+| PostgreSQL-1-1-1-1 | PostgreSQL-1-1-1 |                1 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.44 |                        0.43 |        90.28 |                                                      79498.00 |                                              32454.00 |
+| PostgreSQL-1-1-2-0 | PostgreSQL-1-1-2 |                1 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.44 |                        0.44 |        93.08 |                                                      26999.00 |                                              12835.00 |
+| PostgreSQL-1-1-2-1 | PostgreSQL-1-1-2 |                1 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.50 |                        0.50 |       104.98 |                                                      57708.00 |                                              15838.00 |
+| PostgreSQL-1-2-1-0 | PostgreSQL-1-2-1 |                2 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.47 |                        0.47 |        99.38 |                                                     475392.00 |                                             146520.00 |
+| PostgreSQL-1-2-1-1 | PostgreSQL-1-2-1 |                2 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.47 |                        0.47 |        97.98 |                                                     303542.00 |                                             110335.00 |
+| PostgreSQL-1-2-2-0 | PostgreSQL-1-2-2 |                2 |          10 |     1024 |               1 |           1 |           0 | 300.00 |            0 |                           0.47 |                        0.47 |        97.98 |                                                     160663.00 |                                              61604.00 |
+| PostgreSQL-1-2-2-1 | PostgreSQL-1-2-2 |                2 |          10 |     1024 |               1 |           1 |           1 | 300.00 |            0 |                           0.52 |                        0.52 |       109.88 |                                                     133744.00 |                                              54965.00 |
 
 ### Monitoring
 
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        43.42 |      0.35 |           0.62 |                  0.88 |
+| PostgreSQL-1-1-2-1 |        43.42 |      0.35 |           0.62 |                  0.88 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        16.25 |      0.21 |           0.25 |                  0.25 |
+| PostgreSQL-1-1-2-1 |        16.25 |      0.21 |           0.25 |                  0.25 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         2.25 |      0.01 |           0.69 |                  0.95 |
+| PostgreSQL-1-1-2-1 |         2.56 |      0.01 |           0.69 |                  0.95 |
+| PostgreSQL-1-2-1-1 |        53.13 |      0.02 |           0.62 |                  0.87 |
+| PostgreSQL-1-2-2-1 |         2.85 |      0.02 |           0.50 |                  0.57 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        34.57 |      0.68 |           0.23 |                  0.23 |
+| PostgreSQL-1-1-2-1 |        84.22 |      1.30 |           0.23 |                  0.23 |
+| PostgreSQL-1-2-1-1 |       161.19 |      2.01 |           0.23 |                  0.23 |
+| PostgreSQL-1-2-2-1 |       165.82 |      2.06 |           0.23 |                  0.23 |
+
+### Application Metrics
+
+#### Loading phase: SUT deployment
+
+| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
+|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
+| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        3.00 |                                    2.00 |
+| PostgreSQL-1-1-2-1 |                      1.00 |                                     0.00 |                                             0.00 |                        3.00 |                                    2.00 |
+
+#### Execution phase: SUT deployment
+
+| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
+|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
+| PostgreSQL-1-1-1-1 |                     21.00 |                                     0.00 |                                             0.00 |                        1.00 |                                    1.00 |
+| PostgreSQL-1-1-2-1 |                     21.00 |                                     0.00 |                                             0.00 |                        1.00 |                                    0.00 |
+| PostgreSQL-1-2-1-1 |                     21.00 |                                     0.00 |                                             0.00 |                        2.00 |                                    1.00 |
+| PostgreSQL-1-2-2-1 |                     21.00 |                                     0.00 |                                             0.00 |                        2.00 |                                    1.00 |
+
 ### Tests
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
