@@ -542,7 +542,10 @@ class CollectorBase:
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluation = self.get_evaluator(code)
-        df = evaluation.get_monitoring_metric(metric=metric, component=component).T
+        df = evaluation.get_monitoring_metric(metric=metric, component=component)
+        if df.empty:
+            return pd.DataFrame()
+        df = df.T
         df.index = code + '-' + df.index.astype(str)
         return df
 
@@ -565,13 +568,15 @@ class CollectorBase:
         5. **Multi-tenant key join** — when both DataFrames have
            ``(code, experiment_run, client, type_tenants, num_tenants)`` columns.
 
-        If none of the strategies match, a warning is printed and ``None`` is returned.
+        If none of the strategies match, a warning is printed and an empty DataFrame is returned.
 
         :param df: Monitoring DataFrame to enrich with connection metadata.
         :type df: pandas.DataFrame
-        :return: Enriched DataFrame with connection metadata columns added.
+        :return: Enriched DataFrame with connection metadata columns added, or empty on failure.
         :rtype: pandas.DataFrame
         """
+        if df is None or df.empty:
+            return pd.DataFrame()
         df_connections = self.get_connections()
         intersection_job = df.index.intersection(df_connections['job'])
         intersection_phase = df.index.intersection(df_connections['phase'])
@@ -674,6 +679,7 @@ class CollectorBase:
 
         else:
             print("add_metadata: combine failed!")
+            return pd.DataFrame()
 
     def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
         """
