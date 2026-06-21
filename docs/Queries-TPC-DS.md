@@ -4,6 +4,9 @@ The [TPC-DS](https://www.tpc.org/tpcds/) benchmark defines 99 decision-support q
 retail channels (store, catalog, web) and associated returns. This page documents all 99 queries as
 implemented in Bexhoma, including the TPC-DS reference SQL and any DBMS-specific dialect variants.
 
+> **Reference version:** All SQL templates and parameter distributions on this page are taken from
+> **TPC-DS v4.0.0** (`DSGen-software-code-4.0.0/query_templates/` and `query_variants/`).
+
 ## Configuration File
 
 Queries are stored in [`experiments/tpcds/queries-tpcds.config`](../experiments/tpcds/queries-tpcds.config).
@@ -66,6 +69,41 @@ Sixteen queries carry a `'DBMS'` key with dialect-specific SQL for one or more s
 | Q84 | MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()` |
 | Q86 | MariaDB, MonetDB, PostgreSQL, Exasol, MemSQL | `GROUP BY ROLLUP` syntax differences |
 | Q97 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL + GROUP BY` |
+
+---
+
+## Deviations from the TPC-DS Reference Templates
+
+Not every query in bexhoma is a verbatim translation of the TPC-DS template.
+Differences fall into two categories:
+
+- **Syntactic** — different SQL dialect or notation, but the query returns the same result set on the same data.
+- **Semantic** — the query logic or filter differs, so a different result set is expected compared to a conforming TPC-DS implementation.
+
+### Semantic Differences (different result set expected)
+
+| Query | What bexhoma does | What the template specifies | Effect |
+|-------|-------------------|-----------------------------|--------|
+| **Q1** | `sum({AGG_FIELD})` — the aggregated field is drawn at random from 7 options (`SR_RETURN_AMT`, `SR_FEE`, `SR_REFUNDED_CASH`, `SR_RETURN_AMT_INC_TAX`, `SR_REVERSED_CHARGE`, `SR_STORE_CREDIT`, `SR_RETURN_TAX`) | Hardcodes `sum(sr_return_amt_inc_tax)` | Different rows pass the 120% threshold depending on which field is selected |
+| **Q2** | `d_year = 1998` and `d_year = 1999` are **hardcoded** in the SQL; the declared `{YEAR}` parameter is never substituted into the query text | Draws `[YEAR]` and `[YEAR]+1` from a uniform distribution (1998–2001) | Always compares 1998 vs. 1999; other year pairs are never exercised |
+| **Q5** | Date window uses `interval '14' day` | `+ 30 days` | 14-day window instead of 30-day window; fewer rows match in all three channel CTEs |
+| **Q13** | `d_year` is **hardcoded to 2001** in the WHERE clause | Draws `[YEAR]` from uniform distribution | Always filters to year 2001 only |
+| **Q30** | `STATE` parameter list contains only `["TN"]` — always Tennessee | Draws `[STATE]` from `fips_county` distribution (any US state) | Always restricted to TN; no other states are tested |
+| **Q49** | Adds `and d_moy = {MONTH}` to all three channel subqueries | No month filter; the template aggregates an entire year | Results restricted to a single month; template returns full-year top-10 |
+| **Q98** | Start date is always the 1st of the month (`'{YEAR}-{MONTH}-01'`), with `MONTH` drawn from 1–7 | Start date drawn from a sales-weighted date distribution within Jan–Jul of `[YEAR]` | Window always starts on the 1st; template may start on any day within the distribution |
+
+### Syntactic Differences (same result set, dialect adaptation)
+
+| Difference | Queries affected | Notes |
+|------------|-----------------|-------|
+| `GROUP BY … WITH ROLLUP` (MySQL/MariaDB default) vs. `GROUP BY ROLLUP(…)` (standard SQL) | Q5, Q18, Q22, Q27, Q36, Q67, Q70, Q77, Q80, Q86 | Per-DBMS overrides in the `'DBMS'` key handle each target system |
+| `CONCAT('a', ',', 'b')` vs. standard `'a' \|\| ',' \|\| 'b'` | Q5, Q66, Q84 | MySQL/MariaDB default; `\|\|` used in PostgreSQL/MonetDB/Exasol overrides |
+| `interval 'N' day` vs. `+ N days` date arithmetic | Q5, Q21, Q32, Q72, Q77, Q80, Q92 | Both express the same time offset; dialect normalised for portability |
+| `ORDER BY col IS NOT NULL, col` (explicit NULL-last sort) vs. plain `ORDER BY col` | Q5, Q65, Q72 | Added to make NULL ordering deterministic across DBMS that differ in default NULL position |
+| `FULL OUTER JOIN` rewritten as `UNION ALL + GROUP BY` for MySQL | Q51, Q97 | MySQL/MariaDB override; the rewrite is logically equivalent |
+| `CAST(… AS SIGNED)` vs. `CAST(… AS INT)` | Q54 (MySQL override) | MySQL does not support `INT` as a cast target |
+| `CAST(inv_after AS FLOAT) / inv_before` vs. plain division | Q21 | Forces floating-point division; semantically equivalent on non-integer inputs |
+| Nested CTE workaround (outer CTE wraps everything) | Q5 (MariaDB), Q14a+b (MariaDB), Q77 (MariaDB), Q80 (MariaDB) | MariaDB <10.4 cannot reference a CTE from inside another CTE body |
 
 ---
 
