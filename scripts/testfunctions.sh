@@ -25,6 +25,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=10
+BEXHOMA_STORAGE_CLASS="shared"
 
 
 # ---------------------------------------------------------------------------
