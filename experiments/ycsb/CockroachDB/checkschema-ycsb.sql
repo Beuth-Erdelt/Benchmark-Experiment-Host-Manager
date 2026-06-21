@@ -6,6 +6,25 @@
 -- Purpose: Verifies the CockroachDB cluster state and range distribution
 --          after the YCSB schema is loaded.
 
+SELECT 'wait for rebalancing' AS message;
+
+DO $$
+DECLARE
+    pending INT;
+BEGIN
+    LOOP
+        SELECT count(*) INTO pending
+        FROM crdb_internal.ranges
+        WHERE array_length(learner_replicas, 1) > 0
+           OR array_length(replicas, 1) < {num_worker_replicas};
+        EXIT WHEN pending = 0;
+        PERFORM pg_sleep(5);
+    END LOOP;
+END;
+$$;
+
+SELECT 'wait for rebalancing: done' AS message;
+
 -- This table contains information about the distribution of ranges across the nodes. It gives insights into the status of ranges, including which node is hosting which range.
 SELECT 'crdb_internal.ranges' AS message;
 SELECT * FROM crdb_internal.ranges;
