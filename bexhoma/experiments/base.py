@@ -1701,33 +1701,33 @@ class ExperimentBase():
                         experimentRun = str(config.num_experiment_to_apply_done + 1)
                         client_round = config.experiment_dict["benchmarker"][config.client - 1]
                         config.client += 1
-                        if config.client > self.client:
+                        is_first_in_round = config.client > self.client
+                        if is_first_in_round:
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
                             self.client = config.client
-                            # Round counter is per-configuration: synchronizes parallel jobs
-                            # within one config's client round (e.g. query stream + refresh stream).
-                            # Different SUTs must not share this counter.
-                            round_idx = config.client - 2  # 0-based index of the round just started
-                            benchmarker_rounds = config.experiment_dict.get("benchmarker") or []
-                            if round_idx < len(benchmarker_rounds):
-                                total_round_pods = sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
-                            else:
-                                total_round_pods = 0
-                            round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
-                            self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
-                            print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
-                            if self.tenant_per == 'container':
-                                # Experiment counter spans all configurations so every
-                                # container-tenancy pod waits for the full cross-SUT cohort.
-                                total_exp_pods = sum(
-                                    sum(entry["parallelism"] for entry in c_rounds[round_idx])
-                                    for c in self.configurations
-                                    for c_rounds in [c.experiment_dict.get("benchmarker") or []]
-                                    if round_idx < len(c_rounds)
-                                )
-                                exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
-                                self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
-                                print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
+                        # Round counter is per-configuration: initialize for every config so
+                        # each SUT's pods find their own key already set in Redis.
+                        round_idx = config.client - 2  # 0-based index of the round just started
+                        benchmarker_rounds = config.experiment_dict.get("benchmarker") or []
+                        if round_idx < len(benchmarker_rounds):
+                            total_round_pods = sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
+                        else:
+                            total_round_pods = 0
+                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
+                        self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
+                        print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
+                        if is_first_in_round and self.tenant_per == 'container':
+                            # Experiment counter spans all configurations so every
+                            # container-tenancy pod waits for the full cross-SUT cohort.
+                            total_exp_pods = sum(
+                                sum(entry["parallelism"] for entry in c_rounds[round_idx])
+                                for c in self.configurations
+                                for c_rounds in [c.experiment_dict.get("benchmarker") or []]
+                                if round_idx < len(c_rounds)
+                            )
+                            exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+                            self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
+                            print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         for bm_idx, bench_entry in enumerate(client_round):
                             benchmark_index = bm_idx + 1
@@ -1754,19 +1754,20 @@ class ExperimentBase():
                         client = str(config.client)
                         experimentRun = str(config.num_experiment_to_apply_done + 1)
                         config.client = config.client+1
-                        if config.client > self.client:
+                        is_first_in_round = config.client > self.client
+                        if is_first_in_round:
                             # this is the first instance of the next benchmark run
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
                             self.client = config.client
-                            # Initialize round counter for this client round (per-configuration).
-                            round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
-                            self.cluster.set_pod_counter(queue=round_counter_key, value=parallelism)
-                            if self.tenant_per == 'container':
-                                # Container tenancy uses experiment_dict; this legacy path
-                                # falls back to the current config's parallelism only.
-                                exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
-                                self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
-                                print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
+                        # Initialize round counter for this config (always, per-config key).
+                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
+                        self.cluster.set_pod_counter(queue=round_counter_key, value=parallelism)
+                        if is_first_in_round and self.tenant_per == 'container':
+                            # Container tenancy uses experiment_dict; this legacy path
+                            # falls back to the current config's parallelism only.
+                            exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+                            self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
+                            print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
