@@ -1,4 +1,4 @@
-﻿# TPC-DS Query Reference
+# TPC-DS Query Reference
 
 The [TPC-DS](https://www.tpc.org/tpcds/) benchmark defines 99 decision-support queries covering three
 retail channels (store, catalog, web) and associated returns. This page documents all 99 queries as
