@@ -84,13 +84,12 @@ Differences fall into two categories:
 
 | Query | What bexhoma does | What the template specifies | Effect |
 |-------|-------------------|-----------------------------|--------|
-| **Q1** | `sum({AGG_FIELD})` — the aggregated field is drawn at random from 7 options (`SR_RETURN_AMT`, `SR_FEE`, `SR_REFUNDED_CASH`, `SR_RETURN_AMT_INC_TAX`, `SR_REVERSED_CHARGE`, `SR_STORE_CREDIT`, `SR_RETURN_TAX`) | Hardcodes `sum(sr_return_amt_inc_tax)` | Different rows pass the 120% threshold depending on which field is selected |
-| **Q2** | `d_year = 1998` and `d_year = 1999` are **hardcoded** in the SQL; the declared `{YEAR}` parameter is never substituted into the query text | Draws `[YEAR]` and `[YEAR]+1` from a uniform distribution (1998–2001) | Always compares 1998 vs. 1999; other year pairs are never exercised |
-| **Q5** | Date window uses `interval '14' day` | `+ 30 days` | 14-day window instead of 30-day window; fewer rows match in all three channel CTEs |
-| **Q13** | `d_year` is **hardcoded to 2001** in the WHERE clause | Draws `[YEAR]` from uniform distribution | Always filters to year 2001 only |
-| **Q30** | `STATE` parameter list contains only `["TN"]` — always Tennessee | Draws `[STATE]` from `fips_county` distribution (any US state) | Always restricted to TN; no other states are tested |
-| **Q49** | Adds `and d_moy = {MONTH}` to all three channel subqueries | No month filter; the template aggregates an entire year | Results restricted to a single month; template returns full-year top-10 |
-| **Q98** | Start date is always the 1st of the month (`'{YEAR}-{MONTH}-01'`), with `MONTH` drawn from 1–7 | Start date drawn from a sales-weighted date distribution within Jan–Jul of `[YEAR]` | Window always starts on the 1st; template may start on any day within the distribution |
+| **Q2** | `d_year = {YEAR}` and `d_year = {YEAR}+1` now substituted correctly (previously hardcoded 1998/1999) | Draws `[YEAR]` and `[YEAR]+1` from a uniform distribution (1998–2001) | **Fixed** — all year pairs now exercised |
+| **Q5** | Date window corrected to `interval '30' day` (previously `interval '14' day`) | `+ 30 days` | **Fixed** |
+| **Q13** | `d_year = {YEAR}` now substituted (previously hardcoded 2001); `YEAR` parameter added (1998–2002) | Draws `[YEAR]` from uniform distribution | **Fixed** |
+| **Q30** | `STATE` expanded to all 43 US state codes (previously only `["TN"]`) | Draws `[STATE]` from `fips_county` distribution (any US state) | **Fixed** |
+| **Q49** | `d_moy` filter removed from all three channel subqueries; `MONTH` parameter removed | No month filter; the template aggregates an entire year | **Fixed** |
+| **Q98** | Start date uses `{DAY}` parameter (integer 1–28) instead of hardcoded `01`; `DAY` parameter added | Start date drawn from a sales-weighted date distribution within Jan–Jul of `[YEAR]` | **Approximated** — uniform day distribution used; sales-weighted draw not expressible in dbmsbenchmarker |
 
 ### Syntactic Differences (same result set, dialect adaptation)
 
