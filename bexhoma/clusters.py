@@ -397,7 +397,7 @@ class Kubernetes():
             self.wait(2)
             return self.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
 
-    def get_pods(self, app='', component='', experiment='', configuration='', status=''):
+    def get_pods(self, app='', component='', experiment='', configuration='', dbms='', status=''):
         """
         Return names of Pods matching the given label selectors and optional phase.
 
@@ -405,6 +405,7 @@ class Kubernetes():
         :param component: ``component`` label value.
         :param experiment: ``experiment`` label value.
         :param configuration: ``configuration`` label value.
+        :param dbms: ``dbms`` label value (DBMS type, e.g. ``MonetDB``).
         :param status: Pod phase to filter by (e.g. ``Running``, ``Succeeded``).
         :return: List of Pod names.
         """
@@ -418,6 +419,8 @@ class Kubernetes():
             label += ',experiment=' + experiment
         if configuration:
             label += ',configuration=' + configuration
+        if dbms:
+            label += ',dbms=' + dbms
         field_selector = 'status.phase=' + status if status else ''
         self.logger.debug(f'get_pods label({label})')
         try:
@@ -435,7 +438,7 @@ class Kubernetes():
             self.wait(2)
             return self.get_pods(
                 app=app, component=component, experiment=experiment,
-                configuration=configuration, status=status
+                configuration=configuration, dbms=dbms, status=status
             )
 
     def get_stateful_sets(self, app='', component='', experiment='', configuration=''):

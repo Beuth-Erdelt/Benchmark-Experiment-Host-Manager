@@ -592,7 +592,7 @@ class ExperimentBase():
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
         if self.max_sut is not None:
-            self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
+            self.workload['info'] = self.workload['info']+"\nMaximum DBMS per experiment is {}.".format(self.max_sut)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
         self.workload['loading_active'] = self.loading_is_active()
     def generate_port_forward(self, service: str) -> str:
@@ -1471,43 +1471,42 @@ class ExperimentBase():
             intervals_wait = intervals
             _benchmark_just_submitted = False
             # count number of running and pending pods
-            num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
-            num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
-            num_pods_running_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Running'))
-            num_pods_pending_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Pending'))
+            num_pods_running_experiment = len(self.cluster.get_pods(app=self.appname, component='sut', experiment=self.code, status='Running'))
+            num_pods_pending_experiment = len(self.cluster.get_pods(app=self.appname, component='sut', experiment=self.code, status='Pending'))
+            num_pods_running_cluster = len(self.cluster.get_pods(app=self.appname, component='sut', status='Running'))
+            num_pods_pending_cluster = len(self.cluster.get_pods(app=self.appname, component='sut', status='Pending'))
+            # track optimistic in-pass pending counts per DBMS type (reset each loop iteration)
+            num_pods_pending_dbms: dict[str, int] = {}
             for config in self.configurations:
                 # check if sut is running
                 if not config.status.sut_running():
-                    #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.status.sut_pending():
-                            #print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
-                            if self.cluster.max_sut is not None or self.max_sut is not None:
-                                we_can_start_new_sut = True
-                                if self.max_sut is not None:
-                                    #print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                    if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
-                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                        #print("{:30s}: has to wait".format(config.configuration))
-                                        we_can_start_new_sut = False
-                                if self.cluster.max_sut is not None:
-                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
-                                    if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
-                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
-                                        #print("{:30s}: has to wait".format(config.configuration))
-                                        we_can_start_new_sut = False
-                                if we_can_start_new_sut:
-                                    print("{:30s}: will start now".format(config.configuration))
-                                    config.lifecycle.start_sut()
-                                    num_pods_pending_experiment = num_pods_pending_experiment + 1
-                                    num_pods_pending_cluster = num_pods_pending_cluster + 1
-                            else:
+                            we_can_start_new_sut = True
+                            if self.max_sut is not None:
+                                if num_pods_running_experiment + num_pods_pending_experiment >= self.max_sut:
+                                    print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))
+                                    we_can_start_new_sut = False
+                            if self.cluster.max_sut is not None:
+                                if num_pods_running_cluster + num_pods_pending_cluster >= self.cluster.max_sut:
+                                    print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))
+                                    we_can_start_new_sut = False
+                            if config.max_sut_dbms is not None:
+                                dbms_type = config.docker
+                                num_running_dbms = len(self.cluster.get_pods(app=self.appname, component='sut', dbms=dbms_type, status='Running'))
+                                num_pending_dbms = len(self.cluster.get_pods(app=self.appname, component='sut', dbms=dbms_type, status='Pending'))
+                                num_pending_dbms_this_pass = num_pods_pending_dbms.get(dbms_type, 0)
+                                if num_running_dbms + num_pending_dbms + num_pending_dbms_this_pass >= config.max_sut_dbms:
+                                    print("{:30s}: has to wait - {} running and {} pending pods of dbms {}: max is {} pods per dbms".format(config.configuration, num_running_dbms, num_pending_dbms, dbms_type, config.max_sut_dbms))
+                                    we_can_start_new_sut = False
+                            if we_can_start_new_sut:
                                 print("{:30s}: will start now".format(config.configuration))
                                 config.lifecycle.start_sut()
-                                num_pods_pending_experiment = num_pods_pending_experiment + 1
-                                num_pods_pending_cluster = num_pods_pending_cluster + 1
-                                #self.wait(10)
+                                num_pods_pending_experiment += 1
+                                num_pods_pending_cluster += 1
+                                if config.max_sut_dbms is not None:
+                                    dbms_type = config.docker
+                                    num_pods_pending_dbms[dbms_type] = num_pods_pending_dbms.get(dbms_type, 0) + 1
                         else:
                             print("{:30s}: is pending".format(config.configuration))
                     continue

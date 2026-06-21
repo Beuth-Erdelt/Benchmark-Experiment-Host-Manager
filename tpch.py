@@ -131,6 +131,8 @@ if __name__ == '__main__':
     ### prepare and configure experiment
     ##############
     experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    if args.max_sut_experiment is not None:
+        experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     #experiment.num_tenants = multi_tenant_num

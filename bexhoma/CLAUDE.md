@@ -163,6 +163,7 @@ Key attribute groups:
 | Deployment bookkeeping | `deployment_infos`, `statefulset_name`, `sut_service_name`, `sut_pod_name`, `volumeid`, `service` |
 | Benchmark sequencing | `benchmark_list`, `benchmark_list_template`, `benchmarking_parameters_list`, `benchmarking_parameters_list_template`, `client`, `connection`, `current_benchmark_start`, `current_benchmark_connection` |
 | DBMS branching | `worker_name_app`, `worker_name_component`, `worker_metric_strip_container` |
+| SUT throttling | `max_sut_dbms` — max concurrent SUT pods with the same `dbms` label allowed in the cluster; `None` means no limit |
 
 ### Key design decisions
 

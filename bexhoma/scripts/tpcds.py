@@ -40,7 +40,8 @@ def do_benchmark():
 	parser.add_argument('-e', '--experiment', help='sets experiment code for continuing started experiment', default=None)
 	parser.add_argument('-d', '--detached', help='puts most of the experiment workflow inside the cluster', action='store_true')
 	parser.add_argument('-m', '--monitoring', help='activates monitoring', action='store_true')
-	parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations, default is no limit', default=None)
+	parser.add_argument('-ms', '--max-sut', help='maximum number of parallel DBMS configurations cluster-wide, default is no limit', default=None)
+	parser.add_argument('-mse', '--max-sut-experiment', help='maximum number of parallel DBMS configurations in this experiment, default is no limit', default=None)
 	parser.add_argument('-dt', '--datatransfer', help='activates datatransfer', action='store_true', default=False)
 	parser.add_argument('-md', '--monitoring-delay', help='time to wait [s] before execution of the runs of a query', default=10)
 	parser.add_argument('-nr', '--num-run', help='number of runs per query', default=1)
@@ -83,6 +84,8 @@ def do_benchmark():
 	if code is None:
 		code = cluster.code
 	experiment = experiments.tpcds(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+	if args.max_sut_experiment is not None:
+		experiment.max_sut = int(args.max_sut_experiment)
 	if mode == 'run':
 		# we want all TPC-H queries
 		experiment.set_queries_full()

@@ -120,6 +120,8 @@ if __name__ == '__main__':
     ### prepare and configure experiment
     ##############
     experiment = experiments.ycsb(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    if args.max_sut_experiment is not None:
+        experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
     # remove running dbms
@@ -516,7 +518,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
+                    config.max_sut_dbms = 1
                 if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
                     # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
@@ -806,7 +808,7 @@ if __name__ == '__main__':
                                         )
                     #print(executor_list)
                     config.add_benchmark_list(executor_list)
-                    cluster.max_sut = 1 # can only run 1 in same cluster because of fixed stateful set
+                    config.max_sut_dbms = 1
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############
