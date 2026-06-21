@@ -46,7 +46,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_scale.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 
 
@@ -80,7 +79,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_monitoring.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 
 
@@ -121,7 +119,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_storage.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 
 
@@ -174,7 +171,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_keytime.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
 
 

@@ -21,8 +21,9 @@
 
 
 
-#### TCP-DS Compare (Example-TPC-DS.md)
+#### TCP-DS PostgreSQL (Example-TPC-DS.md)
 bexhoma tpcds `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
@@ -38,10 +39,9 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_compare.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_postgresql.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_testcase_compare.log"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS compare  sf=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
@@ -66,7 +66,6 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_monitoring.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_testcase_monitoring.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS monitoring  sf=3"
 
 
@@ -90,7 +89,6 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_throughput.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_testcase_throughput.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
@@ -120,7 +118,6 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_storage.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_testcase_storage.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS storage  sf=1  nc=2"
 
 
@@ -157,7 +154,6 @@ bexhoma tpcds `
   -rst cephcsi                   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_monetdb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
@@ -183,7 +179,6 @@ bexhoma tpcds `
   -rst cephcsi                   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_monetdb_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
@@ -209,7 +204,6 @@ bexhoma tpcds `
   -rst cephcsi                   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_monetdb_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
@@ -242,7 +236,6 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   profiling 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_profiling.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_tpcds_testcase_profiling.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS profiling  sf=10  ne=1,1"
 
 

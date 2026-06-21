@@ -166,7 +166,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_newconn.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
@@ -204,7 +203,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_newconn_pool.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 

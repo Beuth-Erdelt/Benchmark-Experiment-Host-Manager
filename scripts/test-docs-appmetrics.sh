@@ -52,7 +52,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 
-wait_log "$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -98,7 +97,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log
 
-wait_log "$LOG_DIR/doc_ycsb_testcase_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=1,8"
 
 
@@ -138,7 +136,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 
 
@@ -178,7 +175,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
 
-wait_log "$LOG_DIR/doc_tpcds_testcase_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL appmetrics  sf=3"
 
 
@@ -214,7 +210,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log
 
-wait_log "$LOG_DIR/doc_hammerdb_testcase_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -255,7 +250,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 
-wait_log "$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -303,7 +297,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log
 
-wait_log "$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 
 
@@ -343,7 +336,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
 
-wait_log "$LOG_DIR/doc_tpch_run_mysql_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL appmetrics  sf=3"
 
 
@@ -385,7 +377,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
 
-wait_log "$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL appmetrics  sf=3"
 
 
@@ -423,7 +414,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log
 
-wait_log "$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=1,2"
 
 
@@ -479,7 +469,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log
 
-wait_log "$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB appmetrics  sf=10  nbp=1"
 
 
@@ -519,7 +508,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
 
-wait_log "$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB appmetrics  sf=16  nbp=1,2"
 
 
@@ -573,7 +561,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log
 
-wait_log "$LOG_DIR/doc_ycsb_run_redis_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
 
 
@@ -627,7 +614,6 @@ bexhoma ycsb \
   -tr \
   run &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log
 
-wait_log "$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB appmetrics  sf=1  nbp=1"
 
 
@@ -662,7 +648,6 @@ bexhoma benchbase \
   -tr \
   run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 
-wait_log "$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=1,2"
 
 
@@ -724,7 +709,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 
-wait_log "$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=16"
 
 
@@ -768,7 +752,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
 
-wait_log "$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PGBouncer appmetrics  sf=16  nbp=1,2"
 
 

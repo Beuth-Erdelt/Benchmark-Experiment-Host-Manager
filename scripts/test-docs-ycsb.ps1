@@ -42,7 +42,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_loading.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_loading.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading  sf=1  nlp=1,8"
 
 
@@ -67,7 +66,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_benchmarking.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_benchmarking.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
 
 
@@ -94,7 +92,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_monitoring.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_monitoring.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB monitoring  sf=3  nbp=1,8"
 
 
@@ -126,7 +123,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_storage.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_storage.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
 
 
@@ -148,7 +144,6 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_loading_patch.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_loading_patch.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch  sf=1  nlp=1"
 
 
@@ -182,7 +177,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_a.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_a.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload a  sf=10  nbp=1,8"
 
 
@@ -211,7 +205,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_b.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_b.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload b  sf=10  nbp=1,8"
 
 
@@ -240,7 +233,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_c.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_c.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c  sf=10  nbp=1,8"
 
 
@@ -270,7 +262,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_d.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_d.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload d  sf=10  nbp=1"
 
 
@@ -300,7 +291,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_e.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_e.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload e  sf=10  nbp=1"
 
 
@@ -329,7 +319,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_f.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_testcase_f.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload f  sf=10  nbp=1,8"
 
 

@@ -67,7 +67,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_citus_1.log
 
-wait_log "$LOG_DIR/doc_ycsb_citus_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-ycsb-1
@@ -128,7 +127,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_citus_2.log
 
-wait_log "$LOG_DIR/doc_ycsb_citus_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 
 
@@ -168,7 +166,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_1.log
 
-wait_log "$LOG_DIR/doc_benchbase_citus_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
 kubectl delete pvc bexhoma-storage-citus-benchbase-tpcc-128
@@ -218,7 +215,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_2.log
 
-wait_log "$LOG_DIR/doc_benchbase_citus_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
@@ -267,7 +263,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_3.log
 
-wait_log "$LOG_DIR/doc_benchbase_citus_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
 
@@ -309,7 +304,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_1.log
 
-wait_log "$LOG_DIR/doc_hammerdb_citus_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-128
@@ -365,7 +359,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_2.log
 
-wait_log "$LOG_DIR/doc_hammerdb_citus_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-500
@@ -421,7 +414,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_3.log
 
-wait_log "$LOG_DIR/doc_hammerdb_citus_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
 

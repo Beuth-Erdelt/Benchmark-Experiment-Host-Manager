@@ -41,29 +41,6 @@ function Wait-BexhomaProcess {
     Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): bexhoma $ProcessName has terminated."
 }
 
-function Wait-BexhomaLog {
-    param([string]$LogFile)
-    while (-not (Test-Path $LogFile)) {
-        Start-Sleep -Seconds 2
-    }
-    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for log to close: $LogFile"
-    while ($true) {
-        try {
-            $stream = [System.IO.File]::Open(
-                $LogFile,
-                [System.IO.FileMode]::Open,
-                [System.IO.FileAccess]::ReadWrite,
-                [System.IO.FileShare]::Read
-            )
-            $stream.Close()
-            break
-        } catch [System.IO.IOException] {
-            Start-Sleep -Seconds 10
-        }
-    }
-    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Log closed: $LogFile"
-}
-
 function Invoke-CleanLogs {
     $warningText = "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens."
 

@@ -66,7 +66,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
 
-wait_log "$LOG_DIR/doc_ycsb_cockroachdb_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
@@ -122,7 +121,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
 
-wait_log "$LOG_DIR/doc_ycsb_cockroachdb_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
@@ -172,7 +170,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
 
-wait_log "$LOG_DIR/doc_ycsb_cockroachdb_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 
 
@@ -206,7 +203,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 
-wait_log "$LOG_DIR/doc_benchbase_cockroachdb_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
@@ -246,7 +242,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
 
-wait_log "$LOG_DIR/doc_benchbase_cockroachdb_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
@@ -292,7 +287,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
 
-wait_log "$LOG_DIR/doc_benchbase_cockroachdb_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 

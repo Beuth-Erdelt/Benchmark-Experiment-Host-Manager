@@ -70,7 +70,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_collector_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -119,7 +118,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_collector_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -162,7 +160,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_collector_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
@@ -220,7 +217,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
@@ -268,7 +264,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
@@ -316,7 +311,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -368,7 +362,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_1.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_collector_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 1/3  sf=3"
 
 # -dbms PostgreSQL              DBMS under test
@@ -412,7 +405,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_2.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_collector_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 2/3  sf=6"
 
 
@@ -452,7 +444,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_3.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_collector_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 3/3  sf=6"
 
 
@@ -513,7 +504,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # -dbms PostgreSQL              DBMS under test
@@ -565,7 +555,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # -dbms PostgreSQL              DBMS under test
@@ -617,7 +606,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
@@ -676,7 +664,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
 
-wait_log "$LOG_DIR/doc_ycsb_testcase_collector_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 
@@ -730,7 +717,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
 
-wait_log "$LOG_DIR/doc_ycsb_testcase_collector_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -777,7 +763,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
 
-wait_log "$LOG_DIR/doc_ycsb_testcase_collector_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
@@ -828,7 +813,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
 
-wait_log "$LOG_DIR/doc_hammerdb_testcase_collector_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -871,7 +855,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
 
-wait_log "$LOG_DIR/doc_hammerdb_testcase_collector_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -908,7 +891,6 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
 
-wait_log "$LOG_DIR/doc_hammerdb_testcase_collector_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 

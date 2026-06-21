@@ -20,7 +20,8 @@ source ./scripts/testfunctions.sh
 ###########################################
 
 
-#### TCP-DS Compare (Example-TPC-DS.md)
+#### TCP-DS PostgreSQL (Example-TPC-DS.md)
+# -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
@@ -37,6 +38,7 @@ source ./scripts/testfunctions.sh
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
+  -dbms PostgreSQL \
   -sf 1 \
   -nlp 8 \
   -nlt 8 \
@@ -48,10 +50,9 @@ bexhoma tpcds \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_compare.log
+  run &>$LOG_DIR/doc_tpcds_testcase_postgresql.log
 
-wait_log "$LOG_DIR/doc_tpcds_testcase_compare.log"
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
@@ -90,7 +91,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
 
-wait_log "$LOG_DIR/doc_tpcds_testcase_monitoring.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 
 
@@ -126,7 +126,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
 
-wait_log "$LOG_DIR/doc_tpcds_testcase_throughput.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
@@ -169,7 +168,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 
-wait_log "$LOG_DIR/doc_tpcds_testcase_storage.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
 
 
@@ -223,7 +221,6 @@ bexhoma tpcds \
   -rst cephcsi \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 
-wait_log "$LOG_DIR/doc_tpcds_monetdb_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
@@ -265,7 +262,6 @@ bexhoma tpcds \
   -rst cephcsi \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 
-wait_log "$LOG_DIR/doc_tpcds_monetdb_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
@@ -307,7 +303,6 @@ bexhoma tpcds \
   -rst cephcsi \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 
-wait_log "$LOG_DIR/doc_tpcds_monetdb_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 

@@ -47,7 +47,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_dragonfly_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_dragonfly_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
 
 
@@ -79,7 +78,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_dragonfly_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_dragonfly_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
 
 
@@ -109,7 +107,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_dragonfly_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_dragonfly_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 
 
@@ -142,7 +139,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_dragonfly_4.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_dragonfly_4.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 
 
@@ -176,7 +172,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_dragonfly_5.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_dragonfly_5.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 

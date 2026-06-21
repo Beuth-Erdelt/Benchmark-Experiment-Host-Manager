@@ -47,7 +47,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_cockroachdb_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_cockroachdb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
@@ -80,7 +79,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_cockroachdb_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_cockroachdb_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
@@ -110,7 +108,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_cockroachdb_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_cockroachdb_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 
 
@@ -132,7 +129,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_cockroachdb_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_cockroachdb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
@@ -157,7 +153,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_cockroachdb_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_cockroachdb_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
@@ -185,7 +180,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_cockroachdb_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_cockroachdb_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 

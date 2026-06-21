@@ -57,22 +57,6 @@ wait_process() {
 }
 
 
-wait_log() {
-    local log_file=$1
-
-    while [[ ! -f "$log_file" ]]; do
-        sleep 2
-    done
-
-    echo "$(date +"%Y-%m-%d %H:%M:%S"): Waiting for log to close: $log_file"
-    while lsof "$log_file" > /dev/null 2>&1; do
-        sleep 10
-    done
-
-    echo "$(date +"%Y-%m-%d %H:%M:%S"): Log closed: $log_file"
-}
-
-
 clean_logs() {
     export MYDIR=$(pwd)
 

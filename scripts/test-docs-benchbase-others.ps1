@@ -38,7 +38,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_twitter_simple.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_twitter_simple.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase twitter simple  sf=16  nbp=1"
 
 
@@ -63,7 +62,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_twitter_scale.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_twitter_scale.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
 
@@ -84,7 +82,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_chbenchmark_simple.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_chbenchmark_simple.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
 
 
@@ -107,7 +104,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_chbenchmark_scale.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_chbenchmark_scale.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
 
@@ -129,7 +125,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_c.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_ycsb_c.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
 
@@ -151,7 +146,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_a.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_ycsb_a.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
 
@@ -173,7 +167,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_b.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_ycsb_b.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
 
@@ -195,7 +188,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_d.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_ycsb_d.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
 
 
@@ -217,7 +209,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_e.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_ycsb_e.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
 
 
@@ -239,7 +230,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_f.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_testcase_ycsb_f.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
 

@@ -54,29 +54,6 @@ function Wait-BexhomaProcess {
     Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): bexhoma $ProcessName has terminated."
 }
 
-function Wait-BexhomaLog {
-    param([string]$LogFile)
-    while (-not (Test-Path $LogFile)) {
-        Start-Sleep -Seconds 2
-    }
-    while ($true) {
-        try {
-            $stream = [System.IO.File]::Open(
-                $LogFile,
-                [System.IO.FileMode]::Open,
-                [System.IO.FileAccess]::ReadWrite,
-                [System.IO.FileShare]::Read
-            )
-            $stream.Close()
-            break
-        } catch [System.IO.IOException] {
-            Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for log to close: $LogFile"
-            Start-Sleep -Seconds 10
-        }
-    }
-    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Log closed: $LogFile"
-}
-
 function Invoke-CleanLogs {
     $warningText = "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens."
 
@@ -180,7 +157,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_yugabytedb_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_yugabytedb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 #### YCSB Execution (Example-YugaByteDB.md)
@@ -208,7 +184,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_yugabytedb_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_yugabytedb_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
@@ -249,7 +224,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_yugabytedb_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_yugabytedb_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
@@ -280,7 +254,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_yugabytedb_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_yugabytedb_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
@@ -313,7 +286,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_yugabytedb_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_yugabytedb_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
@@ -351,7 +323,6 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_yugabytedb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_run_yugabytedb_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
@@ -380,7 +351,6 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_yugabytedb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_run_yugabytedb_appmetrics.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 

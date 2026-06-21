@@ -60,7 +60,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_1.log
 
-wait_log "$LOG_DIR/doc_ycsb_redis_1.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
 
 
@@ -106,7 +105,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_2.log
 
-wait_log "$LOG_DIR/doc_ycsb_redis_2.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3  sf=1  nbp=1"
 
 
@@ -154,7 +152,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_3.log
 
-wait_log "$LOG_DIR/doc_ycsb_redis_3.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 replication  sf=1  nbp=1"
 
 
@@ -204,7 +201,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_4.log
 
-wait_log "$LOG_DIR/doc_ycsb_redis_4.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single PVC  sf=1  nbp=1  nc=2"
 
 
@@ -256,7 +252,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_5.log
 
-wait_log "$LOG_DIR/doc_ycsb_redis_5.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 

@@ -45,7 +45,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_citus_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_citus_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus  sf=1  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-ycsb-1
@@ -83,7 +82,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_citus_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_ycsb_citus_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 
 
@@ -110,7 +108,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_citus_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_citus_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
 kubectl delete pvc bexhoma-storage-citus-benchbase-tpcc-128
@@ -143,7 +140,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_citus_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_citus_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
@@ -172,7 +168,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_citus_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_benchbase_citus_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
 
@@ -200,7 +195,6 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_citus_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_citus_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus  sf=16  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-128
@@ -236,7 +230,6 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_citus_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_citus_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
 kubectl delete pvc bexhoma-storage-citus-hammerdb-500
@@ -272,7 +265,6 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_citus_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\doc_hammerdb_citus_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
 
@@ -302,7 +294,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_tpch_testcase_citus_1.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\test_tpch_testcase_citus_1.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus  sf=1  nbp=1"
 
 kubectl delete pvc bexhoma-storage-citus-tpch-10
@@ -339,7 +330,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_tpch_testcase_citus_2.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\test_tpch_testcase_citus_2.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
 kubectl delete pvc bexhoma-storage-citus-tpch-10
@@ -374,7 +364,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_tpch_testcase_citus_3.log" -Encoding utf8
 
-Wait-BexhomaLog "$LOG_DIR\test_tpch_testcase_citus_3.log"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 
 

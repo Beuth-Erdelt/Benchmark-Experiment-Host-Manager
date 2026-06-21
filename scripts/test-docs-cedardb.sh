@@ -45,7 +45,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log
 
-wait_log "$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 
 
@@ -85,7 +84,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log
 
-wait_log "$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
 
 
@@ -117,7 +115,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log
 
-wait_log "$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB chbenchmark simple  sf=10  nbp=1"
 
 
