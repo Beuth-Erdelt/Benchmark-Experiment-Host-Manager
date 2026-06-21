@@ -158,7 +158,8 @@ class Benchmark:
             print("\n### Execution")
             print("\n#### Per Connection\n")
             df_conn = self.evaluator.get_summary_benchmark_per_connection()
-            print(df_conn.to_markdown(index=True, floatfmt=".2f"))
+            if not df_conn.empty:
+                print(df_conn.to_markdown(index=True, floatfmt=".2f"))
             print("\n#### Per Phase\n")
             if is_multitenant:
                 df_phase = self.evaluator.get_summary_benchmark_per_phase_multitenant()
