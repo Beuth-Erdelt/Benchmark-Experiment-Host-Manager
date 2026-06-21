@@ -217,15 +217,17 @@ further negative, but the wait condition is still satisfied immediately.
 | Level | Scope | Key format |
 |---|---|---|
 | **Job** | All pods within one Kubernetes Job | `bexhoma-{type}-podcount-job-{CONNECTION}-{EXPERIMENT}` |
-| **Round** | All benchmarker pods across all parallel jobs in the same client round | `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{EXPERIMENT}` |
+| **Round** | All benchmarker pods within one configuration's client round (e.g. query stream + refresh stream) | `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{CONFIGURATION}-{EXPERIMENT}` |
 | **Experiment** | All pods of all configurations in the same phase; container tenancy only | `bexhoma-{type}-podcount-exp-{EXPERIMENT}` |
 
 `{type}` is `benchmarker`, `loader`, or `generator`.  `{CONNECTION}` maps to
 `self.configuration` / `$BEXHOMA_CONNECTION`.  `{EXPERIMENT}` maps to `self.code` /
 `$BEXHOMA_EXPERIMENT`.
 
-The round counter key is unique per `(EXPERIMENT_RUN, CLIENT, EXPERIMENT)` triple, which
-prevents stale counter values from one round affecting the next (the core fix for #720).
+The round counter key is unique per `(EXPERIMENT_RUN, CLIENT, CONFIGURATION, EXPERIMENT)` quad.
+The `CONFIGURATION` segment scopes the counter to a single SUT so that benchmarkers of
+different parallel configurations never share a round counter. The remaining fields prevent
+stale values from one round affecting the next (the core fix for #720).
 
 ### Rules per pod type
 

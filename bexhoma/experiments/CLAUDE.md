@@ -117,7 +117,7 @@ counters (three in container-tenancy mode):
 | Counter | Key | Initialized to |
 |---|---|---|
 | Job | `bexhoma-benchmarker-podcount-job-{CONNECTION}-{EXPERIMENT}` | `parallelism` of this job |
-| Round | `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{EXPERIMENT}` | sum of `parallelism` across all jobs in the round |
+| Round | `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{CONFIGURATION}-{EXPERIMENT}` | sum of `parallelism` across all jobs in this configuration's round |
 
 A pod polls until the counter is `<= 0` (not `== 0`), so that a restarted pod
 that decrements again still exits the poll immediately.
