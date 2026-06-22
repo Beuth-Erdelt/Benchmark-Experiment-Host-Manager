@@ -152,6 +152,16 @@ def print_report(all_records: list[dict]) -> None:
         for name in missing:
             print(f"  {name}")
 
+    referenced = {rec["logfile"] for rec in all_records}
+    unreferenced = sorted(
+        p.name for p in LOGS_DIR.glob("*.log") if p.name not in referenced
+    )
+    if unreferenced:
+        print(f"\n\nLog files in {LOGS_DIR}/ not referenced in any doc  ({len(unreferenced)})")
+        print("-" * 70)
+        for name in unreferenced:
+            print(f"  {name}")
+
 
 if __name__ == "__main__":
     if not DOCS_DIR.exists():
