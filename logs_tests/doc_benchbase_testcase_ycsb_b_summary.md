@@ -3,8 +3,8 @@
 ### Workload
 Benchbase Workload ycsb SF=1000
 * Type: benchbase
-* Duration: 1061s 
-* Code: 1782010446
+* Duration: 1053s 
+* Code: 1782082180
 * Benchbase runs an YCSB experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads.
@@ -27,13 +27,13 @@ Benchbase Workload ycsb SF=1000
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:226880
+  * disk:222216
   * cpu_list:0-127
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782010446
+    * code:1782082180
     * TENANT_VOL:False
 * PostgreSQL-1-1-2-1 uses docker image postgres:18.3
   * RAM:540492877824
@@ -41,13 +41,13 @@ Benchbase Workload ycsb SF=1000
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:227402
+  * disk:222633
   * cpu_list:0-127
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782010446
+    * code:1782082180
     * TENANT_VOL:False
 
 ### Workflow
@@ -68,7 +68,7 @@ Benchbase Workload ycsb SF=1000
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 1000 |       47.00 |           0.00 |            0.00 |          7.00 |           40.00 |              1 |           1 |             |                |             0 | False         |            76595.74 |
+| PostgreSQL-1-1 |                1 | 1000 |       51.00 |           1.00 |            0.00 |          8.00 |           42.00 |              1 |           1 |             |                |             0 | False         |            70588.24 |
 
 ### Execution
 
@@ -76,16 +76,16 @@ Benchbase Workload ycsb SF=1000
 
 | DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          32 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            0 |                       16384.05 |                    16384.06 |         0.00 |                                                       1029.00 |                                                471.00 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       1 |           0 | 300.00 |            0 |                        8192.02 |                     8192.03 |         0.00 |                                                       1082.00 |                                                475.00 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       2 |           0 | 300.00 |            0 |                        8192.03 |                     8192.03 |         0.00 |                                                       1087.00 |                                                477.00 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          32 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            0 |                       16384.04 |                    16384.06 |         0.00 |                                                       1071.00 |                                                478.00 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       1 |           0 | 300.00 |            0 |                        8192.02 |                     8192.03 |         0.00 |                                                       1012.00 |                                                448.00 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       2 |           0 | 300.00 |            0 |                        8192.03 |                     8192.03 |         0.00 |                                                       1090.00 |                                                474.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |          32 |    16384 |               1 |           1 |           0 | 300.00 |            0 |                       16384.05 |                    16384.06 |         0.00 |                                                       1029.00 |                                                471.00 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |          32 |    16384 |               1 |           2 |           0 | 300.00 |            0 |                       16384.05 |                    16384.06 |         0.00 |                                                       1087.00 |                                                476.00 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |          32 |    16384 |               1 |           1 |           0 | 300.00 |            0 |                       16384.04 |                    16384.06 |         0.00 |                                                       1071.00 |                                                478.00 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |          32 |    16384 |               1 |           2 |           0 | 300.00 |            0 |                       16384.05 |                    16384.06 |         0.00 |                                                       1090.00 |                                                461.00 |
 
 ### Tests
 * TEST passed: Throughput (requests/second) contains no 0 or NaN

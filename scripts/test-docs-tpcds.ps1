@@ -150,7 +150,7 @@ bexhoma tpcds `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
+  -rss 2000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_1.log" -Encoding utf8
 
@@ -175,7 +175,7 @@ bexhoma tpcds `
   -t 14400                      <# query timeout in seconds #> `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
+  -rss 2000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_2.log" -Encoding utf8
 
@@ -200,7 +200,7 @@ bexhoma tpcds `
   -t 14400                      <# query timeout in seconds #> `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
+  -rss 2000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_3.log" -Encoding utf8
 

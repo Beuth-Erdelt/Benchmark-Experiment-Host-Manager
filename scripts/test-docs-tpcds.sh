@@ -199,7 +199,7 @@ sleep 30
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 1000Gi                   size of the persistent volume claim
+# -rss 2000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
@@ -217,7 +217,7 @@ bexhoma tpcds \
   -lr 1024Gi \
   -rr 1024Gi \
   -rsr \
-  -rss 1000Gi \
+  -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 
@@ -241,7 +241,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
-# -rss 1000Gi                   size of the persistent volume claim
+# -rss 2000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
@@ -258,7 +258,7 @@ bexhoma tpcds \
   -t 14400 \
   -lr 1024Gi \
   -rr 1024Gi \
-  -rss 1000Gi \
+  -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 
@@ -282,7 +282,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
-# -rss 1000Gi                   size of the persistent volume claim
+# -rss 2000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
@@ -299,7 +299,7 @@ bexhoma tpcds \
   -t 14400 \
   -lr 1024Gi \
   -rr 1024Gi \
-  -rss 1000Gi \
+  -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 
