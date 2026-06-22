@@ -38,6 +38,8 @@ for filename in os.listdir(md_directory):
 # Regular expression to match: <filename>.log\n```bash\n...``` blocks
 pattern = re.compile(r'(?P<logfile>[\w\-.\/]+\.log)\n```markdown\n(.*?)\n```', re.DOTALL)
 
+missing_summary_files = []
+
 for filename in os.listdir(md_directory):
     if filename.endswith('.md'):
         print(f"Reading {filename}")
@@ -56,12 +58,18 @@ for filename in os.listdir(md_directory):
                 return f"{log_marker}\n```markdown\n{log_content}\n```"
             else:
                 print(f"Warning: Summary file not found - {summary_path}")
+                missing_summary_files.append(summary_path)
                 return match.group(0)  # return original if file is missing
         new_content = pattern.sub(replace_block, content)
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(new_content)
 
 
+
+if missing_summary_files:
+    print("\n\n\nMissing summary files\n\n\n")
+    for path in sorted(set(missing_summary_files)):
+        print(path)
 
 print("\n\n\nShow all failed tests\n\n\n")
 
