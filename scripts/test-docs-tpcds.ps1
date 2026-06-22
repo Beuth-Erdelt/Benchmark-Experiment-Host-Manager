@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for TPC-DS experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,8 +21,9 @@
 
 
 
-#### TCP-DS Compare (Example-TPC-DS.md)
+#### TCP-DS PostgreSQL (Example-TPC-DS.md)
 bexhoma tpcds `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
@@ -38,10 +39,9 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_compare.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_postgresql.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS compare  sf=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
@@ -66,7 +66,6 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_monitoring.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS monitoring  sf=3"
 
 
@@ -90,7 +89,6 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_throughput.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
@@ -113,14 +111,13 @@ bexhoma tpcds `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_storage.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS storage  sf=1  nc=2"
 
 
@@ -153,11 +150,10 @@ bexhoma tpcds `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rss 2000Gi                   <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
@@ -179,11 +175,10 @@ bexhoma tpcds `
   -t 14400                      <# query timeout in seconds #> `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rss 2000Gi                   <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
@@ -205,11 +200,10 @@ bexhoma tpcds `
   -t 14400                      <# query timeout in seconds #> `
   -lr 1024Gi                    <# RAM limit for the SUT container #> `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rss 2000Gi                   <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
@@ -236,13 +230,12 @@ bexhoma tpcds `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   profiling 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_profiling.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpcds"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS profiling  sf=10  ne=1,1"
 
 

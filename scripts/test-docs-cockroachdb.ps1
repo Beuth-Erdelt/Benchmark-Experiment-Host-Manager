@@ -47,7 +47,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_cockroachdb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
@@ -74,13 +73,12 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_cockroachdb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
@@ -110,7 +108,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_cockroachdb_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 
 
@@ -132,7 +129,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_cockroachdb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
@@ -157,7 +153,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_cockroachdb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
@@ -179,13 +174,12 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_cockroachdb_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 

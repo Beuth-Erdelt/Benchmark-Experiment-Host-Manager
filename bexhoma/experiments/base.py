@@ -592,7 +592,7 @@ class ExperimentBase():
         else:
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
         if self.max_sut is not None:
-            self.workload['info'] = self.workload['info']+"\nMaximum DBMS per cluster is {}.".format(self.max_sut)
+            self.workload['info'] = self.workload['info']+"\nMaximum DBMS per experiment is {}.".format(self.max_sut)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
         self.workload['loading_active'] = self.loading_is_active()
     def generate_port_forward(self, service: str) -> str:
@@ -1471,43 +1471,42 @@ class ExperimentBase():
             intervals_wait = intervals
             _benchmark_just_submitted = False
             # count number of running and pending pods
-            num_pods_running_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Running'))
-            num_pods_pending_experiment = len(self.cluster.get_pods(app = self.appname, component = 'sut', experiment=self.code, status = 'Pending'))
-            num_pods_running_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Running'))
-            num_pods_pending_cluster = len(self.cluster.get_pods(app = self.appname, component = 'sut', status = 'Pending'))
+            num_pods_running_experiment = len(self.cluster.get_pods(app=self.appname, component='sut', experiment=self.code, status='Running'))
+            num_pods_pending_experiment = len(self.cluster.get_pods(app=self.appname, component='sut', experiment=self.code, status='Pending'))
+            num_pods_running_cluster = len(self.cluster.get_pods(app=self.appname, component='sut', status='Running'))
+            num_pods_pending_cluster = len(self.cluster.get_pods(app=self.appname, component='sut', status='Pending'))
+            # track optimistic in-pass pending counts per DBMS type (reset each loop iteration)
+            num_pods_pending_dbms: dict[str, int] = {}
             for config in self.configurations:
                 # check if sut is running
                 if not config.status.sut_running():
-                    #print("{} is not running".format(config.configuration))
                     if not config.experiment_done:
                         if not config.status.sut_pending():
-                            #print("{:30s}: is not running yet".format(config.configuration))#, end="", flush=True)
-                            if self.cluster.max_sut is not None or self.max_sut is not None:
-                                we_can_start_new_sut = True
-                                if self.max_sut is not None:
-                                    #print("In experiment: {} running and {} pending pods: max is {} pods)".format(num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                    if num_pods_running_experiment+num_pods_pending_experiment >= self.max_sut:
-                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))#, end="", flush=True)
-                                        #print("{:30s}: has to wait".format(config.configuration))
-                                        we_can_start_new_sut = False
-                                if self.cluster.max_sut is not None:
-                                    #print("{:30s}: {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
-                                    if num_pods_running_cluster+num_pods_pending_cluster >= self.cluster.max_sut:
-                                        print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))#, end="", flush=True)
-                                        #print("{:30s}: has to wait".format(config.configuration))
-                                        we_can_start_new_sut = False
-                                if we_can_start_new_sut:
-                                    print("{:30s}: will start now".format(config.configuration))
-                                    config.lifecycle.start_sut()
-                                    num_pods_pending_experiment = num_pods_pending_experiment + 1
-                                    num_pods_pending_cluster = num_pods_pending_cluster + 1
-                            else:
+                            we_can_start_new_sut = True
+                            if self.max_sut is not None:
+                                if num_pods_running_experiment + num_pods_pending_experiment >= self.max_sut:
+                                    print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per experiment".format(config.configuration, num_pods_running_experiment, num_pods_pending_experiment, self.max_sut))
+                                    we_can_start_new_sut = False
+                            if self.cluster.max_sut is not None:
+                                if num_pods_running_cluster + num_pods_pending_cluster >= self.cluster.max_sut:
+                                    print("{:30s}: has to wait - {} running and {} pending pods: max is {} pods per cluster".format(config.configuration, num_pods_running_cluster, num_pods_pending_cluster, self.cluster.max_sut))
+                                    we_can_start_new_sut = False
+                            if config.max_sut_dbms is not None:
+                                dbms_type = config.docker
+                                num_running_dbms = len(self.cluster.get_pods(app=self.appname, component='sut', dbms=dbms_type, status='Running'))
+                                num_pending_dbms = len(self.cluster.get_pods(app=self.appname, component='sut', dbms=dbms_type, status='Pending'))
+                                num_pending_dbms_this_pass = num_pods_pending_dbms.get(dbms_type, 0)
+                                if num_running_dbms + num_pending_dbms + num_pending_dbms_this_pass >= config.max_sut_dbms:
+                                    print("{:30s}: has to wait - {} running and {} pending pods of dbms {}: max is {} pods per dbms".format(config.configuration, num_running_dbms, num_pending_dbms, dbms_type, config.max_sut_dbms))
+                                    we_can_start_new_sut = False
+                            if we_can_start_new_sut:
                                 print("{:30s}: will start now".format(config.configuration))
                                 config.lifecycle.start_sut()
-                                num_pods_pending_experiment = num_pods_pending_experiment + 1
-                                num_pods_pending_cluster = num_pods_pending_cluster + 1
-                                #self.wait(10)
+                                num_pods_pending_experiment += 1
+                                num_pods_pending_cluster += 1
+                                if config.max_sut_dbms is not None:
+                                    dbms_type = config.docker
+                                    num_pods_pending_dbms[dbms_type] = num_pods_pending_dbms.get(dbms_type, 0) + 1
                         else:
                             print("{:30s}: is pending".format(config.configuration))
                     continue
@@ -1701,24 +1700,33 @@ class ExperimentBase():
                         experimentRun = str(config.num_experiment_to_apply_done + 1)
                         client_round = config.experiment_dict["benchmarker"][config.client - 1]
                         config.client += 1
-                        if config.client > self.client:
+                        is_first_in_round = config.client > self.client
+                        if is_first_in_round:
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
                             self.client = config.client
-                            # Initialize round counter: total pods across all configs for this client round.
-                            # Unique per (experimentRun, client, code) to avoid cross-round contamination.
-                            round_idx = config.client - 2  # 0-based index of the round just started
+                        # Round counter is per-configuration: initialize for every config so
+                        # each SUT's pods find their own key already set in Redis.
+                        round_idx = config.client - 2  # 0-based index of the round just started
+                        benchmarker_rounds = config.experiment_dict.get("benchmarker") or []
+                        if round_idx < len(benchmarker_rounds):
+                            total_round_pods = sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
+                        else:
                             total_round_pods = 0
-                            for c in self.configurations:
-                                benchmarker_rounds = c.experiment_dict.get("benchmarker") or []
-                                if round_idx < len(benchmarker_rounds):
-                                    total_round_pods += sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
-                            round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}'.format(app, experimentRun, client, self.code)
-                            self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
-                            print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
-                            if self.tenant_per == 'container':
-                                exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
-                                self.cluster.set_pod_counter(queue=exp_bm_key, value=total_round_pods)
-                                print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_round_pods))
+                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
+                        self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
+                        print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
+                        if is_first_in_round and self.tenant_per == 'container':
+                            # Experiment counter spans all configurations so every
+                            # container-tenancy pod waits for the full cross-SUT cohort.
+                            total_exp_pods = sum(
+                                sum(entry["parallelism"] for entry in c_rounds[round_idx])
+                                for c in self.configurations
+                                for c_rounds in [c.experiment_dict.get("benchmarker") or []]
+                                if round_idx < len(c_rounds)
+                            )
+                            exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+                            self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
+                            print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         for bm_idx, bench_entry in enumerate(client_round):
                             benchmark_index = bm_idx + 1
@@ -1745,17 +1753,20 @@ class ExperimentBase():
                         client = str(config.client)
                         experimentRun = str(config.num_experiment_to_apply_done + 1)
                         config.client = config.client+1
-                        if config.client > self.client:
+                        is_first_in_round = config.client > self.client
+                        if is_first_in_round:
                             # this is the first instance of the next benchmark run
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
                             self.client = config.client
-                            # Initialize round counter for this client round (legacy path uses parallelism of this config only)
-                            round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}'.format(app, experimentRun, client, self.code)
-                            self.cluster.set_pod_counter(queue=round_counter_key, value=parallelism)
-                            if self.tenant_per == 'container':
-                                exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
-                                self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
-                                print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
+                        # Initialize round counter for this config (always, per-config key).
+                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
+                        self.cluster.set_pod_counter(queue=round_counter_key, value=parallelism)
+                        if is_first_in_round and self.tenant_per == 'container':
+                            # Container tenancy uses experiment_dict; this legacy path
+                            # falls back to the current config's parallelism only.
+                            exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+                            self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
+                            print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)

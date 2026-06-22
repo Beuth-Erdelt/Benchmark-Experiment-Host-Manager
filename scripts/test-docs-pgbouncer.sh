@@ -98,7 +98,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=16  nbp=16"
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 100Gi                    size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -127,7 +127,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rsr \
   -rss 100Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
 
@@ -166,7 +166,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
@@ -204,7 +203,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 

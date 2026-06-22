@@ -52,7 +52,7 @@ images/tpch_refresh/
 3. Sync: decrement **job counter** `bexhoma-benchmarker-podcount-job-<CONNECTION>-<EXPERIMENT>`,
    poll until ≤ 0.
 4. Sync: decrement **round counter**
-   `bexhoma-benchmarker-podcount-round-<EXPERIMENT_RUN>-<CLIENT>-<EXPERIMENT>`,
+   `bexhoma-benchmarker-podcount-round-<EXPERIMENT_RUN>-<CLIENT>-<CONFIGURATION>-<EXPERIMENT>`,
    poll until ≤ 0.  This ensures the refresh stream starts at the same moment as
    the parallel query stream (benchmark_run=1).
 5. For K in FIRST_SET..LAST_SET:

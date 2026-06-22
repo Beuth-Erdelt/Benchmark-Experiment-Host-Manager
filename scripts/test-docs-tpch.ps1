@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for TPC-H experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -21,8 +21,9 @@
 
 
 
-#### TCP-H Compare (Example-TPC-H.md)
+#### TCP-H PostgreSQL (Example-TPC-H.md)
 bexhoma tpch `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
@@ -37,10 +38,9 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_compare.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_postgresql.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H compare  sf=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H PostgreSQL  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
@@ -64,7 +64,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_monitoring.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H monitoring  sf=10"
 
 
@@ -87,7 +86,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_throughput.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
@@ -110,13 +108,12 @@ bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 30Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_storage.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H storage  sf=1  nc=2"
 
 
@@ -135,13 +132,12 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 5Gi                      <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_fractional.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
@@ -174,13 +170,11 @@ bexhoma tpch `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
@@ -203,13 +197,12 @@ bexhoma tpch `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
@@ -232,13 +225,12 @@ bexhoma tpch `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 

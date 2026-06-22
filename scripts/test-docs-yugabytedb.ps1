@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for YugabyteDB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -157,7 +157,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_yugabytedb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 #### YCSB Execution (Example-YugaByteDB.md)
@@ -185,7 +184,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_yugabytedb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
@@ -220,13 +218,12 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 1Gi                      <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_yugabytedb_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
@@ -257,7 +254,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_yugabytedb_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
@@ -290,7 +286,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_yugabytedb_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
@@ -328,7 +323,6 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_yugabytedb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
@@ -357,7 +351,6 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_yugabytedb_appmetrics.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 

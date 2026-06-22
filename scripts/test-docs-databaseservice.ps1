@@ -54,7 +54,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
 
@@ -83,7 +82,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
 # delete database service placeholder
@@ -124,13 +122,12 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 1Gi                      <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
 
@@ -169,7 +166,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_databaseservice_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
@@ -189,7 +185,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_databaseservice_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
 
@@ -232,7 +227,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_1.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService  sf=3"
 
 
@@ -257,7 +251,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_2.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
 
@@ -294,13 +287,12 @@ bexhoma tpch `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 1Gi                      <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_3.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
 
@@ -320,13 +312,12 @@ bexhoma tpch `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 1Gi                      <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_4.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 
 

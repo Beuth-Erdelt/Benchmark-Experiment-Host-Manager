@@ -906,9 +906,9 @@ class YcsbEvaluator(LogEvaluator):
         client, child, time, errors, throughput, goodput, efficiency, and
         latency percentiles), then sorts by ``(experiment_run, client, child)``.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
-                 if there are no benchmarking results.
-        :rtype: pandas.DataFrame or None
+        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
         """
         df = self.get_df_benchmarking()
         if not df.empty:
@@ -938,6 +938,7 @@ class YcsbEvaluator(LogEvaluator):
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['configuration', 'experiment_run', 'client', 'child'], key=natural_sort) #sort_values(['experiment_run'])
             #df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             return df_plot_filtered
+        return pd.DataFrame()
     def get_summary_benchmark_per_phase(self):
         """
         Returns benchmarking results aggregated over parallel pods, one row per phase.

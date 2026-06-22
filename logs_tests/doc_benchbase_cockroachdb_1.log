@@ -1,307 +1,319 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1770923951
-Experiment                    : starts at 2026-02-12 20:19:11.459307 (35116114.92986096)
+Experiment                    : has code 1782077346
+Experiment                    : starts at 2026-06-21 23:29:06.874249 (475341.8662479)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.8.20.
+Experiment uses bexhoma version 0.9.17.
 Experiment is limited to DBMS ['CockroachDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker14.
+SUT is fixed to cl-worker38.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-CockroachDB-1-1-1024          : will start now
-CockroachDB-1-1-1024          : deployments ['sut']
-CockroachDB-1-1-1024          : stateful sets ['worker']
-CockroachDB-1-1-1024          : pvcs []
-CockroachDB-1-1-1024          : name of SUT pods = bexhoma-sut-cockroachdb-1-1-1024-1770923951
-CockroachDB-1-1-1024          : name of SUT service = bexhoma-sut-cockroachdb-1-1-1024-1770923951
-CockroachDB-1-1-1024          : name of worker pods = bexhoma-worker-cockroachdb-benchbase-tpcc-16
-CockroachDB-1-1-1024          : name of worker service headless = bexhoma-worker-cockroachdb-benchbase-tpcc-16
+CockroachDB-1                 : will start now
+CockroachDB-1                 : deployments ['sut']
+CockroachDB-1                 : stateful sets ['worker']
+CockroachDB-1                 : pvcs []
+CockroachDB-1                 : name of SUT pods = bexhoma-sut-cockroachdb-1-1782077346
+CockroachDB-1                 : name of SUT service = bexhoma-sut-cockroachdb-1-1782077346
+CockroachDB-1                 : name of worker pods = bexhoma-worker-cockroachdb-benchbase-tpcc-16
+CockroachDB-1                 : name of worker service headless = bexhoma-worker-cockroachdb-benchbase-tpcc-16
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-bqms5']
-CockroachDB-1-1-1024          : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-bqms5']
-CockroachDB-1-1-1024          : found 3 / 3 running workers (component worker)
-CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2026-02-12 19:21:44 (that is in 120 secs)
+CockroachDB-1                 : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-hvvvc']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : found 0 / 3 running workers (component worker)
+CockroachDB-1                 : waits for health check of workers to succeed
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2026-02-12 19:21:44
+CockroachDB-1                 : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-hvvvc']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : found 3 / 3 running workers (component worker)
+CockroachDB-1                 : is not loaded yet
+CockroachDB-1                 : will start loading but not before 2026-06-21 21:32:16 (that is in 120 secs)
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2026-02-12 19:21:44
+CockroachDB-1                 : is not loaded yet
+CockroachDB-1                 : will start loading but not before 2026-06-21 21:32:16
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : will start loading but not before 2026-02-12 19:21:44
+CockroachDB-1                 : is not loaded yet
+CockroachDB-1                 : will start loading but not before 2026-06-21 21:32:16
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is not loaded yet
-CockroachDB-1-1-1024          : connect to pod bexhoma-sut-cockroachdb-1-1-1024-1770923951-76d68c4ff8-4dnq8 to load scripts
-CockroachDB-1-1-1024          : start asynch loading scripts of type loaded
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is not loaded yet
+CockroachDB-1                 : will start loading but not before 2026-06-21 21:32:16
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is not loaded yet
+CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1782077346-8674cdccf4-d9jlv to load scripts
+CockroachDB-1                 : start asynch loading scripts of type loaded
+CockroachDB-1                 : is loading
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is loading
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is loading
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is loading
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is loading
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : showing loader times
-CockroachDB-1-1-1024          : generator times (start/end per pod and container) []
-CockroachDB-1-1-1024          : loader times (start/end per pod and container) [(1770924112, 1770924280)]
-CockroachDB-1-1-1024          : total times (start/end per pod and container) [(1770924112, 1770924280)]
-CockroachDB-1-1-1024          : loader timespan (first to last [s]) = 168
-CockroachDB-1-1-1024          : connect to pod bexhoma-sut-cockroachdb-1-1-1024-1770923951-76d68c4ff8-4dnq8 to load scripts
-CockroachDB-1-1-1024          : start asynch loading scripts of type indexed
-CockroachDB-1-1-1024          : is loading
+CockroachDB-1                 : is loading
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+- waiting 30s -               : done
+CockroachDB-1                 : showing loader times
+CockroachDB-1                 : generator times (start/end per pod and container) []
+CockroachDB-1                 : loader times (start/end per pod and container) [(1782077550, 1782077790)]
+CockroachDB-1                 : total times (start/end per pod and container) [(1782077550, 1782077790)]
+CockroachDB-1                 : loader timespan (first to last [s]) = 240
+CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1782077346-8674cdccf4-d9jlv to load scripts
+CockroachDB-1                 : start asynch loading scripts of type indexed
+CockroachDB-1                 : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 1
-CockroachDB-1-1-1024          : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-CockroachDB-1-1-1024-1        : start benchmarking
-CockroachDB-1-1-1024          : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
-CockroachDB-1-1-1024          : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-0
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-1
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-2
-CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1770923951
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-CockroachDB-1-1782077346 initialized to 1.
+CockroachDB-1                 : benchmarks done 0 of 1. This will be client 1
+CockroachDB-1-1-1-1           : start benchmarking (benchmark_run=1)
+CockroachDB-1                 : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-0
+CockroachDB-1                 : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-1
+CockroachDB-1                 : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-2
+CockroachDB-1                 : benchmarking results in folder D:\data\benchmarks/1782077346
 - waiting 10s -               : done
-CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1770923951-1-1-ch2w5: found
+CockroachDB-1                 : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1782077346-1-1-1-pngk2: found
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '19272492-1499-4433-a552-c6eb4dda4622', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sun, 21 Jun 2026 21:41:06 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
-- waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
-timing_benchmarker [(1770924346, 1770924649)]
-CockroachDB-1-1-1024-1        : showing benchmarker times
-CockroachDB-1-1-1024-1        : benchmarker timespan job from 1770924345 to 1770924666
-CockroachDB-1-1-1024-1        : benchmarker timespan pods from 1770924346 to 1770924649
-CockroachDB-1-1-1024-1        : benchmarker timespan (start to end single container [s]) = 303
-CockroachDB-1-1-1024-1        : benchmarker times (start/end per pod and container) = [(1770924346, 1770924649)]
-CockroachDB-1-1-1024-1        : found and updated times {'benchmarker': [(1770924346, 1770924649)]}
+CockroachDB-1-1-1-1           : wrote benchmarking_timespans to D:/data/benchmarks/1782077346/CockroachDB-1-1-1-1.config
+CockroachDB-1-1-1-1           : showing benchmarker times
+CockroachDB-1-1-1-1           : benchmarker timespan job from 1782077890 to 1782078208
+CockroachDB-1-1-1-1           : benchmarker timespan pods from 1782077892 to 1782078196
+CockroachDB-1-1-1-1           : benchmarker timespan (start to end single container [s]) = 304
+CockroachDB-1-1-1-1           : benchmarker times (start/end per pod and container) = [(1782077892, 1782078196)]
+CockroachDB-1-1-1-1           : found and updated times {'benchmarker': [(1782077892, 1782078196)]}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-CockroachDB-1-1-1024          : benchmarks done 0 of 1. This will be client 2
-CockroachDB-1-1-1024          : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'cockroachdb', 'BEXHOMA_DATABASE': 'defaultdb', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-CockroachDB-1-1-1024-2        : start benchmarking
-CockroachDB-1-1-1024          : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
-CockroachDB-1-1-1024          : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-0
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-1
-CockroachDB-1-1-1024          : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-2
-CockroachDB-1-1-1024          : benchmarking results in folder /home/perdelt/benchmarks/1770923951
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-CockroachDB-1-1782077346 initialized to 2.
+CockroachDB-1                 : benchmarks done 0 of 1. This will be client 2
+CockroachDB-1-1-2-1           : start benchmarking (benchmark_run=1)
+CockroachDB-1                 : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-0
+CockroachDB-1                 : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-1
+CockroachDB-1                 : distributed system - get host info for worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-2
+CockroachDB-1                 : benchmarking results in folder D:\data\benchmarks/1782077346
 - waiting 10s -               : done
-CockroachDB-1-1-1024          : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1-1024-1770923951-1-2-5bvjl: found
+CockroachDB-1                 : benchmarking is waiting for job bexhoma-benchmarker-cockroachdb-1-1782077346-1-2-1-llhq7: found
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1                 : has running benchmarks
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
+CockroachDB-1-1-2-1           : wrote benchmarking_timespans to D:/data/benchmarks/1782077346/CockroachDB-1-1-2-1.config
+CockroachDB-1-1-2-1           : showing benchmarker times
+CockroachDB-1-1-2-1           : benchmarker timespan job from 1782078285 to 1782078606
+CockroachDB-1-1-2-1           : benchmarker timespan pods from 1782078288 to 1782078593
+CockroachDB-1-1-2-1           : benchmarker timespan (start to end single container [s]) = 305
+CockroachDB-1-1-2-1           : benchmarker times (start/end per pod and container) = [(1782078288, 1782078593), (1782078289, 1782078592)]
+CockroachDB-1-1-2-1           : found and updated times {'benchmarker': [(1782078288, 1782078593), (1782078289, 1782078592)]}
 - waiting 30s -               : done
-CockroachDB-1-1-1024          : has running benchmarks
-timing_benchmarker [(1770924713, 1770925018), (1770924712, 1770925016)]
-CockroachDB-1-1-1024-2        : showing benchmarker times
-CockroachDB-1-1-1024-2        : benchmarker timespan job from 1770924710 to 1770925034
-CockroachDB-1-1-1024-2        : benchmarker timespan pods from 1770924712 to 1770925018
-CockroachDB-1-1-1024-2        : benchmarker timespan (start to end single container [s]) = 306
-CockroachDB-1-1-1024-2        : benchmarker times (start/end per pod and container) = [(1770924713, 1770925018), (1770924712, 1770925016)]
-CockroachDB-1-1-1024-2        : found and updated times {'benchmarker': [(1770924713, 1770925018), (1770924712, 1770925016)]}
-- waiting 30s -               : done
-CockroachDB-1-1-1024          : can be stopped
-CockroachDB-1-1-1024          : had 0 restarts at worker bexhoma-sut-cockroachdb-1-1-1024-1770923951-76d68c4ff8-4dnq8
-CockroachDB-1-1-1024          : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
-CockroachDB-1-1-1024          : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
-CockroachDB-1-1-1024          : had 0 restarts at worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-0
-CockroachDB-1-1-1024          : had 0 restarts at worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-1
-CockroachDB-1-1-1024          : had 0 restarts at worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-2
-Experiment                    : ends at 2026-02-12 20:37:48.080948 (35117231.55150288) - 1116.62s total
+CockroachDB-1                 : can be stopped
+CockroachDB-1                 : had 0 restarts at worker bexhoma-sut-cockroachdb-1-1782077346-8674cdccf4-d9jlv
+CockroachDB-1                 : worker pods found: ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bexhoma-worker-cockroachdb-benchbase-tpcc-16-0', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-1', 'bexhoma-worker-cockroachdb-benchbase-tpcc-16-2']
+CockroachDB-1                 : had 0 restarts at worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-0
+CockroachDB-1                 : had 0 restarts at worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-1
+CockroachDB-1                 : had 0 restarts at worker bexhoma-worker-cockroachdb-benchbase-tpcc-16-2
+Experiment                    : ends at 2026-06-21 23:50:50.555182 (476645.5467563) - 1303.68s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow not complete
+Result workflow complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
-    Type: benchbase
-    Duration: 1117s 
-    Code: 1770923951
-    Intro: Benchbase runs a TPC-C experiment.
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-    Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.20.
-    Experiment is limited to DBMS ['CockroachDB'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: benchbase
+* Duration: 1304s 
+* Code: 1782077346
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads.
+  * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+  * Experiment uses bexhoma version 0.9.17.
+  * Experiment is limited to DBMS ['CockroachDB'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [16] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-CockroachDB-1-1-1024-1 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008474112
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:96794
-    cpu_list:0-63
-    args:['-c', 'while true; do echo hello; sleep 10;done']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    worker 0
-        RAM:2164173176832
-        Cores:224
-        host:6.8.0-90-generic
-        node:cl-worker36
-        disk:898268
-        datadisk:291861
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-223
-    worker 1
-        RAM:1081742745600
-        Cores:128
-        host:6.8.0-90-generic
-        node:cl-worker29
-        disk:466964
-        datadisk:291679
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-127
-    worker 2
-        RAM:540579303424
-        Cores:128
-        host:6.8.0-94-generic
-        node:cl-worker22
-        disk:415112
-        datadisk:291982
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-127
-    eval_parameters
-                code:1770923951
-                BEXHOMA_REPLICAS:3
-                BEXHOMA_WORKERS:3
-CockroachDB-1-1-1024-2 uses docker image cockroachdb/cockroach:v24.2.4
-    RAM:541008474112
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:96794
-    cpu_list:0-63
-    args:['-c', 'while true; do echo hello; sleep 10;done']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:2
-    numExperiment:1
-    worker 0
-        RAM:2164173176832
-        Cores:224
-        host:6.8.0-90-generic
-        node:cl-worker36
-        disk:898463
-        datadisk:292053
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-223
-    worker 1
-        RAM:1081742745600
-        Cores:128
-        host:6.8.0-90-generic
-        node:cl-worker29
-        disk:467124
-        datadisk:291839
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-127
-    worker 2
-        RAM:540579303424
-        Cores:128
-        host:6.8.0-94-generic
-        node:cl-worker22
-        disk:415110
-        datadisk:291979
-        volume_size:1000G
-        volume_used:283G
-        cpu_list:0-127
-    eval_parameters
-                code:1770923951
-                BEXHOMA_REPLICAS:3
-                BEXHOMA_WORKERS:3
-
-### Execution
-
-#### Per Pod
-                          experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-connection_pod                                                                                                                                                                                                                                                                      
-CockroachDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    312.983331                 311.596665         0.0                                                     103278.0                                              51107.0
-CockroachDB-1-1-1024-2-2               1          8    8192       2      1  300.0           0                    127.093312                 126.606646         0.0                                                     132056.0                                              62933.0
-CockroachDB-1-1-1024-2-1               1          8    8192       2      2  300.0           0                    121.826654                 121.349987         0.0                                                     132987.0                                              65652.0
-
-#### Aggregated Parallel
-                        experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-CockroachDB-1-1-1024-1               1         16   16384          1  300.0           0                        312.98                     311.60         0.0                                                     103278.0                                              51107.0
-CockroachDB-1-1-1024-2               1         16   16384          2  300.0           0                        248.92                     247.96         0.0                                                     132987.0                                              64292.5
+* CockroachDB-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:267098
+  * cpu_list:0-127
+  * args:['-c', 'while true; do echo hello; sleep 10;done']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * worker 0
+    * RAM:1077381271552
+    * Cores:256
+    * host:6.8.0-111-generic
+    * node:cl-worker27
+    * disk:1338795
+    * volume_size:1000G
+    * volume_used:687G
+    * cpu_list:0-255
+  * worker 1
+    * RAM:1081742745600
+    * Cores:128
+    * host:6.8.0-117-generic
+    * node:cl-worker29
+    * disk:598992
+    * volume_size:1000G
+    * volume_used:687G
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1077382602752
+    * Cores:256
+    * host:6.8.0-1052-nvidia
+    * node:cl-worker28
+    * disk:377517
+    * volume_size:1000G
+    * volume_used:687G
+    * cpu_list:0-255
+  * eval_parameters
+    * code:1782077346
+    * BEXHOMA_REPLICAS:3
+    * BEXHOMA_WORKERS:3
+* CockroachDB-1-1-2-1 uses docker image cockroachdb/cockroach:v24.2.4
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:266524
+  * cpu_list:0-127
+  * args:['-c', 'while true; do echo hello; sleep 10;done']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * worker 0
+    * RAM:1077381271552
+    * Cores:256
+    * host:6.8.0-111-generic
+    * node:cl-worker27
+    * disk:1339000
+    * volume_size:1000G
+    * volume_used:687G
+    * cpu_list:0-255
+  * worker 1
+    * RAM:1081742745600
+    * Cores:128
+    * host:6.8.0-117-generic
+    * node:cl-worker29
+    * disk:599188
+    * volume_size:1000G
+    * volume_used:687G
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1077382602752
+    * Cores:256
+    * host:6.8.0-1052-nvidia
+    * node:cl-worker28
+    * disk:377838
+    * volume_size:1000G
+    * volume_used:687G
+    * cpu_list:0-255
+  * eval_parameters
+    * code:1782077346
+    * BEXHOMA_REPLICAS:3
+    * BEXHOMA_WORKERS:3
 
 ### Workflow
 
 #### Actual
-DBMS CockroachDB-1-1-1024 - Pods [[2, 1]]
+
+* DBMS CockroachDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS CockroachDB-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 #### Planned
-DBMS CockroachDB-1-1-1024 - Pods [[1, 2]]
+
+* DBMS CockroachDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS CockroachDB-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 ### Loading
-                        time_load  terminals  pods  Throughput [SF/h]
-CockroachDB-1-1-1024-1      168.0        1.0   1.0         342.857143
-CockroachDB-1-1-1024-2      168.0        1.0   2.0         342.857143
+
+#### Per Run
+
+|                 |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| CockroachDB-1-1 |                1 |   16 |      516.00 |           1.00 |            0.00 |        240.00 |          275.00 |              1 |           1 |             | None           |             0 | False         |              111.63 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                  | phase             | job                 |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:----------------------|:------------------|:--------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| CockroachDB-1-1-1-1-1 | CockroachDB-1-1-1 | CockroachDB-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         311.09 |                      309.65 |         0.00 |                                                     125594.00 |                                              51418.00 |
+| CockroachDB-1-1-2-1-1 | CockroachDB-1-1-2 | CockroachDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         135.29 |                      134.72 |         0.00 |                                                     147550.00 |                                              59114.00 |
+| CockroachDB-1-1-2-1-2 | CockroachDB-1-1-2 | CockroachDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         136.09 |                      135.53 |         0.00 |                                                     147131.00 |                                              58770.00 |
+
+#### Per Phase
+
+| DBMS              | phase             |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:------------------|:------------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| CockroachDB-1-1-1 | CockroachDB-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         311.09 |                      309.65 |         0.00 |                                                     125594.00 |                                              51418.00 |
+| CockroachDB-1-1-2 | CockroachDB-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         271.39 |                      270.25 |         0.00 |                                                     147550.00 |                                              58942.00 |
 
 ### Tests
-TEST passed: Throughput (requests/second) contains no 0 or NaN
-TEST passed: Workflow as planned
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned

@@ -48,7 +48,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter simple  sf=16  nbp=1"
 
 
@@ -88,7 +87,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
 
@@ -120,7 +118,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
 
 
@@ -156,7 +153,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
 
@@ -190,7 +186,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
 
@@ -224,7 +219,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
 
@@ -258,7 +252,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
 
@@ -292,7 +285,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
 
 
@@ -326,7 +318,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
 
 
@@ -360,7 +351,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
 

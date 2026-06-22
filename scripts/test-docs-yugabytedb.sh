@@ -120,7 +120,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 #### YCSB Execution (Example-YugaByteDB.md)
@@ -167,7 +166,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 
@@ -201,7 +199,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 1Gi                      size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -224,11 +222,10 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 1Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 
@@ -271,7 +268,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 
@@ -318,7 +314,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 
@@ -374,7 +369,6 @@ bexhoma ycsb \
   -tr \
   run &>$LOG_DIR/doc_ycsb_run_yugabytedb_appmetrics.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 
@@ -415,7 +409,6 @@ bexhoma benchbase \
   -tr \
   run &>$LOG_DIR/doc_benchbase_run_yugabytedb_appmetrics.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 

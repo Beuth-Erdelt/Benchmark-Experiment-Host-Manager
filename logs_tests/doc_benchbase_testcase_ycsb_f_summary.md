@@ -2,87 +2,91 @@
 
 ### Workload
 Benchbase Workload ycsb SF=1000
-    Type: benchbase
-    Duration: 967s 
-    Code: 1769700391
-    Intro: Benchbase runs an YCSB experiment.
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-    Benchbase data is generated and loaded using several threads.
-    Benchmark is 'ycsb'. Workload is 'f'. Scaling factor is 1000. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.20.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [64] threads, split into [1] pods.
-    Benchmarking is tested with [32] threads, split into [1, 2] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: benchbase
+* Duration: 1019s 
+* Code: 1782084508
+* Benchbase runs an YCSB experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads.
+  * Benchmark is 'ycsb'. Workload is 'f'. Scaling factor is 1000. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+  * Experiment uses bexhoma version 0.9.17.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Loading is tested with [64] threads, split into [1] pods.
+  * Benchmarking is tested with [32] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-1-1-1024-1 uses docker image postgres:17.5
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:97295
-    datadisk:2297
-    cpu_list:0-63
-    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-                code:1769700391
-                TENANT_VOL:False
-PostgreSQL-1-1-1024-2 uses docker image postgres:17.5
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:97789
-    datadisk:2791
-    cpu_list:0-63
-    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:2
-    numExperiment:1
-    eval_parameters
-                code:1769700391
-                TENANT_VOL:False
-
-### Execution
-
-#### Per Pod
-                         experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-connection_pod                                                                                                                                                                                                                                                                     
-PostgreSQL-1-1-1024-1-1               1         32   16384       1      1  300.0           0                   1694.903109                1695.009776         0.0                                                      41243.0                                              18865.0
-PostgreSQL-1-1-1024-2-1               1         16    8192       2      1  300.0           0                    830.676481                 830.729815         0.0                                                      41126.0                                              19245.0
-PostgreSQL-1-1-1024-2-2               1         16    8192       2      2  300.0           0                    861.889900                 861.943234         0.0                                                      40662.0                                              18546.0
-
-#### Aggregated Parallel
-                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         32   16384          1  300.0           0                       1694.90                    1695.01         0.0                                                      41243.0                                              18865.0
-PostgreSQL-1-1-1024-2               1         32   16384          2  300.0           0                       1692.57                    1692.67         0.0                                                      41126.0                                              18895.5
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:222217
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782084508
+    * TENANT_VOL:False
+* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:226057
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782084508
+    * TENANT_VOL:False
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[2, 1]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 #### Planned
-DBMS PostgreSQL-1-1-1024 - Pods [[1, 2]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 ### Loading
-                       time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1       34.0        1.0   1.0      105882.352941
-PostgreSQL-1-1-1024-2       34.0        1.0   2.0      105882.352941
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 | 1000 |       50.00 |           1.00 |            0.00 |          8.00 |           41.00 |              1 |           1 |             |                |             0 | False         |            72000.00 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          32 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            0 |                       16384.04 |                    16384.07 |         0.00 |                                                       1638.00 |                                                704.00 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       1 |           0 | 300.00 |            0 |                        8192.01 |                     8192.03 |         0.00 |                                                       1693.00 |                                                733.00 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       2 |           0 | 300.00 |            0 |                        8192.02 |                     8192.03 |         0.00 |                                                       1663.00 |                                                711.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |          32 |    16384 |               1 |           1 |           0 | 300.00 |            0 |                       16384.04 |                    16384.07 |         0.00 |                                                       1638.00 |                                                704.00 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |          32 |    16384 |               1 |           2 |           0 | 300.00 |            0 |                       16384.03 |                    16384.06 |         0.00 |                                                       1693.00 |                                                722.00 |
 
 ### Tests
-TEST passed: Throughput (requests/second) contains no 0 or NaN
-TEST passed: Workflow as planned
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned

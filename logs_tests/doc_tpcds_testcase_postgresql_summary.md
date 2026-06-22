@@ -1,0 +1,191 @@
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=1
+* Type: tpcds
+* Duration: 709s 
+* Code: 1782066626
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.9.17.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:222221
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782066626
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |      246.00 |           1.00 |            1.00 |         56.00 |          177.00 |              8 |           0 |             | None           |             0 | False         |               14.63 |
+
+### Execution
+
+#### Per Connection
+
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |        215 |            0.41 |             9022.65 |           1657.67 |          -1 | PostgreSQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |        215 |            0.41 |             9022.65 |           1657.67 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries       |   PostgreSQL-1-1-1-1-1 |
+|:--------------|-----------------------:|
+| TPC-DS Q1     |                 137.92 |
+| TPC-DS Q2     |                 323.34 |
+| TPC-DS Q3     |                 223.21 |
+| TPC-DS Q4     |               12569.39 |
+| TPC-DS Q5     |                 589.96 |
+| TPC-DS Q6     |               68802.30 |
+| TPC-DS Q7     |                 361.33 |
+| TPC-DS Q8     |                  74.10 |
+| TPC-DS Q9     |                2613.06 |
+| TPC-DS Q10    |                1303.97 |
+| TPC-DS Q11    |                6453.03 |
+| TPC-DS Q12    |                  79.18 |
+| TPC-DS Q13    |                 828.35 |
+| TPC-DS Q14a+b |                2448.08 |
+| TPC-DS Q15    |                 124.29 |
+| TPC-DS Q16    |                 189.29 |
+| TPC-DS Q17    |                 303.34 |
+| TPC-DS Q18    |                 379.35 |
+| TPC-DS Q19    |                 158.96 |
+| TPC-DS Q20    |                 110.73 |
+| TPC-DS Q21    |                 225.06 |
+| TPC-DS Q22    |                3140.25 |
+| TPC-DS Q23a+b |                5332.70 |
+| TPC-DS Q24a+b |                 914.64 |
+| TPC-DS Q25    |                 351.26 |
+| TPC-DS Q26    |                 269.28 |
+| TPC-DS Q27    |                  33.86 |
+| TPC-DS Q28    |                 823.70 |
+| TPC-DS Q29    |                 371.84 |
+| TPC-DS Q30    |                8555.63 |
+| TPC-DS Q31    |                1540.38 |
+| TPC-DS Q32    |                 136.67 |
+| TPC-DS Q33    |                 437.99 |
+| TPC-DS Q34    |                  43.53 |
+| TPC-DS Q35    |                1675.24 |
+| TPC-DS Q36    |                  37.28 |
+| TPC-DS Q37    |                 527.03 |
+| TPC-DS Q38    |                1708.67 |
+| TPC-DS Q39a+b |                2702.48 |
+| TPC-DS Q40    |                 119.76 |
+| TPC-DS Q41    |                 985.82 |
+| TPC-DS Q42    |                  95.58 |
+| TPC-DS Q43    |                  33.36 |
+| TPC-DS Q44    |                 483.61 |
+| TPC-DS Q45    |                 103.09 |
+| TPC-DS Q46    |                  49.11 |
+| TPC-DS Q47    |                1707.06 |
+| TPC-DS Q48    |                 671.40 |
+| TPC-DS Q49    |                 491.40 |
+| TPC-DS Q50    |                 509.69 |
+| TPC-DS Q51    |                 831.34 |
+| TPC-DS Q52    |                  98.64 |
+| TPC-DS Q53    |                 120.65 |
+| TPC-DS Q54    |                 300.62 |
+| TPC-DS Q55    |                  93.59 |
+| TPC-DS Q56    |                 437.00 |
+| TPC-DS Q57    |                 808.18 |
+| TPC-DS Q58    |                 498.78 |
+| TPC-DS Q59    |                 429.05 |
+| TPC-DS Q60    |                 397.35 |
+| TPC-DS Q61    |                 147.66 |
+| TPC-DS Q62    |                 139.81 |
+| TPC-DS Q63    |                 118.65 |
+| TPC-DS Q64    |                 807.32 |
+| TPC-DS Q65    |                 606.55 |
+| TPC-DS Q66    |                 244.09 |
+| TPC-DS Q67    |                2951.08 |
+| TPC-DS Q68    |                  48.16 |
+| TPC-DS Q69    |                 127.60 |
+| TPC-DS Q70    |                 380.18 |
+| TPC-DS Q71    |                 305.68 |
+| TPC-DS Q72    |                 906.85 |
+| TPC-DS Q73    |                  33.97 |
+| TPC-DS Q74    |                1389.26 |
+| TPC-DS Q75    |                 999.60 |
+| TPC-DS Q76    |                 165.17 |
+| TPC-DS Q77    |                 414.44 |
+| TPC-DS Q78    |                2298.00 |
+| TPC-DS Q79    |                 258.29 |
+| TPC-DS Q80    |                 573.87 |
+| TPC-DS Q81    |               39195.32 |
+| TPC-DS Q82    |                 358.69 |
+| TPC-DS Q83    |                 100.76 |
+| TPC-DS Q84    |                  36.53 |
+| TPC-DS Q85    |                 352.59 |
+| TPC-DS Q86    |                 206.82 |
+| TPC-DS Q87    |                1445.54 |
+| TPC-DS Q88    |                3027.72 |
+| TPC-DS Q89    |                 138.10 |
+| TPC-DS Q90    |                 134.10 |
+| TPC-DS Q91    |                 110.48 |
+| TPC-DS Q92    |                  83.81 |
+| TPC-DS Q93    |                 219.53 |
+| TPC-DS Q94    |                 197.74 |
+| TPC-DS Q95    |                3176.24 |
+| TPC-DS Q96    |                 103.56 |
+| TPC-DS Q97    |                 411.08 |
+| TPC-DS Q98    |                 189.24 |
+| TPC-DS Q99    |                 181.16 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Tests
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

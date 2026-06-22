@@ -55,6 +55,80 @@ wait_process "ycsb"
 
 
 
+###########################################
+################# TPC-H ###################
+###########################################
+
+
+#### TCP-H Compare (TestCases.md)
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch \
+  -sf 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpch_testcase_compare.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
+
+
+###########################################
+################# TPC-DS ##################
+###########################################
+
+
+#### TCP-DS Compare (TestCases.md)
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -sf 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_compare.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
+
+
 
 
 
@@ -136,7 +210,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 50Gi -rsr \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
@@ -228,7 +302,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 50Gi -rsr \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi -rsr \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_postgresql_3.log &
 
 
@@ -312,7 +386,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_tpch_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
@@ -417,7 +491,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 100Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 100Gi \
   run </dev/null &>$LOG_DIR/test_tpcds_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mysql_3.log
@@ -492,7 +566,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 100Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 100Gi \
   run </dev/null &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log &
 
 
@@ -576,7 +650,7 @@ nohup python tpcds.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 100Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 100Gi \
   run </dev/null &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_tpch_testcase_mariadb_3.log
@@ -632,7 +706,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log &
 
 
@@ -675,7 +749,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log &
 
 
@@ -734,7 +808,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_2.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mysql_2.log
@@ -781,7 +855,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mysql_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mysql_4.log
@@ -844,7 +918,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mariadb_2.log
@@ -891,7 +965,7 @@ nohup python benchbase.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_benchbase_testcase_mariadb_4.log
@@ -948,7 +1022,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log &
 
 
@@ -968,7 +1042,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log &
 
 
@@ -1023,7 +1097,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_2.log
@@ -1046,7 +1120,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mysql_3.log
@@ -1106,7 +1180,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_2.log
@@ -1129,7 +1203,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_hammerdb_testcase_mariadb_3.log
@@ -1201,7 +1275,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log &
 
 
@@ -1225,7 +1299,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log &
 
 
@@ -1249,7 +1323,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log &
 
 
@@ -1273,7 +1347,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log &
 
@@ -1341,7 +1415,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_2.log
@@ -1368,7 +1442,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_3.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_3.log
@@ -1395,7 +1469,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mysql_4.log
@@ -1422,7 +1496,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst cephcsi -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mysql_5.log &
 
@@ -1497,7 +1571,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_2.log &
 
 #watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_2.log
@@ -1523,7 +1597,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1,2 \
   -nc 2 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_3.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_3.log
@@ -1549,7 +1623,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_4.log &
 
 # watch -n 30 tail -n 50 $LOG_DIR/test_ycsb_testcase_mariadb_4.log
@@ -1575,7 +1649,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 1 \
-  -rst cephcsi -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
   -m -mc \
   run </dev/null &>$LOG_DIR/test_ycsb_testcase_mariadb_5.log &
 

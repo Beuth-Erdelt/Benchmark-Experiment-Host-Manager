@@ -20,7 +20,8 @@ source ./scripts/testfunctions.sh
 ###########################################
 
 
-#### TCP-DS Compare (Example-TPC-DS.md)
+#### TCP-DS PostgreSQL (Example-TPC-DS.md)
+# -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
@@ -37,6 +38,7 @@ source ./scripts/testfunctions.sh
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
+  -dbms PostgreSQL \
   -sf 1 \
   -nlp 8 \
   -nlt 8 \
@@ -48,10 +50,9 @@ bexhoma tpcds \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_compare.log
+  run &>$LOG_DIR/doc_tpcds_testcase_postgresql.log
 
-wait_process "tpcds"
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
@@ -90,7 +91,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
 
-wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 
 
@@ -126,7 +126,6 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
 
-wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
@@ -149,7 +148,7 @@ sleep 30
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -164,12 +163,11 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
-  -rss 10Gi \
-  -rst cephcsi \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 
-wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
 
 
@@ -201,8 +199,8 @@ sleep 30
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 1000Gi                   size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rss 2000Gi                   size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 30 \
@@ -219,11 +217,10 @@ bexhoma tpcds \
   -lr 1024Gi \
   -rr 1024Gi \
   -rsr \
-  -rss 1000Gi \
-  -rst cephcsi \
+  -rss 2000Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 
-wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
@@ -244,8 +241,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
-# -rss 1000Gi                   size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rss 2000Gi                   size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 30 \
@@ -261,11 +258,10 @@ bexhoma tpcds \
   -t 14400 \
   -lr 1024Gi \
   -rr 1024Gi \
-  -rss 1000Gi \
-  -rst cephcsi \
+  -rss 2000Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 
-wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
@@ -286,8 +282,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 1024Gi                    RAM requested for the SUT container
-# -rss 1000Gi                   size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rss 2000Gi                   size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 30 \
@@ -303,11 +299,10 @@ bexhoma tpcds \
   -t 14400 \
   -lr 1024Gi \
   -rr 1024Gi \
-  -rss 1000Gi \
-  -rst cephcsi \
+  -rss 2000Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 
-wait_process "tpcds"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
@@ -333,7 +328,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -352,7 +347,7 @@ bexhoma tpcds \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
 

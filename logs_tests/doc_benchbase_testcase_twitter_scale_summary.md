@@ -3,182 +3,181 @@
 ### Workload
 Benchbase Workload twitter SF=1600
 * Type: benchbase
-* Duration: 6032s 
-* Code: 1773915579
+* Duration: 5822s 
+* Code: 1782067250
 * Benchbase runs the Twitter benchmark.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads.
   * Benchmark is 'twitter'. Scaling factor is 1600. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 20 minutes.
-  * Experiment uses bexhoma version 0.9.4.
+  * Experiment uses bexhoma version 0.9.17.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker14.
+  * SUT is fixed to cl-worker38.
   * Loading is tested with [1] threads, split into [1] pods.
   * Benchmarking is tested with [160] threads, split into [1, 2, 4, 8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
 
 ### Connections
-* PostgreSQL-1-1-1024-1 uses docker image postgres:18.3
-  * RAM:541008474112
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:172521
-  * datadisk:22632
-  * cpu_list:0-63
-  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:239751
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
   * eval_parameters
-    * code:1773915579
+    * code:1782067250
     * TENANT_VOL:False
-* PostgreSQL-1-1-1024-2 uses docker image postgres:18.3
-  * RAM:541008474112
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:172647
-  * datadisk:22758
-  * cpu_list:0-63
-  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:238583
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
   * eval_parameters
-    * code:1773915579
+    * code:1782067250
     * TENANT_VOL:False
-* PostgreSQL-1-1-1024-3 uses docker image postgres:18.3
-  * RAM:541008474112
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:172772
-  * datadisk:22883
-  * cpu_list:0-63
-  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+* PostgreSQL-1-1-3-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:239803
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
   * eval_parameters
-    * code:1773915579
+    * code:1782067250
     * TENANT_VOL:False
-* PostgreSQL-1-1-1024-4 uses docker image postgres:18.3
-  * RAM:541008474112
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:172916
-  * datadisk:23026
-  * cpu_list:0-63
-  * args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'effective_io_concurrency=64', '-c', 'io_method=worker', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0']
+* PostgreSQL-1-1-4-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:239000
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
   * eval_parameters
-    * code:1773915579
+    * code:1782067250
     * TENANT_VOL:False
-
-### Execution
-
-#### Per Pod
-
-| DBMS                    |   experiment_run |   terminals |   target |   client |   child |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:------------------------|-----------------:|------------:|---------:|---------:|--------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1024-1-1 |                1 |         160 |    16384 |        1 |       1 |   1200 |            0 |                       16384    |                    16384.1  |            0 |                                                         18410 |                                                  3796 |
-| PostgreSQL-1-1-1024-2-1 |                1 |          80 |     8192 |        2 |       1 |   1200 |            0 |                        8191.98 |                     8192.02 |            0 |                                                         18409 |                                                  3818 |
-| PostgreSQL-1-1-1024-2-2 |                1 |          80 |     8192 |        2 |       2 |   1200 |            0 |                        8192.02 |                     8192.02 |            0 |                                                         18381 |                                                  3805 |
-| PostgreSQL-1-1-1024-3-3 |                1 |          40 |     4096 |        3 |       1 |   1200 |            0 |                        4095.99 |                     4095.99 |            0 |                                                         18320 |                                                  3807 |
-| PostgreSQL-1-1-1024-3-2 |                1 |          40 |     4096 |        3 |       2 |   1200 |            0 |                        4095.93 |                     4095.96 |            0 |                                                         18328 |                                                  3820 |
-| PostgreSQL-1-1-1024-3-1 |                1 |          40 |     4096 |        3 |       3 |   1200 |            0 |                        4095.99 |                     4095.99 |            0 |                                                         18347 |                                                  3813 |
-| PostgreSQL-1-1-1024-3-4 |                1 |          40 |     4096 |        3 |       4 |   1200 |            0 |                        4095.98 |                     4095.99 |            0 |                                                         18324 |                                                  3831 |
-| PostgreSQL-1-1-1024-4-8 |                1 |          20 |     2048 |        4 |       1 |   1200 |            0 |                        2047.99 |                     2048    |            0 |                                                         18425 |                                                  3829 |
-| PostgreSQL-1-1-1024-4-6 |                1 |          20 |     2048 |        4 |       2 |   1200 |            0 |                        2047.95 |                     2047.97 |            0 |                                                         18394 |                                                  3861 |
-| PostgreSQL-1-1-1024-4-5 |                1 |          20 |     2048 |        4 |       3 |   1200 |            0 |                        2048    |                     2048    |            0 |                                                         18408 |                                                  3830 |
-| PostgreSQL-1-1-1024-4-4 |                1 |          20 |     2048 |        4 |       4 |   1200 |            0 |                        2048    |                     2048    |            0 |                                                         18390 |                                                  3825 |
-| PostgreSQL-1-1-1024-4-2 |                1 |          20 |     2048 |        4 |       5 |   1200 |            0 |                        2048    |                     2048    |            0 |                                                         18419 |                                                  3825 |
-| PostgreSQL-1-1-1024-4-7 |                1 |          20 |     2048 |        4 |       6 |   1200 |            0 |                        2048    |                     2048    |            0 |                                                         18393 |                                                  3804 |
-| PostgreSQL-1-1-1024-4-3 |                1 |          20 |     2048 |        4 |       7 |   1200 |            0 |                        2047.97 |                     2047.98 |            0 |                                                         18402 |                                                  3846 |
-| PostgreSQL-1-1-1024-4-1 |                1 |          20 |     2048 |        4 |       8 |   1200 |            0 |                        2047.99 |                     2048    |            0 |                                                         18418 |                                                  3818 |
-
-#### Aggregated Parallel
-
-| DBMS                  |   experiment_run |   terminals |   target |   pod_count |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:----------------------|-----------------:|------------:|---------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1024-1 |                1 |         160 |    16384 |           1 |   1200 |            0 |                        16384   |                       16384 |            0 |                                                         18410 |                                               3796    |
-| PostgreSQL-1-1-1024-2 |                1 |         160 |    16384 |           2 |   1200 |            0 |                        16384   |                       16384 |            0 |                                                         18409 |                                               3811.5  |
-| PostgreSQL-1-1-1024-3 |                1 |         160 |    16384 |           4 |   1200 |            0 |                        16383.9 |                       16384 |            0 |                                                         18347 |                                               3817.75 |
-| PostgreSQL-1-1-1024-4 |                1 |         160 |    16384 |           8 |   1200 |            0 |                        16383.9 |                       16384 |            0 |                                                         18425 |                                               3829.75 |
 
 ### Workflow
 
 #### Actual
 
-* DBMS PostgreSQL-1-1-1024 - Pods [[2, 8, 1, 4]]
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: benchbase (2 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 3: benchbase (4 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 4: benchbase (8 pods)
 
 #### Planned
 
-* DBMS PostgreSQL-1-1-1024 - Pods [[1, 2, 4, 8]]
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: benchbase (2 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 3: benchbase (4 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 4: benchbase (8 pods)
 
 ### Loading
 
-| DBMS                  |   time_load |   terminals |   pods |   Throughput [SF/h] |
-|:----------------------|------------:|------------:|-------:|--------------------:|
-| PostgreSQL-1-1-1024-1 |         593 |           1 |      1 |             9713.32 |
-| PostgreSQL-1-1-1024-2 |         593 |           1 |      2 |             9713.32 |
-| PostgreSQL-1-1-1024-3 |         593 |           1 |      4 |             9713.32 |
-| PostgreSQL-1-1-1024-4 |         593 |           1 |      8 |             9713.32 |
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 | 1600 |      503.00 |           0.00 |            0.00 |        235.00 |          268.00 |              1 |           1 |             |                |             0 | False         |            11451.29 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |    time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|--------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       1 |           0 | 1200.00 |            0 |                        8192.05 |                     8192.05 |         0.00 |                                                       2468.00 |                                               1039.00 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       2 |           0 | 1200.00 |            0 |                        8192.04 |                     8192.05 |         0.00 |                                                       2471.00 |                                               1040.00 |
+| PostgreSQL-1-1-3-1-1 | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          40 |     4096 |        3 |               1 |       1 |           0 | 1200.00 |          712 |                        4095.99 |                     4095.40 |         0.00 |                                                       2471.00 |                                               1068.00 |
+| PostgreSQL-1-1-3-1-2 | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          40 |     4096 |        3 |               1 |       2 |           0 | 1200.00 |          777 |                        4095.99 |                     4095.35 |         0.00 |                                                       2472.00 |                                               1068.00 |
+| PostgreSQL-1-1-3-1-3 | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          40 |     4096 |        3 |               1 |       3 |           0 | 1200.00 |          787 |                        4095.99 |                     4095.34 |         0.00 |                                                       2481.00 |                                               1072.00 |
+| PostgreSQL-1-1-3-1-4 | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          40 |     4096 |        3 |               1 |       4 |           0 | 1200.00 |          775 |                        4095.99 |                     4095.35 |         0.00 |                                                       2481.00 |                                               1065.00 |
+| PostgreSQL-1-1-4-1-1 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       1 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2135.00 |                                                996.00 |
+| PostgreSQL-1-1-4-1-2 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       2 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2137.00 |                                                992.00 |
+| PostgreSQL-1-1-4-1-3 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       3 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2136.00 |                                                996.00 |
+| PostgreSQL-1-1-4-1-4 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       4 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2135.00 |                                                992.00 |
+| PostgreSQL-1-1-4-1-5 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       5 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2135.00 |                                                994.00 |
+| PostgreSQL-1-1-4-1-6 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       6 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2138.00 |                                                993.00 |
+| PostgreSQL-1-1-4-1-7 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       7 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2135.00 |                                                996.00 |
+| PostgreSQL-1-1-4-1-8 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          20 |     2048 |        4 |               1 |       8 |           0 | 1200.00 |            0 |                        2048.00 |                     2048.00 |         0.00 |                                                       2132.00 |                                                995.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |    time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|--------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |         160 |    16384 |               1 |           2 |           0 | 1200.00 |            0 |                       16384.09 |                    16384.10 |         0.00 |                                                       2471.00 |                                               1039.50 |
+| PostgreSQL-1-1-3 | PostgreSQL-1-1-3 |                1 |         160 |    16384 |               1 |           4 |           0 | 1200.00 |         3051 |                       16383.98 |                    16381.44 |         0.00 |                                                       2481.00 |                                               1068.25 |
+| PostgreSQL-1-1-4 | PostgreSQL-1-1-4 |                1 |         160 |    16384 |               1 |           8 |           0 | 1200.00 |            0 |                       16384.01 |                    16384.02 |         0.00 |                                                       2138.00 |                                                994.25 |
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
 
-| DBMS                  |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1024-1 |      2713.56 |      6.37 |          13.91 |                 18.71 |
-| PostgreSQL-1-1-1024-2 |      2713.56 |      6.37 |          13.91 |                 18.71 |
-| PostgreSQL-1-1-1024-3 |      2713.56 |      6.37 |          13.91 |                 18.71 |
-| PostgreSQL-1-1-1024-4 |      2713.56 |      6.37 |          13.91 |                 18.71 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |      2239.59 |     14.29 |           8.07 |                 12.66 |
+| PostgreSQL-1-1-2-1 |      2239.59 |     14.29 |           8.07 |                 12.66 |
+| PostgreSQL-1-1-3-1 |      2239.59 |     14.29 |           8.07 |                 12.66 |
+| PostgreSQL-1-1-4-1 |      2239.59 |     14.29 |           8.07 |                 12.66 |
 
 ### Loading phase: component loader
 
-| DBMS                  |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1024-1 |        149.5 |      0.25 |           0.25 |                  0.25 |
-| PostgreSQL-1-1-1024-2 |        149.5 |      0.25 |           0.25 |                  0.25 |
-| PostgreSQL-1-1-1024-3 |        149.5 |      0.25 |           0.25 |                  0.25 |
-| PostgreSQL-1-1-1024-4 |        149.5 |      0.25 |           0.25 |                  0.25 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        80.77 |      0.71 |           0.26 |                  0.26 |
+| PostgreSQL-1-1-2-1 |        80.77 |      0.71 |           0.26 |                  0.26 |
+| PostgreSQL-1-1-3-1 |        80.77 |      0.71 |           0.26 |                  0.26 |
+| PostgreSQL-1-1-4-1 |        80.77 |      0.71 |           0.26 |                  0.26 |
 
 ### Execution phase: SUT deployment
 
-| DBMS                  |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1024-1 |      15519.3 |     13.43 |          20.38 |                 25.41 |
-| PostgreSQL-1-1-1024-2 |      15508.8 |     13.46 |          20.43 |                 25.51 |
-| PostgreSQL-1-1-1024-3 |      15074   |     13.3  |          20.49 |                 25.61 |
-| PostgreSQL-1-1-1024-4 |      15472   |     13.48 |          20.57 |                 25.73 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |     10404.89 |     10.26 |          14.84 |                 19.47 |
+| PostgreSQL-1-1-2-1 |     10182.45 |      9.29 |          14.86 |                 19.53 |
+| PostgreSQL-1-1-3-1 |     10261.14 |      9.01 |          14.99 |                 20.38 |
+| PostgreSQL-1-1-4-1 |      9710.63 |      9.71 |          15.09 |                 22.15 |
 
 ### Execution phase: component benchmarker
 
-| DBMS                  |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1024-1 |      3065.81 |      2.53 |           2.38 |                  2.94 |
-| PostgreSQL-1-1-1024-2 |      3065.81 |      4.79 |           2.38 |                  2.94 |
-| PostgreSQL-1-1-1024-3 |      3183.87 |      3.5  |           1.13 |                  1.13 |
-| PostgreSQL-1-1-1024-4 |      3251.86 |      6.13 |           0.78 |                  0.78 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |      2860.60 |      2.72 |           2.42 |                  2.80 |
+| PostgreSQL-1-1-2-1 |      2860.60 |      4.79 |           2.42 |                  2.80 |
+| PostgreSQL-1-1-3-1 |      3162.83 |      6.73 |           1.44 |                  1.63 |
+| PostgreSQL-1-1-4-1 |      3425.68 |      8.83 |           0.79 |                  0.79 |
 
 ### Tests
-* TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned

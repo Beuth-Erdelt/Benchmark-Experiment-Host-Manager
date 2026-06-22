@@ -64,7 +64,6 @@ bexhoma ycsb \
   -tr \
   run &>$LOG_DIR/doc_ycsb_tidb_1.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 
 
@@ -99,7 +98,6 @@ bexhoma benchbase \
   -tr \
   run &>$LOG_DIR/doc_benchbase_tidb_1.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 
 

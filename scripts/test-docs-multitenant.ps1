@@ -34,7 +34,7 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 10Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -42,7 +42,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_tpch_run_postgresql_tenants_schema.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma tpch `
@@ -59,7 +58,7 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 10Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -67,7 +66,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_tpch_run_postgresql_tenants_database.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma tpch `
@@ -83,7 +81,7 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 5Gi                      <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -91,7 +89,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_tpch_run_postgresql_tenants_container.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -116,7 +113,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 20Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -124,7 +121,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_benchbase_run_postgresql_tenants_schema.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma benchbase `
@@ -140,7 +136,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 20Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -148,7 +144,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_benchbase_run_postgresql_tenants_database.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma benchbase `
@@ -164,7 +159,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 10Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -172,7 +167,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_benchbase_run_postgresql_tenants_container.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
@@ -197,7 +191,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -205,7 +199,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_benchbase_run_mysql_tenants_database.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma benchbase `
@@ -221,7 +214,7 @@ bexhoma benchbase `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
-  -rst cephcsi                   <# storage class for persistent volumes #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -229,7 +222,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\test_benchbase_run_mysql_tenants_container.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 

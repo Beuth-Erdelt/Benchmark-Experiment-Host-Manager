@@ -46,7 +46,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_scale.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 
 
@@ -80,7 +79,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 
 
@@ -101,7 +99,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -117,11 +115,10 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 30Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_storage.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 
 
@@ -148,7 +145,7 @@ sleep 30
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 100Gi                    size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -170,11 +167,10 @@ bexhoma benchbase \
   -lr 128Gi \
   -rr 128Gi \
   -rss 100Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
 
 

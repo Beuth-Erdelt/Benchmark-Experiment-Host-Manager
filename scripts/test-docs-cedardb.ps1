@@ -33,7 +33,6 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_cedardb_monitoring.log" -Encoding utf8
 
-Wait-BexhomaProcess "tpch"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H CedarDB monitoring  sf=3"
 
 
@@ -58,7 +57,6 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_cedardb_loading.log" -Encoding utf8
 
-Wait-BexhomaProcess "ycsb"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
 
 
@@ -79,7 +77,6 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_chbenchmark_cedardb_simple.log" -Encoding utf8
 
-Wait-BexhomaProcess "benchbase"
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CedarDB chbenchmark simple  sf=10  nbp=1"
 
 

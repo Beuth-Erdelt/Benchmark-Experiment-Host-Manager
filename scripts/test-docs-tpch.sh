@@ -20,7 +20,8 @@ source ./scripts/testfunctions.sh
 ###########################################
 
 
-#### TCP-H Compare (Example-TPC-H.md)
+#### TCP-H PostgreSQL (Example-TPC-H.md)
+# -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
@@ -36,6 +37,7 @@ source ./scripts/testfunctions.sh
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
+  -dbms PostgreSQL \
   -sf 1 \
   -nlp 8 \
   -nlt 8 \
@@ -46,10 +48,9 @@ bexhoma tpch \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_compare.log
+  run &>$LOG_DIR/doc_tpch_testcase_postgresql.log
 
-wait_process "tpch"
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
@@ -86,7 +87,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
 
@@ -120,7 +120,6 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
@@ -142,7 +141,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rss 30Gi                     size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -157,11 +156,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 30Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_storage.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
 
@@ -179,7 +177,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 5Gi                      size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -195,11 +193,10 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 5Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
@@ -231,7 +228,7 @@ sleep 30
 # -lr 256Gi                     RAM limit for the SUT container
 # -rr 256Gi                     RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -251,11 +248,10 @@ bexhoma tpch \
   -lr 256Gi \
   -rr 256Gi \
   -rss 1000Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
@@ -277,7 +273,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=
 # -lr 256Gi                     RAM limit for the SUT container
 # -rr 256Gi                     RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -297,11 +293,10 @@ bexhoma tpch \
   -lr 256Gi \
   -rr 256Gi \
   -rss 1000Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
@@ -323,7 +318,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=
 # -lr 256Gi                     RAM limit for the SUT container
 # -rr 256Gi                     RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -343,11 +338,10 @@ bexhoma tpch \
   -lr 256Gi \
   -rr 256Gi \
   -rss 1000Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 
-wait_process "tpch"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 

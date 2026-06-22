@@ -66,7 +66,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
@@ -92,7 +91,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -118,11 +117,10 @@ bexhoma ycsb \
   -tr \
   -rsr \
   -rss 50Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
@@ -172,7 +170,6 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
 
-wait_process "ycsb"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
 
 
@@ -206,7 +203,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
@@ -246,7 +242,6 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
@@ -267,7 +262,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128 
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 100Gi                    size of the persistent volume claim
-# -rst cephcsi                   storage class for persistent volumes
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -288,11 +283,10 @@ bexhoma benchbase \
   -tr \
   -rsr \
   -rss 100Gi \
-  -rst cephcsi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
 
-wait_process "benchbase"
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 
