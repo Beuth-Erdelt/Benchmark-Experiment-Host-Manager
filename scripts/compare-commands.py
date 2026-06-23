@@ -22,15 +22,28 @@ _RE_PS_LOG = re.compile(r'Out-File\s+"?\$LOG_DIR[\\\/](\S+\.log)')
 
 # ── Flag parsing ───────────────────────────────────────────────────────────────
 
-def parse_flags(tokens: list[str]) -> dict[str, str | bool]:
-    """Parse a flat token list into {flag: value_or_True}."""
+def _strip_one_quote_pair(s: str) -> str:
+    """Remove exactly one surrounding double-quote pair from *s*, if present."""
+    if len(s) >= 2 and s.startswith('"') and s.endswith('"'):
+        return s[1:-1]
+    return s
+
+
+def parse_flags(tokens: list[str], normalize: bool = False) -> dict[str, str | bool]:
+    """
+    Parse a flat token list into {flag: value_or_True}.
+
+    :param normalize: when True, strip one outer double-quote pair from each value
+                      so that ``"1,1"`` and ``1,1`` compare as equal.
+    """
     flags: dict[str, str | bool] = {}
     i = 0
     while i < len(tokens):
         tok = tokens[i]
         if tok.startswith('-'):
             if i + 1 < len(tokens) and not tokens[i + 1].startswith('-'):
-                flags[tok] = tokens[i + 1]
+                v = tokens[i + 1]
+                flags[tok] = _strip_one_quote_pair(v) if normalize else v
                 i += 2
             else:
                 flags[tok] = True
@@ -106,7 +119,7 @@ def _parse_bash_block(block: list[str]) -> tuple[str | None, dict, str | None]:
             cleaned = cleaned[1:]
         tokens.extend(cleaned)
 
-    flags = parse_flags(tokens)
+    flags = parse_flags(tokens, normalize=True)
     if subcommand:
         flags['__subcommand__'] = subcommand
     if action:
@@ -138,7 +151,7 @@ def _parse_ps_block(block: list[str]) -> tuple[str | None, dict, str | None]:
             cleaned = cleaned[1:]
         tokens.extend(cleaned)
 
-    flags = parse_flags(tokens)
+    flags = parse_flags(tokens, normalize=True)
     if subcommand:
         flags['__subcommand__'] = subcommand
     if action:

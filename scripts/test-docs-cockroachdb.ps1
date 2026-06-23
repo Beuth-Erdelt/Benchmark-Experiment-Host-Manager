@@ -139,15 +139,16 @@ bexhoma benchbase `
   -xsd 10                       <# benchmark duration in minutes #> `
   -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
   -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
-  -nbp 1,2,4,8                  <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbp "1,2,4,8"                <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 1280                     <# threads per benchmarking pod #> `
-  -nw 3                         <# number of worker nodes #> `
-  -nwr 3                        <# replication factor #> `
+  -nw 3                         <# number of worker nodes in the cluster #> `
+  -nwr 3                        <# number of worker node replicas #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 100Gi `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

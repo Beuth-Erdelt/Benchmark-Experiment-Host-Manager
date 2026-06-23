@@ -225,17 +225,20 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_postgresql_1.log
 ```
 
@@ -357,18 +360,24 @@ TEST passed: Workflow as planned
 #### TPC-H Monitoring
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_postgresql_2.log
 ```
 
@@ -511,19 +520,27 @@ kubectl delete pvc bexhoma-storage-postgresql-tpch-1
 
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rsr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_postgresql_3.log
 ```
 
@@ -924,17 +941,20 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_mysql_1.log
 ```
 
@@ -1058,18 +1078,24 @@ No warnings
 #### TPC-H Monitoring
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_mysql_2.log
 ```
 
@@ -1244,19 +1270,27 @@ kubectl delete pvc bexhoma-storage-mysql-tpch-1
 ```
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rsr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_mysql_3.log
 ```
 
@@ -1647,17 +1681,20 @@ TEST passed: Workflow as planned
 #### TPC-H Simple
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_mariadb_1.log
 ```
 
@@ -1778,18 +1815,22 @@ TEST passed: Workflow as planned
 #### TPC-H Monitoring
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_mariadb_2.log
 ```
 
@@ -1931,19 +1972,24 @@ kubectl delete pvc bexhoma-storage-mariadb-tpch-1
 ```
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpch \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_mariadb_3.log
 ```
 
@@ -2649,17 +2695,20 @@ TEST passed: Workflow as planned
 #### TPC-DS Simple
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log
 ```
 
@@ -2854,18 +2903,22 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_postgresql_2.log
 ```
 
@@ -3091,19 +3144,24 @@ kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
 
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log
 ```
 
@@ -3447,17 +3505,20 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_mysql_1.log
 ```
 
@@ -3651,18 +3712,22 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_mysql_2.log
 ```
 
@@ -3880,19 +3945,24 @@ kubectl delete pvc bexhoma-storage-mysql-tpcds-1
 ```
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 10 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_mysql_3.log
 ```
 
@@ -4208,17 +4278,20 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 #### TPC-DS Simple
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log
 ```
 
@@ -4572,19 +4645,24 @@ kubectl delete pvc bexhoma-storage-mariadb-tpcds-1
 ```
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1,2 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 100Gi \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log
 ```
 
@@ -4842,17 +4920,19 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms PostgreSQL \
   -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log
 ```
 
@@ -4930,18 +5010,20 @@ sleep 10
 ```
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms PostgreSQL \
   -xtb 1024 \
+  -nc 2 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log
 ```
 
@@ -5033,18 +5115,21 @@ TEST passed: Workflow as planned
 #### Benchbase Monitoring
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms PostgreSQL \
   -xtb 1024 \
-  -nbp 1 \
-  -nbt 16 \
-  -xnbf 8 \
-  -ne 1 \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -nbt 160 \
+  -xnbf 8 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log
 ```
 
@@ -5135,19 +5220,22 @@ TEST passed: Workflow as planned
 #### Benchbase Complex
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms PostgreSQL \
   -xtb 1024 \
+  -nc 2 \
+  -ne 1,2 \
   -nbp 1,2 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1,2 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log
 ```
 
@@ -5383,17 +5471,19 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MySQL \
   -sf 16 \
   -xsd 5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MySQL \
   -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mysql_1.log
 ```
 
@@ -5480,18 +5570,20 @@ sleep 10
 ```
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MySQL \
   -sf 16 \
   -xsd 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MySQL \
   -xtb 1024 \
+  -nc 2 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mysql_2.log
 ```
 
@@ -5581,18 +5673,21 @@ TEST passed: Workflow as planned
 #### Benchbase Monitoring
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MySQL \
   -sf 16 \
   -xsd 5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MySQL \
   -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mysql_3.log
 ```
 
@@ -5682,19 +5777,22 @@ TEST passed: Workflow as planned
 #### Benchbase Complex
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MySQL \
   -sf 16 \
   -xsd 2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MySQL \
   -xtb 1024 \
-  -nbp 1,2 \
-  -nbt 8 \
-  -xnbf 8 \
-  -ne 1,2 \
   -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -ne 1,2 \
+  -nbp 1,2 \
+  -nbt 160 \
+  -xnbf 8 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mysql_4.log
 ```
 
@@ -5922,17 +6020,19 @@ TEST passed: Workflow as planned
 #### Benchbase Simple
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MariaDB \
   -sf 16 \
   -xsd 5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MariaDB \
   -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mariadb_1.log
 ```
 
@@ -6025,18 +6125,20 @@ sleep 10
 ```
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MariaDB \
   -sf 16 \
   -xsd 1 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MariaDB \
   -xtb 1024 \
+  -nc 2 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 30Gi \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log
 ```
 
@@ -6143,18 +6245,21 @@ Benchbase Workload tpcc SF=16
 #### Benchbase Monitoring
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MariaDB \
   -sf 16 \
   -xsd 5 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MariaDB \
   -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mariadb_3.log
 ```
 
@@ -6270,19 +6375,22 @@ Benchbase Workload tpcc SF=16
 #### Benchbase Complex
 
 ```bash
-bexhoma benchbase -ms $BEXHOMA_MS -tr \
+bexhoma benchbase \
+  -dbms MariaDB \
   -sf 16 \
   -xsd 2 \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -dbms MariaDB \
   -xtb 1024 \
+  -nc 2 \
+  -ne 1,2 \
   -nbp 1,2 \
   -nbt 160 \
   -xnbf 8 \
-  -ne 1,2 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log
 ```
 
@@ -6550,16 +6658,17 @@ Benchbase Workload tpcc SF=16
 #### HammerDB Simple
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
   -nlt 8 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log
 ```
 
@@ -6630,18 +6739,20 @@ TEST passed: Workflow as planned
 #### HammerDB Monitoring
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
   -nlt 8 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log
 ```
 
@@ -6725,18 +6836,21 @@ TEST passed: Workflow as planned
 #### HammerDB Complex
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms PostgreSQL \
   -sf 16 \
   -xsd 2 \
-  -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
+  -nc 2 \
+  -ne 1,2 \
   -nbp 1,2 \
   -nbt 16 \
-  -ne 1,2 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log
 ```
 
@@ -6952,16 +7066,17 @@ TEST passed: Workflow as planned
 #### HammerDB Simple
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
   -nlt 8 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_mysql_1.log
 ```
 
@@ -7031,18 +7146,20 @@ TEST passed: Workflow as planned
 #### HammerDB Monitoring
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
   -nlt 8 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log
 ```
 
@@ -7135,18 +7252,21 @@ TEST passed: Workflow as planned
 #### HammerDB Complex
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms MySQL \
   -sf 16 \
   -xsd 2 \
-  -dbms MySQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
+  -nc 2 \
+  -ne 1,2 \
   -nbp 1,2 \
   -nbt 16 \
-  -ne 1,2 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log
 ```
 
@@ -7353,16 +7473,17 @@ TEST passed: Workflow as planned
 #### HammerDB Simple
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
   -nlt 8 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_mariadb_1.log
 ```
 
@@ -7448,18 +7569,20 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 #### HammerDB Monitoring
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
-  -sf 16 \
-  -xlat \
+bexhoma hammerdb \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -sf 16 \
   -nlt 8 \
+  -nc 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 16 \
-  -ne 1 \
-  -nc 1 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log
 ```
 
@@ -7578,18 +7701,21 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 #### HammerDB Complex
 
 ```bash
-bexhoma hammerdb -ms $BEXHOMA_MS -tr \
+bexhoma hammerdb \
+  -dbms MariaDB \
   -sf 16 \
   -xsd 2 \
-  -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -nlt 8 \
+  -nc 2 \
+  -ne 1,2 \
   -nbp 1,2 \
   -nbt 16 \
-  -ne 1,2 \
-  -nc 2 \
-  -m -mc \
-  -rst shared -rss 30Gi \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log
 ```
 
@@ -7856,20 +7982,22 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ### YCSB Loader Test for Scaling the Driver
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 131072 \
+  -sf 1 \
+  -xwl a \
+  -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nlp 4,8 \
   -nlt 32,64 \
   -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
   -xnbf 1 \
-  -ne 1 \
-  -nc 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log
 ```
 
@@ -7947,21 +8075,23 @@ TEST passed: Result contains no FAILED column
 ### YCSB Loader Test for Persistency
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 131072 \
+  -sf 1 \
+  -xwl a \
+  -xtb 1024 \
+  -nc 2 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
   -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
   -xnbf 1 \
-  -ne 1 \
-  -nc 2 \
-  -rst shared -rss 100Gi \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log
 ```
 
@@ -8060,21 +8190,23 @@ TEST passed: Result contains no FAILED column
 ### YCSB Execution for Scaling and Repetition
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 131072 \
+  -sf 1 \
+  -xwl a \
+  -xtb 1024 \
+  -nc 2 \
+  -ne 1,2 \
   -nlp 8 \
   -nlt 64 \
   -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
   -xnbf 1 \
-  -ne 1,2 \
-  -nc 2 \
-  -rst shared -rss 100Gi \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log
 ```
 
@@ -8270,21 +8402,23 @@ TEST passed: Result contains no FAILED column
 ### YCSB Execution Different Workload
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  --workload e \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 131072 \
+  -sf 1 \
+  -xwl e \
+  -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
   -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
   -xnbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -rst shared -rss 100Gi \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log
 ```
 
