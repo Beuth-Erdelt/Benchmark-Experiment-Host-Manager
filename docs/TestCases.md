@@ -782,18 +782,23 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
+bexhoma tpch \
   -dbms PostgreSQL \
+  -sf 3 \
   -nlp 8 \
   -nlt 8 \
-  -sf 3 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
-  -rnn "$BEXHOMA_NODE_SUT" \
-  -rnl "$BEXHOMA_NODE_LOAD" \
-  -rnb "$BEXHOMA_NODE_BENCHMARK" \
-  -rst ramdisk -rss 50Gi \
+  -xdt \
+  -m \
+  -mc \
+  -ma \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rst ramdisk \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_ramdisk.log
 ```
 
@@ -1527,19 +1532,24 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
+bexhoma tpch \
   -dbms MySQL \
-  -rr 128Gi -lr 128Gi \
+  -sf 10 \
   -nlp 8 \
   -nlt 8 \
-  -sf 10 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
-  -rnn "$BEXHOMA_NODE_SUT" \
-  -rnl "$BEXHOMA_NODE_LOAD" \
-  -rnb "$BEXHOMA_NODE_BENCHMARK" \
-  -rst ramdisk -rss 100Gi \
+  -xdt \
+  -m \
+  -mc \
+  -ma \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rst ramdisk \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log
 ```
 
@@ -2236,19 +2246,24 @@ The disk has size 50GB.
 Make sure you have enough RAM.
 
 ```bash
-bexhoma tpch -ms $BEXHOMA_MS -xdt -tr -lr 64Gi \
+bexhoma tpch \
   -dbms MariaDB \
-  -rr 128Gi -lr 128Gi \
+  -sf 10 \
   -nlp 8 \
   -nlt 8 \
-  -sf 10 \
-  -t 1200 \
   -xii -xic -xis \
-  -m -mc -ma \
-  -rnn "$BEXHOMA_NODE_SUT" \
-  -rnl "$BEXHOMA_NODE_LOAD" \
-  -rnb "$BEXHOMA_NODE_BENCHMARK" \
-  -rst ramdisk -rss 100Gi \
+  -xdt \
+  -m \
+  -mc \
+  -ma \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rst ramdisk \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log
 
 ```
@@ -4492,18 +4507,22 @@ TEST passed: Workflow as planned
 #### TPC-DS Monitoring
 
 ```bash
-bexhoma tpcds -ms $BEXHOMA_MS -tr \
-  -sf 1 \
-  -xdt \
-  -t 1200 \
+bexhoma tpcds \
   -dbms MariaDB \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xii -xic -xis \
+  -sf 1 \
   -nlp 8 \
-  -nbp 1 \
-  -ne 1 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
   -nc 1 \
-  -m -mc \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log
 ```
 
@@ -8494,23 +8513,26 @@ TEST failed: Result contains FAILED column
 ### YCSB Execution Monitoring
 
 ```bash
-bexhoma ycsb -ms $BEXHOMA_MS -tr \
-  -sf 10 \
-  --workload a \
+bexhoma ycsb \
   -dbms PostgreSQL \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -xtb 131072 \
+  -sf 1 \
+  -xwl a \
+  -xtb 1024 \
+  -nc 1 \
+  -ne 1 \
   -nlp 8 \
   -nlt 64 \
   -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
   -xnbf 1 \
-  -ne 1 \
-  -nc 1 \
-  -rst shared -rss 100Gi \
-  -m -mc \
-  run &>$LOG_DIR/test_ycsb_testcase_5.log
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log
 ```
 
 yields (after ca. 10 minutes) something like

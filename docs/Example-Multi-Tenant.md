@@ -680,15 +680,22 @@ BEXHOMA_NUM_TENANTS_LOADER = 16
 
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
-bexhoma tpch -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+bexhoma tpch \
+  -dbms PostgreSQL \
   -sf 1 \
-  --dbms PostgreSQL \
-  -xii -xic -xis \
-  -nlp $BEXHOMA_NUM_TENANTS_LOADER -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp $BEXHOMA_NUM_TENANTS_LOADER \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -xii -xic -xis \
+  -tr \
+  -rsr \
+  -rss 10Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi -rsr \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database_multiload.log
 ```
 

@@ -232,6 +232,51 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL throughput  sf=10  ne=1,2"
 
 
+#### TPC-H RAM Disk Test - MySQL (TestCases.md)
+# -dbms MySQL                   DBMS under test
+# -sf 10                        scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect metrics for the whole experiment
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 128Gi                     RAM limit for the SUT container
+# -rr 128Gi                     RAM requested for the SUT container
+# -rst ramdisk                  storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch \
+  -dbms MySQL \
+  -sf 10 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ma \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rst ramdisk \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL ramdisk  sf=10"
+
+
 ###########################################
 ############ TPC-H PostgreSQL #############
 ###########################################
@@ -375,6 +420,49 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL throughput  sf=10  ne=1,2"
 
 
+#### TPC-H RAM Disk Test - PostgreSQL (TestCases.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect metrics for the whole experiment
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rst ramdisk                  storage class for persistent volumes
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch \
+  -dbms PostgreSQL \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ma \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rst ramdisk \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/doc_tpch_testcase_ramdisk.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL ramdisk  sf=3"
+
+
 ###########################################
 ############## TPC-H MariaDB ##############
 ###########################################
@@ -506,6 +594,51 @@ bexhoma tpch \
   run &>$LOG_DIR/test_tpch_testcase_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB throughput  sf=1  ne=1,2"
+
+
+#### TPC-H RAM Disk Test - MariaDB (TestCases.md)
+# -dbms MariaDB                 DBMS under test
+# -sf 10                        scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ma                           collect metrics for the whole experiment
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 128Gi                     RAM limit for the SUT container
+# -rr 128Gi                     RAM requested for the SUT container
+# -rst ramdisk                  storage class for persistent volumes
+# -rss 100Gi                    size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch \
+  -dbms MariaDB \
+  -sf 10 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -m \
+  -mc \
+  -ma \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 128Gi \
+  -rr 128Gi \
+  -rst ramdisk \
+  -rss 100Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB ramdisk  sf=10"
 
 
 ###########################################
@@ -814,6 +947,47 @@ bexhoma tpcds \
   run &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB simple  sf=1"
+
+
+#### TCP-DS Monitoring - MariaDB (TestCases.md)
+# -dbms MariaDB                 DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          disable result type checking
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nbp 1                        number of benchmarking pods
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MariaDB \
+  -sf 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xdt \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB monitoring  sf=1"
 
 
 #### Remove persistent storage
