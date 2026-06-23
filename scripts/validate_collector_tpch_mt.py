@@ -230,6 +230,9 @@ try:
             df_mon_k[k] = df_mon_k[k].astype(str)
     merged_df = df_perf_k.merge(df_mon_k, on=join_keys, how='inner')
     merged_df = collect.add_metadata(merged_df).copy()
+    for col in merged_df.columns:
+        if merged_df[col].dtype == object:
+            merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce').fillna(merged_df[col])
     check_df(merged_df, "merged_perf_monitoring_mt", HEADER_COLS)
 except Exception:
     traceback.print_exc()

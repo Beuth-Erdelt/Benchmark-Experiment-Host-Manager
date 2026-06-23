@@ -231,6 +231,9 @@ try:
             df_mon_k[k] = df_mon_k[k].astype(str)
     merged_df = df_perf_k.merge(df_mon_k, on=join_keys, how='inner')
     merged_df = collect.add_metadata(merged_df).copy()
+    for col in merged_df.columns:
+        if merged_df[col].dtype == object:
+            merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce').fillna(merged_df[col])
     merged_df["E_Tpx"] = (merged_df["Goodput (requests/second)"]
                            / merged_df["CPU Utilization Time [s]"] * 600.)
     merged_df["E_Lat"] = 1. / np.sqrt(
