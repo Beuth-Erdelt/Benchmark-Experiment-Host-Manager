@@ -858,6 +858,14 @@ scrape_configs:
                                 if vol['name'] == 'bxw':
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                        if cfg.use_ephemeral_storage():
+                            ephemeral_size = cfg.storage['storageSize']
+                            c = dep['spec']['template']['spec']['containers'][i_container]
+                            c.setdefault('resources', {})
+                            c['resources'].setdefault('requests', {})
+                            c['resources'].setdefault('limits', {})
+                            c['resources']['requests']['ephemeral-storage'] = ephemeral_size
+                            c['resources']['limits']['ephemeral-storage'] = ephemeral_size
                     elif (not cfg.monitoring_active
                           or cfg.experiment.cluster.monitor_cluster_active
                           or cfg.experiment.cluster.monitor_cluster_exists):
@@ -1201,6 +1209,10 @@ scrape_configs:
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu']
                     if req_mem == "0":
                         del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory']
+                    if cfg.use_ephemeral_storage():
+                        ephemeral_size = cfg.storage['storageSize']
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['ephemeral-storage'] = ephemeral_size
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['ephemeral-storage'] = ephemeral_size
                     if node_gpu:
                         if 'nodeSelector' not in dep['spec']['template']['spec']:
                             dep['spec']['template']['spec']['nodeSelector'] = {}
