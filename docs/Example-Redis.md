@@ -38,6 +38,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 ```
@@ -672,7 +673,7 @@ bexhoma ycsb \
   -tr \
   -rsr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_4.log
 ```
@@ -856,7 +857,7 @@ bexhoma ycsb \
   -tr \
   -rsr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_5.log
 ```

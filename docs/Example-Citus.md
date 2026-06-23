@@ -34,6 +34,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 ```
@@ -319,7 +320,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_citus_2.log
 ```
@@ -835,7 +836,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 100Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_2.log
 ```
@@ -1278,7 +1279,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 100Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_3.log
 ```
@@ -2102,7 +2103,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_2.log
 ```
@@ -2528,7 +2529,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 200Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_3.log
 ```
@@ -3404,7 +3405,7 @@ bexhoma tpch \
   -t 14400 \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_2.log
 ```
@@ -3838,7 +3839,7 @@ bexhoma tpch \
   -t 14400 \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_3.log
 ```

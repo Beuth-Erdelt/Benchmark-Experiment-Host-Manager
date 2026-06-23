@@ -30,6 +30,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 ```
@@ -66,7 +67,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -270,7 +271,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -474,7 +475,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 5Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1031,7 +1032,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 20Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1170,7 +1171,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 20Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1310,7 +1311,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1506,7 +1507,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1645,7 +1646,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

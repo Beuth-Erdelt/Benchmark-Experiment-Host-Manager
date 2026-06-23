@@ -130,9 +130,9 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB storage  sf=1 
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records x 1000) #> `
-  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
-  -xnbf 2                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnbf 2                       <# throughput target as a multiple of the base ops/s #> `
   -xnlf 1                       <# loading throughput target as a multiple of the base ops/s #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
@@ -142,6 +142,7 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 <# override deployment configuration parameter #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_loading_patch.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch  sf=1  nlp=1"

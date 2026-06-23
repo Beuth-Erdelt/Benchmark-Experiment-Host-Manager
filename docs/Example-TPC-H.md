@@ -28,6 +28,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 ```
@@ -743,7 +744,7 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 30Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_storage.log
 ```
@@ -950,7 +951,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 5Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_fractional.log
 ```
@@ -1302,6 +1303,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 
@@ -1321,8 +1323,8 @@ bexhoma tpch \
   -lr 256Gi \
   -rr 256Gi \
   -rss 1000Gi \
-  -rst shared \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_1.log
 ```
 
@@ -1561,6 +1563,7 @@ This is repeated 2 times (`-nc`).
 ```bash
 mkdir -p ./logs/
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
@@ -1582,8 +1585,8 @@ bexhoma tpch \
   -lr 256Gi \
   -rr 256Gi \
   -rss 1000Gi \
-  -rst shared \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_2.log
 ```
 
@@ -1789,6 +1792,7 @@ We then run two power tests, one after the other, and then a throughput test wit
 ```bash
 mkdir -p ./logs/
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
@@ -1810,8 +1814,8 @@ bexhoma tpch \
   -lr 256Gi \
   -rr 256Gi \
   -rss 1000Gi \
-  -rst shared \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_monetdb_3.log
 ```
 
