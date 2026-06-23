@@ -221,8 +221,15 @@ sep("Merged performance_multitenant + monitoring_multitenant with E_Tpx / E_Lat 
 try:
     df_mon  = collect.get_monitoring_aggregated_per_phase_multitenant(type="stream")
     df_perf = collect.get_performance_aggregated_per_phase_multitenant()
+    join_keys = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
     cols_to_use = [c for c in df_mon.columns if c not in df_perf.columns]
-    merged_df = df_perf.join(df_mon[cols_to_use], how="inner")
+    df_perf_k = df_perf.copy()
+    df_mon_k = df_mon[join_keys + cols_to_use].copy()
+    for k in join_keys:
+        if df_perf_k[k].dtype != df_mon_k[k].dtype:
+            df_perf_k[k] = df_perf_k[k].astype(str)
+            df_mon_k[k] = df_mon_k[k].astype(str)
+    merged_df = df_perf_k.merge(df_mon_k, on=join_keys, how='inner')
     merged_df = collect.add_metadata(merged_df).copy()
     merged_df["E_Tpx"] = (merged_df["Goodput (requests/second)"]
                            / merged_df["CPU Utilization Time [s]"] * 600.)
