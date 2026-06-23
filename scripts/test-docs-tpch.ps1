@@ -183,7 +183,7 @@ bexhoma tpch `
   -dbms MonetDB                 <# DBMS under test #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
   -nc 2                         <# number of repeated runs per configuration #> `
-  -ne 1,1                       <# parallel client counts to sweep (comma-separated) #> `
+  -ne "1,1"                     <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
@@ -198,7 +198,6 @@ bexhoma tpch `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_2.log" -Encoding utf8
@@ -211,7 +210,7 @@ bexhoma tpch `
   -dbms MonetDB                 <# DBMS under test #> `
   -sf 100                       <# scaling factor (controls database size in GB) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1,1,3                     <# parallel client counts to sweep (comma-separated) #> `
+  -ne "1,1,3"                   <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
@@ -226,7 +225,6 @@ bexhoma tpch `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_3.log" -Encoding utf8

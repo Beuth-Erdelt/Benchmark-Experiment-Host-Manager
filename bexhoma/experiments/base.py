@@ -575,6 +575,8 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
             if request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
+        elif request_storage_size and request_storage_type is None:
+            self.workload['info'] = self.workload['info']+"\nDatabase uses ephemeral storage of size {}.".format(request_storage_size)
         if self.loading_is_active():
             self.workload['info'] = self.workload['info']+"\nLoading is tested with {} threads, split into {} pods.".format(num_loading_threads, num_loading_pods)
         if self.benchmarking_is_active():

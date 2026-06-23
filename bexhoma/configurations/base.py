@@ -1040,3 +1040,19 @@ class SutConfiguration:
         if 'storageConfiguration' not in self.storage:
             self.storage['storageConfiguration'] = ''
         return True
+
+    def use_ephemeral_storage(self) -> bool:
+        """Return True iff ephemeral-storage resources should be requested for the SUT.
+
+        This is the case when a storage size is configured but no storage class
+        is set, meaning no persistent volume is created and the database files
+        live in the container's ephemeral storage.
+
+        :rtype: bool
+        """
+        if not self.storage:
+            return False
+        return (
+            self.storage.get('storageClassName') is None
+            and bool(self.storage.get('storageSize', ''))
+        )

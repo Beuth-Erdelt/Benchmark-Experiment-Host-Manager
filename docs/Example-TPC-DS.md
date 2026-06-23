@@ -47,6 +47,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 ```
@@ -999,7 +1000,7 @@ bexhoma tpcds \
   -t 1200 \
   -tr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_storage.log
 ```
@@ -1287,7 +1288,7 @@ bexhoma tpcds \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
 ```
@@ -1899,6 +1900,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 
@@ -1919,7 +1921,7 @@ bexhoma tpcds \
   -rr 1024Gi \
   -rsr \
   -rss 2000Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_1.log
 ```
 
@@ -2206,7 +2208,7 @@ bexhoma tpcds \
   -lr 1024Gi \
   -rr 1024Gi \
   -rss 2000Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_2.log
 ```
 
@@ -2506,7 +2508,7 @@ bexhoma tpcds \
   -lr 1024Gi \
   -rr 1024Gi \
   -rss 2000Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/doc_tpcds_monetdb_3.log
 ```
 

@@ -30,6 +30,7 @@ BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
 
 mkdir -p $LOG_DIR
 ```
@@ -66,7 +67,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -270,7 +271,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -474,7 +475,7 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 5Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -679,15 +680,22 @@ BEXHOMA_NUM_TENANTS_LOADER = 16
 
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
-bexhoma tpch -tr \
-  -mtn $BEXHOMA_NUM_TENANTS -mtb database \
+bexhoma tpch \
+  -dbms PostgreSQL \
   -sf 1 \
-  --dbms PostgreSQL \
-  -xii -xic -xis \
-  -nlp $BEXHOMA_NUM_TENANTS_LOADER -nlt 1 -nbp 1 -nbt 64 \
   -ne $BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS \
+  -nlp $BEXHOMA_NUM_TENANTS_LOADER \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
+  -xii -xic -xis \
+  -tr \
+  -rsr \
+  -rss 10Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  -rst shared -rss 10Gi -rsr \
   run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database_multiload.log
 ```
 
@@ -1031,7 +1039,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 20Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1170,7 +1178,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 20Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1310,7 +1318,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 10Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1506,7 +1514,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1645,7 +1653,7 @@ bexhoma benchbase \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
-  -rst shared \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

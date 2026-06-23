@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 6528s 
-* Code: 1782067968
+* Duration: 3100s 
+* Code: 1782146495
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -15,7 +15,7 @@ YCSB SF=1
   * Target is based on multiples of '16384'.
   * Factors for loading are [4].
   * Factors for benchmarking are [4].
-  * Experiment uses bexhoma version 0.9.17.
+  * Experiment uses bexhoma version 0.9.18.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['CockroachDB'].
   * Import is handled by 8 processes (pods).
@@ -34,48 +34,7 @@ YCSB SF=1
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:238686
-  * cpu_list:0-127
-  * args:['-c', 'while true; do echo hello; sleep 10;done']
-  * requests_cpu:4
-  * requests_memory:16Gi
-  * worker 0
-    * RAM:1081853939712
-    * Cores:128
-    * host:6.8.0-111-generic
-    * node:cl-worker37
-    * disk:640681
-    * volume_size:50G
-    * volume_used:1.9G
-    * cpu_list:0-127
-  * worker 1
-    * RAM:2164173246464
-    * Cores:224
-    * host:6.8.0-111-generic
-    * node:cl-worker36
-    * disk:985845
-    * volume_size:50G
-    * volume_used:1.9G
-    * cpu_list:0-223
-  * worker 2
-    * RAM:1081649803264
-    * Cores:56
-    * host:6.8.0-111-generic
-    * node:cl-worker34
-    * disk:308090
-    * volume_size:50G
-    * volume_used:1.8G
-    * cpu_list:0-55
-  * eval_parameters
-    * code:1782067968
-    * BEXHOMA_REPLICAS:3
-    * BEXHOMA_WORKERS:3
-* CockroachDB-1-2-1-1 uses docker image cockroachdb/cockroach:v24.2.4
-  * RAM:540492877824
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:239094
+  * disk:219926
   * cpu_list:0-127
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
@@ -85,32 +44,79 @@ YCSB SF=1
     * Cores:256
     * host:6.8.0-111-generic
     * node:cl-worker27
-    * disk:1336134
+    * disk:1337485
+    * datadisk:705151
     * volume_size:50G
-    * volume_used:2.0G
+    * volume_used:1.9G
     * cpu_list:0-255
   * worker 1
-    * RAM:1081649803264
-    * Cores:56
+    * RAM:2164173246464
+    * Cores:224
     * host:6.8.0-111-generic
-    * node:cl-worker34
-    * disk:308091
+    * node:cl-worker36
+    * disk:838172
+    * datadisk:704969
     * volume_size:50G
-    * volume_used:2.0G
-    * cpu_list:0-55
+    * volume_used:1.7G
+    * cpu_list:0-223
   * worker 2
     * RAM:1081853939712
     * Cores:128
     * host:6.8.0-111-generic
     * node:cl-worker37
-    * disk:640681
+    * disk:643622
+    * datadisk:705029
+    * volume_size:50G
+    * volume_used:1.7G
+    * cpu_list:0-127
+  * eval_parameters
+    * code:1782146495
+    * BEXHOMA_REPLICAS:3
+    * BEXHOMA_WORKERS:3
+* CockroachDB-1-2-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:219926
+  * cpu_list:0-127
+  * args:['-c', 'while true; do echo hello; sleep 10;done']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * worker 0
+    * RAM:1077381271552
+    * Cores:256
+    * host:6.8.0-111-generic
+    * node:cl-worker27
+    * disk:1337491
+    * datadisk:705243
+    * volume_size:50G
+    * volume_used:2.0G
+    * cpu_list:0-255
+  * worker 1
+    * RAM:1081853939712
+    * Cores:128
+    * host:6.8.0-111-generic
+    * node:cl-worker37
+    * disk:643621
+    * datadisk:705242
     * volume_size:50G
     * volume_used:2.0G
     * cpu_list:0-127
+  * worker 2
+    * RAM:2164173246464
+    * Cores:224
+    * host:6.8.0-111-generic
+    * node:cl-worker36
+    * disk:836553
+    * datadisk:705245
+    * volume_size:50G
+    * volume_used:2.0G
+    * cpu_list:0-223
   * worker 3
     * node:cl-worker24
   * eval_parameters
-    * code:1782067968
+    * code:1782146495
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
@@ -132,20 +138,20 @@ YCSB SF=1
 
 | connection            |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:----------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| CockroachDB-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.27 |              1830877.00 |            125000.00 |                            614911.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.30 |              1830051.00 |            125000.00 |                            615935.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.31 |              1829870.00 |            125000.00 |                            613887.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.34 |              1828968.00 |            125000.00 |                            612351.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.34 |              1829013.00 |            125000.00 |                            613375.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.30 |              1830152.00 |            125000.00 |                            612863.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.38 |              1828004.00 |            125000.00 |                            613375.00 | 1.00 |                1.97 |
-| CockroachDB-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                           68.27 |              1831015.00 |            125000.00 |                            614911.00 | 1.00 |                1.97 |
+| CockroachDB-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.83 |               786985.00 |            125000.00 |                            199423.00 | 1.00 |                4.57 |
+| CockroachDB-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.66 |               787852.00 |            125000.00 |                            198015.00 | 1.00 |                4.57 |
+| CockroachDB-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.92 |               786557.00 |            125000.00 |                            199551.00 | 1.00 |                4.58 |
+| CockroachDB-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.93 |               786502.00 |            125000.00 |                            199167.00 | 1.00 |                4.58 |
+| CockroachDB-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.91 |               786585.00 |            125000.00 |                            199295.00 | 1.00 |                4.58 |
+| CockroachDB-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.81 |               787120.00 |            125000.00 |                            197631.00 | 1.00 |                4.57 |
+| CockroachDB-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.64 |               787964.00 |            125000.00 |                            199295.00 | 1.00 |                4.57 |
+| CockroachDB-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          158.85 |               786914.00 |            125000.00 |                            198527.00 | 1.00 |                4.57 |
 
 #### Per Run
 
 | DBMS            |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |                1.97 |                          546.52 |              1831015.00 |           1000000.00 |                            613951.00 |
+| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |                4.57 |                         1270.55 |               787964.00 |           1000000.00 |                            198863.00 |
 
 ### Execution
 
@@ -153,13 +159,15 @@ YCSB SF=1
 
 | DBMS                  | phase             | job                 | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------------|:------------------|:--------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1-1-1-1 | CockroachDB-1-1-1 | CockroachDB-1-1-1-1 | CockroachDB-1   |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                          467.68 |              2138200.00 |             499844 |                          242303.00 |               500156 |                           4861951.00 |
+| CockroachDB-1-2-1-1-1 | CockroachDB-1-2-1 | CockroachDB-1-2-1-1 | CockroachDB-1   |                2 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                         1269.24 |               787875.00 |             499716 |                           94335.00 |               500284 |                           1576959.00 |
+| CockroachDB-1-1-1-1-1 | CockroachDB-1-1-1 | CockroachDB-1-1-1-1 | CockroachDB-1   |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                         1319.68 |               757760.00 |             499571 |                           77887.00 |               500429 |                           1323007.00 |
 
 #### Per Phase
 
 | DBMS              | phase             |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------------|:------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1-1 | CockroachDB-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                          467.68 |              2138200.00 |             499844 |                          242303.00 |               500156 |                           4861951.00 |
+| CockroachDB-1-1-1 | CockroachDB-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                         1319.68 |               757760.00 |             499571 |                           77887.00 |               500429 |                           1323007.00 |
+| CockroachDB-1-2-1 | CockroachDB-1-2-1 |                2 |        64 |    65536 |               1 |           1 |            0 |                         1269.24 |               787875.00 |             499716 |                           94335.00 |               500284 |                           1576959.00 |
 
 ### Monitoring
 
@@ -167,27 +175,27 @@ YCSB SF=1
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |     14553.68 |      2.99 |           6.44 |                 14.66 |
+| CockroachDB-1-1-1-1 |     26330.71 |      2.92 |          10.06 |                 23.12 |
 
 ### Loading phase: component loader
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |       143.82 |      0.59 |           0.11 |                  0.11 |
+| CockroachDB-1-1-1-1 |       142.20 |      0.75 |           0.11 |                  0.11 |
 
 ### Execution phase: component worker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |      4619.01 |      3.98 |           7.38 |                 14.06 |
-| CockroachDB-1-2-1-1 |      6451.40 |      2.94 |           5.18 |                  9.71 |
+| CockroachDB-1-1-1-1 |      3075.07 |      5.85 |           6.88 |                 13.17 |
+| CockroachDB-1-2-1-1 |      3674.46 |      5.52 |           6.46 |                 12.35 |
 
 ### Execution phase: component benchmarker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |        93.21 |      0.08 |           0.13 |                  0.13 |
-| CockroachDB-1-2-1-1 |        82.30 |      0.13 |           0.13 |                  0.13 |
+| CockroachDB-1-1-1-1 |        96.00 |      0.38 |           0.13 |                  0.14 |
+| CockroachDB-1-2-1-1 |        95.74 |      0.16 |           0.13 |                  0.13 |
 
 ### Tests
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]

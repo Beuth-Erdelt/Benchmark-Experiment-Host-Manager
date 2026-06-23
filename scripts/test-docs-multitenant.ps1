@@ -68,6 +68,32 @@ bexhoma tpch `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
+$BEXHOMA_NUM_TENANTS_LOADER = 16
+
+bexhoma tpch `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" <# parallel client counts for loading and benchmarking #> `
+  -nlp $BEXHOMA_NUM_TENANTS_LOADER <# number of data loader pods #> `
+  -nlt 1                        <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -mtb database                 <# tenant isolation level (schema / database / container) #> `
+  -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\test_tpch_run_postgresql_tenants_database_multiload.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database multiload  tenants=$BEXHOMA_NUM_TENANTS  loaders=$BEXHOMA_NUM_TENANTS_LOADER  sf=1"
+
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
