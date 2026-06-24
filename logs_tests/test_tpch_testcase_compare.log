@@ -1,9 +1,9 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1782218791
-Experiment                    : starts at 2026-06-23 14:46:31.299835 (371775.775660219)
+Experiment                    : has code 1782313700
+Experiment                    : starts at 2026-06-24 17:08:20.686746 (711697.1507656)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -25,226 +25,228 @@ PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1782218791
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1782218791
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1782313700
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1782313700
 MonetDB-1                     : will start now
 MonetDB-1                     : deployments ['sut']
 MonetDB-1                     : stateful sets []
 MonetDB-1                     : pvcs ['sut']
-MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1782218791
-MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1782218791
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1782313700
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1782313700
 MariaDB-1                     : will start now
 MariaDB-1                     : deployments ['sut']
 MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1782218791
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1782218791
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1782313700
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1782313700
 MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1782218791
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1782218791
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1782313700
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1782313700
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-06-23 12:48:05 (that is in 60 secs)
+MonetDB-1                     : will start loading but not before 2026-06-24 15:10:07 (that is in 60 secs)
 MariaDB-1                     : waits for health check to succeed
 MySQL-1                       : is pending
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-06-23 12:48:05
+MonetDB-1                     : will start loading but not before 2026-06-24 15:10:07
 MariaDB-1                     : waits for health check to succeed
 MySQL-1                       : is pending
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782218791-6f4f6bf995-zh2s2 to load scripts
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782313700-7c4f7cdd4c-bp9x7 to load scripts
 MonetDB-1                     : start asynch loading scripts of type loaded
 MonetDB-1                     : is loading
 MariaDB-1                     : waits for health check to succeed
 MySQL-1                       : is pending
 - waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-MonetDB-1                     : is loading
-MariaDB-1                     : waits for health check to succeed
-MySQL-1                       : is pending
-- waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782218791-b9c69c97c-stdnf to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782313700-648cd9d657-zrhx5 to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type loaded
 PostgreSQL-1                  : is loading
 MonetDB-1                     : showing loader times
-MonetDB-1                     : generator times (start/end per pod and container) [(1782218912, 1782218912), (1782218928, 1782218928), (1782218910, 1782218910), (1782218916, 1782218916), (1782218909, 1782218909), (1782218925, 1782218925), (1782218919, 1782218919), (1782218923, 1782218923)]
-MonetDB-1                     : loader times (start/end per pod and container) [(1782218931, 1782218951), (1782218931, 1782218951), (1782218931, 1782218952), (1782218931, 1782218950), (1782218931, 1782218951), (1782218931, 1782218951), (1782218932, 1782218951), (1782218932, 1782218952)]
-MonetDB-1                     : total times (start/end per pod and container) [(1782218912, 1782218912), (1782218928, 1782218928), (1782218910, 1782218910), (1782218916, 1782218916), (1782218909, 1782218909), (1782218925, 1782218925), (1782218919, 1782218919), (1782218923, 1782218923), (1782218931, 1782218951), (1782218931, 1782218951), (1782218931, 1782218952), (1782218931, 1782218950), (1782218931, 1782218951), (1782218931, 1782218951), (1782218932, 1782218951), (1782218932, 1782218952)]
-MonetDB-1                     : generator timespan (first to last [s]) = 19
-MonetDB-1                     : loader timespan (first to last [s]) = 21
-MonetDB-1                     : total timespan (first to last [s]) = 43
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782218791-6f4f6bf995-zh2s2 to load scripts
+MonetDB-1                     : generator times (start/end per pod and container) [(1782313855, 1782313855), (1782313852, 1782313852), (1782313867, 1782313867), (1782313853, 1782313853), (1782313868, 1782313868), (1782313863, 1782313863), (1782313854, 1782313854), (1782313858, 1782313859)]
+MonetDB-1                     : loader times (start/end per pod and container) [(1782313872, 1782313889), (1782313872, 1782313890), (1782313872, 1782313889), (1782313873, 1782313890), (1782313872, 1782313889), (1782313872, 1782313891), (1782313873, 1782313885), (1782313873, 1782313888)]
+MonetDB-1                     : total times (start/end per pod and container) [(1782313855, 1782313855), (1782313852, 1782313852), (1782313867, 1782313867), (1782313853, 1782313853), (1782313868, 1782313868), (1782313863, 1782313863), (1782313854, 1782313854), (1782313858, 1782313859), (1782313872, 1782313889), (1782313872, 1782313890), (1782313872, 1782313889), (1782313873, 1782313890), (1782313872, 1782313889), (1782313872, 1782313891), (1782313873, 1782313885), (1782313873, 1782313888)]
+MonetDB-1                     : generator timespan (first to last [s]) = 16
+MonetDB-1                     : loader timespan (first to last [s]) = 19
+MonetDB-1                     : total timespan (first to last [s]) = 39
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782313700-7c4f7cdd4c-bp9x7 to load scripts
 MonetDB-1                     : start asynch loading scripts of type indexed
 MonetDB-1                     : is loading
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-06-23 12:50:42 (that is in 60 secs)
-MySQL-1                       : is pending
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1782218791 initialized to 1.
-MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
-MonetDB-1-1-1-1               : start benchmarking (benchmark_run=1)
-MonetDB-1                     : benchmarking results in folder /data/benchmarks/1782218791
-- waiting 10s -               : done
-MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782218791-1-1-1-ml9wj: found
-MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-06-23 12:50:42
+MariaDB-1                     : will start loading but not before 2026-06-24 15:13:28 (that is in 60 secs)
 MySQL-1                       : is pending
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times
-PostgreSQL-1                  : generator times (start/end per pod and container) [(1782218980, 1782218980), (1782219001, 1782219001), (1782218987, 1782218987), (1782218990, 1782218990), (1782218984, 1782218984), (1782218995, 1782218995), (1782218998, 1782218998), (1782219005, 1782219005)]
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1782218980, 1782218980), (1782219001, 1782219001), (1782218987, 1782218987), (1782218990, 1782218990), (1782218984, 1782218984), (1782218995, 1782218995), (1782218998, 1782218998), (1782219005, 1782219005), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014), (1782219008, 1782219014)]
-PostgreSQL-1                  : generator timespan (first to last [s]) = 25
-PostgreSQL-1                  : loader timespan (first to last [s]) = 6
-PostgreSQL-1                  : total timespan (first to last [s]) = 34
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782218791-b9c69c97c-stdnf to load scripts
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1782313908, 1782313908), (1782313920, 1782313920), (1782313928, 1782313928), (1782313932, 1782313932), (1782313927, 1782313927), (1782313917, 1782313917), (1782313914, 1782313914), (1782313910, 1782313910)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1782313937, 1782313943), (1782313937, 1782313943), (1782313937, 1782313943), (1782313936, 1782313942), (1782313937, 1782313943), (1782313937, 1782313943), (1782313937, 1782313943), (1782313936, 1782313942)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1782313908, 1782313908), (1782313920, 1782313920), (1782313928, 1782313928), (1782313932, 1782313932), (1782313927, 1782313927), (1782313917, 1782313917), (1782313914, 1782313914), (1782313910, 1782313910), (1782313937, 1782313943), (1782313937, 1782313943), (1782313937, 1782313943), (1782313936, 1782313942), (1782313937, 1782313943), (1782313937, 1782313943), (1782313937, 1782313943), (1782313936, 1782313942)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 24
+PostgreSQL-1                  : loader timespan (first to last [s]) = 7
+PostgreSQL-1                  : total timespan (first to last [s]) = 35
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782313700-648cd9d657-zrhx5 to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type indexed
 PostgreSQL-1                  : is loading
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1782313700 initialized to 1.
+MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
+MonetDB-1-1-1-1               : start benchmarking (benchmark_run=1)
+MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1782313700
+- waiting 10s -               : done
+MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782313700-1-1-1-tg9dm: ..found
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1782218791-7946f6dbfd-qfg8g to load scripts
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-xd56g to load scripts
 MariaDB-1                     : start asynch loading scripts of type loaded
 MariaDB-1                     : is loading
 MySQL-1                       : is pending
-MonetDB-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1782218791/MonetDB-1-1-1-1.config
+MonetDB-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782313700/MonetDB-1-1-1-1.config
 MonetDB-1-1-1-1               : showing benchmarker times
-MonetDB-1-1-1-1               : benchmarker timespan job from 1782219021 to 1782219083
-MonetDB-1-1-1-1               : benchmarker timespan pods from 1782219027 to 1782219034
-MonetDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 7
-MonetDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782219027, 1782219034)]
-MonetDB-1-1-1-1               : found and updated times {'benchmarker': [(1782219027, 1782219034)]}
+MonetDB-1-1-1-1               : benchmarker timespan job from 1782314056 to 1782314115
+MonetDB-1-1-1-1               : benchmarker timespan pods from 1782314082 to 1782314090
+MonetDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 8
+MonetDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782314082, 1782314090)]
+MonetDB-1-1-1-1               : found and updated times {'benchmarker': [(1782314082, 1782314090)]}
 - waiting 30s -               : done
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1782218791 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1782313700 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
 PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1782218791
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1782313700
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1782218791-1-1-1-pr427: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1782313700-1-1-1-prmls: found
 MonetDB-1                     : can be stopped
-MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1782218791-6f4f6bf995-zh2s2
-MariaDB-1                     : is loading
-MySQL-1                       : is pending
-- waiting 30s -               : done
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1782313700-7c4f7cdd4c-bp9x7
 MariaDB-1                     : showing loader times
-MariaDB-1                     : generator times (start/end per pod and container) [(1782219102, 1782219102), (1782219092, 1782219092), (1782219103, 1782219103), (1782219106, 1782219106), (1782219103, 1782219103), (1782219093, 1782219093), (1782219093, 1782219093), (1782219092, 1782219092)]
-MariaDB-1                     : loader times (start/end per pod and container) [(1782219110, 1782219146), (1782219110, 1782219148), (1782219110, 1782219147), (1782219110, 1782219148), (1782219110, 1782219148), (1782219110, 1782219143), (1782219110, 1782219145), (1782219111, 1782219148)]
-MariaDB-1                     : total times (start/end per pod and container) [(1782219102, 1782219102), (1782219092, 1782219092), (1782219103, 1782219103), (1782219106, 1782219106), (1782219103, 1782219103), (1782219093, 1782219093), (1782219093, 1782219093), (1782219092, 1782219092), (1782219110, 1782219146), (1782219110, 1782219148), (1782219110, 1782219147), (1782219110, 1782219148), (1782219110, 1782219148), (1782219110, 1782219143), (1782219110, 1782219145), (1782219111, 1782219148)]
-MariaDB-1                     : generator timespan (first to last [s]) = 14
-MariaDB-1                     : loader timespan (first to last [s]) = 38
-MariaDB-1                     : total timespan (first to last [s]) = 56
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1782218791-7946f6dbfd-qfg8g to load scripts
+MariaDB-1                     : generator times (start/end per pod and container) [(1782314130, 1782314130), (1782314119, 1782314119), (1782314133, 1782314133), (1782314136, 1782314136), (1782314122, 1782314122), (1782314120, 1782314120), (1782314119, 1782314119), (1782314125, 1782314125)]
+MariaDB-1                     : loader times (start/end per pod and container) [(1782314139, 1782314178), (1782314139, 1782314180), (1782314139, 1782314180), (1782314139, 1782314170), (1782314139, 1782314179), (1782314139, 1782314180), (1782314139, 1782314180), (1782314139, 1782314177)]
+MariaDB-1                     : total times (start/end per pod and container) [(1782314130, 1782314130), (1782314119, 1782314119), (1782314133, 1782314133), (1782314136, 1782314136), (1782314122, 1782314122), (1782314120, 1782314120), (1782314119, 1782314119), (1782314125, 1782314125), (1782314139, 1782314178), (1782314139, 1782314180), (1782314139, 1782314180), (1782314139, 1782314170), (1782314139, 1782314179), (1782314139, 1782314180), (1782314139, 1782314180), (1782314139, 1782314177)]
+MariaDB-1                     : generator timespan (first to last [s]) = 17
+MariaDB-1                     : loader timespan (first to last [s]) = 41
+MariaDB-1                     : total timespan (first to last [s]) = 61
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1782313700\bexhoma-loading-mariadb-1-initindexes-tpch-mariadb.sql" bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8:/tmp/initindexes-tpch.sql -c dbms
+Raw output (bytes): b'Error from server (BadRequest): pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 does not have a host assigned\n'
+Decoded with utf-8:
+Error from server (BadRequest): pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 does not have a host assigned
+
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1782313700\bexhoma-loading-mariadb-1-initconstraints-tpch-mariadb.sql" bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8:/tmp/initconstraints-tpch.sql -c dbms
+Raw output (bytes): b'Error from server (BadRequest): pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 does not have a host assigned\n'
+Decoded with utf-8:
+Error from server (BadRequest): pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 does not have a host assigned
+
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster cp "\\localhost\D$\data\benchmarks\1782313700\bexhoma-loading-mariadb-1-initstatistics-tpch-mariadb.sql" bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8:/tmp/initstatistics-tpch.sql -c dbms
+Raw output (bytes): b'Error from server (BadRequest): pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 does not have a host assigned\n'
+Decoded with utf-8:
+Error from server (BadRequest): pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 does not have a host assigned
+
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8 to load scripts
 MariaDB-1                     : start asynch loading scripts of type indexed
 MariaDB-1                     : is loading
 MySQL-1                       : is pending
-PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1782218791/PostgreSQL-1-1-1-1.config
+PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1782313700/PostgreSQL-1-1-1-1.config
 PostgreSQL-1-1-1-1            : showing benchmarker times
-PostgreSQL-1-1-1-1            : benchmarker timespan job from 1782219120 to 1782219178
-PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1782219129 to 1782219144
-PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 15
-PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1782219129, 1782219144)]
-PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1782219129, 1782219144)]}
+PostgreSQL-1-1-1-1            : benchmarker timespan job from 1782314172 to 1782314244
+PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1782314180 to 1782314196
+PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 16
+PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1782314180, 1782314196)]
+PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1782314180, 1782314196)]}
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1782218791-b9c69c97c-stdnf
-MariaDB-1                     : is loading
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1782313700-648cd9d657-zrhx5
+MariaDB-1                     : is pending
 MySQL-1                       : is pending
 - waiting 30s -               : done
-MariaDB-1                     : is loading
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-1                     : is loading
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1782218791 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1782313700 initialized to 1.
 MariaDB-1                     : benchmarks done 0 of 1. This will be client 1
 MariaDB-1-1-1-1               : start benchmarking (benchmark_run=1)
-MariaDB-1                     : benchmarking results in folder /data/benchmarks/1782218791
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782313700
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782218791-1-1-1-trh8v: found
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 12:59:03 (that is in 120 secs)
-- waiting 30s -               : done
-MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 12:59:03
-MariaDB-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1782218791/MariaDB-1-1-1-1.config
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782313700-1-1-1-fh89p: found
+MySQL-1                       : is pending
+MariaDB-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782313700/MariaDB-1-1-1-1.config
 MariaDB-1-1-1-1               : showing benchmarker times
-MariaDB-1-1-1-1               : benchmarker timespan job from 1782219314 to 1782219457
-MariaDB-1-1-1-1               : benchmarker timespan pods from 1782219323 to 1782219434
-MariaDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 111
-MariaDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782219323, 1782219434)]
-MariaDB-1-1-1-1               : found and updated times {'benchmarker': [(1782219323, 1782219434)]}
+MariaDB-1-1-1-1               : benchmarker timespan job from 1782314338 to 1782314357
+MariaDB-1-1-1-1               : benchmarker timespan pods from 1782314343 to 1782314343
+MariaDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 0
+MariaDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782314343, 1782314343)]
+MariaDB-1-1-1-1               : found and updated times {'benchmarker': [(1782314343, 1782314343)]}
 - waiting 30s -               : done
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1782218791-7946f6dbfd-qfg8g
-MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 12:59:03
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1782313700-56c9ff5754-2w9q8
+MySQL-1                       : is pending
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 12:59:03
+MySQL-1                       : will start loading but not before 2026-06-24 15:24:19 (that is in 120 secs)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782218791-cb74995b-wrpmm to load scripts
+MySQL-1                       : will start loading but not before 2026-06-24 15:24:19
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-24 15:24:19
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-24 15:24:19
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782313700-5f75d8c5b8-6852n to load scripts
 MySQL-1                       : start asynch loading scripts of type loaded
 MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : showing loader times
-MySQL-1                       : generator times (start/end per pod and container) [(1782219570, 1782219570), (1782219589, 1782219589), (1782219589, 1782219590), (1782219570, 1782219570), (1782219571, 1782219571), (1782219588, 1782219588), (1782219588, 1782219588), (1782219586, 1782219586)]
-MySQL-1                       : loader times (start/end per pod and container) [(1782219593, 1782219609), (1782219593, 1782219611), (1782219593, 1782219612), (1782219593, 1782219610), (1782219593, 1782219609), (1782219593, 1782219609), (1782219593, 1782219612), (1782219593, 1782219611)]
-MySQL-1                       : total times (start/end per pod and container) [(1782219570, 1782219570), (1782219589, 1782219589), (1782219589, 1782219590), (1782219570, 1782219570), (1782219571, 1782219571), (1782219588, 1782219588), (1782219588, 1782219588), (1782219586, 1782219586), (1782219593, 1782219609), (1782219593, 1782219611), (1782219593, 1782219612), (1782219593, 1782219610), (1782219593, 1782219609), (1782219593, 1782219609), (1782219593, 1782219612), (1782219593, 1782219611)]
-MySQL-1                       : generator timespan (first to last [s]) = 20
+MySQL-1                       : generator times (start/end per pod and container) [(1782314708, 1782314708), (1782314717, 1782314717), (1782314706, 1782314706), (1782314725, 1782314725), (1782314722, 1782314722), (1782314711, 1782314711), (1782314725, 1782314725), (1782314707, 1782314707)]
+MySQL-1                       : loader times (start/end per pod and container) [(1782314731, 1782314748), (1782314730, 1782314748), (1782314730, 1782314748), (1782314730, 1782314749), (1782314730, 1782314749), (1782314730, 1782314747), (1782314730, 1782314749), (1782314730, 1782314748)]
+MySQL-1                       : total times (start/end per pod and container) [(1782314708, 1782314708), (1782314717, 1782314717), (1782314706, 1782314706), (1782314725, 1782314725), (1782314722, 1782314722), (1782314711, 1782314711), (1782314725, 1782314725), (1782314707, 1782314707), (1782314731, 1782314748), (1782314730, 1782314748), (1782314730, 1782314748), (1782314730, 1782314749), (1782314730, 1782314749), (1782314730, 1782314747), (1782314730, 1782314749), (1782314730, 1782314748)]
+MySQL-1                       : generator timespan (first to last [s]) = 19
 MySQL-1                       : loader timespan (first to last [s]) = 19
-MySQL-1                       : total timespan (first to last [s]) = 42
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782218791-cb74995b-wrpmm to load scripts
+MySQL-1                       : total timespan (first to last [s]) = 43
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782313700-5f75d8c5b8-6852n to load scripts
 MySQL-1                       : start asynch loading scripts of type indexed
 MySQL-1                       : is loading
 - waiting 30s -               : done
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1782218791 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1782313700 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 1. This will be client 1
 MySQL-1-1-1-1                 : start benchmarking (benchmark_run=1)
-MySQL-1                       : benchmarking results in folder /data/benchmarks/1782218791
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1782313700
 - waiting 10s -               : done
-MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1782218791-1-1-1-rdphz: found
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1782313700-1-1-1-rpw8d: found
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1782218791/MySQL-1-1-1-1.config
+MySQL-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1782313700/MySQL-1-1-1-1.config
 MySQL-1-1-1-1                 : showing benchmarker times
-MySQL-1-1-1-1                 : benchmarker timespan job from 1782219671 to 1782219747
-MySQL-1-1-1-1                 : benchmarker timespan pods from 1782219680 to 1782219734
+MySQL-1-1-1-1                 : benchmarker timespan job from 1782314864 to 1782314957
+MySQL-1-1-1-1                 : benchmarker timespan pods from 1782314865 to 1782314919
 MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 54
-MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1782219680, 1782219734)]
-MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1782219680, 1782219734)]}
+MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1782314865, 1782314919)]
+MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1782314865, 1782314919)]}
 - waiting 30s -               : done
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1782218791-cb74995b-wrpmm
-Experiment                    : ends at 2026-06-23 15:03:01.606936 (372766.082760547) - 990.31s total
+MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1782313700-5f75d8c5b8-6852n
+Experiment                    : ends at 2026-06-24 17:30:00.091898 (712996.5562396) - 1299.41s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-'pods'
 Result workflow not complete
 
 ## Show Summary
@@ -252,8 +254,8 @@ Result workflow not complete
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 991s 
-* Code: 1782218791
+* Duration: 1300s 
+* Code: 1782313700
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -279,58 +281,54 @@ TPC-H Queries SF=1
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:257486
-  * datadisk:2105
+  * disk:256385
   * cpu_list:0-127
   * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1782218791
+    * code:1782313700
 * MonetDB-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP1
   * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:225232
-  * datadisk:2209
+  * disk:261209
   * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1782218791
+    * code:1782313700
 * MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
   * RAM:540492877824
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:294248
-  * datadisk:35543
+  * disk:285361
   * cpu_list:0-127
   * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1782218791
+    * code:1782313700
 * PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
   * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:226003
-  * datadisk:2757
+  * disk:264644
   * cpu_list:0-127
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1782218791
+    * code:1782313700
 
 ### Workflow
 
@@ -354,69 +352,46 @@ TPC-H Queries SF=1
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1    |                1 |    1 |      277.00 |           0.00 |           14.00 |         38.00 |          221.00 |              8 |           0 |             | None           |             0 | False         |               13.00 |
-| MonetDB-1-1    |                1 |    1 |      139.00 |           1.00 |           19.00 |         21.00 |           95.00 |              8 |           0 |             | None           |             0 | False         |               25.90 |
-| MySQL-1-1      |                1 |    1 |      141.00 |           0.00 |           20.00 |         19.00 |           99.00 |              8 |           0 |             | None           |             0 | False         |               25.53 |
-| PostgreSQL-1-1 |                1 |    1 |      158.00 |           1.00 |           25.00 |          6.00 |          123.00 |              8 |           0 |             |                |             0 | False         |               22.78 |
+| MariaDB-1-1    |                1 |    1 |       64.00 |           0.00 |           17.00 |         41.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |               56.25 |
+| MonetDB-1-1    |                1 |    1 |      165.00 |           2.00 |           16.00 |         19.00 |          124.00 |              8 |           0 |             | None           |             0 | False         |               21.82 |
+| MySQL-1-1      |                1 |    1 |      197.00 |           1.00 |           19.00 |         19.00 |          153.00 |              8 |           0 |             | None           |             0 | False         |               18.27 |
+| PostgreSQL-1-1 |                1 |    1 |      203.00 |           2.00 |           24.00 |          7.00 |          166.00 |              8 |           0 |             |                |             0 | False         |               17.73 |
 
 ### Execution
 
 #### Per Connection
 
-|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| MariaDB-1-1-1-1-1    | MariaDB-1       | MariaDB-1-1-1    | MariaDB-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |        111 |            1.19 |             3243.50 |            713.51 |          -1 | MariaDB-1-1-1-1-1    |
-| MonetDB-1-1-1-1-1    | MonetDB-1       | MonetDB-1-1-1    | MonetDB-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |          7 |            0.09 |            45483.66 |          11314.29 |          -1 | MonetDB-1-1-1-1-1    |
-| MySQL-1-1-1-1-1      | MySQL-1         | MySQL-1-1-1      | MySQL-1-1-1-1      |                1 |        1 |               1 |           1 | 1.00 |               22 |         54 |            1.09 |             3453.26 |           1466.67 |          -1 | MySQL-1-1-1-1-1      |
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         15 |            0.33 |            11731.82 |           5280.00 |           0 | PostgreSQL-1-1-1-1-1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MariaDB-1-1-1    | MariaDB-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |        111 |            1.19 |             3243.50 |            713.51 |          -1 |
-| MonetDB-1-1-1    | MonetDB-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |          7 |            0.09 |            45483.66 |          11314.29 |          -1 |
-| MySQL-1-1-1      | MySQL-1-1-1      |                1 |        1 |               1 |           1 | 1.00 |               22 |         54 |            1.09 |             3453.26 |           1466.67 |          -1 |
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         15 |            0.33 |            11731.82 |           5280.00 |           0 |
+
 
 ### Latency of Timer Execution [ms]
-| Queries                                             |   MariaDB-1-1-1-1-1 |   MonetDB-1-1-1-1-1 |   MySQL-1-1-1-1-1 |   PostgreSQL-1-1-1-1-1 |
-|:----------------------------------------------------|--------------------:|--------------------:|------------------:|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |             9410.23 |              600.40 |           8486.49 |                1143.17 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |              496.57 |               24.62 |            123.07 |                 266.38 |
-| Shipping Priority (TPC-H Q3)                        |             1607.02 |               73.80 |           1688.02 |                 370.30 |
-| Order Priority Checking Query (TPC-H Q4)            |              354.87 |              124.35 |            503.11 |                 166.53 |
-| Local Supplier Volume (TPC-H Q5)                    |             1012.69 |               75.50 |           1076.80 |                 304.04 |
-| Forecasting Revenue Change (TPC-H Q6)               |             1350.33 |               20.63 |           1303.66 |                 181.89 |
-| Volume Shipping Query (TPC-H Q7)                    |             1402.60 |               73.69 |           2124.21 |                 342.41 |
-| National Market Share (TPC-H Q8)                    |             1997.77 |              145.08 |           3007.50 |                 202.50 |
-| Product Type Profit Measure (TPC-H Q9)              |             2155.24 |               99.77 |           2231.08 |                 908.93 |
-| Returned Item Reporting Query (TPC-H Q10)           |              954.31 |              167.71 |           1027.85 |                 527.60 |
-| Important Stock Identification (TPC-H Q11)          |              170.90 |               19.32 |            183.62 |                  74.38 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |             3485.41 |               40.27 |           1961.50 |                 278.61 |
-| Customer Distribution (TPC-H Q13)                   |             3313.35 |              253.28 |           3382.60 |                 771.75 |
-| Promotion Effect Query (TPC-H Q14)                  |            13727.58 |               31.14 |           1467.40 |                 206.72 |
-| Top Supplier Query (TPC-H Q15)                      |             1874.13 |               28.21 |          13328.29 |                 231.78 |
-| Parts/Supplier Relationship (TPC-H Q16)             |              230.49 |               79.98 |            405.83 |                 293.15 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               58.97 |               35.50 |            292.00 |                 755.48 |
-| Large Volume Customer (TPC-H Q18)                   |             3085.11 |              105.68 |           1749.95 |                3188.04 |
-| Discounted Revenue (TPC-H Q19)                      |              100.70 |               55.12 |            138.36 |                  55.10 |
-| Potential Part Promotion (TPC-H Q20)                |              296.01 |               88.74 |            270.32 |                 140.95 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            58885.47 |             1268.10 |           5166.55 |                 331.03 |
-| Global Sales Opportunity Query (TPC-H Q22)          |              126.34 |               47.89 |            143.43 |                 107.42 |
-
-### Errors (failed queries)
-
-No errors
-
-### Warnings (result mismatch)
-
-No warnings
-
-### Tests
-* TEST passed: Geo Times [s] contains no 0 or NaN
-* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-* TEST passed: Throughput@Size contains no 0 or NaN
-* TEST passed: No SQL errors
-* TEST passed: No SQL warnings
-* TEST passed: Workflow as planned
+bexhoma : Traceback (most recent call last):
+In Zeile:1 Zeichen:1
++ bexhoma tpch `
++ ~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\tpch.py", line 420, in <module>
+    experiment.process()
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\base.py", line 291, in process
+    self.show_summary()
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\tpch.py", line 159, in show_summary
+    super().show_summary()
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\dbmsbenchmarker.py", line 120, in 
+show_summary
+    primary.show_summary(self)
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py", line 170, in show_summary
+    extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py", line 276, in 
+_show_extra_sections
+    df_latencies = self.evaluator.get_query_latencies(query_titles=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\dbmsbenchmarker.py", line 387, in 
+get_query_latencies
+    df = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').T
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'T'
