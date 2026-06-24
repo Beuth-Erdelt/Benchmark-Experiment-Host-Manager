@@ -1838,6 +1838,7 @@ class ExperimentBase():
                                     connection = config.configuration+'-'+client
                                 config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply
+                            config.experiment_done = True
                 else:
                     print("{:30s}: is loading".format(config.configuration))
             _we_have_running_benchmarks = False
