@@ -63,7 +63,7 @@ def make_base_parser():
     p.add_argument('-rg',  '--request-gpu', help='number of GPUs to request for the SUT pod', default=1)
     p.add_argument('-rgt', '--request-gpu-type', help='require SUT node to carry label gpu=<value>', default='')
     p.add_argument('-rst', '--request-storage-type', help='storage class for the SUT persistent volume', default=None, choices=[None, '', 'local-hdd', 'shared', 'ramdisk', 'cephcsi'])
-    p.add_argument('-rss', '--request-storage-size', help='size of the SUT persistent volume (e.g. 10Gi)', default='10Gi')
+    p.add_argument('-rss', '--request-storage-size', help='size of the SUT persistent volume (e.g. 10Gi)', default='')
     p.add_argument('-rsr', '--request-storage-remove', help='delete any existing PVC for the SUT before starting', action='store_true', default=False)
     p.add_argument('-rnn', '--request-node-name', help='pin the SUT pod to this Kubernetes node', default=None)
     p.add_argument('-rnl', '--request-node-loading', help='pin loader pods to this Kubernetes node', default=None)
