@@ -121,6 +121,8 @@ bexhoma ycsb \
   start &>$LOG_DIR/test_ycsb_start_postgresql.log
 ```
 
+test_ycsb_start_postgresql.log
+
 The summary confirms the SUT is running and shows the port-forward command.
 
 ### Start DBMS and Load Data
@@ -140,6 +142,8 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_ycsb_load_postgresql.log
 ```
+
+test_ycsb_load_postgresql.log
 
 Key parameters:
 - `-nlp 8`: 8 parallel loader pods
@@ -169,6 +173,8 @@ bexhoma ycsb \
   run &>$LOG_DIR/test_ycsb_run_postgresql.log
 ```
 
+test_ycsb_run_postgresql.log
+
 Key parameters:
 - `-nbp 8`: 8 parallel benchmarker pods
 - `-nbt 64`: 64 threads per benchmarker pod
@@ -197,6 +203,8 @@ bexhoma benchbase \
   start &>$LOG_DIR/test_benchbase_start_postgresql.log
 ```
 
+test_benchbase_start_postgresql.log
+
 ### Start DBMS and Load Data
 
 Imports TPC-C data (scale factor 1) using 8 parallel loader pods.
@@ -213,6 +221,8 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_benchbase_load_postgresql.log
 ```
+
+test_benchbase_load_postgresql.log
 
 The **Loading** table reports `Throughput [SF/h]` — scale factors loaded per hour.
 
@@ -235,6 +245,8 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_benchbase_run_postgresql.log
 ```
+
+test_benchbase_run_postgresql.log
 
 The **Execution** table reports:
 - `Throughput (requests/second)` and `Goodput (requests/second)` — total and successful transaction rate
@@ -261,6 +273,8 @@ bexhoma hammerdb \
   start &>$LOG_DIR/test_hammerdb_start_postgresql.log
 ```
 
+test_hammerdb_start_postgresql.log
+
 ### Start DBMS and Load Data
 
 Imports TPC-C data (1 warehouse = scale factor 1) using a single loader pod.
@@ -278,6 +292,8 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_hammerdb_load_postgresql.log
 ```
+
+test_hammerdb_load_postgresql.log
 
 The **Loading** table reports `Imported warehouses [1/h]`.
 
@@ -300,6 +316,8 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_hammerdb_run_postgresql.log
 ```
+
+test_hammerdb_run_postgresql.log
 
 The **Execution** table reports `NOPM` (New Orders Per Minute) and `TPM` (Transactions Per Minute), which are the standard HammerDB TPC-C metrics.
 
@@ -324,6 +342,8 @@ bexhoma tpch \
   start &>$LOG_DIR/test_tpch_start_postgresql.log
 ```
 
+test_tpch_start_postgresql.log
+
 ### Start DBMS and Load Data
 
 Generates and loads TPC-H data at scale factor 1.
@@ -342,6 +362,8 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpch_load_postgresql.log
 ```
+
+test_tpch_load_postgresql.log
 
 The **Loading** table breaks down time into phases:
 
@@ -374,6 +396,8 @@ bexhoma tpch \
   run &>$LOG_DIR/test_tpch_run_postgresql.log
 ```
 
+test_tpch_run_postgresql.log
+
 The **Execution** section reports per-query latency in the **Latency of Timer Execution** table and the TPC-H standard metrics:
 
 | Metric | Meaning |
@@ -402,6 +426,8 @@ bexhoma tpcds \
   start &>$LOG_DIR/test_tpcds_start_postgresql.log
 ```
 
+test_tpcds_start_postgresql.log
+
 ### Start DBMS and Load Data
 
 ```bash
@@ -417,6 +443,8 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/test_tpcds_load_postgresql.log
 ```
+
+test_tpcds_load_postgresql.log
 
 ### Start DBMS and Load Data and Run Workload
 
@@ -439,5 +467,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpcds_run_postgresql.log
 ```
+
+test_tpcds_run_postgresql.log
 
 The **Execution** section reports per-query latency for all 99 TPC-DS queries and the same Power@Size / Throughput@Size metrics as TPC-H.
