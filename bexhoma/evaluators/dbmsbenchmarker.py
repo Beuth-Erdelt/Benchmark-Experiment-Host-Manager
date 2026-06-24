@@ -183,7 +183,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             conn_name = connection_data['name']
             orig_name = connection_data['orig_name']
             configuration = connection_data.get('configuration', '-')
-            benchmark_run_num = str(int(connection_data['parameter'].get('numBenchmark', 0)))
+            benchmark_run_num = str(int(connection_data['parameter'].get('numBenchmark', 0) or 0))
             if benchmark_run_num and orig_name.endswith('-' + benchmark_run_num):
                 phase_id = orig_name[:-len('-' + benchmark_run_num)]
             else:
@@ -198,7 +198,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             df_row['SF'] = float(loading_params['SF'])
             df_row['pods'] = int(loading_params['PODS_PARALLEL'])
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
-            df_row['benchmark_run'] = int(connection_data['parameter']['numBenchmark'])
+            df_row['benchmark_run'] = int(connection_data['parameter'].get('numBenchmark', 0) or 0)
             client = int(connection_data['parameter']['client'])
             df_row['client'] = client
             tenant_by = loading_params.get('BEXHOMA_TENANT_BY', '')
