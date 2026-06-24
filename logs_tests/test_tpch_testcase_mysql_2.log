@@ -1,1483 +1,358 @@
-/data/benchmarks
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1777891777
-Experiment                    : starts at 2026-05-04 12:49:37.249475 (658957.765913996)
+Experiment                    : has code 1782314361
+Experiment                    : starts at 2026-06-24 17:19:22.823613 (712359.2879673)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=10) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.9.6.
+Experiment uses bexhoma version 0.10.0.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker14.
-Loading is tested with [1] threads, split into [8] pods.
+SUT is fixed to cl-worker38.
+Database uses ephemeral storage of size 10Gi.
+Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-MySQL-BHT-8                   : will start now
-MySQL-BHT-8                   : deployments ['sut']
-MySQL-BHT-8                   : stateful sets []
-MySQL-BHT-8                   : pvcs ['sut']
-MySQL-BHT-8                   : name of SUT pods = bexhoma-sut-mysql-bht-8-1777891777
-MySQL-BHT-8                   : name of SUT service = bexhoma-sut-mysql-bht-8-1777891777
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1782314361
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1782314361
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : will start loading but not before 2026-05-04 10:55:49 (that is in 120 secs)
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : will start loading but not before 2026-05-04 10:55:49
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : will start loading but not before 2026-05-04 10:55:49
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : will start loading but not before 2026-05-04 10:55:49
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : connect to pod bexhoma-sut-mysql-bht-8-1777891777-5cf4497578-xzb7c to load scripts
-MySQL-BHT-8                   : start asynch loading scripts of type loaded
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : showing loader times
-MySQL-BHT-8                   : generator times (start/end per pod and container) [(1777892184, 1777892184), (1777892169, 1777892169), (1777892167, 1777892167), (1777892172, 1777892172), (1777892167, 1777892167), (1777892177, 1777892177), (1777892181, 1777892181), (1777892169, 1777892169)]
-MySQL-BHT-8                   : loader times (start/end per pod and container) [(1777892187, 1777894626), (1777892187, 1777894573), (1777892187, 1777894613), (1777892187, 1777894622), (1777892188, 1777894624), (1777892187, 1777894406), (1777892187, 1777894406), (1777892187, 1777894626)]
-MySQL-BHT-8                   : total times (start/end per pod and container) [(1777892184, 1777892184), (1777892169, 1777892169), (1777892167, 1777892167), (1777892172, 1777892172), (1777892167, 1777892167), (1777892177, 1777892177), (1777892181, 1777892181), (1777892169, 1777892169), (1777892187, 1777894626), (1777892187, 1777894573), (1777892187, 1777894613), (1777892187, 1777894622), (1777892188, 1777894624), (1777892187, 1777894406), (1777892187, 1777894406), (1777892187, 1777894626)]
-MySQL-BHT-8                   : generator timespan (first to last [s]) = 17
-MySQL-BHT-8                   : loader timespan (first to last [s]) = 2439
-MySQL-BHT-8                   : total timespan (first to last [s]) = 2459
-MySQL-BHT-8                   : connect to pod bexhoma-sut-mysql-bht-8-1777891777-5cf4497578-xzb7c to load scripts
-MySQL-BHT-8                   : start asynch loading scripts of type indexed
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-24 16:13:52 (that is in 120 secs)
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-24 16:13:52
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-24 16:13:52
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-24 16:13:52
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782314361-654df4df8d-9sj8r to load scripts
+MySQL-1                       : start asynch loading scripts of type loaded
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : showing loader times
+MySQL-1                       : generator times (start/end per pod and container) [(1782317672, 1782317672), (1782317685, 1782317685), (1782317680, 1782317680), (1782317676, 1782317676), (1782317691, 1782317691), (1782317688, 1782317688), (1782317674, 1782317674), (1782317693, 1782317693)]
+MySQL-1                       : loader times (start/end per pod and container) [(1782317697, 1782317872), (1782317698, 1782317866), (1782317698, 1782317866), (1782317697, 1782317868), (1782317697, 1782317870), (1782317697, 1782317863), (1782317697, 1782317869), (1782317697, 1782317860)]
+MySQL-1                       : total times (start/end per pod and container) [(1782317672, 1782317672), (1782317685, 1782317685), (1782317680, 1782317680), (1782317676, 1782317676), (1782317691, 1782317691), (1782317688, 1782317688), (1782317674, 1782317674), (1782317693, 1782317693), (1782317697, 1782317872), (1782317698, 1782317866), (1782317698, 1782317866), (1782317697, 1782317868), (1782317697, 1782317870), (1782317697, 1782317863), (1782317697, 1782317869), (1782317697, 1782317860)]
+MySQL-1                       : generator timespan (first to last [s]) = 21
+MySQL-1                       : loader timespan (first to last [s]) = 175
+MySQL-1                       : total timespan (first to last [s]) = 200
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782314361-654df4df8d-9sj8r to load scripts
+MySQL-1                       : start asynch loading scripts of type indexed
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-MySQL-BHT-8                   : benchmarks done 0 of 1. This will be client 1
-MySQL-BHT-8-1-1               : start benchmarking
-MySQL-BHT-8-1-1               : needs monitoring (common metrics) for deployment sut
-MySQL-BHT-8                   : benchmarking results in folder /data/benchmarks/1777891777
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1782314361 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 1
+MySQL-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1782314361
 - waiting 10s -               : done
-MySQL-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1777891777-1-1-dc2bt: found
-MySQL-BHT-8-1-1               : needs monitoring (common metrics) for deployment sut
-MySQL-BHT-8-1-1               : collecting loading metrics of SUT at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1777891777(.*)", pod=~"(.*)mysql-bht-8-1777891777(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MySQL-BHT-8-1-1               : collecting metrics of data generator at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1777891777(.*)", pod=~"(.*)mysql-bht-8-1777891777(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MySQL-BHT-8-1-1               : collecting metrics of data injector at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1777891777(.*)", pod=~"(.*)mysql-bht-8-1777891777(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1782314361-1-1-1-xxv6n: found
+MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1-1-1-1                 : collecting loading metrics of SUT at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1782314361(.*)", pod=~"(.*)mysql-1-1782314361(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : collecting metrics of data generator at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1782314361(.*)", pod=~"(.*)mysql-1-1782314361(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : collecting metrics of data injector at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1782314361(.*)", pod=~"(.*)mysql-1-1782314361(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
+MySQL-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1782314361/MySQL-1-1-1-1.config
+MySQL-1-1-1-1                 : showing benchmarker times
+MySQL-1-1-1-1                 : benchmarker timespan job from 1782318209 to 1782318826
+MySQL-1-1-1-1                 : benchmarker timespan pods from 1782318211 to 1782318792
+MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 581
+MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1782318211, 1782318792)]
+MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1782318211, 1782318792)]}
+MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1-1-1-1                 : collecting execution metrics of SUT at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1782314361(.*)", pod=~"(.*)mysql-1-1782314361(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : collecting metrics of benchmarker at connection MySQL-1-1-1-1
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1782314361(.*)", pod=~"(.*)mysql-1-1782314361(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8                   : has running benchmarks
-timing_benchmarker [(1777911878, 1777913422)]
-MySQL-BHT-8-1-1               : showing benchmarker times
-MySQL-BHT-8-1-1               : benchmarker timespan job from 1777911869 to 1777913432
-MySQL-BHT-8-1-1               : benchmarker timespan pods from 1777911878 to 1777913422
-MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 1544
-MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1777911878, 1777913422)]
-MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1777911878, 1777913422)]}
-MySQL-BHT-8-1-1               : needs monitoring (common metrics) for deployment sut
-MySQL-BHT-8-1-1               : collecting execution metrics of SUT at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1777891777(.*)", pod=~"(.*)mysql-bht-8-1777891777(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MySQL-BHT-8-1-1               : collecting metrics of benchmarker at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1777891777(.*)", pod=~"(.*)mysql-bht-8-1777891777(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-- waiting 30s -               : done
-MySQL-BHT-8                   : can be stopped
-MySQL-BHT-8                   : had 0 0 restarts at worker bexhoma-sut-mysql-bht-8-1777891777-5cf4497578-xzb7c
-Experiment                    : ends at 2026-05-04 18:51:18.636019 (680659.152460319) - 21701.39s total
-Join results done!
-Build evaluation cube done!
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1782314361-654df4df8d-9sj8r
+Experiment                    : ends at 2026-06-24 18:34:35.952549 (716872.4166008) - 4513.13s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-'inspector' object has no attribute 'e'
+'pods'
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
 TPC-H Queries SF=10
 * Type: tpch
-* Duration: 21702s 
-* Code: 1777891777
+* Duration: 4514s 
+* Code: 1782314361
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=10) data is loaded and benchmark is executed.
@@ -1485,33 +360,91 @@ TPC-H Queries SF=10
   * All instances use the same query parameters.
   * Timeout per query is 1200.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.9.6.
+  * Experiment uses bexhoma version 0.10.0.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker14.
-  * Loading is tested with [1] threads, split into [8] pods.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
 
 ### Connections
-* MySQL-BHT-8-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541008474112
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:213863
-  * datadisk:62501
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
+* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:284289
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
   * eval_parameters
-    * code:1777891777
+    * code:1782314361
+
+### Workflow
+
+#### Actual
+
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
+
+#### Planned
+
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
+
+### Loading
+
+#### Per Run
+
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MySQL-1-1 |                1 |   10 |      729.00 |           1.00 |           21.00 |        175.00 |          528.00 |              8 |           0 |             | None           |             0 | False         |               49.38 |
+
+### Execution
+
+#### Per Connection
+
+|                 | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
+|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
+| MySQL-1-1-1-1-1 | MySQL-1         | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |        581 |           11.28 |             3236.45 |           1363.17 |          -1 | MySQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |        581 |           11.28 |             3236.45 |           1363.17 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   MySQL-1-1-1-1-1 |
+|:----------------------------------------------------|------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |          75942.21 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            954.41 |
+| Shipping Priority (TPC-H Q3)                        |          17413.12 |
+| Order Priority Checking Query (TPC-H Q4)            |           4897.30 |
+| Local Supplier Volume (TPC-H Q5)                    |          13372.95 |
+| Forecasting Revenue Change (TPC-H Q6)               |          12545.94 |
+| Volume Shipping Query (TPC-H Q7)                    |           9083.45 |
+| National Market Share (TPC-H Q8)                    |          36367.63 |
+| Product Type Profit Measure (TPC-H Q9)              |          25143.14 |
+| Returned Item Reporting Query (TPC-H Q10)           |          16307.06 |
+| Important Stock Identification (TPC-H Q11)          |           2375.86 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |          19377.67 |
+| Customer Distribution (TPC-H Q13)                   |          78947.77 |
+| Promotion Effect Query (TPC-H Q14)                  |          15092.63 |
+| Top Supplier Query (TPC-H Q15)                      |         162191.17 |
+| Parts/Supplier Relationship (TPC-H Q16)             |           3505.76 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |           4340.85 |
+| Large Volume Customer (TPC-H Q18)                   |          17435.68 |
+| Discounted Revenue (TPC-H Q19)                      |           1467.71 |
+| Potential Part Promotion (TPC-H Q20)                |           2913.60 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |          52480.56 |
+| Global Sales Opportunity Query (TPC-H Q22)          |           1397.88 |
 
 ### Errors (failed queries)
 
@@ -1521,111 +454,47 @@ No errors
 
 No warnings
 
-### Latency of Timer Execution [ms]
-| DBMS                                                |   MySQL-BHT-8-1-1-1 |
-|:----------------------------------------------------|--------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |           297515.95 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |             3704.68 |
-| Shipping Priority (TPC-H Q3)                        |            52674.58 |
-| Order Priority Checking Query (TPC-H Q4)            |            15958.73 |
-| Local Supplier Volume (TPC-H Q5)                    |            46692.27 |
-| Forecasting Revenue Change (TPC-H Q6)               |            42538.08 |
-| Forecasting Revenue Change (TPC-H Q7)               |            34182.94 |
-| National Market Share (TPC-H Q8)                    |           110215.23 |
-| Product Type Profit Measure (TPC-H Q9)              |            82494.03 |
-| Forecasting Revenue Change (TPC-H Q10)              |            58764.24 |
-| Important Stock Identification (TPC-H Q11)          |             7736.26 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |            71748.57 |
-| Customer Distribution (TPC-H Q13)                   |           290629.72 |
-| Forecasting Revenue Change (TPC-H Q14)              |            56599.93 |
-| Top Supplier Query (TPC-H Q15)                      |            48145.72 |
-| Parts/Supplier Relationship (TPC-H Q16)             |             8209.30 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |            13191.89 |
-| Large Volume Customer (TPC-H Q18)                   |            60715.58 |
-| Discounted Revenue (TPC-H Q19)                      |             4471.10 |
-| Potential Part Promotion (TPC-H Q20)                |             9464.34 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           214700.09 |
-| Global Sales Opportunity Query (TPC-H Q22)          |             4945.47 |
-
-### Loading [s]
-
-| DBMS              |   timeGenerate |   timeIngesting |   timeSchema |   timeIndex |   timeLoad |
-|:------------------|---------------:|----------------:|-------------:|------------:|-----------:|
-| MySQL-BHT-8-1-1-1 |          17.00 |         2439.00 |         3.00 |    19686.00 |   22148.00 |
-
-### Geometric Mean of Medians of Timer Run [s]
-
-| DBMS              |   Geo Times [s] |
-|:------------------|----------------:|
-| MySQL-BHT-8-1-1-1 |           34.04 |
-
-### Power@Size ((3600*SF)/(geo times))
-
-| DBMS              |   Power@Size [~Q/h] |
-|:------------------|--------------------:|
-| MySQL-BHT-8-1-1-1 |             1064.66 |
-
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-
-| DBMS            |   time [s] |   count |    SF |   Throughput@Size |
-|:----------------|-----------:|--------:|------:|------------------:|
-| MySQL-BHT-8-1-1 |    1544.00 |    1.00 | 10.00 |            512.95 |
-
-### Workflow
-
-| DBMS              | orig_name       |    SF |   pods |   num_experiment |   num_client |   benchmark_start |   benchmark_end |
-|:------------------|:----------------|------:|-------:|-----------------:|-------------:|------------------:|----------------:|
-| MySQL-BHT-8-1-1-1 | MySQL-BHT-8-1-1 | 10.00 |      8 |                1 |            1 |        1777911880 |      1777913424 |
-
-#### Actual
-
-* DBMS MySQL-BHT-8 - Pods [[1]]
-
-#### Planned
-
-* DBMS MySQL-BHT-8 - Pods [[1]]
-
 ### Monitoring
 
 ### Loading phase: SUT deployment
 
-| DBMS                       |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:---------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777891777-MySQL-BHT-8-1-1 |     19931.39 |      3.72 |          74.22 |                115.09 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |      2669.33 |      8.80 |          26.19 |                 53.22 |
 
 ### Loading phase: component data generator
 
-| DBMS                       |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:---------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777891777-MySQL-BHT-8-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
-| DBMS                       |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:---------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777891777-MySQL-BHT-8-1-1 |        30.78 |      0.19 |           0.01 |                  1.31 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |        26.15 |      0.24 |           0.01 |                  1.28 |
 
 ### Execution phase: SUT deployment
 
-| DBMS                       |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:---------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777891777-MySQL-BHT-8-1-1 |      3005.25 |      2.03 |          80.50 |                121.85 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |       572.97 |      3.09 |          25.74 |                 52.77 |
 
 ### Execution phase: component benchmarker
 
-| DBMS                       |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:---------------------------|-------------:|----------:|---------------:|----------------------:|
-| 1777891777-MySQL-BHT-8-1-1 |        21.28 |      0.42 |           0.39 |                  0.39 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| MySQL-1-1-1-1 |        21.65 |      0.37 |           0.43 |                  0.44 |
 
 ### Tests
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
 * TEST passed: Workflow as planned
-* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Loading phase: component data generator contains 0 or NaN in CPU [CPUs]
-* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]

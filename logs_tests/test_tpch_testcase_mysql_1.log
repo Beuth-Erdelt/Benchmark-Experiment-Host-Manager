@@ -1,9 +1,9 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1782224265
-Experiment                    : starts at 2026-06-23 16:17:45.051838 (377249.527662275)
+Experiment                    : has code 1782313711
+Experiment                    : starts at 2026-06-24 17:08:32.249556 (711708.7139171)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -26,10 +26,8 @@ MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1782224265
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1782224265
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1782313711
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1782313711
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
@@ -40,58 +38,56 @@ MySQL-1                       : waits for health check to succeed
 MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 14:22:51 (that is in 120 secs)
+MySQL-1                       : will start loading but not before 2026-06-24 15:13:23 (that is in 120 secs)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 14:22:51
+MySQL-1                       : will start loading but not before 2026-06-24 15:13:23
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 14:22:51
+MySQL-1                       : will start loading but not before 2026-06-24 15:13:23
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-23 14:22:51
+MySQL-1                       : will start loading but not before 2026-06-24 15:13:23
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782224265-676f655f9c-w45z6 to load scripts
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782313711-785c676ffd-nqdl6 to load scripts
 MySQL-1                       : start asynch loading scripts of type loaded
 MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : showing loader times
-MySQL-1                       : generator times (start/end per pod and container) [(1782224613, 1782224613), (1782224605, 1782224605), (1782224593, 1782224593), (1782224596, 1782224596), (1782224615, 1782224615), (1782224608, 1782224608), (1782224594, 1782224594), (1782224599, 1782224599)]
-MySQL-1                       : loader times (start/end per pod and container) [(1782224618, 1782224634), (1782224618, 1782224637), (1782224618, 1782224637), (1782224618, 1782224637), (1782224618, 1782224637), (1782224618, 1782224636), (1782224618, 1782224635), (1782224618, 1782224637)]
-MySQL-1                       : total times (start/end per pod and container) [(1782224613, 1782224613), (1782224605, 1782224605), (1782224593, 1782224593), (1782224596, 1782224596), (1782224615, 1782224615), (1782224608, 1782224608), (1782224594, 1782224594), (1782224599, 1782224599), (1782224618, 1782224634), (1782224618, 1782224637), (1782224618, 1782224637), (1782224618, 1782224637), (1782224618, 1782224637), (1782224618, 1782224636), (1782224618, 1782224635), (1782224618, 1782224637)]
-MySQL-1                       : generator timespan (first to last [s]) = 22
-MySQL-1                       : loader timespan (first to last [s]) = 19
-MySQL-1                       : total timespan (first to last [s]) = 44
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782224265-676f655f9c-w45z6 to load scripts
+MySQL-1                       : generator times (start/end per pod and container) [(1782314053, 1782314053), (1782314061, 1782314061), (1782314057, 1782314057), (1782314052, 1782314052), (1782314064, 1782314064), (1782314068, 1782314068), (1782314055, 1782314055), (1782314070, 1782314070)]
+MySQL-1                       : loader times (start/end per pod and container) [(1782314073, 1782314091), (1782314073, 1782314091), (1782314073, 1782314089), (1782314073, 1782314090), (1782314074, 1782314090), (1782314074, 1782314091), (1782314073, 1782314091), (1782314073, 1782314088)]
+MySQL-1                       : total times (start/end per pod and container) [(1782314053, 1782314053), (1782314061, 1782314061), (1782314057, 1782314057), (1782314052, 1782314052), (1782314064, 1782314064), (1782314068, 1782314068), (1782314055, 1782314055), (1782314070, 1782314070), (1782314073, 1782314091), (1782314073, 1782314091), (1782314073, 1782314089), (1782314073, 1782314090), (1782314074, 1782314090), (1782314074, 1782314091), (1782314073, 1782314091), (1782314073, 1782314088)]
+MySQL-1                       : generator timespan (first to last [s]) = 18
+MySQL-1                       : loader timespan (first to last [s]) = 18
+MySQL-1                       : total timespan (first to last [s]) = 39
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782313711-785c676ffd-nqdl6 to load scripts
 MySQL-1                       : start asynch loading scripts of type indexed
 MySQL-1                       : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1782224265 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1782313711 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 1. This will be client 1
 MySQL-1-1-1-1                 : start benchmarking (benchmark_run=1)
-MySQL-1                       : benchmarking results in folder /data/benchmarks/1782224265
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1782313711
 - waiting 10s -               : done
-MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1782224265-1-1-1-k2tvr: found
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1782313711-1-1-1-xzs7z: found
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1782224265/MySQL-1-1-1-1.config
+MySQL-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1782313711/MySQL-1-1-1-1.config
 MySQL-1-1-1-1                 : showing benchmarker times
-MySQL-1-1-1-1                 : benchmarker timespan job from 1782224692 to 1782224797
-MySQL-1-1-1-1                 : benchmarker timespan pods from 1782224701 to 1782224765
-MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 64
-MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1782224701, 1782224765)]
-MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1782224701, 1782224765)]}
+MySQL-1-1-1-1                 : benchmarker timespan job from 1782314213 to 1782314296
+MySQL-1-1-1-1                 : benchmarker timespan pods from 1782314222 to 1782314273
+MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 51
+MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1782314222, 1782314273)]
+MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1782314222, 1782314273)]}
 - waiting 30s -               : done
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1782224265-676f655f9c-w45z6
-Experiment                    : ends at 2026-06-23 16:27:11.528476 (377816.004300612) - 566.48s total
+MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1782313711-785c676ffd-nqdl6
+Experiment                    : ends at 2026-06-24 17:18:56.691724 (712333.1558594) - 624.44s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -105,8 +101,8 @@ Result workflow not complete
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 567s 
-* Code: 1782224265
+* Duration: 625s 
+* Code: 1782313711
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -132,14 +128,13 @@ TPC-H Queries SF=1
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:260480
-  * datadisk:35559
+  * disk:266128
   * cpu_list:0-127
   * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782224265
+    * code:1782313711
 
 ### Workflow
 
@@ -157,7 +152,7 @@ TPC-H Queries SF=1
 
 |           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 |    1 |      149.00 |           0.00 |           22.00 |         19.00 |          105.00 |              8 |           0 |             | None           |             0 | False         |               24.16 |
+| MySQL-1-1 |                1 |    1 |      200.00 |           2.00 |           18.00 |         18.00 |          159.00 |              8 |           0 |             | None           |             0 | False         |               18.00 |
 
 ### Execution
 
@@ -165,39 +160,39 @@ TPC-H Queries SF=1
 
 |                 | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
 |:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| MySQL-1-1-1-1-1 | MySQL-1         | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         64 |            1.26 |             3010.74 |           1237.50 |          -1 | MySQL-1-1-1-1-1 |
+| MySQL-1-1-1-1-1 | MySQL-1         | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         51 |            0.98 |             3834.80 |           1552.94 |          -1 | MySQL-1-1-1-1-1 |
 
 #### Per Phase
 
 |             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         64 |            1.26 |             3010.74 |           1237.50 |          -1 |
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         51 |            0.98 |             3834.80 |           1552.94 |          -1 |
 
 ### Latency of Timer Execution [ms]
 | Queries                                             |   MySQL-1-1-1-1-1 |
 |:----------------------------------------------------|------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |          11044.48 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |            134.37 |
-| Shipping Priority (TPC-H Q3)                        |           1575.10 |
-| Order Priority Checking Query (TPC-H Q4)            |            535.88 |
-| Local Supplier Volume (TPC-H Q5)                    |           1350.97 |
-| Forecasting Revenue Change (TPC-H Q6)               |           1599.48 |
-| Volume Shipping Query (TPC-H Q7)                    |           1047.14 |
-| National Market Share (TPC-H Q8)                    |           3909.54 |
-| Product Type Profit Measure (TPC-H Q9)              |           3081.73 |
-| Returned Item Reporting Query (TPC-H Q10)           |           1678.06 |
-| Important Stock Identification (TPC-H Q11)          |            228.72 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |           2150.70 |
-| Customer Distribution (TPC-H Q13)                   |           3435.62 |
-| Promotion Effect Query (TPC-H Q14)                  |           1477.39 |
-| Top Supplier Query (TPC-H Q15)                      |          14211.77 |
-| Parts/Supplier Relationship (TPC-H Q16)             |            469.72 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |            338.36 |
-| Large Volume Customer (TPC-H Q18)                   |           1857.14 |
-| Discounted Revenue (TPC-H Q19)                      |            183.46 |
-| Potential Part Promotion (TPC-H Q20)                |            365.35 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           6714.13 |
-| Global Sales Opportunity Query (TPC-H Q22)          |            188.94 |
+| Pricing Summary Report (TPC-H Q1)                   |           8342.62 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            113.67 |
+| Shipping Priority (TPC-H Q3)                        |           1360.76 |
+| Order Priority Checking Query (TPC-H Q4)            |            462.17 |
+| Local Supplier Volume (TPC-H Q5)                    |           1024.24 |
+| Forecasting Revenue Change (TPC-H Q6)               |           1141.52 |
+| Volume Shipping Query (TPC-H Q7)                    |            750.78 |
+| National Market Share (TPC-H Q8)                    |           2858.45 |
+| Product Type Profit Measure (TPC-H Q9)              |           1963.78 |
+| Returned Item Reporting Query (TPC-H Q10)           |           1000.15 |
+| Important Stock Identification (TPC-H Q11)          |            166.90 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |           1888.96 |
+| Customer Distribution (TPC-H Q13)                   |           3356.49 |
+| Promotion Effect Query (TPC-H Q14)                  |           1335.93 |
+| Top Supplier Query (TPC-H Q15)                      |          12776.72 |
+| Parts/Supplier Relationship (TPC-H Q16)             |            390.43 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |            274.93 |
+| Large Volume Customer (TPC-H Q18)                   |           1704.47 |
+| Discounted Revenue (TPC-H Q19)                      |            147.87 |
+| Potential Part Promotion (TPC-H Q20)                |            263.45 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           4640.65 |
+| Global Sales Opportunity Query (TPC-H Q22)          |            141.84 |
 
 ### Errors (failed queries)
 
