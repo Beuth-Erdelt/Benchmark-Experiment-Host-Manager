@@ -289,7 +289,8 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
             list_error_query_nums = list(df_errors_by_num.columns[failing_cols_mask])
             for query_title, query_num in zip(list_error_query_titles, list_error_query_nums):
-                list_errors = self.evaluator.evaluation.get_error(query_num)
+                query_num_stripped = str(query_num).lstrip('Q')
+                list_errors = self.evaluator.evaluation.get_error(query_num_stripped)
                 list_errors = {k: v for k, v in list_errors.items() if len(v) > 0}
                 print("* " + query_title)
                 for k, v in list_errors.items():
