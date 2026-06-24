@@ -2767,26 +2767,32 @@ class ExperimentBase():
         """
         Print monitoring tables for all registered monitoring components and record test results.
 
-        Results are appended to ``self._test_results`` via :meth:`_record_test`.
+        The ``### Monitoring`` header is only printed when at least one component
+        has collected data.  Results are appended to ``self._test_results`` via
+        :meth:`_record_test`.
         """
-        if (self.monitoring_active or self.cluster.monitor_cluster_active):
-            print("\n### Monitoring")
-            optional_components = self.workload.get('optional_monitoring_components', [])
-            for component, title in self.workload['monitoring_components'].items():
-                df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
-                if len(df_monitoring) > 0:
-                    print(f"\n### {title}\n")
-                    df = pd.concat(df_monitoring, axis=1).round(2)
-                    df = df.reindex(index=evaluators.natural_sort(df.index))
-                    df.index.names = ["DBMS"]
-                    print(df.to_markdown(index=True, floatfmt=".2f"))
-                    passed = self.evaluator.test_results_column(df, "CPU [CPUs]")
-                    if not passed and component in optional_components:
-                        # Data generator produces no CPU load when data is pre-existing; skip test.
-                        self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
-                    else:
-                        suffix = "no 0 or NaN" if passed else "0 or NaN"
-                        self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
+        if not (self.monitoring_active or self.cluster.monitor_cluster_active):
+            return
+        optional_components = self.workload.get('optional_monitoring_components', [])
+        header_printed = False
+        for component, title in self.workload['monitoring_components'].items():
+            df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
+            if len(df_monitoring) > 0:
+                if not header_printed:
+                    print("\n### Monitoring")
+                    header_printed = True
+                print(f"\n### {title}\n")
+                df = pd.concat(df_monitoring, axis=1).round(2)
+                df = df.reindex(index=evaluators.natural_sort(df.index))
+                df.index.names = ["DBMS"]
+                print(df.to_markdown(index=True, floatfmt=".2f"))
+                passed = self.evaluator.test_results_column(df, "CPU [CPUs]")
+                if not passed and component in optional_components:
+                    # Data generator produces no CPU load when data is pre-existing; skip test.
+                    self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
+                else:
+                    suffix = "no 0 or NaN" if passed else "0 or NaN"
+                    self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
     def OLD_show_summary_monitoring(self):
         test_results = ""
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
