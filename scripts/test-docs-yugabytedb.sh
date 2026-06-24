@@ -30,7 +30,7 @@ install_yugabytedb() {
   fi
 
   helm install bexhoma yugabytedb/yugabyte \
-    --version 2025.2.1 \
+    --version 2025.2.4 \
     --set \
 gflags.tserver.ysql_enable_packed_row=true,\
 gflags.tserver.ysql_max_connections=1280,\
@@ -49,6 +49,7 @@ storage.tserver.storageClass=shared,\
 storage.ephemeral=$EPHEMERAL,\
 tserver.livenessProbe.timeoutSeconds=10,\
 master.livenessProbe.timeoutSeconds=10,\
+preflight.skipUlimit=true,\
 enableLoadBalancer=true
 
   echo "Waiting 60s for pods to start..."

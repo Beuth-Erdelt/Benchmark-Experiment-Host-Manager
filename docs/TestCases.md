@@ -53,170 +53,175 @@ test_tpch_testcase_compare.log
 
 ### Workload
 TPC-H Queries SF=1
-    Type: tpch
-    Duration: 6624s 
-    Code: 1772132709
-    This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 600.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.20.
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [8] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpch
+* Duration: 991s 
+* Code: 1782218791
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 600.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:148921
-    cpu_list:0-63
-    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772132709
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:149774
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772132709
-MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:541008474112
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:182586
-    cpu_list:0-63
-    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772132709
-PostgreSQL-BHT-8-1-1 uses docker image postgres:18.2
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:148816
-    cpu_list:0-63
-    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772132709
+* MariaDB-1-1-1-1-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:257486
+  * datadisk:2105
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782218791
+* MonetDB-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP1
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:225232
+  * datadisk:2209
+  * cpu_list:0-127
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782218791
+* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:294248
+  * datadisk:35543
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782218791
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:226003
+  * datadisk:2757
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782218791
+
+### Workflow
+
+#### Actual
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MariaDB-1-1    |                1 |    1 |      277.00 |           0.00 |           14.00 |         38.00 |          221.00 |              8 |           0 |             | None           |             0 | False         |               13.00 |
+| MonetDB-1-1    |                1 |    1 |      139.00 |           1.00 |           19.00 |         21.00 |           95.00 |              8 |           0 |             | None           |             0 | False         |               25.90 |
+| MySQL-1-1      |                1 |    1 |      141.00 |           0.00 |           20.00 |         19.00 |           99.00 |              8 |           0 |             | None           |             0 | False         |               25.53 |
+| PostgreSQL-1-1 |                1 |    1 |      158.00 |           1.00 |           25.00 |          6.00 |          123.00 |              8 |           0 |             |                |             0 | False         |               22.78 |
+
+### Execution
+
+#### Per Connection
+
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| MariaDB-1-1-1-1-1    | MariaDB-1       | MariaDB-1-1-1    | MariaDB-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |        111 |            1.19 |             3243.50 |            713.51 |          -1 | MariaDB-1-1-1-1-1    |
+| MonetDB-1-1-1-1-1    | MonetDB-1       | MonetDB-1-1-1    | MonetDB-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |          7 |            0.09 |            45483.66 |          11314.29 |          -1 | MonetDB-1-1-1-1-1    |
+| MySQL-1-1-1-1-1      | MySQL-1         | MySQL-1-1-1      | MySQL-1-1-1-1      |                1 |        1 |               1 |           1 | 1.00 |               22 |         54 |            1.09 |             3453.26 |           1466.67 |          -1 | MySQL-1-1-1-1-1      |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         15 |            0.33 |            11731.82 |           5280.00 |           0 | PostgreSQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MariaDB-1-1-1    | MariaDB-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |        111 |            1.19 |             3243.50 |            713.51 |          -1 |
+| MonetDB-1-1-1    | MonetDB-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               22 |          7 |            0.09 |            45483.66 |          11314.29 |          -1 |
+| MySQL-1-1-1      | MySQL-1-1-1      |                1 |        1 |               1 |           1 | 1.00 |               22 |         54 |            1.09 |             3453.26 |           1466.67 |          -1 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         15 |            0.33 |            11731.82 |           5280.00 |           0 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   MariaDB-1-1-1-1-1 |   MonetDB-1-1-1-1-1 |   MySQL-1-1-1-1-1 |   PostgreSQL-1-1-1-1-1 |
+|:----------------------------------------------------|--------------------:|--------------------:|------------------:|-----------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |             9410.23 |              600.40 |           8486.49 |                1143.17 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |              496.57 |               24.62 |            123.07 |                 266.38 |
+| Shipping Priority (TPC-H Q3)                        |             1607.02 |               73.80 |           1688.02 |                 370.30 |
+| Order Priority Checking Query (TPC-H Q4)            |              354.87 |              124.35 |            503.11 |                 166.53 |
+| Local Supplier Volume (TPC-H Q5)                    |             1012.69 |               75.50 |           1076.80 |                 304.04 |
+| Forecasting Revenue Change (TPC-H Q6)               |             1350.33 |               20.63 |           1303.66 |                 181.89 |
+| Volume Shipping Query (TPC-H Q7)                    |             1402.60 |               73.69 |           2124.21 |                 342.41 |
+| National Market Share (TPC-H Q8)                    |             1997.77 |              145.08 |           3007.50 |                 202.50 |
+| Product Type Profit Measure (TPC-H Q9)              |             2155.24 |               99.77 |           2231.08 |                 908.93 |
+| Returned Item Reporting Query (TPC-H Q10)           |              954.31 |              167.71 |           1027.85 |                 527.60 |
+| Important Stock Identification (TPC-H Q11)          |              170.90 |               19.32 |            183.62 |                  74.38 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |             3485.41 |               40.27 |           1961.50 |                 278.61 |
+| Customer Distribution (TPC-H Q13)                   |             3313.35 |              253.28 |           3382.60 |                 771.75 |
+| Promotion Effect Query (TPC-H Q14)                  |            13727.58 |               31.14 |           1467.40 |                 206.72 |
+| Top Supplier Query (TPC-H Q15)                      |             1874.13 |               28.21 |          13328.29 |                 231.78 |
+| Parts/Supplier Relationship (TPC-H Q16)             |              230.49 |               79.98 |            405.83 |                 293.15 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               58.97 |               35.50 |            292.00 |                 755.48 |
+| Large Volume Customer (TPC-H Q18)                   |             3085.11 |              105.68 |           1749.95 |                3188.04 |
+| Discounted Revenue (TPC-H Q19)                      |              100.70 |               55.12 |            138.36 |                  55.10 |
+| Potential Part Promotion (TPC-H Q20)                |              296.01 |               88.74 |            270.32 |                 140.95 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            58885.47 |             1268.10 |           5166.55 |                 331.03 |
+| Global Sales Opportunity Query (TPC-H Q22)          |              126.34 |               47.89 |            143.43 |                 107.42 |
 
 ### Errors (failed queries)
+
 No errors
 
 ### Warnings (result mismatch)
+
 No warnings
 
-### Latency of Timer Execution [ms]
-DBMS                                                 MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             25658.29            1058.80          29064.46               2028.92
-Minimum Cost Supplier Query (TPC-H Q2)                         1302.54              25.96            359.86                447.13
-Shipping Priority (TPC-H Q3)                                   5396.46             108.68           4235.12                710.16
-Order Priority Checking Query (TPC-H Q4)                       1035.89             149.28           1580.40                342.78
-Local Supplier Volume (TPC-H Q5)                               3382.99              68.04           4048.76                617.70
-Forecasting Revenue Change (TPC-H Q6)                          3281.91              27.15           4173.34                454.52
-Forecasting Revenue Change (TPC-H Q7)                          3460.43              96.02           5881.82                710.81
-National Market Share (TPC-H Q8)                               6278.81             441.64           9139.40                414.38
-Product Type Profit Measure (TPC-H Q9)                         5395.12             103.07           7001.70               1028.47
-Forecasting Revenue Change (TPC-H Q10)                         2882.37             136.91           4033.74               1118.22
-Important Stock Identification (TPC-H Q11)                      399.08              18.01            491.93                159.83
-Shipping Modes and Order Priority (TPC-H Q12)                 11344.40              54.59           7061.09                632.14
-Customer Distribution (TPC-H Q13)                              9830.44             527.38          12839.86               1957.52
-Forecasting Revenue Change (TPC-H Q14)                        28827.78              36.94           5107.15                493.01
-Top Supplier Query (TPC-H Q15)                                 6878.66              36.69          38836.63                494.84
-Parts/Supplier Relationship (TPC-H Q16)                         651.74              83.97            922.78                556.05
-Small-Quantity-Order Revenue (TPC-H Q17)                        157.92              63.63           1282.78               1794.64
-Large Volume Customer (TPC-H Q18)                             10197.63             220.03           5920.24               5329.01
-Discounted Revenue (TPC-H Q19)                                  280.65              86.71            438.88                116.51
-Potential Part Promotion (TPC-H Q20)                            504.22              38.89            759.12                291.64
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          193516.10            2535.43          18481.79                737.86
-Global Sales Opportunity Query (TPC-H Q22)                      388.16              56.86            521.29                216.40
-
-### Loading [s]
-                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1             23.0          250.0         2.0     1779.0    2056.0
-MonetDB-BHT-8-1-1             22.0           20.0         8.0      153.0     208.0
-MySQL-BHT-64-1-1              18.0          256.0         4.0     2541.0    2823.0
-PostgreSQL-BHT-8-1-1          24.0           26.0         1.0      167.0     220.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                      Geo Times [s]
-DBMS                               
-MariaDB-BHT-8-1-1              3.19
-MonetDB-BHT-8-1-1              0.12
-MySQL-BHT-64-1-1               3.43
-PostgreSQL-BHT-8-1-1           0.65
-
-### Power@Size ((3600*SF)/(geo times))
-                      Power@Size [~Q/h]
-DBMS                                   
-MariaDB-BHT-8-1-1               1157.78
-MonetDB-BHT-8-1-1              34899.99
-MySQL-BHT-64-1-1                1074.39
-PostgreSQL-BHT-8-1-1            5786.21
-
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                                  time [s]  count   SF  Throughput@Size
-DBMS               SF  num_experiment num_client                                       
-MariaDB-BHT-8-1    1.0 1              1                326      1  1.0           242.94
-MonetDB-BHT-8-1    1.0 1              1                 10      1  1.0          7920.00
-MySQL-BHT-64-1     1.0 1              1                167      1  1.0           474.25
-PostgreSQL-BHT-8-1 1.0 1              1                 25      1  1.0          3168.00
-
-### Workflow
-                               orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MariaDB-BHT-8-1-1        MariaDB-BHT-8-1  1.0     8               1           1       1772135733     1772136059
-MonetDB-BHT-8-1-1        MonetDB-BHT-8-1  1.0     8               1           1       1772133527     1772133537
-MySQL-BHT-64-1-1          MySQL-BHT-64-1  1.0     8               1           1       1772139099     1772139266
-PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  1.0     8               1           1       1772133097     1772133122
-
-#### Actual
-DBMS MariaDB-BHT-8 - Pods [[1]]
-DBMS MonetDB-BHT-8 - Pods [[1]]
-DBMS MySQL-BHT-64 - Pods [[1]]
-DBMS PostgreSQL-BHT-8 - Pods [[1]]
-
-#### Planned
-DBMS PostgreSQL-BHT-8 - Pods [[1]]
-DBMS MonetDB-BHT-8 - Pods [[1]]
-DBMS MariaDB-BHT-8 - Pods [[1]]
-DBMS MySQL-BHT-64 - Pods [[1]]
-
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST passed: Workflow as planned
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned
 ```
 
 
@@ -972,8 +977,8 @@ test_tpch_testcase_mysql_1.log
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 846s 
-* Code: 1779625885
+* Duration: 567s 
+* Code: 1782224265
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -981,85 +986,90 @@ TPC-H Queries SF=1
   * All instances use the same query parameters.
   * Timeout per query is 1200.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.9.8.
+  * Experiment uses bexhoma version 0.10.0.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is tested with [1] threads, split into [8] pods.
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
 
 ### Connections
-* MySQL-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:540590804992
-  * Cores:96
+* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:540492877824
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker23
-  * disk:1231906
-  * cpu_list:0-95
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
+  * node:cl-worker38
+  * disk:260480
+  * datadisk:35559
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1779625885
+    * code:1782224265
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
 
 ### Loading
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:---------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 |    1 |      443.00 |           1.00 |            8.00 |         90.00 |          325.00 |              8 |           0 |          | None           |             0 | False         |                8.13 |
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MySQL-1-1 |                1 |    1 |      149.00 |           0.00 |           22.00 |         19.00 |          105.00 |              8 |           0 |             | None           |             0 | False         |               24.16 |
 
 ### Execution
 
 #### Per Connection
 
-|               |   experiment_run |   client |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |
-|:--------------|-----------------:|---------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|
-| MySQL-1-1-1-1 |             1.00 |     1.00 |        1.00 | 1.00 |            22.00 |      79.00 |            1.66 |             2248.82 |           1002.53 |
+|                 | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
+|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
+| MySQL-1-1-1-1-1 | MySQL-1         | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         64 |            1.26 |             3010.74 |           1237.50 |          -1 | MySQL-1-1-1-1-1 |
 
 #### Per Phase
 
-|             |   experiment_run |   client |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |
-|:------------|-----------------:|---------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|
-| MySQL-1-1-1 |             1.00 |     1.00 |        1.00 | 1.00 |            22.00 |      79.00 |            1.66 |             2248.82 |           1002.53 |
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         64 |            1.26 |             3010.74 |           1237.50 |          -1 |
 
 ### Latency of Timer Execution [ms]
-| Queries                                             |   MySQL-1-1-1-1 |
-|:----------------------------------------------------|----------------:|
-| Pricing Summary Report (TPC-H Q1)                   |        13173.30 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |          188.91 |
-| Shipping Priority (TPC-H Q3)                        |         2061.15 |
-| Order Priority Checking Query (TPC-H Q4)            |          791.56 |
-| Local Supplier Volume (TPC-H Q5)                    |         1951.46 |
-| Forecasting Revenue Change (TPC-H Q6)               |         2373.51 |
-| Forecasting Revenue Change (TPC-H Q7)               |         1345.30 |
-| National Market Share (TPC-H Q8)                    |         4485.11 |
-| Product Type Profit Measure (TPC-H Q9)              |         3221.55 |
-| Forecasting Revenue Change (TPC-H Q10)              |         1812.60 |
-| Important Stock Identification (TPC-H Q11)          |          235.92 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |         3548.38 |
-| Customer Distribution (TPC-H Q13)                   |         5511.38 |
-| Forecasting Revenue Change (TPC-H Q14)              |         2815.40 |
-| Top Supplier Query (TPC-H Q15)                      |        19024.32 |
-| Parts/Supplier Relationship (TPC-H Q16)             |          556.26 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |          486.70 |
-| Large Volume Customer (TPC-H Q18)                   |         3218.41 |
-| Discounted Revenue (TPC-H Q19)                      |          235.03 |
-| Potential Part Promotion (TPC-H Q20)                |          422.04 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |         7978.46 |
-| Global Sales Opportunity Query (TPC-H Q22)          |          277.28 |
+| Queries                                             |   MySQL-1-1-1-1-1 |
+|:----------------------------------------------------|------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |          11044.48 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            134.37 |
+| Shipping Priority (TPC-H Q3)                        |           1575.10 |
+| Order Priority Checking Query (TPC-H Q4)            |            535.88 |
+| Local Supplier Volume (TPC-H Q5)                    |           1350.97 |
+| Forecasting Revenue Change (TPC-H Q6)               |           1599.48 |
+| Volume Shipping Query (TPC-H Q7)                    |           1047.14 |
+| National Market Share (TPC-H Q8)                    |           3909.54 |
+| Product Type Profit Measure (TPC-H Q9)              |           3081.73 |
+| Returned Item Reporting Query (TPC-H Q10)           |           1678.06 |
+| Important Stock Identification (TPC-H Q11)          |            228.72 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |           2150.70 |
+| Customer Distribution (TPC-H Q13)                   |           3435.62 |
+| Promotion Effect Query (TPC-H Q14)                  |           1477.39 |
+| Top Supplier Query (TPC-H Q15)                      |          14211.77 |
+| Parts/Supplier Relationship (TPC-H Q16)             |            469.72 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |            338.36 |
+| Large Volume Customer (TPC-H Q18)                   |           1857.14 |
+| Discounted Revenue (TPC-H Q19)                      |            183.46 |
+| Potential Part Promotion (TPC-H Q20)                |            365.35 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           6714.13 |
+| Global Sales Opportunity Query (TPC-H Q22)          |            188.94 |
 
 ### Errors (failed queries)
 
@@ -1070,7 +1080,6 @@ No errors
 No warnings
 
 ### Tests
-* TEST passed: Workflow as planned
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
@@ -2443,265 +2452,261 @@ test_tpcds_testcase_compare.log
 
 ### Workload
 TPC-DS Queries SF=1
-    Type: tpcds
-    Duration: 31291s 
-    Code: 1772394654
-    This includes the reading queries of TPC-DS.
-    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-    TPC-DS (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q99.
-    All instances use the same query parameters.
-    Timeout per query is 1200.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.21.
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [8] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpcds
+* Duration: 4408s 
+* Code: 1782219800
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:152072
-    cpu_list:0-63
-    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772394654
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:152978
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772394654
-MySQL-BHT-64-1-1 uses docker image mysql:8.4.0
-    RAM:541008474112
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:185771
-    cpu_list:0-63
-    args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=300', '--innodb-io-capacity_max=600', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772394654
-PostgreSQL-BHT-8-1-1 uses docker image postgres:18.3
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:153308
-    cpu_list:0-63
-    args:['-c', 'max_connections=3000', '-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'shared_buffers=256GB', '-c', 'effective_cache_size=256GB', '-c', 'work_mem=32GB', '-c', 'maintenance_work_mem=4GB', '-c', 'temp_buffers=4GB', '-c', 'wal_buffers=1GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'fsync=on', '-c', 'wal_compression=on', '-c', 'synchronous_commit=on', '-c', 'max_wal_size=32GB', '-c', 'min_wal_size=32GB', '-c', 'checkpoint_timeout=12h', '-c', 'checkpoint_completion_target=1.0', '-c', 'effective_io_concurrency=64']
-    requests_cpu:4
-    requests_memory:64Gi
-    limits_memory:64Gi
-    eval_parameters
-        code:1772394654
-
-### Errors (failed queries)
-            MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q72               True              False             False                 False
-TPC-DS Q94               True              False             False                 False
-TPC-DS Q95               True              False             False                 False
-TPC-DS Q72
-MariaDB-BHT-8-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=232) Query execution was interrupted (max_statement_time exceeded)
-TPC-DS Q94
-MariaDB-BHT-8-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=232) Query execution was interrupted (max_statement_time exceeded)
-TPC-DS Q95
-MariaDB-BHT-8-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=232) Query execution was interrupted (max_statement_time exceeded)
-
-### Warnings (result mismatch)
-               MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q27                 False               True             False                  True
-TPC-DS Q36                 False               True             False                  True
-TPC-DS Q39a+b              False               True              True                  True
-TPC-DS Q47                 False               True             False                 False
-TPC-DS Q70                 False               True             False                 False
-TPC-DS Q72                 False               True              True                  True
-TPC-DS Q78                 False               True             False                  True
-TPC-DS Q80                 False               True             False                  True
-TPC-DS Q86                 False               True              True                  True
-TPC-DS Q94                 False               True              True                  True
-TPC-DS Q95                 False               True              True                  True
-TPC-DS Q98                 False               True             False                 False
-
-### Latency of Timer Execution [ms]
-DBMS           MariaDB-BHT-8-1-1  MonetDB-BHT-8-1-1  MySQL-BHT-64-1-1  PostgreSQL-BHT-8-1-1
-TPC-DS Q1                  19.76              43.65             67.46                197.15
-TPC-DS Q2               14140.33             236.29          20108.54                815.22
-TPC-DS Q3                  20.89              21.34             30.50                419.61
-TPC-DS Q4               37552.77            1253.31          98118.81              19157.75
-TPC-DS Q5               29540.39              92.23          44132.86               1316.41
-TPC-DS Q6                2786.13              81.87         290774.81             189867.64
-TPC-DS Q7               12303.66              50.86           2800.35                947.14
-TPC-DS Q8                 977.34              36.37           1447.85                133.95
-TPC-DS Q9               12844.29              64.61          18125.77               5727.58
-TPC-DS Q10                 53.96              40.18            108.03               2773.32
-TPC-DS Q11              24915.76             633.36          62737.54              10763.44
-TPC-DS Q12                943.83              19.30           1358.52                172.31
-TPC-DS Q13               2996.02              60.48           5625.00               1696.22
-TPC-DS Q14a+b          157105.76            2699.49         200799.53               5621.97
-TPC-DS Q15                540.12              23.67            773.41                307.80
-TPC-DS Q16              30985.66              37.83            774.15                794.89
-TPC-DS Q17               2664.40             170.03           2259.13                834.85
-TPC-DS Q18               6926.27             119.91           3528.43               1094.26
-TPC-DS Q19                699.44              39.56           1278.44                423.02
-TPC-DS Q20               1749.96              24.21           2634.24                274.60
-TPC-DS Q21              81527.89              68.70         121245.22                580.72
-TPC-DS Q22              63331.94             954.08          21749.78               9610.29
-TPC-DS Q23a+b          177968.55            2108.19         135621.99              10336.46
-TPC-DS Q24a+b              85.63             241.98          13174.34               1498.98
-TPC-DS Q25                413.71             110.98            500.94                809.04
-TPC-DS Q26               2747.78              24.93          20576.55                651.30
-TPC-DS Q27               4918.54             110.84           2245.38                 52.81
-TPC-DS Q28               9162.29              65.94          12464.32               2170.39
-TPC-DS Q29                139.67             115.09            156.43                876.17
-TPC-DS Q30                306.00              19.23           1677.09              25844.21
-TPC-DS Q31               4154.50             139.47          46898.21               4723.47
-TPC-DS Q32                 23.01              19.90           1244.96                465.35
-TPC-DS Q33                639.78              41.39            988.77               1028.01
-TPC-DS Q34              12555.18              32.54           3934.22                 57.88
-TPC-DS Q35               3422.86              99.84          55691.59               3049.83
-TPC-DS Q36               5303.17              74.04           5331.02                 52.12
-TPC-DS Q37              13660.58              75.63             23.02                622.25
-TPC-DS Q38              26255.06             224.60          36669.45               3506.22
-TPC-DS Q39a+b            4468.68            1406.76           8305.57               6076.00
-TPC-DS Q40                730.42              82.99            800.66                300.02
-TPC-DS Q41               1670.18               6.18           5752.41               3085.73
-TPC-DS Q42                712.86              17.59             94.11                221.45
-TPC-DS Q43               3646.89              43.83              2.63                 58.44
-TPC-DS Q44               3931.69              71.32           6252.69               1044.48
-TPC-DS Q45                448.07              14.29            506.85                204.35
-TPC-DS Q46              13719.34              46.25           4722.07                 74.56
-TPC-DS Q47              41975.18             250.29          31439.91               4945.08
-TPC-DS Q48               3462.58              44.96           3902.23               1662.88
-TPC-DS Q49               1085.73             103.83           1425.59               1943.49
-TPC-DS Q50                 75.83             104.53             94.59               1081.41
-TPC-DS Q51              26365.03             460.96          27092.64               2967.68
-TPC-DS Q52                778.10              19.24             92.44                222.64
-TPC-DS Q53                621.93              30.63           1138.12                284.70
-TPC-DS Q54               2810.32              27.90          12095.66                188.88
-TPC-DS Q55                663.82              14.51             82.47                222.00
-TPC-DS Q56                425.64              25.49            796.38                948.48
-TPC-DS Q57              23357.91             100.43          15799.83               2371.71
-TPC-DS Q58              23625.99              58.23          30401.73                998.59
-TPC-DS Q59              36659.86             116.27          28287.98               1061.82
-TPC-DS Q60               2130.28              26.26           1910.84               1046.16
-TPC-DS Q61               1162.10              32.07              2.83                334.52
-TPC-DS Q62               6219.99              24.65          13114.05                275.08
-TPC-DS Q63                632.56              26.87           1150.49                275.91
-TPC-DS Q64               2041.22             422.37           1539.80               1672.97
-TPC-DS Q65              22703.82              94.52          34144.15               1382.92
-TPC-DS Q66               4124.36             112.33           7519.16                545.08
-TPC-DS Q67              25477.77             387.91          36687.37               8115.41
-TPC-DS Q68              12098.80              38.13           1342.40                 75.17
-TPC-DS Q69               1272.12              35.90           2006.18                642.70
-TPC-DS Q70              34422.53              91.42          57246.05               1115.69
-TPC-DS Q71               1290.46              28.69           1892.92                858.96
-TPC-DS Q73              11241.59              22.41           4198.38                 57.41
-TPC-DS Q74              18666.35             174.60          22130.36               2697.92
-TPC-DS Q75              17555.67             504.15           7412.58               1526.69
-TPC-DS Q76               1491.84              45.27           1776.11                573.00
-TPC-DS Q77              23713.51              62.54          44195.62                785.68
-TPC-DS Q78              18561.29             812.26          48086.68               4526.56
-TPC-DS Q79              12497.26              40.39          19029.58                399.40
-TPC-DS Q80               2200.01             426.81          39078.42               1129.51
-TPC-DS Q81                656.01              26.67           6536.44             110172.33
-TPC-DS Q82              14113.01             158.60            158.42               1011.58
-TPC-DS Q83               3379.23              18.24           3774.61                250.69
-TPC-DS Q84                149.60              50.49            233.51                237.35
-TPC-DS Q85                427.27              77.85            402.13                813.09
-TPC-DS Q86               3495.45              23.34           5219.97                540.28
-TPC-DS Q87              26107.27             246.04          36814.05               3534.40
-TPC-DS Q88              29820.73              64.35           6633.89               6067.04
-TPC-DS Q89               4897.17              35.49            400.12                291.50
-TPC-DS Q90                342.83              15.15           1390.33                336.70
-TPC-DS Q91                 38.97              22.13             42.12                251.26
-TPC-DS Q92                 12.73              10.35             80.27                139.32
-TPC-DS Q93                 86.63              90.34            130.74                479.55
-TPC-DS Q96               2140.96              12.83            438.01                235.37
-TPC-DS Q97              19032.57             232.24          26891.29                964.99
-TPC-DS Q98               3368.06              40.04           4830.05                448.03
-TPC-DS Q99              18260.28              58.33          54863.04                390.97
-
-### Loading [s]
-                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1              1.0          575.0         5.0    10765.0   11352.0
-MonetDB-BHT-8-1-1              0.0           95.0        11.0      328.0     441.0
-MySQL-BHT-64-1-1               0.0          365.0        10.0    10675.0   11070.0
-PostgreSQL-BHT-8-1-1           1.0          135.0         3.0      363.0     508.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                      Geo Times [s]
-DBMS                               
-MariaDB-BHT-8-1-1              2.95
-MonetDB-BHT-8-1-1              0.08
-MySQL-BHT-64-1-1               3.12
-PostgreSQL-BHT-8-1-1           0.89
-
-### Power@Size ((3600*SF)/(geo times))
-                      Power@Size [~Q/h]
-DBMS                                   
-MariaDB-BHT-8-1-1               1223.80
-MonetDB-BHT-8-1-1              50913.85
-MySQL-BHT-64-1-1                1156.30
-PostgreSQL-BHT-8-1-1            4075.26
-
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                                  time [s]  count   SF  Throughput@Size
-DBMS               SF  num_experiment num_client                                       
-MariaDB-BHT-8-1    1.0 1              1               4895      1  1.0            70.60
-MonetDB-BHT-8-1    1.0 1              1                 35      1  1.0          9874.29
-MySQL-BHT-64-1     1.0 1              1               1997      1  1.0           173.06
-PostgreSQL-BHT-8-1 1.0 1              1                521      1  1.0           663.34
+* MariaDB-1-1-1-1-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:262406
+  * datadisk:4535
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782219800
+* MonetDB-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP1
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:267892
+  * datadisk:3447
+  * cpu_list:0-127
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782219800
+* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:540492877824
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:263219
+  * datadisk:38233
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782219800
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:267892
+  * datadisk:5794
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782219800
 
 ### Workflow
-                               orig_name   SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MariaDB-BHT-8-1-1        MariaDB-BHT-8-1  1.0     8               1           1       1772407740     1772412635
-MonetDB-BHT-8-1-1        MonetDB-BHT-8-1  1.0     8               1           1       1772396466     1772396501
-MySQL-BHT-64-1-1          MySQL-BHT-64-1  1.0     8               1           1       1772423861     1772425858
-PostgreSQL-BHT-8-1-1  PostgreSQL-BHT-8-1  1.0     8               1           1       1772395281     1772395802
 
 #### Actual
-DBMS MariaDB-BHT-8 - Pods [[1]]
-DBMS MonetDB-BHT-8 - Pods [[1]]
-DBMS MySQL-BHT-64 - Pods [[1]]
-DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
 #### Planned
-DBMS PostgreSQL-BHT-8 - Pods [[1]]
-DBMS MonetDB-BHT-8 - Pods [[1]]
-DBMS MariaDB-BHT-8 - Pods [[1]]
-DBMS MySQL-BHT-64 - Pods [[1]]
 
-### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST failed: SQL errors
-TEST failed: SQL warnings (result mismatch)
-TEST passed: Workflow as planned
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MariaDB-1-1    |                1 |    1 |      569.00 |           0.00 |            1.00 |         60.00 |          501.00 |              8 |           0 |             | None           |             0 | False         |                6.33 |
+| MonetDB-1-1    |                1 |    1 |      350.00 |           0.00 |            1.00 |        123.00 |          219.00 |              8 |           0 |             | None           |             0 | False         |               10.29 |
+| MySQL-1-1      |                1 |    1 |      929.00 |           0.00 |            1.00 |        121.00 |          800.00 |              8 |           0 |             | None           |             0 | False         |                3.88 |
+| PostgreSQL-1-1 |                1 |    1 |      224.00 |           0.00 |            1.00 |         53.00 |          161.00 |              8 |           0 |             | None           |             0 | False         |               16.07 |
+
+### Execution
+
+#### Per Connection
+
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| MariaDB-1-1-1-1-1    | MariaDB-1       | MariaDB-1-1-1    | MariaDB-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               97 |       3237 |            1.02 |             3550.08 |            107.88 |          -1 | MariaDB-1-1-1-1-1    |
+| MonetDB-1-1-1-1-1    | MonetDB-1       | MonetDB-1-1-1    | MonetDB-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               97 |         20 |            0.06 |            63528.69 |          17460.00 |          -1 | MonetDB-1-1-1-1-1    |
+| MySQL-1-1-1-1-1      | MySQL-1         | MySQL-1-1-1      | MySQL-1-1-1-1      |                1 |        1 |               1 |           1 | 1.00 |               97 |        551 |            0.83 |             4410.93 |            633.76 |          -1 | MySQL-1-1-1-1-1      |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |        190 |            0.38 |             9622.23 |           1837.89 |          -1 | PostgreSQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MariaDB-1-1-1    | MariaDB-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               97 |       3237 |            1.02 |             3550.08 |            107.88 |          -1 |
+| MonetDB-1-1-1    | MonetDB-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               97 |         20 |            0.06 |            63528.69 |          17460.00 |          -1 |
+| MySQL-1-1-1      | MySQL-1-1-1      |                1 |        1 |               1 |           1 | 1.00 |               97 |        551 |            0.83 |             4410.93 |            633.76 |          -1 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |        190 |            0.38 |             9622.23 |           1837.89 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries       |   MariaDB-1-1-1-1-1 |   MonetDB-1-1-1-1-1 |   MySQL-1-1-1-1-1 |   PostgreSQL-1-1-1-1-1 |
+|:--------------|--------------------:|--------------------:|------------------:|-----------------------:|
+| TPC-DS Q1     |               26.71 |               53.08 |             81.48 |                 115.80 |
+| TPC-DS Q2     |             6948.20 |               96.37 |           7324.95 |                 320.16 |
+| TPC-DS Q3     |               21.04 |               24.47 |             25.65 |                 221.67 |
+| TPC-DS Q4     |            12312.46 |              609.24 |          33053.88 |                8983.63 |
+| TPC-DS Q5     |             8462.02 |               70.41 |          16287.36 |                 479.62 |
+| TPC-DS Q6     |              737.95 |               50.67 |          79310.94 |               52953.31 |
+| TPC-DS Q7     |             3426.10 |               42.02 |            784.67 |                 395.26 |
+| TPC-DS Q8     |              349.52 |               23.52 |            432.16 |                  68.73 |
+| TPC-DS Q9     |             3858.53 |               43.84 |           4863.55 |                2476.80 |
+| TPC-DS Q10    |               56.90 |               40.70 |             93.52 |                1195.06 |
+| TPC-DS Q11    |             8236.48 |              290.42 |          19014.71 |                5368.37 |
+| TPC-DS Q12    |              250.67 |               18.19 |            377.84 |                  73.88 |
+| TPC-DS Q13    |             1054.78 |               36.65 |           1574.61 |                 658.99 |
+| TPC-DS Q14a+b |            55432.85 |             1568.22 |          56555.16 |                2154.85 |
+| TPC-DS Q15    |              251.41 |               24.34 |            212.79 |                 128.66 |
+| TPC-DS Q16    |            11655.39 |               29.62 |             77.38 |                 215.89 |
+| TPC-DS Q17    |              764.10 |               93.45 |            528.85 |                 339.79 |
+| TPC-DS Q18    |             1877.22 |               53.90 |            989.17 |                 408.78 |
+| TPC-DS Q19    |              232.27 |               34.76 |            363.89 |                 164.27 |
+| TPC-DS Q20    |              440.94 |               22.29 |            601.57 |                 112.87 |
+| TPC-DS Q21    |            21334.13 |               78.30 |          29082.67 |                 235.19 |
+| TPC-DS Q22    |            19858.84 |              637.41 |           5497.97 |                3175.05 |
+| TPC-DS Q23a+b |            58761.12 |             1173.89 |          42770.50 |                5555.38 |
+| TPC-DS Q24a+b |               83.89 |              100.82 |             64.58 |                 409.51 |
+| TPC-DS Q25    |              189.70 |              104.23 |            153.49 |                 327.05 |
+| TPC-DS Q26    |              867.27 |               19.37 |           5624.39 |                 267.67 |
+| TPC-DS Q27    |             1664.06 |               56.85 |            613.04 |                  35.12 |
+| TPC-DS Q28    |             2833.13 |               41.62 |           3775.24 |                 853.99 |
+| TPC-DS Q29    |               96.68 |               88.20 |             93.59 |                 355.78 |
+| TPC-DS Q30    |              105.77 |               22.97 |            477.37 |                8753.15 |
+| TPC-DS Q31    |             1399.05 |              102.37 |          13055.21 |                1522.92 |
+| TPC-DS Q32    |               11.42 |               16.97 |            183.61 |                 104.26 |
+| TPC-DS Q33    |              184.56 |               25.47 |            294.32 |                 401.91 |
+| TPC-DS Q34    |             2993.66 |               25.36 |           1074.68 |                  40.52 |
+| TPC-DS Q35    |             1207.55 |               80.12 |          15330.63 |                1642.96 |
+| TPC-DS Q36    |             1649.69 |               62.33 |           1457.13 |                  36.74 |
+| TPC-DS Q37    |             3745.58 |               48.51 |             13.57 |                 407.41 |
+| TPC-DS Q38    |            10393.56 |              102.63 |           9216.57 |                1851.33 |
+| TPC-DS Q39a+b |             1173.27 |             1041.05 |           2150.89 |                2776.01 |
+| TPC-DS Q40    |              178.32 |               56.10 |            199.56 |                 133.10 |
+| TPC-DS Q41    |               33.53 |                7.28 |            125.82 |                 276.57 |
+| TPC-DS Q42    |              241.00 |               20.80 |             30.69 |                  95.59 |
+| TPC-DS Q43    |             1147.94 |               39.52 |              2.51 |                  36.66 |
+| TPC-DS Q44    |             1155.07 |               36.11 |           1634.61 |                 429.43 |
+| TPC-DS Q45    |              135.34 |               14.19 |            139.73 |                  91.65 |
+| TPC-DS Q46    |             3148.31 |               35.13 |            424.78 |                  48.64 |
+| TPC-DS Q47    |            15003.55 |              181.25 |           7935.74 |                1867.39 |
+| TPC-DS Q48    |             1247.94 |               32.54 |           1405.70 |                 636.76 |
+| TPC-DS Q49    |              110.88 |               75.54 |            145.03 |                 477.90 |
+| TPC-DS Q50    |               31.17 |               99.68 |             34.13 |                 443.43 |
+| TPC-DS Q51    |             7753.65 |              303.25 |           6750.35 |                 849.60 |
+| TPC-DS Q52    |              320.31 |               56.13 |             30.95 |                  94.66 |
+| TPC-DS Q53    |              165.01 |               29.08 |            284.03 |                 127.63 |
+| TPC-DS Q54    |             1153.94 |               27.30 |           2994.28 |                  81.04 |
+| TPC-DS Q55    |              237.46 |               16.80 |             21.66 |                  93.27 |
+| TPC-DS Q56    |              177.59 |               20.62 |            247.71 |                 416.98 |
+| TPC-DS Q57    |             7205.46 |              108.35 |           3697.34 |                 820.70 |
+| TPC-DS Q58    |             5932.96 |               55.26 |           7152.69 |                 497.72 |
+| TPC-DS Q59    |             9267.74 |               94.85 |           6763.84 |                 479.91 |
+| TPC-DS Q60    |              768.71 |               20.96 |            529.69 |                 501.27 |
+| TPC-DS Q61    |              405.86 |               27.51 |              3.28 |                 194.99 |
+| TPC-DS Q62    |             2286.94 |               33.32 |           3089.40 |                 141.93 |
+| TPC-DS Q63    |              159.64 |               24.34 |            263.09 |                 128.86 |
+| TPC-DS Q64    |              588.76 |              220.02 |            402.71 |                 844.53 |
+| TPC-DS Q65    |             5929.87 |               88.17 |           8119.52 |                 773.26 |
+| TPC-DS Q66    |             1301.97 |              106.78 |           2748.58 |                 262.74 |
+| TPC-DS Q67    |             8968.14 |              248.23 |           9086.35 |                3271.20 |
+| TPC-DS Q68    |             3274.28 |               34.51 |            368.58 |                  48.21 |
+| TPC-DS Q69    |                3.65 |               27.51 |              4.46 |                 120.63 |
+| TPC-DS Q70    |             8642.14 |               64.45 |          13258.87 |                 377.98 |
+| TPC-DS Q71    |              521.54 |               27.42 |            516.36 |                 306.82 |
+| TPC-DS Q72    |           408624.92 |              198.61 |          14078.39 |                1127.51 |
+| TPC-DS Q73    |             2851.68 |               23.38 |           1094.42 |                  36.30 |
+| TPC-DS Q74    |             6151.54 |               99.88 |           5685.28 |                1383.38 |
+| TPC-DS Q75    |             6202.51 |              255.79 |           1751.02 |                1018.62 |
+| TPC-DS Q76    |              466.17 |               39.53 |            432.75 |                 231.63 |
+| TPC-DS Q77    |             6285.48 |               57.62 |          10025.60 |                 339.91 |
+| TPC-DS Q78    |             5738.32 |              433.20 |          12473.94 |                1349.99 |
+| TPC-DS Q79    |             3092.40 |               38.95 |           5250.05 |                 111.66 |
+| TPC-DS Q80    |              534.10 |              312.03 |           9445.11 |                 477.50 |
+| TPC-DS Q81    |              214.21 |               39.79 |           2137.09 |               44464.79 |
+| TPC-DS Q82    |             3725.49 |               53.28 |             28.47 |                 357.21 |
+| TPC-DS Q83    |              937.42 |               12.69 |            878.78 |                 103.20 |
+| TPC-DS Q84    |               64.25 |               15.21 |             64.87 |                  91.21 |
+| TPC-DS Q85    |              123.87 |              190.90 |            108.40 |                 345.59 |
+| TPC-DS Q86    |              971.41 |               30.17 |           1198.77 |                 210.74 |
+| TPC-DS Q87    |            10280.54 |              146.41 |           8568.96 |                1387.98 |
+| TPC-DS Q88    |            23723.78 |               41.09 |           2051.35 |                3024.10 |
+| TPC-DS Q89    |             1494.23 |               35.49 |             56.66 |                 117.77 |
+| TPC-DS Q90    |              360.88 |               14.81 |            375.76 |                 132.84 |
+| TPC-DS Q91    |               28.50 |               22.19 |             22.09 |                 111.26 |
+| TPC-DS Q92    |                9.64 |               12.05 |             21.00 |                  62.76 |
+| TPC-DS Q93    |               44.53 |               68.66 |             44.15 |                 227.99 |
+| TPC-DS Q96    |             2682.34 |               13.68 |            193.03 |                 104.89 |
+| TPC-DS Q97    |             5202.48 |              132.31 |           8135.01 |                 405.32 |
+| TPC-DS Q98    |              863.67 |               36.50 |           1351.19 |                 184.17 |
+| TPC-DS Q99    |             4916.78 |               47.03 |          18285.00 |                 178.75 |
+
+### Errors (failed queries)
+
+|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
+|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
+| MariaDB-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+Traceback (most recent call last):
+  File "/home/perdelt/Git-projects/Benchmark-Experiment-Host-Manager/tpcds.py", line 250, in <module>
+    experiment.process()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/perdelt/Git-projects/Benchmark-Experiment-Host-Manager/bexhoma/experiments/base.py", line 291, in process
+    self.show_summary()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/perdelt/Git-projects/Benchmark-Experiment-Host-Manager/bexhoma/experiments/dbmsbenchmarker.py", line 120, in show_summary
+    primary.show_summary(self)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/perdelt/Git-projects/Benchmark-Experiment-Host-Manager/bexhoma/benchmarks/base.py", line 170, in show_summary
+    extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)
+  File "/home/perdelt/Git-projects/Benchmark-Experiment-Host-Manager/bexhoma/benchmarks/base.py", line 290, in _show_extra_sections
+    list_errors = self.evaluator.evaluation.get_error(numQuery)
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.14/site-packages/dbmsbenchmarker/inspector.py", line 450, in get_error
+    return self.benchmarks.getError(numQuery, connection)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/perdelt/anaconda3/envs/bexhoma/lib/python3.14/site-packages/dbmsbenchmarker/benchmarker.py", line 1926, in getError
+    return self.protocol['query'][str(query)]['errors']
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'ariaDB-1-1-1-1-1'
 ```
 
 

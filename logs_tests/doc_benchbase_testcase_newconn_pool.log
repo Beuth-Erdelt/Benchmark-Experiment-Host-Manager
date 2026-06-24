@@ -2,153 +2,170 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1773401739
-Experiment                    : starts at 2026-03-13 12:35:42.084257 (198215.808119)
+Experiment                    : has code 1782224097
+Experiment                    : starts at 2026-06-23 16:14:56.907572 (377081.383396399)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
-Experiment uses bexhoma version 0.9.3.
+Experiment uses bexhoma version 0.10.0.
 Experiment is limited to DBMS ['PGBouncer'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker14.
+SUT is fixed to cl-worker38.
+Database uses ephemeral storage of size 10Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [32] threads, split into [1, 2] pods.
 Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-pgb-1-2-32-32                 : will start now
-pgb-1-2-32-32                 : deployments ['pool', 'sut']
-pgb-1-2-32-32                 : stateful sets []
-pgb-1-2-32-32                 : pvcs ['sut']
-pgb-1-2-32-32                 : name of SUT pods = bexhoma-sut-pgb-1-2-32-32-1773401739
-pgb-1-2-32-32                 : name of SUT service = bexhoma-sut-pgb-1-2-32-32-1773401739
+PGBouncer-1                   : will start now
+PGBouncer-1                   : deployments ['pool', 'sut']
+PGBouncer-1                   : stateful sets []
+PGBouncer-1                   : pvcs ['sut']
+PGBouncer-1                   : name of SUT pods = bexhoma-sut-pgbouncer-1-1782224097
+PGBouncer-1                   : name of SUT service = bexhoma-sut-pgbouncer-1-1782224097
 - waiting 30s -               : done
-pgb-1-2-32-32                 : waits for health check to succeed
+PGBouncer-1                   : waits for health check to succeed
 - waiting 30s -               : done
-pgb-1-2-32-32                 : is not loaded yet
-pgb-1-2-32-32                 : connect to pod bexhoma-sut-pgb-1-2-32-32-1773401739-9bf7779b5-fvgb8 to load scripts
-pgb-1-2-32-32                 : start asynch loading scripts of type loaded
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : waits for health check to succeed
 - waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : is not loaded yet
+PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1782224097-698d5fc9f5-ljnwr to load scripts
+PGBouncer-1                   : start asynch loading scripts of type loaded
+PGBouncer-1                   : is loading
 - waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : is loading
 - waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : is loading
 - waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : is loading
 - waiting 30s -               : done
-pgb-1-2-32-32                 : showing loader times
-pgb-1-2-32-32                 : generator times (start/end per pod and container) []
-pgb-1-2-32-32                 : loader times (start/end per pod and container) [(1773401846, 1773402008)]
-pgb-1-2-32-32                 : total times (start/end per pod and container) [(1773401846, 1773402008)]
-pgb-1-2-32-32                 : loader timespan (first to last [s]) = 162
-pgb-1-2-32-32                 : connect to pod bexhoma-sut-pgb-1-2-32-32-1773401739-9bf7779b5-fvgb8 to load scripts
-pgb-1-2-32-32                 : start asynch loading scripts of type indexed
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : is loading
 - waiting 30s -               : done
-pgb-1-2-32-32                 : is loading
+PGBouncer-1                   : showing loader times
+PGBouncer-1                   : generator times (start/end per pod and container) []
+PGBouncer-1                   : loader times (start/end per pod and container) [(1782224196, 1782224332)]
+PGBouncer-1                   : total times (start/end per pod and container) [(1782224196, 1782224332)]
+PGBouncer-1                   : loader timespan (first to last [s]) = 136
+PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1782224097-698d5fc9f5-ljnwr to load scripts
+PGBouncer-1                   : start asynch loading scripts of type indexed
+PGBouncer-1                   : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-pgb-1-2-32-32                 : benchmarks done 0 of 1. This will be client 1
-pgb-1-2-32-32                 : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 32, 'BENCHBASE_TIME': 600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'true'}
-pgb-1-2-32-32-1               : start benchmarking
-pgb-1-2-32-32                 : benchmarking results in folder D:\data\benchmarks/1773401739
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PGBouncer-1-1782224097 initialized to 1.
+PGBouncer-1                   : benchmarks done 0 of 1. This will be client 1
+PGBouncer-1-1-1-1             : start benchmarking (benchmark_run=1)
+PGBouncer-1                   : benchmarking results in folder /data/benchmarks/1782224097
 - waiting 10s -               : done
-pgb-1-2-32-32                 : benchmarking is waiting for job bexhoma-benchmarker-pgb-1-2-32-32-1773401739-1-1-v4msk: found
+PGBouncer-1                   : benchmarking is waiting for job bexhoma-benchmarker-pgbouncer-1-1782224097-1-1-1-7cpgd: found
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
-timing_benchmarker [(1773402171, 1773402775)]
-pgb-1-2-32-32-1               : showing benchmarker times
-pgb-1-2-32-32-1               : benchmarker timespan job from 1773402167 to 1773402821
-pgb-1-2-32-32-1               : benchmarker timespan pods from 1773402171 to 1773402775
-pgb-1-2-32-32-1               : benchmarker timespan (start to end single container [s]) = 604
-pgb-1-2-32-32-1               : benchmarker times (start/end per pod and container) = [(1773402171, 1773402775)]
-pgb-1-2-32-32-1               : found and updated times {'benchmarker': [(1773402171, 1773402775)]}
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1-1-1-1             : wrote benchmarking_timespans to /data/benchmarks/1782224097/PGBouncer-1-1-1-1.config
+PGBouncer-1-1-1-1             : showing benchmarker times
+PGBouncer-1-1-1-1             : benchmarker timespan job from 1782224387 to 1782225024
+PGBouncer-1-1-1-1             : benchmarker timespan pods from 1782224389 to 1782224993
+PGBouncer-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 604
+PGBouncer-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1782224389, 1782224993)]
+PGBouncer-1-1-1-1             : found and updated times {'benchmarker': [(1782224389, 1782224993)]}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-pgb-1-2-32-32                 : benchmarks done 0 of 1. This will be client 2
-pgb-1-2-32-32                 : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'postgres', 'BEXHOMA_DATABASE': 'postgres', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 600, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false', 'BENCHBASE_NEWCONNPERTXN': 'true'}
-pgb-1-2-32-32-2               : start benchmarking
-pgb-1-2-32-32                 : benchmarking results in folder D:\data\benchmarks/1773401739
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PGBouncer-1-1782224097 initialized to 2.
+PGBouncer-1                   : benchmarks done 0 of 1. This will be client 2
+PGBouncer-1-1-2-1             : start benchmarking (benchmark_run=1)
+PGBouncer-1                   : benchmarking results in folder /data/benchmarks/1782224097
 - waiting 10s -               : done
-pgb-1-2-32-32                 : benchmarking is waiting for job bexhoma-benchmarker-pgb-1-2-32-32-1773401739-1-2-75jgb: found
+PGBouncer-1                   : benchmarking is waiting for job bexhoma-benchmarker-pgbouncer-1-1782224097-1-2-1-9knct: found
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : has running benchmarks
-timing_benchmarker [(1773402900, 1773403503), (1773402900, 1773403502)]
-pgb-1-2-32-32-2               : showing benchmarker times
-pgb-1-2-32-32-2               : benchmarker timespan job from 1773402895 to 1773403528
-pgb-1-2-32-32-2               : benchmarker timespan pods from 1773402900 to 1773403503
-pgb-1-2-32-32-2               : benchmarker timespan (start to end single container [s]) = 603
-pgb-1-2-32-32-2               : benchmarker times (start/end per pod and container) = [(1773402900, 1773403503), (1773402900, 1773403502)]
-pgb-1-2-32-32-2               : found and updated times {'benchmarker': [(1773402900, 1773403503), (1773402900, 1773403502)]}
+PGBouncer-1                   : has running benchmarks
 - waiting 30s -               : done
-pgb-1-2-32-32                 : can be stopped
-pgb-1-2-32-32                 : had 0 0 restarts at worker bexhoma-pool-pgb-1-2-32-32-1773401739-768c7c8595-5m6z5
-pgb-1-2-32-32                 : had 0 0 restarts at worker bexhoma-pool-pgb-1-2-32-32-1773401739-768c7c8595-mgqrx
-pgb-1-2-32-32                 : had 0 0 restarts at worker bexhoma-sut-pgb-1-2-32-32-1773401739-9bf7779b5-fvgb8
-Experiment                    : ends at 2026-03-13 13:06:43.040477 (200076.7632832) - 1860.96s total
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+- waiting 30s -               : done
+PGBouncer-1-1-2-1             : wrote benchmarking_timespans to /data/benchmarks/1782224097/PGBouncer-1-1-2-1.config
+PGBouncer-1-1-2-1             : showing benchmarker times
+PGBouncer-1-1-2-1             : benchmarker timespan job from 1782225063 to 1782225702
+PGBouncer-1-1-2-1             : benchmarker timespan pods from 1782225065 to 1782225669
+PGBouncer-1-1-2-1             : benchmarker timespan (start to end single container [s]) = 604
+PGBouncer-1-1-2-1             : benchmarker times (start/end per pod and container) = [(1782225065, 1782225668), (1782225066, 1782225669)]
+PGBouncer-1-1-2-1             : found and updated times {'benchmarker': [(1782225065, 1782225668), (1782225066, 1782225669)]}
+- waiting 30s -               : done
+PGBouncer-1                   : can be stopped
+PGBouncer-1                   : had 0 0 restarts at worker bexhoma-pool-pgbouncer-1-1782224097-6bf7fdf595-mqvdn
+PGBouncer-1                   : had 0 0 restarts at worker bexhoma-pool-pgbouncer-1-1782224097-6bf7fdf595-v72cv
+PGBouncer-1                   : had 0 0 restarts at worker bexhoma-sut-pgbouncer-1-1782224097-698d5fc9f5-ljnwr
+Experiment                    : ends at 2026-06-23 16:42:16.679296 (378721.155120911) - 1639.77s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -159,18 +176,19 @@ Result workflow complete
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1861s 
-* Code: 1773401739
+* Duration: 1640s 
+* Code: 1782224097
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
-  * Experiment uses bexhoma version 0.9.3.
+  * Experiment uses bexhoma version 0.10.0.
   * Experiment is limited to DBMS ['PGBouncer'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker14.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
   * Loading is tested with [1] threads, split into [1] pods.
   * Benchmarking is tested with [32] threads, split into [1, 2] pods.
   * Pooling is done with [2] pods having [32] inbound and [32] outbound connections in total.
@@ -178,66 +196,71 @@ Benchbase Workload tpcc SF=16
   * Experiment is run once.
 
 ### Connections
-*  pgb-1-2-32-32-1 uses docker image postgres:18.3
-  * RAM:541008474112
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:152160
-  * cpu_list:0-63
+* PGBouncer-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:257622
+  * datadisk:4309
+  * cpu_list:0-127
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1773401739
-*  pgb-1-2-32-32-2 uses docker image postgres:18.3
-  * RAM:541008474112
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:5.15.0-164-generic
-  * node:cl-worker14
-  * disk:152434
-  * cpu_list:0-63
+    * code:1782224097
+* PGBouncer-1-1-2-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:257899
+  * datadisk:4586
+  * cpu_list:0-127
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'synchronous_commit=off', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1773401739
-
-### Execution
-
-#### Per Pod
-
-| DBMS              |   experiment_run |   terminals |   target |   client |   child |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:------------------|-----------------:|------------:|---------:|---------:|--------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| pgb-1-2-32-32-1-1 |                1 |          32 |    16384 |        1 |       1 |    600 |            1 |                       1455.02  |                     467.343 |            0 |                                                         38229 |                                                 21989 |
-| pgb-1-2-32-32-2-1 |                1 |          16 |     8192 |        2 |       1 |    600 |            2 |                        620.965 |                     446.392 |            0 |                                                         49573 |                                                 25759 |
-| pgb-1-2-32-32-2-2 |                1 |          16 |     8192 |        2 |       2 |    600 |            1 |                        610.777 |                     446.41  |            0 |                                                         49831 |                                                 26188 |
-
-#### Aggregated Parallel
-
-| DBMS            |   experiment_run |   terminals |   target |   pod_count |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:----------------|-----------------:|------------:|---------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| pgb-1-2-32-32-1 |                1 |          32 |    16384 |           1 |    600 |            1 |                        1455.02 |                      467.34 |            0 |                                                         38229 |                                               21989   |
-| pgb-1-2-32-32-2 |                1 |          32 |    16384 |           2 |    600 |            3 |                        1231.74 |                      892.8  |            0 |                                                         49831 |                                               25973.5 |
+    * code:1782224097
 
 ### Workflow
 
 #### Actual
 
-* DBMS pgb-1-2-32-32 - Pods [[1, 2]]
+* DBMS PGBouncer-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PGBouncer-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 #### Planned
 
-* DBMS pgb-1-2-32-32 - Pods [[1, 2]]
+* DBMS PGBouncer-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PGBouncer-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 ### Loading
 
-| DBMS            |   time_load |   terminals |   pods |   Throughput [SF/h] |
-|:----------------|------------:|------------:|-------:|--------------------:|
-| pgb-1-2-32-32-1 |         162 |           1 |      1 |             355.556 |
-| pgb-1-2-32-32-2 |         162 |           1 |      2 |             355.556 |
+#### Per Run
+
+|               |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PGBouncer-1-1 |                1 |   16 |      313.00 |           1.00 |            0.00 |        136.00 |          176.00 |              1 |           1 |             | None           |             0 | False         |              184.03 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                | phase           | job               |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:--------------------|:----------------|:------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PGBouncer-1-1-1-1-1 | PGBouncer-1-1-1 | PGBouncer-1-1-1-1 |                1 |          32 |    16384 |        1 |               1 |       1 |          -1 | 600.00 |            2 |                        1473.01 |                      467.70 |         0.00 |                                                      42381.00 |                                              21720.00 |
+| PGBouncer-1-1-2-1-1 | PGBouncer-1-1-2 | PGBouncer-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       1 |          -1 | 600.00 |            1 |                         673.06 |                      448.73 |         0.00 |                                                      51332.00 |                                              23765.00 |
+| PGBouncer-1-1-2-1-2 | PGBouncer-1-1-2 | PGBouncer-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       2 |          -1 | 600.00 |            2 |                         663.74 |                      448.50 |         0.00 |                                                      51240.00 |                                              24098.00 |
+
+#### Per Phase
+
+| DBMS            | phase           |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:----------------|:----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PGBouncer-1-1-1 | PGBouncer-1-1-1 |                1 |          32 |    16384 |               1 |           1 |          -1 | 600.00 |            2 |                        1473.01 |                      467.70 |         0.00 |                                                      42381.00 |                                              21720.00 |
+| PGBouncer-1-1-2 | PGBouncer-1-1-2 |                1 |          32 |    16384 |               1 |           2 |          -1 | 600.00 |            3 |                        1336.80 |                      897.23 |         0.00 |                                                      51332.00 |                                              23931.50 |
 
 ### Tests
 * TEST passed: Throughput (requests/second) contains no 0 or NaN

@@ -9,77 +9,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # See LICENSE for details.
 
-$BEXHOMA_NODE_SUT       = "cl-worker14"
-$BEXHOMA_NODE_LOAD      = "cl-worker19"
-$BEXHOMA_NODE_BENCHMARK = "cl-worker19"
-$LOG_DIR                = ".\logs_tests"
+. .\scripts\testfunctions.ps1
 
-# ---------------------------------------------------------------------------
-# Prerequisites
-# ---------------------------------------------------------------------------
-
-if (-not (Test-Path "cluster.config")) {
-    Write-Error "Error: cluster.config not found."
-    exit 1
-}
-Write-Host "Passed: ./cluster.config found."
-
-foreach ($dir in @("experiments", "k8s")) {
-    if (-not (Test-Path $dir -PathType Container)) {
-        Write-Error "Error: Directory '$dir' missing."
-        exit 1
-    }
-}
-Write-Host "Passed: ./experiments/ found."
-Write-Host "Passed: ./k8s/ found."
-
-New-Item -ItemType Directory -Force -Path $LOG_DIR | Out-Null
-Write-Host "Passed: $LOG_DIR/ found."
-
-Write-Host "Checks passed. Proceeding..."
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-function Wait-BexhomaProcess {
-    param([string]$ProcessName)
-    while ($true) {
-        $running = Get-CimInstance Win32_Process |
-                   Where-Object { $_.CommandLine -like "*bexhoma*$ProcessName*" }
-        if (-not $running) { break }
-        Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): Waiting for bexhoma $ProcessName to terminate..."
-        Start-Sleep -Seconds 60
-    }
-    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): bexhoma $ProcessName has terminated."
-}
-
-function Invoke-CleanLogs {
-    $warningText = "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens."
-
-    Write-Host "Removing connection warning lines from log files..."
-    Get-ChildItem -Path $LOG_DIR -Filter "*.log" -Recurse | ForEach-Object {
-        $lines = Get-Content $_.FullName
-        $filtered = $lines | Where-Object { $_ -ne $warningText }
-        if ($filtered.Count -ne $lines.Count) {
-            $filtered | Set-Content $_.FullName -Encoding utf8
-        }
-    }
-
-    Write-Host "Extracting summaries from log files..."
-    Get-ChildItem -Path $LOG_DIR -Filter "*.log" | ForEach-Object {
-        $filename = $_.BaseName
-        Write-Host "Cleaning $($_.FullName)"
-        $show = $false
-        $summary = @(foreach ($line in Get-Content $_.FullName) {
-            if ($line -match '## Show Summary') { $show = $true }
-            if ($show) { $line }
-        })
-        $summary | Out-File "$LOG_DIR\${filename}_summary.md" -Encoding utf8
-    }
-
-    Write-Host "Extraction complete! Files are saved in $LOG_DIR."
-}
 
 function Install-YugabyteDB {
     param([string]$Persistent = "yes")
@@ -87,8 +18,8 @@ function Install-YugabyteDB {
     if ($Persistent -eq "yes") { $Ephemeral = "false" } else { $Ephemeral = "true" }
 
     helm install bexhoma yugabytedb/yugabyte `
-        --version 2025.2.1 `
-        --set "gflags.tserver.ysql_enable_packed_row=true,gflags.tserver.ysql_max_connections=1280,resource.master.limits.cpu=2,resource.master.limits.memory=16Gi,resource.master.requests.cpu=2,resource.master.requests.memory=16Gi,resource.tserver.limits.cpu=8,resource.tserver.limits.memory=16Gi,resource.tserver.requests.cpu=8,resource.tserver.requests.memory=16Gi,storage.master.size=100Gi,storage.master.storageClass=shared,storage.tserver.size=100Gi,storage.tserver.storageClass=shared,storage.ephemeral=$Ephemeral,tserver.livenessProbe.timeoutSeconds=10,master.livenessProbe.timeoutSeconds=10,enableLoadBalancer=true"
+        --version 2025.2.4 `
+        --set "gflags.tserver.ysql_enable_packed_row=true,gflags.tserver.ysql_max_connections=1280,resource.master.limits.cpu=2,resource.master.limits.memory=16Gi,resource.master.requests.cpu=2,resource.master.requests.memory=16Gi,resource.tserver.limits.cpu=8,resource.tserver.limits.memory=16Gi,resource.tserver.requests.cpu=8,resource.tserver.requests.memory=16Gi,storage.master.size=100Gi,storage.master.storageClass=shared,storage.tserver.size=100Gi,storage.tserver.storageClass=shared,storage.ephemeral=$Ephemeral,tserver.livenessProbe.timeoutSeconds=10,master.livenessProbe.timeoutSeconds=10,preflight.skipUlimit=true,enableLoadBalancer=true"
 
     Write-Host "Waiting 60s for pods to start..."
     Start-Sleep -Seconds 60
@@ -111,10 +42,6 @@ function Remove-YugabyteDB {
     Write-Host "Waiting 60s for cleanup..."
     Start-Sleep -Seconds 60
 }
-
-# ---------------------------------------------------------------------------
-# Wait for any pre-existing jobs
-# ---------------------------------------------------------------------------
 
 Wait-BexhomaProcess "tpch"
 Wait-BexhomaProcess "tpcds"
