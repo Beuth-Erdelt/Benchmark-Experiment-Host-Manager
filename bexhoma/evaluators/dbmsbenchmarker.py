@@ -384,12 +384,14 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :rtype: pandas.DataFrame
         """
         global query_properties
-        df = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean').T
+        raw = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        if raw is None:
+            return None
+        df = raw.T
         if query_titles:
-            if not df is None:
-                query_properties = self.evaluation.get_experiment_query_properties()
-                df = df.round(2)
-                df.index = df.index.map(map_index_to_queryname)
+            query_properties = self.evaluation.get_experiment_query_properties()
+            df = df.round(2)
+            df.index = df.index.map(map_index_to_queryname)
         return df.T
     def get_summary_benchmark_per_phase(self):
         """
