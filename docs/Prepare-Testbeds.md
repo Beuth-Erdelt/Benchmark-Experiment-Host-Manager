@@ -127,40 +127,40 @@ test_ycsb_start_postgresql.log
 
 ### Workload
 YCSB Start DBMS
-    Type: ycsb
-    Duration: 185s 
-    Code: 1749627467
-    Intro: Start DBMS and do not load data.
-    This just starts a SUT.
-    Workload is 'C'.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    SUT is fixed to cl-worker11.
-    Experiment is run once.
+* Type: ycsb
+* Duration: 163s 
+* Code: 1782304165
+* Start DBMS and do not load data.
+* This just starts a SUT.
+  * Workload is 'C'.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-1-1-16384
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-16384-1749627467 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782304165 9091:9091
 
 ### Connections
-PostgreSQL-1-1-16384-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:387183600
-    datadisk:39
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1749627467
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220502
+  * datadisk:39
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782304165
 
 ### Tests
-TEST passed: Result contains no FAILED column
 ```
 
 The summary confirms the SUT is running and shows the port-forward command.
@@ -189,62 +189,85 @@ test_ycsb_load_postgresql.log
 
 ### Workload
 YCSB Data Loading SF=1
-    Type: ycsb
-    Duration: 329s 
-    Code: 1749627711
-    Intro: YCSB driver runs the experiment.
-    This imports YCSB data sets.
-    Workload is 'C'.
-    Number of rows to insert is 1000000.
-    Ordering of inserts is hashed.
-    Target is based on multiples of '16384'.
-    Factors for loading are [1].
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [64] threads, split into [8] pods.
-    Experiment is run once.
+* Type: ycsb
+* Duration: 339s 
+* Code: 1782304350
+* YCSB driver runs the experiment.
+* This imports YCSB data sets.
+  * Workload is 'C'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [1].
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-64-8-16384
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-64-8-16384-1749627711 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782304350 9091:9091
 
 ### Connections
-PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:389594652
-    datadisk:2393
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1749627711
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:222854
+  * datadisk:2391
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782304350
 
 ### Loading
-                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-16384               1       64   16384          8           0                   16319.503604                61292.0             1000000                            1176.125
 
-### Ingestion - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-16384-1      168.17     2.84          3.87                 4.73
+#### Per Connection
 
-### Ingestion - Loader
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-16384-1       50.89        0          3.39                 3.42
+| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| PostgreSQL-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2039.95 |                61276.00 |            125000.00 |                              1477.00 | 1.00 |               58.75 |
+| PostgreSQL-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2039.98 |                61275.00 |            125000.00 |                              1497.00 | 1.00 |               58.75 |
+| PostgreSQL-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.08 |                61272.00 |            125000.00 |                              1497.00 | 1.00 |               58.75 |
+| PostgreSQL-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.18 |                61269.00 |            125000.00 |                              1495.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.28 |                61266.00 |            125000.00 |                              1545.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.22 |                61268.00 |            125000.00 |                              1497.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.62 |                61256.00 |            125000.00 |                              1506.00 | 1.00 |               58.77 |
+| PostgreSQL-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.38 |                61263.00 |            125000.00 |                              1508.00 | 1.00 |               58.76 |
+
+#### Per Run
+
+| DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 | 1.00 |               58.75 |                        16321.70 |                61276.00 |           1000000.00 |                              1502.75 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |       241.19 |      3.91 |           1.71 |                  2.70 |
+
+### Loading phase: component loader
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |        82.91 |      1.44 |           0.11 |                  0.11 |
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Result contains no FAILED column
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 ```
 
 Key parameters:
@@ -281,92 +304,135 @@ test_ycsb_run_postgresql.log
 
 ### Workload
 YCSB SF=1
-    Type: ycsb
-    Duration: 444s 
-    Code: 1749628094
-    Intro: YCSB driver runs the experiment.
-    This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'C'.
-    Number of rows to insert is 1000000.
-    Ordering of inserts is hashed.
-    Number of operations is 1000000.
-    Batch size is ''.
-    Target is based on multiples of '16384'.
-    Factors for loading are [1].
-    Factors for benchmarking are [1].
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [64] threads, split into [8] pods.
-    Benchmarking is tested with [64] threads, split into [8] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Services
-PostgreSQL-64-8-16384
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-64-8-16384-1749628094 9091:9091
+* Type: ycsb
+* Duration: 429s 
+* Code: 1782304720
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'C'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [1].
+  * Factors for benchmarking are [1].
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [64] threads, split into [8] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-64-8-16384-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:389579728
-    datadisk:2393
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1749628094
-
-### Loading
-                       experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-PostgreSQL-64-8-16384               1       64   16384          8           0                   16317.972165                61290.0             1000000                             1014.25
-
-### Execution
-                         experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)
-PostgreSQL-64-8-16384-1               1       64   16384          8           0                       16317.77                61311.0           1000000                             466.0
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:222854
+  * datadisk:2391
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782304720
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-16384 - Pods [[8]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ycsb (8 pods)
 
 #### Planned
-DBMS PostgreSQL-64-8-16384 - Pods [[8]]
 
-### Ingestion - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-16384-1      124.99        0          3.53                 4.14
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ycsb (8 pods)
 
-### Ingestion - Loader
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-16384-1      119.93     1.17          4.54                 4.56
+### Loading
 
-### Execution - SUT
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-16384-1       79.08        0          3.79                 4.71
+#### Per Connection
 
-### Execution - Benchmarker
-                         CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-64-8-16384-1       84.38        0          1.88                  1.9
+| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| PostgreSQL-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.55 |                61258.00 |            125000.00 |                              1509.00 | 1.00 |               58.77 |
+| PostgreSQL-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2039.98 |                61275.00 |            125000.00 |                              1516.00 | 1.00 |               58.75 |
+| PostgreSQL-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.35 |                61264.00 |            125000.00 |                              1511.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.42 |                61262.00 |            125000.00 |                              1484.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.45 |                61261.00 |            125000.00 |                              1515.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.15 |                61270.00 |            125000.00 |                              1507.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.12 |                61271.00 |            125000.00 |                              1468.00 | 1.00 |               58.76 |
+| PostgreSQL-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         2040.25 |                61267.00 |            125000.00 |                              1574.00 | 1.00 |               58.76 |
+
+#### Per Run
+
+| DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 | 1.00 |               58.75 |                        16322.27 |                61275.00 |           1000000.00 |                              1510.50 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
+|:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
+| PostgreSQL-1-1-1-1-5 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       5 |         8 |     2048 |           8 |            0 |                         2040.22 |                61268.00 |             125000 |                             632.00 |
+| PostgreSQL-1-1-1-1-7 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       7 |         8 |     2048 |           8 |            0 |                         2040.22 |                61268.00 |             125000 |                             726.00 |
+| PostgreSQL-1-1-1-1-8 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       8 |         8 |     2048 |           8 |            0 |                         2040.05 |                61273.00 |             125000 |                             699.00 |
+| PostgreSQL-1-1-1-1-3 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       3 |         8 |     2048 |           8 |            0 |                         2040.62 |                61256.00 |             125000 |                             693.00 |
+| PostgreSQL-1-1-1-1-4 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       4 |         8 |     2048 |           8 |            0 |                         2040.45 |                61261.00 |             125000 |                             757.00 |
+| PostgreSQL-1-1-1-1-6 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       6 |         8 |     2048 |           8 |            0 |                         2040.32 |                61265.00 |             125000 |                             677.00 |
+| PostgreSQL-1-1-1-1-2 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       2 |         8 |     2048 |           8 |            0 |                         2040.38 |                61263.00 |             125000 |                             646.00 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |         8 |     2048 |           8 |            0 |                         2040.55 |                61258.00 |             125000 |                             656.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
+|:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        64 |    16384 |               1 |           8 |            0 |                        16322.80 |                61273.00 |            1000000 |                             757.00 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       238.22 |      3.89 |           1.57 |                  2.66 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        67.39 |      1.94 |           0.11 |                  0.11 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       120.71 |      2.22 |           1.85 |                  3.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        70.74 |      1.28 |           0.10 |                  0.11 |
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
-TEST passed: Result contains no FAILED column
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
 ```
 
 Key parameters:
@@ -403,38 +469,41 @@ test_benchbase_start_postgresql.log
 
 ### Workload
 Benchbase Start DBMS
-    Type: benchbase
-    Duration: 187s 
-    Code: 1749628596
-    Intro: Start DBMS and do not load data.
-    This just starts a SUT.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    SUT is fixed to cl-worker11.
-    Experiment is run once.
+* Type: benchbase
+* Duration: 197s 
+* Code: 1782305186
+* Start DBMS and do not load data.
+* This just starts a SUT.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-1-1-1024
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749628596 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782305186 9091:9091
 
 ### Connections
-PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:387168592
-    datadisk:39
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-                code:1749628596
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220502
+  * datadisk:39
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782305186
+    * TENANT_VOL:False
 
 ### Tests
+* TEST failed: Throughput (requests/second) contains 0 or NaN
 ```
 
 ### Start DBMS and Load Data
@@ -540,84 +609,115 @@ test_benchbase_run_postgresql.log
 
 ### Workload
 Benchbase Workload tpcc SF=1
-    Type: benchbase
-    Duration: 686s 
-    Code: 1749629205
-    Intro: Benchbase runs a TPC-C experiment.
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-    Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [64] threads, split into [1] pods.
-    Benchmarking is tested with [64] threads, split into [8] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Services
-PostgreSQL-1-1-1024
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-1-1-1024-1749629205 9091:9091
+* Type: benchbase
+* Duration: 611s 
+* Code: 1782305705
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads.
+  * Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 5 minutes.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [64] threads, split into [1] pods.
+  * Benchmarking is tested with [64] threads, split into [8] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-1-1-1024-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:387465804
-    datadisk:331
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-                code:1749629205
-
-### Execution
-                       experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-PostgreSQL-1-1-1024-1               1         64    1024          8  300.0           0                        418.06                     414.25         0.0                                                     800425.0                                            152900.62
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220793
+  * datadisk:330
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782305705
+    * TENANT_VOL:False
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-1-1-1024 - Pods [[8]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (8 pods)
 
 #### Planned
-DBMS PostgreSQL-1-1-1024 - Pods [[8]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (8 pods)
 
 ### Loading
-                       time_load  terminals  pods  Throughput [SF/h]
-PostgreSQL-1-1-1024-1       66.0        1.0   8.0          54.545455
 
-### Ingestion - SUT
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1       61.02     0.77          2.47                 2.61
+#### Per Run
 
-### Ingestion - Loader
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1       11.48        0          0.23                 0.23
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |       60.00 |           0.00 |            0.00 |         24.00 |           36.00 |              1 |           1 |             |                |             0 | False         |               60.00 |
 
-### Execution - SUT
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1       712.8     2.26          2.96                 3.22
+### Execution
 
-### Execution - Benchmarker
-                       CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-1-1-1024-1      279.33     0.36          1.95                 1.95
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       1 |           0 | 300.00 |            0 |                          52.83 |                       52.35 |         0.00 |                                                     755417.00 |                                             151346.00 |
+| PostgreSQL-1-1-1-1-2 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       2 |           0 | 300.00 |            0 |                          53.23 |                       52.70 |         0.00 |                                                     755040.00 |                                             150160.00 |
+| PostgreSQL-1-1-1-1-3 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       3 |           0 | 300.00 |            0 |                          50.55 |                       50.09 |         0.00 |                                                     784752.00 |                                             157853.00 |
+| PostgreSQL-1-1-1-1-4 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       4 |           0 | 300.00 |            0 |                          52.24 |                       51.75 |         0.00 |                                                     760276.00 |                                             153034.00 |
+| PostgreSQL-1-1-1-1-5 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       5 |           0 | 300.00 |            2 |                          51.42 |                       51.00 |         0.00 |                                                     768047.00 |                                             155439.00 |
+| PostgreSQL-1-1-1-1-6 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       6 |           0 | 300.00 |            1 |                          51.52 |                       51.08 |         0.00 |                                                     780820.00 |                                             154906.00 |
+| PostgreSQL-1-1-1-1-7 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       7 |           0 | 300.00 |            0 |                          51.63 |                       51.27 |         0.00 |                                                     774322.00 |                                             154791.00 |
+| PostgreSQL-1-1-1-1-8 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |           8 |      128 |        1 |               1 |       8 |           0 | 300.00 |            0 |                          52.21 |                       51.68 |         0.00 |                                                     769977.00 |                                             152923.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |          64 |     1024 |               1 |           8 |           0 | 300.00 |            3 |                         415.62 |                      411.92 |         0.00 |                                                     784752.00 |                                             153806.50 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        19.28 |      0.85 |           0.51 |                  0.66 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         7.32 |      0.00 |           0.24 |                  0.24 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       712.35 |      2.66 |           0.90 |                  1.18 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       196.11 |      1.73 |           0.23 |                  0.23 |
 
 ### Tests
-TEST passed: Throughput (requests/second) contains no 0 or NaN
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned
 ```
 
 The **Execution** table reports:
@@ -651,34 +751,37 @@ test_hammerdb_start_postgresql.log
 
 ### Workload
 HammerDB Start DBMS
-    Type: tpcc
-    Duration: 186s 
-    Code: 1749629932
-    Start DBMS and do not load data.
-    This just starts a SUT.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    SUT is fixed to cl-worker11.
-    Experiment is run once.
+* Type: tpcc
+* Duration: 163s 
+* Code: 1782306350
+* Start DBMS and do not load data.
+* This just starts a SUT.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-BHT-1-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1-1749629932 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782306350 9091:9091
 
 ### Connections
-PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386794388
-    datadisk:39
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749629932
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220502
+  * datadisk:39
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782306350
 
 ### Tests
 ```
@@ -786,84 +889,107 @@ test_hammerdb_run_postgresql.log
 
 ### Workload
 HammerDB Workload SF=1 (warehouses for TPC-C)
-    Type: tpcc
-    Duration: 798s 
-    Code: 1749630540
-    HammerDB runs the benchmark.
-    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
-    TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 1. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [64] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Services
-PostgreSQL-BHT-1-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1-1749630540 9091:9091
+* Type: tpcc
+* Duration: 725s 
+* Code: 1782306858
+* HammerDB runs the benchmark.
+* This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+  * TPC-C data is generated and loaded using several threads.
+  * Scaling factor (i.e., number of warehouses) is 1. Benchmarking runs for 5 minutes.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:387041208
-    datadisk:281
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749630540
-
-### Execution
-                      experiment_run  vusers  client  pod_count  efficiency     NOPM      TPM  duration  errors
-PostgreSQL-BHT-1-1-1               1      64       1          1         0.0  19670.0  53038.0         5       0
-
-Warehouses: 1
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220743
+  * datadisk:280
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782306858
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-1-1 - Pods [[1]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 #### Planned
-DBMS PostgreSQL-BHT-1-1 - Pods [[1]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 ### Loading
-                      time_load  terminals  pods  Imported warehouses [1/h]
-PostgreSQL-BHT-1-1-1       31.0        1.0   1.0                 116.129032
 
-### Ingestion - SUT
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1-1        3.46        0          2.41                 2.47
+#### Per Run
 
-### Ingestion - Loader
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1-1       12.11        0          0.02                 0.02
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |       63.00 |           0.00 |            0.00 |         26.00 |           37.00 |              1 |           1 |             | None           |             0 | False         |               57.14 |
 
-### Execution - SUT
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1-1    10120.59     23.8          3.49                 3.91
+### Execution
 
-### Execution - Benchmarker
-                      CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1-1        88.8     0.22          0.19                 0.19
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |   TPM |   efficiency |   duration |   errors |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|------:|-------------:|-----------:|---------:|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       64 |        1 |               1 |       1 |  43252 | 99406 |         0.00 |          5 |        0 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |     NOPM |      TPM |   duration |   errors |
+|:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|---------:|---------:|-----------:|---------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       64 |        1 |               1 |           1 |         0.00 | 43252.00 | 99406.00 |          5 |        0 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         5.95 |      0.13 |           0.51 |                  0.60 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |      3327.76 |      8.58 |           1.68 |                  2.40 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        92.17 |      0.25 |           0.23 |                  0.24 |
 
 ### Tests
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: NOPM contains no 0 or NaN
-TEST passed: Workflow as planned
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: NOPM contains no 0 or NaN
+* TEST passed: Workflow as planned
 ```
 
 The **Execution** table reports `NOPM` (New Orders Per Minute) and `TPM` (Transactions Per Minute), which are the standard HammerDB TPC-C metrics.
@@ -895,34 +1021,37 @@ test_tpch_start_postgresql.log
 
 ### Workload
 TPC-H Start DBMS
-    Type: tpch
-    Duration: 186s 
-    Code: 1749631401
-    Start DBMS and do not load data.
-    This just starts a SUT.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    SUT is fixed to cl-worker11.
-    Experiment is run once.
+* Type: tpch
+* Duration: 192s 
+* Code: 1782307622
+* Start DBMS and do not load data.
+* This just starts a SUT.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749631401 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782307622 9091:9091
 
 ### Connections
-PostgreSQL-BHT-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386626208
-    datadisk:39
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749631401
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220503
+  * datadisk:39
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782307622
 
 ### Tests
 ```
@@ -952,45 +1081,75 @@ test_tpch_load_postgresql.log
 
 ### Workload
 TPC-H Data Loading SF=1
-    Type: tpch
-    Duration: 413s 
-    Code: 1749631645
-    This includes the reading queries of TPC-H.
-    This imports TPC-H data sets.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [1] pods.
-    Experiment is run once.
+* Type: tpch
+* Duration: 269s 
+* Code: 1782307837
+* This includes the reading queries of TPC-H.
+* This imports TPC-H data sets.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749631645 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782307837 9091:9091
 
 ### Connections
-PostgreSQL-BHT-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:389395728
-    datadisk:2757
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749631645
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:223221
+  * datadisk:2757
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782307837
 
-### Loading [s]
-                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1           0.0           89.0         1.0       89.0     180.0
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |      111.00 |           0.00 |            0.00 |         29.00 |           81.00 |              1 |           0 |             |                |             0 | False         |               32.43 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |        16.27 |      0.33 |           0.50 |                  1.72 |
+
+### Loading phase: component data generator
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
 
 ### Tests
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
 The **Loading** table breaks down time into phases:
@@ -1030,131 +1189,155 @@ test_tpch_run_postgresql.log
 
 ### Workload
 TPC-H Queries SF=1
-    Type: tpch
-    Duration: 506s 
-    Code: 1749632089
-    This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 600.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [64] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Services
-PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749632089 9091:9091
+* Type: tpch
+* Duration: 351s 
+* Code: 1782308137
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 600.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:389393760
-    datadisk:2757
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749632089
-
-### Errors (failed queries)
-No errors
-
-### Warnings (result mismatch)
-No warnings
-
-### Latency of Timer Execution [ms]
-DBMS                                                 PostgreSQL-BHT-1-1-1
-Pricing Summary Report (TPC-H Q1)                                 2558.68
-Minimum Cost Supplier Query (TPC-H Q2)                             440.98
-Shipping Priority (TPC-H Q3)                                       772.87
-Order Priority Checking Query (TPC-H Q4)                          1290.26
-Local Supplier Volume (TPC-H Q5)                                   673.11
-Forecasting Revenue Change (TPC-H Q6)                              508.40
-Forecasting Revenue Change (TPC-H Q7)                              794.26
-National Market Share (TPC-H Q8)                                   636.57
-Product Type Profit Measure (TPC-H Q9)                            1154.01
-Forecasting Revenue Change (TPC-H Q10)                            1275.45
-Important Stock Identification (TPC-H Q11)                         254.67
-Shipping Modes and Order Priority (TPC-H Q12)                     1065.38
-Customer Distribution (TPC-H Q13)                                 1991.37
-Forecasting Revenue Change (TPC-H Q14)                             567.41
-Top Supplier Query (TPC-H Q15)                                     558.84
-Parts/Supplier Relationship (TPC-H Q16)                            570.01
-Small-Quantity-Order Revenue (TPC-H Q17)                          1884.79
-Large Volume Customer (TPC-H Q18)                                 7194.80
-Discounted Revenue (TPC-H Q19)                                     709.86
-Potential Part Promotion (TPC-H Q20)                               661.73
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)                920.74
-Global Sales Opportunity Query (TPC-H Q22)                         248.82
-
-### Loading [s]
-                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1-1           0.0           87.0         1.0       88.0     177.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                      Geo Times [s]
-DBMS                               
-PostgreSQL-BHT-1-1-1           0.86
-
-### Power@Size ((3600*SF)/(geo times))
-                      Power@Size [~Q/h]
-DBMS                                   
-PostgreSQL-BHT-1-1-1            4163.28
-
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                 time [s]  count  SF  Throughput@Size
-DBMS               SF num_experiment num_client                                      
-PostgreSQL-BHT-1-1 1  1              1                 29      1   1          2731.03
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:223221
+  * datadisk:2757
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782308137
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT - Pods [[1]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
 
 #### Planned
-DBMS PostgreSQL-BHT-1 - Pods [[1]]
 
-### Ingestion - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1      144.14     0.04          3.79                 5.33
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
 
-### Ingestion - Loader
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1        4.97        0           0.0                 0.73
+### Loading
 
-### Execution - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1      121.82        0          3.85                 5.39
+#### Per Run
 
-### Execution - Benchmarker
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1           0        0           0.0                  0.0
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |      110.00 |           0.00 |            0.00 |         29.00 |           80.00 |              1 |           0 |             |                |             0 | False         |               32.73 |
+
+### Execution
+
+#### Per Connection
+
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         11 |            0.29 |            12590.58 |           7200.00 |           0 | PostgreSQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         11 |            0.29 |            12590.58 |           7200.00 |           0 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   PostgreSQL-1-1-1-1-1 |
+|:----------------------------------------------------|-----------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |                1162.36 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                 202.23 |
+| Shipping Priority (TPC-H Q3)                        |                 304.63 |
+| Order Priority Checking Query (TPC-H Q4)            |                 131.74 |
+| Local Supplier Volume (TPC-H Q5)                    |                 281.63 |
+| Forecasting Revenue Change (TPC-H Q6)               |                 190.26 |
+| Volume Shipping Query (TPC-H Q7)                    |                 377.36 |
+| National Market Share (TPC-H Q8)                    |                 193.01 |
+| Product Type Profit Measure (TPC-H Q9)              |                 557.27 |
+| Returned Item Reporting Query (TPC-H Q10)           |                 298.93 |
+| Important Stock Identification (TPC-H Q11)          |                  90.60 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                 279.81 |
+| Customer Distribution (TPC-H Q13)                   |                1444.53 |
+| Promotion Effect Query (TPC-H Q14)                  |                 309.12 |
+| Top Supplier Query (TPC-H Q15)                      |                 203.16 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                 226.64 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                 633.14 |
+| Large Volume Customer (TPC-H Q18)                   |                2882.49 |
+| Discounted Revenue (TPC-H Q19)                      |                  54.50 |
+| Potential Part Promotion (TPC-H Q20)                |                 133.07 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 271.66 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                  94.89 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        38.52 |      0.67 |           2.05 |                  3.60 |
+
+### Loading phase: component data generator
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         2.31 |      0.67 |           2.05 |                  3.60 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST failed: Workflow not as planned
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned
 ```
 
 The **Execution** section reports per-query latency in the **Latency of Timer Execution** table and the TPC-H standard metrics:
@@ -1191,34 +1374,37 @@ test_tpcds_start_postgresql.log
 
 ### Workload
 TPC-DS Start DBMS
-    Type: tpcds
-    Duration: 189s 
-    Code: 1749632646
-    Start DBMS and do not load data.
-    This just starts a SUT.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    SUT is fixed to cl-worker11.
-    Experiment is run once.
+* Type: tpcds
+* Duration: 169s 
+* Code: 1782308542
+* Start DBMS and do not load data.
+* This just starts a SUT.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749632646 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782308542 9091:9091
 
 ### Connections
-PostgreSQL-BHT-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386609984
-    datadisk:39
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749632646
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:220503
+  * datadisk:39
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782308542
 
 ### Tests
 ```
@@ -1245,45 +1431,75 @@ test_tpcds_load_postgresql.log
 
 ### Workload
 TPC-DS Data Loading SF=1
-    Type: tpcds
-    Duration: 268s 
-    Code: 1749632890
-    This includes the reading queries of TPC-DS.
-    This imports TPC-DS data sets.
-    TPC-DS (SF=1) data is loaded and benchmark is executed.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [1] pods.
-    Experiment is run once.
+* Type: tpcds
+* Duration: 368s 
+* Code: 1782308736
+* This includes the reading queries of TPC-DS.
+* This imports TPC-DS data sets.
+  * TPC-DS (SF=1) data is loaded and benchmark is executed.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Experiment is run once.
 
 ### Services
-PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749632890 9091:9091
+PostgreSQL-1
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782308736 9091:9091
 
 ### Connections
-PostgreSQL-BHT-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386611056
-    datadisk:40
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749632890
+* PostgreSQL-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:226210
+  * datadisk:5747
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782308736
 
-### Loading [s]
-                    timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1           0.0            0.0         1.0        1.0       3.0
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |      197.00 |           1.00 |            0.00 |         63.00 |          132.00 |              1 |           0 |             | None           |             0 | False         |               18.27 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |        98.89 |      1.53 |           2.82 |                  5.50 |
+
+### Loading phase: component data generator
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1 |         7.82 |      0.17 |           0.00 |                  0.67 |
 
 ### Tests
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
 ### Start DBMS and Load Data and Run Workload
@@ -1314,210 +1530,232 @@ test_tpcds_run_postgresql.log
 
 ### Workload
 TPC-DS Queries SF=1
-    Type: tpcds
-    Duration: 350s 
-    Code: 1749633193
-    This includes the reading queries of TPC-DS.
-    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-    TPC-DS (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q99.
-    All instances use the same query parameters.
-    Timeout per query is 600.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [64] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
-
-### Services
-PostgreSQL-BHT-1
-    kubectl --context perdelt port-forward service/bexhoma-sut-postgresql-bht-1-1749633193 9091:9091
+* Type: tpcds
+* Duration: 585s 
+* Code: 1782309137
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 600.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-1-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:386610852
-    datadisk:40
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1749633193
-
-### Errors (failed queries)
-            PostgreSQL-BHT-1-1-1
-TPC-DS Q90                  True
-TPC-DS Q90
-PostgreSQL-BHT-1-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: division by zero
-
-### Warnings (result mismatch)
-No warnings
-
-### Latency of Timer Execution [ms]
-DBMS           PostgreSQL-BHT-1-1-1
-TPC-DS Q1                     49.55
-TPC-DS Q2                      7.15
-TPC-DS Q3                      3.42
-TPC-DS Q4                     11.50
-TPC-DS Q5                     11.24
-TPC-DS Q6                      3.75
-TPC-DS Q7                      3.06
-TPC-DS Q8                      5.80
-TPC-DS Q9                      4.27
-TPC-DS Q10                     5.08
-TPC-DS Q11                     4.47
-TPC-DS Q12                     3.37
-TPC-DS Q13                     5.07
-TPC-DS Q14a+b                 24.71
-TPC-DS Q15                     2.28
-TPC-DS Q16                     4.71
-TPC-DS Q17                    11.98
-TPC-DS Q18                     4.43
-TPC-DS Q19                     4.27
-TPC-DS Q20                     2.17
-TPC-DS Q21                     3.75
-TPC-DS Q22                     2.12
-TPC-DS Q23a+b                 10.88
-TPC-DS Q24a+b                  8.88
-TPC-DS Q25                    21.37
-TPC-DS Q26                     2.47
-TPC-DS Q27                     2.45
-TPC-DS Q28                  1721.81
-TPC-DS Q29                    16.58
-TPC-DS Q30                     3.09
-TPC-DS Q31                     5.68
-TPC-DS Q32                     2.40
-TPC-DS Q33                     5.38
-TPC-DS Q34                     2.96
-TPC-DS Q35                     4.64
-TPC-DS Q36                     2.93
-TPC-DS Q37                     2.11
-TPC-DS Q38                     3.15
-TPC-DS Q39a+b                  5.61
-TPC-DS Q40                     3.36
-TPC-DS Q41                     2.57
-TPC-DS Q42                     1.80
-TPC-DS Q43                     2.29
-TPC-DS Q44                     2.77
-TPC-DS Q45                     2.37
-TPC-DS Q46                     2.88
-TPC-DS Q47                     3.18
-TPC-DS Q48                     2.35
-TPC-DS Q49                     4.83
-TPC-DS Q50                     3.29
-TPC-DS Q51                     2.80
-TPC-DS Q52                     1.52
-TPC-DS Q53                     2.09
-TPC-DS Q54                     3.61
-TPC-DS Q55                     1.44
-TPC-DS Q56                     4.19
-TPC-DS Q57                     3.02
-TPC-DS Q58                     4.70
-TPC-DS Q59                     3.82
-TPC-DS Q60                     4.20
-TPC-DS Q61                  1841.66
-TPC-DS Q62                     3.76
-TPC-DS Q63                     2.52
-TPC-DS Q64                   120.22
-TPC-DS Q65                     2.34
-TPC-DS Q66                     8.31
-TPC-DS Q67                     2.42
-TPC-DS Q68                     2.46
-TPC-DS Q69                     3.36
-TPC-DS Q70                     2.93
-TPC-DS Q71                     2.46
-TPC-DS Q72                     8.93
-TPC-DS Q73                     2.08
-TPC-DS Q74                     3.27
-TPC-DS Q75                     5.32
-TPC-DS Q76                     2.42
-TPC-DS Q77                  2355.24
-TPC-DS Q78                     5.07
-TPC-DS Q79                     1.91
-TPC-DS Q80                     8.25
-TPC-DS Q81                     2.44
-TPC-DS Q82                     1.85
-TPC-DS Q83                     3.60
-TPC-DS Q84                     2.25
-TPC-DS Q85                     8.81
-TPC-DS Q86                     1.83
-TPC-DS Q87                     2.27
-TPC-DS Q88                  2933.43
-TPC-DS Q89                     2.65
-TPC-DS Q91                     3.66
-TPC-DS Q92                     1.79
-TPC-DS Q93                     1.63
-TPC-DS Q94                     2.90
-TPC-DS Q95                     3.70
-TPC-DS Q96                     1.43
-TPC-DS Q97                     1.93
-TPC-DS Q98                     1.61
-TPC-DS Q99                     2.07
-
-### Loading [s]
-                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-1-1-1           0.0            0.0         1.0        1.0       3.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                      Geo Times [s]
-DBMS                               
-PostgreSQL-BHT-1-1-1            0.0
-
-### Power@Size ((3600*SF)/(geo times))
-                      Power@Size [~Q/h]
-DBMS                                   
-PostgreSQL-BHT-1-1-1          730912.95
-
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                 time [s]  count  SF  Throughput@Size
-DBMS               SF num_experiment num_client                                      
-PostgreSQL-BHT-1-1 1  1              1                 17      1   1         20752.94
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:226210
+  * datadisk:5747
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782309137
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT - Pods [[1]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
 #### Planned
-DBMS PostgreSQL-BHT-1 - Pods [[1]]
 
-### Ingestion - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1         0.0      0.0          2.35                 2.38
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
-### Ingestion - Loader
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1           0        0           0.0                  0.0
+### Loading
 
-### Execution - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1       10.35     0.18          2.36                 2.39
+#### Per Run
 
-### Execution - Benchmarker
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-1-1           0        0           0.0                  0.0
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |    1 |      194.00 |           0.00 |            0.00 |         62.00 |          130.00 |              1 |           0 |             | None           |             0 | False         |               18.56 |
+
+### Execution
+
+#### Per Connection
+
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |        177 |            0.36 |            10054.69 |           2013.56 |          -1 | PostgreSQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |        177 |            0.36 |            10054.69 |           2013.56 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries       |   PostgreSQL-1-1-1-1-1 |
+|:--------------|-----------------------:|
+| TPC-DS Q1     |                 127.73 |
+| TPC-DS Q2     |                 312.43 |
+| TPC-DS Q3     |                 188.47 |
+| TPC-DS Q4     |                8922.19 |
+| TPC-DS Q5     |                 530.52 |
+| TPC-DS Q6     |               51798.15 |
+| TPC-DS Q7     |                 375.14 |
+| TPC-DS Q8     |                  69.22 |
+| TPC-DS Q9     |                2497.53 |
+| TPC-DS Q10    |                1187.07 |
+| TPC-DS Q11    |                5421.18 |
+| TPC-DS Q12    |                  62.56 |
+| TPC-DS Q13    |                 577.65 |
+| TPC-DS Q14a+b |                2099.85 |
+| TPC-DS Q15    |                 108.23 |
+| TPC-DS Q16    |                 182.95 |
+| TPC-DS Q17    |                 287.66 |
+| TPC-DS Q18    |                 375.59 |
+| TPC-DS Q19    |                 166.11 |
+| TPC-DS Q20    |                 107.04 |
+| TPC-DS Q21    |                 232.32 |
+| TPC-DS Q22    |                3949.31 |
+| TPC-DS Q23a+b |                5435.30 |
+| TPC-DS Q24a+b |                 705.70 |
+| TPC-DS Q25    |                 357.89 |
+| TPC-DS Q26    |                 263.42 |
+| TPC-DS Q27    |                  37.13 |
+| TPC-DS Q28    |                 861.96 |
+| TPC-DS Q29    |                 355.98 |
+| TPC-DS Q30    |                8750.39 |
+| TPC-DS Q31    |                1535.26 |
+| TPC-DS Q32    |                  77.95 |
+| TPC-DS Q33    |                 426.68 |
+| TPC-DS Q34    |                  35.09 |
+| TPC-DS Q35    |                1366.75 |
+| TPC-DS Q36    |                  36.16 |
+| TPC-DS Q37    |                 553.56 |
+| TPC-DS Q38    |                1381.16 |
+| TPC-DS Q39a+b |                2587.64 |
+| TPC-DS Q40    |                 131.75 |
+| TPC-DS Q41    |                 881.31 |
+| TPC-DS Q42    |                 100.36 |
+| TPC-DS Q43    |                  34.45 |
+| TPC-DS Q44    |                   3.53 |
+| TPC-DS Q45    |                  88.03 |
+| TPC-DS Q46    |                  43.17 |
+| TPC-DS Q47    |                1766.50 |
+| TPC-DS Q48    |                 622.78 |
+| TPC-DS Q49    |                 482.28 |
+| TPC-DS Q50    |                 422.69 |
+| TPC-DS Q51    |                 814.58 |
+| TPC-DS Q52    |                  93.10 |
+| TPC-DS Q53    |                 122.83 |
+| TPC-DS Q54    |                  96.51 |
+| TPC-DS Q55    |                  94.57 |
+| TPC-DS Q56    |                 434.94 |
+| TPC-DS Q57    |                 824.05 |
+| TPC-DS Q58    |                 421.86 |
+| TPC-DS Q59    |                 445.07 |
+| TPC-DS Q60    |                 384.17 |
+| TPC-DS Q61    |                 172.89 |
+| TPC-DS Q62    |                 119.71 |
+| TPC-DS Q63    |                 120.33 |
+| TPC-DS Q64    |                 670.19 |
+| TPC-DS Q65    |                 595.19 |
+| TPC-DS Q66    |                 217.19 |
+| TPC-DS Q67    |                2897.31 |
+| TPC-DS Q68    |                  46.50 |
+| TPC-DS Q69    |                 269.83 |
+| TPC-DS Q70    |                 383.19 |
+| TPC-DS Q71    |                 345.73 |
+| TPC-DS Q72    |                 822.10 |
+| TPC-DS Q73    |                  37.03 |
+| TPC-DS Q74    |                 886.82 |
+| TPC-DS Q75    |                1037.75 |
+| TPC-DS Q76    |                 162.64 |
+| TPC-DS Q77    |                 392.28 |
+| TPC-DS Q78    |                1753.25 |
+| TPC-DS Q79    |                 179.18 |
+| TPC-DS Q80    |                 579.86 |
+| TPC-DS Q81    |               38959.51 |
+| TPC-DS Q82    |                 806.39 |
+| TPC-DS Q83    |                 100.88 |
+| TPC-DS Q84    |                  97.10 |
+| TPC-DS Q85    |                 347.72 |
+| TPC-DS Q86    |                 207.42 |
+| TPC-DS Q87    |                1427.97 |
+| TPC-DS Q88    |                2984.98 |
+| TPC-DS Q89    |                  37.75 |
+| TPC-DS Q90    |                 133.71 |
+| TPC-DS Q91    |                 154.90 |
+| TPC-DS Q92    |                  57.54 |
+| TPC-DS Q93    |                 225.38 |
+| TPC-DS Q94    |                 169.22 |
+| TPC-DS Q95    |                3078.26 |
+| TPC-DS Q96    |                 101.50 |
+| TPC-DS Q97    |                 384.47 |
+| TPC-DS Q98    |                 173.97 |
+| TPC-DS Q99    |                 176.20 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        78.34 |      0.87 |           2.17 |                  4.58 |
+
+### Loading phase: component data generator
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         9.66 |      0.30 |           0.00 |                  0.98 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       240.60 |      2.08 |           3.10 |                  5.79 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        13.15 |      0.43 |           0.30 |                  0.30 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST failed: SQL errors
-TEST passed: No SQL warnings
-TEST failed: Workflow not as planned
-TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]
-TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned
 ```
 
 The **Execution** section reports per-query latency for all 99 TPC-DS queries and the same Power@Size / Throughput@Size metrics as TPC-H.
