@@ -4951,6 +4951,1367 @@ TEST passed: Workflow as planned
 ```
 
 
+### MonetDB
+
+#### TPC-DS Simple
+
+```bash
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log
+```
+
+yields (after ca. 15 minutes) something like
+
+test_tpcds_testcase_monetdb_1.log
+```markdown
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=3
+    Type: tpcds
+    Duration: 758s 
+    Code: 1728673738
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:255699240
+    datadisk:6065064
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1
+TPC-DS Q1                  76.88
+TPC-DS Q2                 531.08
+TPC-DS Q3                  56.28
+TPC-DS Q4                3972.34
+TPC-DS Q5                 967.40
+TPC-DS Q6                 224.50
+TPC-DS Q7                 128.69
+TPC-DS Q8                 190.76
+TPC-DS Q9                 143.71
+TPC-DS Q10                142.15
+TPC-DS Q11               1816.96
+TPC-DS Q12                 49.89
+TPC-DS Q13                156.28
+TPC-DS Q14a+b            6943.98
+TPC-DS Q15                 52.38
+TPC-DS Q16                312.98
+TPC-DS Q17                434.73
+TPC-DS Q18                264.32
+TPC-DS Q19                 73.88
+TPC-DS Q20                 60.53
+TPC-DS Q21                120.54
+TPC-DS Q22               2664.17
+TPC-DS Q23a+b            8569.72
+TPC-DS Q24a+b             363.35
+TPC-DS Q25                274.53
+TPC-DS Q26                 60.79
+TPC-DS Q27                353.54
+TPC-DS Q28                182.72
+TPC-DS Q29                343.25
+TPC-DS Q30                 39.49
+TPC-DS Q31                533.66
+TPC-DS Q32                 41.02
+TPC-DS Q33                 43.13
+TPC-DS Q34                 48.97
+TPC-DS Q35                186.25
+TPC-DS Q37                115.68
+TPC-DS Q38                578.45
+TPC-DS Q39a+b            3895.54
+TPC-DS Q40                 84.08
+TPC-DS Q41                 12.36
+TPC-DS Q42                 47.25
+TPC-DS Q43                 93.87
+TPC-DS Q44                 66.22
+TPC-DS Q45                 39.91
+TPC-DS Q46                 80.79
+TPC-DS Q47                557.04
+TPC-DS Q48                119.43
+TPC-DS Q49                288.21
+TPC-DS Q50                212.09
+TPC-DS Q51               1817.76
+TPC-DS Q52                 35.35
+TPC-DS Q53                 55.80
+TPC-DS Q54                139.88
+TPC-DS Q55                 28.61
+TPC-DS Q56                 54.76
+TPC-DS Q57                160.48
+TPC-DS Q58                116.64
+TPC-DS Q59                263.77
+TPC-DS Q60                 56.63
+TPC-DS Q61                 66.36
+TPC-DS Q62                 60.03
+TPC-DS Q63                 46.83
+TPC-DS Q64               1045.75
+TPC-DS Q65                392.84
+TPC-DS Q66                301.18
+TPC-DS Q67               2346.23
+TPC-DS Q68                 71.98
+TPC-DS Q69                 75.61
+TPC-DS Q71                 61.34
+TPC-DS Q72                283.64
+TPC-DS Q73                 42.26
+TPC-DS Q74               1788.02
+TPC-DS Q75               2708.57
+TPC-DS Q76                 70.94
+TPC-DS Q77                178.39
+TPC-DS Q78               3220.20
+TPC-DS Q79                102.33
+TPC-DS Q80               1819.42
+TPC-DS Q81                 53.07
+TPC-DS Q82                177.85
+TPC-DS Q83                 30.26
+TPC-DS Q84                 90.80
+TPC-DS Q85                 72.05
+TPC-DS Q87                794.75
+TPC-DS Q88                193.52
+TPC-DS Q89                 77.79
+TPC-DS Q90                 20.14
+TPC-DS Q91                 30.77
+TPC-DS Q92                 26.66
+TPC-DS Q93                303.20
+TPC-DS Q94                 75.19
+TPC-DS Q95                172.45
+TPC-DS Q96                 25.95
+TPC-DS Q97                931.61
+TPC-DS Q98                 84.55
+TPC-DS Q99                103.49
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1           1.0          287.0         9.0      124.0     428.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MonetDB-BHT-8-1-1           0.19
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MonetDB-BHT-8-1-1           62559.68
+
+### Throughput@Size
+                                              time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS            SF num_experiment num_client                                              
+MonetDB-BHT-8-1 3  1              1                 71      1   3                  3346.48
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Workflow as planned
+```
+
+#### TPC-DS Monitoring
+
+```bash
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_2.log
+```
+
+yields (after ca. 15 minutes) something like
+
+test_tpcds_testcase_monetdb_2.log
+```markdown
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=3
+    Type: tpcds
+    Duration: 750s 
+    Code: 1728674578
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:255699500
+    datadisk:6065324
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1
+TPC-DS Q1                  71.17
+TPC-DS Q2                 450.88
+TPC-DS Q3                  42.54
+TPC-DS Q4                3994.92
+TPC-DS Q5                 938.16
+TPC-DS Q6                 230.07
+TPC-DS Q7                 143.51
+TPC-DS Q8                 179.85
+TPC-DS Q9                 139.41
+TPC-DS Q10                126.56
+TPC-DS Q11               1928.03
+TPC-DS Q12                 41.43
+TPC-DS Q13                156.77
+TPC-DS Q14a+b            7366.31
+TPC-DS Q15                 50.87
+TPC-DS Q16                316.28
+TPC-DS Q17                462.37
+TPC-DS Q18                264.26
+TPC-DS Q19                 83.63
+TPC-DS Q20                 52.60
+TPC-DS Q21                139.23
+TPC-DS Q22               2539.13
+TPC-DS Q23a+b            9125.71
+TPC-DS Q24a+b             329.99
+TPC-DS Q25                268.20
+TPC-DS Q26                 62.62
+TPC-DS Q27                411.59
+TPC-DS Q28                173.33
+TPC-DS Q29                276.84
+TPC-DS Q30                 38.25
+TPC-DS Q31                537.96
+TPC-DS Q32                 41.58
+TPC-DS Q33                 45.19
+TPC-DS Q34                 50.39
+TPC-DS Q35                197.19
+TPC-DS Q37                144.80
+TPC-DS Q38                624.65
+TPC-DS Q39a+b            2705.73
+TPC-DS Q40                 92.95
+TPC-DS Q41                  9.05
+TPC-DS Q42                 38.56
+TPC-DS Q43                 95.35
+TPC-DS Q44                 66.62
+TPC-DS Q45                 37.50
+TPC-DS Q46                 73.56
+TPC-DS Q47                589.54
+TPC-DS Q48                138.58
+TPC-DS Q49                250.68
+TPC-DS Q50                222.02
+TPC-DS Q51               1888.21
+TPC-DS Q52                 36.24
+TPC-DS Q53                 57.38
+TPC-DS Q54                127.25
+TPC-DS Q55                 29.13
+TPC-DS Q56                 49.88
+TPC-DS Q57                277.96
+TPC-DS Q58                111.17
+TPC-DS Q59                263.93
+TPC-DS Q60                 51.83
+TPC-DS Q61                 60.86
+TPC-DS Q62                 50.67
+TPC-DS Q63                 52.95
+TPC-DS Q64               1104.19
+TPC-DS Q65                350.95
+TPC-DS Q66                298.67
+TPC-DS Q67               2265.86
+TPC-DS Q68                 76.28
+TPC-DS Q69                 36.60
+TPC-DS Q71                 63.73
+TPC-DS Q72                308.22
+TPC-DS Q73                 41.60
+TPC-DS Q74                603.63
+TPC-DS Q75               3349.52
+TPC-DS Q76                 75.23
+TPC-DS Q77                177.01
+TPC-DS Q78               3180.86
+TPC-DS Q79                 81.80
+TPC-DS Q80               2156.84
+TPC-DS Q81                 36.36
+TPC-DS Q82                129.02
+TPC-DS Q83                 27.41
+TPC-DS Q84                102.74
+TPC-DS Q85                 72.85
+TPC-DS Q87                748.00
+TPC-DS Q88                183.99
+TPC-DS Q89                 70.10
+TPC-DS Q90                 25.53
+TPC-DS Q91                 25.37
+TPC-DS Q92                 28.20
+TPC-DS Q93                336.76
+TPC-DS Q94                 64.51
+TPC-DS Q95                180.87
+TPC-DS Q96                 37.48
+TPC-DS Q97                914.34
+TPC-DS Q98                 83.00
+TPC-DS Q99                 90.09
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1           1.0          286.0         9.0      121.0     424.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MonetDB-BHT-8-1-1           0.18
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MonetDB-BHT-8-1-1            64558.7
+
+### Throughput@Size
+                                              time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS            SF num_experiment num_client                                              
+MonetDB-BHT-8-1 3  1              1                 70      1   3                  3394.29
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+### Ingestion - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1      686.56     1.82          1.78                 7.68
+
+### Ingestion - Loader
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1       57.45     0.21          1.18                 2.72
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1      143.76        0          4.72                10.28
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1       12.61        0          0.25                 0.26
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
+#### TPC-DS Throughput Test
+
+```bash
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -nc 2 \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_3.log
+```
+
+yields (after ca. 20 minutes) something like
+
+test_tpcds_testcase_monetdb_3.log
+```markdown
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=3
+    Type: tpcds
+    Duration: 995s 
+    Code: 1728675428
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=3) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 30Gi.
+    Loading is tested with [1] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 2] times the number of benchmarking pods.
+    Experiment is run 2 times.
+
+### Connections
+MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5486698
+    volume_size:100G
+    volume_used:5.3G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558770
+    volume_size:100G
+    volume_used:5.3G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-1-2-2 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558770
+    volume_size:100G
+    volume_used:5.3G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558771
+    volume_size:100G
+    volume_used:5.4G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558197
+    volume_size:100G
+    volume_used:5.4G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-2-2 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:5558197
+    volume_size:100G
+    volume_used:5.4G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+            MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-1-2-2  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1  MonetDB-BHT-8-2-2-2
+TPC-DS Q1                  True                 True                 True                 True                 True                False
+TPC-DS Q25                 True                 True                 True                 True                 True                False
+TPC-DS Q34                 True                 True                 True                 True                 True                False
+TPC-DS Q43                 True                 True                 True                 True                 True                False
+TPC-DS Q44                 True                 True                 True                 True                 True                False
+TPC-DS Q46                 True                 True                 True                 True                 True                False
+TPC-DS Q54                 True                 True                 True                 True                 True                False
+TPC-DS Q68                 True                 True                 True                 True                 True                False
+TPC-DS Q73                 True                 True                 True                 True                 True                False
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-1-2-2  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1  MonetDB-BHT-8-2-2-2
+TPC-DS Q1                  1457.90                55.71                52.77              1036.26                53.04                64.40
+TPC-DS Q2                  8897.17               433.92               417.83              6701.04               416.75               425.14
+TPC-DS Q3                  2492.94                43.05                33.73              1810.61                40.69                38.67
+TPC-DS Q4                 12439.46              3795.57              3938.42             10047.81              4018.64              3859.93
+TPC-DS Q5                  6301.59               740.40               634.56              3798.51               689.95               622.01
+TPC-DS Q6                   582.82               217.37               175.64               486.61               155.69               150.46
+TPC-DS Q7                  2761.20                96.81                82.15              2552.40                86.28               122.09
+TPC-DS Q8                  1220.89               128.82               120.85              1012.07                95.54               119.90
+TPC-DS Q9                   635.23               230.87               222.55               513.18               195.19               176.37
+TPC-DS Q10                 1944.22                66.97                74.34              1442.27                64.76               115.25
+TPC-DS Q11                 1995.57              1960.02              1840.68              1973.40              1940.35              1893.88
+TPC-DS Q12                  901.53                37.77                39.34               811.98                32.13                36.08
+TPC-DS Q13                  298.44               184.98               173.74               196.24               136.51               151.76
+TPC-DS Q14a+b              7875.23              7310.76              6835.78              6959.55              6064.90              5986.83
+TPC-DS Q15                  317.83                40.80                36.44               183.75                33.21                57.51
+TPC-DS Q16                 1582.59               280.60               283.50              1249.30               284.59               274.86
+TPC-DS Q17                 1246.26               329.36               365.05              1072.00               312.44               437.02
+TPC-DS Q18                  949.22               220.84               266.57              1394.53               223.82               229.80
+TPC-DS Q19                  163.75                82.94                77.59               125.20                81.99                86.57
+TPC-DS Q20                   58.07                52.46                51.33                52.19                48.89                50.37
+TPC-DS Q21                 7896.30                66.97                93.68              5718.54                93.54               103.29
+TPC-DS Q22                 2789.12              2970.36              2736.95              2785.88              2820.73              2821.87
+TPC-DS Q23a+b              6467.52              6817.87              7425.04              6773.74              6912.46              6692.53
+TPC-DS Q24a+b               786.52               360.59               328.72               930.28               354.57               310.32
+TPC-DS Q25                  390.95               382.50               379.47               832.69               378.67               372.53
+TPC-DS Q26                  414.53                62.61               113.07               230.80                60.97               153.19
+TPC-DS Q27                  391.67               336.29               388.75               485.71               368.16               340.48
+TPC-DS Q28                  810.17               195.01               184.20               651.45               175.24               175.50
+TPC-DS Q29                  348.06               408.32               421.04               349.08               362.12               466.38
+TPC-DS Q30                  256.94                51.04                48.23               135.65                65.69                32.77
+TPC-DS Q31                  853.96               411.53               457.30               899.25               449.57               464.16
+TPC-DS Q32                   39.75                39.67                40.41                64.72                34.82                34.99
+TPC-DS Q33                  158.07                56.13                49.50                92.59                53.07                53.46
+TPC-DS Q34                  667.98                44.71                44.78               439.87                45.05                51.55
+TPC-DS Q35                  193.79               227.84               208.86               223.47               218.79               191.00
+TPC-DS Q37                  183.74                66.45               108.31               363.26                65.78                62.99
+TPC-DS Q38                  559.49               612.53               612.32               649.48               577.21               605.82
+TPC-DS Q39a+b              2795.62              2621.09              2604.48              2728.80              2441.65              2736.29
+TPC-DS Q40                  454.41                84.46                95.53               672.49                81.85                82.76
+TPC-DS Q41                    8.78                12.81                 8.59                 9.38                 9.06                 8.77
+TPC-DS Q42                   36.26                38.52                89.67                37.75                50.32                46.54
+TPC-DS Q43                   99.81               105.60                94.91               101.64               105.66               116.34
+TPC-DS Q44                   67.60                65.70                80.38                70.85                78.03                63.74
+TPC-DS Q45                   36.77                48.37                41.96                39.58                41.19                41.62
+TPC-DS Q46                  293.60               112.61                80.49               126.50                72.92               107.04
+TPC-DS Q47                  652.86               629.48               689.78               665.06               646.98               666.18
+TPC-DS Q48                  129.64               126.69               134.31               453.37               129.62               150.58
+TPC-DS Q49                  994.84               254.84               265.41               631.35               224.06               234.91
+TPC-DS Q50                  411.80               257.95               239.26               331.69               232.09               340.69
+TPC-DS Q51                 1810.95              1761.45              1819.17              1792.25              1836.54              1803.62
+TPC-DS Q52                   38.61                37.25                37.28                73.31                36.40                38.77
+TPC-DS Q53                   63.88                57.65                57.54                66.58                56.20                70.13
+TPC-DS Q54                  295.37                36.98                43.54               232.27                41.14                46.92
+TPC-DS Q55                   36.21                29.34                29.12                30.14                29.58                34.00
+TPC-DS Q56                   65.69                45.06                46.22                42.60                57.03                43.49
+TPC-DS Q57                  258.10               182.61               187.59               196.75               187.37               228.58
+TPC-DS Q58                  120.90               118.55               131.27               118.36               118.08               142.61
+TPC-DS Q59                  279.80               517.06               524.65               249.02               256.63               260.00
+TPC-DS Q60                  173.97                58.92                58.14               182.61                62.58                60.17
+TPC-DS Q61                  132.04                67.16                66.30                91.42               167.82                64.46
+TPC-DS Q62                  729.19               283.22               281.48               559.81                52.02                46.38
+TPC-DS Q63                   54.77                76.32                74.40                53.21                50.57                62.17
+TPC-DS Q64                 1324.58               643.39               614.00              1151.97               582.28               597.60
+TPC-DS Q65                  411.61               419.52               409.04               397.73               425.15               440.10
+TPC-DS Q66                 1267.26               538.76               627.83               716.93               306.93               279.70
+TPC-DS Q67                 2420.32              2473.85              2260.13              2270.07              2176.51              2418.12
+TPC-DS Q68                  733.11                79.67                72.15               235.31                76.59                73.66
+TPC-DS Q69                  286.03                71.44                76.99                80.09                76.24                83.76
+TPC-DS Q71                  493.94                60.72                72.69               104.31                64.92               420.97
+TPC-DS Q72                 2568.27              3801.24              3849.62              2638.45              3913.62              2981.85
+TPC-DS Q73                   52.42                42.56                42.55                42.67                44.51                44.01
+TPC-DS Q74                  553.73               613.68               598.28               553.55               564.35               579.13
+TPC-DS Q75                 4278.21              2325.02              2354.85              3556.34              2403.58              2328.77
+TPC-DS Q76                   72.60                76.63                73.81                67.52                83.05                72.04
+TPC-DS Q77                  413.48               173.82               180.13               350.36               180.41               188.84
+TPC-DS Q78                 3199.09              3134.83              3575.71              3106.40              2970.40              3732.60
+TPC-DS Q79                  211.67                88.75                85.18               174.57                78.34                83.01
+TPC-DS Q80                 2100.88              2233.29              2029.86              2173.84              2227.43              2372.94
+TPC-DS Q81                  192.89                33.27                60.99                99.19                34.15                32.81
+TPC-DS Q82                  544.84                69.25                72.32               437.80                76.63                67.48
+TPC-DS Q83                  133.69                21.77                21.10               176.84                21.54                22.19
+TPC-DS Q84                  335.91                16.58                14.86               364.21                16.59                15.92
+TPC-DS Q85                  198.42                70.18                74.61                86.76                95.47                82.30
+TPC-DS Q87                  750.08               777.95               754.70               755.24               754.57               751.73
+TPC-DS Q88                  789.86               191.05               199.44               504.00               180.22               205.46
+TPC-DS Q89                   83.55                81.68                75.47                77.83                80.40                75.74
+TPC-DS Q90                  746.61                22.87                20.18               423.59                20.78                32.37
+TPC-DS Q91                  189.19                26.79                25.40                69.64                27.00                27.08
+TPC-DS Q92                   27.13                25.20                24.32                24.93                25.59                26.29
+TPC-DS Q93                  353.73               446.38               438.20               335.19               328.46               317.22
+TPC-DS Q94                  441.25                63.27                65.71               295.77                67.04                62.92
+TPC-DS Q95                  200.01               255.47               252.36               193.54               186.92               208.63
+TPC-DS Q96                   25.11                25.25                24.40                24.63                24.59                25.76
+TPC-DS Q97                  888.44               955.01               970.64               865.66              1030.15               947.86
+TPC-DS Q98                   85.35                83.53                86.75                86.76                87.75                89.26
+TPC-DS Q99                   91.98               101.54                94.49                94.38                97.89                90.17
+
+### Loading [s]
+                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-1-2-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-1-2-2           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-2-1-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-2-2-1           1.0          275.0         5.0      105.0     393.0
+MonetDB-BHT-8-2-2-2           1.0          275.0         5.0      105.0     393.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                     Geo Times [s]
+DBMS                              
+MonetDB-BHT-8-1-1-1           0.43
+MonetDB-BHT-8-1-2-1           0.18
+MonetDB-BHT-8-1-2-2           0.18
+MonetDB-BHT-8-2-1-1           0.38
+MonetDB-BHT-8-2-2-1           0.17
+MonetDB-BHT-8-2-2-2           0.18
+
+### Power@Size
+                     Power@Size [~Q/h]
+DBMS                                  
+MonetDB-BHT-8-1-1-1           25917.90
+MonetDB-BHT-8-1-2-1           64333.08
+MonetDB-BHT-8-1-2-2           63407.94
+MonetDB-BHT-8-2-1-1           30183.86
+MonetDB-BHT-8-2-2-1           67882.00
+MonetDB-BHT-8-2-2-2           64231.37
+
+### Throughput@Size
+                                                time [s]  count  SF  Throughput@Size [~GB/h]
+DBMS              SF num_experiment num_client                                              
+MonetDB-BHT-8-1-1 3  1              1                129      1   3                  1841.86
+MonetDB-BHT-8-1-2 3  1              2                 68      2   3                  6988.24
+MonetDB-BHT-8-2-1 3  2              1                114      1   3                  2084.21
+MonetDB-BHT-8-2-2 3  2              2                 65      2   3                  7310.77
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1, 2], [1, 2]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1, 2], [1, 2]]
+
+### Execution - SUT
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1-1      238.66     0.00          3.32                 8.23
+MonetDB-BHT-8-1-2      565.72     9.99         16.86                22.39
+MonetDB-BHT-8-2-1     1154.98     0.00          7.93                16.96
+MonetDB-BHT-8-2-2      334.40     0.00          5.01                10.34
+
+### Execution - Benchmarker
+                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1-1       14.10     0.05          0.25                 0.26
+MonetDB-BHT-8-1-2       34.05     0.33          0.75                 0.78
+MonetDB-BHT-8-2-1       34.05     0.00          0.74                 0.77
+MonetDB-BHT-8-2-2       27.37     0.00          0.73                 0.76
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
+#### TPC-DS Power Test Large
+
+```bash
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 100 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 300Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_4.log
+```
+
+yields (after ca. 110 minutes) something like
+
+test_tpcds_testcase_monetdb_4.log
+```markdown
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=100
+    Type: tpcds
+    Duration: 6331s 
+    Code: 1728676629
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=100) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 300Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:249634108
+    datadisk:162530732
+    volume_size:300G
+    volume_used:155G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+No errors
+
+### Warnings (result mismatch)
+No warnings
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1
+TPC-DS Q1               21540.10
+TPC-DS Q2              234536.17
+TPC-DS Q3               52161.56
+TPC-DS Q4              383862.53
+TPC-DS Q5              130445.75
+TPC-DS Q6               12467.55
+TPC-DS Q7               73421.64
+TPC-DS Q8               47626.63
+TPC-DS Q9               35999.02
+TPC-DS Q10              13875.78
+TPC-DS Q11              87521.23
+TPC-DS Q12               2813.57
+TPC-DS Q13               7253.94
+TPC-DS Q14a+b          410993.67
+TPC-DS Q15              11345.34
+TPC-DS Q16              20444.94
+TPC-DS Q17             112165.36
+TPC-DS Q18              24168.99
+TPC-DS Q19               5743.73
+TPC-DS Q20               1023.79
+TPC-DS Q21              91704.61
+TPC-DS Q22              86337.22
+TPC-DS Q23a+b         2736895.84
+TPC-DS Q24a+b            6107.79
+TPC-DS Q25              20943.89
+TPC-DS Q26               1762.98
+TPC-DS Q27              28616.77
+TPC-DS Q28              24479.10
+TPC-DS Q29              14225.98
+TPC-DS Q30               2905.96
+TPC-DS Q31              22703.53
+TPC-DS Q32                535.63
+TPC-DS Q33              14858.80
+TPC-DS Q34               2961.26
+TPC-DS Q35               7629.06
+TPC-DS Q37              34972.06
+TPC-DS Q38              29446.64
+TPC-DS Q39a+b           79446.39
+TPC-DS Q40               5005.79
+TPC-DS Q41                340.97
+TPC-DS Q42               2261.78
+TPC-DS Q43               2160.14
+TPC-DS Q44               3335.84
+TPC-DS Q45               1007.63
+TPC-DS Q46               2493.34
+TPC-DS Q47               5878.41
+TPC-DS Q48               1175.38
+TPC-DS Q49              38294.50
+TPC-DS Q50               3741.81
+TPC-DS Q51              50318.14
+TPC-DS Q52               1265.41
+TPC-DS Q53               2107.47
+TPC-DS Q54               7608.31
+TPC-DS Q55               2060.64
+TPC-DS Q56              12970.61
+TPC-DS Q57               2303.47
+TPC-DS Q58               5467.10
+TPC-DS Q59              11463.27
+TPC-DS Q60               3737.78
+TPC-DS Q61               4874.03
+TPC-DS Q62               3992.80
+TPC-DS Q63                950.49
+TPC-DS Q64              45759.04
+TPC-DS Q65              25361.62
+TPC-DS Q66              21174.82
+TPC-DS Q67             112971.25
+TPC-DS Q68               9680.79
+TPC-DS Q69               3257.94
+TPC-DS Q71               4878.81
+TPC-DS Q72              32102.01
+TPC-DS Q73                322.64
+TPC-DS Q74              24826.16
+TPC-DS Q75             187073.16
+TPC-DS Q76              14043.38
+TPC-DS Q77               8627.66
+TPC-DS Q78             191797.32
+TPC-DS Q79               5074.40
+TPC-DS Q80             117303.11
+TPC-DS Q81               2790.04
+TPC-DS Q82              28911.03
+TPC-DS Q83               1952.11
+TPC-DS Q84                879.36
+TPC-DS Q85               3602.37
+TPC-DS Q87              59126.34
+TPC-DS Q88               3332.16
+TPC-DS Q89               3645.28
+TPC-DS Q90               1185.67
+TPC-DS Q91               1299.77
+TPC-DS Q92               2001.95
+TPC-DS Q93              28101.76
+TPC-DS Q94               2069.09
+TPC-DS Q95              18037.05
+TPC-DS Q96                119.80
+TPC-DS Q97              42468.49
+TPC-DS Q98               3413.94
+TPC-DS Q99               1930.03
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1        4023.0         1362.0         6.0     2703.0    8096.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MonetDB-BHT-8-1-1          10.34
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MonetDB-BHT-8-1-1           35243.87
+
+### Throughput@Size
+                                               time [s]  count   SF  Throughput@Size [~GB/h]
+DBMS            SF  num_experiment num_client                                               
+MonetDB-BHT-8-1 100 1              1               6117      1  100                  1294.75
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1]]
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1    20233.87     16.8        133.36               245.14
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1       42.02     0.06          0.39                  0.4
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
+
+#### TPC-DS Throughput Test Large
+
+```bash
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 100 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -nc 2 \
+  -ne 1,5 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 300Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_5.log
+```
+
+yields (after ca. 360 minutes) something like
+
+test_tpcds_testcase_monetdb_5.log
+```markdown
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=100
+    Type: tpcds
+    Duration: 20752s 
+    Code: 1729497306
+    This includes the reading queries of TPC-DS.
+    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+    TPC-DS (SF=100) data is loaded and benchmark is executed.
+    Query ordering is Q1 - Q99.
+    All instances use the same query parameters.
+    Import sets indexes and constraints after loading and recomputes statistics.
+    System metrics are monitored by a cluster-wide installation.
+    Benchmark is limited to DBMS ['MonetDB'].
+    Import is handled by 8 processes (pods).
+    Loading is fixed to cl-worker19.
+    Benchmarking is fixed to cl-worker19.
+    SUT is fixed to cl-worker11.
+    Database is persisted to disk of type shared and size 300Gi.
+    Loading is tested with [8] threads, split into [8] pods.
+    Benchmarking is tested with [1] threads, split into [1] pods.
+    Benchmarking is run as [1, 1, 5, 5] times the number of benchmarking pods.
+    Experiment is run once.
+
+### Connections
+MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250321764
+    datadisk:288744504
+    volume_size:300G
+    volume_used:276G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322104
+    datadisk:157561721
+    volume_size:300G
+    volume_used:151G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-3-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322276
+    datadisk:157561721
+    volume_size:300G
+    volume_used:151G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-3-2 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322276
+    datadisk:157561721
+    volume_size:300G
+    volume_used:151G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-3-3 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322276
+    datadisk:157561721
+    volume_size:300G
+    volume_used:151G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-3-4 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322276
+    datadisk:157561721
+    volume_size:300G
+    volume_used:151G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-3-5 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322276
+    datadisk:157561721
+    volume_size:300G
+    volume_used:151G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-1 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322616
+    datadisk:232899461
+    volume_size:300G
+    volume_used:223G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-2 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322616
+    datadisk:232899461
+    volume_size:300G
+    volume_used:223G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-3 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322616
+    datadisk:232899461
+    volume_size:300G
+    volume_used:223G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-4 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322616
+    datadisk:232899461
+    volume_size:300G
+    volume_used:223G
+    requests_cpu:4
+    requests_memory:16Gi
+MonetDB-BHT-8-4-5 uses docker image monetdb/monetdb:Dec2023
+    RAM:541008605184
+    CPU:AMD Opteron(tm) Processor 6378
+    Cores:64
+    host:5.15.0-116-generic
+    node:cl-worker11
+    disk:250322616
+    datadisk:232899461
+    volume_size:300G
+    volume_used:223G
+    requests_cpu:4
+    requests_memory:16Gi
+
+### Errors (failed queries)
+               MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3  MonetDB-BHT-8-3-4  MonetDB-BHT-8-3-5  MonetDB-BHT-8-4-1  MonetDB-BHT-8-4-2  MonetDB-BHT-8-4-3  MonetDB-BHT-8-4-4  MonetDB-BHT-8-4-5
+TPC-DS Q23a+b              False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q24a+b              False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q25                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q26                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q27                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q28                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q29                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q30                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q31                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q32                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q33                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q34                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q35                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q37                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q38                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q39a+b              False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q40                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q41                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q42                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q43                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q44                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q45                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q46                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q47                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q48                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q49                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q50                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q51                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q52                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q53                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q54                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q55                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q56                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q57                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q58                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q59                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q60                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q61                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q62                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q63                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q64                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q65                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q66                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q67                 False              False               True              False               True              False              False              False              False              False               True              False
+TPC-DS Q68                 False              False               True               True               True              False              False              False              False              False               True              False
+TPC-DS Q69                 False              False               True               True               True              False              False              False              False              False               True              False
+TPC-DS Q71                 False              False               True               True               True              False              False              False              False              False               True              False
+TPC-DS Q72                 False              False               True               True               True              False              False              False              False              False               True              False
+TPC-DS Q73                 False              False               True               True               True              False              False              False               True               True               True              False
+TPC-DS Q74                 False              False               True               True               True              False              False              False               True               True               True              False
+TPC-DS Q75                 False              False               True               True               True              False              False              False               True               True               True               True
+TPC-DS Q76                 False              False               True               True               True              False              False               True               True               True               True               True
+TPC-DS Q77                 False              False               True               True               True              False              False               True               True               True               True               True
+TPC-DS Q78                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q79                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q80                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q81                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q82                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q83                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q84                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q85                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q87                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q88                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q89                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q90                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q91                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q92                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q93                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q94                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q95                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q96                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q97                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q98                 False              False               True               True               True               True               True               True               True               True               True               True
+TPC-DS Q99                 False              False               True               True               True               True               True               True               True               True               True               True
+
+### Warnings (result mismatch)
+            MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3  MonetDB-BHT-8-3-4  MonetDB-BHT-8-3-5  MonetDB-BHT-8-4-1  MonetDB-BHT-8-4-2  MonetDB-BHT-8-4-3  MonetDB-BHT-8-4-4  MonetDB-BHT-8-4-5
+TPC-DS Q1                True               True               True              False               True               True               True               True               True               True               True               True
+TPC-DS Q34               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q46               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q54               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q68               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q69               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q71               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q72               True               True              False              False              False               True               True               True               True               True              False               True
+TPC-DS Q73               True               True              False              False              False               True               True               True              False              False              False               True
+TPC-DS Q74               True               True              False              False              False               True               True               True              False              False              False               True
+TPC-DS Q75               True               True              False              False              False               True               True               True              False              False              False              False
+TPC-DS Q76               True               True              False              False              False               True               True              False              False              False              False              False
+TPC-DS Q77               True               True              False              False              False               True               True              False              False              False              False              False
+TPC-DS Q78               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q79               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q80               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q81               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q82               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q83               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q84               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q85               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q87               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q88               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q89               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q90               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q91               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q92               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q93               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q94               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q95               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q96               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q97               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q98               True               True              False              False              False              False              False              False              False              False              False              False
+TPC-DS Q99               True               True              False              False              False              False              False              False              False              False              False              False
+
+### Latency of Timer Execution [ms]
+DBMS           MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3  MonetDB-BHT-8-3-4  MonetDB-BHT-8-3-5  MonetDB-BHT-8-4-1  MonetDB-BHT-8-4-2  MonetDB-BHT-8-4-3  MonetDB-BHT-8-4-4  MonetDB-BHT-8-4-5
+TPC-DS Q1               27370.75            2398.34            3427.48            3548.13            2621.80            3349.98            2533.30           42994.62           43099.49           42921.18           42831.04           42908.51
+TPC-DS Q2              290821.48           12968.89           42420.72           43545.27           43077.55           42017.09           43019.55          587520.51          587142.92          589163.04          587448.87          588656.35
+TPC-DS Q3              113297.32            2534.75            2226.94            1311.94            2827.32            2754.30            2898.16          126104.75          126592.93          124695.38          126524.33          125210.92
+TPC-DS Q4              419012.49          151417.82          841027.33          841979.72          771544.18          758497.43          987181.05          863825.28          842226.46          875548.69          841795.93          864986.88
+TPC-DS Q5              152472.27           25913.86           38700.56           38704.71           75992.76           89474.50           35704.63          280847.09          302657.12          272871.72          309269.37          290256.00
+TPC-DS Q6               10465.72            6148.11            8494.14            8372.64           20295.71           19794.75           10755.25           39960.65           38099.00           35536.35           36848.37           32571.94
+TPC-DS Q7               85464.02            1717.00             656.49             659.43           14569.19           14941.80             779.82          125905.42          127393.38          126724.35          122928.01          123021.42
+TPC-DS Q8               31537.49            2868.56           51567.86           50598.40           57879.85           57629.18            4131.33           37375.11           37821.85           37375.05           37374.59           37374.76
+TPC-DS Q9               24558.10            2959.41            9601.51            7915.98            8954.79            8555.44            2609.90           39832.01           37006.15           39783.22           39745.52           39686.99
+TPC-DS Q10               4798.43            1708.85           10055.94           12059.05           11024.65           11410.25            1068.77            8830.09           11203.75            8863.00            8856.28            8982.50
+TPC-DS Q11              74948.80           74442.53          127970.28          129086.83          119531.67          127820.74           98889.67          128465.69          116448.46          123230.43          115624.77          126471.84
+TPC-DS Q12               1922.56             586.98             489.47             429.42            8194.10             615.13             359.98             302.72             711.24            3474.69            1657.43             523.10
+TPC-DS Q13               2705.39            1601.06            3541.62            2587.14            4190.26            3541.01             356.11             335.97            8615.20             375.12            8625.05             414.59
+TPC-DS Q14a+b          331389.83          274582.58          495565.35          450771.53          450517.42          450518.97          498161.82          544996.30          520469.11          543487.22          534403.23          570664.29
+TPC-DS Q15              11234.26            1133.29             539.39            3274.29            3533.18            3535.34             704.67             639.50           14143.56             606.52             869.53            1274.78
+TPC-DS Q16              25139.98             863.51             783.43            5917.83            5936.80            5181.27             795.14           43898.62           57727.55           46832.57           57696.69           19303.74
+TPC-DS Q17              57273.54           34438.89          136125.32          173456.87          179543.43          175108.63           85005.01          218938.52          223817.53          219048.18          220848.61          219440.73
+TPC-DS Q18              26480.21            8663.66           22465.62           22848.76           15768.86           21216.73           21039.15           51344.16           46580.72           51222.66           49248.84           50783.59
+TPC-DS Q19               2424.20            2259.17            6801.66            6127.00            6794.42            6798.48            6977.89            9677.23            9660.20            9704.29            9707.72            9694.76
+TPC-DS Q20                941.11             498.07             859.07             876.10            1179.98            1178.25            1177.47             731.59             729.09             735.39             730.50             730.95
+TPC-DS Q21             115406.12             950.95            6428.35            6422.47            6412.70            6404.55            6426.69          142631.61          142621.07          142619.30          142613.04          142602.51
+TPC-DS Q22              91135.38           81955.21           97082.60          112905.33          112828.09          107411.61           97016.26           97696.66          110253.74           97281.24           91222.80          121667.95
+
+### Loading [s]
+                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
+MonetDB-BHT-8-1-1        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-2-1        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-3-1        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-3-2        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-3-3        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-3-4        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-3-5        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-4-1        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-4-2        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-4-3        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-4-4        4023.0         1362.0         6.0     2703.0    8096.0
+MonetDB-BHT-8-4-5        4023.0         1362.0         6.0     2703.0    8096.0
+
+### Geometric Mean of Medians of Timer Run [s]
+                   Geo Times [s]
+DBMS                            
+MonetDB-BHT-8-1-1          29.76
+MonetDB-BHT-8-2-1           5.57
+MonetDB-BHT-8-3-1          11.35
+MonetDB-BHT-8-3-2          13.07
+MonetDB-BHT-8-3-3          19.37
+MonetDB-BHT-8-3-4          17.48
+MonetDB-BHT-8-3-5           7.76
+MonetDB-BHT-8-4-1          35.40
+MonetDB-BHT-8-4-2          49.88
+MonetDB-BHT-8-4-3          39.40
+MonetDB-BHT-8-4-4          44.92
+MonetDB-BHT-8-4-5          36.51
+
+### Power@Size
+                   Power@Size [~Q/h]
+DBMS                                
+MonetDB-BHT-8-1-1           12115.25
+MonetDB-BHT-8-2-1           64912.63
+MonetDB-BHT-8-3-1           31815.26
+MonetDB-BHT-8-3-2           27619.23
+MonetDB-BHT-8-3-3           18609.96
+MonetDB-BHT-8-3-4           20642.87
+MonetDB-BHT-8-3-5           46558.91
+MonetDB-BHT-8-4-1           10194.85
+MonetDB-BHT-8-4-2            7229.98
+MonetDB-BHT-8-4-3            9147.06
+MonetDB-BHT-8-4-4            8024.32
+MonetDB-BHT-8-4-5            9884.43
+
+### Throughput@Size
+                                               time [s]  count   SF  Throughput@Size [~GB/h]
+DBMS            SF  num_experiment num_client                                               
+MonetDB-BHT-8-1 100 1              1               6889      1  100                  1149.66
+MonetDB-BHT-8-2 100 1              2               3711      1  100                  2134.20
+MonetDB-BHT-8-3 100 1              3               4040      5  100                  9801.98
+MonetDB-BHT-8-4 100 1              4               5477      5  100                  7230.24
+
+### Workflow
+
+#### Actual
+DBMS MonetDB-BHT-8 - Pods [[1, 1, 5, 5]]
+
+#### Planned
+DBMS MonetDB-BHT-8 - Pods [[1, 1, 5, 5]]
+
+### Execution - SUT
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1    21745.36    17.29        173.03               283.57
+MonetDB-BHT-8-2    18120.57    20.21        188.28               290.39
+MonetDB-BHT-8-3    43989.47    42.21        461.98               484.15
+MonetDB-BHT-8-4    50356.12    45.19        457.93               484.00
+
+### Execution - Benchmarker
+                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
+MonetDB-BHT-8-1       39.84     0.10          0.38                 0.41
+MonetDB-BHT-8-2       39.84     0.01          0.63                 0.66
+MonetDB-BHT-8-3       80.27     0.03          1.58                 1.62
+MonetDB-BHT-8-4      126.49     0.12          1.78                 1.82
+
+### Tests
+TEST passed: Geo Times [s] contains no 0 or NaN
+TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+TEST passed: Throughput@Size [~GB/h] contains no 0 or NaN
+TEST failed: SQL errors
+TEST failed: SQL warnings (result mismatch)
+TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
+TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+TEST passed: Workflow as planned
+```
 
 
 

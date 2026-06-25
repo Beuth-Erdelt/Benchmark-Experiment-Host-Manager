@@ -1041,6 +1041,214 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,
 
 
 ###########################################
+############ TPC-DS MonetDB ###############
+###########################################
+
+
+#### TCP-DS Simple - MonetDB (TestCases.md)
+# -dbms MonetDB                 DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 1                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nbp 1                        number of benchmarking pods
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB simple  sf=3"
+
+
+#### TCP-DS Monitoring - MonetDB (TestCases.md)
+# -dbms MonetDB                 DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 1                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nbp 1                        number of benchmarking pods
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-3
+sleep 30
+
+
+#### TCP-DS Throughput Test - MonetDB (TestCases.md)
+# -dbms MonetDB                 DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 1                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nbp 1                        number of benchmarking pods
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rss 30Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 3 \
+  -nlp 8 \
+  -nlt 1 \
+  -xii -xic -xis \
+  -nc 2 \
+  -ne 1,2 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 30Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_3.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=3  ne=1,2"
+
+
+#### Remove persistent storage
+kubectl delete pvc bexhoma-storage-monetdb-tpcds-100
+sleep 30
+
+
+#### TCP-DS Power Test Large - MonetDB (TestCases.md)
+# -dbms MonetDB                 DBMS under test
+# -sf 100                       scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nbp 1                        number of benchmarking pods
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rss 300Gi                    size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 100 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -nc 1 \
+  -ne 1 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 300Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_4.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power large  sf=100"
+
+
+#### TCP-DS Throughput Test Large - MonetDB (TestCases.md)
+# -dbms MonetDB                 DBMS under test
+# -sf 100                       scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,5                       parallel client counts to sweep (comma-separated)
+# -nbp 1                        number of benchmarking pods
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rss 300Gi                    size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 100 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -nc 2 \
+  -ne 1,5 \
+  -nbp 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 300Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/test_tpcds_testcase_monetdb_5.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput large  sf=100  ne=1,5"
+
+
+###########################################
 ########### Benchbase PostgreSQL ##########
 ###########################################
 
