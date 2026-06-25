@@ -81,6 +81,7 @@ spec:
           # --- Transaction Commit Behavior ---
           #- "--innodb-flush-log-at-trx-commit=1"  # Default
           - "--innodb-flush-log-at-trx-commit=2"   # Flush every second (safe compromise)
+          - "--skip-log-bin"                        # Disable binary logging; reduces disk usage by ~50% during load
           #- "--sync-binlog=0"                     # No fsync per transaction (OLAP-friendly)
           # --- Temporary Tables ---
           #- "--tmp-table-size=1G"                 # Prevent temp table disk usage
