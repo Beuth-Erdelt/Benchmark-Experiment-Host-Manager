@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -129,14 +129,6 @@ MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'e3dad4a1-db73-41c0-b3b5-c8010c3f704f', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 02 Jun 2026 21:26:17 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
@@ -174,14 +166,6 @@ MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '7a6dc33c-a7b8-47d5-8c09-5d5c008df1a5', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 02 Jun 2026 21:36:19 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done

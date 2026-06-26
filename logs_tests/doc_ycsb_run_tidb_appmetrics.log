@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -32,14 +32,6 @@ TiDB-64-8-16384               : name of SUT service = bexhoma-sut-tidb-64-8-1638
 TiDB-64-8-16384               : name of worker pods = bexhoma-worker-tidb-ycsb-1
 TiDB-64-8-16384               : name of worker service headless = bexhoma-worker-tidb-ycsb-1
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '3bc858d1-2bec-434d-9778-4e87b3c2a2e5', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 13 Mar 2026 15:11:24 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 TiDB-64-8-16384               : waits for monitoring
 TiDB-64-8-16384               : wants to monitor all components in cluster
