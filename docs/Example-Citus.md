@@ -2588,6 +2588,8 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 200Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_3.log
