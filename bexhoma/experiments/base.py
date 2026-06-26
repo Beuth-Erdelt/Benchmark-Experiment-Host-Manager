@@ -1783,6 +1783,7 @@ class ExperimentBase():
                         if not stop_after_benchmarking:
                             print("{:30s}: can be stopped".format(config.configuration))
                             app = self.cluster.appname
+                            sut_restarts: dict[str, str] = {}
                             deployments = list(config.deployment_infos['deployment'].keys())
                             for deployment in deployments:
                                 pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
@@ -1793,6 +1794,7 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
+                                    sut_restarts[pod] = restarts
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
                             for statefulset in statefulsets:
@@ -1804,7 +1806,12 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
+                                    sut_restarts[pod] = restarts
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                            restarts_filename = self.result_filename_local(
+                                f"bexhoma-sut-{config.configuration}-restarts.json")
+                            with open(restarts_filename, 'w') as _f:
+                                json.dump(sut_restarts, _f, indent=2)
                             config.lifecycle.stop_sut()
                             config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                             if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -2515,6 +2522,19 @@ class ExperimentBase():
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
+        result_dir = Path(resultfolder) / code
+        restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
+        if restarts_files:
+            print("\n### SUT Container Restarts")
+            total_restarts = 0
+            for restarts_file in restarts_files:
+                with open(restarts_file) as _f:
+                    pod_restarts: dict[str, str] = json.load(_f)
+                for pod, counts in pod_restarts.items():
+                    pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
+                    total_restarts += pod_total
+                    print(f"* {pod}: {counts}")
+            self._record_test(total_restarts == 0, "No SUT container restarts")
         return connections_sorted, monitoring_applications
     def show_summary(self):
         """
