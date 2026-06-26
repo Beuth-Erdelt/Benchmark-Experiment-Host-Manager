@@ -1085,9 +1085,9 @@ class YcsbEvaluator(LogEvaluator):
         """
         Record YCSB pass/fail tests.
 
-        Tests overall throughput for the loading phase (when data is available)
-        and the execution phase, workflow completeness, and absence of FAILED
-        operation columns.
+        Tests overall throughput for the loading phase (when data is available).
+        When benchmarking is active, also tests execution-phase throughput,
+        workflow completeness, and absence of FAILED operation columns.
 
         :param experiment: The owning experiment object.
         :param df_loading: Per-run loading DataFrame; empty if loading was not active.
@@ -1097,18 +1097,18 @@ class YcsbEvaluator(LogEvaluator):
         """
         if not df_loading.empty:
             experiment._test_column(df_loading, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
-        experiment._test_column(df_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
         if experiment.benchmarking_is_active():
+            experiment._test_column(df_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"
             )
-        contains_failed = any('FAILED' in col for col in df_reduced.columns)
-        experiment._record_test(
-            not contains_failed,
-            "Execution Phase: contains no FAILED column" if not contains_failed
-            else "Execution Phase: contains FAILED column",
-        )
+            contains_failed = any('FAILED' in col for col in df_reduced.columns)
+            experiment._record_test(
+                not contains_failed,
+                "Execution Phase: contains no FAILED column" if not contains_failed
+                else "Execution Phase: contains FAILED column",
+            )
 
 
 

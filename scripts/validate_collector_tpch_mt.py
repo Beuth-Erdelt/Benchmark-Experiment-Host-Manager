@@ -232,7 +232,7 @@ try:
     merged_df = collect.add_metadata(merged_df).copy()
     for col in merged_df.columns:
         if merged_df[col].dtype == object:
-            merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce').fillna(merged_df[col])
+            merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce').fillna(merged_df[col]).infer_objects(copy=False)
     check_df(merged_df, "merged_perf_monitoring_mt", HEADER_COLS)
 except Exception:
     traceback.print_exc()

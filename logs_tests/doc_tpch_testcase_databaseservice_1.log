@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -47,14 +47,6 @@ DBS-BHT-8                     : is not loaded yet
 DBS-BHT-8                     : connect to pod bexhoma-sut-dbs-bht-8-1772631969-857586d56b-vvql7 to load scripts
 DBS-BHT-8                     : start asynch loading scripts of type loaded
 DBS-BHT-8                     : is loading
-Exception when calling CoreV1Api->list_namespaced_pod for getJobPods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'e033f7eb-7235-436c-888a-aba19adc5d30', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Wed, 04 Mar 2026 13:50:31 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 - waiting 30s -               : done
 DBS-BHT-8                     : is loading

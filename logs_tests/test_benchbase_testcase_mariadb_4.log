@@ -2,18 +2,18 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1780047177
-Experiment                    : starts at 2026-05-29 11:32:58.401191 (1418262.7913226)
+Experiment                    : has code 1782364932
+Experiment                    : starts at 2026-06-25 07:22:14.421272 (762930.885705)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 2 minutes.
-Experiment uses bexhoma version 0.9.9.
+Experiment uses bexhoma version 0.10.0.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker3.
+SUT is fixed to cl-worker38.
 Database is persisted to disk of type shared and size 30Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [160] threads, split into [1, 2] pods.
@@ -26,23 +26,23 @@ MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
 MariaDB-1                     : list of pvcs ['bexhoma-storage-mariadb-benchbase-tpcc-16']
 MariaDB-1                     : storage bexhoma-storage-mariadb-benchbase-tpcc-16 exists
-MariaDB-1                     : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '1087', 'timeLoadingEnd': '1780045635', 'timeLoadingStart': '1780045074', 'time_generated': '0', 'time_indexed': '561', 'time_ingested': '525', 'time_initschema': '1', 'time_loaded': '1'}
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1780047177
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1780047177
+MariaDB-1                     : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '761', 'timeLoadingEnd': '1782363365', 'timeLoadingStart': '1782362962', 'time_generated': '0', 'time_indexed': '403', 'time_ingested': '356', 'time_initschema': '2', 'time_loaded': '2'}
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1782364932
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1782364932
 MariaDB-1                     : name of SUT PVC name = bexhoma-storage-mariadb-benchbase-tpcc-16
 MariaDB-1                     : copied label indexed = True
 MariaDB-1                     : copied label loaded = True
-MariaDB-1                     : copied label timeLoading = 1087
-MariaDB-1                     : copied label timeLoadingEnd = 1780045635
-MariaDB-1                     : copied label timeLoadingStart = 1780045074
+MariaDB-1                     : copied label timeLoading = 761
+MariaDB-1                     : copied label timeLoadingEnd = 1782363365
+MariaDB-1                     : copied label timeLoadingStart = 1782362962
 MariaDB-1                     : copied label time_generated = 0
-MariaDB-1                     : copied label time_indexed = 561
-MariaDB-1                     : copied label time_ingested = 525
-MariaDB-1                     : copied label time_initschema = 1
-MariaDB-1                     : copied label time_loaded = 1
+MariaDB-1                     : copied label time_indexed = 403
+MariaDB-1                     : copied label time_ingested = 356
+MariaDB-1                     : copied label time_initschema = 2
+MariaDB-1                     : copied label time_loaded = 2
 MariaDB-1                     : loading is set to finished
 - waiting 30s -               : done
-MariaDB-1                     : waits for health check to succeed
+MariaDB-1                     : is pending
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
@@ -50,18 +50,20 @@ MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-05-29 09:36:41 (that is in 60 secs)
+MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-05-29 09:36:41
+MariaDB-1                     : will start benchmarking but not before 2026-06-25 05:26:43 (that is in 60 secs)
+- waiting 30s -               : done
+MariaDB-1                     : will start benchmarking but not before 2026-06-25 05:26:43
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1782364932 initialized to 1.
 MariaDB-1                     : benchmarks done 0 of 2. This will be client 1
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 160, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-1-1                 : start benchmarking
-MariaDB-1-1-1                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-1-1-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-1-1-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-1-1-xph9x: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-1-1-1-54t7g: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -69,59 +71,64 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-1-1                 : showing benchmarker times
-MariaDB-1-1-1                 : benchmarker timespan job from 1780047420 to 1780047626
-MariaDB-1-1-1                 : benchmarker timespan pods from 1780047422 to 1780047594
-MariaDB-1-1-1                 : benchmarker timespan (start to end single container [s]) = 172
-MariaDB-1-1-1                 : benchmarker times (start/end per pod and container) = [(1780047422, 1780047594)]
-MariaDB-1-1-1                 : found and updated times {'benchmarker': [(1780047422, 1780047594)]}
-MariaDB-1-1-1                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-1-1                 : collecting execution metrics of SUT at connection MariaDB-1-1-1
-MariaDB-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-1-1                 : collecting metrics of benchmarker at connection MariaDB-1-1-1
-MariaDB-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-1-1-1.config
+MariaDB-1-1-1-1               : showing benchmarker times
+MariaDB-1-1-1-1               : benchmarker timespan job from 1782365236 to 1782365400
+MariaDB-1-1-1-1               : benchmarker timespan pods from 1782365239 to 1782365366
+MariaDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 127
+MariaDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782365239, 1782365366)]
+MariaDB-1-1-1-1               : found and updated times {'benchmarker': [(1782365239, 1782365366)]}
+MariaDB-1-1-1-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-1-1-1               : collecting execution metrics of SUT at connection MariaDB-1-1-1-1
+MariaDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-1-1               : collecting metrics of benchmarker at connection MariaDB-1-1-1-1
+MariaDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MariaDB-1-1782364932 initialized to 2.
 MariaDB-1                     : benchmarks done 0 of 2. This will be client 2
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 160, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-1-2                 : start benchmarking
-MariaDB-1-1-2                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-1-2-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-1-2-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-1-2-5n2mm: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-1-2-1-2zgdv: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
+Exception when calling BatchV1Api->list_namespaced_job: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '40670467-a41a-49b9-b456-567b6706eb5e', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Thu, 25 Jun 2026 05:33:07 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-1-2                 : showing benchmarker times
-MariaDB-1-1-2                 : benchmarker timespan job from 1780047681 to 1780047826
-MariaDB-1-1-2                 : benchmarker timespan pods from 1780047684 to 1780047807
-MariaDB-1-1-2                 : benchmarker timespan (start to end single container [s]) = 123
-MariaDB-1-1-2                 : benchmarker times (start/end per pod and container) = [(1780047685, 1780047807), (1780047684, 1780047807)]
-MariaDB-1-1-2                 : found and updated times {'benchmarker': [(1780047685, 1780047807), (1780047684, 1780047807)]}
-MariaDB-1-1-2                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-1-2                 : collecting execution metrics of SUT at connection MariaDB-1-1-2
-MariaDB-1-1-2                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-1-2                 : collecting metrics of benchmarker at connection MariaDB-1-1-2
-MariaDB-1-1-2                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-1-2-1.config
+MariaDB-1-1-2-1               : showing benchmarker times
+MariaDB-1-1-2-1               : benchmarker timespan job from 1782365469 to 1782365639
+MariaDB-1-1-2-1               : benchmarker timespan pods from 1782365473 to 1782365596
+MariaDB-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 123
+MariaDB-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1782365473, 1782365596), (1782365473, 1782365596)]
+MariaDB-1-1-2-1               : found and updated times {'benchmarker': [(1782365473, 1782365596), (1782365473, 1782365596)]}
+MariaDB-1-1-2-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-1-2-1               : collecting execution metrics of SUT at connection MariaDB-1-1-2-1
+MariaDB-1-1-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-2-1               : collecting metrics of benchmarker at connection MariaDB-1-1-2-1
+MariaDB-1-1-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-MariaDB-1-1782364932 initialized to 2.
 MariaDB-1                     : benchmarks done 0 of 2. This will be client 3
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 80, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-1-3                 : start benchmarking
-MariaDB-1-1-3                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-1-3-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-1-3-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-1-3-8dcwm: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-1-3-1-tdgwr: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -129,27 +136,27 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-1-3                 : showing benchmarker times
-MariaDB-1-1-3                 : benchmarker timespan job from 1780047879 to 1780048025
-MariaDB-1-1-3                 : benchmarker timespan pods from 1780047882 to 1780048004
-MariaDB-1-1-3                 : benchmarker timespan (start to end single container [s]) = 122
-MariaDB-1-1-3                 : benchmarker times (start/end per pod and container) = [(1780047882, 1780048004), (1780047882, 1780048004)]
-MariaDB-1-1-3                 : found and updated times {'benchmarker': [(1780047882, 1780048004), (1780047882, 1780048004)]}
-MariaDB-1-1-3                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-1-3                 : collecting execution metrics of SUT at connection MariaDB-1-1-3
-MariaDB-1-1-3                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-1-3                 : collecting metrics of benchmarker at connection MariaDB-1-1-3
-MariaDB-1-1-3                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-3-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-1-3-1.config
+MariaDB-1-1-3-1               : showing benchmarker times
+MariaDB-1-1-3-1               : benchmarker timespan job from 1782365712 to 1782365876
+MariaDB-1-1-3-1               : benchmarker timespan pods from 1782365715 to 1782365845
+MariaDB-1-1-3-1               : benchmarker timespan (start to end single container [s]) = 130
+MariaDB-1-1-3-1               : benchmarker times (start/end per pod and container) = [(1782365715, 1782365845), (1782365716, 1782365845)]
+MariaDB-1-1-3-1               : found and updated times {'benchmarker': [(1782365715, 1782365845), (1782365716, 1782365845)]}
+MariaDB-1-1-3-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-1-3-1               : collecting execution metrics of SUT at connection MariaDB-1-1-3-1
+MariaDB-1-1-3-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-3-1               : collecting metrics of benchmarker at connection MariaDB-1-1-3-1
+MariaDB-1-1-3-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-MariaDB-1-1782364932 initialized to 4.
 MariaDB-1                     : benchmarks done 0 of 2. This will be client 4
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 80, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-1-4                 : start benchmarking
-MariaDB-1-1-4                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-1-4-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-1-4-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-1-4-25fbv: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-1-4-1-fllgt: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -157,21 +164,21 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-1-4                 : showing benchmarker times
-MariaDB-1-1-4                 : benchmarker timespan job from 1780048079 to 1780048231
-MariaDB-1-1-4                 : benchmarker timespan pods from 1780048083 to 1780048206
-MariaDB-1-1-4                 : benchmarker timespan (start to end single container [s]) = 123
-MariaDB-1-1-4                 : benchmarker times (start/end per pod and container) = [(1780048083, 1780048206), (1780048083, 1780048206), (1780048083, 1780048206), (1780048084, 1780048206)]
-MariaDB-1-1-4                 : found and updated times {'benchmarker': [(1780048083, 1780048206), (1780048083, 1780048206), (1780048083, 1780048206), (1780048084, 1780048206)]}
-MariaDB-1-1-4                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-1-4                 : collecting execution metrics of SUT at connection MariaDB-1-1-4
-MariaDB-1-1-4                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-1-4                 : collecting metrics of benchmarker at connection MariaDB-1-1-4
-MariaDB-1-1-4                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-4-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-1-4-1.config
+MariaDB-1-1-4-1               : showing benchmarker times
+MariaDB-1-1-4-1               : benchmarker timespan job from 1782365950 to 1782366129
+MariaDB-1-1-4-1               : benchmarker timespan pods from 1782365956 to 1782366079
+MariaDB-1-1-4-1               : benchmarker timespan (start to end single container [s]) = 123
+MariaDB-1-1-4-1               : benchmarker times (start/end per pod and container) = [(1782365956, 1782366079), (1782365956, 1782366079), (1782365956, 1782366079), (1782365956, 1782366079)]
+MariaDB-1-1-4-1               : found and updated times {'benchmarker': [(1782365956, 1782366079), (1782365956, 1782366079), (1782365956, 1782366079), (1782365956, 1782366079)]}
+MariaDB-1-1-4-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-1-4-1               : collecting execution metrics of SUT at connection MariaDB-1-1-4-1
+MariaDB-1-1-4-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-1-4-1               : collecting metrics of benchmarker at connection MariaDB-1-1-4-1
+MariaDB-1-1-4-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1780047177-7dc8cbd9d7-q56nw
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1782364932-6c868b5488-slstm
 MariaDB-1                     : still being removed
 - waiting 30s -               : done
 MariaDB-1                     : starts again
@@ -180,20 +187,20 @@ MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
 MariaDB-1                     : list of pvcs ['bexhoma-storage-mariadb-benchbase-tpcc-16']
 MariaDB-1                     : storage bexhoma-storage-mariadb-benchbase-tpcc-16 exists
-MariaDB-1                     : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '1087', 'timeLoadingEnd': '1780045635', 'timeLoadingStart': '1780045074', 'time_generated': '0', 'time_indexed': '561', 'time_ingested': '525', 'time_initschema': '1', 'time_loaded': '1'}
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1780047177
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1780047177
+MariaDB-1                     : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '761', 'timeLoadingEnd': '1782363365', 'timeLoadingStart': '1782362962', 'time_generated': '0', 'time_indexed': '403', 'time_ingested': '356', 'time_initschema': '2', 'time_loaded': '2'}
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1782364932
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1782364932
 MariaDB-1                     : name of SUT PVC name = bexhoma-storage-mariadb-benchbase-tpcc-16
 MariaDB-1                     : copied label indexed = True
 MariaDB-1                     : copied label loaded = True
-MariaDB-1                     : copied label timeLoading = 1087
-MariaDB-1                     : copied label timeLoadingEnd = 1780045635
-MariaDB-1                     : copied label timeLoadingStart = 1780045074
+MariaDB-1                     : copied label timeLoading = 761
+MariaDB-1                     : copied label timeLoadingEnd = 1782363365
+MariaDB-1                     : copied label timeLoadingStart = 1782362962
 MariaDB-1                     : copied label time_generated = 0
-MariaDB-1                     : copied label time_indexed = 561
-MariaDB-1                     : copied label time_ingested = 525
-MariaDB-1                     : copied label time_initschema = 1
-MariaDB-1                     : copied label time_loaded = 1
+MariaDB-1                     : copied label time_indexed = 403
+MariaDB-1                     : copied label time_ingested = 356
+MariaDB-1                     : copied label time_initschema = 2
+MariaDB-1                     : copied label time_loaded = 2
 MariaDB-1                     : loading is set to finished
 - waiting 10s -               : done
 - waiting 30s -               : done
@@ -203,18 +210,20 @@ MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-05-29 09:55:04 (that is in 60 secs)
+MariaDB-1                     : waits for health check to succeed
 - waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-05-29 09:55:04
+MariaDB-1                     : will start benchmarking but not before 2026-06-25 05:47:31 (that is in 60 secs)
+- waiting 30s -               : done
+MariaDB-1                     : will start benchmarking but not before 2026-06-25 05:47:31
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDB-1-1782364932 initialized to 1.
 MariaDB-1                     : benchmarks done 1 of 2. This will be client 1
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 160, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-2-1                 : start benchmarking
-MariaDB-1-2-1                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-2-1-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-2-1-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-2-1-62bjt: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-2-1-1-zwkkc: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -222,31 +231,27 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-2-1                 : showing benchmarker times
-MariaDB-1-2-1                 : benchmarker timespan job from 1780048521 to 1780048727
-MariaDB-1-2-1                 : benchmarker timespan pods from 1780048523 to 1780048699
-MariaDB-1-2-1                 : benchmarker timespan (start to end single container [s]) = 176
-MariaDB-1-2-1                 : benchmarker times (start/end per pod and container) = [(1780048523, 1780048699)]
-MariaDB-1-2-1                 : found and updated times {'benchmarker': [(1780048523, 1780048699)]}
-MariaDB-1-2-1                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-2-1                 : collecting execution metrics of SUT at connection MariaDB-1-2-1
-MariaDB-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-2-1                 : collecting metrics of benchmarker at connection MariaDB-1-2-1
-MariaDB-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-2-1-1.config
+MariaDB-1-2-1-1               : showing benchmarker times
+MariaDB-1-2-1-1               : benchmarker timespan job from 1782366487 to 1782366653
+MariaDB-1-2-1-1               : benchmarker timespan pods from 1782366490 to 1782366613
+MariaDB-1-2-1-1               : benchmarker timespan (start to end single container [s]) = 123
+MariaDB-1-2-1-1               : benchmarker times (start/end per pod and container) = [(1782366490, 1782366613)]
+MariaDB-1-2-1-1               : found and updated times {'benchmarker': [(1782366490, 1782366613)]}
+MariaDB-1-2-1-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-2-1-1               : collecting execution metrics of SUT at connection MariaDB-1-2-1-1
+MariaDB-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-1-1               : collecting metrics of benchmarker at connection MariaDB-1-2-1-1
+MariaDB-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-MariaDB-1-1782364932 initialized to 2.
 MariaDB-1                     : benchmarks done 1 of 2. This will be client 2
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 160, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-2-2                 : start benchmarking
-MariaDB-1-2-2                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-2-2-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-2-2-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-2-2-kjvr7: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-2-2-1-7h5vw: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -254,27 +259,27 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-2-2                 : showing benchmarker times
-MariaDB-1-2-2                 : benchmarker timespan job from 1780048781 to 1780048926
-MariaDB-1-2-2                 : benchmarker timespan pods from 1780048784 to 1780048914
-MariaDB-1-2-2                 : benchmarker timespan (start to end single container [s]) = 130
-MariaDB-1-2-2                 : benchmarker times (start/end per pod and container) = [(1780048785, 1780048914), (1780048784, 1780048914)]
-MariaDB-1-2-2                 : found and updated times {'benchmarker': [(1780048785, 1780048914), (1780048784, 1780048914)]}
-MariaDB-1-2-2                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-2-2                 : collecting execution metrics of SUT at connection MariaDB-1-2-2
-MariaDB-1-2-2                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-2-2                 : collecting metrics of benchmarker at connection MariaDB-1-2-2
-MariaDB-1-2-2                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-2-2-1.config
+MariaDB-1-2-2-1               : showing benchmarker times
+MariaDB-1-2-2-1               : benchmarker timespan job from 1782366726 to 1782366891
+MariaDB-1-2-2-1               : benchmarker timespan pods from 1782366730 to 1782366854
+MariaDB-1-2-2-1               : benchmarker timespan (start to end single container [s]) = 124
+MariaDB-1-2-2-1               : benchmarker times (start/end per pod and container) = [(1782366731, 1782366854), (1782366730, 1782366853)]
+MariaDB-1-2-2-1               : found and updated times {'benchmarker': [(1782366731, 1782366854), (1782366730, 1782366853)]}
+MariaDB-1-2-2-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-2-2-1               : collecting execution metrics of SUT at connection MariaDB-1-2-2-1
+MariaDB-1-2-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-2-1               : collecting metrics of benchmarker at connection MariaDB-1-2-2-1
+MariaDB-1-2-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-3-MariaDB-1-1782364932 initialized to 2.
 MariaDB-1                     : benchmarks done 1 of 2. This will be client 3
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 80, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-2-3                 : start benchmarking
-MariaDB-1-2-3                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-2-3-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-2-3-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-2-3-fc892: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-2-3-1-jc9xv: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -282,27 +287,27 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-2-3                 : showing benchmarker times
-MariaDB-1-2-3                 : benchmarker timespan job from 1780048978 to 1780049124
-MariaDB-1-2-3                 : benchmarker timespan pods from 1780048981 to 1780049106
-MariaDB-1-2-3                 : benchmarker timespan (start to end single container [s]) = 125
-MariaDB-1-2-3                 : benchmarker times (start/end per pod and container) = [(1780048981, 1780049106), (1780048981, 1780049106)]
-MariaDB-1-2-3                 : found and updated times {'benchmarker': [(1780048981, 1780049106), (1780048981, 1780049106)]}
-MariaDB-1-2-3                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-2-3                 : collecting execution metrics of SUT at connection MariaDB-1-2-3
-MariaDB-1-2-3                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-2-3                 : collecting metrics of benchmarker at connection MariaDB-1-2-3
-MariaDB-1-2-3                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-3-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-2-3-1.config
+MariaDB-1-2-3-1               : showing benchmarker times
+MariaDB-1-2-3-1               : benchmarker timespan job from 1782366959 to 1782367123
+MariaDB-1-2-3-1               : benchmarker timespan pods from 1782366963 to 1782367088
+MariaDB-1-2-3-1               : benchmarker timespan (start to end single container [s]) = 125
+MariaDB-1-2-3-1               : benchmarker times (start/end per pod and container) = [(1782366963, 1782367088), (1782366964, 1782367088)]
+MariaDB-1-2-3-1               : found and updated times {'benchmarker': [(1782366963, 1782367088), (1782366964, 1782367088)]}
+MariaDB-1-2-3-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-2-3-1               : collecting execution metrics of SUT at connection MariaDB-1-2-3-1
+MariaDB-1-2-3-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-3-1               : collecting metrics of benchmarker at connection MariaDB-1-2-3-1
+MariaDB-1-2-3-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-4-MariaDB-1-1782364932 initialized to 4.
 MariaDB-1                     : benchmarks done 1 of 2. This will be client 4
-MariaDB-1                     : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mariadb', 'BEXHOMA_DATABASE': 'benchbase', 'BENCHBASE_TARGET': 4096, 'BENCHBASE_TERMINALS': 80, 'BENCHBASE_TIME': 120, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'bexhoma', 'BEXHOMA_PASSWORD': 'password', 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-MariaDB-1-2-4                 : start benchmarking
-MariaDB-1-2-4                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1780047177
+MariaDB-1-2-4-1               : start benchmarking (benchmark_run=1)
+MariaDB-1-2-4-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1782364932
 - waiting 10s -               : done
-MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1780047177-2-4-prmwx: found
+MariaDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-mariadb-1-1782364932-2-4-1-6xnxt: found
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
@@ -310,45 +315,44 @@ MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDB-1-2-4                 : showing benchmarker times
-MariaDB-1-2-4                 : benchmarker timespan job from 1780049177 to 1780049330
-MariaDB-1-2-4                 : benchmarker timespan pods from 1780049181 to 1780049307
-MariaDB-1-2-4                 : benchmarker timespan (start to end single container [s]) = 126
-MariaDB-1-2-4                 : benchmarker times (start/end per pod and container) = [(1780049181, 1780049306), (1780049181, 1780049306), (1780049182, 1780049307), (1780049181, 1780049306)]
-MariaDB-1-2-4                 : found and updated times {'benchmarker': [(1780049181, 1780049306), (1780049181, 1780049306), (1780049182, 1780049307), (1780049181, 1780049306)]}
-MariaDB-1-2-4                 : needs monitoring (common metrics) for deployment sut
-MariaDB-1-2-4                 : collecting execution metrics of SUT at connection MariaDB-1-2-4
-MariaDB-1-2-4                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MariaDB-1-2-4                 : collecting metrics of benchmarker at connection MariaDB-1-2-4
-MariaDB-1-2-4                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1780047177(.*)", pod=~"(.*)mariadb-1-1780047177(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-4-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782364932/MariaDB-1-2-4-1.config
+MariaDB-1-2-4-1               : showing benchmarker times
+MariaDB-1-2-4-1               : benchmarker timespan job from 1782367194 to 1782367375
+MariaDB-1-2-4-1               : benchmarker timespan pods from 1782367199 to 1782367323
+MariaDB-1-2-4-1               : benchmarker timespan (start to end single container [s]) = 124
+MariaDB-1-2-4-1               : benchmarker times (start/end per pod and container) = [(1782367200, 1782367323), (1782367200, 1782367323), (1782367199, 1782367321), (1782367200, 1782367323)]
+MariaDB-1-2-4-1               : found and updated times {'benchmarker': [(1782367200, 1782367323), (1782367200, 1782367323), (1782367199, 1782367321), (1782367200, 1782367323)]}
+MariaDB-1-2-4-1               : needs monitoring (common metrics) for deployment sut
+MariaDB-1-2-4-1               : collecting execution metrics of SUT at connection MariaDB-1-2-4-1
+MariaDB-1-2-4-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MariaDB-1-2-4-1               : collecting metrics of benchmarker at connection MariaDB-1-2-4-1
+MariaDB-1-2-4-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1782364932(.*)", pod=~"(.*)mariadb-1-1782364932(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1780047177-68dc8b5d8d-8cmr8
-Experiment                    : ends at 2026-05-29 12:09:32.313444 (1420456.7039626) - 2193.91s total
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1782364932-695dff6ddf-kxsb6
+Experiment                    : ends at 2026-06-25 08:03:48.627362 (765425.0916393) - 2494.21s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 2194s 
-* Code: 1780047177
+* Duration: 2495s 
+* Code: 1782364932
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 2 minutes.
-  * Experiment uses bexhoma version 0.9.9.
+  * Experiment uses bexhoma version 0.10.0.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
+  * SUT is fixed to cl-worker38.
   * Database is persisted to disk of type shared and size 30Gi.
   * Loading is tested with [1] threads, split into [1] pods.
   * Benchmarking is tested with [160] threads, split into [1, 2] pods.
@@ -356,211 +360,225 @@ Benchbase Workload tpcc SF=16
   * Experiment is run 2 times.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+* MariaDB-1-1-1-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220471
   * volume_size:30G
   * volume_used:2.0G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-1-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-1-2-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220471
   * volume_size:30G
   * volume_used:2.0G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-1-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-1-3-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220471
   * volume_size:30G
   * volume_used:2.0G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-1-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-1-4-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220472
   * volume_size:30G
   * volume_used:2.0G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-2-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-2-1-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220472
   * volume_size:30G
-  * volume_used:2.1G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * volume_used:2.3G
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-2-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-2-2-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220472
   * volume_size:30G
-  * volume_used:2.1G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * volume_used:2.3G
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-2-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-2-3-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220471
   * volume_size:30G
-  * volume_used:2.1G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * volume_used:2.3G
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
-* MariaDB-1-2-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
+    * code:1782364932
+* MariaDB-1-2-4-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
+  * node:cl-worker38
+  * disk:220471
   * volume_size:30G
-  * volume_used:2.1G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * volume_used:2.3G
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1780047177
+    * code:1782364932
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: benchbase (4 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: benchbase (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: benchbase (4 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: benchbase (4 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: benchbase (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: benchbase (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: benchbase (4 pods)
 
 ### Loading
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:---------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |   16 |     1087.00 |           1.00 |            0.00 |        525.00 |          561.00 |              0 |           1 |          | None           |             0 | False         |               52.99 |
-| MariaDB-1-2 |                2 |   16 |     1087.00 |           1.00 |            0.00 |        525.00 |          561.00 |              0 |           1 |          | None           |             0 | False         |               52.99 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MariaDB-1-1 |                1 |   16 |      761.00 |           2.00 |            0.00 |        356.00 |          403.00 |              0 |           1 |             | None           |             0 | False         |               75.69 |
+| MariaDB-1-2 |                2 |   16 |      761.00 |           2.00 |            0.00 |        356.00 |          403.00 |              0 |           1 |             | None           |             0 | False         |               75.69 |
 
 ### Execution
 
 #### Per Connection
 
-| DBMS            |   experiment_run |   terminals |   target |   client |   child |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:----------------|-----------------:|------------:|---------:|---------:|--------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| MariaDB-1-1-1-1 |             1.00 |      160.00 |  8192.00 |     1.00 |    1.00 | 120.00 |        43.00 |                         383.78 |                      377.61 |         0.00 |                                                     101269.00 |                                             294908.00 |
-| MariaDB-1-1-2-1 |             1.00 |      160.00 |  8192.00 |     2.00 |    1.00 | 120.00 |        22.00 |                         187.88 |                      185.97 |         0.00 |                                                    3123314.00 |                                             850463.00 |
-| MariaDB-1-1-2-2 |             1.00 |      160.00 |  8192.00 |     2.00 |    2.00 | 120.00 |        16.00 |                         215.47 |                      213.08 |         0.00 |                                                    2826271.00 |                                             740682.00 |
-| MariaDB-1-1-3-1 |             1.00 |       80.00 |  4096.00 |     3.00 |    1.00 | 120.00 |         0.00 |                         150.78 |                      148.98 |         0.00 |                                                    2582112.00 |                                             530471.00 |
-| MariaDB-1-1-3-2 |             1.00 |       80.00 |  4096.00 |     3.00 |    2.00 | 120.00 |         0.00 |                         148.27 |                      146.20 |         0.00 |                                                    2596819.00 |                                             534672.00 |
-| MariaDB-1-1-4-1 |             1.00 |       80.00 |  4096.00 |     4.00 |    1.00 | 120.00 |       110.00 |                          91.65 |                       89.84 |         0.00 |                                                     424148.00 |                                             719005.00 |
-| MariaDB-1-1-4-2 |             1.00 |       80.00 |  4096.00 |     4.00 |    2.00 | 120.00 |       100.00 |                          75.59 |                       74.33 |         0.00 |                                                     577066.00 |                                             972171.00 |
-| MariaDB-1-1-4-3 |             1.00 |       80.00 |  4096.00 |     4.00 |    3.00 | 120.00 |        87.00 |                          79.75 |                       78.60 |         0.00 |                                                     477518.00 |                                             767402.00 |
-| MariaDB-1-1-4-4 |             1.00 |       80.00 |  4096.00 |     4.00 |    4.00 | 120.00 |       104.00 |                          99.69 |                       97.74 |         0.00 |                                                     376222.00 |                                             640196.00 |
-| MariaDB-1-2-1-1 |             2.00 |      160.00 |  8192.00 |     1.00 |    1.00 | 120.00 |        16.00 |                         453.26 |                      446.19 |         0.00 |                                                     146710.00 |                                             339082.00 |
-| MariaDB-1-2-2-1 |             2.00 |      160.00 |  8192.00 |     2.00 |    1.00 | 120.00 |       126.00 |                         167.36 |                      165.06 |         0.00 |                                                     386348.00 |                                             887074.00 |
-| MariaDB-1-2-2-2 |             2.00 |      160.00 |  8192.00 |     2.00 |    2.00 | 120.00 |       125.00 |                         219.01 |                      215.65 |         0.00 |                                                     281451.00 |                                             677863.00 |
-| MariaDB-1-2-3-1 |             2.00 |       80.00 |  4096.00 |     3.00 |    1.00 | 120.00 |        52.00 |                         165.51 |                      162.98 |         0.00 |                                                     167209.00 |                                             340298.00 |
-| MariaDB-1-2-3-2 |             2.00 |       80.00 |  4096.00 |     3.00 |    2.00 | 120.00 |        56.00 |                         186.93 |                      183.84 |         0.00 |                                                     148148.00 |                                             325543.00 |
-| MariaDB-1-2-4-1 |             2.00 |       80.00 |  4096.00 |     4.00 |    1.00 | 120.00 |        63.00 |                          94.56 |                       93.07 |         0.00 |                                                     735346.00 |                                             665147.00 |
-| MariaDB-1-2-4-2 |             2.00 |       80.00 |  4096.00 |     4.00 |    2.00 | 120.00 |        57.00 |                          84.19 |                       83.14 |         0.00 |                                                     768878.00 |                                             740456.00 |
-| MariaDB-1-2-4-3 |             2.00 |       80.00 |  4096.00 |     4.00 |    3.00 | 120.00 |        54.00 |                          86.40 |                       85.23 |         0.00 |                                                     762651.00 |                                             725338.00 |
-| MariaDB-1-2-4-4 |             2.00 |       80.00 |  4096.00 |     4.00 |    4.00 | 120.00 |        61.00 |                         105.37 |                      103.81 |         0.00 |                                                     710149.00 |                                             598917.00 |
+| DBMS              | phase         | job             |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:------------------|:--------------|:----------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| MariaDB-1-1-1-1-1 | MariaDB-1-1-1 | MariaDB-1-1-1-1 |                1 |         160 |     8192 |        1 |               1 |       1 |          -1 | 120.00 |            0 |                         967.06 |                      952.57 |         0.00 |                                                     492745.00 |                                             164974.00 |
+| MariaDB-1-1-2-1-1 | MariaDB-1-1-2 | MariaDB-1-1-2-1 |                1 |         160 |     8192 |        2 |               1 |       1 |          -1 | 120.00 |            0 |                         320.49 |                      316.64 |         0.00 |                                                    2093763.00 |                                             494056.00 |
+| MariaDB-1-1-2-1-2 | MariaDB-1-1-2 | MariaDB-1-1-2-1 |                1 |         160 |     8192 |        2 |               1 |       2 |          -1 | 120.00 |            0 |                         242.21 |                      239.85 |         0.00 |                                                    2804421.00 |                                             659793.00 |
+| MariaDB-1-1-3-1-1 | MariaDB-1-1-3 | MariaDB-1-1-3-1 |                1 |          80 |     4096 |        3 |               1 |       1 |          -1 | 120.00 |            0 |                         451.47 |                      445.15 |         0.00 |                                                     135576.00 |                                             169888.00 |
+| MariaDB-1-1-3-1-2 | MariaDB-1-1-3 | MariaDB-1-1-3-1 |                1 |          80 |     4096 |        3 |               1 |       2 |          -1 | 120.00 |            0 |                         425.37 |                      419.38 |         0.00 |                                                     141231.00 |                                             179604.00 |
+| MariaDB-1-1-4-1-1 | MariaDB-1-1-4 | MariaDB-1-1-4-1 |                1 |          80 |     4096 |        4 |               1 |       1 |          -1 | 120.00 |            0 |                         210.65 |                      208.06 |         0.00 |                                                    1383547.00 |                                             379692.00 |
+| MariaDB-1-1-4-1-2 | MariaDB-1-1-4 | MariaDB-1-1-4-1 |                1 |          80 |     4096 |        4 |               1 |       2 |          -1 | 120.00 |            0 |                         232.05 |                      229.02 |         0.00 |                                                    1189542.00 |                                             343797.00 |
+| MariaDB-1-1-4-1-3 | MariaDB-1-1-4 | MariaDB-1-1-4-1 |                1 |          80 |     4096 |        4 |               1 |       3 |          -1 | 120.00 |            0 |                         213.38 |                      210.43 |         0.00 |                                                    1355253.00 |                                             374383.00 |
+| MariaDB-1-1-4-1-4 | MariaDB-1-1-4 | MariaDB-1-1-4-1 |                1 |          80 |     4096 |        4 |               1 |       4 |          -1 | 120.00 |            0 |                         225.12 |                      222.47 |         0.00 |                                                    1238071.00 |                                             353898.00 |
+| MariaDB-1-2-1-1-1 | MariaDB-1-2-1 | MariaDB-1-2-1-1 |                2 |         160 |     8192 |        1 |               1 |       1 |          -1 | 120.00 |            0 |                         920.43 |                      906.26 |         0.00 |                                                     571446.00 |                                             172230.00 |
+| MariaDB-1-2-2-1-1 | MariaDB-1-2-2 | MariaDB-1-2-2-1 |                2 |         160 |     8192 |        2 |               1 |       1 |          -1 | 120.00 |            0 |                         427.24 |                      421.13 |         0.00 |                                                    1017372.00 |                                             372815.00 |
+| MariaDB-1-2-2-1-2 | MariaDB-1-2-2 | MariaDB-1-2-2-1 |                2 |         160 |     8192 |        2 |               1 |       2 |          -1 | 120.00 |            0 |                         357.92 |                      353.82 |         0.00 |                                                    1227140.00 |                                             445660.00 |
+| MariaDB-1-2-3-1-1 | MariaDB-1-2-3 | MariaDB-1-2-3-1 |                2 |          80 |     4096 |        3 |               1 |       1 |          -1 | 120.00 |            0 |                         379.06 |                      373.49 |         0.00 |                                                     917359.00 |                                             199443.00 |
+| MariaDB-1-2-3-1-2 | MariaDB-1-2-3 | MariaDB-1-2-3-1 |                2 |          80 |     4096 |        3 |               1 |       2 |          -1 | 120.00 |            0 |                         348.27 |                      343.62 |         0.00 |                                                     987067.00 |                                             216431.00 |
+| MariaDB-1-2-4-1-1 | MariaDB-1-2-4 | MariaDB-1-2-4-1 |                2 |          80 |     4096 |        4 |               1 |       1 |          -1 | 120.00 |            0 |                         200.48 |                      197.60 |         0.00 |                                                    1357630.00 |                                             397247.00 |
+| MariaDB-1-2-4-1-2 | MariaDB-1-2-4 | MariaDB-1-2-4-1 |                2 |          80 |     4096 |        4 |               1 |       2 |          -1 | 120.00 |            0 |                         220.92 |                      217.98 |         0.00 |                                                    1163093.00 |                                             360457.00 |
+| MariaDB-1-2-4-1-3 | MariaDB-1-2-4 | MariaDB-1-2-4-1 |                2 |          80 |     4096 |        4 |               1 |       3 |          -1 | 120.00 |            0 |                         202.23 |                      199.54 |         0.00 |                                                    1305829.00 |                                             395153.00 |
+| MariaDB-1-2-4-1-4 | MariaDB-1-2-4 | MariaDB-1-2-4-1 |                2 |          80 |     4096 |        4 |               1 |       4 |          -1 | 120.00 |            0 |                         207.67 |                      205.04 |         0.00 |                                                    1262583.00 |                                             384669.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   terminals |   target |   pod_count |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:--------------|-----------------:|------------:|---------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |      160.00 |  8192.00 |        1.00 | 120.00 |        43.00 |                         383.78 |                      377.61 |         0.00 |                                                     101269.00 |                                             294908.00 |
-| MariaDB-1-1-2 |             1.00 |      320.00 | 16384.00 |        2.00 | 120.00 |        38.00 |                         403.36 |                      399.06 |         0.00 |                                                    3123314.00 |                                             795572.50 |
-| MariaDB-1-1-3 |             1.00 |      160.00 |  8192.00 |        2.00 | 120.00 |         0.00 |                         299.06 |                      295.18 |         0.00 |                                                    2596819.00 |                                             532571.50 |
-| MariaDB-1-1-4 |             1.00 |      320.00 | 16384.00 |        4.00 | 120.00 |       401.00 |                         346.68 |                      340.52 |         0.00 |                                                     577066.00 |                                             774693.50 |
-| MariaDB-1-2-1 |             2.00 |      160.00 |  8192.00 |        1.00 | 120.00 |        16.00 |                         453.26 |                      446.19 |         0.00 |                                                     146710.00 |                                             339082.00 |
-| MariaDB-1-2-2 |             2.00 |      320.00 | 16384.00 |        2.00 | 120.00 |       251.00 |                         386.37 |                      380.71 |         0.00 |                                                     386348.00 |                                             782468.50 |
-| MariaDB-1-2-3 |             2.00 |      160.00 |  8192.00 |        2.00 | 120.00 |       108.00 |                         352.44 |                      346.82 |         0.00 |                                                     167209.00 |                                             332920.50 |
-| MariaDB-1-2-4 |             2.00 |      320.00 | 16384.00 |        4.00 | 120.00 |       235.00 |                         370.52 |                      365.26 |         0.00 |                                                     768878.00 |                                             682464.50 |
+| DBMS          | phase         |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:--------------|:--------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| MariaDB-1-1-1 | MariaDB-1-1-1 |                1 |         160 |     8192 |               1 |           1 |          -1 | 120.00 |            0 |                         967.06 |                      952.57 |         0.00 |                                                     492745.00 |                                             164974.00 |
+| MariaDB-1-1-2 | MariaDB-1-1-2 |                1 |         320 |    16384 |               1 |           2 |          -1 | 120.00 |            0 |                         562.70 |                      556.49 |         0.00 |                                                    2804421.00 |                                             576924.50 |
+| MariaDB-1-1-3 | MariaDB-1-1-3 |                1 |         160 |     8192 |               1 |           2 |          -1 | 120.00 |            0 |                         876.85 |                      864.53 |         0.00 |                                                     141231.00 |                                             174746.00 |
+| MariaDB-1-1-4 | MariaDB-1-1-4 |                1 |         320 |    16384 |               1 |           4 |          -1 | 120.00 |            0 |                         881.21 |                      869.98 |         0.00 |                                                    1383547.00 |                                             362942.50 |
+| MariaDB-1-2-1 | MariaDB-1-2-1 |                2 |         160 |     8192 |               1 |           1 |          -1 | 120.00 |            0 |                         920.43 |                      906.26 |         0.00 |                                                     571446.00 |                                             172230.00 |
+| MariaDB-1-2-2 | MariaDB-1-2-2 |                2 |         320 |    16384 |               1 |           2 |          -1 | 120.00 |            0 |                         785.17 |                      774.95 |         0.00 |                                                    1227140.00 |                                             409237.50 |
+| MariaDB-1-2-3 | MariaDB-1-2-3 |                2 |         160 |     8192 |               1 |           2 |          -1 | 120.00 |            0 |                         727.33 |                      717.11 |         0.00 |                                                     987067.00 |                                             207937.00 |
+| MariaDB-1-2-4 | MariaDB-1-2-4 |                2 |         320 |    16384 |               1 |           4 |          -1 | 120.00 |            0 |                         831.32 |                      820.17 |         0.00 |                                                    1357630.00 |                                             384381.50 |
 
 ### Monitoring
 
 ### Execution phase: SUT deployment
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       895.81 |     17.49 |           7.14 |                  7.24 |
-| MariaDB-1-1-2 |       892.12 |      8.98 |           7.34 |                  7.44 |
-| MariaDB-1-1-3 |       826.20 |     10.08 |           7.40 |                  7.50 |
-| MariaDB-1-1-4 |      1818.95 |     25.62 |           7.50 |                  7.60 |
-| MariaDB-1-2-1 |      5268.63 |     26.71 |           7.49 |                  7.59 |
-| MariaDB-1-2-2 |      2695.60 |     35.03 |           7.49 |                  7.59 |
-| MariaDB-1-2-3 |      1407.09 |     33.20 |           7.54 |                  7.64 |
-| MariaDB-1-2-4 |      1527.22 |     21.28 |           7.65 |                  7.75 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |      2031.17 |     28.21 |           4.00 |                  4.10 |
+| MariaDB-1-1-2-1 |      1322.28 |     18.92 |           4.23 |                  4.33 |
+| MariaDB-1-1-3-1 |      1209.81 |     13.68 |           4.33 |                  4.43 |
+| MariaDB-1-1-4-1 |      1048.15 |     11.39 |           4.49 |                  4.59 |
+| MariaDB-1-2-1-1 |      1304.29 |     14.17 |           4.26 |                  4.36 |
+| MariaDB-1-2-2-1 |      1065.69 |     15.92 |           4.55 |                  4.65 |
+| MariaDB-1-2-3-1 |       926.95 |     10.39 |           4.62 |                  4.72 |
+| MariaDB-1-2-4-1 |      1001.09 |     12.19 |           4.80 |                  4.90 |
 
 ### Execution phase: component benchmarker
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       132.28 |      1.07 |           0.72 |                  0.72 |
-| MariaDB-1-1-2 |        87.22 |      3.57 |           0.72 |                  0.72 |
-| MariaDB-1-1-3 |        72.10 |      0.91 |           0.70 |                  0.70 |
-| MariaDB-1-1-4 |       132.74 |      1.82 |           0.41 |                  0.41 |
-| MariaDB-1-2-1 |       148.20 |      1.81 |           0.71 |                  0.71 |
-| MariaDB-1-2-2 |       120.82 |      2.71 |           1.06 |                  1.06 |
-| MariaDB-1-2-3 |       106.84 |      3.19 |           1.06 |                  1.06 |
-| MariaDB-1-2-4 |       123.89 |      2.99 |           1.06 |                  1.06 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |       194.52 |      2.35 |           0.70 |                  0.70 |
+| MariaDB-1-1-2-1 |       168.41 |      2.97 |           0.74 |                  0.74 |
+| MariaDB-1-1-3-1 |       213.01 |      3.25 |           0.74 |                  0.74 |
+| MariaDB-1-1-4-1 |       253.99 |      3.43 |           0.50 |                  0.50 |
+| MariaDB-1-2-1-1 |       197.18 |      2.65 |           0.71 |                  0.71 |
+| MariaDB-1-2-2-1 |       228.81 |      4.92 |           0.79 |                  0.79 |
+| MariaDB-1-2-3-1 |       171.83 |      4.99 |           0.79 |                  0.79 |
+| MariaDB-1-2-4-1 |       235.27 |      4.42 |           0.49 |                  0.49 |
 
 ### Tests
 * TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

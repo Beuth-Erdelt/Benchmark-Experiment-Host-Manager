@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -622,14 +622,6 @@ MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'bafe3184-2aa3-450e-9be2-7ac2ddcb955b', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 02 Jun 2026 14:39:07 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
@@ -739,14 +731,6 @@ MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '89ffd53b-d297-459b-b783-77f43d81f0f6', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 02 Jun 2026 15:09:25 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
@@ -838,14 +822,6 @@ MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : is loading
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '953aa5d4-7bd6-4d6a-b799-dc0f6bc67b23', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 02 Jun 2026 15:34:41 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : is loading
 - waiting 30s -               : done

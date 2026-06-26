@@ -2,124 +2,150 @@
 
 ### Workload
 TPC-H Queries SF=1
-    Type: tpch
-    Duration: 2482s 
-    Code: 1748916422
-    This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 1200.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MariaDB'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpch
+* Duration: 725s 
+* Code: 1782333577
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.0.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['MariaDB'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker38.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-MariaDB-BHT-8-1-1 uses docker image mariadb:11.4.7
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:319525344
-    datadisk:2091
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748916422
-
-### Errors (failed queries)
-No errors
-
-### Warnings (result mismatch)
-No warnings
-
-### Latency of Timer Execution [ms]
-DBMS                                                 MariaDB-BHT-8-1-1
-Pricing Summary Report (TPC-H Q1)                             26007.81
-Minimum Cost Supplier Query (TPC-H Q2)                         1424.68
-Shipping Priority (TPC-H Q3)                                   5752.96
-Order Priority Checking Query (TPC-H Q4)                       1470.50
-Local Supplier Volume (TPC-H Q5)                               3638.64
-Forecasting Revenue Change (TPC-H Q6)                          3132.16
-Forecasting Revenue Change (TPC-H Q7)                          3854.64
-National Market Share (TPC-H Q8)                               6830.26
-Product Type Profit Measure (TPC-H Q9)                         6253.92
-Forecasting Revenue Change (TPC-H Q10)                         2856.04
-Important Stock Identification (TPC-H Q11)                      422.14
-Shipping Modes and Order Priority (TPC-H Q12)                 11440.37
-Customer Distribution (TPC-H Q13)                             10250.61
-Forecasting Revenue Change (TPC-H Q14)                        30218.01
-Top Supplier Query (TPC-H Q15)                                 6329.73
-Parts/Supplier Relationship (TPC-H Q16)                         647.58
-Small-Quantity-Order Revenue (TPC-H Q17)                        159.29
-Large Volume Customer (TPC-H Q18)                             11382.62
-Discounted Revenue (TPC-H Q19)                                  368.73
-Potential Part Promotion (TPC-H Q20)                            734.58
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)          196513.50
-Global Sales Opportunity Query (TPC-H Q22)                      459.38
-
-### Loading [s]
-                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MariaDB-BHT-8-1-1           1.0          259.0         2.0     1520.0    1790.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                   Geo Times [s]
-DBMS                            
-MariaDB-BHT-8-1-1            3.5
-
-### Power@Size ((3600*SF)/(geo times))
-                   Power@Size [~Q/h]
-DBMS                                
-MariaDB-BHT-8-1-1            1062.48
-
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                              time [s]  count  SF  Throughput@Size
-DBMS            SF num_experiment num_client                                      
-MariaDB-BHT-8-1 1  1              1                335      1   1           236.42
+* MariaDB-1-1-1-1-1 uses docker image mariadb:11.4.7
+  * RAM:540492877824
+  * CPU:Intel(R) Xeon(R) Gold 6430
+  * Cores:128
+  * host:6.8.0-111-generic
+  * node:cl-worker38
+  * disk:254316
+  * cpu_list:0-127
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1782333577
 
 ### Workflow
 
 #### Actual
-DBMS MariaDB-BHT-8 - Pods [[1]]
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: tpch (1 pods)
 
 #### Planned
-DBMS MariaDB-BHT-8 - Pods [[1]]
 
-### Ingestion - SUT
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1     1526.26     2.02          9.69                  9.7
+* DBMS MariaDB-1 - Experiment 1 Client 1: tpch (1 pods)
 
-### Ingestion - Loader
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1        7.86     0.02          0.52                 1.16
+### Loading
 
-### Execution - SUT
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1      321.09      1.0          9.81                 9.82
+#### Per Run
 
-### Execution - Benchmarker
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MariaDB-BHT-8-1       14.85     0.05          0.26                 0.26
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MariaDB-1-1 |                1 |    1 |      361.00 |           1.00 |           18.00 |         47.00 |          292.00 |              8 |           0 |             | None           |             0 | False         |                9.97 |
+
+### Execution
+
+#### Per Connection
+
+|                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| MariaDB-1-1-1-1-1 | MariaDB-1       | MariaDB-1-1-1 | MariaDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |        107 |            1.12 |             3444.13 |            740.19 |          -1 | MariaDB-1-1-1-1-1 |
+
+#### Per Phase
+
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MariaDB-1-1-1 | MariaDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |        107 |            1.12 |             3444.13 |            740.19 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   MariaDB-1-1-1-1-1 |
+|:----------------------------------------------------|--------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |             7826.42 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |              508.07 |
+| Shipping Priority (TPC-H Q3)                        |             1652.33 |
+| Order Priority Checking Query (TPC-H Q4)            |              400.18 |
+| Local Supplier Volume (TPC-H Q5)                    |             1065.60 |
+| Forecasting Revenue Change (TPC-H Q6)               |              897.29 |
+| Volume Shipping Query (TPC-H Q7)                    |             1131.93 |
+| National Market Share (TPC-H Q8)                    |             2075.71 |
+| Product Type Profit Measure (TPC-H Q9)              |             2037.49 |
+| Returned Item Reporting Query (TPC-H Q10)           |              904.34 |
+| Important Stock Identification (TPC-H Q11)          |              139.67 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |             3119.38 |
+| Customer Distribution (TPC-H Q13)                   |             3115.70 |
+| Promotion Effect Query (TPC-H Q14)                  |            12671.14 |
+| Top Supplier Query (TPC-H Q15)                      |             1997.16 |
+| Parts/Supplier Relationship (TPC-H Q16)             |              210.77 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               59.44 |
+| Large Volume Customer (TPC-H Q18)                   |             3205.99 |
+| Discounted Revenue (TPC-H Q19)                      |              106.26 |
+| Potential Part Promotion (TPC-H Q20)                |              222.20 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            58675.88 |
+| Global Sales Opportunity Query (TPC-H Q22)          |              127.26 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |       519.88 |      6.76 |           5.68 |                  5.78 |
+
+### Loading phase: component data generator
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |         2.75 |      0.05 |           0.00 |                  0.11 |
+
+### Execution phase: SUT deployment
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |        83.67 |      1.00 |           5.91 |                  6.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MariaDB-1-1-1-1 |        14.63 |      0.46 |           0.30 |                  0.31 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

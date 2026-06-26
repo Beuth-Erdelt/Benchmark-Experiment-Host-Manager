@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -144,14 +144,6 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '2fe10434-ae08-4e71-82a2-8850608ced4a', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sun, 14 Jun 2026 19:25:21 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done

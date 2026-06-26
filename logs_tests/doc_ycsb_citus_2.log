@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -87,14 +87,6 @@ Citus-64-8-65536              : worker pods found: ['bexhoma-worker-citus-ycsb-1
 Citus-64-8-65536              : worker pods found (only stateful set pods): ['bexhoma-worker-citus-ycsb-1-0', 'bexhoma-worker-citus-ycsb-1-1', 'bexhoma-worker-citus-ycsb-1-2']
 Citus-64-8-65536              : found 3 / 3 running workers (component worker)
 Citus-64-8-65536              : try to attach workers to master
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'e90eabfd-5d7b-4377-b083-142a251a2416', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 13 Mar 2026 21:44:57 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 Citus-64-8-65536              : master found
 Citus-64-8-65536              : looking for worker pods

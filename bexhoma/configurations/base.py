@@ -194,6 +194,7 @@ class SutConfiguration:
         self.sut_has_pool = False                                                #: True iff there is a pool component (for monitoring).
         self.is_sut_ready = False                                                #: True once the SUT pod reports ready.
         self.are_worker_ready = False                                            #: True once all worker pods report ready.
+        self.are_pool_ready = False                                              #: True once all pool (e.g. PGBouncer) pods report ready.
         self.reset_sut()
         self.benchmark = None                                                    #: Optional dbmsbenchmarker instance.
         self.current_benchmark_connection = ""                                   #: Name of the connection currently being benchmarked.

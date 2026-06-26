@@ -43,14 +43,15 @@ function Wait-BexhomaProcess {
 }
 
 function Invoke-CleanLogs {
-    $warningText = "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens."
-
     Write-Host "Removing connection warning lines from log files..."
     Get-ChildItem -Path $LOG_DIR -Filter "*.log" -Recurse | ForEach-Object {
-        $lines = Get-Content $_.FullName
-        $filtered = $lines | Where-Object { $_ -ne $warningText }
-        if ($filtered.Count -ne $lines.Count) {
-            $filtered | Set-Content $_.FullName -Encoding utf8
+        $content = Get-Content $_.FullName -Raw
+        if ($null -eq $content) { return }
+        $original = $content
+        $content = $content -replace '(?m)^Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens\.\r?\n', ''
+        $content = $content -replace '(?m)^Exception when calling CoreV1Api->.*\r?\nReason: Unauthorized\r?\nHTTP response headers: HTTPHeaderDict\(.*\r?\nHTTP response body: .*\r?\n(\r?\n)*Create new access token\r?\n', ''
+        if ($content -ne $original) {
+            Set-Content $_.FullName $content -Encoding utf8 -NoNewline
         }
     }
 

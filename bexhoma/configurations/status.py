@@ -97,35 +97,56 @@ class ComponentStatus:
         return False
 
     def workers_healthy(self) -> bool:
-        """Return True iff all worker pods are Running and Ready.
+        """Return True iff all worker pods and pool pods (if any) are Running and Ready.
 
-        :return: True if all worker pods are running and ready.
+        Checks StatefulSet-based worker pods (when :attr:`~bexhoma.configurations.SutConfiguration.num_worker` > 0)
+        and pool pods such as PGBouncer (when :attr:`~bexhoma.configurations.SutConfiguration.sut_has_pool` is True).
+        Both checks must pass for the method to return True.
+
+        :return: True if all required pods are running and ready.
         :rtype: bool
         """
+        all_ready = True
         if self._config.num_worker > 0:
-            if self._config.are_worker_ready:
-                return True
-            self._config.are_worker_ready = True
-            components = list(self._config.deployment_infos['statefulset'].keys())
-            for component in components:
+            if not self._config.are_worker_ready:
+                self._config.are_worker_ready = True
+                components = list(self._config.deployment_infos['statefulset'].keys())
+                for component in components:
+                    num_ready = 0
+                    pods_worker = self._config.get_worker_pods(
+                        component=component, only_stateful=True)
+                    for pod in pods_worker:
+                        status = self._config.experiment.cluster.get_pod_status(pod)
+                        if status == "Running":
+                            ready = self._config.experiment.cluster.is_pod_ready(pod)
+                            if ready:
+                                num_ready = num_ready + 1
+                    print("{:30s}: found {} / {} running workers (component {})".format(
+                        self._config.configuration, num_ready, self._config.num_worker, component))
+                    self._config.are_worker_ready = (
+                        self._config.are_worker_ready and (num_ready == self._config.num_worker))
+                if self._config.are_worker_ready:
+                    self._config.attach_worker()
+            all_ready = all_ready and self._config.are_worker_ready
+        if self._config.sut_has_pool:
+            if not self._config.are_pool_ready:
+                app = self._config.appname
+                configuration = self._config.configuration
+                num_pool = self._config.resources.get('replicas_pooling', 1)
+                pods_pool = self._config.experiment.cluster.get_pods(
+                    app, 'pool', self._config.experiment.code, configuration)
                 num_ready = 0
-                pods_worker = self._config.get_worker_pods(
-                    component=component, only_stateful=True)
-                for pod in pods_worker:
+                for pod in pods_pool:
                     status = self._config.experiment.cluster.get_pod_status(pod)
                     if status == "Running":
                         ready = self._config.experiment.cluster.is_pod_ready(pod)
                         if ready:
                             num_ready = num_ready + 1
-                print("{:30s}: found {} / {} running workers (component {})".format(
-                    self._config.configuration, num_ready, self._config.num_worker, component))
-                self._config.are_worker_ready = (
-                    self._config.are_worker_ready and (num_ready == self._config.num_worker))
-                if self._config.are_worker_ready:
-                    self._config.attach_worker()
-            return self._config.are_worker_ready
-        else:
-            return True
+                print("{:30s}: found {} / {} running pool pods".format(
+                    self._config.configuration, num_ready, num_pool))
+                self._config.are_pool_ready = (num_ready == num_pool)
+            all_ready = all_ready and self._config.are_pool_ready
+        return all_ready
 
     def sut_exists(self) -> bool:
         """Return True iff any SUT component pod exists in the cluster.

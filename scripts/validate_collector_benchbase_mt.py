@@ -233,7 +233,8 @@ try:
     merged_df = collect.add_metadata(merged_df).copy()
     for col in merged_df.columns:
         if merged_df[col].dtype == object:
-            merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce').fillna(merged_df[col])
+            merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce').fillna(merged_df[col]).infer_objects(copy=False)
+    merged_df = merged_df.copy()
     merged_df["E_Tpx"] = (merged_df["Goodput (requests/second)"]
                            / merged_df["CPU Utilization Time [s]"] * 600.)
     merged_df["E_Lat"] = 1. / np.sqrt(

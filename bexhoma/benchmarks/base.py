@@ -282,14 +282,17 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         df_errors = self.evaluator.get_total_errors(query_titles=True)
         num_errors = df_errors.sum().sum()
         if num_errors > 0:
-            df_errors = df_errors[~(df_errors == 0).all(axis=1)]
-            list_error_queries = list(df_errors.index)
-            print(df_errors.to_markdown(index=True, floatfmt=".2f"))
-            for error in list_error_queries:
-                numQuery = error[1:]
-                list_errors = self.evaluator.evaluation.get_error(numQuery)
+            df_errors_display = df_errors[~(df_errors == 0).all(axis=1)]
+            print(df_errors_display.to_markdown(index=True, floatfmt=".2f"))
+            failing_cols_mask = (df_errors != 0).any(axis=0)
+            list_error_query_titles = list(df_errors.columns[failing_cols_mask])
+            df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
+            list_error_query_nums = list(df_errors_by_num.columns[failing_cols_mask])
+            for query_title, query_num in zip(list_error_query_titles, list_error_query_nums):
+                query_num_stripped = str(query_num).lstrip('Q')
+                list_errors = self.evaluator.evaluation.get_error(query_num_stripped)
                 list_errors = {k: v for k, v in list_errors.items() if len(v) > 0}
-                print("* " + error)
+                print("* " + query_title)
                 for k, v in list_errors.items():
                     print(f"  * {k}: {v}")
         else:

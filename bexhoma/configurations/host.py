@@ -341,8 +341,14 @@ class HostProbe:
             return
         if 'deployment' in self._config.deployment_infos:
             for component, deployment in self._config.deployment_infos['deployment'].items():
-                for _, pod in enumerate(deployment['pods']):
-                    pvc = deployment['pvc']
+                if 'pvc' not in deployment:
+                    continue
+                pods = self._config.experiment.cluster.get_pods(
+                    component='sut',
+                    configuration=self._config.configuration,
+                    experiment=self._config.code)
+                pvc = deployment['pvc'][0]
+                for pod in pods:
                     print("{:30s}: get size via pod {} and write to pvc {}".format(
                         self._config.configuration, pod, pvc))
                     size, used = self.get_host_volume(pod=pod)

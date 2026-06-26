@@ -376,7 +376,7 @@ class EvaluatorBase:
             'phase': c['phase'],
             'job': c['job'],
             'experiment_run': c['parameter']['numExperiment'],
-            'benchmark_run': int(c['parameter'].get('numBenchmark', 0)),
+            'benchmark_run': int(c['parameter'].get('numBenchmark', 0) or 0),
             'client': int(c['parameter']['client']),
             'dockerimage': c['parameter']['dockerimage'],
             'time_load': float(c['timeLoad']),
@@ -477,7 +477,7 @@ class EvaluatorBase:
         result = dict()
         for conn in connections_sorted:
             code = conn['parameter']['code']
-            benchmark_run_num = str(int(conn['parameter'].get('numBenchmark', 0)))
+            benchmark_run_num = str(int(conn['parameter'].get('numBenchmark', 0) or 0))
             if 'orig_name' in conn:
                 # entry represents an individual pod — use the pod name as connection id
                 name = conn['name']

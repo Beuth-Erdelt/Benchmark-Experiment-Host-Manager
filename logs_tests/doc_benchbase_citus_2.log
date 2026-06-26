@@ -1,4 +1,4 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
@@ -499,14 +499,6 @@ Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '8a390298-26fc-475d-b328-36a15a2c1408', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sat, 14 Mar 2026 05:57:47 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 Citus-1-1-1024                : has running benchmarks
 - waiting 30s -               : done

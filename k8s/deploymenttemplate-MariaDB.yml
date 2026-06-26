@@ -55,7 +55,7 @@ spec:
           # --- Async I/O ---
           - "--innodb-use-native-aio=0"           # CephFS-compatible async I/O
           # --- Buffer Pool (memory use) ---
-          - "--innodb-buffer-pool-size=256G"      # 256G out of 500G
+          - "--innodb-buffer-pool-size=96G"       # ca 75% of 128Gi container limit
           - "--innodb-buffer-pool-chunk-size=2G"  # Logical chunking
           # --- I/O Capacity ---
           - "--innodb-io-capacity=200"            # CephFS-friendly
@@ -88,6 +88,7 @@ spec:
               "if mariadb --user=root --password=password -e 'SELECT 1+1;'; then exit 0; else exit 1; fi"
             ]
           initialDelaySeconds: 15
+          timeoutSeconds: 2
           periodSeconds: 60
           successThreshold: 3
         ports:
