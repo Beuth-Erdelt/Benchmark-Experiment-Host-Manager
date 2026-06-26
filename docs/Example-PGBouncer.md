@@ -121,7 +121,7 @@ At the end of a benchmark you will see a summary like
 
 test_ycsb_testcase_pgbouncer_1.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=16
@@ -366,7 +366,7 @@ The result looks something like
 
 test_ycsb_testcase_pgbouncer_2.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=16
@@ -661,7 +661,7 @@ bexhoma benchbase \
 
 doc_benchbase_testcase_newconn.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -789,7 +789,7 @@ bexhoma benchbase \
 
 doc_benchbase_testcase_newconn_pool.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16

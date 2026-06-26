@@ -68,7 +68,7 @@ This
 
 doc_benchbase_run_postgresql_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -241,7 +241,7 @@ bexhoma hammerdb \
 
 doc_hammerdb_testcase_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -409,7 +409,7 @@ bexhoma tpch \
 
 doc_tpch_testcase_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -604,7 +604,7 @@ bexhoma tpcds \
 
 doc_tpcds_testcase_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=3
@@ -881,7 +881,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -1164,7 +1164,7 @@ This
 
 doc_benchbase_run_mysql_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -1336,7 +1336,7 @@ bexhoma hammerdb \
 
 doc_hammerdb_run_mysql_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -1504,7 +1504,7 @@ bexhoma tpch \
 
 doc_tpch_run_mysql_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -1699,7 +1699,7 @@ bexhoma tpcds \
 
 doc_tpcds_run_mysql_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=3
@@ -1976,7 +1976,7 @@ bexhoma ycsb \
 
 doc_ycsb_run_mysql_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -2235,7 +2235,7 @@ bexhoma ycsb \
 
 doc_ycsb_run_cockroachdb_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -2431,7 +2431,7 @@ bexhoma benchbase \
 
 doc_benchbase_run_cockroachdb_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -2650,7 +2650,7 @@ bexhoma ycsb \
 
 doc_ycsb_run_redis_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -2844,7 +2844,7 @@ bexhoma ycsb \
 
 doc_ycsb_run_tidb_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -3111,7 +3111,7 @@ bexhoma benchbase \
 
 doc_benchbase_run_tidb_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -3469,7 +3469,7 @@ bexhoma ycsb \
 
 doc_ycsb_run_pgbouncer_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=16
@@ -3620,7 +3620,7 @@ bexhoma benchbase \
 
 doc_benchbase_run_pgbouncer_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -3804,7 +3804,7 @@ bexhoma ycsb \
 
 doc_ycsb_run_yugabytedb_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -3968,7 +3968,7 @@ bexhoma benchbase \
 
 doc_benchbase_run_yugabytedb_appmetrics.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16

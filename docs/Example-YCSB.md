@@ -114,7 +114,7 @@ At the end of a benchmark you will see a summary like
 
 doc_ycsb_testcase_loading.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -404,7 +404,7 @@ Each of the drivers has 64 threads and a target of twice or three times (`-ltf`)
 
 doc_ycsb_testcase_benchmarking.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -554,7 +554,7 @@ If monitoring is activated, the summary also contains a section like this:
 
 doc_ycsb_testcase_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -767,7 +767,7 @@ The result looks something like
 
 doc_ycsb_testcase_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -999,7 +999,7 @@ The result looks something like
 
 doc_ycsb_testcase_loading_patch.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -1105,7 +1105,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_a.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1333,7 +1333,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_b.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1494,7 +1494,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_c.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1664,7 +1664,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_d.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1812,7 +1812,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_e.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1953,7 +1953,7 @@ bexhoma ycsb \
 
 doc_ycsb_testcase_f.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
