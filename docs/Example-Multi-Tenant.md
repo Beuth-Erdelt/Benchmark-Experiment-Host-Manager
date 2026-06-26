@@ -71,10 +71,10 @@ bexhoma tpch \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_schema.log
+  run &>$LOG_DIR/docs_tpch_postgresql_tenants_schema.log
 ```
 
-test_tpch_run_postgresql_tenants_schema.log
+docs_tpch_postgresql_tenants_schema.log
 ```markdown
 ﻿## Show Summary
 
@@ -275,10 +275,10 @@ bexhoma tpch \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database.log
+  run &>$LOG_DIR/docs_tpch_postgresql_tenants_database.log
 ```
 
-test_tpch_run_postgresql_tenants_database.log
+docs_tpch_postgresql_tenants_database.log
 ```markdown
 ﻿## Show Summary
 
@@ -479,10 +479,10 @@ bexhoma tpch \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_container.log
+  run &>$LOG_DIR/docs_tpch_postgresql_tenants_container.log
 ```
 
-test_tpch_run_postgresql_tenants_container.log
+docs_tpch_postgresql_tenants_container.log
 ```markdown
 ﻿## Show Summary
 
@@ -696,10 +696,10 @@ bexhoma tpch \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_run_postgresql_tenants_database_multiload.log
+  run &>$LOG_DIR/docs_tpch_postgresql_tenants_database_multiload.log
 ```
 
-test_tpch_run_postgresql_tenants_database_multiload.log
+docs_tpch_postgresql_tenants_database_multiload.log
 ```markdown
 ﻿## Show Summary
 
@@ -1043,10 +1043,10 @@ bexhoma benchbase \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_schema.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_tenants_schema.log
 ```
 
-test_benchbase_run_postgresql_tenants_schema.log
+docs_benchbase_postgresql_tenants_schema.log
 ```markdown
 ﻿## Show Summary
 
@@ -1182,10 +1182,10 @@ bexhoma benchbase \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_database.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_tenants_database.log
 ```
 
-test_benchbase_run_postgresql_tenants_database.log
+docs_benchbase_postgresql_tenants_database.log
 ```markdown
 ﻿## Show Summary
 
@@ -1322,10 +1322,10 @@ bexhoma benchbase \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_run_postgresql_tenants_container.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_tenants_container.log
 ```
 
-test_benchbase_run_postgresql_tenants_container.log
+docs_benchbase_postgresql_tenants_container.log
 ```markdown
 ﻿## Show Summary
 
@@ -1518,10 +1518,10 @@ bexhoma benchbase \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_database.log
+  run &>$LOG_DIR/docs_benchbase_mysql_tenants_database.log
 ```
 
-test_benchbase_run_mysql_tenants_database.log
+docs_benchbase_mysql_tenants_database.log
 ```markdown
 ﻿## Show Summary
 
@@ -1657,10 +1657,10 @@ bexhoma benchbase \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_run_mysql_tenants_container.log
+  run &>$LOG_DIR/docs_benchbase_mysql_tenants_container.log
 ```
 
-test_benchbase_run_mysql_tenants_container.log
+docs_benchbase_mysql_tenants_container.log
 ```markdown
 ﻿## Show Summary
 

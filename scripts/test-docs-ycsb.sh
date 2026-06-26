@@ -56,7 +56,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_loading.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_loading.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading  sf=1  nlp=1,8"
 
@@ -97,7 +97,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_benchmarking.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
 
@@ -142,7 +142,7 @@ bexhoma ycsb \
   -tr \
   -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB monitoring  sf=3  nbp=1,8"
 
@@ -190,7 +190,7 @@ bexhoma ycsb \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_storage.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
 
@@ -229,7 +229,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
-  run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_loading_patch.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading patch  sf=1  nlp=1"
 
@@ -283,7 +283,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_a.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_a.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload a  sf=10  nbp=1,8"
 
@@ -332,7 +332,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_b.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_b.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload b  sf=10  nbp=1,8"
 
@@ -381,7 +381,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_c.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_c.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload c  sf=10  nbp=1,8"
 
@@ -432,7 +432,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_d.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_d.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload d  sf=10  nbp=1"
 
@@ -483,7 +483,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_e.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_e.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload e  sf=10  nbp=1"
 
@@ -532,7 +532,7 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_f.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_f.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload f  sf=10  nbp=1,8"
 

@@ -39,7 +39,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H PostgreSQL  sf=1"
 
@@ -64,7 +64,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_monitoring.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H monitoring  sf=10"
 
@@ -87,7 +87,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_throughput.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_throughput.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
@@ -115,7 +115,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_storage.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H storage  sf=1  nc=2"
 
@@ -139,7 +139,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_fractional.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_fractional.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
@@ -176,7 +176,7 @@ bexhoma tpch `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
@@ -203,7 +203,7 @@ bexhoma tpch `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
@@ -230,7 +230,7 @@ bexhoma tpch `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_monetdb_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 

@@ -57,7 +57,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_scale.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_scale.log
 ```
 
 This
@@ -105,7 +105,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_benchbase_testcase_scale.log
+docs_benchbase_postgresql_scale.log
 ```markdown
 ﻿## Show Summary
 
@@ -359,12 +359,12 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_monitoring.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_monitoring.log
 ```
 
 The result looks something like
 
-doc_benchbase_testcase_monitoring.log
+docs_benchbase_postgresql_monitoring.log
 ```markdown
 ﻿## Show Summary
 
@@ -522,7 +522,7 @@ bexhoma benchbase \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_storage.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_storage.log
 ```
 
 The following status shows we have two volumes of type `shared`.
@@ -541,7 +541,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-doc_benchbase_testcase_storage.log
+docs_benchbase_postgresql_storage.log
 ```markdown
 ﻿## Show Summary
 
@@ -673,12 +673,12 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_keytime.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_keytime.log
 ```
 
 ## Evaluate Results
 
-doc_benchbase_testcase_keytime.log
+docs_benchbase_postgresql_keytime.log
 ```markdown
 ﻿## Show Summary
 

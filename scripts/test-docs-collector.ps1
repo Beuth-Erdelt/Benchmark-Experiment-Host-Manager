@@ -47,7 +47,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
@@ -75,7 +75,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
@@ -101,7 +101,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
@@ -139,7 +139,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_schema.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_tenants_schema.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
@@ -167,7 +167,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_database.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_tenants_database.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
@@ -195,7 +195,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_collector_tenants_container.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_tenants_container.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
@@ -229,7 +229,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 1/3  sf=3"
 
@@ -255,7 +255,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 2/3  sf=6"
 
@@ -279,7 +279,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 3/3  sf=6"
 
@@ -319,7 +319,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_schema.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_tenants_schema.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
@@ -350,7 +350,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_database.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_tenants_database.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
@@ -381,7 +381,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_collector_tenants_container.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_tenants_container.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
@@ -417,7 +417,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_collector_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
@@ -447,7 +447,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_collector_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 
@@ -475,7 +475,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_collector_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_collector_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
 
@@ -508,7 +508,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_collector_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
@@ -533,7 +533,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_collector_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
@@ -556,7 +556,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_collector_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_collector_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 

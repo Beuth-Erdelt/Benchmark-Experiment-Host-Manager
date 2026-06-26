@@ -96,7 +96,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnpp 4 \
   -xnpi 64 \
   -xnpo 64 \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log &
+  run </dev/null &>$LOG_DIR/docs_ycsb_pgbouncer_1.log &
 
 
 wait_process "ycsb"
@@ -119,7 +119,7 @@ nohup python ycsb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
-  run </dev/null &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log &
+  run </dev/null &>$LOG_DIR/docs_ycsb_pgbouncer_2.log &
 
 
 wait_process "ycsb"

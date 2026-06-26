@@ -64,7 +64,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 5Gi \
-  run &>$LOG_DIR/doc_ycsb_tidb_1.log
+  run &>$LOG_DIR/docs_ycsb_tidb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 
@@ -100,7 +100,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 16Gi \
-  run &>$LOG_DIR/doc_benchbase_tidb_1.log
+  run &>$LOG_DIR/docs_benchbase_tidb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 

@@ -40,7 +40,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS PostgreSQL  sf=1"
 
@@ -66,7 +66,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_monitoring.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS monitoring  sf=3"
 
@@ -90,7 +90,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_throughput.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_throughput.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
@@ -119,7 +119,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_storage.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS storage  sf=1  nc=2"
 
@@ -155,7 +155,7 @@ bexhoma tpcds `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 2000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
@@ -180,7 +180,7 @@ bexhoma tpcds `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rss 2000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
@@ -205,7 +205,7 @@ bexhoma tpcds `
   -rr 1024Gi                    <# RAM requested for the SUT container #> `
   -rss 2000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_monetdb_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
@@ -237,7 +237,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  profiling 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_profiling.log" -Encoding utf8
+  profiling 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_profiling.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS profiling  sf=10  ne=1,1"
 

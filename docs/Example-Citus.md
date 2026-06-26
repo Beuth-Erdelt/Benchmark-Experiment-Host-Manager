@@ -66,7 +66,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_citus_1.log
+  run &>$LOG_DIR/docs_ycsb_citus_1.log
 ```
 
 This
@@ -120,7 +120,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_citus_1.log
+docs_ycsb_citus_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -323,7 +323,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_citus_2.log
+  run &>$LOG_DIR/docs_ycsb_citus_2.log
 ```
 The following status shows we have one volume of type `shared`.
 Every Citus experiment will take the databases from these volumes and skip loading.
@@ -355,7 +355,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
-doc_ycsb_citus_2.log
+docs_ycsb_citus_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -649,12 +649,12 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_citus_1.log
+  run &>$LOG_DIR/docs_benchbase_citus_1.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_citus_1.log
+docs_benchbase_citus_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -840,12 +840,12 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_citus_2.log
+  run &>$LOG_DIR/docs_benchbase_citus_2.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_citus_2.log
+docs_benchbase_citus_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -1283,12 +1283,12 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_citus_3.log
+  run &>$LOG_DIR/docs_benchbase_citus_3.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_citus_3.log
+docs_benchbase_citus_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -1987,12 +1987,12 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_citus_1.log
+  run &>$LOG_DIR/docs_hammerdb_citus_1.log
 ```
 
 ### Evaluate Results
 
-doc_hammerdb_citus_1.log
+docs_hammerdb_citus_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -2122,12 +2122,12 @@ bexhoma hammerdb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_citus_2.log
+  run &>$LOG_DIR/docs_hammerdb_citus_2.log
 ```
 
 ### Evaluate Results
 
-doc_hammerdb_citus_2.log
+docs_hammerdb_citus_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -2592,12 +2592,12 @@ bexhoma hammerdb \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_citus_3.log
+  run &>$LOG_DIR/docs_hammerdb_citus_3.log
 ```
 
 ### Evaluate Results
 
-doc_hammerdb_citus_3.log
+docs_hammerdb_citus_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -3276,13 +3276,13 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_citus_1.log
+  run &>$LOG_DIR/docs_tpch_citus_1.log
 ```
 
 
 ### Evaluate Results
 
-test_tpch_testcase_citus_1.log
+docs_tpch_citus_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -3469,12 +3469,12 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_citus_2.log
+  run &>$LOG_DIR/docs_tpch_citus_2.log
 ```
 
 ### Evaluate Results
 
-test_tpch_testcase_citus_2.log
+docs_tpch_citus_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -3903,12 +3903,12 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_citus_3.log
+  run &>$LOG_DIR/docs_tpch_citus_3.log
 ```
 
 ### Evaluate Results
 
-test_tpch_testcase_citus_3.log
+docs_tpch_citus_3.log
 ```markdown
 ﻿## Show Summary
 

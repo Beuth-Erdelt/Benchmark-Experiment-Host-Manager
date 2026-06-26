@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for YCSB experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -41,7 +41,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_loading.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_loading.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading  sf=1  nlp=1,8"
 
@@ -66,7 +66,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_benchmarking.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_benchmarking.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
 
@@ -93,7 +93,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_monitoring.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB monitoring  sf=3  nbp=1,8"
 
@@ -124,7 +124,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_storage.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
 
@@ -147,7 +147,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 5Gi                      <# size of the persistent volume claim #> `
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 <# override deployment configuration parameter #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_loading_patch.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_loading_patch.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch  sf=1  nlp=1"
 
@@ -181,7 +181,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_a.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_a.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload a  sf=10  nbp=1,8"
 
@@ -210,7 +210,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_b.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_b.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload b  sf=10  nbp=1,8"
 
@@ -239,7 +239,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_c.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_c.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c  sf=10  nbp=1,8"
 
@@ -269,7 +269,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_d.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_d.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload d  sf=10  nbp=1"
 
@@ -299,7 +299,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_e.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_e.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload e  sf=10  nbp=1"
 
@@ -328,7 +328,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_f.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_f.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload f  sf=10  nbp=1,8"
 

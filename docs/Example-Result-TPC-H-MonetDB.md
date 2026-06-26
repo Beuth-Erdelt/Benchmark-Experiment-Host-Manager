@@ -56,7 +56,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_1.log
+  run &>$LOG_DIR/docs_tpch_monetdb_1.log
 ```
 
 ## Status Data Disk
@@ -275,7 +275,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_2.log
+  run &>$LOG_DIR/docs_tpch_monetdb_2.log
 ```
 
 yields
@@ -484,7 +484,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_3.log
+  run &>$LOG_DIR/docs_tpch_monetdb_3.log
 ```
 
 yields something like

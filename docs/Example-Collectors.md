@@ -55,7 +55,7 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_collector_1.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_collector_1.log
 ```
 
 This
@@ -71,7 +71,7 @@ This
 
 The result looks something like
 
-doc_benchbase_testcase_collector_1.log
+docs_benchbase_postgresql_collector_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -287,14 +287,14 @@ bexhoma benchbase \
   -lr 64Gi -rr 64Gi \
   -rsr -rss 100Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_collector_2.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_collector_2.log
 ```
 
 Same as test 1 but with `nbp=4,8` (4 or 8 benchmarking pods) and `xnbf=20` (target factor 20). This tests scale-out of the benchmarking driver further. The PVC is recreated (`-rsr`).
 
 The result looks something like
 
-doc_benchbase_testcase_collector_2.log
+docs_benchbase_postgresql_collector_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -520,14 +520,14 @@ bexhoma benchbase \
   -lr 64Gi -rr 64Gi \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_collector_3.log
 ```
 
 Same parameters as test 2 but without `-rsr -rst`. The persistent volume from the previous experiment is reused, so no data generation or loading takes place.
 
 The result looks something like
 
-doc_benchbase_testcase_collector_3.log
+docs_benchbase_postgresql_collector_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -765,7 +765,7 @@ bexhoma benchbase \
   -rsr -rss 20Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_schema.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_schema.log
 ```
 
 This
@@ -776,7 +776,7 @@ This
 
 The result looks something like
 
-doc_benchbase_testcase_collector_tenants_schema.log
+docs_benchbase_postgresql_collector_tenants_schema.log
 ```markdown
 ﻿## Show Summary
 
@@ -1004,14 +1004,14 @@ bexhoma benchbase \
   -rsr -rss 20Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_database.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_database.log
 ```
 
 Same as schema isolation but each tenant gets its own PostgreSQL database (`-mtb database`) inside one shared DBMS container.
 
 The result looks something like
 
-doc_benchbase_testcase_collector_tenants_database.log
+docs_benchbase_postgresql_collector_tenants_database.log
 ```markdown
 ﻿## Show Summary
 
@@ -1239,14 +1239,14 @@ bexhoma benchbase \
   -rsr -rss 10Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_collector_tenants_container.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_container.log
 ```
 
 Each tenant gets its own separate DBMS container (`-mtb container`). `-ne "1,1"` means 1 loader and 1 benchmarker pod per tenant. Storage is reduced to 10Gi per tenant since each container has its own volume.
 
 The result looks something like
 
-doc_benchbase_testcase_collector_tenants_container.log
+docs_benchbase_postgresql_collector_tenants_container.log
 ```markdown
 ﻿## Show Summary
 
@@ -1573,7 +1573,7 @@ bexhoma tpch \
   -lr 64Gi -rr 64Gi \
   -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_collector_1.log
+  run &>$LOG_DIR/docs_tpch_postgresql_collector_1.log
 ```
 
 This
@@ -1584,7 +1584,7 @@ This
 
 The result looks something like
 
-doc_tpch_testcase_collector_1.log
+docs_tpch_postgresql_collector_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -1867,14 +1867,14 @@ bexhoma tpch \
   -lr 64Gi -rr 64Gi \
   -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_collector_2.log
+  run &>$LOG_DIR/docs_tpch_postgresql_collector_2.log
 ```
 
 Same as test 1 but doubles the scaling factor to SF=6. The PVC is recreated (`-rsr`).
 
 The result looks something like
 
-doc_tpch_testcase_collector_2.log
+docs_tpch_postgresql_collector_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -2157,14 +2157,14 @@ bexhoma tpch \
   -lr 64Gi -rr 64Gi \
   -rss 60Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_collector_3.log
+  run &>$LOG_DIR/docs_tpch_postgresql_collector_3.log
 ```
 
 Same parameters as test 2 but without `-rsr -rst`. The persistent volume is reused, so loading is skipped.
 
 The result looks something like
 
-doc_tpch_testcase_collector_3.log
+docs_tpch_postgresql_collector_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -2459,14 +2459,14 @@ bexhoma tpch \
   -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_schema.log
+  run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_schema.log
 ```
 
 Runs TPC-H with 2 tenants isolated by schema, each loaded by 1 of 2 parallel loader pods (`-nlp $BEXHOMA_NUM_TENANTS`), each benchmarked by 64 threads.
 
 The result looks something like
 
-doc_tpch_testcase_collector_tenants_schema.log
+docs_tpch_postgresql_collector_tenants_schema.log
 ```markdown
 ﻿## Show Summary
 
@@ -2805,14 +2805,14 @@ bexhoma tpch \
   -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_database.log
+  run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_database.log
 ```
 
 Same as schema isolation but each tenant gets its own PostgreSQL database (`-mtb database`).
 
 The result looks something like
 
-doc_tpch_testcase_collector_tenants_database.log
+docs_tpch_postgresql_collector_tenants_database.log
 ```markdown
 ﻿## Show Summary
 
@@ -3151,14 +3151,14 @@ bexhoma tpch \
   -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_collector_tenants_container.log
+  run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_container.log
 ```
 
 Each tenant gets its own DBMS container (`-mtb container`) with its own 15Gi volume. `-ne "1,1"` means 1 loader and 1 benchmarker pod per tenant.
 
 The result looks something like
 
-doc_tpch_testcase_collector_tenants_container.log
+docs_tpch_postgresql_collector_tenants_container.log
 ```markdown
 ﻿## Show Summary
 
@@ -3530,7 +3530,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS -tr \
   -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_collector_1.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_collector_1.log
 ```
 
 This
@@ -3541,7 +3541,7 @@ This
 
 The result looks something like
 
-doc_ycsb_testcase_collector_1.log
+docs_ycsb_postgresql_collector_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -3777,14 +3777,14 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS -tr \
   -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_collector_2.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_collector_2.log
 ```
 
 Same as test 1 but with `xnbf=3` (target factor 3 × 16384). The PVC is recreated (`-rsr`).
 
 The result looks something like
 
-doc_ycsb_testcase_collector_2.log
+docs_ycsb_postgresql_collector_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -4020,14 +4020,14 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS -tr \
   -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
 ```
 
 Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`).
 
 The result looks something like
 
-doc_ycsb_testcase_collector_3.log
+docs_ycsb_postgresql_collector_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -4276,7 +4276,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS -tr \
   -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_collector_1.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_collector_1.log
 ```
 
 This
@@ -4287,7 +4287,7 @@ This
 
 The result looks something like
 
-doc_hammerdb_testcase_collector_1.log
+docs_hammerdb_postgresql_collector_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -4488,14 +4488,14 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS -tr \
   -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_collector_2.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_collector_2.log
 ```
 
 Same as test 1 but with `nbt=32` virtual users per benchmarking pod. The PVC is recreated (`-rsr`).
 
 The result looks something like
 
-doc_hammerdb_testcase_collector_2.log
+docs_hammerdb_postgresql_collector_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -4696,14 +4696,14 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_collector_3.log
 ```
 
 Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`). Since the database persists, loading is fast (pre-loaded data is already present) and the experiment focuses on benchmarking with the existing dataset.
 
 The result looks something like
 
-doc_hammerdb_testcase_collector_3.log
+docs_hammerdb_postgresql_collector_3.log
 ```markdown
 ﻿## Show Summary
 

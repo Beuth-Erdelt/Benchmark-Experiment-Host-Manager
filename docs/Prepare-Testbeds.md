@@ -118,10 +118,10 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT \
-  start &>$LOG_DIR/test_ycsb_start_postgresql.log
+  start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 ```
 
-test_ycsb_start_postgresql.log
+docs_ycsb_postgresql_start.log
 ```markdown
 ﻿## Show Summary
 
@@ -180,10 +180,10 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load &>$LOG_DIR/test_ycsb_load_postgresql.log
+  load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 ```
 
-test_ycsb_load_postgresql.log
+docs_ycsb_postgresql_load.log
 ```markdown
 ﻿## Show Summary
 
@@ -295,10 +295,10 @@ bexhoma ycsb \
   -ss \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_run_postgresql.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 ```
 
-test_ycsb_run_postgresql.log
+docs_ycsb_postgresql_run.log
 ```markdown
 ﻿## Show Summary
 
@@ -460,10 +460,10 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT \
-  start &>$LOG_DIR/test_benchbase_start_postgresql.log
+  start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 ```
 
-test_benchbase_start_postgresql.log
+docs_benchbase_postgresql_start.log
 ```markdown
 ﻿## Show Summary
 
@@ -520,10 +520,10 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load &>$LOG_DIR/test_benchbase_load_postgresql.log
+  load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 ```
 
-test_benchbase_load_postgresql.log
+docs_benchbase_postgresql_load.log
 ```markdown
 ﻿## Show Summary
 
@@ -612,10 +612,10 @@ bexhoma benchbase \
   -ss \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_run_postgresql.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 ```
 
-test_benchbase_run_postgresql.log
+docs_benchbase_postgresql_run.log
 ```markdown
 ﻿## Show Summary
 
@@ -754,10 +754,10 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT \
-  start &>$LOG_DIR/test_hammerdb_start_postgresql.log
+  start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 ```
 
-test_hammerdb_start_postgresql.log
+docs_hammerdb_postgresql_start.log
 ```markdown
 ﻿## Show Summary
 
@@ -812,10 +812,10 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load &>$LOG_DIR/test_hammerdb_load_postgresql.log
+  load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 ```
 
-test_hammerdb_load_postgresql.log
+docs_hammerdb_postgresql_load.log
 ```markdown
 ﻿## Show Summary
 
@@ -903,10 +903,10 @@ bexhoma hammerdb \
   -ss \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_run_postgresql.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 ```
 
-test_hammerdb_run_postgresql.log
+docs_hammerdb_postgresql_run.log
 ```markdown
 ﻿## Show Summary
 
@@ -1034,10 +1034,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT \
-  start &>$LOG_DIR/test_tpch_start_postgresql.log
+  start &>$LOG_DIR/docs_tpch_postgresql_start.log
 ```
 
-test_tpch_start_postgresql.log
+docs_tpch_postgresql_start.log
 ```markdown
 ﻿## Show Summary
 
@@ -1094,10 +1094,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load &>$LOG_DIR/test_tpch_load_postgresql.log
+  load &>$LOG_DIR/docs_tpch_postgresql_load.log
 ```
 
-test_tpch_load_postgresql.log
+docs_tpch_postgresql_load.log
 ```markdown
 ﻿## Show Summary
 
@@ -1202,10 +1202,10 @@ bexhoma tpch \
   -ss \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_run_postgresql.log
+  run &>$LOG_DIR/docs_tpch_postgresql_run.log
 ```
 
-test_tpch_run_postgresql.log
+docs_tpch_postgresql_run.log
 ```markdown
 ﻿## Show Summary
 
@@ -1387,10 +1387,10 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT \
-  start &>$LOG_DIR/test_tpcds_start_postgresql.log
+  start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 ```
 
-test_tpcds_start_postgresql.log
+docs_tpcds_postgresql_start.log
 ```markdown
 ﻿## Show Summary
 
@@ -1444,10 +1444,10 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
-  load &>$LOG_DIR/test_tpcds_load_postgresql.log
+  load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 ```
 
-test_tpcds_load_postgresql.log
+docs_tpcds_postgresql_load.log
 ```markdown
 ﻿## Show Summary
 
@@ -1543,10 +1543,10 @@ bexhoma tpcds \
   -ss \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_run_postgresql.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 ```
 
-test_tpcds_run_postgresql.log
+docs_tpcds_postgresql_run.log
 ```markdown
 ﻿## Show Summary
 

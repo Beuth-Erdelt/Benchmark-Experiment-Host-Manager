@@ -67,7 +67,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_citus_1.log
+  run &>$LOG_DIR/docs_ycsb_citus_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nbp=1"
 
@@ -127,7 +127,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_citus_2.log
+  run &>$LOG_DIR/docs_ycsb_citus_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 
@@ -168,7 +168,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_citus_1.log
+  run &>$LOG_DIR/docs_benchbase_citus_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
@@ -217,7 +217,7 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_citus_2.log
+  run &>$LOG_DIR/docs_benchbase_citus_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
@@ -265,7 +265,7 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_citus_3.log
+  run &>$LOG_DIR/docs_benchbase_citus_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
@@ -308,7 +308,7 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_citus_1.log
+  run &>$LOG_DIR/docs_hammerdb_citus_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
 
@@ -363,7 +363,7 @@ bexhoma hammerdb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_citus_2.log
+  run &>$LOG_DIR/docs_hammerdb_citus_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
@@ -422,7 +422,7 @@ bexhoma hammerdb \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_citus_3.log
+  run &>$LOG_DIR/docs_hammerdb_citus_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
@@ -468,7 +468,7 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_citus_1.log
+  run &>$LOG_DIR/docs_tpch_citus_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus  sf=1  nbp=1"
 
@@ -523,7 +523,7 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_citus_2.log
+  run &>$LOG_DIR/docs_tpch_citus_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
@@ -576,7 +576,7 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_citus_3.log
+  run &>$LOG_DIR/docs_tpch_citus_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 

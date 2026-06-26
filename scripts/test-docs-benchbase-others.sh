@@ -48,7 +48,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_twitter_simple.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter simple  sf=16  nbp=1"
 
@@ -89,7 +89,7 @@ bexhoma benchbase \
   -rr 128Gi \
   -rss 1600Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_twitter_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
@@ -122,7 +122,7 @@ bexhoma benchbase \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_chbenchmark_simple.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
 
@@ -159,7 +159,7 @@ bexhoma benchbase \
   -rr 128Gi \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_chbenchmark_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
@@ -194,7 +194,7 @@ bexhoma benchbase \
   -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_c.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
@@ -229,7 +229,7 @@ bexhoma benchbase \
   -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_a.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
@@ -264,7 +264,7 @@ bexhoma benchbase \
   -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_b.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
@@ -299,7 +299,7 @@ bexhoma benchbase \
   -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_d.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
 
@@ -334,7 +334,7 @@ bexhoma benchbase \
   -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_e.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
 
@@ -369,7 +369,7 @@ bexhoma benchbase \
   -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
+  run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_f.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 

@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for managed database service experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -52,7 +52,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
@@ -80,7 +80,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
@@ -126,7 +126,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_databaseservice_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
@@ -164,7 +164,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_databaseservice_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
@@ -183,7 +183,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_databaseservice_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
@@ -225,7 +225,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService  sf=3"
 
@@ -249,7 +249,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
@@ -291,7 +291,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
@@ -316,7 +316,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_databaseservice_4.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_4.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 

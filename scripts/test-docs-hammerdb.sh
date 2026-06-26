@@ -44,7 +44,7 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_scale.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 
@@ -79,7 +79,7 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=16  nbp=1,2"
 
@@ -121,7 +121,7 @@ bexhoma hammerdb \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_storage.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
 
@@ -169,7 +169,7 @@ bexhoma hammerdb \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_hammerdb_testcase_keytime.log
+  run &>$LOG_DIR/docs_hammerdb_postgresql_keytime.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB keytime  sf=16  nbp=1,2  nc=2"
 

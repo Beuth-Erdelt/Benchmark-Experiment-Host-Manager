@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for PGBouncer experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -48,7 +48,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_ycsb_testcase_pgbouncer_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=16  nbp=16"
 
@@ -82,7 +82,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_ycsb_testcase_pgbouncer_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
 
@@ -107,7 +107,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_newconn.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_pgbouncer_newconn.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
@@ -131,7 +131,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_newconn_pool.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_pgbouncer_newconn_pool.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 

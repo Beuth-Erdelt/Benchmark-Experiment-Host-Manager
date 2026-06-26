@@ -71,7 +71,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_cockroachdb_1.log
+  run &>$LOG_DIR/docs_ycsb_cockroachdb_1.log
 ```
 
 This
@@ -125,7 +125,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_cockroachdb_1.log
+docs_ycsb_cockroachdb_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -341,7 +341,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_cockroachdb_2.log
+  run &>$LOG_DIR/docs_ycsb_cockroachdb_2.log
 ```
 The following status shows we have one volume of type `shared`.
 Every Citus experiment will take the databases from these volumes and skip loading.
@@ -374,7 +374,7 @@ Here, we remove existing storage via `-rsr` to start with a clean copy.
 
 The result looks something like
 
-doc_ycsb_cockroachdb_2.log
+docs_ycsb_cockroachdb_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -617,13 +617,13 @@ bexhoma ycsb \
   -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_cockroachdb_3.log
+  run &>$LOG_DIR/docs_ycsb_cockroachdb_3.log
 ```
 
 
 The result looks something like
 
-doc_ycsb_cockroachdb_3.log
+docs_ycsb_cockroachdb_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -854,12 +854,12 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_cockroachdb_1.log
+  run &>$LOG_DIR/docs_benchbase_cockroachdb_1.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_cockroachdb_1.log
+docs_benchbase_cockroachdb_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -1038,12 +1038,12 @@ bexhoma benchbase \
   -tr \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_cockroachdb_2.log
+  run &>$LOG_DIR/docs_benchbase_cockroachdb_2.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_cockroachdb_2.log
+docs_benchbase_cockroachdb_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -1396,12 +1396,12 @@ bexhoma benchbase \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_cockroachdb_3.log
+  run &>$LOG_DIR/docs_benchbase_cockroachdb_3.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_cockroachdb_3.log
+docs_benchbase_cockroachdb_3.log
 ```markdown
 ﻿## Show Summary
 

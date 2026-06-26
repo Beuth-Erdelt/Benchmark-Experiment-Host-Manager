@@ -35,7 +35,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_scale.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_scale.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB scale  sf=16  nbp=1,2"
 
@@ -57,7 +57,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_monitoring.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB monitoring  sf=16  nbp=1,2"
 
@@ -85,7 +85,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_storage.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
 
@@ -116,7 +116,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_hammerdb_testcase_keytime.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_keytime.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB keytime  sf=16  nbp=1,2  nc=2"
 

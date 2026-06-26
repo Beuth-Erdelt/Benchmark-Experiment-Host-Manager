@@ -50,7 +50,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_postgresql.log
+  run &>$LOG_DIR/docs_tpch_postgresql.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL  sf=1"
 
@@ -89,7 +89,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
+  run &>$LOG_DIR/docs_tpch_postgresql_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
 
@@ -124,7 +124,7 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_throughput.log
+  run &>$LOG_DIR/docs_tpch_postgresql_throughput.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
@@ -164,7 +164,7 @@ bexhoma tpch \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_storage.log
+  run &>$LOG_DIR/docs_tpch_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 
@@ -201,7 +201,7 @@ bexhoma tpch \
   -rss 5Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_fractional.log
+  run &>$LOG_DIR/docs_tpch_postgresql_fractional.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
@@ -217,7 +217,7 @@ bexhoma tpch \
   -xrs 3 \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_refresh.log
+  run &>$LOG_DIR/docs_tpch_postgresql_refresh.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh  sf=1  ne=3"
 
@@ -271,7 +271,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_1.log
+  run &>$LOG_DIR/docs_tpch_monetdb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
@@ -316,7 +316,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_2.log
+  run &>$LOG_DIR/docs_tpch_monetdb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
@@ -361,7 +361,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_3.log
+  run &>$LOG_DIR/docs_tpch_monetdb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 

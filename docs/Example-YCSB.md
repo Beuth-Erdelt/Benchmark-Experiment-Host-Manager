@@ -59,7 +59,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_loading.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_loading.log
 ```
 
 This
@@ -112,7 +112,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_testcase_loading.log
+docs_ycsb_postgresql_loading.log
 ```markdown
 ﻿## Show Summary
 
@@ -397,12 +397,12 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_benchmarking.log
 ```
 This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
 Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
 
-doc_ycsb_testcase_benchmarking.log
+docs_ycsb_postgresql_benchmarking.log
 ```markdown
 ﻿## Show Summary
 
@@ -547,12 +547,12 @@ bexhoma ycsb \
   -tr \
   -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like this:
 
-doc_ycsb_testcase_monitoring.log
+docs_ycsb_postgresql_monitoring.log
 ```markdown
 ﻿## Show Summary
 
@@ -745,7 +745,7 @@ bexhoma ycsb \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_storage.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_storage.log
 ```
 The following status shows we have one volume of type `shared`.
 Every PostgreSQL experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
@@ -765,7 +765,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-doc_ycsb_testcase_storage.log
+docs_ycsb_postgresql_storage.log
 ```markdown
 ﻿## Show Summary
 
@@ -992,12 +992,12 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
-  run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_loading_patch.log
 ```
 
 The result looks something like
 
-doc_ycsb_testcase_loading_patch.log
+docs_ycsb_postgresql_loading_patch.log
 ```markdown
 ﻿## Show Summary
 
@@ -1098,12 +1098,12 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_a.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_a.log
 ```
 
 ### Evaluate Results
 
-doc_ycsb_testcase_a.log
+docs_ycsb_postgresql_wl_a.log
 ```markdown
 ﻿## Show Summary
 
@@ -1326,12 +1326,12 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_b.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_b.log
 ```
 
 ### Evaluate Results
 
-doc_ycsb_testcase_b.log
+docs_ycsb_postgresql_wl_b.log
 ```markdown
 ﻿## Show Summary
 
@@ -1487,12 +1487,12 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_c.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_c.log
 ```
 
 ### Evaluate Results
 
-doc_ycsb_testcase_c.log
+docs_ycsb_postgresql_wl_c.log
 ```markdown
 ﻿## Show Summary
 
@@ -1657,12 +1657,12 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_d.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_d.log
 ```
 
 ### Evaluate Results
 
-doc_ycsb_testcase_d.log
+docs_ycsb_postgresql_wl_d.log
 ```markdown
 ﻿## Show Summary
 
@@ -1805,12 +1805,12 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_e.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_e.log
 ```
 
 ### Evaluate Results
 
-doc_ycsb_testcase_e.log
+docs_ycsb_postgresql_wl_e.log
 ```markdown
 ﻿## Show Summary
 
@@ -1946,12 +1946,12 @@ bexhoma ycsb \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_testcase_f.log
+  run &>$LOG_DIR/docs_ycsb_postgresql_wl_f.log
 ```
 
 ### Evaluate Results
 
-doc_ycsb_testcase_f.log
+docs_ycsb_postgresql_wl_f.log
 ```markdown
 ﻿## Show Summary
 

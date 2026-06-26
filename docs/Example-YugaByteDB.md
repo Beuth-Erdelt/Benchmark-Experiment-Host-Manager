@@ -128,7 +128,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_yugabytedb_1.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_1.log
 ```
 
 This
@@ -182,7 +182,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_yugabytedb_1.log
+docs_ycsb_yugabytedb_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -363,12 +363,12 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_yugabytedb_2.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_2.log
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
 
-doc_ycsb_yugabytedb_2.log
+docs_ycsb_yugabytedb_2.log
 ```markdown
 ﻿## Show Summary
 
@@ -508,7 +508,7 @@ bexhoma ycsb \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_yugabytedb_3.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_3.log
 ```
 This will add a PVC to the Dummy DBMS.
 Nothing will be stored there, but it maintains status information about previous loading processes.
@@ -530,7 +530,7 @@ If YugabyteDB is restarted or data is delete somehow, this PVC information will 
 
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
-doc_ycsb_yugabytedb_3.log
+docs_ycsb_yugabytedb_3.log
 ```markdown
 ﻿## Show Summary
 
@@ -778,12 +778,12 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_yugabytedb_1.log
+  run &>$LOG_DIR/docs_benchbase_yugabytedb_1.log
 ```
 
 yields
 
-doc_benchbase_yugabytedb_1.log
+docs_benchbase_yugabytedb_1.log
 ```markdown
 ﻿## Show Summary
 
@@ -944,12 +944,12 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_yugabytedb_2.log
+  run &>$LOG_DIR/docs_benchbase_yugabytedb_2.log
 ```
 
 yields
 
-doc_benchbase_yugabytedb_2.log
+docs_benchbase_yugabytedb_2.log
 ```markdown
 
 ```
