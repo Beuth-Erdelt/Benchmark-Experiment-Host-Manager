@@ -116,9 +116,11 @@ class TpccEvaluator(LogEvaluator):
                             extracted_data[label + " [ms]"] = float(value.replace('ms', '').strip())
                         else:
                             extracted_data[label] = float(value.strip())
-            # efficiency is only meaningful when key-and-think time is enabled
-            if keyandthink == "true":
-                efficiency = round(100. * float(result_tuples[0][0][0]) / float(result_tuples[0][1]) / 1.286, 2)
+            sf_int = int(sf)
+            vusers_first = int(float(result_tuples[0][1]))
+            # efficiency is only meaningful when key-and-think time is enabled and vusers == 10 × SF
+            if keyandthink == "true" and vusers_first == 10 * sf_int:
+                efficiency = round(100. * float(result_tuples[0][0][0]) / sf_int / 12.86, 2)
             else:
                 efficiency = 0
             phase = configuration_name + '-' + experiment_run + '-' + client
