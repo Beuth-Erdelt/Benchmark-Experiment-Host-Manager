@@ -116,7 +116,7 @@ def patch_doc_file(doc_path: Path, commands: dict[str, list[str]]) -> bool:
         i += 1
 
     if changed:
-        doc_path.write_text('\n'.join(out) + '\n', encoding='utf-8')
+        doc_path.write_text('\n'.join(out) + '\n', encoding='utf-8', newline='\n')
     return changed
 
 
