@@ -10,6 +10,23 @@ Extracted from log files in `logs_tests/`.
 
 ---
 
+## Rule of thumb for `-rss`
+
+`-rss` sets the persistent volume claim size (or the ephemeral storage limit when no `-rst` is given).
+Use these formulas as the default; increase for special cases noted below.
+
+| Workload | Formula | Rationale |
+|----------|---------|-----------|
+| TPC-H | `10 × SF Gi` | MySQL at SF=1 needs 8.1 G; PostgreSQL/MariaDB need 2–3 G. 10× covers MySQL with ~1.2× headroom. |
+| TPC-DS | `10 × SF Gi` | MySQL SF=1 needs 8.1 G; PostgreSQL SF=10 needs 54 G. 10× headroom ≥ 1.2×. |
+| YCSB | `5 × SF Gi` | PostgreSQL/MariaDB need 1.9–2.4 G; MySQL clean-load ~3–5 G. 5× covers all at SF=1 with thin MySQL margin. |
+| Benchbase | `1 × SF Gi` | MySQL SF=16 needs 11 G < 16 Gi; PostgreSQL needs ≤ 5.2 G. 1× is sufficient. |
+| HammerDB | `1 × SF Gi` | MySQL SF=16 needs ~11 G < 16 Gi; PostgreSQL needs ≤ 4.8 G. Same headroom as Benchbase. |
+
+**Special case — TPC-DS MonetDB SF=100:** measured at 151–155 G; formula would give 1000 Gi which is grossly over-provisioned. Use 300 Gi instead (≈ 2× measured maximum).
+
+---
+
 ## TPC-H
 
 | DBMS | SF | volume\_used | datadisk | Status | Source |
@@ -68,7 +85,7 @@ Extracted from log files in `logs_tests/`.
 | PostgreSQL | 1 | 2.4 G | 2,390–2,392 MB | ✓ extracted | `doc_ycsb_testcase_storage.log`, `test_ycsb_testcase_postgresql_1/2.log` |
 | PostgreSQL | 3 | ~8–10 G | 7,092–10,402 MB | ✓ extracted (datadisk only) | `doc_ycsb_testcase_monitoring.log` (values span benchmarking run) |
 | PostgreSQL | 10 | ~23 G | 23,344–23,566 MB | ✓ extracted (datadisk only) | `doc_ycsb_testcase_b/c/d/e/f.log` |
-| MariaDB | 1 | 1.8 G | 1,770–1,794 MB | ✓ extracted | `test_ycsb_testcase_mariadb_1/2/3/4/5.log` |
+| MariaDB | 1 | 1.8–1.9 G | 1,770–1,794 MB | ✓ extracted | `test_ycsb_testcase_mariadb_2/3/4.log` (1.8 G), `test_ycsb_testcase_mariadb_5.log` (1.9 G, monitoring run) |
 | MySQL | 1 | 36–48 G ⚠ | — | ✓ extracted, likely contaminated | `test_ycsb_testcase_mysql_2/3/4/5.log` — volume grew across tests without wipe; **clean-load estimate: 3–5 G** |
 | CockroachDB | 1 | 1.9 G | 705,151 KB (full-disk) | ✓ extracted (`volume_used`) | `doc_ycsb_cockroachdb_2.log` — `datadisk` is the entire cluster disk (~705 GB); use `volume_used` |
 | CockroachDB | 10 | — (full-disk 687 G) | — | ✓ extracted, full-disk only | `doc_ycsb_cockroachdb_3.log` — no separate `volume_used` for data only |
