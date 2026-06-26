@@ -73,6 +73,9 @@ clean_logs() {
     grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . \
     | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
 
+    grep -rl "Exception when calling CoreV1Api->" . \
+    | xargs perl -0777 -i -pe 's/^Exception when calling CoreV1Api->.*\nReason: Unauthorized\nHTTP response headers: HTTPHeaderDict\(.*\nHTTP response body: .*\n(\n)*Create new access token\n//mg'
+
     cd "$MYDIR" || return
 
     echo "Extracting summaries from log files..."
