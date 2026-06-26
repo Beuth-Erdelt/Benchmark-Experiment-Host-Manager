@@ -518,11 +518,12 @@ bexhoma benchbase \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
   -lr 64Gi -rr 64Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
 ```
 
-Same parameters as test 2 but without `-rsr -rss -rst`. The persistent volume from the previous experiment is reused, so no data generation or loading takes place.
+Same parameters as test 2 but without `-rsr -rst`. The persistent volume from the previous experiment is reused, so no data generation or loading takes place.
 
 The result looks something like
 
@@ -2154,11 +2155,12 @@ bexhoma tpch \
   -m -ma -mc \
   -tr \
   -lr 64Gi -rr 64Gi \
+  -rss 60Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_3.log
 ```
 
-Same parameters as test 2 but without `-rsr -rss -rst`. The persistent volume is reused, so loading is skipped.
+Same parameters as test 2 but without `-rsr -rst`. The persistent volume is reused, so loading is skipped.
 
 The result looks something like
 
@@ -4016,11 +4018,12 @@ bexhoma ycsb \
   -xop 1 \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
 ```
 
-Same parameters as test 2 but the persistent volume is reused (no `-rsr -rss -rst`).
+Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`).
 
 The result looks something like
 
@@ -4691,11 +4694,12 @@ bexhoma hammerdb \
   -xlat \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
 ```
 
-Same parameters as test 2 but the persistent volume is reused (no `-rsr -rss -rst`). Since the database persists, loading is fast (pre-loaded data is already present) and the experiment focuses on benchmarking with the existing dataset.
+Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`). Since the database persists, loading is fast (pre-loaded data is already present) and the experiment focuses on benchmarking with the existing dataset.
 
 The result looks something like
 

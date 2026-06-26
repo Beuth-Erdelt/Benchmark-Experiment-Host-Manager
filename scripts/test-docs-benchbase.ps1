@@ -32,6 +32,7 @@ bexhoma benchbase `
   -nbt 160                      <# threads per benchmarking pod #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -53,6 +54,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

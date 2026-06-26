@@ -35,6 +35,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -62,6 +63,7 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 15Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -87,6 +89,7 @@ bexhoma tpch `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rss 30Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -112,6 +115,7 @@ bexhoma tpcds `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rss 30Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -134,6 +138,7 @@ bexhoma hammerdb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -161,6 +166,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -189,6 +195,7 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rss 15Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -214,6 +221,7 @@ bexhoma tpch `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rss 30Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -240,6 +248,7 @@ bexhoma tpcds `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 30Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -263,6 +272,7 @@ bexhoma hammerdb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -297,6 +307,7 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -321,6 +332,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -354,6 +366,7 @@ bexhoma ycsb `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 5Gi                      <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -389,6 +402,7 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 5Gi                      <# size of the persistent volume claim #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_run_tidb_appmetrics.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB appmetrics  sf=1  nbp=1"
@@ -409,6 +423,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_run_tidb_appmetrics.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=1,2"
@@ -443,6 +458,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 80Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -469,6 +485,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

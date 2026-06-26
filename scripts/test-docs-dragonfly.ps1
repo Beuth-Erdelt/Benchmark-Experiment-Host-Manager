@@ -42,6 +42,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 5Gi                      <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -73,6 +74,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 5Gi                      <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -102,6 +104,7 @@ bexhoma ycsb `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 5Gi                      <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

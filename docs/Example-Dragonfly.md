@@ -66,6 +66,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_1.log
 ```
@@ -313,6 +314,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_2.log
 ```
@@ -514,6 +516,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_dragonfly_3.log
 ```

@@ -48,6 +48,7 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_postgresql.log
 ```
@@ -378,6 +379,7 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
 ```
@@ -562,6 +564,7 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_throughput.log
 ```
@@ -1084,6 +1087,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 10Gi \
   -xrs 3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_refresh.log

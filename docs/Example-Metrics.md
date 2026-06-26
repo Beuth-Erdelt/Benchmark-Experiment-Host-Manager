@@ -40,6 +40,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_postgresql_appmetrics.log
 ```
@@ -233,6 +234,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_appmetrics.log
 ```
@@ -400,6 +402,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -lr 64Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_appmetrics.log
 ```
@@ -594,6 +597,7 @@ bexhoma tpcds \
   -t 1200 \
   -tr \
   -lr 64Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_testcase_appmetrics.log
 ```
@@ -870,6 +874,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_appmetrics.log
 ```
@@ -1131,6 +1136,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_mysql_appmetrics.log
 ```
@@ -1323,6 +1329,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_run_mysql_appmetrics.log
 ```
@@ -1490,6 +1497,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -lr 64Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_run_mysql_appmetrics.log
 ```
@@ -1684,6 +1692,7 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpcds_run_mysql_appmetrics.log
 ```
@@ -1960,6 +1969,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_mysql_appmetrics.log
 ```
@@ -2218,6 +2228,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_cockroachdb_appmetrics.log
 ```
@@ -2413,6 +2424,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_cockroachdb_appmetrics.log
 ```
@@ -2631,6 +2643,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_redis_appmetrics.log
 ```
@@ -2825,6 +2838,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   run &>$LOG_DIR/doc_ycsb_run_tidb_appmetrics.log
 ```
 
@@ -3091,6 +3105,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   run &>$LOG_DIR/doc_benchbase_run_tidb_appmetrics.log
 ```
 
@@ -3447,6 +3462,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 80Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_run_pgbouncer_appmetrics.log
 ```
@@ -3597,6 +3613,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_run_pgbouncer_appmetrics.log
 ```

@@ -64,6 +64,7 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_1.log
 ```
@@ -278,6 +279,7 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_2.log
 ```
@@ -462,6 +464,7 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_redis_3.log
 ```

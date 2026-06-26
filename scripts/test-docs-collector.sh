@@ -137,6 +137,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rss 16Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -157,6 +158,7 @@ bexhoma benchbase \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_collector_3.log
 
@@ -424,6 +426,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 2/3  sf=6"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rss 60Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -441,6 +444,7 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 60Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_collector_3.log
 
@@ -738,6 +742,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rss 15Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -760,6 +765,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_collector_3.log
 
@@ -871,6 +877,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rss 16Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -888,6 +895,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_collector_3.log
 

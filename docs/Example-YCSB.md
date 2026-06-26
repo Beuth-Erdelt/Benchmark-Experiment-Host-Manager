@@ -57,6 +57,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_loading.log
 ```
@@ -394,6 +395,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_benchmarking.log
 ```
@@ -543,6 +545,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_monitoring.log
 ```
@@ -987,6 +990,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
   run &>$LOG_DIR/doc_ycsb_testcase_loading_patch.log
 ```
@@ -1092,6 +1096,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_a.log
 ```
@@ -1319,6 +1324,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_b.log
 ```
@@ -1479,6 +1485,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_c.log
 ```
@@ -1648,6 +1655,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_d.log
 ```
@@ -1795,6 +1803,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_e.log
 ```
@@ -1935,6 +1944,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_f.log
 ```

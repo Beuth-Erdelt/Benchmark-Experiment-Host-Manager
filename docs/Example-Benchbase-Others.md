@@ -54,6 +54,7 @@ bexhoma benchbase \
   -nbt 16 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_simple.log
 ```
@@ -185,6 +186,7 @@ bexhoma benchbase \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rss 1600Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_twitter_scale.log
 ```
@@ -429,6 +431,7 @@ bexhoma benchbase \
   -nbt 100 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_simple.log
 ```
@@ -558,6 +561,7 @@ bexhoma benchbase \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_scale.log
 ```
@@ -754,6 +758,7 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 32 \
   -tr \
+  -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_c.log
 ```
@@ -894,6 +899,7 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 32 \
   -tr \
+  -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_a.log
 ```
@@ -1018,6 +1024,7 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 32 \
   -tr \
+  -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_b.log
 ```
@@ -1144,6 +1151,7 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 32 \
   -tr \
+  -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_d.log
 ```
@@ -1254,6 +1262,7 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 32 \
   -tr \
+  -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_e.log
 ```
@@ -1364,6 +1373,7 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 32 \
   -tr \
+  -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_f.log
 ```

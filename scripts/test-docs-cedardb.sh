@@ -28,6 +28,7 @@ source ./scripts/testfunctions.sh
 # -mc                           collect metrics for all cluster nodes
 # -ms 5                         max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rss 30Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -42,6 +43,7 @@ bexhoma tpch \
   -mc \
   -ms 5 \
   -tr \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log
 
@@ -63,6 +65,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 # -nbt 64                       threads per benchmarking pod
 # -ms 5                         max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rss 5Gi                      size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -81,6 +84,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms 5 \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log
 
@@ -98,6 +102,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
 # -nbt 100                      threads per benchmarking pod
 # -ms 2                         max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -112,6 +117,7 @@ bexhoma benchbase \
   -nbt 100 \
   -ms 2 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log
 

@@ -64,6 +64,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_ycsb_citus_1.log
 ```
@@ -646,6 +647,7 @@ bexhoma benchbase \
   -nws 48 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_citus_1.log
 ```
@@ -1983,6 +1985,7 @@ bexhoma hammerdb \
   -xlat \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_citus_1.log
 ```
@@ -3213,6 +3216,7 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_tpch_testcase_citus_1.log
 ```

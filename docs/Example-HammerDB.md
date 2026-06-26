@@ -51,6 +51,7 @@ bexhoma hammerdb \
   -nbt 16 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_scale.log
 ```
@@ -337,6 +338,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_hammerdb_testcase_monitoring.log
 ```

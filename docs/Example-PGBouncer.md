@@ -62,6 +62,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 80Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
 ```
@@ -651,6 +652,7 @@ bexhoma benchbase \
   -xconn \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
 ```
@@ -778,6 +780,7 @@ bexhoma benchbase \
   -xconn \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
 ```

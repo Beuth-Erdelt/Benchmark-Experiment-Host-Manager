@@ -40,6 +40,7 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 5Gi                      <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -103,6 +104,7 @@ bexhoma benchbase `
   -nws 48                       <# number of shards #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -190,6 +192,7 @@ bexhoma hammerdb `
   -xlat                         <# collect per-operation latency histograms #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -289,6 +292,7 @@ bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 10Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
