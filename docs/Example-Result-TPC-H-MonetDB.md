@@ -21,7 +21,7 @@ At first we generate TPC-H data at SF=100 (`-sf`) with 8 parallel generators (`-
 The generated data is stored at the shared disk `data`.
 Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
 Afterwards the script creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`).
-The database is located in another shared disk of storageClass shared (`-rst`) and of size 300Gi (`-rss`).
+The database is located in another shared disk of storageClass shared (`-rst`) and of size 1000Gi (`-rss`).
 
 The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
 To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).

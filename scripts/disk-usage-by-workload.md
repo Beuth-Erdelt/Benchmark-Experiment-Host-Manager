@@ -17,13 +17,13 @@ Use these formulas as the default; increase for special cases noted below.
 
 | Workload | Formula | Rationale |
 |----------|---------|-----------|
-| TPC-H | `10 × SF Gi` | MySQL at SF=1 needs 8.1 G; PostgreSQL/MariaDB need 2–3 G. 10× covers MySQL with ~1.2× headroom. |
-| TPC-DS | `10 × SF Gi` | MySQL SF=1 needs 8.1 G; PostgreSQL SF=10 needs 54 G. 10× headroom ≥ 1.2×. |
+| TPC-H | `15 × SF Gi` | MySQL at SF=1 needs 8.1 G; PostgreSQL/MariaDB need 2–3 G. 15× covers MySQL with ~1.85× headroom, providing additional margin for indexes and temp files. |
+| TPC-DS | `15 × SF Gi` | MySQL SF=1 needs 8.1 G; PostgreSQL SF=10 needs 54 G. 15× provides ≥ 1.85× headroom with additional margin for indexes and temp files. |
 | YCSB | `5 × SF Gi` | PostgreSQL/MariaDB need 1.9–2.4 G; MySQL clean-load ~3–5 G. 5× covers all at SF=1 with thin MySQL margin. |
 | Benchbase | `1 × SF Gi` | MySQL SF=16 needs 11 G < 16 Gi; PostgreSQL needs ≤ 5.2 G. 1× is sufficient. |
 | HammerDB | `1 × SF Gi` | MySQL SF=16 needs ~11 G < 16 Gi; PostgreSQL needs ≤ 4.8 G. Same headroom as Benchbase. |
 
-**Special case — TPC-DS MonetDB SF=100:** measured at 151–155 G; formula would give 1000 Gi which is grossly over-provisioned. Use 300 Gi instead (≈ 2× measured maximum).
+**Special case — TPC-H/TPC-DS MonetDB SF=100:** measured at rest (TPC-H: 162–200 G; TPC-DS: 151–155 G); formula would give 1500 Gi which is grossly over-provisioned. Use **1000 Gi** instead — the measured value is before benchmarking; concurrent clients can generate substantial temp data, so ≈ 5–7× the at-rest size is appropriate.
 
 ---
 
