@@ -121,7 +121,7 @@ def do_benchmark():
 			'cpu': cpu_type,
 			'gpu': '',
 		})
-	if request_node_name is not None:
+	if request_node_name:
 		experiment.set_resources(
 			nodeSelector = {
 				'cpu': cpu_type,
