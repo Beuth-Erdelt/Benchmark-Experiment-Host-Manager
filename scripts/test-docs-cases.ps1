@@ -664,7 +664,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_tpcds_testcase_mariadb_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\testcase_tpcds_mariadb_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDB monitoring  sf=1"
 
@@ -697,7 +697,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_tpcds_testcase_mariadb_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\testcase_tpcds_mariadb_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,2"
 

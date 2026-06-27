@@ -127,7 +127,7 @@ At the end of a benchmark you will see a summary like
 
 docs_tpcds_postgresql.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -493,7 +493,7 @@ If monitoring is activated, the summary also contains a section like this:
 
 docs_tpcds_postgresql_monitoring.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=3
@@ -754,7 +754,7 @@ This runs 3 streams (`-ne`), the first one as a single stream and the following 
 
 docs_tpcds_postgresql_throughput.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -1035,7 +1035,7 @@ The result looks something like
 
 docs_tpcds_postgresql_storage.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -1300,7 +1300,7 @@ bexhoma tpcds \
 
 docs_tpcds_postgresql_profiling.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Data Profiling SF=10
@@ -1958,7 +1958,7 @@ At the end of a benchmark you will see a summary like
 
 docs_tpcds_monetdb_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=30
@@ -2219,7 +2219,7 @@ bexhoma tpcds \
 
 docs_tpcds_monetdb_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=30
@@ -2519,7 +2519,7 @@ bexhoma tpcds \
 
 docs_tpcds_monetdb_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=30

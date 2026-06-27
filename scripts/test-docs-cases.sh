@@ -1013,7 +1013,7 @@ bexhoma tpcds \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB monitoring  sf=1"
 
@@ -1063,7 +1063,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,2"
 
