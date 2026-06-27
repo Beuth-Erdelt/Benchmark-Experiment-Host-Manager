@@ -295,7 +295,7 @@ def patch_ps_file(ps_path: Path, sh_commands: dict[str, dict]) -> bool:
         out.append(lines[i])
         i += 1
     if changed:
-        ps_path.write_text('\n'.join(out) + '\n', encoding='utf-8')
+        ps_path.write_text('\n'.join(out) + '\n', encoding='utf-8', newline='\n')
     return changed
 
 

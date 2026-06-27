@@ -34,6 +34,7 @@ source ./scripts/testfunctions.sh
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -49,8 +50,9 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_postgresql.log
+  run &>$LOG_DIR/docs_tpcds_postgresql.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 
@@ -71,6 +73,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rss 30Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -88,8 +91,9 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 
@@ -108,6 +112,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -123,8 +128,9 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_throughput.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
@@ -166,7 +172,7 @@ bexhoma tpcds \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_storage.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
 
@@ -219,7 +225,7 @@ bexhoma tpcds \
   -rsr \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/doc_tpcds_monetdb_1.log
+  run &>$LOG_DIR/docs_tpcds_monetdb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
@@ -260,7 +266,7 @@ bexhoma tpcds \
   -rr 1024Gi \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/doc_tpcds_monetdb_2.log
+  run &>$LOG_DIR/docs_tpcds_monetdb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
@@ -301,7 +307,7 @@ bexhoma tpcds \
   -rr 1024Gi \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/doc_tpcds_monetdb_3.log
+  run &>$LOG_DIR/docs_tpcds_monetdb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
@@ -349,7 +355,7 @@ bexhoma tpcds \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
+  profiling &>$LOG_DIR/docs_tpcds_postgresql_profiling.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS profiling  sf=10  ne=1,1"
 

@@ -69,7 +69,8 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  run &>$LOG_DIR/doc_ycsb_tidb_1.log
+  -rss 5Gi \
+  run &>$LOG_DIR/docs_ycsb_tidb_1.log
 ```
 
 This
@@ -123,7 +124,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_tidb_1.log
+docs_ycsb_tidb_1.log
 ```markdown
 ## Show Summary
 
@@ -372,12 +373,13 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  run &>$LOG_DIR/doc_benchbase_tidb_1.log
+  -rss 16Gi \
+  run &>$LOG_DIR/docs_benchbase_tidb_1.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_tidb_1.log
+docs_benchbase_tidb_1.log
 ```markdown
 ## Show Summary
 

@@ -130,7 +130,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_1.log
 ```
 
 This
@@ -183,7 +183,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_databaseservice_1.log
+docs_ycsb_databaseservice_1.log
 ```markdown
 ## Show Summary
 
@@ -293,12 +293,12 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_2.log
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
 
-doc_ycsb_databaseservice_2.log
+docs_ycsb_databaseservice_2.log
 ```markdown
 ## Show Summary
 
@@ -412,7 +412,7 @@ bexhoma ycsb \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_3.log
 ```
 
 This will add a PVC to the Dummy DBMS.
@@ -435,7 +435,7 @@ If data is delete somehow, this PVC information will be outdated and wrong.
 
 This approach helps bexhoma to persist status information, but it does not persist data inside the Cloud database.
 
-doc_ycsb_databaseservice_3.log
+docs_ycsb_databaseservice_3.log
 ```markdown
 ## Show Summary
 
@@ -617,12 +617,12 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice_1.log
 ```
 
 yields
 
-doc_benchbase_databaseservice_1.log
+docs_benchbase_databaseservice_1.log
 ```markdown
 ## Show Summary
 
@@ -740,12 +740,12 @@ bexhoma benchbase \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice_2.log
 ```
 
 yields
 
-doc_benchbase_databaseservice_2.log
+docs_benchbase_databaseservice_2.log
 ```markdown
 ## Show Summary
 
@@ -863,12 +863,12 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_1.log
 ```
 
 yields
 
-doc_tpch_testcase_databaseservice_1.log
+docs_tpch_databaseservice_1.log
 ```markdown
 ## Show Summary
 
@@ -1009,12 +1009,12 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_2.log
 ```
 
 yields
 
-doc_tpch_testcase_databaseservice_2.log
+docs_tpch_databaseservice_2.log
 ```markdown
 ## Show Summary
 
@@ -1174,12 +1174,12 @@ bexhoma tpch \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_3.log
 ```
 
 yields
 
-doc_tpch_testcase_databaseservice_3.log
+docs_tpch_databaseservice_3.log
 ```markdown
 ## Show Summary
 
@@ -1327,12 +1327,12 @@ bexhoma tpch \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_4.log
 ```
 
 yields
 
-doc_tpch_testcase_databaseservice_4.log
+docs_tpch_databaseservice_4.log
 ```markdown
 ## Show Summary
 

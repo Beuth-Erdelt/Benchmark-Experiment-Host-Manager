@@ -62,8 +62,9 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 80Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_1.log
+  run &>$LOG_DIR/docs_ycsb_pgbouncer_1.log
 ```
 
 This
@@ -118,7 +119,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-test_ycsb_testcase_pgbouncer_1.log
+docs_ycsb_pgbouncer_1.log
 ```markdown
 ## Show Summary
 
@@ -342,7 +343,7 @@ bexhoma ycsb \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_pgbouncer_2.log
+  run &>$LOG_DIR/docs_ycsb_pgbouncer_2.log
 ```
 The following status shows we have one volume of type `shared`.
 Every PGBouncer experiment (and every PostgreSQL experiment) will take the database from this volume and skip loading.
@@ -363,7 +364,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-test_ycsb_testcase_pgbouncer_2.log
+docs_ycsb_pgbouncer_2.log
 ```markdown
 ## Show Summary
 
@@ -651,13 +652,14 @@ bexhoma benchbase \
   -xconn \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_newconn.log
+  run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_testcase_newconn.log
+docs_benchbase_pgbouncer_newconn.log
 ```markdown
 ## Show Summary
 
@@ -778,13 +780,14 @@ bexhoma benchbase \
   -xconn \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_testcase_newconn_pool.log
+  run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn_pool.log
 ```
 
 ### Evaluate Results
 
-doc_benchbase_testcase_newconn_pool.log
+docs_benchbase_pgbouncer_newconn_pool.log
 ```markdown
 ## Show Summary
 

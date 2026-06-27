@@ -866,6 +866,34 @@ scrape_configs:
                             c['resources'].setdefault('limits', {})
                             c['resources']['requests']['ephemeral-storage'] = ephemeral_size
                             c['resources']['limits']['ephemeral-storage'] = ephemeral_size
+                        req_cpu_w = 0
+                        limit_cpu_w = 0
+                        req_mem_w = 0
+                        limit_mem_w = 0
+                        if 'requests' in cfg.resources and 'cpu' in cfg.resources['requests']:
+                            req_cpu_w = cfg.resources['requests']['cpu']
+                        if 'requests' in cfg.resources and 'memory' in cfg.resources['requests']:
+                            req_mem_w = cfg.resources['requests']['memory']
+                        if 'limits' in cfg.resources and 'cpu' in cfg.resources['limits']:
+                            limit_cpu_w = cfg.resources['limits']['cpu']
+                        if 'limits' in cfg.resources and 'memory' in cfg.resources['limits']:
+                            limit_mem_w = cfg.resources['limits']['memory']
+                        c = dep['spec']['template']['spec']['containers'][i_container]
+                        c.setdefault('resources', {})
+                        c['resources'].setdefault('requests', {})
+                        c['resources'].setdefault('limits', {})
+                        c['resources']['requests']['cpu'] = req_cpu_w
+                        c['resources']['limits']['cpu'] = limit_cpu_w
+                        c['resources']['requests']['memory'] = req_mem_w
+                        c['resources']['limits']['memory'] = limit_mem_w
+                        if limit_cpu_w == "0":
+                            del c['resources']['limits']['cpu']
+                        if limit_mem_w == "0":
+                            del c['resources']['limits']['memory']
+                        if req_cpu_w == "0":
+                            del c['resources']['requests']['cpu']
+                        if req_mem_w == "0":
+                            del c['resources']['requests']['memory']
                     elif (not cfg.monitoring_active
                           or cfg.experiment.cluster.monitor_cluster_active
                           or cfg.experiment.cluster.monitor_cluster_exists):

@@ -29,7 +29,7 @@ for filename in os.listdir(md_directory):
                 print(f"Warning: Summary file not found - {summary_path}")
                 return match.group(0)  # return original if file is missing
         new_content = pattern.sub(replace_block, content)
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, 'w', encoding='utf-8', newline='\n') as f:
             f.write(new_content)
 
 """
@@ -61,7 +61,7 @@ for filename in os.listdir(md_directory):
                 missing_summary_files.append(summary_path)
                 return match.group(0)  # return original if file is missing
         new_content = pattern.sub(replace_block, content)
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, 'w', encoding='utf-8', newline='\n') as f:
             f.write(new_content)
 
 

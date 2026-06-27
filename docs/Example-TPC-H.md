@@ -48,8 +48,9 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_postgresql.log
+  run &>$LOG_DIR/docs_tpch_postgresql.log
 ```
 
 This
@@ -104,7 +105,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_tpch_testcase_postgresql.log
+docs_tpch_postgresql.log
 ```markdown
 ## Show Summary
 
@@ -378,13 +379,14 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_monitoring.log
+  run &>$LOG_DIR/docs_tpch_postgresql_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like this:
 
-doc_tpch_testcase_monitoring.log
+docs_tpch_postgresql_monitoring.log
 ```markdown
 ## Show Summary
 
@@ -562,13 +564,14 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_throughput.log
+  run &>$LOG_DIR/docs_tpch_postgresql_throughput.log
 ```
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
-doc_tpch_testcase_throughput.log
+docs_tpch_postgresql_throughput.log
 ```markdown
 ## Show Summary
 
@@ -746,7 +749,7 @@ bexhoma tpch \
   -rss 30Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_storage.log
+  run &>$LOG_DIR/docs_tpch_postgresql_storage.log
 ```
 The following status shows we have a volumes of type `shared`.
 Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.
@@ -786,7 +789,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-doc_tpch_testcase_storage.log
+docs_tpch_postgresql_storage.log
 ```markdown
 ## Show Summary
 
@@ -953,12 +956,12 @@ bexhoma tpch \
   -rss 5Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_fractional.log
+  run &>$LOG_DIR/docs_tpch_postgresql_fractional.log
 ```
 
 results in
 
-doc_tpch_testcase_fractional.log
+docs_tpch_postgresql_fractional.log
 ```markdown
 ## Show Summary
 
@@ -1084,14 +1087,15 @@ bexhoma tpch \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 10Gi \
   -xrs 3 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_refresh.log
+  run &>$LOG_DIR/docs_tpch_postgresql_refresh.log
 ```
 
 Use `-xrso N` to skip the first N already-applied refresh sets and continue from where a previous run stopped.
 
-doc_tpch_testcase_refresh.log
+docs_tpch_postgresql_refresh.log
 ```markdown
 ## Show Summary
 
@@ -1325,7 +1329,7 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_1.log
+  run &>$LOG_DIR/docs_tpch_monetdb_1.log
 ```
 
 ### Status Data Disk
@@ -1376,7 +1380,7 @@ Cluster Prometheus: Running
 
 At the end of a benchmark you will see a summary like
 
-doc_tpch_monetdb_1.log
+docs_tpch_monetdb_1.log
 ```markdown
 ## Show Summary
 
@@ -1587,12 +1591,12 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_2.log
+  run &>$LOG_DIR/docs_tpch_monetdb_2.log
 ```
 
 ### Evaluate Results
 
-doc_tpch_monetdb_2.log
+docs_tpch_monetdb_2.log
 ```markdown
 ## Show Summary
 
@@ -1816,12 +1820,12 @@ bexhoma tpch \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_monetdb_3.log
+  run &>$LOG_DIR/docs_tpch_monetdb_3.log
 ```
 
 ### Evaluate Results
 
-doc_tpch_monetdb_3.log
+docs_tpch_monetdb_3.log
 ```markdown
 ## Show Summary
 

@@ -283,7 +283,7 @@ def process_sh_file(path: Path) -> bool:
 
     new_text = ''.join(out)
     if new_text != text:
-        path.write_text(new_text, encoding='utf-8')
+        path.write_text(new_text, encoding='utf-8', newline='\n')
         return True
     return False
 
@@ -371,7 +371,7 @@ def process_ps1_file(path: Path) -> bool:
 
     new_text = ''.join(out)
     if new_text != text:
-        path.write_text(new_text, encoding='utf-8')
+        path.write_text(new_text, encoding='utf-8', newline='\n')
         return True
     return False
 

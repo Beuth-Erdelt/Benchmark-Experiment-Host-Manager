@@ -69,7 +69,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_databaseservice_1.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
@@ -116,7 +116,7 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_databaseservice_2.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
@@ -182,7 +182,7 @@ bexhoma ycsb \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_databaseservice_3.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
@@ -230,7 +230,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_databaseservice_1.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
@@ -260,7 +260,7 @@ bexhoma benchbase \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_benchbase_databaseservice_2.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
@@ -314,7 +314,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_1.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
 
@@ -351,7 +351,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_2.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
@@ -407,7 +407,7 @@ bexhoma tpch \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_3.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
@@ -446,7 +446,7 @@ bexhoma tpch \
   -rss 1Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_databaseservice_4.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 

@@ -64,8 +64,9 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_redis_1.log
+  run &>$LOG_DIR/docs_ycsb_redis_1.log
 ```
 
 This
@@ -119,7 +120,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_ycsb_redis_1.log
+docs_ycsb_redis_1.log
 ```markdown
 ## Show Summary
 
@@ -278,13 +279,14 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_redis_2.log
+  run &>$LOG_DIR/docs_ycsb_redis_2.log
 ```
 
 yields something like
 
-doc_ycsb_redis_2.log
+docs_ycsb_redis_2.log
 ```markdown
 ## Show Summary
 
@@ -462,13 +464,14 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_redis_3.log
+  run &>$LOG_DIR/docs_ycsb_redis_3.log
 ```
 
 yields something like
 
-doc_ycsb_redis_3.log
+docs_ycsb_redis_3.log
 ```markdown
 ## Show Summary
 
@@ -675,7 +678,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_redis_4.log
+  run &>$LOG_DIR/docs_ycsb_redis_4.log
 ```
 
 The following status shows we have one volume of type `shared`.
@@ -694,7 +697,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-doc_ycsb_redis_4.log
+docs_ycsb_redis_4.log
 ```markdown
 ## Show Summary
 
@@ -859,7 +862,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_ycsb_redis_5.log
+  run &>$LOG_DIR/docs_ycsb_redis_5.log
 ```
 
 Redis expects fully qualified domain name (FQDN) for each pod.
@@ -889,7 +892,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
-doc_ycsb_redis_5.log
+docs_ycsb_redis_5.log
 ```markdown
 ## Show Summary
 

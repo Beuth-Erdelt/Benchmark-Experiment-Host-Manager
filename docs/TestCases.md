@@ -41,13 +41,14 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_compare.log
+  run &>$LOG_DIR/testcase_tpch_compare.log
 ```
 
 yields (after ca. 120 minutes) something like
 
-test_tpch_testcase_compare.log
+testcase_tpch_compare.log
 ```markdown
 ## Show Summary
 
@@ -238,13 +239,14 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_tpch_testcase_postgresql_1.log
+testcase_tpch_postgresql_1.log
 ```markdown
 ## Show Summary
 
@@ -382,13 +384,14 @@ bexhoma tpch \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpch_testcase_postgresql_2.log
+testcase_tpch_postgresql_2.log
 ```markdown
 ## Show Summary
 
@@ -570,15 +573,15 @@ bexhoma tpch \
   -lr 128Gi \
   -rr 128Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 100Gi \
   -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpch_testcase_postgresql_3.log
+testcase_tpch_postgresql_3.log
 ```markdown
 ## Show Summary
 
@@ -864,14 +867,14 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rst ramdisk \
-  -rss 50Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_ramdisk.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_ramdisk.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-doc_tpch_testcase_ramdisk.log
+testcase_tpch_postgresql_ramdisk.log
 ```markdown
 ## Show Summary
 
@@ -1068,13 +1071,14 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_tpch_mysql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_tpch_testcase_mysql_1.log
+testcase_tpch_mysql_1.log
 ```markdown
 ## Show Summary
 
@@ -1211,13 +1215,14 @@ bexhoma tpch \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_tpch_mysql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpch_testcase_mysql_2.log
+testcase_tpch_mysql_2.log
 ```markdown
 ## Show Summary
 
@@ -1397,15 +1402,15 @@ bexhoma tpch \
   -lr 128Gi \
   -rr 128Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 100Gi \
   -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_tpch_mysql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpch_testcase_mysql_3.log
+testcase_tpch_mysql_3.log
 ```markdown
 ## Show Summary
 
@@ -1654,12 +1659,12 @@ bexhoma tpch \
   -rst ramdisk \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log
+  run &>$LOG_DIR/testcase_tpch_mysql_ramdisk.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-doc_tpch_testcase_mysql_ramdisk.log
+testcase_tpch_mysql_ramdisk.log
 ```markdown
 ## Show Summary
 
@@ -1849,13 +1854,14 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_tpch_testcase_mariadb_1.log
+testcase_tpch_mariadb_1.log
 ```markdown
 ## Show Summary
 
@@ -1991,13 +1997,14 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpch_testcase_mariadb_2.log
+testcase_tpch_mariadb_2.log
 ```markdown
 ## Show Summary
 
@@ -2175,14 +2182,14 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpch_testcase_mariadb_3.log
+testcase_tpch_mariadb_3.log
 ```markdown
 ## Show Summary
 
@@ -2470,13 +2477,13 @@ bexhoma tpch \
   -rst ramdisk \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_ramdisk.log
 
 ```
 
 yields (after ca. 15 minutes) something like
 
-doc_tpch_testcase_mariadb_ramdisk.log
+testcase_tpch_mariadb_ramdisk.log
 ```markdown
 ## Show Summary
 
@@ -2664,13 +2671,14 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_compare.log
+  run &>$LOG_DIR/testcase_tpcds_compare.log
 ```
 
 yields (after ca. 520 minutes) something like
 
-test_tpcds_testcase_compare.log
+testcase_tpcds_compare.log
 ```markdown
 ## Show Summary
 
@@ -2946,13 +2954,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_tpcds_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_tpcds_testcase_postgresql_1.log
+testcase_tpcds_postgresql_1.log
 ```markdown
 ## Show Summary
 
@@ -3156,13 +3165,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_tpcds_postgresql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_postgresql_2.log
+testcase_tpcds_postgresql_2.log
 ```markdown
 ## Show Summary
 
@@ -3400,12 +3410,12 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_tpcds_postgresql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_postgresql_3.log
+testcase_tpcds_postgresql_3.log
 ```markdown
 ## Show Summary
 
@@ -3756,13 +3766,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_tpcds_mysql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_tpcds_testcase_mysql_1.log
+testcase_tpcds_mysql_1.log
 ```markdown
 ## Show Summary
 
@@ -3897,13 +3908,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_tpcds_mysql_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_mysql_2.log
+testcase_tpcds_mysql_2.log
 ```markdown
 ## Show Summary
 
@@ -4054,12 +4066,12 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_tpcds_mysql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_mysql_3.log
+testcase_tpcds_mysql_3.log
 ```markdown
 ## Show Summary
 
@@ -4382,13 +4394,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_tpcds_testcase_mariadb_1.log
+testcase_tpcds_mariadb_1.log
 ```markdown
 ## Show Summary
 
@@ -4598,13 +4611,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_mariadb_2.log
+testcase_tpcds_mariadb_2.log
 ```markdown
 ## Show Summary
 
@@ -4863,14 +4877,14 @@ bexhoma tpcds \
   -t 1200 \
   -tr \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 100Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_mariadb_3.log
+testcase_tpcds_mariadb_3.log
 ```markdown
 ## Show Summary
 
@@ -5246,13 +5260,14 @@ bexhoma tpcds \
   -nbp 1 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_1.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_monetdb_1.log
+testcase_tpcds_monetdb_1.log
 ```markdown
 ## Show Summary
 
@@ -5444,13 +5459,14 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_2.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_2.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_tpcds_testcase_monetdb_2.log
+testcase_tpcds_monetdb_2.log
 ```markdown
 ## Show Summary
 
@@ -5666,12 +5682,12 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_3.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_3.log
 ```
 
 yields (after ca. 20 minutes) something like
 
-test_tpcds_testcase_monetdb_3.log
+testcase_tpcds_monetdb_3.log
 ```markdown
 ## Show Summary
 
@@ -5973,12 +5989,12 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 300Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_4.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_4.log
 ```
 
 yields (after ca. 110 minutes) something like
 
-test_tpcds_testcase_monetdb_4.log
+testcase_tpcds_monetdb_4.log
 ```markdown
 ## Show Summary
 
@@ -6187,12 +6203,12 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 300Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_5.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_5.log
 ```
 
 yields (after ca. 360 minutes) something like
 
-test_tpcds_testcase_monetdb_5.log
+testcase_tpcds_monetdb_5.log
 ```markdown
 ## Show Summary
 
@@ -6626,13 +6642,14 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_postgresql_1.log
+testcase_benchbase_postgresql_1.log
 ```markdown
 ## Show Summary
 
@@ -6732,14 +6749,14 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_2.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_postgresql_2.log
+testcase_benchbase_postgresql_2.log
 ```markdown
 ## Show Summary
 
@@ -6854,13 +6871,14 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_3.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_postgresql_3.log
+testcase_benchbase_postgresql_3.log
 ```markdown
 ## Show Summary
 
@@ -6985,14 +7003,14 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_4.log
 ```
 
 yields (after ca. 30 minutes) something like
 
-test_benchbase_testcase_postgresql_4.log
+testcase_benchbase_postgresql_4.log
 ```markdown
 ## Show Summary
 
@@ -7265,13 +7283,14 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_mysql_1.log
+testcase_benchbase_mysql_1.log
 ```markdown
 ## Show Summary
 
@@ -7370,14 +7389,14 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_2.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_mysql_2.log
+testcase_benchbase_mysql_2.log
 ```markdown
 ## Show Summary
 
@@ -7475,13 +7494,14 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_3.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_mysql_3.log
+testcase_benchbase_mysql_3.log
 ```markdown
 ## Show Summary
 
@@ -7605,14 +7625,14 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_4.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_4.log
 ```
 
 yields (after ca. 30 minutes) something like
 
-test_benchbase_testcase_mysql_4.log
+testcase_benchbase_mysql_4.log
 ```markdown
 ## Show Summary
 
@@ -7846,13 +7866,14 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_mariadb_1.log
+testcase_benchbase_mariadb_1.log
 ```markdown
 ## Show Summary
 
@@ -7951,14 +7972,14 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_2.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_mariadb_2.log
+testcase_benchbase_mariadb_2.log
 ```markdown
 ## Show Summary
 
@@ -8075,13 +8096,14 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_3.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_benchbase_testcase_mariadb_3.log
+testcase_benchbase_mariadb_3.log
 ```markdown
 ## Show Summary
 
@@ -8205,14 +8227,14 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_4.log
 ```
 
 yields (after ca. 30 minutes) something like
 
-test_benchbase_testcase_mariadb_4.log
+testcase_benchbase_mariadb_4.log
 ```markdown
 ## Show Summary
 
@@ -8498,13 +8520,14 @@ bexhoma hammerdb \
   -nbt 16 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_hammerdb_postgresql_1.log
 ```
 
 yields (after ca. 10 minutes)
 
-test_hammerdb_testcase_postgresql_1.log
+testcase_hammerdb_postgresql_1.log
 ```markdown
 ## Show Summary
 
@@ -8596,14 +8619,14 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_hammerdb_postgresql_2.log
 ```
 
 yields (after ca. 15 minutes)
 
-test_hammerdb_testcase_postgresql_2.log
+testcase_hammerdb_postgresql_2.log
 ```markdown
 ## Show Summary
 
@@ -8729,14 +8752,14 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_hammerdb_postgresql_3.log
 ```
 
 yields (after ca. 60 minutes)
 
-test_hammerdb_testcase_postgresql_3.log
+testcase_hammerdb_postgresql_3.log
 ```markdown
 ## Show Summary
 
@@ -9009,13 +9032,14 @@ bexhoma hammerdb \
   -nbt 16 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_hammerdb_mysql_1.log
 ```
 
 yields (after ca. 10 minutes)
 
-test_hammerdb_testcase_mysql_1.log
+testcase_hammerdb_mysql_1.log
 ```markdown
 ## Show Summary
 
@@ -9091,14 +9115,14 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_hammerdb_mysql_2.log
 ```
 
 yields (after ca. 15 minutes)
 
-test_hammerdb_testcase_mysql_2.log
+testcase_hammerdb_mysql_2.log
 ```markdown
 ## Show Summary
 
@@ -9198,14 +9222,14 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_hammerdb_mysql_3.log
 ```
 
 yields (after ca. 60 minutes)
 
-test_hammerdb_testcase_mysql_3.log
+testcase_hammerdb_mysql_3.log
 ```markdown
 ## Show Summary
 
@@ -9416,13 +9440,14 @@ bexhoma hammerdb \
   -nbt 16 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_hammerdb_mariadb_1.log
 ```
 
 yields (after ca. 10 minutes)
 
-test_hammerdb_testcase_mariadb_1.log
+testcase_hammerdb_mariadb_1.log
 ```markdown
 ## Show Summary
 
@@ -9514,14 +9539,14 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_hammerdb_mariadb_2.log
 ```
 
 yields (after ca. 15 minutes)
 
-test_hammerdb_testcase_mariadb_2.log
+testcase_hammerdb_mariadb_2.log
 ```markdown
 ## Show Summary
 
@@ -9647,14 +9672,14 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_hammerdb_mariadb_3.log
 ```
 
 yields (after ca. 60 minutes)
 
-test_hammerdb_testcase_mariadb_3.log
+testcase_hammerdb_mariadb_3.log
 ```markdown
 ## Show Summary
 
@@ -9930,13 +9955,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_1.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_ycsb_testcase_postgresql_1.log
+testcase_ycsb_postgresql_1.log
 ```markdown
 ## Show Summary
 
@@ -10023,14 +10049,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_2.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_ycsb_testcase_postgresql_2.log
+testcase_ycsb_postgresql_2.log
 ```markdown
 ## Show Summary
 
@@ -10138,14 +10164,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_3.log
 ```
 
 yields (after ca. 15 minutes) something like
 
-test_ycsb_testcase_postgresql_3.log
+testcase_ycsb_postgresql_3.log
 ```markdown
 ## Show Summary
 
@@ -10350,14 +10376,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_4.log
 ```
 
 yields (after ca. 5 minutes) something like
 
-test_ycsb_testcase_postgresql_4.log
+testcase_ycsb_postgresql_4.log
 ```markdown
 ## Show Summary
 
@@ -10444,14 +10470,14 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_5.log
 ```
 
 yields (after ca. 10 minutes) something like
 
-test_ycsb_testcase_postgresql_5.log
+testcase_ycsb_postgresql_5.log
 ```markdown
 ## Show Summary
 
@@ -10569,13 +10595,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_1.log
 ```
 
 yields (after ca. 165 minutes) something like
 
-test_ycsb_testcase_mysql_1.log
+testcase_ycsb_mysql_1.log
 ```markdown
 ## Show Summary
 
@@ -10760,14 +10787,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_2.log
 ```
 
 yields (after ca. 310 minutes) something like
 
-test_ycsb_testcase_mysql_2.log
+testcase_ycsb_mysql_2.log
 ```markdown
 ## Show Summary
 
@@ -10902,14 +10929,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_3.log
 ```
 
 yields (after ca. 240 minutes) something like
 
-test_ycsb_testcase_mysql_3.log
+testcase_ycsb_mysql_3.log
 ```markdown
 ## Show Summary
 
@@ -11170,14 +11197,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_4.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_4.log
 ```
 
 yields (after ca. 35 minutes) something like
 
-test_ycsb_testcase_mysql_4.log
+testcase_ycsb_mysql_4.log
 ```markdown
 ## Show Summary
 
@@ -11282,14 +11309,14 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_5.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_5.log
 ```
 
 yields (after ca. 70 minutes) something like
 
-test_ycsb_testcase_mysql_5.log
+testcase_ycsb_mysql_5.log
 ```markdown
 ## Show Summary
 
@@ -11431,13 +11458,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_1.log
 ```
 
 yields (after ca. 45 minutes) something like
 
-test_ycsb_testcase_mariadb_1.log
+testcase_ycsb_mariadb_1.log
 ```markdown
 ## Show Summary
 
@@ -11586,14 +11614,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_2.log
 ```
 
 yields (after ca. 70 minutes) something like
 
-test_ycsb_testcase_mariadb_2.log
+testcase_ycsb_mariadb_2.log
 ```markdown
 ## Show Summary
 
@@ -11728,14 +11756,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_3.log
 ```
 
 yields (after ca. 120 minutes) something like
 
-test_ycsb_testcase_mariadb_3.log
+testcase_ycsb_mariadb_3.log
 ```markdown
 ## Show Summary
 
@@ -12007,14 +12035,14 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_4.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_4.log
 ```
 
 yields (after ca. 25 minutes) something like
 
-test_ycsb_testcase_mariadb_4.log
+testcase_ycsb_mariadb_4.log
 ```markdown
 ## Show Summary
 
@@ -12130,14 +12158,14 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
+  -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_5.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_5.log
 ```
 
 yields (after ca. 45 minutes) something like
 
-test_ycsb_testcase_mariadb_5.log
+testcase_ycsb_mariadb_5.log
 ```markdown
 ## Show Summary
 

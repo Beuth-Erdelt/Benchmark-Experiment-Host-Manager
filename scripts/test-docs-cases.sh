@@ -48,7 +48,7 @@ bexhoma tpch \
   -rr 64Gi \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_compare.log
+  run &>$LOG_DIR/testcase_tpch_compare.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
 
@@ -88,7 +88,7 @@ bexhoma tpcds \
   -rr 64Gi \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_compare.log
+  run &>$LOG_DIR/testcase_tpcds_compare.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
 
@@ -132,7 +132,7 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_tpch_mysql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL simple  sf=1"
 
@@ -179,7 +179,7 @@ bexhoma tpch \
   -rr 128Gi \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_tpch_mysql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL monitoring  sf=10"
 
@@ -235,7 +235,7 @@ bexhoma tpch \
   -rss 100Gi \
   -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_tpch_mysql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL throughput  sf=10  ne=1,2"
 
@@ -280,7 +280,7 @@ bexhoma tpch \
   -rst ramdisk \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_mysql_ramdisk.log
+  run &>$LOG_DIR/testcase_tpch_mysql_ramdisk.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL ramdisk  sf=10"
 
@@ -324,7 +324,7 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL simple  sf=1"
 
@@ -371,7 +371,7 @@ bexhoma tpch \
   -rr 128Gi \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL monitoring  sf=10"
 
@@ -427,7 +427,7 @@ bexhoma tpch \
   -rss 100Gi \
   -rsr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL throughput  sf=10  ne=1,2"
 
@@ -470,7 +470,7 @@ bexhoma tpch \
   -rst ramdisk \
   -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_ramdisk.log
+  run &>$LOG_DIR/testcase_tpch_postgresql_ramdisk.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL ramdisk  sf=3"
 
@@ -514,7 +514,7 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB simple  sf=1"
 
@@ -557,7 +557,7 @@ bexhoma tpch \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB monitoring  sf=1"
 
@@ -607,7 +607,7 @@ bexhoma tpch \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpch_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB throughput  sf=1  ne=1,2"
 
@@ -652,7 +652,7 @@ bexhoma tpch \
   -rst ramdisk \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpch_testcase_mariadb_ramdisk.log
+  run &>$LOG_DIR/testcase_tpch_mariadb_ramdisk.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB ramdisk  sf=10"
 
@@ -696,7 +696,7 @@ bexhoma tpcds \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_tpcds_mysql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL simple  sf=1"
 
@@ -739,7 +739,7 @@ bexhoma tpcds \
   -tr \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_tpcds_mysql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=10"
 
@@ -789,7 +789,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_tpcds_mysql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL throughput  sf=10  ne=1,2"
 
@@ -833,7 +833,7 @@ bexhoma tpcds \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_tpcds_postgresql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL simple  sf=1"
 
@@ -876,7 +876,7 @@ bexhoma tpcds \
   -tr \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_tpcds_postgresql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL monitoring  sf=10"
 
@@ -926,7 +926,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 100Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_tpcds_postgresql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL throughput  sf=10  ne=1,2"
 
@@ -970,7 +970,7 @@ bexhoma tpcds \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB simple  sf=1"
 
@@ -1013,7 +1013,7 @@ bexhoma tpcds \
   -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB monitoring  sf=1"
 
@@ -1063,7 +1063,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_tpcds_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,2"
 
@@ -1103,7 +1103,7 @@ bexhoma tpcds \
   -tr \
   -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_1.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB simple  sf=3"
 
@@ -1142,7 +1142,7 @@ bexhoma tpcds \
   -tr \
   -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_2.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
 
@@ -1188,7 +1188,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_3.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=3  ne=1,2"
 
@@ -1234,7 +1234,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 300Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_4.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power large  sf=100"
 
@@ -1275,7 +1275,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 300Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_tpcds_testcase_monetdb_5.log
+  run &>$LOG_DIR/testcase_tpcds_monetdb_5.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput large  sf=100  ne=1,5"
 
@@ -1315,7 +1315,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL simple  sf=16"
 
@@ -1355,7 +1355,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL persistency  sf=16  nc=2"
 
@@ -1394,7 +1394,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL monitoring  sf=16"
 
@@ -1433,7 +1433,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_postgresql_4.log
+  run &>$LOG_DIR/testcase_benchbase_postgresql_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL complex  sf=16  nc=2  ne=1,2"
 
@@ -1473,7 +1473,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL simple  sf=16"
 
@@ -1513,7 +1513,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL persistency  sf=16  nc=2"
 
@@ -1552,7 +1552,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL monitoring  sf=16"
 
@@ -1591,7 +1591,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mysql_4.log
+  run &>$LOG_DIR/testcase_benchbase_mysql_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL complex  sf=16  nc=2  ne=1,2"
 
@@ -1631,7 +1631,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB simple  sf=16"
 
@@ -1671,7 +1671,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB persistency  sf=16  nc=2"
 
@@ -1710,7 +1710,7 @@ bexhoma benchbase \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB monitoring  sf=16"
 
@@ -1749,7 +1749,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_benchbase_testcase_mariadb_4.log
+  run &>$LOG_DIR/testcase_benchbase_mariadb_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB complex  sf=16  nc=2  ne=1,2"
 
@@ -1785,7 +1785,7 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_hammerdb_postgresql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL simple  sf=16"
 
@@ -1825,7 +1825,7 @@ bexhoma hammerdb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_hammerdb_postgresql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL monitoring  sf=16"
 
@@ -1862,7 +1862,7 @@ bexhoma hammerdb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_hammerdb_postgresql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL complex  sf=16  nc=2  ne=1,2"
 
@@ -1898,7 +1898,7 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_hammerdb_mysql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL simple  sf=16"
 
@@ -1938,7 +1938,7 @@ bexhoma hammerdb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_hammerdb_mysql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL monitoring  sf=16"
 
@@ -1975,7 +1975,7 @@ bexhoma hammerdb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_hammerdb_mysql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL complex  sf=16  nc=2  ne=1,2"
 
@@ -2011,7 +2011,7 @@ bexhoma hammerdb \
   -tr \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_hammerdb_mariadb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB simple  sf=16"
 
@@ -2051,7 +2051,7 @@ bexhoma hammerdb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_hammerdb_mariadb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB monitoring  sf=16"
 
@@ -2088,7 +2088,7 @@ bexhoma hammerdb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 16Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_hammerdb_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_hammerdb_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB complex  sf=16  nc=2  ne=1,2"
 
@@ -2134,7 +2134,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_1.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL loader scaling  sf=1"
 
@@ -2180,7 +2180,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_2.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL persistency  sf=1  nc=2"
 
@@ -2221,7 +2221,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_3.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL scaling  sf=1  nc=2  ne=1,2"
 
@@ -2262,7 +2262,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_4.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL workload e  sf=1"
 
@@ -2307,7 +2307,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_postgresql_5.log
+  run &>$LOG_DIR/testcase_ycsb_postgresql_5.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL monitoring  sf=1"
 
@@ -2353,7 +2353,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_1.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL loader scaling  sf=1"
 
@@ -2399,7 +2399,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_2.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL persistency  sf=1  nc=2"
 
@@ -2440,7 +2440,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_3.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL scaling  sf=1  nc=2  ne=1,2"
 
@@ -2481,7 +2481,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_4.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL workload e  sf=1"
 
@@ -2526,7 +2526,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mysql_5.log
+  run &>$LOG_DIR/testcase_ycsb_mysql_5.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL monitoring  sf=1"
 
@@ -2572,7 +2572,7 @@ bexhoma ycsb \
   -tr \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_1.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB loader scaling  sf=1"
 
@@ -2618,7 +2618,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_2.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB persistency  sf=1  nc=2"
 
@@ -2659,7 +2659,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_3.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB scaling  sf=1  nc=2  ne=1,2"
 
@@ -2700,7 +2700,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_4.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_4.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB workload e  sf=1"
 
@@ -2745,7 +2745,7 @@ bexhoma ycsb \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 5Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/test_ycsb_testcase_mariadb_5.log
+  run &>$LOG_DIR/testcase_ycsb_mariadb_5.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB monitoring  sf=1"
 

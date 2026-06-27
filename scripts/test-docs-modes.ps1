@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for bexhoma start/load mode experiments.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -27,7 +27,7 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  start 2>&1 | Out-File "$LOG_DIR\test_ycsb_start_postgresql.log" -Encoding utf8
+  start 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_start.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
@@ -44,7 +44,7 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  load 2>&1 | Out-File "$LOG_DIR\test_ycsb_load_postgresql.log" -Encoding utf8
+  load 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_load.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
@@ -65,7 +65,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_ycsb_run_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_run.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
@@ -86,7 +86,7 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  start 2>&1 | Out-File "$LOG_DIR\test_benchbase_start_postgresql.log" -Encoding utf8
+  start 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_start.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
@@ -102,7 +102,7 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  load 2>&1 | Out-File "$LOG_DIR\test_benchbase_load_postgresql.log" -Encoding utf8
+  load 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_load.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
@@ -122,7 +122,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_benchbase_run_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_run.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
@@ -143,7 +143,7 @@ bexhoma hammerdb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  start 2>&1 | Out-File "$LOG_DIR\test_hammerdb_start_postgresql.log" -Encoding utf8
+  start 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_start.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
@@ -159,7 +159,7 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  load 2>&1 | Out-File "$LOG_DIR\test_hammerdb_load_postgresql.log" -Encoding utf8
+  load 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_load.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
@@ -179,7 +179,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_hammerdb_run_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_run.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
@@ -200,7 +200,7 @@ bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  start 2>&1 | Out-File "$LOG_DIR\test_tpch_start_postgresql.log" -Encoding utf8
+  start 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_start.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
@@ -219,7 +219,7 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  load 2>&1 | Out-File "$LOG_DIR\test_tpch_load_postgresql.log" -Encoding utf8
+  load 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_load.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
@@ -242,7 +242,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_tpch_run_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_run.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
@@ -263,7 +263,7 @@ bexhoma tpcds `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  start 2>&1 | Out-File "$LOG_DIR\test_tpcds_start_postgresql.log" -Encoding utf8
+  start 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_start.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
@@ -282,7 +282,7 @@ bexhoma tpcds `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  load 2>&1 | Out-File "$LOG_DIR\test_tpcds_load_postgresql.log" -Encoding utf8
+  load 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_load.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
@@ -305,7 +305,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\test_tpcds_run_postgresql.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_run.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds

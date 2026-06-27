@@ -43,7 +43,8 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_tidb_1.log" -Encoding utf8
+  -rss 5Gi                      <# size of the persistent volume claim #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB  sf=1  nbp=1"
 
@@ -63,7 +64,8 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_tidb_1.log" -Encoding utf8
+  -rss 16Gi                     <# size of the persistent volume claim #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 

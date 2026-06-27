@@ -68,8 +68,9 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_postgresql.log
+  run &>$LOG_DIR/docs_tpcds_postgresql.log
 ```
 
 This
@@ -124,7 +125,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-doc_tpcds_testcase_postgresql.log
+docs_tpcds_postgresql.log
 ```markdown
 ## Show Summary
 
@@ -483,13 +484,14 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 30Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_monitoring.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 ```
 
 If monitoring is activated, the summary also contains a section like this:
 
-doc_tpcds_testcase_monitoring.log
+docs_tpcds_postgresql_monitoring.log
 ```markdown
 ## Show Summary
 
@@ -743,13 +745,14 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_throughput.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_throughput.log
 ```
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
-doc_tpcds_testcase_throughput.log
+docs_tpcds_postgresql_throughput.log
 ```markdown
 ## Show Summary
 
@@ -1002,7 +1005,7 @@ bexhoma tpcds \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/doc_tpcds_testcase_storage.log
+  run &>$LOG_DIR/docs_tpcds_postgresql_storage.log
 ```
 The following status shows we have a volumes of type `shared`.
 Every experiment running TPC-DS of SF=1 at MonetDB will take the database from this volume and skip loading.
@@ -1030,7 +1033,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-doc_tpcds_testcase_storage.log
+docs_tpcds_postgresql_storage.log
 ```markdown
 ## Show Summary
 
@@ -1290,12 +1293,12 @@ bexhoma tpcds \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  profiling &>$LOG_DIR/doc_tpcds_testcase_profiling.log
+  profiling &>$LOG_DIR/docs_tpcds_postgresql_profiling.log
 ```
 
 ### Evaluate Results
 
-doc_tpcds_testcase_profiling.log
+docs_tpcds_postgresql_profiling.log
 ```markdown
 ## Show Summary
 
@@ -1922,7 +1925,7 @@ bexhoma tpcds \
   -rsr \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/doc_tpcds_monetdb_1.log
+  run &>$LOG_DIR/docs_tpcds_monetdb_1.log
 ```
 
 
@@ -1953,7 +1956,7 @@ Cluster Prometheus: Running
 
 At the end of a benchmark you will see a summary like
 
-doc_tpcds_monetdb_1.log
+docs_tpcds_monetdb_1.log
 ```markdown
 ## Show Summary
 
@@ -2209,12 +2212,12 @@ bexhoma tpcds \
   -rr 1024Gi \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/doc_tpcds_monetdb_2.log
+  run &>$LOG_DIR/docs_tpcds_monetdb_2.log
 ```
 
 ### Evaluate Results
 
-doc_tpcds_monetdb_2.log
+docs_tpcds_monetdb_2.log
 ```markdown
 ## Show Summary
 
@@ -2509,12 +2512,12 @@ bexhoma tpcds \
   -rr 1024Gi \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/doc_tpcds_monetdb_3.log
+  run &>$LOG_DIR/docs_tpcds_monetdb_3.log
 ```
 
 ### Evaluate Results
 
-doc_tpcds_monetdb_3.log
+docs_tpcds_monetdb_3.log
 ```markdown
 ## Show Summary
 

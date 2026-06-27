@@ -228,7 +228,7 @@ def ps_to_sh(ps_path: Path) -> str:
 
 if __name__ == '__main__':
     content = ps_to_sh(PS_FILE)
-    SH_FILE.write_text(content, encoding='utf-8')
+    SH_FILE.write_text(content, encoding='utf-8', newline='\n')
     print(f'Generated {SH_FILE}')
     line_count = content.count('\n')
     cmd_count = content.count('run &>$LOG_DIR/')

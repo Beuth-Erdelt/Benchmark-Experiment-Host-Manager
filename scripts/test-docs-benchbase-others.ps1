@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # Generates documentation summaries for Benchbase experiments on additional DBMS.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
@@ -33,10 +33,11 @@ bexhoma benchbase `
   -nbt 16                       <# threads per benchmarking pod #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 16Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_twitter_simple.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_twitter_simple.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase twitter simple  sf=16  nbp=1"
 
@@ -57,10 +58,11 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
+  -rss 1600Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_twitter_scale.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_twitter_scale.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
@@ -77,10 +79,11 @@ bexhoma benchbase `
   -nbt 100                      <# threads per benchmarking pod #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 10Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_chbenchmark_simple.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_chbenchmark_simple.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
 
@@ -99,10 +102,11 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
+  -rss 100Gi                    <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_chbenchmark_scale.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_chbenchmark_scale.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
@@ -120,10 +124,11 @@ bexhoma benchbase `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_c.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_ycsb_c.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
@@ -141,10 +146,11 @@ bexhoma benchbase `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_a.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_ycsb_a.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
@@ -162,10 +168,11 @@ bexhoma benchbase `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_b.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_ycsb_b.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
@@ -183,10 +190,11 @@ bexhoma benchbase `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_d.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_ycsb_d.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
 
@@ -204,10 +212,11 @@ bexhoma benchbase `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_e.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_ycsb_e.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
 
@@ -225,10 +234,11 @@ bexhoma benchbase `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 32                       <# threads per benchmarking pod #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_f.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_ycsb_f.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
