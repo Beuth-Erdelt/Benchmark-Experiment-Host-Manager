@@ -163,7 +163,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-test_ycsb_start_postgresql.log
+docs_ycsb_postgresql_start.log
 ```markdown
 ## Show Summary
 
@@ -312,7 +312,7 @@ PostgreSQL-1
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 ```
 
-test_ycsb_load_postgresql.log
+docs_ycsb_postgresql_load.log
 ```markdown
 ## Show Summary
 
@@ -564,7 +564,7 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
-test_ycsb_run_postgresql.log
+docs_ycsb_postgresql_run.log
 ```markdown
 ## Show Summary
 
@@ -772,7 +772,7 @@ PostgreSQL-1
 * TEST failed: Throughput (requests/second) contains 0 or NaN
 ```
 
-test_benchbase_start_postgresql.log
+docs_benchbase_postgresql_start.log
 ```markdown
 ## Show Summary
 
@@ -902,7 +902,7 @@ PostgreSQL-1
 * TEST failed: Throughput (requests/second) contains 0 or NaN
 ```
 
-test_benchbase_load_postgresql.log
+docs_benchbase_postgresql_load.log
 ```markdown
 ## Show Summary
 
@@ -1111,7 +1111,7 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
-test_benchbase_run_postgresql.log
+docs_benchbase_postgresql_run.log
 ```markdown
 ## Show Summary
 
@@ -1293,7 +1293,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-test_hammerdb_start_postgresql.log
+docs_hammerdb_postgresql_start.log
 ```markdown
 ## Show Summary
 
@@ -1420,7 +1420,7 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-test_hammerdb_load_postgresql.log
+docs_hammerdb_postgresql_load.log
 ```markdown
 ## Show Summary
 
@@ -1619,7 +1619,7 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
-test_hammerdb_run_postgresql.log
+docs_hammerdb_postgresql_run.log
 ```markdown
 ## Show Summary
 
@@ -1791,7 +1791,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-test_tpch_start_postgresql.log
+docs_tpch_postgresql_start.log
 ```markdown
 ## Show Summary
 
@@ -1928,7 +1928,7 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-test_tpch_load_postgresql.log
+docs_tpch_postgresql_load.log
 ```markdown
 ## Show Summary
 
@@ -2193,7 +2193,7 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-test_tpch_run_postgresql.log
+docs_tpch_postgresql_run.log
 ```markdown
 ## Show Summary
 
@@ -2419,7 +2419,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-test_tpcds_start_postgresql.log
+docs_tpcds_postgresql_start.log
 ```markdown
 ## Show Summary
 
@@ -2553,7 +2553,7 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-test_tpcds_load_postgresql.log
+docs_tpcds_postgresql_load.log
 ```markdown
 ## Show Summary
 
@@ -2886,7 +2886,7 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-test_tpcds_run_postgresql.log
+docs_tpcds_postgresql_run.log
 ```markdown
 ## Show Summary
 
