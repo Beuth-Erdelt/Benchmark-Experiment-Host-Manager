@@ -298,7 +298,14 @@ class LoadingCoordinator:
             cfg.logger.debug("check if {} is running".format(pod_sut))
             self.check()
             if not cfg.loading_started:
-                self.load_data(scripts=cfg.initscript)
+                try:
+                    self.load_data(scripts=cfg.initscript)
+                except RuntimeError as exc:
+                    print("{:30s}: init script upload failed: {}".format(cfg.configuration, exc))
+                    cfg.loading_started = True
+                    cfg.loading_finished = True
+                    cfg.loading_active = False
+                    return False
             if delay > 0:
                 cfg.wait(delay)
             return True

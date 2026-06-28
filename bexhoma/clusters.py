@@ -1141,37 +1141,67 @@ class Kubernetes():
             else:
                 return "", stdout, stderr
 
-    def upload_file(self, filename_remote, filename_local, pod, container="dashboard"):
+    def upload_file(self, filename_remote, filename_local, pod, container="dashboard",
+                    max_retries: int = 3) -> str:
         """
         Upload a local file into a Pod container using ``kubectl cp``.
 
         On Windows the local path is converted to a UNC path first.
+        Retries up to ``max_retries`` times on transient failures (e.g. context
+        deadline exceeded).  Raises ``RuntimeError`` if all attempts fail.
 
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
         :param pod: Target Pod name.
         :param container: Target container name.  Defaults to ``dashboard``.
+        :param max_retries: Maximum number of attempts before raising.
         :return: Output of the kubectl command.
+        :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
         cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
-        return self.kubectl(cmd)
+        for attempt in range(1, max_retries + 1):
+            result = self.kubectl(cmd)
+            if result is not None:
+                return result
+            if attempt < max_retries:
+                print(f"upload_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
+                self.wait(10)
+        raise RuntimeError(
+            f'upload_file failed after {max_retries} attempts: '
+            f'{filename_local} -> {pod}:{filename_remote}'
+        )
 
-    def download_file(self, filename_remote, filename_local, pod, container="dashboard"):
+    def download_file(self, filename_remote, filename_local, pod, container="dashboard",
+                      max_retries: int = 3) -> str:
         """
         Download a file from a Pod container to the local machine using ``kubectl cp``.
 
         On Windows the local destination path is converted to a UNC path first.
+        Retries up to ``max_retries`` times on transient failures.  Raises
+        ``RuntimeError`` if all attempts fail.
 
         :param filename_remote: Source path inside the container.
         :param filename_local: Destination path on the local machine.
         :param pod: Source Pod name.
         :param container: Source container name.  Defaults to ``dashboard``.
+        :param max_retries: Maximum number of attempts before raising.
         :return: Output of the kubectl command.
+        :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
         cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
-        return self.kubectl(cmd)
+        for attempt in range(1, max_retries + 1):
+            result = self.kubectl(cmd)
+            if result is not None:
+                return result
+            if attempt < max_retries:
+                print(f"download_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
+                self.wait(10)
+        raise RuntimeError(
+            f'download_file failed after {max_retries} attempts: '
+            f'{pod}:{filename_remote} -> {filename_local}'
+        )
 
     def check_dbms_connection(self, ip, port):
         """

@@ -1640,7 +1640,12 @@ class ExperimentBase():
                             print("#### Starting to index")
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_index = True
-                                config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                try:
+                                    config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                except RuntimeError as exc:
+                                    print("{:30s}: index script upload failed: {}".format(config_tmp.configuration, exc))
+                                    config_tmp.loading_finished = True
+                                    config_tmp.loading_active = False
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()
