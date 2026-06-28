@@ -69,7 +69,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 5Gi \
+  -rss 10Gi \
   run &>$LOG_DIR/docs_ycsb_tidb_1.log
 ```
 

@@ -953,7 +953,7 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -rsr \
-  -rss 5Gi \
+  -rss 10Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_fractional.log

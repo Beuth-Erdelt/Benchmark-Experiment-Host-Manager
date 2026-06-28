@@ -2643,7 +2643,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
 ```
@@ -2838,7 +2838,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 5Gi \
+  -rss 10Gi \
   run &>$LOG_DIR/docs_ycsb_tidb_appmetrics.log
 ```
 

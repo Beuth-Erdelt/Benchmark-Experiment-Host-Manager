@@ -2277,7 +2277,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB complex  sf=16  nc=2 
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2298,7 +2298,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_1.log
 
@@ -2327,7 +2327,7 @@ sleep 30
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2348,7 +2348,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_2.log
 
@@ -2372,7 +2372,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL persistency  sf=1  nc=
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2393,7 +2393,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_3.log
 
@@ -2417,7 +2417,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL scaling  sf=1  nc=2  n
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2438,7 +2438,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_4.log
 
@@ -2464,7 +2464,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL workload e  sf=1"
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2487,7 +2487,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_5.log
 
@@ -2516,7 +2516,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL monitoring  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2537,7 +2537,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_1.log
 
@@ -2566,7 +2566,7 @@ sleep 30
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2587,7 +2587,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_2.log
 
@@ -2611,7 +2611,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL persistency  sf=1  nc=2"
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2632,7 +2632,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_3.log
 
@@ -2656,7 +2656,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL scaling  sf=1  nc=2  ne=1,2
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2677,7 +2677,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_4.log
 
@@ -2703,7 +2703,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL workload e  sf=1"
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2726,7 +2726,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_5.log
 
@@ -2755,7 +2755,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL monitoring  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2776,7 +2776,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_1.log
 
@@ -2805,7 +2805,7 @@ sleep 30
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2826,7 +2826,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_2.log
 
@@ -2850,7 +2850,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB persistency  sf=1  nc=2"
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2871,7 +2871,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_3.log
 
@@ -2895,7 +2895,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB scaling  sf=1  nc=2  ne=1
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2916,7 +2916,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_4.log
 
@@ -2942,7 +2942,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB workload e  sf=1"
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -2965,7 +2965,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_5.log
 

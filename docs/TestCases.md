@@ -10038,7 +10038,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_1.log
 ```
@@ -10134,7 +10134,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_2.log
 ```
@@ -10251,7 +10251,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_3.log
 ```
@@ -10465,7 +10465,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_4.log
 ```
@@ -10561,7 +10561,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_postgresql_5.log
 ```
@@ -10688,7 +10688,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_1.log
 ```
@@ -10882,7 +10882,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_2.log
 ```
@@ -11026,7 +11026,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_3.log
 ```
@@ -11296,7 +11296,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_4.log
 ```
@@ -11410,7 +11410,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mysql_5.log
 ```
@@ -11561,7 +11561,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_1.log
 ```
@@ -11719,7 +11719,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_2.log
 ```
@@ -11863,7 +11863,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_3.log
 ```
@@ -12144,7 +12144,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_4.log
 ```
@@ -12269,7 +12269,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 5Gi \
+  -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_ycsb_mariadb_5.log
 ```
