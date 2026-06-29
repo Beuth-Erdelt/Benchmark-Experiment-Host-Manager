@@ -746,6 +746,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL simple  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
 # -rss 150Gi                    size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -767,6 +768,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rss 150Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_tpcds_mysql_2.log
