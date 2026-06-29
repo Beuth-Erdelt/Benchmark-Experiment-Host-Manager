@@ -1320,10 +1320,6 @@ bexhoma hammerdb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL simple  sf=16"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mysql-hammerdb-16
-Start-Sleep -Seconds 30
-
 
 #### HammerDB Monitoring (TestCases.md)
 bexhoma hammerdb `
@@ -1340,7 +1336,8 @@ bexhoma hammerdb `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rss 16Gi                     <# size of the persistent volume claim #> `
+  -rss 128Gi                    <# size of the persistent volume claim #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -1365,7 +1362,7 @@ bexhoma hammerdb `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rss 16Gi                     <# size of the persistent volume claim #> `
+  -rss 32Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
