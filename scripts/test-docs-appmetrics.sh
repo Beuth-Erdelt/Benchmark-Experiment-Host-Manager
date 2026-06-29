@@ -107,7 +107,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=
 #### TPC-H Application Metrics (Example-TPC-H.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
-# -nlp 8                        number of data loader pods
+# -nlp 2                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
@@ -127,7 +127,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \
@@ -148,7 +148,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 #### TPC-DS Application Metrics (Example-TPC-DS.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
-# -nlp 8                        number of data loader pods
+# -nlp 2                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
@@ -168,7 +168,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \
@@ -317,7 +317,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 #### TPC-H MySQL Application Metrics
 # -dbms MySQL                   DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
-# -nlp 8                        number of data loader pods
+# -nlp 2                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
@@ -337,7 +337,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 bexhoma tpch \
   -dbms MySQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \
@@ -358,7 +358,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL appmetrics  sf=3"
 #### TPC-DS MySQL Application Metrics
 # -dbms MySQL                   DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
-# -nlp 8                        number of data loader pods
+# -nlp 2                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
@@ -379,7 +379,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL appmetrics  sf=3"
 bexhoma tpcds \
   -dbms MySQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \

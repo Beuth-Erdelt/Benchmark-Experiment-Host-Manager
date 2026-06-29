@@ -76,7 +76,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PostgreSQL app
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
-  -nlp 8                        <# number of data loader pods #> `
+  -nlp 2                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
@@ -102,7 +102,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H PostgreSQL ap
 bexhoma tpcds `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
-  -nlp 8                        <# number of data loader pods #> `
+  -nlp 2                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
@@ -208,7 +208,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL appmetri
 bexhoma tpch `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
-  -nlp 8                        <# number of data loader pods #> `
+  -nlp 2                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
@@ -234,7 +234,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL appmetr
 bexhoma tpcds `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
-  -nlp 8                        <# number of data loader pods #> `
+  -nlp 2                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `

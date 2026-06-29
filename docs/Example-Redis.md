@@ -49,7 +49,7 @@ Example:
 ```bash
 bexhoma ycsb \
   -dbms Redis \
-  -sf 1 \
+  -sf 3 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -60,7 +60,7 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 128 \
-  -xop 10 \
+  -xop 1 \
   -m \
   -mc \
   -tr \

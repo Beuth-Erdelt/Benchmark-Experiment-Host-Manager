@@ -22,7 +22,7 @@ source ./scripts/testfunctions.sh
 
 # Single host Redis
 # -dbms Redis                   DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records x 1000)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -33,7 +33,7 @@ source ./scripts/testfunctions.sh
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (x 1000)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
@@ -43,7 +43,7 @@ source ./scripts/testfunctions.sh
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
   -dbms Redis \
-  -sf 1 \
+  -sf 3 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -54,7 +54,7 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 128 \
-  -xop 10 \
+  -xop 1 \
   -m \
   -mc \
   -tr \
@@ -62,7 +62,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=3  nbp=1"
 
 
 # Cluster of 3 Redis instances

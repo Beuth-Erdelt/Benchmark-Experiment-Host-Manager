@@ -391,7 +391,7 @@ Example:
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \
@@ -586,7 +586,7 @@ Example:
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \
@@ -1486,7 +1486,7 @@ Example:
 bexhoma tpch \
   -dbms MySQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \
@@ -1680,7 +1680,7 @@ Example:
 bexhoma tpcds \
   -dbms MySQL \
   -sf 3 \
-  -nlp 8 \
+  -nlp 2 \
   -nlt 8 \
   -xii -xic -xis \
   -xdt \

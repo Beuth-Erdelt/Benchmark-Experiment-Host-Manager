@@ -24,7 +24,7 @@
 # Single host Dragonfly
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records x 1000) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -35,7 +35,7 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 1                        <# number of operations for the benchmark phase (x 1000) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -48,7 +48,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single  sf=3  nbp=1"
 
 
 # Cluster of 3 Dragonfly instances
