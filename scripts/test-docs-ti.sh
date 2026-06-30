@@ -41,7 +41,7 @@ source ./scripts/testfunctions.sh
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 bexhoma ycsb \
   -dbms TiDB \
   -sf 1 \
@@ -63,7 +63,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 5Gi \
+  -rss 50Gi \
   run &>$LOG_DIR/docs_ycsb_tidb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
@@ -83,7 +83,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 16Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 bexhoma benchbase \
   -dbms TiDB \
   -sf 16 \
@@ -99,7 +99,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 16Gi \
+  -rss 50Gi \
   run &>$LOG_DIR/docs_benchbase_tidb_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"

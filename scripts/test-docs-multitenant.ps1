@@ -33,7 +33,7 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
@@ -57,7 +57,7 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
@@ -83,7 +83,7 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
@@ -106,7 +106,7 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 5Gi                      <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
@@ -138,7 +138,7 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 20Gi                     <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb schema                   <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
@@ -161,7 +161,7 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 20Gi                     <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb database                 <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
@@ -184,7 +184,7 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -mtb container                <# tenant isolation level (schema / database / container) #> `
   -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
