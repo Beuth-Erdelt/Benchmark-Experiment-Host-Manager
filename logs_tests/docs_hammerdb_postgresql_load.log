@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1782730137
-Experiment                    : starts at 2026-06-29 12:48:58.077757 (466102.089476885)
+Experiment                    : has code 1782747873
+Experiment                    : starts at 2026-06-29 17:44:33.773135 (483837.784855462)
 Experiment                    : This imports TPC-C data sets.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 1.
@@ -20,13 +20,10 @@ PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1782730137
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1782730137
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1782747873
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1782747873
 - waiting 30s -               : done
-PostgreSQL-1                  : will start now
-PostgreSQL-1                  : deployments ['sut']
-PostgreSQL-1                  : stateful sets []
-PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
@@ -37,29 +34,29 @@ PostgreSQL-1                  : waits for health check to succeed
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782730137-56594df7f-tnfxx to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782747873-dd4858478-nll7k to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type loaded
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1782730329, 1782730350)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1782730329, 1782730350)]
-PostgreSQL-1                  : loader timespan (first to last [s]) = 21
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782730137-56594df7f-tnfxx to load scripts
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1782748064, 1782748090)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1782748064, 1782748090)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 26
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782747873-dd4858478-nll7k to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type indexed
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped, but we leave it running
-PostgreSQL-1                  : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782730137 9091
+PostgreSQL-1                  : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782747873 9091
 PostgreSQL-1-1                : needs monitoring (common metrics) for deployment sut
-PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1782730137
+PostgreSQL-1                  : benchmarking results in folder /data/benchmarks/1782747873
 PostgreSQL-1-1                : needs monitoring (common metrics) for deployment sut
 PostgreSQL-1-1                : collecting loading metrics of SUT at connection PostgreSQL-1-1
-PostgreSQL-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782730137(.*)", pod=~"(.*)postgresql-1-1782730137(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782747873(.*)", pod=~"(.*)postgresql-1-1782747873(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 PostgreSQL-1-1                : collecting metrics of data injector at connection PostgreSQL-1-1
-PostgreSQL-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782730137(.*)", pod=~"(.*)postgresql-1-1782730137(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Experiment                    : ends at 2026-06-29 12:53:25.150916 (466369.162637597) - 267.07s total
+PostgreSQL-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782747873(.*)", pod=~"(.*)postgresql-1-1782747873(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Experiment                    : ends at 2026-06-29 17:48:59.982561 (484103.994282993) - 266.21s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -69,8 +66,8 @@ Experiment                    : uploading workload file
 ### Workload
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 268s 
-* Code: 1782730137
+* Duration: 267s 
+* Code: 1782747873
 * HammerDB runs the benchmark.
 * This imports TPC-C data sets.
   * TPC-C data is generated and loaded using several threads.
@@ -86,7 +83,7 @@ HammerDB Data Loading SF=1 (warehouses for TPC-C)
 
 ### Services
 PostgreSQL-1
-* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782730137 9091:9091
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1782747873 9091:9091
 
 ### Connections
 * PostgreSQL-1-1 uses docker image postgres:18.3
@@ -95,14 +92,14 @@ PostgreSQL-1
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:263763
+  * disk:263766
   * datadisk:280
   * cpu_list:0-127
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782730137
+    * code:1782747873
 
 ### Loading
 
@@ -110,7 +107,7 @@ PostgreSQL-1
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |    1 |       55.00 |           0.00 |            0.00 |         21.00 |           34.00 |              1 |           1 |             | None           |             0 | False         |               65.45 |
+| PostgreSQL-1-1 |                1 |    1 |       59.00 |           0.00 |            0.00 |         26.00 |           33.00 |              1 |           1 |             | None           |             0 | False         |               61.02 |
 
 ### Monitoring
 
@@ -118,14 +115,14 @@ PostgreSQL-1
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1 |         1.72 |      0.09 |           0.44 |                  0.50 |
+| PostgreSQL-1-1 |         1.03 |      0.06 |           0.42 |                  0.46 |
 
 ### Loading phase: component loader
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PostgreSQL-1-1 |        12.18 |      0.00 |           0.02 |                  0.02 |
 
 ### Tests
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Loading phase: component loader contains 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
