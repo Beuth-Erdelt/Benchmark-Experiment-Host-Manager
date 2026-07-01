@@ -7,21 +7,21 @@ echo "$DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
 
 ######################## Show general parameters ########################
-echo "HAMMERDB_TYPE=$HAMMERDB_TYPE"
+echo "HAMMERDB_TYPE:$HAMMERDB_TYPE"
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
 echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
 echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
-echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
-echo "SF $SF"
-echo "HAMMERDB_NUM_VU $HAMMERDB_NUM_VU"
-echo "HAMMERDB_ITERATIONS $HAMMERDB_ITERATIONS"
-echo "HAMMERDB_DURATION $HAMMERDB_DURATION"
-echo "HAMMERDB_RAMPUP $HAMMERDB_RAMPUP"
-echo "HAMMERDB_VUSERS $HAMMERDB_VUSERS"
+echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
+echo "SF:$SF"
+echo "HAMMERDB_NUM_VU:$HAMMERDB_NUM_VU"
+echo "HAMMERDB_ITERATIONS:$HAMMERDB_ITERATIONS"
+echo "HAMMERDB_DURATION:$HAMMERDB_DURATION"
+echo "HAMMERDB_RAMPUP:$HAMMERDB_RAMPUP"
+echo "HAMMERDB_VUSERS:$HAMMERDB_VUSERS"
 
 ######################## Generate workflow file (MySQL) ########################
 
@@ -36,7 +36,7 @@ if {!\$complete} { after 5000 wait_to_complete } else { exit }
 dbset db mysql
 diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
-# Error: can't read "mysql_ssl_options": no such variable
+# Error: can't read \"mysql_ssl_options\": no such variable
 # diset connection mysql_ssl true
 # diset connection mysql_ssl_ca /etc/mysql/certs/ca-cert.pem
 # diset connection mysql_ssl_cert /etc/mysql/certs/client-cert.pem
@@ -165,6 +165,23 @@ echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
 bexhoma_end_epoch=$(date -u +%s)
 echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch"
+
+######################## Parameters summary ########################
+echo "HAMMERDB_TYPE:$HAMMERDB_TYPE"
+echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
+echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
+echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
+echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
+echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
+echo "SF:$SF"
+echo "HAMMERDB_NUM_VU:$HAMMERDB_NUM_VU"
+echo "HAMMERDB_ITERATIONS:$HAMMERDB_ITERATIONS"
+echo "HAMMERDB_DURATION:$HAMMERDB_DURATION"
+echo "HAMMERDB_RAMPUP:$HAMMERDB_RAMPUP"
+echo "HAMMERDB_VUSERS:$HAMMERDB_VUSERS"
 
 ######################## Exit successfully ###################
 exit 0

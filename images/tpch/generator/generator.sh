@@ -37,9 +37,11 @@ else
 fi
 
 ######################## Show more parameters ########################
-echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
-echo "SF $SF"
+BEXHOMA_CHILD_INITIAL="$BEXHOMA_CHILD"
+BEXHOMA_NUM_PODS_INITIAL="$BEXHOMA_NUM_PODS"
+echo "BEXHOMA_CHILD_INITIAL:$BEXHOMA_CHILD_INITIAL"
+echo "BEXHOMA_NUM_PODS_INITIAL:$BEXHOMA_NUM_PODS_INITIAL"
+echo "SF:$SF"
 echo "$BEXHOMA_CHILD" > /tmp/tpch/BEXHOMA_CHILD
 
 ######################## Multi-Tenant parameters ########################
@@ -53,8 +55,8 @@ if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
     BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+	echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+	echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
 elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     echo "BEXHOMA_TENANT_BY is database"
     #BEXHOMA_NUM_PODS=1
@@ -63,14 +65,14 @@ elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-	echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-	echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+	echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+	echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
 elif [ "$BEXHOMA_TENANT_BY" = "container" ]; then
     echo "BEXHOMA_TENANT_BY is container"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
-    echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-    echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
+    echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+    echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
 else
     echo "BEXHOMA_TENANT_BY is not set"
 fi
@@ -125,7 +127,7 @@ else
 	fi
 	mkdir -p $destination_raw
 fi
-echo "destination_raw $destination_raw"
+echo "destination_raw:$destination_raw"
 
 ######################## Multi-Tenant parameters ########################
 BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
@@ -247,6 +249,22 @@ echo "Duration $DURATION_SCRIPT seconds (script total)"
 echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
 echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch"
+
+######################## Parameters summary ########################
+echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
+echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
+echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
+echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
+echo "BEXHOMA_CHILD_INITIAL:$BEXHOMA_CHILD_INITIAL"
+echo "BEXHOMA_NUM_PODS_INITIAL:$BEXHOMA_NUM_PODS_INITIAL"
+echo "SF:$SF"
+echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
+echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
+echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
+echo "destination_raw:$destination_raw"
 
 ######################## Exit successfully ###################
 exit 0

@@ -76,22 +76,22 @@ class YcsbEvaluator(LogEvaluator):
             pod_name = filename[filename.rindex("-") + 1:-len(".log")]
             connection_name = re.findall('BEXHOMA_CONNECTION:(.+?)\n', stdout)[0]
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
-            sf = re.findall('SF (.+?)\n', stdout)[0]
+            sf = re.findall('SF:(.+?)\n', stdout)[0]
             code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
             benchmark_run = benchmark_run[0] if benchmark_run else '1'
-            target = re.findall('YCSB_TARGET (.+?)\n', stdout)[0]
-            threads = re.findall('YCSB_THREADCOUNT (.+?)\n', stdout)[0]
-            workload = re.findall('YCSB_WORKLOAD (.+?)\n', stdout)[0]
-            operations = re.findall('YCSB_OPERATIONS (.+?)\n', stdout)[0]
-            child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
+            target = re.findall('YCSB_TARGET:(.+?)\n', stdout)[0]
+            threads = re.findall('YCSB_THREADCOUNT:(.+?)\n', stdout)[0]
+            workload = re.findall('YCSB_WORKLOAD:(.+?)\n', stdout)[0]
+            operations = re.findall('YCSB_OPERATIONS:(.+?)\n', stdout)[0]
+            child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
             batchsize_matches = re.findall('YCSB_BATCHSIZE:(.+?)\n', stdout)
             batchsize = int(batchsize_matches[0]) if batchsize_matches else -1
             exception_matches = re.findall('site.ycsb.DBException:(.+?)\n', stdout)
             exceptions = len(exception_matches)
-            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS:(.+?)\n', stdout)[0]
             # collect lines starting with "[" — YCSB summary rows; skip "[ WARN]" lines
             parsed_rows = []
             for line in lines:

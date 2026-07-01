@@ -579,7 +579,7 @@ class EvaluatorBase:
                 try:
                     with open(log_path, encoding='utf-8', errors='ignore') as f:
                         content = f.read()
-                    tenant_match = re.search(r'BEXHOMA_TENANT_ID\s+(\d+)', content)
+                    tenant_match = re.search(r'BEXHOMA_TENANT_ID:(\d+)', content)
                     duration_match = re.search(r'BEXHOMA_DURATION:(\d+)', content)
                     if tenant_match and duration_match:
                         tenant_id = int(tenant_match.group(1))

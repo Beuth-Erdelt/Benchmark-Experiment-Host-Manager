@@ -14,9 +14,9 @@ echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
 
 ######################## Show more parameters ########################
 BEXHOMA_CHILD=$(cat /tmp/tpcds/BEXHOMA_CHILD )
-echo "BEXHOMA_CHILD $BEXHOMA_CHILD"
-echo "BEXHOMA_NUM_PODS $BEXHOMA_NUM_PODS"
-echo "SF $SF"
+echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
+echo "SF:$SF"
 
 ######################## Read per-pod config from Redis ########################
 BEXHOMA_POD_CONFIG_KEY="bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-config-$BEXHOMA_CHILD"
@@ -45,7 +45,7 @@ else
     # only store locally
     destination_raw=/tmp/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
 fi
-echo "destination_raw $destination_raw"
+echo "destination_raw:$destination_raw"
 cd $destination_raw
 
 ######################## Show generated files ########################
@@ -185,6 +185,17 @@ echo "Duration $DURATION_SCRIPT seconds (script total)"
 echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
 echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch"
+
+######################## Parameters summary ########################
+echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
+echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
+echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
+echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
+echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
+echo "SF:$SF"
+echo "destination_raw:$destination_raw"
 
 ######################## Exit successfully ###################
 # while true; do sleep 2; done
