@@ -12,9 +12,10 @@
 # Date: 2025-05-18
 # Version: 1.0
 # Description: Connects to a SUT container via SSH and runs sysbench (CPU/memory)
-#   or fio (disk I/O) workloads. Configuration is supplied via environment variables.
-#   A Redis message queue is consulted for pod-assignment details.
-#   redis-cli and openssh-client are installed for queue interaction and SSH access.
+#   or a single, ENV-configurable fio (disk I/O) workload. Configuration is supplied
+#   via environment variables. A Redis message queue is consulted for pod-assignment
+#   details. redis-cli and openssh-client are installed for queue interaction and SSH
+#   access; jq parses fio's JSON result into KEY:VALUE metrics and a CSV summary.
 ######################################################################################
 FROM alpine:3.20
 
@@ -49,11 +50,21 @@ ENV HARDWARE_TYPE=sysbench
 ENV HARDWARE_THREADS=4
 ENV HARDWARE_TEST_DIR=/tmp/fio-test
 ENV HARDWARE_SIZE=1G
+ENV HARDWARE_DURATION=30
+
+# fio workload parameters (HARDWARE_TYPE=fio only)
+ENV HARDWARE_FIO_RW=randrw
+ENV HARDWARE_FIO_BS=8k
+ENV HARDWARE_FIO_IODEPTH=1
+ENV HARDWARE_FIO_NUMJOBS=1
+ENV HARDWARE_FIO_ENGINE=sync
+ENV HARDWARE_FIO_FSYNC=0
+ENV HARDWARE_FIO_RWMIXREAD=50
 
 ######################################################################################
-# Install SSH client and redis-cli
+# Install SSH client, redis-cli and jq (for fio JSON result parsing)
 ######################################################################################
-RUN apk add --no-cache openssh-client bash redis
+RUN apk add --no-cache openssh-client bash redis jq
 
 ######################################################################################
 # Install SSH private key for SUT access

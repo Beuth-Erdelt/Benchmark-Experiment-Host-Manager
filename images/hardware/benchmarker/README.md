@@ -42,7 +42,21 @@ Pods always synchronise before starting: each pod decrements the Redis counter
 * `HARDWARE_TYPE`: Benchmark to run — `sysbench` or `fio`.
 * `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`). Not used by fio.
 * `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/tmp/fio-test`). Not used by sysbench.
-* `HARDWARE_SIZE`: Size of fio test files (default `1G`). Not used by sysbench.
+* `HARDWARE_SIZE`: Size of the fio test file (default `1G`). Not used by sysbench.
+* `HARDWARE_DURATION`: Runtime of the fio job in seconds (default `30`). Not used by sysbench.
+
+### fio workload parameters (`HARDWARE_TYPE=fio` only)
+
+fio runs as a **single** job per pod, fully described by these variables (mirrors the
+options exposed by `scripts/hardware-benchmark.sh`):
+
+* `HARDWARE_FIO_RW`: I/O pattern — `write`, `read`, `randwrite`, `randread`, or `randrw` (default `randrw`).
+* `HARDWARE_FIO_BS`: Block size (default `8k`).
+* `HARDWARE_FIO_IODEPTH`: Queue depth (default `1`).
+* `HARDWARE_FIO_NUMJOBS`: Number of parallel fio jobs (default `1`).
+* `HARDWARE_FIO_ENGINE`: fio ioengine — `sync`, `libaio`, `io_uring`, ... (default `sync`; `sync` needs no special kernel/seccomp support, which is not guaranteed for every SUT container).
+* `HARDWARE_FIO_FSYNC`: Call `fsync` every N writes; `0` disables it (default `0`).
+* `HARDWARE_FIO_RWMIXREAD`: Percentage of reads when `HARDWARE_FIO_RW=randrw` (default `50`). Ignored for all other `HARDWARE_FIO_RW` values.
 
 ## Workloads
 
@@ -55,7 +69,20 @@ Runs two tests sequentially on the SUT via SSH:
 
 ### fio (`HARDWARE_TYPE=fio`)
 
-Runs two tests sequentially on the SUT via SSH:
+Runs one fio job on the SUT via SSH, configured entirely by the `HARDWARE_FIO_*`
+variables above, with `--direct=1 --time_based --group_reporting --output-format=json`.
 
-1. **Sequential write** — 1 MB blocks, 30-second runtime.
-2. **Random read/write (QD1)** — 4 KB blocks, `iodepth=1`, `fsync=1`, 30-second runtime.
+## Output
+
+Both workloads write their raw result(s) to `/results/$BEXHOMA_EXPERIMENT/`, named
+`<tool>.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.<uuid>.<ext>` (consistent with the other
+Bexhoma benchmarker images):
+
+* **sysbench**: `sysbench.....cpu.txt` and `sysbench.....memory.txt` (raw stdout).
+* **fio**: `fio.....json` (raw fio JSON report) and `fio.....csv` (one-row summary:
+  IOPS, bandwidth, and 8 completion-latency percentiles — p01/p10/p50/p90/p95/p99/p999/p9999,
+  in ms — per read/write direction).
+
+Both scripts also echo a `KEY:VALUE` summary of the same metrics to stdout
+(`HARDWARE_FIO_READ_IOPS`, `HARDWARE_FIO_READ_LAT_P99_MS`, `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC`,
+etc.), so results can be scraped from the pod log without opening the result files.
