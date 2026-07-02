@@ -8,12 +8,12 @@
       <rect x="122" y="84"  width="16" height="64" rx="3"/>
     </g>
     <path d="M 45 105 A 62 62 0 0 1 155 105"
-          fill="none" stroke="#C9D4E8" stroke-width="7" stroke-linecap="round"/>
+          fill="none" stroke="#1B2A4A" stroke-width="7" stroke-linecap="round"/>
     <line x1="100" y1="118" x2="140" y2="64" stroke="#F5A623" stroke-width="8" stroke-linecap="round"/>
     <circle cx="100" cy="118" r="9" fill="#F5A623"/>
   </g>
   <text x="212" y="112" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
-        font-size="72" font-weight="700" letter-spacing="1" fill="#E6EDF3">bexhoma</text>
+        font-size="72" font-weight="700" letter-spacing="1" fill="#1B2A4A">bexhoma</text>
   <text x="215" y="152" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
-        font-size="22" font-weight="400" letter-spacing="2" fill="#9BA9BF">BENCHMARK EXPERIMENT HOST MANAGER</text>
+        font-size="22" font-weight="400" letter-spacing="2" fill="#5A6B85">BENCHMARK EXPERIMENT HOST MANAGER</text>
 </svg>
