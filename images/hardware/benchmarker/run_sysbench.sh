@@ -1,17 +1,20 @@
-#!/bin/sh
-set -e
+#!/bin/bash
 
-SUT_HOST="${SUT_HOST:-sut-service}"
-SUT_USER="${SUT_USER:-bench}"
-KEY_PATH="${KEY_PATH:-/root/.ssh/id_ed25519}"
-THREADS="${THREADS:-4}"
+######################## Show parameters ########################
+echo "BEXHOMA_SUT_HOST:$BEXHOMA_SUT_HOST"
+echo "BEXHOMA_SUT_USER:$BEXHOMA_SUT_USER"
+echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
+echo "HARDWARE_THREADS:$HARDWARE_THREADS"
 
-SSH_OPTS="-i ${KEY_PATH} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+######################## Set SSH options ########################
+SSH_OPTS="-i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
+######################## Run sysbench CPU benchmark ########################
 echo "=== sysbench CPU ==="
-ssh ${SSH_OPTS} "${SUT_USER}@${SUT_HOST}" \
-  "sysbench cpu --cpu-max-prime=20000 --threads=${THREADS} run"
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_SUT_HOST}" \
+  "sysbench cpu --cpu-max-prime=20000 --threads=${HARDWARE_THREADS} run"
 
+######################## Run sysbench memory benchmark ########################
 echo "=== sysbench Memory ==="
-ssh ${SSH_OPTS} "${SUT_USER}@${SUT_HOST}" \
-  "sysbench memory --memory-block-size=1K --memory-total-size=10G --threads=${THREADS} run"
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_SUT_HOST}" \
+  "sysbench memory --memory-block-size=1K --memory-total-size=10G --threads=${HARDWARE_THREADS} run"

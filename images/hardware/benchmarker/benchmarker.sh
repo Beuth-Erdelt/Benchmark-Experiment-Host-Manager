@@ -7,7 +7,7 @@ echo "$DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
 
 ######################## Show general parameters ########################
-echo "HAMMERDB_TYPE:$HAMMERDB_TYPE"
+echo "HARDWARE_TYPE:$HARDWARE_TYPE"
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
@@ -17,14 +17,12 @@ echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
 BEXHOMA_CHILD_INITIAL="$BEXHOMA_CHILD"
 echo "BEXHOMA_CHILD_INITIAL:$BEXHOMA_CHILD_INITIAL"
 echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
-echo "SF:$SF"
-echo "HAMMERDB_NUM_VU:$HAMMERDB_NUM_VU"
-echo "HAMMERDB_ITERATIONS:$HAMMERDB_ITERATIONS"
-echo "HAMMERDB_DURATION:$HAMMERDB_DURATION"
-echo "HAMMERDB_RAMPUP:$HAMMERDB_RAMPUP"
-echo "HAMMERDB_TIMEPROFILE:$HAMMERDB_TIMEPROFILE"
-echo "HAMMERDB_ALLWAREHOUSES:$HAMMERDB_ALLWAREHOUSES"
-echo "HAMMERDB_KEYANDTHINK:$HAMMERDB_KEYANDTHINK"
+echo "HARDWARE_THREADS:$HARDWARE_THREADS"
+echo "HARDWARE_TEST_DIR:$HARDWARE_TEST_DIR"
+echo "HARDWARE_SIZE:$HARDWARE_SIZE"
+echo "BEXHOMA_SUT_HOST:$BEXHOMA_SUT_HOST"
+echo "BEXHOMA_SUT_USER:$BEXHOMA_SUT_USER"
+echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
 
 ######################## Wait for synched starting time ########################
 echo "benchmark started at $BEXHOMA_TIME_NOW"
@@ -133,218 +131,21 @@ fi
 ######################## Show more parameters ########################
 echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
-echo "SF:$SF"
-
-######################## Generate workflow file (MySQL) ########################
-
-if [ "$HAMMERDB_TYPE" = "mysql" ]; then
-    echo "#!/bin/tclsh
-proc runtimer { seconds } {
-set x 0
-set timerstop 0
-while {!\$timerstop} {
-incr x
-after 1000
-  if { ![ expr {\$x % 60} ] } {
-          set y [ expr \$x / 60 ]
-          puts \"Timer: \$y minutes elapsed\"
-  }
-update
-if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
-    }
-return
-}
-puts \"SETTING CONFIGURATION\"
-dbset db mysql
-diset connection mysql_host $BEXHOMA_HOST
-diset connection mysql_port $BEXHOMA_PORT
-# Error: can't read \"mysql_ssl_options\": no such variable
-# diset connection mysql_ssl true
-# diset connection mysql_ssl_ca /etc/mysql/certs/ca-cert.pem
-# diset connection mysql_ssl_cert /etc/mysql/certs/client-cert.pem
-# diset connection mysql_ssl_key /etc/mysql/certs/client-key.pem
-diset tpcc mysql_count_ware $SF
-diset tpcc mysql_num_vu $HAMMERDB_NUM_VU
-diset tpcc mysql_user $BEXHOMA_USER
-diset tpcc mysql_pass $BEXHOMA_PASSWORD
-diset tpcc mysql_driver timed
-diset tpcc mysql_rampup $HAMMERDB_RAMPUP
-diset tpcc mysql_duration $HAMMERDB_DURATION
-diset tpcc mysql_total_iterations $HAMMERDB_ITERATIONS
-diset tpcc mysql_timeprofile $HAMMERDB_TIMEPROFILE
-diset tpcc mysql_allwarehouse $HAMMERDB_ALLWAREHOUSES
-diset tpcc mysql_keyandthink $HAMMERDB_KEYANDTHINK
-vuset logtotemp 1
-loadscript
-puts \"SEQUENCE STARTED\"
-foreach z { $HAMMERDB_VUSERS } {
-puts \"\$z VU TEST\"
-vuset vu \$z
-vucreate
-vurun
-runtimer 600
-vudestroy
-after 5000
-        }
-puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
-fi
-
-######################## Generate workflow file (MariaDB) ########################
-
-if [ "$HAMMERDB_TYPE" = "mariadb" ]; then
-    echo "#!/bin/tclsh
-proc runtimer { seconds } {
-set x 0
-set timerstop 0
-while {!\$timerstop} {
-incr x
-after 1000
-  if { ![ expr {\$x % 60} ] } {
-          set y [ expr \$x / 60 ]
-          puts \"Timer: \$y minutes elapsed\"
-  }
-update
-if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
-    }
-return
-}
-puts \"SETTING CONFIGURATION\"
-dbset db maria
-diset connection maria_host $BEXHOMA_HOST
-diset connection maria_port $BEXHOMA_PORT
-diset tpcc maria_count_ware $SF
-diset tpcc maria_num_vu $HAMMERDB_NUM_VU
-diset tpcc maria_user $BEXHOMA_USER
-diset tpcc maria_pass $BEXHOMA_PASSWORD
-diset tpcc maria_driver timed
-diset tpcc maria_rampup $HAMMERDB_RAMPUP
-diset tpcc maria_duration $HAMMERDB_DURATION
-diset tpcc maria_total_iterations $HAMMERDB_ITERATIONS
-diset tpcc maria_timeprofile $HAMMERDB_TIMEPROFILE
-diset tpcc maria_allwarehouse $HAMMERDB_ALLWAREHOUSES
-diset tpcc maria_keyandthink $HAMMERDB_KEYANDTHINK
-vuset logtotemp 1
-loadscript
-puts \"SEQUENCE STARTED\"
-foreach z { $HAMMERDB_VUSERS } {
-puts \"\$z VU TEST\"
-vuset vu \$z
-vucreate
-vurun
-runtimer 600
-vudestroy
-after 5000
-        }
-puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
-fi
-
-######################## Generate workflow file (PostgreSQL) ########################
-
-if [ "$HAMMERDB_TYPE" = "postgresql" ]; then
-    echo "#!/bin/tclsh
-puts \"SETTING CONFIGURATION\"
-dbset db pg
-diset connection pg_host $BEXHOMA_HOST
-diset connection pg_port $BEXHOMA_PORT
-diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $HAMMERDB_NUM_VU
-diset tpcc pg_superuser postgres
-diset tpcc pg_superuserpass postgres
-diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $BEXHOMA_USER
-diset tpcc pg_pass $BEXHOMA_PASSWORD
-diset tpcc pg_dbase tpcc
-diset tpcc pg_driver timed
-diset tpcc pg_rampup $HAMMERDB_RAMPUP
-diset tpcc pg_duration $HAMMERDB_DURATION
-diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
-diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
-diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
-diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
-vuset logtotemp 1
-tcset unique 0
-tcset refreshrate 10
-tcset timestamps 1
-tcset logtotemp 1
-loadscript
-puts \"SEQUENCE STARTED\"
-foreach z { $HAMMERDB_VUSERS } {
-    puts \"\$z VU TEST\"
-    vuset vu \$z
-    vucreate
-    vurun
-    vudestroy
-    after 5000
-}
-puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
-fi
-
-######################## Generate workflow file (Citus) ########################
-
-if [ "$HAMMERDB_TYPE" = "citus" ]; then
-    echo "#!/bin/tclsh
-proc runtimer { seconds } {
-set x 0
-set timerstop 0
-while {!\$timerstop} {
-incr x
-after 1000
-  if { ![ expr {\$x % 60} ] } {
-          set y [ expr \$x / 60 ]
-          puts \"Timer: \$y minutes elapsed\"
-  }
-update
-if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
-    }
-return
-}
-puts \"SETTING CONFIGURATION\"
-dbset db pg
-diset connection pg_host $BEXHOMA_HOST
-diset connection pg_port $BEXHOMA_PORT
-diset tpcc pg_count_ware $SF
-diset tpcc pg_num_vu $HAMMERDB_NUM_VU
-diset tpcc pg_superuser postgres
-diset tpcc pg_superuserpass postgres
-diset tpcc pg_defaultdbase postgres
-diset tpcc pg_user $BEXHOMA_USER
-diset tpcc pg_pass $BEXHOMA_PASSWORD
-diset tpcc pg_dbase $BEXHOMA_DATABASE
-diset tpcc pg_driver timed
-diset tpcc pg_rampup $HAMMERDB_RAMPUP
-diset tpcc pg_duration $HAMMERDB_DURATION
-diset tpcc pg_total_iterations $HAMMERDB_ITERATIONS
-diset tpcc pg_cituscompat true
-diset tpcc pg_storedprocs false
-diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
-diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
-diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
-vuset logtotemp 1
-loadscript
-print vuconf
-puts \"SEQUENCE STARTED\"
-foreach z { $HAMMERDB_VUSERS } {
-puts \"\$z VU TEST\"
-vuset vu \$z
-vucreate
-runtimer $HAMMERDB_DURATION
-vurun
-vudestroy
-after 5000
-        }
-puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
-fi
-
-######################## Show workflow file ########################
-cat benchmark.tcl
 
 ######################## Start measurement of time ########################
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
-######################## Execute workload ###################
-./hammerdbcli auto benchmark.tcl
+######################## Run hardware benchmark ########################
+if [ "$HARDWARE_TYPE" = "sysbench" ]; then
+    run_sysbench.sh
+elif [ "$HARDWARE_TYPE" = "fio" ]; then
+    run_fio.sh
+else
+    echo "Unknown HARDWARE_TYPE: $HARDWARE_TYPE"
+    exit 1
+fi
 
 ######################## End time measurement ###################
 SECONDS_END=$SECONDS
@@ -352,14 +153,6 @@ echo "End $SECONDS_END seconds"
 
 DURATION=$((SECONDS_END-SECONDS_START))
 echo "Duration $DURATION seconds"
-
-######################## Store results ###################
-UUID=$(cat /proc/sys/kernel/random/uuid)
-cp /tmp/hammerdb.log /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
-echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log"
-# cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
-echo "/tmp/hdbxtprofile.log"
-cat /tmp/hdbxtprofile.log
 
 ######################## Show timing information ###################
 echo "Benchmarking done"
@@ -377,7 +170,7 @@ echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch"
 
 ######################## Parameters summary ########################
-echo "HAMMERDB_TYPE:$HAMMERDB_TYPE"
+echo "HARDWARE_TYPE:$HARDWARE_TYPE"
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
@@ -386,14 +179,12 @@ echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
 echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
 echo "BEXHOMA_CHILD_INITIAL:$BEXHOMA_CHILD_INITIAL"
 echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
-echo "SF:$SF"
-echo "HAMMERDB_NUM_VU:$HAMMERDB_NUM_VU"
-echo "HAMMERDB_ITERATIONS:$HAMMERDB_ITERATIONS"
-echo "HAMMERDB_DURATION:$HAMMERDB_DURATION"
-echo "HAMMERDB_RAMPUP:$HAMMERDB_RAMPUP"
-echo "HAMMERDB_TIMEPROFILE:$HAMMERDB_TIMEPROFILE"
-echo "HAMMERDB_ALLWAREHOUSES:$HAMMERDB_ALLWAREHOUSES"
-echo "HAMMERDB_KEYANDTHINK:$HAMMERDB_KEYANDTHINK"
+echo "HARDWARE_THREADS:$HARDWARE_THREADS"
+echo "HARDWARE_TEST_DIR:$HARDWARE_TEST_DIR"
+echo "HARDWARE_SIZE:$HARDWARE_SIZE"
+echo "BEXHOMA_SUT_HOST:$BEXHOMA_SUT_HOST"
+echo "BEXHOMA_SUT_USER:$BEXHOMA_SUT_USER"
+echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
 echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
 
 ######################## Exit successfully ###################

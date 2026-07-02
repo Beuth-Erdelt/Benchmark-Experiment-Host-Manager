@@ -317,6 +317,31 @@ build_and_push_tpch_refresh() {
 }
 
 ###########
+build_and_push_hardware() {
+  local version="$1"
+  if [[ -z "$version" ]]; then
+    echo "Usage: build_and_push_hardware <image_tag>"
+    return 1
+  fi
+
+  (
+    set -e
+    cd images/hardware/benchmarker
+    docker build -f Dockerfile -t "bexhoma/benchmarker_hardware:$version" .
+    docker push "bexhoma/benchmarker_hardware:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/benchmarker_hardware:$version"
+
+  (
+    set -e
+    cd images/hardware/sut
+    docker build -f Dockerfile -t "bexhoma/sut_hardware:$version" .
+    docker push "bexhoma/sut_hardware:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/sut_hardware:$version"
+}
+
+###########
 build_and_push_benchbase() {
   local version="$1"
   if [[ -z "$version" ]]; then
@@ -358,6 +383,7 @@ build_and_push_monitoring "$version"
 build_and_push_hammerdb "$version"
 build_and_push_ycsb "$version"
 build_and_push_benchbase "$version"
+build_and_push_hardware "$version"
 
 _wait_all || _any_failed=1
 echo "All version builds and pushes completed."
@@ -373,6 +399,7 @@ build_and_push_monitoring "$version"
 build_and_push_hammerdb "$version"
 build_and_push_ycsb "$version"
 build_and_push_benchbase "$version"
+build_and_push_hardware "$version"
 
 _wait_all || _any_failed=1
 echo "All latest builds and pushes completed."
