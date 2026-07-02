@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ######################## Show parameters ########################
-echo "BEXHOMA_SUT_HOST:$BEXHOMA_SUT_HOST"
+echo "BEXHOMA_HOST:$BEXHOMA_HOST"
 echo "BEXHOMA_SUT_USER:$BEXHOMA_SUT_USER"
 echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
 echo "HARDWARE_THREADS:$HARDWARE_THREADS"
@@ -16,14 +16,14 @@ RESULT_MEMORY="/results/$BEXHOMA_EXPERIMENT/sysbench.$BEXHOMA_CONNECTION.$BEXHOM
 
 ######################## Run sysbench CPU benchmark ########################
 echo "=== sysbench CPU ==="
-ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_SUT_HOST}" \
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" \
   "sysbench cpu --cpu-max-prime=20000 --threads=${HARDWARE_THREADS} run" > "$RESULT_CPU"
 cat "$RESULT_CPU"
 echo "$RESULT_CPU"
 
 ######################## Run sysbench memory benchmark ########################
 echo "=== sysbench Memory ==="
-ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_SUT_HOST}" \
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" \
   "sysbench memory --memory-block-size=1K --memory-total-size=10G --threads=${HARDWARE_THREADS} run" > "$RESULT_MEMORY"
 cat "$RESULT_MEMORY"
 echo "$RESULT_MEMORY"

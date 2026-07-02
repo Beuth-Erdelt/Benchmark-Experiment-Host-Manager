@@ -369,6 +369,10 @@ class EvaluatorBase:
         :type result: dict
         """
         num_loading_pods = len(c['hostsystem']['loading_timespans']['sensor']) if 'loading_timespans' in c['hostsystem'] and 'sensor' in c['hostsystem']['loading_timespans'] else 0
+        # absent entirely for benchmark types with no loading phase at all (e.g.
+        # Hardware) — run_pod() only sets connection_parameter['loading_parameters']
+        # when cfg.loading_parameters is non-empty
+        loading_parameters = c['parameter']['connection_parameter'].get('loading_parameters', {})
         result[connection_id] = {
             'code': c['parameter']['code'],
             'connection': c['name'],
@@ -384,8 +388,7 @@ class EvaluatorBase:
             'time_generate': float(c['timeGenerate']),
             'time_ingest': float(c['timeIngesting']),
             'time_postload': float(c['timeIndex']),
-            'terminals': c['parameter']['connection_parameter']['loading_parameters']['BENCHBASE_TERMINALS']
-                if 'BENCHBASE_TERMINALS' in c['parameter']['connection_parameter']['loading_parameters'] else c['parameter']['connection_parameter']['loading_parameters']['HAMMERDB_VUSERS'] if 'HAMMERDB_VUSERS' in c['parameter']['connection_parameter']['loading_parameters'] else 0,
+            'terminals': loading_parameters.get('BENCHBASE_TERMINALS', loading_parameters.get('HAMMERDB_VUSERS', 0)),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
             'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',

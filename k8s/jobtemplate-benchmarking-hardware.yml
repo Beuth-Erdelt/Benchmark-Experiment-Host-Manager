@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
+  name: bexhoma-benchmarker
+spec:
+  backoffLimit: 4
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: dockerhub
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      containers:
+      # container name is fixed to "dbmsbenchmarker" regardless of tool — required by
+      # experiments/base.py::get_job_timing_benchmarking(), which only ever reads
+      # "*.dbmsbenchmarker.log" to extract BEXHOMA_START/BEXHOMA_END timestamps.
+      - name: dbmsbenchmarker
+        image: bexhoma/benchmarker_hardware:BEXHOMA_PACKAGE_VERSION
+        imagePullPolicy: Always
+        env:
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-hardware-1658676533'}
+        - {name: BEXHOMA_CONNECTION, value: 'hardware'}
+        - {name: BEXHOMA_EXPERIMENT, value: '1234'}
+        - {name: HARDWARE_TYPE, value: 'fio'}
+        - {name: HARDWARE_TEST_DIR, value: '/database/fio-test'}
+        - {name: HARDWARE_SIZE, value: '1G'}
+        - {name: HARDWARE_DURATION, value: '30'}
+        - {name: HARDWARE_FIO_RW, value: 'randrw'}
+        - {name: HARDWARE_FIO_BS, value: '8k'}
+        - {name: HARDWARE_FIO_IODEPTH, value: '1'}
+        - {name: HARDWARE_FIO_NUMJOBS, value: '1'}
+        - {name: HARDWARE_FIO_ENGINE, value: 'sync'}
+        - {name: HARDWARE_FIO_FSYNC, value: '0'}
+        - {name: HARDWARE_FIO_RWMIXREAD, value: '50'}
+        resources:
+          #limits: {cpu: 4000m}
+          #, memory: 16Gi}
+          #requests: {cpu: 4000m}
+          #, memory: 16Gi}
+        #securityContext:
+        #  privileged: true
+        # results go to stdout + /results; no results PVC needed
+        volumeMounts:
+      restartPolicy: Never
+      volumes:

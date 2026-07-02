@@ -41,7 +41,8 @@ ENV BEXHOMA_TIME_START=0
 ENV BEXHOMA_TIME_NOW=0
 
 # SUT connection
-ENV BEXHOMA_SUT_HOST=sut-service
+# BEXHOMA_HOST is injected at runtime by bexhoma's manifest builder
+# (configurations/manifest.py) with the SUT's real k8s service DNS name.
 ENV BEXHOMA_SUT_USER=bench
 ENV BEXHOMA_SUT_KEY=/root/.ssh/id_ed25519
 

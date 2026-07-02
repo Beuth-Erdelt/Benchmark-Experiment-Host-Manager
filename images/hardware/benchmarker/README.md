@@ -33,7 +33,7 @@ Pods always synchronise before starting: each pod decrements the Redis counter
 
 ### SUT connection
 
-* `BEXHOMA_SUT_HOST`: Hostname of the SUT container (default `sut-service`).
+* `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile.
 * `BEXHOMA_SUT_USER`: SSH user on the SUT (default `bench`).
 * `BEXHOMA_SUT_KEY`: Path to the SSH private key inside the benchmarker image (default `/root/.ssh/id_ed25519`).
 

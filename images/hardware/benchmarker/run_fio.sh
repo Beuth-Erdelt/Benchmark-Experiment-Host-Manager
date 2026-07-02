@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ######################## Show parameters ########################
-echo "BEXHOMA_SUT_HOST:$BEXHOMA_SUT_HOST"
+echo "BEXHOMA_HOST:$BEXHOMA_HOST"
 echo "BEXHOMA_SUT_USER:$BEXHOMA_SUT_USER"
 echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
 echo "HARDWARE_TEST_DIR:$HARDWARE_TEST_DIR"
@@ -15,11 +15,18 @@ echo "HARDWARE_FIO_ENGINE:$HARDWARE_FIO_ENGINE"
 echo "HARDWARE_FIO_FSYNC:$HARDWARE_FIO_FSYNC"
 echo "HARDWARE_FIO_RWMIXREAD:$HARDWARE_FIO_RWMIXREAD"
 
+######################## Scope test directory to this pod ########################
+# Parallel benchmarker pods (BEXHOMA_NUM_PODS > 1) share one SUT and one PVC;
+# without a per-pod subdirectory they would all run fio against the same
+# --directory/--name and corrupt each other's test file.
+HARDWARE_TEST_DIR="${HARDWARE_TEST_DIR}/pod-${BEXHOMA_CHILD}"
+echo "HARDWARE_TEST_DIR (scoped to pod):$HARDWARE_TEST_DIR"
+
 ######################## Set SSH options ########################
 SSH_OPTS="-i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 ######################## Create test directory on SUT ########################
-ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_SUT_HOST}" "mkdir -p ${HARDWARE_TEST_DIR}"
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "mkdir -p ${HARDWARE_TEST_DIR}"
 
 ######################## Build fio argument list ########################
 # rwmixread only applies to mixed read/write workloads; fsync=0 means "never", so
@@ -41,7 +48,7 @@ esac
 
 ######################## Run fio benchmark ########################
 echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC ==="
-FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_SUT_HOST}" "fio $FIO_ARGS")"
+FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "fio $FIO_ARGS")"
 
 ######################## Store raw result ########################
 UUID=$(cat /proc/sys/kernel/random/uuid)
