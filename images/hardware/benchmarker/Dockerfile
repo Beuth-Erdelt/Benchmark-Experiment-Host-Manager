@@ -48,7 +48,7 @@ ENV BEXHOMA_SUT_KEY=/root/.ssh/id_ed25519
 # Hardware benchmark parameters
 ENV HARDWARE_TYPE=sysbench
 ENV HARDWARE_THREADS=4
-ENV HARDWARE_TEST_DIR=/tmp/fio-test
+ENV HARDWARE_TEST_DIR=/database/fio-test
 ENV HARDWARE_SIZE=1G
 ENV HARDWARE_DURATION=30
 

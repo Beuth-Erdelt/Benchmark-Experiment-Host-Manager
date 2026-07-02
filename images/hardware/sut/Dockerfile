@@ -22,7 +22,7 @@ FROM alpine:3.20
 ######################################################################################
 RUN apk add --no-cache openssh fio sysbench \
     && ssh-keygen -A \
-    && adduser -D -s /bin/sh bench \
+    && adduser -D -u 1000 -s /bin/sh bench \
     && echo "bench:bench" | chpasswd \
     && mkdir -p /home/bench/.ssh \
     && chmod 700 /home/bench/.ssh \

@@ -41,7 +41,7 @@ Pods always synchronise before starting: each pod decrements the Redis counter
 
 * `HARDWARE_TYPE`: Benchmark to run — `sysbench` or `fio`.
 * `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`). Not used by fio.
-* `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/tmp/fio-test`). Not used by sysbench.
+* `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/database/fio-test`). Not used by sysbench. `/database` is the PVC-backed volume mounted by `k8s/deploymenttemplate-Hardware.yml`, so fio results reflect the benchmarked storage rather than the SUT container's ephemeral filesystem.
 * `HARDWARE_SIZE`: Size of the fio test file (default `1G`). Not used by sysbench.
 * `HARDWARE_DURATION`: Runtime of the fio job in seconds (default `30`). Not used by sysbench.
 

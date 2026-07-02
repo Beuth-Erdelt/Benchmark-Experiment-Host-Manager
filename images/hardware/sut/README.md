@@ -22,3 +22,12 @@ the `bench` user.
 
 The matching private key `bench_key` must be placed in the benchmarker image
 build context (`images/hardware/benchmarker/bench_key`).
+
+## Storage
+
+`k8s/deploymenttemplate-Hardware.yml` mounts a PVC at `/database`, owned by the
+`bench` user (uid 1000, set explicitly via `adduser -u 1000` in the Dockerfile).
+This is the base directory the benchmarker's fio job targets via
+`HARDWARE_TEST_DIR` (see `images/hardware/benchmarker/README.md`), so I/O
+benchmarks measure the PVC-backed storage instead of the container's ephemeral
+filesystem.
