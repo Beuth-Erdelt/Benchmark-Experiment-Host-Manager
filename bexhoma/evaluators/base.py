@@ -520,7 +520,7 @@ class EvaluatorBase:
         """
         workload_properties = self.get_workload()
         df = self.get_connections_of_experiment()
-        df['SF'] = int(workload_properties['defaultParameters']['SF'])
+        df['SF'] = float(workload_properties['defaultParameters']['SF'])
         df_load = df['time_load'].copy()
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx

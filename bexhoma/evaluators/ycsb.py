@@ -858,7 +858,7 @@ class YcsbEvaluator(LogEvaluator):
         # rows without pod_count have no recorded loading phase
         result = result.dropna(subset=['pod_count'])
         workload_properties = self.get_workload()
-        sf_value = int(workload_properties['defaultParameters']['SF'])
+        sf_value = float(workload_properties['defaultParameters']['SF'])
         result = result.copy()
         result['SF'] = sf_value
         result['sf'] = sf_value
