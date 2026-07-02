@@ -50,6 +50,22 @@ the codebase and follow the existing convention.
 - Propose clearer and consistent method names when existing names are unclear,
   inconsistent, or do not follow a unified convention across the codebase.
 
+## Brand assets
+- Logo/icon files live in `docs/logo/` (`bexhoma-banner.png` for light mode,
+  `bexhoma-logo-1-lockup-dark.svg` for dark mode, plus icon/favicon variants).
+- Brand colors: `#326CE5` (blue, icon/accent), `#F5A623` (orange, accent),
+  `#1B2A4A` (dark navy, light-mode wordmark text).
+- Referenced from `README.md` via a `<picture>` element with
+  `prefers-color-scheme` sources so the logo adapts to GitHub's dark mode.
+  PyPI's README renderer strips `<picture>` and doesn't resolve relative
+  paths, so the fallback `<img>` inside it must use an absolute
+  `raw.githubusercontent.com` URL — that fallback is what PyPI ends up
+  showing.
+- Referenced from `docs/conf.py` (`html_logo`, `html_favicon`) for the
+  Sphinx/Read the Docs build.
+- Licensed separately from the AGPL v3 code, under CC BY 4.0 — see
+  `docs/logo/README.md`.
+
 ## Comments
 - Comment when the WHY is non-obvious: a hidden constraint, a workaround,
   a subtle invariant.

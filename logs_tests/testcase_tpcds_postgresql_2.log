@@ -1,753 +1,617 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1750151567
-Experiment                    : starts at 2025-06-17 11:12:47.325536 (14343730.796088787)
+Experiment                    : has code 1782595993
+Experiment                    : starts at 2026-06-27 23:33:21.724478 (993992.4141736)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=10) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.8.
+Experiment uses bexhoma version 0.10.2.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Loading is tested with [1] threads, split into [8] pods.
+Database uses ephemeral storage of size 150Gi.
+Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-PostgreSQL-BHT-8              : will start now
-PostgreSQL-BHT-8              : Name of SUT pods = bexhoma-sut-postgresql-bht-8-1750151567
-PostgreSQL-BHT-8              : Name of SUT service = bexhoma-sut-postgresql-bht-8-1750151567
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1782595993
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1782595993
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : waits for health check to succeed
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : waits for health check to succeed
-done
-PostgreSQL-BHT-8              : is not loaded yet
-PostgreSQL-BHT-8              : start asynch loading scripts of type loaded
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782595993-7677b5d699-zfm6g to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type loaded
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : showing loader times
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1782596259, 1782596627), (1782596260, 1782596755), (1782596259, 1782596671), (1782596259, 1782596673), (1782596259, 1782596671), (1782596259, 1782596657), (1782596259, 1782596669), (1782596259, 1782596672)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596250, 1782596250), (1782596259, 1782596627), (1782596260, 1782596755), (1782596259, 1782596671), (1782596259, 1782596673), (1782596259, 1782596671), (1782596259, 1782596657), (1782596259, 1782596669), (1782596259, 1782596672)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 0
+PostgreSQL-1                  : loader timespan (first to last [s]) = 496
+PostgreSQL-1                  : total timespan (first to last [s]) = 505
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1782595993-7677b5d699-zfm6g to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type indexed
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : showing loader times
-PostgreSQL-BHT-8              : generator timespan (first to last [s]) = 1
-PostgreSQL-BHT-8              : loader timespan (first to last [s]) = 1222
-PostgreSQL-BHT-8              : total timespan (first to last [s]) = 1231
-PostgreSQL-BHT-8              : start asynch loading scripts of type indexed
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : is loading
-done
-PostgreSQL-BHT-8              : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-BHT-8-1            : start benchmarking
-PostgreSQL-BHT-8              : benchmarking results in folder /home/perdelt/benchmarks/1750151567
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1782595993 initialized to 1.
+PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1782595993
 - waiting 10s -               : done
-found
-PostgreSQL-BHT-8-1            : collecting loading metrics of SUT at connection PostgreSQL-BHT-8-1
-PostgreSQL-BHT-8-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1750151567(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-PostgreSQL-BHT-8-1            : collecting metrics of data generator at connection PostgreSQL-BHT-8-1
-PostgreSQL-BHT-8-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1750151567(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-PostgreSQL-BHT-8-1            : collecting metrics of data injector at connection PostgreSQL-BHT-8-1
-PostgreSQL-BHT-8-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1750151567(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1782595993-1-1-1-nqv6q: found
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-1-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782595993(.*)", pod=~"(.*)postgresql-1-1782595993(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of data generator at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782595993(.*)", pod=~"(.*)postgresql-1-1782595993(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of data injector at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782595993(.*)", pod=~"(.*)postgresql-1-1782595993(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
+- waiting 2s -                : done
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
+PostgreSQL-1                  : has running benchmarks
+PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1782595993/PostgreSQL-1-1-1-1.config
+PostgreSQL-1-1-1-1            : showing benchmarker times
+PostgreSQL-1-1-1-1            : benchmarker timespan job from 1782597413 to 1782602949
+PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1782597418 to 1782602924
+PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 5506
+PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1782597418, 1782602924)]
+PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1782597418, 1782602924)]}
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782595993(.*)", pod=~"(.*)postgresql-1-1782595993(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1782595993(.*)", pod=~"(.*)postgresql-1-1782595993(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-BHT-8              : has running benchmarks
-done
-PostgreSQL-BHT-8              : has running benchmarks
-done
-PostgreSQL-BHT-8              : has running benchmarks
-PostgreSQL-BHT-8-1            : showing benchmarker times
-PostgreSQL-BHT-8-1            : benchmarker timespan (start to end single container [s]) = 5174
-PostgreSQL-BHT-8-1            : benchmarker times (start/end per pod and container) = [(1750153788, 1750158918)]
-PostgreSQL-BHT-8-1            : found and updated times {'benchmarker': [(1750153788, 1750158918)]}
-PostgreSQL-BHT-8-1            : collecting execution metrics of SUT at connection PostgreSQL-BHT-8-1
-PostgreSQL-BHT-8-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1750151567(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-PostgreSQL-BHT-8-1            : collecting metrics of benchmarker at connection PostgreSQL-BHT-8-1
-PostgreSQL-BHT-8-1            : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-bht-8-1750151567(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-PostgreSQL-BHT-8              : can be stopped
-Experiment                    : ends at 2025-06-17 13:16:37.468079 (14351160.93863398) - 7430.14s total
-Join results done!
-done!
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1782595993-7677b5d699-zfm6g
+Experiment                    : ends at 2026-06-28 01:30:49.723718 (1001040.4135215) - 7048.00s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
+'pods'
+Result workflow not complete
 
 ## Show Summary
 
 ### Workload
 TPC-DS Queries SF=10
-    Type: tpcds
-    Duration: 7431s 
-    Code: 1750151567
-    This includes the reading queries of TPC-DS.
-    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-    TPC-DS (SF=10) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q99.
-    All instances use the same query parameters.
-    Timeout per query is 1200.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.8.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['PostgreSQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [1] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpcds
+* Duration: 7048s 
+* Code: 1782595993
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=10) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * Database uses ephemeral storage of size 150Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-PostgreSQL-BHT-8-1-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:449714548
-    datadisk:55281
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1750151567
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:1081742745600
+  * CPU:AMD EPYC 7502 32-Core Processor
+  * Cores:128
+  * host:6.8.0-117-generic
+  * node:cl-worker29
+  * disk:660803
+  * cpu_list:0-127
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * eval_parameters
+    * code:1782595993
 
-### Errors (failed queries)
-            PostgreSQL-BHT-8-1-1
-TPC-DS Q6                   True
-TPC-DS Q30                  True
-TPC-DS Q81                  True
-TPC-DS Q6
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
-TPC-DS Q30
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
-TPC-DS Q81
-PostgreSQL-BHT-8-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
-
-### Warnings (result mismatch)
-No warnings
-
-### Latency of Timer Execution [ms]
-DBMS           PostgreSQL-BHT-8-1-1
-TPC-DS Q1                   2634.37
-TPC-DS Q2                   5235.23
-TPC-DS Q3                   2870.39
-TPC-DS Q4                 107415.41
-TPC-DS Q5                   9899.03
-TPC-DS Q7                   4716.17
-TPC-DS Q8                   3664.65
-TPC-DS Q9                  16777.37
-TPC-DS Q10                  6345.62
-TPC-DS Q11                 97696.55
-TPC-DS Q12                  1134.51
-TPC-DS Q13                  7455.15
-TPC-DS Q14a+b              52583.06
-TPC-DS Q15                  2239.03
-TPC-DS Q16                  4575.63
-TPC-DS Q17                  6970.03
-TPC-DS Q18                  7033.56
-TPC-DS Q19                  5036.13
-TPC-DS Q20                  1963.22
-TPC-DS Q21                  5690.08
-TPC-DS Q22                111627.69
-TPC-DS Q23a+b             118299.71
-TPC-DS Q24a+b              11846.23
-TPC-DS Q25                  7389.72
-TPC-DS Q26                  3483.94
-TPC-DS Q27                  5951.02
-TPC-DS Q28                 13347.63
-TPC-DS Q29                  7198.26
-TPC-DS Q31                 16926.45
-TPC-DS Q32                  1298.98
-TPC-DS Q33                 10911.03
-TPC-DS Q34                   774.52
-TPC-DS Q35                  7675.22
-TPC-DS Q36                  8382.58
-TPC-DS Q37                  6053.16
-TPC-DS Q38                 20623.60
-TPC-DS Q39a+b              77756.41
-TPC-DS Q40                  3311.95
-TPC-DS Q41                 90664.06
-TPC-DS Q42                  2884.14
-TPC-DS Q43                  4509.95
-TPC-DS Q44                  7515.71
-TPC-DS Q45                  1348.52
-TPC-DS Q46                  1392.16
-TPC-DS Q47                 26127.03
-TPC-DS Q48                  7030.54
-TPC-DS Q49                 11863.25
-TPC-DS Q50                  8076.05
-TPC-DS Q51                 27973.61
-TPC-DS Q52                  2840.38
-TPC-DS Q53                  3151.07
-TPC-DS Q54                  2620.48
-TPC-DS Q55                  2704.18
-TPC-DS Q56                  9956.28
-TPC-DS Q57                 19399.61
-TPC-DS Q58                  8875.07
-TPC-DS Q59                  9449.10
-TPC-DS Q60                 10445.78
-TPC-DS Q61                  4459.86
-TPC-DS Q62                  1866.80
-TPC-DS Q63                  3101.14
-TPC-DS Q64                 15865.04
-TPC-DS Q65                 18222.22
-TPC-DS Q66                 10258.60
-TPC-DS Q67                 70472.91
-TPC-DS Q68                  1451.97
-TPC-DS Q69                  5116.28
-TPC-DS Q70                 10512.15
-TPC-DS Q71                  8546.26
-TPC-DS Q72                 37283.95
-TPC-DS Q73                   758.84
-TPC-DS Q74                 25089.08
-TPC-DS Q75                 22688.67
-TPC-DS Q76                  6019.57
-TPC-DS Q77                  8275.49
-TPC-DS Q78                 45298.51
-TPC-DS Q79                  5242.64
-TPC-DS Q80                 11696.92
-TPC-DS Q82                  6321.02
-TPC-DS Q83                  1178.78
-TPC-DS Q84                   510.23
-TPC-DS Q85                  2914.20
-TPC-DS Q86                  3898.90
-TPC-DS Q87                 20672.32
-TPC-DS Q88                 14858.10
-TPC-DS Q89                  3587.25
-TPC-DS Q90                  3761.34
-TPC-DS Q91                   677.39
-TPC-DS Q92                   721.17
-TPC-DS Q93                  3704.76
-TPC-DS Q94                  3875.99
-TPC-DS Q95                 70045.35
-TPC-DS Q96                  2127.91
-TPC-DS Q97                  7919.80
-TPC-DS Q98                  3728.64
-TPC-DS Q99                  3033.00
-
-### Loading [s]
-                      timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-PostgreSQL-BHT-8-1-1           1.0         1222.0         1.0      798.0    2030.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                      Geo Times [s]
-DBMS                               
-PostgreSQL-BHT-8-1-1           7.01
-
-### Power@Size ((3600*SF)/(geo times))
-                      Power@Size [~Q/h]
-DBMS                                   
-PostgreSQL-BHT-8-1-1            5159.09
-
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                                   time [s]  count    SF  Throughput@Size
-DBMS               SF   num_experiment num_client                                        
-PostgreSQL-BHT-8-1 10.0 1              1               5130      1  10.0           673.68
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1782595993-7677b5d699-zfm6g: 0 0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-BHT-8 - Pods [[1]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
 #### Planned
-DBMS PostgreSQL-BHT-8 - Pods [[1]]
 
-### Ingestion - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1     3561.37     3.33         27.82                54.66
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
-### Ingestion - Loader
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       57.09     0.07          5.31                11.39
+### Loading
 
-### Execution - SUT
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1     7478.18     3.51         29.49                56.24
+#### Per Run
 
-### Execution - Benchmarker
-                    CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-PostgreSQL-BHT-8-1       31.65     0.04           0.3                  0.3
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 |   10 |     1653.00 |           6.00 |            0.00 |        496.00 |         1142.00 |              8 |           0 |             | None           |             0 | False         |               21.78 |
+
+### Execution
+
+#### Per Connection
+
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               96 |       5506 |            3.16 |            11477.20 |            627.68 |          -1 | PostgreSQL-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               96 |       5506 |            3.16 |            11477.20 |            627.68 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries       |   PostgreSQL-1-1-1-1-1 |
+|:--------------|-----------------------:|
+| TPC-DS Q2     |                2473.69 |
+| TPC-DS Q3     |                1454.28 |
+| TPC-DS Q4     |               98028.18 |
+| TPC-DS Q5     |                5054.95 |
+| TPC-DS Q7     |                2403.56 |
+| TPC-DS Q8     |                1715.23 |
+| TPC-DS Q9     |                7782.47 |
+| TPC-DS Q10    |                2819.92 |
+| TPC-DS Q11    |               58417.79 |
+| TPC-DS Q12    |                 594.50 |
+| TPC-DS Q13    |                3714.13 |
+| TPC-DS Q14a+b |               23174.54 |
+| TPC-DS Q15    |                1004.68 |
+| TPC-DS Q16    |                2525.16 |
+| TPC-DS Q17    |                3268.41 |
+| TPC-DS Q18    |                2255.10 |
+| TPC-DS Q19    |                2213.33 |
+| TPC-DS Q20    |                1063.13 |
+| TPC-DS Q21    |                2360.77 |
+| TPC-DS Q22    |               48712.96 |
+| TPC-DS Q23a+b |               63793.55 |
+| TPC-DS Q24a+b |                6047.96 |
+| TPC-DS Q25    |                3360.84 |
+| TPC-DS Q26    |                1221.89 |
+| TPC-DS Q27    |                2566.88 |
+| TPC-DS Q28    |                6417.05 |
+| TPC-DS Q29    |                3919.92 |
+| TPC-DS Q31    |                7771.48 |
+| TPC-DS Q32    |                 875.20 |
+| TPC-DS Q33    |                4951.72 |
+| TPC-DS Q34    |                 340.16 |
+| TPC-DS Q35    |                3546.01 |
+| TPC-DS Q36    |                 427.48 |
+| TPC-DS Q37    |                2715.66 |
+| TPC-DS Q38    |               11662.60 |
+| TPC-DS Q39a+b |               40993.66 |
+| TPC-DS Q40    |                 988.24 |
+| TPC-DS Q41    |               61020.81 |
+| TPC-DS Q42    |                1226.30 |
+| TPC-DS Q43    |                2038.20 |
+| TPC-DS Q44    |                   2.10 |
+| TPC-DS Q45    |                 681.53 |
+| TPC-DS Q46    |                 574.82 |
+| TPC-DS Q47    |               11807.07 |
+| TPC-DS Q48    |                3609.40 |
+| TPC-DS Q49    |                4531.62 |
+| TPC-DS Q50    |                7187.90 |
+| TPC-DS Q51    |               13219.13 |
+| TPC-DS Q52    |                1209.94 |
+| TPC-DS Q53    |                1297.56 |
+| TPC-DS Q54    |                1008.60 |
+| TPC-DS Q55    |                1152.27 |
+| TPC-DS Q56    |                4257.17 |
+| TPC-DS Q57    |                8388.62 |
+| TPC-DS Q58    |                4194.10 |
+| TPC-DS Q59    |                3613.69 |
+| TPC-DS Q60    |                4830.12 |
+| TPC-DS Q61    |                1907.61 |
+| TPC-DS Q62    |                 933.52 |
+| TPC-DS Q63    |                1344.40 |
+| TPC-DS Q64    |                7382.88 |
+| TPC-DS Q65    |                8075.58 |
+| TPC-DS Q66    |                4374.84 |
+| TPC-DS Q67    |               40688.35 |
+| TPC-DS Q68    |                 596.04 |
+| TPC-DS Q69    |                2265.34 |
+| TPC-DS Q70    |                4738.52 |
+| TPC-DS Q71    |                4191.63 |
+| TPC-DS Q72    |               14392.62 |
+| TPC-DS Q73    |                 328.37 |
+| TPC-DS Q74    |               12506.90 |
+| TPC-DS Q75    |                8205.31 |
+| TPC-DS Q76    |                2750.68 |
+| TPC-DS Q77    |                3409.65 |
+| TPC-DS Q78    |               13398.11 |
+| TPC-DS Q79    |                1602.84 |
+| TPC-DS Q80    |                5602.13 |
+| TPC-DS Q81    |             1093594.34 |
+| TPC-DS Q82    |                2769.49 |
+| TPC-DS Q83    |                 630.68 |
+| TPC-DS Q84    |                 134.30 |
+| TPC-DS Q85    |                1106.60 |
+| TPC-DS Q86    |                2264.56 |
+| TPC-DS Q87    |               10954.12 |
+| TPC-DS Q88    |                6770.17 |
+| TPC-DS Q89    |                1605.55 |
+| TPC-DS Q90    |                 714.22 |
+| TPC-DS Q91    |                 334.94 |
+| TPC-DS Q92    |                 354.22 |
+| TPC-DS Q93    |                3284.99 |
+| TPC-DS Q94    |                1465.73 |
+| TPC-DS Q95    |               47447.73 |
+| TPC-DS Q96    |                1050.60 |
+| TPC-DS Q97    |                3918.92 |
+| TPC-DS Q98    |                2262.77 |
+| TPC-DS Q99    |                1458.33 |
+
+### Errors (failed queries)
+
+|                      |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
+|:---------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
+| PostgreSQL-1-1-1-1-1 |        1.00 |        0.00 |        0.00 |        0.00 |        0.00 |        1.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+* TPC-DS Q1
+  * PostgreSQL-1-1-1-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
+* TPC-DS Q6
+  * PostgreSQL-1-1-1-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
+* TPC-DS Q30
+  * PostgreSQL-1-1-1-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: canceling statement due to user request
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |      2568.70 |      4.41 |          19.59 |                 48.11 |
+
+### Loading phase: component data generator
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       132.67 |      0.77 |           0.01 |                  2.82 |
+
+### Execution phase: SUT deployment
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |      7048.38 |      5.58 |          21.33 |                 53.06 |
+
+### Execution phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        28.48 |      0.43 |           0.31 |                  0.32 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST failed: SQL errors
-TEST passed: No SQL warnings
-TEST passed: Workflow as planned
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: No SUT container restarts
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST failed: SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

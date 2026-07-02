@@ -41,6 +41,8 @@ templates_path = ['_templates']
 #html_theme = 'bizstyle'
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_logo = 'logo/bexhoma-icon-256.png'
+html_favicon = 'logo/favicon.ico'
 
 # -- Options for EPUB output
 epub_show_urls = 'footnote'

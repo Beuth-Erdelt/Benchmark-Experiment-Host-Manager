@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200">
+  <g>
+    <polygon points="100,12 176,56 176,144 100,188 24,144 24,56"
+             fill="none" stroke="#326CE5" stroke-width="11" stroke-linejoin="round"/>
+    <g fill="#326CE5">
+      <rect x="62"  y="122" width="16" height="26" rx="3"/>
+      <rect x="92"  y="104" width="16" height="44" rx="3"/>
+      <rect x="122" y="84"  width="16" height="64" rx="3"/>
+    </g>
+    <path d="M 45 105 A 62 62 0 0 1 155 105"
+          fill="none" stroke="#1B2A4A" stroke-width="7" stroke-linecap="round"/>
+    <line x1="100" y1="118" x2="140" y2="64" stroke="#F5A623" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="100" cy="118" r="9" fill="#F5A623"/>
+  </g>
+  <text x="212" y="112" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="72" font-weight="700" letter-spacing="1" fill="#1B2A4A">bexhoma</text>
+  <text x="215" y="152" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="22" font-weight="400" letter-spacing="2" fill="#5A6B85">BENCHMARK EXPERIMENT HOST MANAGER</text>
+</svg>

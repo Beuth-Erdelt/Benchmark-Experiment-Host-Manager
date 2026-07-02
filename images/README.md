@@ -86,6 +86,19 @@ before building the image (not included due to TPC licensing).
 
 ---
 
+### Hardware benchmarks
+
+The hardware benchmark follows a benchmarker-SUT pattern: the SUT container
+runs an SSH daemon with sysbench and fio installed; the benchmarker connects
+via SSH and triggers workloads remotely.
+
+| Folder | Role | Description |
+|---|---|---|
+| [`hardware/benchmarker/`](hardware/benchmarker/) | Benchmarker | Connects to the SUT via SSH and runs sysbench (CPU/memory) or fio (disk I/O) workloads. Participates in the standard Bexhoma Redis-based pod synchronisation. |
+| [`hardware/sut/`](hardware/sut/) | SUT | Runs an SSH daemon. Has sysbench and fio installed. Accepts workload commands from the benchmarker; no Bexhoma coordination logic runs here. |
+
+---
+
 ### Infrastructure
 
 | Folder | Role | Description |

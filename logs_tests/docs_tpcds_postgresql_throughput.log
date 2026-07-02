@@ -1,21 +1,21 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1782068232
-Experiment                    : starts at 2026-06-21 20:57:12.132874 (466227.1247462)
+Experiment                    : has code 1782970902
+Experiment                    : starts at 2026-07-02 07:41:47.884162 (1368896.799166)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
 All instances use the same query parameters.
 Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.9.17.
+Experiment uses bexhoma version 0.10.2.
 Experiment is limited to DBMS ['MonetDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker38.
+Database uses ephemeral storage of size 15Gi.
 Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 2] times the number of benchmarking pods.
@@ -25,17 +25,17 @@ MonetDB-1                     : will start now
 MonetDB-1                     : deployments ['sut']
 MonetDB-1                     : stateful sets []
 MonetDB-1                     : pvcs ['sut']
-MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1782068232
-MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1782068232
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1782970902
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1782970902
 - waiting 30s -               : done
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-06-21 18:58:46 (that is in 60 secs)
+MonetDB-1                     : will start loading but not before 2026-07-02 05:43:48 (that is in 60 secs)
 - waiting 30s -               : done
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-06-21 18:58:46
+MonetDB-1                     : will start loading but not before 2026-07-02 05:43:48
 - waiting 30s -               : done
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782068232-85c8979f59-zwxrn to load scripts
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782970902-55b96bff5-ccfkt to load scripts
 MonetDB-1                     : start asynch loading scripts of type loaded
 MonetDB-1                     : is loading
 - waiting 30s -               : done
@@ -43,56 +43,53 @@ MonetDB-1                     : is loading
 - waiting 30s -               : done
 MonetDB-1                     : is loading
 - waiting 30s -               : done
-MonetDB-1                     : is loading
-- waiting 30s -               : done
-MonetDB-1                     : is loading
-- waiting 30s -               : done
 MonetDB-1                     : showing loader times
-MonetDB-1                     : generator times (start/end per pod and container) [(1782068370, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068369, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370)]
-MonetDB-1                     : loader times (start/end per pod and container) [(1782068377, 1782068381), (1782068378, 1782068382), (1782068378, 1782068382), (1782068377, 1782068380), (1782068377, 1782068506), (1782068377, 1782068382), (1782068378, 1782068381), (1782068377, 1782068381)]
-MonetDB-1                     : total times (start/end per pod and container) [(1782068370, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068369, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068370, 1782068370), (1782068377, 1782068381), (1782068378, 1782068382), (1782068378, 1782068382), (1782068377, 1782068380), (1782068377, 1782068506), (1782068377, 1782068382), (1782068378, 1782068381), (1782068377, 1782068381)]
+MonetDB-1                     : generator times (start/end per pod and container) [(1782971187, 1782971187), (1782971187, 1782971187), (1782971188, 1782971188), (1782971187, 1782971187), (1782971187, 1782971187), (1782971187, 1782971187), (1782971187, 1782971187), (1782971187, 1782971187)]
+MonetDB-1                     : loader times (start/end per pod and container) [(1782971194, 1782971200), (1782971194, 1782971200), (1782971194, 1782971200), (1782971194, 1782971200), (1782971194, 1782971199), (1782971194, 1782971321), (1782971194, 1782971200), (1782971194, 1782971199)]
+MonetDB-1                     : total times (start/end per pod and container) [(1782971187, 1782971187), (1782971187, 1782971187), (1782971188, 1782971188), (1782971187, 1782971187), (1782971187, 1782971187), (1782971187, 1782971187), (1782971187, 1782971187), (1782971187, 1782971187), (1782971194, 1782971200), (1782971194, 1782971200), (1782971194, 1782971200), (1782971194, 1782971200), (1782971194, 1782971199), (1782971194, 1782971321), (1782971194, 1782971200), (1782971194, 1782971199)]
 MonetDB-1                     : generator timespan (first to last [s]) = 1
-MonetDB-1                     : loader timespan (first to last [s]) = 129
-MonetDB-1                     : total timespan (first to last [s]) = 137
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782068232-85c8979f59-zwxrn to load scripts
+MonetDB-1                     : loader timespan (first to last [s]) = 127
+MonetDB-1                     : total timespan (first to last [s]) = 134
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782970902-55b96bff5-ccfkt to load scripts
 MonetDB-1                     : start asynch loading scripts of type indexed
 MonetDB-1                     : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1782068232 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1782970902 initialized to 1.
 MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
 MonetDB-1-1-1-1               : start benchmarking (benchmark_run=1)
-MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1782068232
+MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1782970902
 - waiting 10s -               : done
-MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782068232-1-1-1-jw5gt: .found
+MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782970902-1-1-1-4lnqz: found
 - waiting 30s -               : done
-MonetDB-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782068232/MonetDB-1-1-1-1.config
+MonetDB-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782970902/MonetDB-1-1-1-1.config
 MonetDB-1-1-1-1               : showing benchmarker times
-MonetDB-1-1-1-1               : benchmarker timespan job from 1782068608 to 1782068666
-MonetDB-1-1-1-1               : benchmarker timespan pods from 1782068621 to 1782068646
-MonetDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 25
-MonetDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782068621, 1782068646)]
-MonetDB-1-1-1-1               : found and updated times {'benchmarker': [(1782068621, 1782068646)]}
+MonetDB-1-1-1-1               : benchmarker timespan job from 1782971676 to 1782971779
+MonetDB-1-1-1-1               : benchmarker timespan pods from 1782971687 to 1782971714
+MonetDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 27
+MonetDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782971687, 1782971714)]
+MonetDB-1-1-1-1               : found and updated times {'benchmarker': [(1782971687, 1782971714)]}
 - waiting 30s -               : done
+- waiting 2s -                : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MonetDB-1-1782068232 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MonetDB-1-1782970902 initialized to 2.
 MonetDB-1                     : benchmarks done 0 of 1. This will be client 2
 MonetDB-1-1-2-1               : start benchmarking (benchmark_run=1)
-MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1782068232
+MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1782970902
 - waiting 10s -               : done
-MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782068232-1-2-1-25b54: .found
+MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782970902-1-2-1-lvnt8: found
 - waiting 30s -               : done
-MonetDB-1-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782068232/MonetDB-1-1-2-1.config
+MonetDB-1-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782970902/MonetDB-1-1-2-1.config
 MonetDB-1-1-2-1               : showing benchmarker times
-MonetDB-1-1-2-1               : benchmarker timespan job from 1782068723 to 1782068784
-MonetDB-1-1-2-1               : benchmarker timespan pods from 1782068734 to 1782068763
-MonetDB-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 29
-MonetDB-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1782068735, 1782068763), (1782068734, 1782068762)]
-MonetDB-1-1-2-1               : found and updated times {'benchmarker': [(1782068735, 1782068763), (1782068734, 1782068762)]}
+MonetDB-1-1-2-1               : benchmarker timespan job from 1782971918 to 1782972041
+MonetDB-1-1-2-1               : benchmarker timespan pods from 1782971933 to 1782971960
+MonetDB-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 27
+MonetDB-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1782971933, 1782971959), (1782971933, 1782971960)]
+MonetDB-1-1-2-1               : found and updated times {'benchmarker': [(1782971933, 1782971959), (1782971933, 1782971960)]}
 - waiting 30s -               : done
 MonetDB-1                     : can be stopped
-MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1782068232-85c8979f59-zwxrn
-Experiment                    : ends at 2026-06-21 21:07:00.169667 (466815.1615734) - 588.04s total
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1782970902-55b96bff5-ccfkt
+Experiment                    : ends at 2026-07-02 08:01:46.433387 (1370095.348494) - 1198.55s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -106,8 +103,8 @@ Result workflow not complete
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 589s 
-* Code: 1782068232
+* Duration: 1199s 
+* Code: 1782970902
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -115,12 +112,12 @@ TPC-DS Queries SF=1
   * All instances use the same query parameters.
   * Timeout per query is 1200.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.9.17.
+  * Experiment uses bexhoma version 0.10.2.
   * Experiment is limited to DBMS ['MonetDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker38.
+  * Database uses ephemeral storage of size 15Gi.
   * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
@@ -128,41 +125,44 @@ TPC-DS Queries SF=1
 
 ### Connections
 * MonetDB-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP1
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
+  * RAM:1081853939712
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
   * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:241985
+  * node:cl-worker37
+  * disk:652190
   * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782068232
+    * code:1782970902
 * MonetDB-1-1-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP1
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
+  * RAM:1081853939712
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
   * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:242009
+  * node:cl-worker37
+  * disk:652917
   * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782068232
+    * code:1782970902
 * MonetDB-1-1-2-1-2 uses docker image monetdb/monetdb:Dec2025-SP1
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
+  * RAM:1081853939712
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
   * Cores:128
   * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:242009
+  * node:cl-worker37
+  * disk:652917
   * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782068232
+    * code:1782970902
+
+### SUT Container Restarts
+* bexhoma-sut-monetdb-1-1782970902-55b96bff5-ccfkt: 0
 
 ### Workflow
 
@@ -182,7 +182,7 @@ TPC-DS Queries SF=1
 
 |             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MonetDB-1-1 |                1 |    1 |      370.00 |           1.00 |            1.00 |        129.00 |          232.00 |              8 |           0 |             | None           |             0 | False         |                9.73 |
+| MonetDB-1-1 |                1 |    1 |      624.00 |           6.00 |            1.00 |        127.00 |          484.00 |              8 |           0 |             | None           |             0 | False         |                5.77 |
 
 ### Execution
 
@@ -190,119 +190,119 @@ TPC-DS Queries SF=1
 
 |                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
 |:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| MonetDB-1-1-1-1-1 | MonetDB-1       | MonetDB-1-1-1 | MonetDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |         25 |            0.07 |            53559.51 |          14256.00 |          -1 | MonetDB-1-1-1-1-1 |
-| MonetDB-1-1-2-1-1 | MonetDB-1       | MonetDB-1-1-2 | MonetDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |         28 |            0.07 |            53933.61 |          12728.57 |          -1 | MonetDB-1-1-2-1-1 |
-| MonetDB-1-1-2-1-2 | MonetDB-1       | MonetDB-1-1-2 | MonetDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |         28 |            0.07 |            53324.59 |          12728.57 |          -1 | MonetDB-1-1-2-1-2 |
+| MonetDB-1-1-1-1-1 | MonetDB-1       | MonetDB-1-1-1 | MonetDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |         27 |            0.10 |            37282.61 |          13200.00 |          -1 | MonetDB-1-1-1-1-1 |
+| MonetDB-1-1-2-1-1 | MonetDB-1       | MonetDB-1-1-2 | MonetDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |         27 |            0.10 |            38132.23 |          13200.00 |          -1 | MonetDB-1-1-2-1-1 |
+| MonetDB-1-1-2-1-2 | MonetDB-1       | MonetDB-1-1-2 | MonetDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |         26 |            0.10 |            39225.86 |          13707.69 |          -1 | MonetDB-1-1-2-1-2 |
 
 #### Per Phase
 
 |               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MonetDB-1-1-1 | MonetDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |         25 |            0.07 |            53559.51 |          14256.00 |          -1 |
-| MonetDB-1-1-2 | MonetDB-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |         28 |            0.07 |            53628.24 |          25457.14 |          -1 |
+| MonetDB-1-1-1 | MonetDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |         27 |            0.10 |            37282.61 |          13200.00 |          -1 |
+| MonetDB-1-1-2 | MonetDB-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |         27 |            0.10 |            38675.18 |          26400.00 |          -1 |
 
 ### Latency of Timer Execution [ms]
 | Queries       |   MonetDB-1-1-1-1-1 |   MonetDB-1-1-2-1-1 |   MonetDB-1-1-2-1-2 |
 |:--------------|--------------------:|--------------------:|--------------------:|
-| TPC-DS Q1     |               56.24 |               58.60 |               57.80 |
-| TPC-DS Q2     |              111.55 |               77.16 |               80.34 |
-| TPC-DS Q3     |               23.87 |               20.84 |               33.27 |
-| TPC-DS Q4     |              658.56 |              577.52 |              664.99 |
-| TPC-DS Q5     |               74.23 |               69.82 |               68.90 |
-| TPC-DS Q6     |               53.02 |               43.11 |               46.59 |
-| TPC-DS Q7     |               49.94 |               42.53 |               42.43 |
-| TPC-DS Q8     |               26.57 |               24.35 |               24.80 |
-| TPC-DS Q9     |               73.82 |               51.58 |               53.29 |
-| TPC-DS Q10    |               64.12 |               51.80 |               53.80 |
-| TPC-DS Q11    |              400.34 |              327.96 |              317.14 |
-| TPC-DS Q12    |               23.42 |               16.00 |               16.88 |
-| TPC-DS Q13    |               51.82 |               42.26 |               51.95 |
-| TPC-DS Q14a+b |             2089.30 |             2441.96 |             2034.95 |
-| TPC-DS Q15    |               31.49 |               32.98 |               33.23 |
-| TPC-DS Q16    |               38.56 |               37.86 |               53.13 |
-| TPC-DS Q17    |               97.09 |               92.95 |               95.19 |
-| TPC-DS Q18    |               64.92 |               53.10 |               59.67 |
-| TPC-DS Q19    |               46.82 |               50.12 |               47.28 |
-| TPC-DS Q20    |               30.55 |               25.21 |               33.91 |
-| TPC-DS Q21    |              137.82 |              134.72 |              132.84 |
-| TPC-DS Q22    |              692.86 |              658.12 |              697.29 |
-| TPC-DS Q23a+b |             1660.81 |             1562.43 |             1759.93 |
-| TPC-DS Q24a+b |              141.36 |              181.83 |              144.98 |
-| TPC-DS Q25    |              124.74 |              102.54 |              106.75 |
-| TPC-DS Q26    |               26.13 |               25.02 |               22.82 |
-| TPC-DS Q27    |               79.10 |               64.87 |               59.27 |
-| TPC-DS Q28    |               54.10 |               58.37 |               69.73 |
-| TPC-DS Q29    |              106.58 |              104.87 |               97.65 |
-| TPC-DS Q30    |               25.62 |               30.73 |               28.58 |
-| TPC-DS Q31    |              127.92 |              107.56 |              115.44 |
-| TPC-DS Q32    |               20.02 |               27.14 |               25.61 |
-| TPC-DS Q33    |               26.88 |               25.76 |               25.31 |
-| TPC-DS Q34    |               28.88 |               32.98 |               32.07 |
-| TPC-DS Q35    |               83.24 |               97.76 |               71.49 |
-| TPC-DS Q36    |               81.49 |               68.74 |               60.41 |
-| TPC-DS Q37    |               71.12 |               91.76 |               88.13 |
-| TPC-DS Q38    |              112.08 |              108.58 |              132.05 |
-| TPC-DS Q39a+b |             1098.51 |             1273.88 |             1179.47 |
-| TPC-DS Q40    |               53.91 |               71.50 |               65.77 |
-| TPC-DS Q41    |                7.18 |                9.44 |                9.30 |
-| TPC-DS Q42    |               21.09 |               27.63 |               24.01 |
-| TPC-DS Q43    |               50.28 |               65.15 |               63.75 |
-| TPC-DS Q44    |               30.84 |               41.00 |               46.67 |
-| TPC-DS Q45    |               16.08 |               15.00 |               19.82 |
-| TPC-DS Q46    |               45.00 |               45.48 |               46.22 |
-| TPC-DS Q47    |              193.02 |              213.59 |              206.49 |
-| TPC-DS Q48    |               41.97 |               45.04 |               45.07 |
-| TPC-DS Q49    |               80.32 |               90.93 |               77.92 |
-| TPC-DS Q50    |               96.73 |              116.99 |              110.77 |
-| TPC-DS Q51    |              311.39 |              340.51 |              336.57 |
-| TPC-DS Q52    |               18.61 |               25.75 |               27.23 |
-| TPC-DS Q53    |               30.22 |               34.04 |               32.24 |
-| TPC-DS Q54    |               46.74 |               39.96 |               43.54 |
-| TPC-DS Q55    |               24.22 |               19.73 |               23.57 |
-| TPC-DS Q56    |               20.76 |               23.71 |               26.64 |
-| TPC-DS Q57    |              102.46 |              112.01 |              107.60 |
-| TPC-DS Q58    |               58.13 |               48.80 |               65.23 |
-| TPC-DS Q59    |               85.15 |               90.21 |              102.22 |
-| TPC-DS Q60    |               23.01 |               27.07 |               26.43 |
-| TPC-DS Q61    |               34.93 |               42.84 |               37.08 |
-| TPC-DS Q62    |               29.03 |               32.84 |               31.69 |
-| TPC-DS Q63    |               22.84 |               33.66 |               29.63 |
-| TPC-DS Q64    |              212.62 |              291.82 |              298.47 |
-| TPC-DS Q65    |               87.23 |               93.33 |               92.44 |
-| TPC-DS Q66    |              125.64 |              139.12 |              121.14 |
-| TPC-DS Q67    |              268.29 |              269.61 |              295.90 |
-| TPC-DS Q68    |               41.44 |               43.56 |               45.02 |
-| TPC-DS Q69    |               33.03 |               39.96 |               27.12 |
-| TPC-DS Q70    |              111.86 |               86.59 |               78.45 |
-| TPC-DS Q71    |               34.73 |               33.01 |               40.73 |
-| TPC-DS Q72    |              244.16 |              244.82 |              247.19 |
-| TPC-DS Q73    |               26.70 |               29.60 |               27.94 |
-| TPC-DS Q74    |              108.99 |              105.35 |              118.54 |
-| TPC-DS Q75    |              335.40 |              365.72 |              299.85 |
-| TPC-DS Q76    |               61.20 |               41.65 |               44.01 |
-| TPC-DS Q77    |               55.46 |               61.06 |               60.12 |
-| TPC-DS Q78    |              523.19 |              525.96 |              536.87 |
-| TPC-DS Q79    |               49.86 |               49.67 |               50.51 |
-| TPC-DS Q80    |              373.86 |              368.25 |              392.28 |
-| TPC-DS Q81    |               36.14 |               38.30 |               31.82 |
-| TPC-DS Q82    |               86.47 |               78.46 |               84.01 |
-| TPC-DS Q83    |               13.73 |               15.67 |               12.53 |
-| TPC-DS Q84    |               22.97 |               21.06 |               25.97 |
-| TPC-DS Q85    |              199.91 |              182.04 |              188.45 |
-| TPC-DS Q86    |               40.28 |               39.57 |               47.34 |
-| TPC-DS Q87    |              211.03 |              163.34 |              170.87 |
-| TPC-DS Q88    |               57.37 |               61.40 |               55.46 |
-| TPC-DS Q89    |               41.19 |               36.54 |               45.41 |
-| TPC-DS Q90    |               17.54 |               13.20 |               13.36 |
-| TPC-DS Q91    |               38.53 |               31.13 |               31.57 |
-| TPC-DS Q92    |               15.12 |               13.95 |               15.01 |
-| TPC-DS Q93    |               88.05 |               82.99 |               78.90 |
-| TPC-DS Q94    |               32.71 |               23.26 |               24.43 |
-| TPC-DS Q95    |              205.81 |              126.77 |              143.80 |
-| TPC-DS Q96    |               16.00 |               17.28 |               15.39 |
-| TPC-DS Q97    |              170.96 |              185.90 |              171.14 |
-| TPC-DS Q98    |               48.92 |               50.35 |               42.70 |
-| TPC-DS Q99    |               56.31 |               51.75 |               49.79 |
+| TPC-DS Q1     |               69.88 |               55.12 |               55.56 |
+| TPC-DS Q2     |              190.95 |              144.31 |              130.43 |
+| TPC-DS Q3     |               35.52 |               32.57 |               32.83 |
+| TPC-DS Q4     |              864.84 |              801.50 |              831.86 |
+| TPC-DS Q5     |              117.53 |              131.00 |              113.72 |
+| TPC-DS Q6     |               76.67 |               73.66 |               70.34 |
+| TPC-DS Q7     |               83.51 |               87.39 |               67.32 |
+| TPC-DS Q8     |               39.12 |               42.15 |               38.73 |
+| TPC-DS Q9     |              117.83 |              117.24 |              116.39 |
+| TPC-DS Q10    |               63.18 |               62.55 |               60.28 |
+| TPC-DS Q11    |              423.01 |              399.06 |              413.45 |
+| TPC-DS Q12    |               25.73 |               38.97 |               34.10 |
+| TPC-DS Q13    |               89.71 |               85.09 |               88.24 |
+| TPC-DS Q14a+b |             1849.17 |             1797.74 |             1680.42 |
+| TPC-DS Q15    |               36.83 |               35.34 |               34.80 |
+| TPC-DS Q16    |               57.62 |               57.47 |               54.37 |
+| TPC-DS Q17    |              151.46 |              151.32 |              145.42 |
+| TPC-DS Q18    |               88.06 |               85.87 |               83.62 |
+| TPC-DS Q19    |               69.68 |               71.97 |               92.64 |
+| TPC-DS Q20    |               36.85 |               34.47 |               36.73 |
+| TPC-DS Q21    |              169.20 |              187.11 |              186.73 |
+| TPC-DS Q22    |              886.79 |              795.10 |              799.92 |
+| TPC-DS Q23a+b |             1637.01 |             1771.19 |             1707.09 |
+| TPC-DS Q24a+b |              205.82 |              235.72 |              172.27 |
+| TPC-DS Q25    |              201.28 |              198.91 |              159.24 |
+| TPC-DS Q26    |               31.97 |               35.65 |               33.98 |
+| TPC-DS Q27    |              103.30 |               93.48 |               99.36 |
+| TPC-DS Q28    |               89.20 |               93.94 |               80.84 |
+| TPC-DS Q29    |              180.00 |              172.13 |              166.22 |
+| TPC-DS Q30    |               29.36 |               31.04 |               30.52 |
+| TPC-DS Q31    |              171.18 |              140.58 |              154.82 |
+| TPC-DS Q32    |               25.75 |               26.87 |               24.78 |
+| TPC-DS Q33    |               37.15 |               36.81 |               29.74 |
+| TPC-DS Q34    |               46.41 |               49.86 |               47.92 |
+| TPC-DS Q35    |              147.69 |              147.94 |              122.44 |
+| TPC-DS Q36    |              168.91 |              159.17 |              169.72 |
+| TPC-DS Q37    |              130.64 |              132.20 |              133.07 |
+| TPC-DS Q38    |              185.19 |              135.09 |              160.73 |
+| TPC-DS Q39a+b |             1245.03 |             1273.12 |             1273.27 |
+| TPC-DS Q40    |               95.81 |               98.11 |               99.28 |
+| TPC-DS Q41    |                7.96 |                9.72 |                9.86 |
+| TPC-DS Q42    |               34.95 |               32.72 |               32.01 |
+| TPC-DS Q43    |               76.51 |               81.29 |               77.67 |
+| TPC-DS Q44    |               57.30 |               55.80 |               52.98 |
+| TPC-DS Q45    |               21.35 |               21.45 |               19.65 |
+| TPC-DS Q46    |               54.88 |               57.09 |               59.31 |
+| TPC-DS Q47    |              272.45 |              268.86 |              266.21 |
+| TPC-DS Q48    |               69.95 |               76.25 |               66.02 |
+| TPC-DS Q49    |              143.17 |              133.16 |              158.73 |
+| TPC-DS Q50    |              154.34 |              148.11 |              138.07 |
+| TPC-DS Q51    |              462.82 |              447.84 |              465.31 |
+| TPC-DS Q52    |               85.18 |               40.60 |               28.36 |
+| TPC-DS Q53    |               47.03 |               48.45 |               48.23 |
+| TPC-DS Q54    |               38.97 |               38.57 |               36.47 |
+| TPC-DS Q55    |               28.91 |               29.93 |               24.62 |
+| TPC-DS Q56    |               31.12 |               29.98 |               33.24 |
+| TPC-DS Q57    |              123.48 |              119.38 |              121.85 |
+| TPC-DS Q58    |               93.25 |               80.52 |               70.85 |
+| TPC-DS Q59    |              139.95 |              209.73 |              151.97 |
+| TPC-DS Q60    |               90.12 |               30.43 |               37.98 |
+| TPC-DS Q61    |               56.52 |               53.43 |               50.55 |
+| TPC-DS Q62    |               49.81 |               57.23 |               59.67 |
+| TPC-DS Q63    |               43.68 |               40.62 |               39.87 |
+| TPC-DS Q64    |              345.25 |              353.22 |              354.03 |
+| TPC-DS Q65    |              150.51 |              122.68 |              132.82 |
+| TPC-DS Q66    |              167.07 |              270.65 |              275.05 |
+| TPC-DS Q67    |              357.88 |              390.44 |              350.32 |
+| TPC-DS Q68    |               68.07 |               76.22 |               73.39 |
+| TPC-DS Q69    |               60.04 |               57.35 |               65.87 |
+| TPC-DS Q70    |              101.40 |               95.29 |              102.71 |
+| TPC-DS Q71    |               57.59 |               52.58 |               49.44 |
+| TPC-DS Q72    |              335.85 |              492.14 |              499.68 |
+| TPC-DS Q73    |               41.23 |               43.64 |               43.01 |
+| TPC-DS Q74    |              407.52 |              331.60 |              360.74 |
+| TPC-DS Q75    |              450.29 |              474.26 |              431.65 |
+| TPC-DS Q76    |               61.99 |               59.34 |               55.11 |
+| TPC-DS Q77    |               90.17 |               82.88 |               84.98 |
+| TPC-DS Q78    |              641.65 |              619.25 |              613.93 |
+| TPC-DS Q79    |               75.97 |               71.58 |               74.13 |
+| TPC-DS Q80    |              447.95 |              481.83 |              490.60 |
+| TPC-DS Q81    |               52.61 |               46.82 |               46.65 |
+| TPC-DS Q82    |              120.80 |              132.77 |              115.43 |
+| TPC-DS Q83    |               16.02 |               16.08 |               15.04 |
+| TPC-DS Q84    |               30.94 |               27.18 |               28.87 |
+| TPC-DS Q85    |              267.35 |              265.86 |              256.76 |
+| TPC-DS Q86    |               52.21 |               52.07 |               52.88 |
+| TPC-DS Q87    |              328.69 |              257.24 |              260.40 |
+| TPC-DS Q88    |               77.33 |               87.34 |               83.68 |
+| TPC-DS Q89    |               57.28 |               60.03 |               64.14 |
+| TPC-DS Q90    |               15.79 |               13.38 |               13.54 |
+| TPC-DS Q91    |               41.20 |               37.91 |               39.86 |
+| TPC-DS Q92    |               16.53 |               16.40 |               16.36 |
+| TPC-DS Q93    |              129.37 |              148.61 |              155.80 |
+| TPC-DS Q94    |               36.84 |               28.71 |               27.27 |
+| TPC-DS Q95    |              268.80 |              219.10 |              158.84 |
+| TPC-DS Q96    |               17.41 |               20.35 |               20.83 |
+| TPC-DS Q97    |              219.38 |              203.23 |              202.45 |
+| TPC-DS Q98    |               64.50 |               66.26 |               60.40 |
+| TPC-DS Q99    |               87.59 |               82.93 |               83.34 |
 
 ### Errors (failed queries)
 
@@ -316,6 +316,7 @@ No errors
 | MonetDB-1-1-2-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
 
 ### Tests
+* TEST passed: No SUT container restarts
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN

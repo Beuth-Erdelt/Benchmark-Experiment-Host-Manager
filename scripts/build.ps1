@@ -172,6 +172,13 @@ function Build-AndPush-Benchbase {
     _BgDockerJob "bexhoma/benchmarker_benchbase:$Version" "images/benchbase" "benchmarker_benchbase" $Version "Dockerfile_benchmarker"
 }
 
+function Build-AndPush-Hardware {
+    param([string]$Version)
+    if (-not $Version) { Write-Host "Usage: Build-AndPush-Hardware <image_tag>"; return }
+    _BgDockerJob "bexhoma/benchmarker_hardware:$Version" "images/hardware/benchmarker" "benchmarker_hardware" $Version
+    _BgDockerJob "bexhoma/sut_hardware:$Version"         "images/hardware/sut"         "sut_hardware"         $Version
+}
+
 
 #### Main ####
 
@@ -187,6 +194,7 @@ Build-AndPush-Monitoring    $version
 Build-AndPush-Hammerdb      $version
 Build-AndPush-Ycsb          $version
 Build-AndPush-Benchbase     $version
+Build-AndPush-Hardware      $version
 
 _WaitAll
 Write-Output "All version builds and pushes completed."
@@ -202,6 +210,7 @@ Build-AndPush-Monitoring    $version
 Build-AndPush-Hammerdb      $version
 Build-AndPush-Ycsb          $version
 Build-AndPush-Benchbase     $version
+Build-AndPush-Hardware      $version
 
 _WaitAll
 Write-Output "All latest builds and pushes completed."

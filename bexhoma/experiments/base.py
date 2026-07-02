@@ -539,7 +539,7 @@ class ExperimentBase():
                 # import uses several processes in pods
                 self.workload['info'] = self.workload['info']+"\nImport is handled by {} processes (pods).".format(" and ".join(map(str, num_loading_pods)))
             # fix loading
-            if not request_node_loading is None:
+            if request_node_loading:
                 self.patch_loading(patch="""
                 spec:
                   template:
@@ -549,7 +549,7 @@ class ExperimentBase():
                 """.format(node=request_node_loading))
                 self.workload['info'] = self.workload['info']+"\nLoading is fixed to {}.".format(request_node_loading)
         # fix benchmarking
-        if not request_node_benchmarking is None:
+        if request_node_benchmarking:
             self.patch_benchmarking(patch="""
             spec:
               template:
@@ -559,7 +559,7 @@ class ExperimentBase():
             """.format(node=request_node_benchmarking))
             self.workload['info'] = self.workload['info']+"\nBenchmarking is fixed to {}.".format(request_node_benchmarking)
         # fix SUT
-        if not request_node_name is None:
+        if request_node_name:
             self.set_resources(
                 nodeSelector = {
                     'cpu': cpu_type,
@@ -1640,7 +1640,12 @@ class ExperimentBase():
                             print("#### Starting to index")
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_index = True
-                                config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                try:
+                                    config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                except RuntimeError as exc:
+                                    print("{:30s}: index script upload failed: {}".format(config_tmp.configuration, exc))
+                                    config_tmp.loading_finished = True
+                                    config_tmp.loading_active = False
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
                     now = datetime.utcnow()

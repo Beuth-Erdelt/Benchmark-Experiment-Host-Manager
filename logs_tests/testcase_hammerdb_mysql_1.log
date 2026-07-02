@@ -1,121 +1,111 @@
-Data Directory                : is running
+﻿Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1750089430
-Experiment                    : starts at 2025-06-16 17:57:10.052760 (14281593.523314323)
+Experiment                    : has code 1782626077
+Experiment                    : starts at 2026-06-28 07:54:39.815198 (1024070.5048905)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.8.8.
+Experiment uses bexhoma version 0.10.2.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
+Database uses ephemeral storage of size 16Gi.
 Loading is tested with [8] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-MySQL-BHT-8-1                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
-done
-MySQL-BHT-8-1                 : will start now
-MySQL-BHT-8-1                 : Name of SUT pods = bexhoma-sut-mysql-bht-8-1-1750089430
-MySQL-BHT-8-1                 : Name of SUT service = bexhoma-sut-mysql-bht-8-1-1750089430
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1782626077
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1782626077
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
+- waiting 2s -                : done
+MySQL-1                       : is pending
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : waits for health check to succeed
-done
-MySQL-BHT-8-1                 : is not loaded yet
-MySQL-BHT-8-1                 : start asynch loading scripts of type loaded
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-28 06:03:16 (that is in 120 secs)
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-28 06:03:16
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-06-28 06:03:16
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : is not loaded yet
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782626077-58dcb6d95-bkq4d to load scripts
+MySQL-1                       : start asynch loading scripts of type loaded
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
+MySQL-1                       : showing loader times
+MySQL-1                       : generator times (start/end per pod and container) []
+MySQL-1                       : loader times (start/end per pod and container) [(1782626631, 1782626716)]
+MySQL-1                       : total times (start/end per pod and container) [(1782626631, 1782626716)]
+MySQL-1                       : loader timespan (first to last [s]) = 85
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1782626077-58dcb6d95-bkq4d to load scripts
+MySQL-1                       : start asynch loading scripts of type indexed
+MySQL-1                       : is loading
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : is loading
-done
-MySQL-BHT-8-1                 : showing loader times
-MySQL-BHT-8-1                 : loader timespan (first to last [s]) = 375
-MySQL-BHT-8-1                 : start asynch loading scripts of type indexed
-MySQL-BHT-8-1                 : is loading
-done
-MySQL-BHT-8-1                 : benchmarks done 0 of 1. This will be client 1
-MySQL-BHT-8-1                 : we will change parameters of benchmark as {'HAMMERDB_NUM_VU': '1', 'SF': '16', 'BEXHOMA_SYNCH_LOAD': 1, 'HAMMERDB_DURATION': '5', 'HAMMERDB_RAMPUP': '2', 'HAMMERDB_TYPE': 'mysql', 'HAMMERDB_MYSQL_ENGINE': 'innodb', 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': 'root', 'HAMMERDB_VUSERS': 16, 'HAMMERDB_KEYANDTHINK': 'false', 'HAMMERDB_TIMEPROFILE': 'false'}
-MySQL-BHT-8-1-1               : start benchmarking
-MySQL-BHT-8-1                 : benchmarking results in folder /home/perdelt/benchmarks/1750089430
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1782626077 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 1
+MySQL-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1782626077
 - waiting 10s -               : done
-MySQL-BHT-8-1                 : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1-1750089430-1-1-lbldr: found
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1782626077-1-1-1-dvmsj: found
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
+MySQL-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1782626077/MySQL-1-1-1-1.config
+MySQL-1-1-1-1                 : showing benchmarker times
+MySQL-1-1-1-1                 : benchmarker timespan job from 1782626864 to 1782627357
+MySQL-1-1-1-1                 : benchmarker timespan pods from 1782626868 to 1782627298
+MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 430
+MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1782626868, 1782627298)]
+MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1782626868, 1782627298)]}
 - waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
-- waiting 30s -               : done
-MySQL-BHT-8-1                 : has running benchmarks
-done
-MySQL-BHT-8-1                 : has running benchmarks
-MySQL-BHT-8-1-1               : showing benchmarker times
-MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 495
-MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1750090134, 1750090616)]
-MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1750090134, 1750090616)]}
-done
-MySQL-BHT-8-1                 : can be stopped
-Experiment                    : ends at 2025-06-16 18:17:38.996975 (14282822.467529545) - 1228.94s total
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1782626077-58dcb6d95-bkq4d
+Experiment                    : ends at 2026-06-28 08:17:06.618539 (1025417.308218) - 1346.80s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -125,55 +115,75 @@ Result workflow complete
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
-    Type: tpcc
-    Duration: 1229s 
-    Code: 1750089430
-    HammerDB runs the benchmark.
-    This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
-    TPC-C data is generated and loaded using several threads.
-    Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.8.8.
-    Experiment is limited to DBMS ['MySQL'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Loading is tested with [8] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpcc
+* Duration: 1347s 
+* Code: 1782626077
+* HammerDB runs the benchmark.
+* This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+  * TPC-C data is generated and loaded using several threads.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
+  * Experiment uses bexhoma version 0.10.2.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * Database uses ephemeral storage of size 16Gi.
+  * Loading is tested with [8] threads, split into [1] pods.
+  * Benchmarking is tested with [16] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-MySQL-BHT-8-1-1 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:403932404
-    datadisk:10864
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1750089430
+* MySQL-1-1-1-1 uses docker image mysql:8.4.0
+  * RAM:1077381271552
+  * Cores:256
+  * host:6.8.0-111-generic
+  * node:cl-worker27
+  * disk:1407972
+  * cpu_list:0-255
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1782626077
 
-### Execution
-                 experiment_run  vusers  client  pod_count  efficiency    NOPM     TPM  duration  errors
-MySQL-BHT-8-1-1               1      16       1          1         0.0  2499.0  5772.0         5       0
-
-Warehouses: 16
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1782626077-58dcb6d95-bkq4d: 0 0
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-BHT-8-1 - Pods [[1]]
+
+* DBMS MySQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 #### Planned
-DBMS MySQL-BHT-8-1 - Pods [[1]]
+
+* DBMS MySQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 ### Loading
-                 time_load  terminals  pods  Imported warehouses [1/h]
-MySQL-BHT-8-1-1      375.0        1.0   1.0                      153.6
+
+#### Per Run
+
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MySQL-1-1 |                1 |   16 |      257.00 |          14.00 |            0.00 |         85.00 |          158.00 |              1 |           8 |             | None           |             0 | False         |              224.12 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS            | phase       | job           |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
+|:----------------|:------------|:--------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
+| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 181106 | 421095 |         0.00 |          5 |        0 |
+
+#### Per Phase
+
+| DBMS        | phase       |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:------------|:------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|----------:|----------:|-----------:|---------:|
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |         0.00 | 181106.00 | 421095.00 |          5 |        0 |
 
 ### Tests
-TEST passed: NOPM contains no 0 or NaN
-TEST passed: Workflow as planned
+* TEST passed: No SUT container restarts
+* TEST passed: NOPM contains no 0 or NaN
+* TEST passed: Workflow as planned

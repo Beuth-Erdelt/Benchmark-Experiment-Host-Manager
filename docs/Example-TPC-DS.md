@@ -68,7 +68,7 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 10Gi \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql.log
 ```
@@ -471,7 +471,7 @@ options:
 Example:
 ```bash
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 3 \
   -nlp 8 \
   -nlt 8 \
@@ -484,7 +484,7 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 30Gi \
+  -rss 45Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 ```
@@ -734,7 +734,7 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 Example:
 ```bash
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 1 \
   -nc 1 \
   -ne 1,2 \
@@ -745,7 +745,9 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
-  -rss 10Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_throughput.log
 ```
@@ -992,7 +994,7 @@ If your cluster allows dynamic provisioning of volumes, you might request a pers
 Example:
 ```bash
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 1 \
   -nc 2 \
   -nlp 8 \
@@ -1002,6 +1004,8 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1272,12 +1276,12 @@ In [1] the benchmark is used to assess node stability and to compare performance
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
 
-Here, we run it at TPC-DS SF=10 in MonetDB:
+Here, we run it at TPC-DS SF=10 in PostgreSQL:
 
 
 ```bash
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 10 \
   -ne 1,1 \
   -nlp 8 \

@@ -71,24 +71,24 @@ class TpccEvaluator(LogEvaluator):
             configuration_name = re.findall('BEXHOMA_CONFIGURATION:(.+?)\n', stdout)[0]
             code = re.findall('BEXHOMA_EXPERIMENT:(.+?)\n', stdout)[0]
             experiment_run = re.findall('BEXHOMA_EXPERIMENT_RUN:(.+?)\n', stdout)[0]
-            iterations = re.findall('HAMMERDB_ITERATIONS (.+?)\n', stdout)[0]
-            duration = re.findall('HAMMERDB_DURATION (.+?)\n', stdout)[0]
-            rampup = re.findall('HAMMERDB_RAMPUP (.+?)\n', stdout)[0]
-            sf = re.findall('SF (.+?)\n', stdout)[0]
-            vusers_loading = re.findall('HAMMERDB_NUM_VU (.+?)\n', stdout)[0]
+            iterations = re.findall('HAMMERDB_ITERATIONS:(.+?)\n', stdout)[0]
+            duration = re.findall('HAMMERDB_DURATION:(.+?)\n', stdout)[0]
+            rampup = re.findall('HAMMERDB_RAMPUP:(.+?)\n', stdout)[0]
+            sf = re.findall('SF:(.+?)\n', stdout)[0]
+            vusers_loading = re.findall('HAMMERDB_NUM_VU:(.+?)\n', stdout)[0]
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
             benchmark_run = benchmark_run[0] if benchmark_run else '1'
-            timeprofile = re.findall('HAMMERDB_TIMEPROFILE (.+?)\n', stdout)[0]
-            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES (.+?)\n', stdout)[0]
-            keyandthink = re.findall('HAMMERDB_KEYANDTHINK (.+?)\n', stdout)[0]
-            child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
+            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
+            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
+            keyandthink = re.findall('HAMMERDB_KEYANDTHINK:(.+?)\n', stdout)[0]
+            child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
             if len(error_timesynch) > 0:
                 # log is incomplete
                 print(filename, "log is incomplete")
                 return pd.DataFrame()
-            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS:(.+?)\n', stdout)[0]
             errors = re.findall('Error ', stdout)
             if len(errors) > 0:
                 # something went wrong

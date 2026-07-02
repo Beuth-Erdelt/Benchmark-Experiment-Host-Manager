@@ -81,18 +81,18 @@ class BenchbaseEvaluator(LogEvaluator):
             if len(error_timesynch) > 0:
                 # log is incomplete
                 return pd.DataFrame()
-            pod_count = re.findall('BEXHOMA_NUM_PODS (.+?)\n', stdout)[0]
-            bench = re.findall('BENCHBASE_BENCH (.+?)\n', stdout)[0]
-            profile = re.findall('BENCHBASE_PROFILE (.+?)\n', stdout)[0]
-            target = re.findall('BENCHBASE_TARGET (.+?)\n', stdout)[0]
+            pod_count = re.findall('BEXHOMA_NUM_PODS:(.+?)\n', stdout)[0]
+            bench = re.findall('BENCHBASE_BENCH:(.+?)\n', stdout)[0]
+            profile = re.findall('BENCHBASE_PROFILE:(.+?)\n', stdout)[0]
+            target = re.findall('BENCHBASE_TARGET:(.+?)\n', stdout)[0]
             if target == "unlimited":
                 target = 0
-            time = re.findall('BENCHBASE_TIME (.+?)\n', stdout)[0]
-            batchsize = re.findall('BENCHBASE_BATCHSIZE (.+?)\n', stdout)[0]
-            keyandthink = re.findall('BENCHBASE_KEY_AND_THINK (.+?)\n', stdout)[0]
-            child = re.findall('BEXHOMA_CHILD (.+?)\n', stdout)[0]
-            sf = re.findall('SF (.+?)\n', stdout)[0]
-            tenant_id_match = re.findall(r'BEXHOMA_TENANT_ID (\d+)', stdout)
+            time = re.findall('BENCHBASE_TIME:(.+?)\n', stdout)[0]
+            batchsize = re.findall('BENCHBASE_BATCHSIZE:(.+?)\n', stdout)[0]
+            keyandthink = re.findall('BENCHBASE_KEY_AND_THINK:(.+?)\n', stdout)[0]
+            child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
+            sf = re.findall('SF:(.+?)\n', stdout)[0]
+            tenant_id_match = re.findall(r'BEXHOMA_TENANT_ID:(\d+)', stdout)
             tenant_id = int(tenant_id_match[0]) if tenant_id_match else -1
             errors = re.findall('error code', stdout)
             num_errors = len(errors)

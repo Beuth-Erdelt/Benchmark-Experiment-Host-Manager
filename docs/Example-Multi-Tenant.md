@@ -474,7 +474,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 5Gi \
+  -rss 10Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \

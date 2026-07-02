@@ -36,7 +36,7 @@ bexhoma tpcds `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rss 15Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -47,7 +47,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS PostgreSQL  
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
 bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
@@ -62,7 +62,7 @@ bexhoma tpcds `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rss 30Gi                     <# size of the persistent volume claim #> `
+  -rss 45Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -73,7 +73,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS monitoring  
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
 bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
@@ -86,7 +86,9 @@ bexhoma tpcds `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 15Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -102,7 +104,7 @@ Start-Sleep -Seconds 30
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
 bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -nlp 8                        <# number of data loader pods #> `
@@ -114,6 +116,8 @@ bexhoma tpcds `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -217,7 +221,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB thro
 
 #### TCP-DS Profiling (Example-TPC-DS.md)
 bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
+  -dbms PostgreSQL              <# DBMS under test #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
   -ne 1,1                       <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `

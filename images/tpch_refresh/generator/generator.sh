@@ -98,5 +98,19 @@ echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
 echo "BEXHOMA_START:$bexhoma_start_epoch"
 echo "BEXHOMA_END:$bexhoma_end_epoch"
 
+######################## Parameters summary ########################
+echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
+echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"
+echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"
+echo "BEXHOMA_CONFIGURATION:$BEXHOMA_CONFIGURATION"
+echo "BEXHOMA_CLIENT:$BEXHOMA_CLIENT"
+echo "BEXHOMA_BENCHMARK_RUN:$BEXHOMA_BENCHMARK_RUN"
+echo "SF:$SF"
+echo "TPCH_REFRESH_STREAMS:$TPCH_REFRESH_STREAMS"
+echo "TPCH_REFRESH_STREAM_OFFSET:$TPCH_REFRESH_STREAM_OFFSET"
+echo "STORE_RAW_DATA:$STORE_RAW_DATA"
+echo "LAST_SET:$LAST_SET"
+echo "destination_raw:$destination_raw"
+
 ######################## Exit successfully ########################
 exit 0

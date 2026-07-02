@@ -1,3 +1,10 @@
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/logo/bexhoma-logo-1-lockup-dark.svg">
+        <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/logo/bexhoma-banner.png" alt="Bexhoma logo" width="500">
+    </picture>
+</p>
+
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/Benchmark-Experiment-Host-Manager.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases/)
 [![PyPI version](https://badge.fury.io/py/bexhoma.svg)](https://badge.fury.io/py/bexhoma)
@@ -158,3 +165,8 @@ https://doi.org/10.1007/978-3-031-68031-1_9
 
 **[5]** Erdelt P.K., Rabl T. (2026). *Benchmarking Multi-Tenant Architectures in PostgreSQL.* EDBT 2026.  
 https://doi.org/10.48786/edbt.2026.46
+
+## License
+
+Bexhoma's code is licensed under the [GNU Affero General Public License v3](LICENSE).
+The logo and other brand assets in [`docs/logo/`](docs/logo/) are licensed separately under [CC BY 4.0](docs/logo/README.md).

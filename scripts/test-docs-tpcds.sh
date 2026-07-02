@@ -34,7 +34,7 @@ source ./scripts/testfunctions.sh
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 10Gi                     size of the persistent volume claim
+# -rss 15Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -50,7 +50,7 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 10Gi \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql.log
 
@@ -58,7 +58,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
-# -dbms MonetDB                 DBMS under test
+# -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
@@ -73,12 +73,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 30Gi                     size of the persistent volume claim
+# -rss 45Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 3 \
   -nlp 8 \
   -nlt 8 \
@@ -91,7 +91,7 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 30Gi \
+  -rss 45Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 
@@ -99,7 +99,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
-# -dbms MonetDB                 DBMS under test
+# -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nc 1                         number of repeated runs per configuration
 # -ne 1,2                       parallel client counts to sweep (comma-separated)
@@ -112,12 +112,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
-# -rss 10Gi                     size of the persistent volume claim
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 15Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 1 \
   -nc 1 \
   -ne 1,2 \
@@ -128,7 +130,9 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
-  -rss 10Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 15Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_throughput.log
 
@@ -141,7 +145,7 @@ sleep 30
 
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
-# -dbms MonetDB                 DBMS under test
+# -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nc 2                         number of repeated runs per configuration
 # -nlp 8                        number of data loader pods
@@ -153,13 +157,15 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
-# -rss 10Gi                     size of the persistent volume claim
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 1 \
   -nc 2 \
   -nlp 8 \
@@ -169,6 +175,8 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -318,7 +326,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 
 
 #### TCP-DS Profiling (Example-TPC-DS.md)
-# -dbms MonetDB                 DBMS under test
+# -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (controls database size in GB)
 # -ne 1,1                       parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
@@ -339,7 +347,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
-  -dbms MonetDB \
+  -dbms PostgreSQL \
   -sf 10 \
   -ne 1,1 \
   -nlp 8 \
