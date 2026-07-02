@@ -23,14 +23,18 @@ FROM alpine:3.20
 RUN apk add --no-cache openssh fio sysbench \
     && ssh-keygen -A \
     && adduser -D -s /bin/sh bench \
+    && echo "bench:bench" | chpasswd \
     && mkdir -p /home/bench/.ssh \
-    && chmod 700 /home/bench/.ssh
+    && chmod 700 /home/bench/.ssh \
+    && printf 'PasswordAuthentication no\nUsePAM no\n' >> /etc/ssh/sshd_config
 
 ######################################################################################
 # Install benchmarker public key for passwordless SSH access
 ######################################################################################
 COPY bench_key.pub /home/bench/.ssh/authorized_keys
-RUN chown -R bench:bench /home/bench/.ssh \
+RUN chown -R bench:bench /home/bench \
+    && chmod 700 /home/bench \
+    && chmod 700 /home/bench/.ssh \
     && chmod 600 /home/bench/.ssh/authorized_keys
 
 ######################################################################################
