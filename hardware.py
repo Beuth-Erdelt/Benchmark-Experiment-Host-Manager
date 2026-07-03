@@ -118,6 +118,11 @@ if __name__ == '__main__':
     ##############
     if "Hardware" in args.dbms or len(args.dbms) == 0:
         config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')
+        # storageClassName follows -rst as usual (defaults to None — no PVC,
+        # /database lives in the SUT container's own ephemeral storage; see
+        # images/hardware/sut/Dockerfile, which bakes the directory in so it
+        # exists either way). Pass -rst explicitly to benchmark real PVC-backed
+        # storage instead.
         config.set_storage(
             storageConfiguration='hardware'
         )

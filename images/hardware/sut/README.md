@@ -25,9 +25,17 @@ build context (`images/hardware/benchmarker/bench_key`).
 
 ## Storage
 
-`k8s/deploymenttemplate-Hardware.yml` mounts a PVC at `/database`, owned by the
-`bench` user (uid 1000, set explicitly via `adduser -u 1000` in the Dockerfile).
-This is the base directory the benchmarker's fio job targets via
-`HARDWARE_TEST_DIR` (see `images/hardware/benchmarker/README.md`), so I/O
-benchmarks measure the PVC-backed storage instead of the container's ephemeral
-filesystem.
+`/database` is the base directory the benchmarker's fio job targets via
+`HARDWARE_TEST_DIR` (see `images/hardware/benchmarker/README.md`). The
+Dockerfile bakes it in (`mkdir` + `chmod 777`) so it always exists and is
+writable by `bench`, regardless of whether a volume ends up mounted there:
+
+* **No `-rst` flag on `hardware.py`** (the default) — no PVC is requested,
+  `/database` is just part of this container's own ephemeral filesystem, lost
+  when the pod is removed.
+* **`-rst shared`** (or another storage class) — `k8s/deploymenttemplate-Hardware.yml`
+  mounts a real PVC at `/database` instead, made world-writable by that
+  manifest's own initContainer (not tied to `bench`'s uid, since ownership set
+  by an initContainer isn't reliably visible on every storage class's separate
+  mount into the main container). Use this when you actually want to measure
+  PVC-backed storage rather than the SUT's ephemeral layer.

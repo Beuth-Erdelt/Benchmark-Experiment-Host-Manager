@@ -43,22 +43,22 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       initContainers:
-        # uid 1000 matches the "bench" user created via `adduser -D -u 1000` in
-        # images/hardware/sut/Dockerfile; the SSH session fio/sysbench run under
-        # needs write access to the PVC, which is otherwise root-owned.
+        # world-writable so fio/sysbench (run over SSH as the "bench" user) can
+        # write regardless of what uid that ends up being on this storage class.
         - name: fix-permissions
           image: busybox:stable
           command:
             - sh
             - -c
             - |
-                echo "Running chown on /database:"
-                chown -v -R 1000:1000 /database
+                mkdir -p /database
+                chmod -v -R 777 /database
           volumeMounts:
           - {mountPath: /database, name: benchmark-storage-volume}
       containers:
       - name: dbms
         image: bexhoma/sut_hardware:BEXHOMA_PACKAGE_VERSION
+        imagePullPolicy: Always
         ports:
         - {containerPort: 22, name: ssh}
         readinessProbe:

@@ -22,7 +22,7 @@ FROM alpine:3.20
 ######################################################################################
 RUN apk add --no-cache openssh fio sysbench \
     && ssh-keygen -A \
-    && adduser -D -u 1000 -s /bin/sh bench \
+    && adduser -D -s /bin/sh bench \
     && echo "bench:bench" | chpasswd \
     && mkdir -p /home/bench/.ssh \
     && chmod 700 /home/bench/.ssh \
@@ -36,6 +36,17 @@ RUN chown -R bench:bench /home/bench \
     && chmod 700 /home/bench \
     && chmod 700 /home/bench/.ssh \
     && chmod 600 /home/bench/.ssh/authorized_keys
+
+######################################################################################
+# Base folder for fio/sysbench benchmarks
+######################################################################################
+# World-writable so fio (run over SSH as "bench") can use it whether or not
+# k8s/deploymenttemplate-Hardware.yml's PVC ends up mounted here — with no PVC
+# (use_storage()=False, e.g. no -rst flag passed to hardware.py) this directory
+# is just part of the container's own ephemeral filesystem; with a PVC it's
+# the mount point (also chmod'd by that manifest's initContainer).
+RUN mkdir -p /database \
+    && chmod 777 /database
 
 ######################################################################################
 # Copy entrypoint and expose SSH port

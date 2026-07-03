@@ -7,7 +7,10 @@ echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
 echo "HARDWARE_THREADS:$HARDWARE_THREADS"
 
 ######################## Set SSH options ########################
-SSH_OPTS="-i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+# bexhoma-service maps the SUT's real SSH port (22) to service port 9091,
+# same as every other DBMS's port-dbms mapping (see deploymenttemplate-Hardware.yml).
+SSH_PORT=9091
+SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 ######################## Store raw results ########################
 UUID=$(cat /proc/sys/kernel/random/uuid)

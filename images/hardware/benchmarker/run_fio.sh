@@ -23,7 +23,10 @@ HARDWARE_TEST_DIR="${HARDWARE_TEST_DIR}/pod-${BEXHOMA_CHILD}"
 echo "HARDWARE_TEST_DIR (scoped to pod):$HARDWARE_TEST_DIR"
 
 ######################## Set SSH options ########################
-SSH_OPTS="-i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+# bexhoma-service maps the SUT's real SSH port (22) to service port 9091,
+# same as every other DBMS's port-dbms mapping (see deploymenttemplate-Hardware.yml).
+SSH_PORT=9091
+SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 ######################## Create test directory on SUT ########################
 ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "mkdir -p ${HARDWARE_TEST_DIR}"
