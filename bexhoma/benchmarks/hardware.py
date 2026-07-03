@@ -80,6 +80,7 @@ class Hardware(Benchmark):
                 list_fio_engine = args.fio_engine.split(",")
                 list_fio_iodepth = experiment.get_parameter_as_list('fio_iodepth')
                 list_fio_fsync = experiment.get_parameter_as_list('fio_fsync')
+                list_fio_fdatasync = experiment.get_parameter_as_list('fio_fdatasync')
                 list_fio_rwmixread = experiment.get_parameter_as_list('fio_rwmixread')
                 experiment.workload['info'] += f"\nTest file size is '{args.hardware_size}', duration per round is {args.hardware_duration}s."
                 experiment.workload['info'] += f"\nI/O pattern(s) swept: {list_fio_rw}."
@@ -87,6 +88,7 @@ class Hardware(Benchmark):
                 experiment.workload['info'] += f"\nQueue depth(s) swept: {list_fio_iodepth}."
                 experiment.workload['info'] += f"\nI/O engine(s) swept: {list_fio_engine}."
                 experiment.workload['info'] += f"\nFsync interval(s) swept: {list_fio_fsync}."
+                experiment.workload['info'] += f"\nFdatasync interval(s) swept: {list_fio_fdatasync}."
                 if 'randrw' in list_fio_rw:
                     experiment.workload['info'] += f"\nRead mix percentage(s) swept: {list_fio_rwmixread}."
 

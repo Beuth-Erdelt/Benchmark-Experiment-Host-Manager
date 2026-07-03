@@ -13,6 +13,7 @@ echo "HARDWARE_FIO_IODEPTH:$HARDWARE_FIO_IODEPTH"
 echo "HARDWARE_FIO_NUMJOBS:$HARDWARE_FIO_NUMJOBS"
 echo "HARDWARE_FIO_ENGINE:$HARDWARE_FIO_ENGINE"
 echo "HARDWARE_FIO_FSYNC:$HARDWARE_FIO_FSYNC"
+echo "HARDWARE_FIO_FDATASYNC:$HARDWARE_FIO_FDATASYNC"
 echo "HARDWARE_FIO_RWMIXREAD:$HARDWARE_FIO_RWMIXREAD"
 
 ######################## Scope test directory to this pod ########################
@@ -32,8 +33,10 @@ SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o Us
 ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "mkdir -p ${HARDWARE_TEST_DIR}"
 
 ######################## Build fio argument list ########################
-# rwmixread only applies to mixed read/write workloads; fsync=0 means "never", so
-# both flags are appended conditionally instead of always being passed to fio.
+# rwmixread only applies to mixed read/write workloads; fsync=0/fdatasync=0 mean
+# "never", so all three flags are appended conditionally instead of always being
+# passed to fio. fsync and fdatasync are alternatives (wal_sync_method=fsync vs.
+# fdatasync in PostgreSQL); the caller is expected to set only one of them.
 FIO_ARGS="--name=hardware_fio --directory=${HARDWARE_TEST_DIR} --rw=${HARDWARE_FIO_RW} \
 --bs=${HARDWARE_FIO_BS} --size=${HARDWARE_SIZE} --numjobs=${HARDWARE_FIO_NUMJOBS} \
 --iodepth=${HARDWARE_FIO_IODEPTH} --ioengine=${HARDWARE_FIO_ENGINE} \
@@ -43,6 +46,9 @@ FIO_ARGS="--name=hardware_fio --directory=${HARDWARE_TEST_DIR} --rw=${HARDWARE_F
 if [ "$HARDWARE_FIO_FSYNC" != "0" ]; then
     FIO_ARGS="$FIO_ARGS --fsync=${HARDWARE_FIO_FSYNC}"
 fi
+if [ "$HARDWARE_FIO_FDATASYNC" != "0" ]; then
+    FIO_ARGS="$FIO_ARGS --fdatasync=${HARDWARE_FIO_FDATASYNC}"
+fi
 case "$HARDWARE_FIO_RW" in
     randrw)
         FIO_ARGS="$FIO_ARGS --rwmixread=${HARDWARE_FIO_RWMIXREAD}"
@@ -50,7 +56,7 @@ case "$HARDWARE_FIO_RW" in
 esac
 
 ######################## Run fio benchmark ########################
-echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC ==="
+echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC fdatasync=$HARDWARE_FIO_FDATASYNC ==="
 FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "fio $FIO_ARGS")"
 
 ######################## Store raw result ########################
@@ -99,7 +105,7 @@ done
 
 ######################## Write CSV summary ########################
 {
-    header="rw,bs,iodepth,numjobs,engine,fsync,size,duration,read_iops,write_iops,read_bw_kbps,write_bw_kbps"
+    header="rw,bs,iodepth,numjobs,engine,fsync,fdatasync,size,duration,read_iops,write_iops,read_bw_kbps,write_bw_kbps"
     for label in "${PERCENTILE_LABELS[@]}"; do
         header="$header,read_${label}_ms"
     done
@@ -109,7 +115,7 @@ done
     echo "$header"
 
     row="$HARDWARE_FIO_RW,$HARDWARE_FIO_BS,$HARDWARE_FIO_IODEPTH,$HARDWARE_FIO_NUMJOBS,$HARDWARE_FIO_ENGINE,\
-$HARDWARE_FIO_FSYNC,$HARDWARE_SIZE,$HARDWARE_DURATION,$read_iops,$write_iops,$read_bw_kbps,$write_bw_kbps"
+$HARDWARE_FIO_FSYNC,$HARDWARE_FIO_FDATASYNC,$HARDWARE_SIZE,$HARDWARE_DURATION,$read_iops,$write_iops,$read_bw_kbps,$write_bw_kbps"
     for value in "${read_lat[@]}"; do
         row="$row,$value"
     done

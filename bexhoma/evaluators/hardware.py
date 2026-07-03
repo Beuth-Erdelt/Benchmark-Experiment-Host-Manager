@@ -29,7 +29,7 @@ _KEYS_PARAMETERS = [
     'HARDWARE_TYPE', 'HARDWARE_SIZE', 'HARDWARE_DURATION',
     'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
     'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
-    'HARDWARE_FIO_RWMIXREAD',
+    'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
 ]
 _PERCENTILE_LABELS = ['P01', 'P10', 'P50', 'P90', 'P95', 'P99', 'P999', 'P9999']
 _KEYS_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
@@ -134,6 +134,10 @@ class HardwareEvaluator(LogEvaluator):
         """
         Casts all Hardware benchmarking result columns to their appropriate data types.
 
+        A read-only (or write-only) fio workload never echoes the opposing
+        direction's ``KEY:VALUE`` lines, so :meth:`log_to_df` defaults those
+        columns to ``''``; such blanks are treated as ``0`` here before casting.
+
         :param df: DataFrame of raw Hardware benchmarking results.
         :type df: pandas.DataFrame
         :return: DataFrame with columns cast to correct types.
@@ -146,10 +150,17 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_type': 'str', 'hardware_size': 'str', 'hardware_duration': 'float',
             'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
-            'hardware_fio_fsync': 'int', 'hardware_fio_rwmixread': 'int',
+            'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
+            'hardware_fio_rwmixread': 'int',
         }
         for key in _KEYS_RESULTS:
             dtype_map[key.lower()] = 'float'
+        numeric_columns = [
+            column for column, dtype in dtype_map.items()
+            if dtype in ('int', 'float') and column in df.columns
+        ]
+        df = df.copy()
+        df[numeric_columns] = df[numeric_columns].replace('', 0)
         df_typed = df.astype(dtype_map)
         if 'tenant_id' not in df_typed.columns:
             df_typed = df_typed.assign(tenant_id=-1)
@@ -190,7 +201,8 @@ class HardwareEvaluator(LogEvaluator):
             dict_grp['job'] = grp['job'].iloc[0]
             # constant within one round (one phase group), so take the first pod's value
             for fio_param in ['hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
-                               'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_rwmixread']:
+                               'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+                               'hardware_fio_rwmixread']:
                 if fio_param in grp.columns:
                     dict_grp[fio_param] = grp[fio_param].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
@@ -213,8 +225,8 @@ class HardwareEvaluator(LogEvaluator):
         columns = [
             'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child',
             'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
-            'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_rwmixread',
-            'hardware_fio_numjobs',
+            'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+            'hardware_fio_rwmixread', 'hardware_fio_numjobs',
             'hardware_fio_read_iops', 'hardware_fio_write_iops',
             'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
             'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
@@ -248,7 +260,8 @@ class HardwareEvaluator(LogEvaluator):
             aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count']
             columns = [
                 'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
-                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_rwmixread',
+                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+                'hardware_fio_rwmixread',
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
                 'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',

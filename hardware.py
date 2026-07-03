@@ -7,7 +7,7 @@ no data loading phase and no ``-dbms`` engine choice beyond the single
 ``Hardware`` target.
 
 The fio workload flags (``-xfrw``, ``-xfbs``, ``-xfid``, ``-xfe``, ``-xfsy``,
-``-xfmx``) each accept a comma-separated list. Every combination across the
+``-xffd``, ``-xfmx``) each accept a comma-separated list. Every combination across the
 lists is run as one more sequential round against the same SUT, so a
 parameter sweep (e.g. queue depth) is expressed as a single invocation
 instead of one process per value.
@@ -46,7 +46,8 @@ if __name__ == '__main__':
     parser.add_argument('-xfbs', '--xfio-blocksize', help='comma-separated fio block sizes to sweep (e.g. 4k,64k,1M)', default='8k', dest='fio_bs')
     parser.add_argument('-xfid', '--xfio-iodepth', help='comma-separated fio queue depths to sweep', default='1', dest='fio_iodepth')
     parser.add_argument('-xfe',  '--xfio-engine', help='comma-separated fio ioengines to sweep, each in {sync, libaio, io_uring}', default='sync', dest='fio_engine')
-    parser.add_argument('-xfsy', '--xfio-fsync', help='comma-separated fsync intervals to sweep (0 disables fsync)', default='0', dest='fio_fsync')
+    parser.add_argument('-xfsy', '--xfio-fsync', help='comma-separated fsync intervals to sweep (0 disables fsync); use fsync xor fdatasync, not both', default='0', dest='fio_fsync')
+    parser.add_argument('-xffd', '--xfio-fdatasync', help='comma-separated fdatasync intervals to sweep (0 disables fdatasync); use fsync xor fdatasync, not both', default='0', dest='fio_fdatasync')
     parser.add_argument('-xfmx', '--xfio-rwmixread', help='comma-separated read percentages to sweep when -xfrw=randrw', default='50', dest='fio_rwmixread')
     # evaluate args
     args = parser.parse_args()
@@ -110,6 +111,7 @@ if __name__ == '__main__':
     # cannot validate a comma-separated string
     list_fio_iodepth = experiment.get_parameter_as_list('fio_iodepth')
     list_fio_fsync = experiment.get_parameter_as_list('fio_fsync')
+    list_fio_fdatasync = experiment.get_parameter_as_list('fio_fdatasync')
     list_fio_rwmixread = experiment.get_parameter_as_list('fio_rwmixread')
     list_fio_rw = args.fio_rw.split(",")
     list_fio_bs = args.fio_bs.split(",")
@@ -150,28 +152,30 @@ if __name__ == '__main__':
                 for fio_iodepth in list_fio_iodepth:
                     for fio_engine in list_fio_engine:
                         for fio_fsync in list_fio_fsync:
-                            for fio_rwmixread in list_fio_rwmixread:
-                                # rwmixread only affects randrw; skip redundant rounds otherwise
-                                if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
-                                    continue
-                                for benchmarking_threads in num_benchmarking_threads:
-                                    for benchmarking_pods in num_benchmarking_pods:
-                                        for num_executor in list_clients:
-                                            benchmarking_pods_scaled = num_executor * benchmarking_pods
-                                            # -nbt (threads per benchmarking pod) maps to fio's own per-pod
-                                            # numjobs concurrency, same role -nbt plays for YCSB_THREADCOUNT /
-                                            # BENCHBASE_TERMINALS / HAMMERDB_VUSERS in the other entry scripts.
-                                            benchmarking_threads_per_pod = int(benchmarking_threads / benchmarking_pods)
-                                            executor_list.append(benchmarking_pods_scaled)
-                                            config.add_benchmarking_parameters(
-                                                HARDWARE_FIO_RW=fio_rw,
-                                                HARDWARE_FIO_BS=fio_bs,
-                                                HARDWARE_FIO_IODEPTH=str(fio_iodepth),
-                                                HARDWARE_FIO_ENGINE=fio_engine,
-                                                HARDWARE_FIO_FSYNC=str(fio_fsync),
-                                                HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
-                                                HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
-                                            )
+                            for fio_fdatasync in list_fio_fdatasync:
+                                for fio_rwmixread in list_fio_rwmixread:
+                                    # rwmixread only affects randrw; skip redundant rounds otherwise
+                                    if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
+                                        continue
+                                    for benchmarking_threads in num_benchmarking_threads:
+                                        for benchmarking_pods in num_benchmarking_pods:
+                                            for num_executor in list_clients:
+                                                benchmarking_pods_scaled = num_executor * benchmarking_pods
+                                                # -nbt (threads per benchmarking pod) maps to fio's own per-pod
+                                                # numjobs concurrency, same role -nbt plays for YCSB_THREADCOUNT /
+                                                # BENCHBASE_TERMINALS / HAMMERDB_VUSERS in the other entry scripts.
+                                                benchmarking_threads_per_pod = int(benchmarking_threads / benchmarking_pods)
+                                                executor_list.append(benchmarking_pods_scaled)
+                                                config.add_benchmarking_parameters(
+                                                    HARDWARE_FIO_RW=fio_rw,
+                                                    HARDWARE_FIO_BS=fio_bs,
+                                                    HARDWARE_FIO_IODEPTH=str(fio_iodepth),
+                                                    HARDWARE_FIO_ENGINE=fio_engine,
+                                                    HARDWARE_FIO_FSYNC=str(fio_fsync),
+                                                    HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
+                                                    HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
+                                                    HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
+                                                )
         config.add_benchmark_list(executor_list)
     ##############
     ### branch for workflows
