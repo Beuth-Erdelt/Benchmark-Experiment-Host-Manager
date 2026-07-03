@@ -41,6 +41,8 @@ source ./scripts/testfunctions.sh
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 bexhoma ycsb \
   -dbms TiDB \
@@ -63,6 +65,8 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 50Gi \
   run &>$LOG_DIR/docs_ycsb_tidb_1.log
 
@@ -83,6 +87,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 bexhoma benchbase \
   -dbms TiDB \
@@ -99,6 +105,8 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 50Gi \
   run &>$LOG_DIR/docs_benchbase_tidb_1.log
 
