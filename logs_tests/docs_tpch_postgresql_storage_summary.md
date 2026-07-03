@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 1250s 
-* Code: 1782971750
+* Duration: 706s 
+* Code: 1783003390
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -25,38 +25,38 @@ TPC-H Queries SF=1
 
 ### Connections
 * PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
-  * RAM:1081853939712
-  * CPU:Intel(R) Xeon(R) Gold 6438Y+
-  * Cores:128
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
   * host:6.8.0-111-generic
-  * node:cl-worker37
-  * disk:645226
+  * node:cl-worker36
+  * disk:661327
   * volume_size:30G
   * volume_used:2.7G
-  * cpu_list:0-127
+  * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782971750
+    * code:1783003390
 * PostgreSQL-1-2-1-1-1 uses docker image postgres:18.3
-  * RAM:1081853939712
-  * CPU:Intel(R) Xeon(R) Gold 6438Y+
-  * Cores:128
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
   * host:6.8.0-111-generic
-  * node:cl-worker37
-  * disk:645550
+  * node:cl-worker36
+  * disk:662846
   * volume_size:30G
   * volume_used:2.7G
-  * cpu_list:0-127
+  * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782971750
+    * code:1783003390
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1782971750-5c7bd5c765-jxzvg: 0 0
+* bexhoma-sut-postgresql-1-1783003390-674794fd67-w9cm6: 0 0
 
 ### Workflow
 
@@ -76,8 +76,8 @@ TPC-H Queries SF=1
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |    1 |      403.00 |           8.00 |           21.00 |         31.00 |          340.00 |              8 |           0 |             |                |             0 | False         |                8.93 |
-| PostgreSQL-1-2 |                2 |    1 |      403.00 |           8.00 |           21.00 |         31.00 |          340.00 |              8 |           0 |             |                |             0 | False         |                8.93 |
+| PostgreSQL-1-1 |                1 | 1.00 |      168.00 |           1.00 |           20.00 |         24.00 |          119.00 |              8 |           0 |             |                |             0 | False         |               21.43 |
+| PostgreSQL-1-2 |                2 | 1.00 |      168.00 |           1.00 |           20.00 |         24.00 |          119.00 |              8 |           0 |             |                |             0 | False         |               21.43 |
 
 ### Execution
 
@@ -85,41 +85,41 @@ TPC-H Queries SF=1
 
 |                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
 |:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         13 |            0.28 |            13747.85 |           6092.31 |           0 | PostgreSQL-1-1-1-1-1 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1    | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |         39 |            0.51 |             7580.85 |           2030.77 |           0 | PostgreSQL-1-2-1-1-1 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         11 |            0.24 |            16493.03 |           7200.00 |           0 | PostgreSQL-1-1-1-1-1 |
+| PostgreSQL-1-2-1-1-1 | PostgreSQL-1    | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |         32 |            0.38 |            10241.92 |           2475.00 |           0 | PostgreSQL-1-2-1-1-1 |
 
 #### Per Phase
 
 |                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         13 |            0.28 |            13747.85 |           6092.31 |           0 |
-| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |         39 |            0.51 |             7580.85 |           2030.77 |           0 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         11 |            0.24 |            16493.03 |           7200.00 |           0 |
+| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |         32 |            0.38 |            10241.92 |           2475.00 |           0 |
 
 ### Latency of Timer Execution [ms]
 | Queries                                             |   PostgreSQL-1-1-1-1-1 |   PostgreSQL-1-2-1-1-1 |
 |:----------------------------------------------------|-----------------------:|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                1372.11 |               14411.37 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                 174.33 |                5870.25 |
-| Shipping Priority (TPC-H Q3)                        |                 316.82 |                5893.84 |
-| Order Priority Checking Query (TPC-H Q4)            |                 143.05 |                 227.09 |
-| Local Supplier Volume (TPC-H Q5)                    |                 274.64 |                 459.63 |
-| Forecasting Revenue Change (TPC-H Q6)               |                 191.44 |                 232.47 |
-| Volume Shipping Query (TPC-H Q7)                    |                 326.05 |                 528.30 |
-| National Market Share (TPC-H Q8)                    |                 168.83 |                1595.87 |
-| Product Type Profit Measure (TPC-H Q9)              |                 432.56 |                 747.50 |
-| Returned Item Reporting Query (TPC-H Q10)           |                 468.60 |                 427.57 |
-| Important Stock Identification (TPC-H Q11)          |                  54.56 |                  52.24 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                 250.14 |                 252.28 |
-| Customer Distribution (TPC-H Q13)                   |                 555.09 |                 561.92 |
-| Promotion Effect Query (TPC-H Q14)                  |                 269.95 |                 235.59 |
-| Top Supplier Query (TPC-H Q15)                      |                 176.55 |                 151.23 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                 200.05 |                 179.09 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                 552.53 |                 562.63 |
-| Large Volume Customer (TPC-H Q18)                   |                2709.68 |                2504.55 |
-| Discounted Revenue (TPC-H Q19)                      |                  61.65 |                  56.24 |
-| Potential Part Promotion (TPC-H Q20)                |                 158.95 |                 326.36 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 268.92 |                 236.70 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                  86.95 |                  81.34 |
+| Pricing Summary Report (TPC-H Q1)                   |                 709.21 |               10166.38 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                 166.55 |                4518.49 |
+| Shipping Priority (TPC-H Q3)                        |                 227.87 |                5390.21 |
+| Order Priority Checking Query (TPC-H Q4)            |                  95.59 |                 111.87 |
+| Local Supplier Volume (TPC-H Q5)                    |                 180.73 |                 199.97 |
+| Forecasting Revenue Change (TPC-H Q6)               |                 123.59 |                 118.40 |
+| Volume Shipping Query (TPC-H Q7)                    |                 247.08 |                 220.99 |
+| National Market Share (TPC-H Q8)                    |                 149.68 |                1262.89 |
+| Product Type Profit Measure (TPC-H Q9)              |                 399.63 |                 416.85 |
+| Returned Item Reporting Query (TPC-H Q10)           |                 397.87 |                 349.74 |
+| Important Stock Identification (TPC-H Q11)          |                  57.82 |                  51.92 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                 209.70 |                 188.95 |
+| Customer Distribution (TPC-H Q13)                   |                 752.32 |                 731.56 |
+| Promotion Effect Query (TPC-H Q14)                  |                 247.31 |                 219.26 |
+| Top Supplier Query (TPC-H Q15)                      |                 155.27 |                 179.17 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                 187.06 |                 181.70 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                 573.43 |                 524.39 |
+| Large Volume Customer (TPC-H Q18)                   |                2174.85 |                2111.46 |
+| Discounted Revenue (TPC-H Q19)                      |                  45.28 |                  39.78 |
+| Potential Part Promotion (TPC-H Q20)                |                 131.80 |                 110.86 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 231.91 |                 209.47 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                  75.12 |                  73.24 |
 
 ### Errors (failed queries)
 
