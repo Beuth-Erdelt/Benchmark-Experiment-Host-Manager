@@ -38,6 +38,23 @@ for _label in _PERCENTILE_LABELS:
     _KEYS_RESULTS.append(f'HARDWARE_FIO_READ_LAT_{_label}_MS')
     _KEYS_RESULTS.append(f'HARDWARE_FIO_WRITE_LAT_{_label}_MS')
 
+_NATURAL_SORT_DIGIT_WIDTH = 10  # zero-pad width; comfortably covers phase strings like "Hardware-1-1-128"
+
+
+def _natural_sort_key(value: str) -> str:
+    """
+    Zero-pads digit runs so a lexicographic sort behaves like a numeric sort.
+
+    Turns ``"Hardware-1-1-10"`` into ``"Hardware-0000000001-0000000001-0000000010"``,
+    so ``"...-10"`` sorts after ``"...-9"`` instead of after ``"...-1"``.
+
+    :param value: String to build a natural-sort key for.
+    :type value: str
+    :return: Sortable string with all digit runs zero-padded.
+    :rtype: str
+    """
+    return re.sub(r'\d+', lambda match: match.group().zfill(_NATURAL_SORT_DIGIT_WIDTH), str(value))
+
 
 class HardwareEvaluator(LogEvaluator):
     """
@@ -225,7 +242,9 @@ class HardwareEvaluator(LogEvaluator):
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
-            df_aggregated = df_aggregated.sort_values(['experiment_run', 'pod_count']).round(2)
+            df_aggregated = df_aggregated.sort_values(
+                by='phase', key=lambda col: col.map(_natural_sort_key)
+            ).round(2)
             aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count']
             columns = [
                 'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
