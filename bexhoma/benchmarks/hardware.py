@@ -74,6 +74,21 @@ class Hardware(Benchmark):
             )
         if experiment.benchmarking_is_active():
             experiment.workload['info'] += f"\nBenchmark tool: {hardware_type}."
+            if hardware_type == 'fio':
+                list_fio_rw = args.fio_rw.split(",")
+                list_fio_bs = args.fio_bs.split(",")
+                list_fio_engine = args.fio_engine.split(",")
+                list_fio_iodepth = experiment.get_parameter_as_list('fio_iodepth')
+                list_fio_fsync = experiment.get_parameter_as_list('fio_fsync')
+                list_fio_rwmixread = experiment.get_parameter_as_list('fio_rwmixread')
+                experiment.workload['info'] += f"\nTest file size is '{args.hardware_size}', duration per round is {args.hardware_duration}s."
+                experiment.workload['info'] += f"\nI/O pattern(s) swept: {list_fio_rw}."
+                experiment.workload['info'] += f"\nBlock size(s) swept: {list_fio_bs}."
+                experiment.workload['info'] += f"\nQueue depth(s) swept: {list_fio_iodepth}."
+                experiment.workload['info'] += f"\nI/O engine(s) swept: {list_fio_engine}."
+                experiment.workload['info'] += f"\nFsync interval(s) swept: {list_fio_fsync}."
+                if 'randrw' in list_fio_rw:
+                    experiment.workload['info'] += f"\nRead mix percentage(s) swept: {list_fio_rwmixread}."
 
     def test_results(self, experiment) -> None:
         """

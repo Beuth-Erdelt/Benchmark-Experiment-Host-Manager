@@ -171,6 +171,11 @@ class HardwareEvaluator(LogEvaluator):
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['job'] = grp['job'].iloc[0]
+            # constant within one round (one phase group), so take the first pod's value
+            for fio_param in ['hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+                               'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_rwmixread']:
+                if fio_param in grp.columns:
+                    dict_grp[fio_param] = grp[fio_param].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
             df_aggregated = pd.concat([df_aggregated, df_grp])
@@ -190,7 +195,9 @@ class HardwareEvaluator(LogEvaluator):
             return pd.DataFrame()
         columns = [
             'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child',
-            'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_numjobs',
+            'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+            'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_rwmixread',
+            'hardware_fio_numjobs',
             'hardware_fio_read_iops', 'hardware_fio_write_iops',
             'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
             'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
@@ -221,6 +228,8 @@ class HardwareEvaluator(LogEvaluator):
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'pod_count']).round(2)
             aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count']
             columns = [
+                'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_rwmixread',
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
                 'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
