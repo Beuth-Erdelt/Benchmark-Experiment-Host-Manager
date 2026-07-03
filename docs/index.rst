@@ -38,6 +38,7 @@
     ./Example-custom.md
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
+    ./Example-Hardware.md
     ./Tool.md
     ./Concept.md
     ./TestCases.md
