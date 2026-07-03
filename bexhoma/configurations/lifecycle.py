@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 
 import yaml
 
+from ..__version__ import __version__
+
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
@@ -1115,7 +1117,12 @@ scrape_configs:
                             if cfg.dockerimage:
                                 result[key]['spec']['template']['spec']['containers'][i_container]['image'] = cfg.dockerimage
                             else:
-                                cfg.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image']
+                                # substitute here already; create_object_from_file() only
+                                # replaces this placeholder in the YAML text written to disk,
+                                # not in this in-memory dict, so cfg.dockerimage would otherwise
+                                # keep the unresolved placeholder for connections.config/summary display
+                                cfg.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image'].replace(
+                                    "BEXHOMA_PACKAGE_VERSION", __version__)
                     elif (not cfg.monitoring_active
                           or cfg.experiment.cluster.monitor_cluster_active
                           or cfg.experiment.cluster.monitor_cluster_exists):
