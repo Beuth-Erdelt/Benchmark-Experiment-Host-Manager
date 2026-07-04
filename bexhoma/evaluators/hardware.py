@@ -281,3 +281,40 @@ class HardwareEvaluator(LogEvaluator):
         :rtype: pandas.DataFrame
         """
         return self.get_summary_benchmark_per_phase()
+
+    def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
+                     workflow_actual: dict, workflow_planned: dict, **extra) -> None:
+        """
+        Record Hardware pass/fail tests: workflow completeness and, for fio, that
+        every round measured something on at least one of read/write.
+
+        A round with both ``hardware_fio_read_iops`` and ``hardware_fio_write_iops``
+        at 0 did not produce a usable fio measurement (e.g. a full PVC or a local
+        disk-quota error while collecting results, as seen for round 10 of
+        experiment 1783115274) rather than a legitimate all-zero result — a
+        ``randread`` round always has 0 write IOPS and vice versa, so only the
+        combination of both being 0 indicates a failed round.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame; always empty for Hardware.
+        :param df_reduced: Per-phase execution DataFrame.
+        :param workflow_actual: Reconstructed actual workflow dict.
+        :param workflow_planned: Planned workflow dict from workload config.
+        """
+        if experiment.benchmarking_is_active():
+            experiment._record_test(
+                experiment.test_workflow(workflow_actual, workflow_planned),
+                "Workflow as planned"
+            )
+            hardware_type = getattr(experiment.args, 'hardware_type', 'fio')
+            has_iops_columns = ('hardware_fio_read_iops' in df_reduced.columns
+                                 and 'hardware_fio_write_iops' in df_reduced.columns)
+            if hardware_type == 'fio' and not df_reduced.empty and has_iops_columns:
+                both_zero = ((df_reduced['hardware_fio_read_iops'] == 0)
+                             & (df_reduced['hardware_fio_write_iops'] == 0))
+                passed = not both_zero.any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero read or write IOPS" if passed
+                    else "Execution Phase: at least one round has 0 IOPS for both read and write"
+                )

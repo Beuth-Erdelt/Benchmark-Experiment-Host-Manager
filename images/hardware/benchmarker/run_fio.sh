@@ -61,17 +61,32 @@ FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "fio $FIO_ARGS
 
 ######################## Remove fio test files from the SUT ########################
 # Without an explicit --filename, fio names one file per numjobs thread
-# (hardware_fio.<jobid>.<fileno>), each --size bytes. The PVC is shared and never
+# (either "hardware_fio" alone, or "hardware_fio.<jobid>.<fileno>" for numjobs>1 —
+# the glob below matches both), each --size bytes. The PVC is shared and never
 # wiped between rounds/experiments (see project notes on -rsr and PVC sharing), so
 # leftover files accumulate round over round and can exceed the PVC size entirely
 # at high numjobs (e.g. numjobs=32 at --size=4G needs 128G, more than double a
 # 50Gi PVC). Removing them right after fio is done keeps steady-state usage to
 # just the current round's files.
 # HARDWARE_TEST_DIR was scoped to /pod-${BEXHOMA_CHILD} above and the glob only
-# matches this job's own hardware_fio.<jobid>.<fileno> files, so with several
-# benchmarker pods running in parallel (BEXHOMA_NUM_PODS > 1) each one only ever
-# removes its own test files, never another pod's directory or files.
-ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "rm -f ${HARDWARE_TEST_DIR}/hardware_fio.*"
+# matches this job's own hardware_fio* files, so with several benchmarker pods
+# running in parallel (BEXHOMA_NUM_PODS > 1) each one only ever removes its own
+# test files, never another pod's directory or files.
+#
+# The before/after listing below is deliberate status output, not just debug
+# noise: it shows exactly which files this round leaves behind before cleanup
+# runs, and its mere presence in a job's log is proof that *this* version of
+# run_fio.sh (the one with cleanup) is what actually executed — if a log is
+# missing this section, the pod ran an older image without the fix.
+echo "=== fio test files before cleanup ==="
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "ls -la ${HARDWARE_TEST_DIR}/hardware_fio* 2>/dev/null || echo '(no hardware_fio* files found)'"
+echo "=== removing fio test files ==="
+# rm -f is silent on success, so -v (verbose) is added here specifically so the
+# log shows which files were actually removed, instead of only being able to
+# infer it indirectly from the after-listing below being empty.
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "rm -fv ${HARDWARE_TEST_DIR}/hardware_fio* 2>&1"
+echo "=== fio test files after cleanup ==="
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "ls -la ${HARDWARE_TEST_DIR}/hardware_fio* 2>/dev/null || echo '(no hardware_fio* files found)'"
 
 ######################## Store raw result ########################
 UUID=$(cat /proc/sys/kernel/random/uuid)
