@@ -20,9 +20,10 @@ node hardware, and cluster load at the time of the run.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 Result tables below are real output from an actual cluster run of every command on this page —
-including a couple of surprises (an inverted `random_page_cost` signal, a reproducible all-zero
-anomaly at `numjobs=16`) that are called out rather than smoothed over, and a caveat where two
-commands landed on different cluster nodes and so aren't directly comparable in absolute terms.
+including a couple of surprises (an inverted `random_page_cost` signal, an all-zero result at
+`numjobs=16` traced back to a local disk-quota-exceeded error, not a storage/fio issue) that are
+called out rather than smoothed over, and a caveat where two commands landed on different cluster
+nodes and so aren't directly comparable in absolute terms.
 
 References:
 1. fio documentation: https://fio.readthedocs.io/en/latest/fio_doc.html
@@ -58,7 +59,12 @@ process per value — see `python hardware.py -h` at the bottom of this page.
 
 ---
 
-## 1. Queue-depth sweep
+## Fio disk benchmarks
+
+The twelve commands below (`-xht fio`) cover raw disk I/O: queue-depth and block-size
+characterization, PostgreSQL-page-size calibration, and WAL/durability/checkpoint simulation.
+
+### 1. Queue-depth sweep
 
 For performing the experiment we can run the
 [hardware file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/hardware.py).
@@ -180,7 +186,7 @@ tail latency rises — is the elbow: on this storage it sits around queue depth 
 
 ---
 
-## 2. Depth-sweep refinement around the elbow
+### 2. Depth-sweep refinement around the elbow
 
 The coarse sweep above only localizes the elbow to "somewhere between 64 and 128" — each doubling
 step covers a wide range. This does a linear pass inside that bracket to pinpoint the actual knee
@@ -291,7 +297,7 @@ number for this specific node.
 
 ---
 
-## 3. Numjobs sweep at fixed queue depth (elbow check)
+### 3. Numjobs sweep at fixed queue depth (elbow check)
 
 Fixes `-xfid 64` (the elbow found above) and sweeps `-nbt` (numjobs per pod) instead of depth: if
 IOPS keep climbing with more threads at the same depth, 64 was a per-queue submission limit, not
@@ -391,13 +397,14 @@ Hardware Benchmark (fio)
 * TEST passed: Workflow as planned
 ```
 
-**Anomaly**: the `numjobs=16` round (`Hardware-1-1-10`, last row) reports exactly zero for every
-metric despite `errors=0` and all tests passing — the round completed without an explicit error
-but fio produced no usable result for it. The same numjobs=16 point shows the identical all-zero
-pattern in the group-commit sweep below (command 9), so this looks like a reproducible issue at
-that specific concurrency level on this cluster (a resource limit inside the benchmarker
-container is a plausible cause), not one-off noise. Treat any numjobs=16 datapoint on this
-cluster with suspicion until investigated.
+**Anomaly, now explained**: the `numjobs=16` round (`Hardware-1-1-10`, last row) reports exactly
+zero for every metric despite `errors=0` and all tests passing. Root cause confirmed: the local
+result directory `D:\data\benchmarks\1783115274` (this experiment's code) hit a disk quota limit
+while downloading that round's result files, so the log the evaluator parsed was incomplete —
+the blank fields were then defaulted to 0 by the recent blank-numeric-column fix rather than
+surfacing as a parse error. This is a local disk-space problem on the machine running the
+experiment, not a storage-device or fio issue — free up space (or point the result folder
+somewhere with more headroom) before re-running sweeps with many rounds.
 
 Setting that aside, `randread` throughput does **not** keep climbing with more threads at fixed
 depth 64 — it stays in the 3800-6300 IOPS range across 1, 2, 4, 8 threads with no clear trend,
@@ -409,7 +416,7 @@ device ceiling rather than a per-queue submission limit.
 
 ---
 
-## 4. Block-size sweep at fixed queue depth (throughput curve)
+### 4. Block-size sweep at fixed queue depth (throughput curve)
 
 Also fixes `-xfid 64`, but sweeps `-xfbs` instead of numjobs: finds the best block size at the
 queue depth already identified as the elbow, and shows where the workload shifts from IOPS-bound
@@ -516,7 +523,7 @@ peak — writes on this storage are IOPS-bound across the whole range tested her
 
 ---
 
-## 5. Depth sweep at PostgreSQL's page size (8k)
+### 5. Depth sweep at PostgreSQL's page size (8k)
 
 The sweeps above use `bs=4k` as a generic device-IOPS probe. PostgreSQL always issues 8kB pages
 (`BLCKSZ`), so this re-anchors the depth sweep at the actual unit of I/O Postgres uses — the
@@ -629,7 +636,7 @@ be revisited with depths beyond 128 if reads dominate your workload.
 
 ---
 
-## 6. `random_page_cost` calibration
+### 6. `random_page_cost` calibration
 
 Sequential vs. random read at the same block size and depth. The latency/throughput ratio
 between the two rounds gives a device-specific number to replace `random_page_cost`'s
@@ -729,7 +736,7 @@ measuring per storage class rather than assuming.
 
 ---
 
-## 7. WAL sync-write latency (fsync)
+### 7. WAL sync-write latency (fsync)
 
 Sequential 8k write + fsync after every write, depth 1, single thread — "how fast can one backend
 commit with `synchronous_commit=on` and no batching" (max TPS ≈ 1/latency).
@@ -820,7 +827,7 @@ storage — compare against command 8 below for the `fdatasync` variant.
 
 ---
 
-## 8. WAL sync-write latency (fdatasync)
+### 8. WAL sync-write latency (fdatasync)
 
 Same as above but `fdatasync` instead of `fsync`. fdatasync skips the inode-metadata sync fsync
 does, and is PostgreSQL's Linux default (`wal_sync_method=fdatasync`) — compare its latency
@@ -913,7 +920,7 @@ Linux default) rather than switching to `fsync`.
 
 ---
 
-## 9. WAL group-commit scaling
+### 9. WAL group-commit scaling
 
 Same sync-write profile, sweeping concurrent committing backends (`-nbt`) instead of a single
 one. If aggregate fsyncs/sec keeps climbing with more concurrent writers, the storage/controller
@@ -1005,8 +1012,11 @@ Hardware Benchmark (fio)
 * TEST passed: Workflow as planned
 ```
 
-Row 5 (`numjobs=16`) is the same all-zero anomaly flagged in command 3 — same concurrency level,
-same symptom, on the same cluster. Setting that row aside, aggregate fsync'd write throughput
+Row 5 (`numjobs=16`) is the same all-zero symptom flagged in command 3 — there confirmed to be a
+local disk-quota-exceeded error on the result directory rather than a storage/fio problem, so
+this row is very likely the same cause (this experiment's own result folder,
+`D:\data\benchmarks\1783123024`, would have hit the same limit). Setting that row aside,
+aggregate fsync'd write throughput
 keeps climbing all the way to 32 concurrent writers with no sign of flattening (120→153→409→753,
 skip, →2308 IOPS) — nearly 19× the single-writer rate at 32 backends. That is a strong signal
 that this storage/controller coalesces concurrent commits well, so `commit_delay`/
@@ -1015,7 +1025,7 @@ already does it.
 
 ---
 
-## 10. WAL record-size sweep
+### 10. WAL record-size sweep
 
 Same sync-write profile, sweeping the WAL record size instead of backend count. Bigger
 transactions (or post-checkpoint `full_page_writes` bursts) write more before fsync — this shows
@@ -1115,7 +1125,7 @@ this case.
 
 ---
 
-## 11. Checkpoint writeback bandwidth
+### 11. Checkpoint writeback bandwidth
 
 Large-block sequential writes without a per-write fsync, approximating how fast
 checkpointer/bgwriter can flush dirty pages during a checkpoint.
@@ -1216,7 +1226,7 @@ checkpoint interval instead of bursting it.
 
 ---
 
-## 12. OLTP/WAL contention proxy
+### 12. OLTP/WAL contention proxy
 
 A single-profile approximation of foreground OLTP traffic contending with WAL flushes on one
 queue: mixed random read/write with fsync on the write side. This is **not** the same as true
@@ -1318,12 +1328,12 @@ planning discussion) is meant to avoid.
 
 ---
 
-## Interpreting results for PostgreSQL configuration
+### Interpreting results for PostgreSQL configuration
 
 | Command(s) | Informs | What this cluster's run actually showed |
 |---|---|---|
 | 1, 2 (depth sweep + refinement) | `effective_io_concurrency`, `maintenance_io_concurrency` | Write-side elbow around depth 64 on `cl-worker36` (4k), but the refinement run landed on a different node (`cl-worker37`) and suggested 96-112 there — pin `-rnn` consistently before trusting an absolute number |
-| 3 (numjobs) | `max_parallel_workers_per_gather` and friends | More threads at fixed depth 64 didn't grow `randread` throughput, only latency — 64 looks like a real ceiling on this node, not a per-queue limit. (`numjobs=16` also reproduced an all-zero anomaly, worth investigating separately) |
+| 3 (numjobs) | `max_parallel_workers_per_gather` and friends | More threads at fixed depth 64 didn't grow `randread` throughput, only latency — 64 looks like a real ceiling on this node, not a per-queue limit. (`numjobs=16`'s all-zero result was a local disk-quota-exceeded error on the result folder, not a storage finding — see command 3) |
 | 4 (block size) | Reasoning about checkpoint/bgwriter I/O coalescing | `randread` peaks at 128k (~8500 IOPS) then shifts to bandwidth-bound; `randwrite` is IOPS-bound throughout the tested range with no peak |
 | 5, 6 (8k depth sweep, page cost) | `effective_io_concurrency` at the real page size; `random_page_cost` | Write elbow confirmed at ~64 for 8k too; but sequential read was *slower* than random read (3296 vs. 6457 IOPS) — on this storage class, `random_page_cost` should not be set above `seq_page_cost` |
 | 7, 8 (WAL sync fsync/fdatasync) | `wal_sync_method`, expected max commit rate | ~123 commits/sec ceiling either way; `fdatasync` gave ~14% better p99 latency than `fsync` at the same throughput |
@@ -1337,6 +1347,16 @@ production numbers. Several results above disagree with the textbook defaults (`
 in particular) precisely because they were measured on this cluster's actual storage rather than
 assumed — re-run against your own storage class and node hardware before trusting a config change
 derived from them, and keep `-rnn` consistent across commands you intend to compare directly.
+
+## Sysbench CPU and RAM benchmarks
+
+*(planned — not yet implemented)*
+
+`-xht sysbench` already exists as a `hardware_type` choice, and the evaluator (see
+`bexhoma/evaluators/hardware.py`) already parses the identity columns from a sysbench log; what's
+missing is the CPU/memory result parsing itself and a set of `test-docs-hardware.ps1` commands
+analogous to the fio sweeps above. This section will cover CPU throughput and memory
+bandwidth/latency sweeps once that lands.
 
 ## Adjust Parameters
 

@@ -37,8 +37,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep.log" -Encoding utf8
@@ -66,8 +67,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_numjobs_sweep.log" -Encoding utf8
@@ -95,8 +97,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_blocksize_sweep.log" -Encoding utf8
@@ -124,8 +127,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_refine.log" -Encoding utf8
@@ -160,8 +164,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_8k.log" -Encoding utf8
@@ -189,8 +194,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_random_page_cost.log" -Encoding utf8
@@ -229,8 +235,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fsync.log" -Encoding utf8
@@ -259,8 +266,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fdatasync.log" -Encoding utf8
@@ -290,8 +298,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_group_commit.log" -Encoding utf8
@@ -320,8 +329,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_record_size.log" -Encoding utf8
@@ -352,8 +362,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_checkpoint_writeback.log" -Encoding utf8
@@ -386,8 +397,9 @@ bexhoma hardware `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_oltp_wal_contention_proxy.log" -Encoding utf8

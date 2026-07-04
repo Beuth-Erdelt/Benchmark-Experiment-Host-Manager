@@ -59,6 +59,20 @@ esac
 echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC fdatasync=$HARDWARE_FIO_FDATASYNC ==="
 FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "fio $FIO_ARGS")"
 
+######################## Remove fio test files from the SUT ########################
+# Without an explicit --filename, fio names one file per numjobs thread
+# (hardware_fio.<jobid>.<fileno>), each --size bytes. The PVC is shared and never
+# wiped between rounds/experiments (see project notes on -rsr and PVC sharing), so
+# leftover files accumulate round over round and can exceed the PVC size entirely
+# at high numjobs (e.g. numjobs=32 at --size=4G needs 128G, more than double a
+# 50Gi PVC). Removing them right after fio is done keeps steady-state usage to
+# just the current round's files.
+# HARDWARE_TEST_DIR was scoped to /pod-${BEXHOMA_CHILD} above and the glob only
+# matches this job's own hardware_fio.<jobid>.<fileno> files, so with several
+# benchmarker pods running in parallel (BEXHOMA_NUM_PODS > 1) each one only ever
+# removes its own test files, never another pod's directory or files.
+ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "rm -f ${HARDWARE_TEST_DIR}/hardware_fio.*"
+
 ######################## Store raw result ########################
 UUID=$(cat /proc/sys/kernel/random/uuid)
 RESULT_JSON="/results/$BEXHOMA_EXPERIMENT/fio.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.json"
