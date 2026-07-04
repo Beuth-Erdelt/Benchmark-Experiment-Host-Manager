@@ -91,6 +91,22 @@ class Hardware(Benchmark):
                 experiment.workload['info'] += f"\nFdatasync interval(s) swept: {list_fio_fdatasync}."
                 if 'randrw' in list_fio_rw:
                     experiment.workload['info'] += f"\nRead mix percentage(s) swept: {list_fio_rwmixread}."
+            elif hardware_type == 'sysbench':
+                list_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
+                list_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
+                experiment.workload['info'] += (
+                    f"\nDuration per round is {args.hardware_duration}s, capping each of the CPU "
+                    "and memory phases (see images/hardware/benchmarker/run_sysbench.sh)."
+                )
+                experiment.workload['info'] += (
+                    f"\nTotal sysbench thread count(s) swept: {list_benchmarking_threads}, "
+                    f"split across pod count(s): {list_benchmarking_pods}."
+                )
+                experiment.workload['info'] += "\nCPU phase: sysbench cpu --cpu-max-prime=20000 (fixed)."
+                experiment.workload['info'] += (
+                    "\nMemory phase: sysbench memory --memory-block-size=1K --memory-total-size=10G "
+                    "(fixed; may finish before the duration cap if this transfers first)."
+                )
 
     def test_results(self, experiment) -> None:
         """
