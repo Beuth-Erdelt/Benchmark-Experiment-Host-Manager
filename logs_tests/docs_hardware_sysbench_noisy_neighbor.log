@@ -1,0 +1,292 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1783172304
+Experiment                    : starts at 2026-07-04 15:38:24.711998 (77388.4877899)
+Experiment                    : This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+Benchmark tool: sysbench.
+Duration per round is 60s, capping each of the CPU and memory phases (see images/hardware/benchmarker/run_sysbench.sh).
+Total sysbench thread count(s) swept: [2], split across pod count(s): [1].
+CPU phase: sysbench cpu --cpu-max-prime=20000 (fixed).
+Memory phase: sysbench memory --memory-block-size=1K --memory-total-size=10G (fixed; may finish before the duration cap if this transfers first).
+Experiment uses bexhoma version 0.10.2.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['Hardware'].
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker36.
+Benchmarking is tested with [2] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Number of tenants is 4, one container per tenant.
+Experiment is run once.
+Cluster monitoring            : is running
+Hardware-1                    : will start now
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1783172304
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1783172304
+Hardware-2                    : will start now
+Hardware-2                    : deployments ['sut']
+Hardware-2                    : stateful sets []
+Hardware-2                    : pvcs ['sut']
+Hardware-2                    : name of SUT pods = bexhoma-sut-hardware-2-1783172304
+Hardware-2                    : name of SUT service = bexhoma-sut-hardware-2-1783172304
+Hardware-3                    : will start now
+Hardware-3                    : deployments ['sut']
+Hardware-3                    : stateful sets []
+Hardware-3                    : pvcs ['sut']
+Hardware-3                    : name of SUT pods = bexhoma-sut-hardware-3-1783172304
+Hardware-3                    : name of SUT service = bexhoma-sut-hardware-3-1783172304
+Hardware-4                    : will start now
+Hardware-4                    : deployments ['sut']
+Hardware-4                    : stateful sets []
+Hardware-4                    : pvcs ['sut']
+Hardware-4                    : name of SUT pods = bexhoma-sut-hardware-4-1783172304
+Hardware-4                    : name of SUT service = bexhoma-sut-hardware-4-1783172304
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1783172304 initialized to 1.
+Experiment                    : Benchmarker experiment counter bexhoma-benchmarker-podcount-exp-1783172304 initialized to 4.
+Hardware-1                    : benchmarks done 0 of 1. This will be client 1
+Hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
+Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783172304
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783172304-1-1-1-7rjnz: found
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-2-1783172304 initialized to 1.
+Hardware-2                    : benchmarks done 0 of 1. This will be client 1
+Hardware-2-1-1-1              : start benchmarking (benchmark_run=1)
+Hardware-2-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-2                    : benchmarking results in folder D:\data\benchmarks/1783172304
+- waiting 10s -               : done
+Hardware-2                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-2-1783172304-1-1-1-l49s2: found
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-3-1783172304 initialized to 1.
+Hardware-3                    : benchmarks done 0 of 1. This will be client 1
+Hardware-3-1-1-1              : start benchmarking (benchmark_run=1)
+Hardware-3-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-3                    : benchmarking results in folder D:\data\benchmarks/1783172304
+- waiting 10s -               : done
+Hardware-3                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-3-1783172304-1-1-1-lrkl9: found
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-4-1783172304 initialized to 1.
+Hardware-4                    : benchmarks done 0 of 1. This will be client 1
+Hardware-4-1-1-1              : start benchmarking (benchmark_run=1)
+Hardware-4-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-4                    : benchmarking results in folder D:\data\benchmarks/1783172304
+- waiting 10s -               : done
+Hardware-4                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-4-1783172304-1-1-1-rdkqc: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Hardware-2                    : has running benchmarks
+Hardware-3                    : has running benchmarks
+Hardware-4                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783172304/Hardware-1-1-1-1.config
+Hardware-1-1-1-1              : showing benchmarker times
+Hardware-1-1-1-1              : benchmarker timespan job from 1783172355 to 1783172521
+Hardware-1-1-1-1              : benchmarker timespan pods from 1783172435 to 1783172499
+Hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 64
+Hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1783172435, 1783172499)]
+Hardware-1-1-1-1              : found and updated times {'benchmarker': [(1783172435, 1783172499)]}
+Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1-1-1-1              : collecting execution metrics of SUT at connection Hardware-1-1-1-1
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783172304(.*)", pod=~"(.*)hardware-1-1783172304(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-1-1              : collecting metrics of benchmarker at connection Hardware-1-1-1-1
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783172304(.*)", pod=~"(.*)hardware-1-1783172304(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-2-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783172304/Hardware-2-1-1-1.config
+Hardware-2-1-1-1              : showing benchmarker times
+Hardware-2-1-1-1              : benchmarker timespan job from 1783172380 to 1783172534
+Hardware-2-1-1-1              : benchmarker timespan pods from 1783172435 to 1783172502
+Hardware-2-1-1-1              : benchmarker timespan (start to end single container [s]) = 67
+Hardware-2-1-1-1              : benchmarker times (start/end per pod and container) = [(1783172435, 1783172502)]
+Hardware-2-1-1-1              : found and updated times {'benchmarker': [(1783172435, 1783172502)]}
+Hardware-2-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-2-1-1-1              : collecting execution metrics of SUT at connection Hardware-2-1-1-1
+Hardware-2-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-2-1783172304(.*)", pod=~"(.*)hardware-2-1783172304(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-2-1-1-1              : collecting metrics of benchmarker at connection Hardware-2-1-1-1
+Hardware-2-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-2-1783172304(.*)", pod=~"(.*)hardware-2-1783172304(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-3-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783172304/Hardware-3-1-1-1.config
+Hardware-3-1-1-1              : showing benchmarker times
+Hardware-3-1-1-1              : benchmarker timespan job from 1783172405 to 1783172548
+Hardware-3-1-1-1              : benchmarker timespan pods from 1783172435 to 1783172497
+Hardware-3-1-1-1              : benchmarker timespan (start to end single container [s]) = 62
+Hardware-3-1-1-1              : benchmarker times (start/end per pod and container) = [(1783172435, 1783172497)]
+Hardware-3-1-1-1              : found and updated times {'benchmarker': [(1783172435, 1783172497)]}
+Hardware-3-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-3-1-1-1              : collecting execution metrics of SUT at connection Hardware-3-1-1-1
+Hardware-3-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-3-1783172304(.*)", pod=~"(.*)hardware-3-1783172304(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-3-1-1-1              : collecting metrics of benchmarker at connection Hardware-3-1-1-1
+Hardware-3-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-3-1783172304(.*)", pod=~"(.*)hardware-3-1783172304(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-4-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783172304/Hardware-4-1-1-1.config
+Hardware-4-1-1-1              : showing benchmarker times
+Hardware-4-1-1-1              : benchmarker timespan job from 1783172431 to 1783172561
+Hardware-4-1-1-1              : benchmarker timespan pods from 1783172435 to 1783172499
+Hardware-4-1-1-1              : benchmarker timespan (start to end single container [s]) = 64
+Hardware-4-1-1-1              : benchmarker times (start/end per pod and container) = [(1783172435, 1783172499)]
+Hardware-4-1-1-1              : found and updated times {'benchmarker': [(1783172435, 1783172499)]}
+Hardware-4-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-4-1-1-1              : collecting execution metrics of SUT at connection Hardware-4-1-1-1
+Hardware-4-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-4-1783172304(.*)", pod=~"(.*)hardware-4-1783172304(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-4-1-1-1              : collecting metrics of benchmarker at connection Hardware-4-1-1-1
+Hardware-4-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-4-1783172304(.*)", pod=~"(.*)hardware-4-1783172304(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1783172304-66bf9895-n7ntf
+Hardware-2                    : can be stopped
+Hardware-2                    : had 0 restarts at worker bexhoma-sut-hardware-2-1783172304-7597944db7-qdgwx
+Hardware-3                    : can be stopped
+Hardware-3                    : had 0 restarts at worker bexhoma-sut-hardware-3-1783172304-588d74db47-2ptfq
+Hardware-4                    : can be stopped
+Hardware-4                    : had 0 restarts at worker bexhoma-sut-hardware-4-1783172304-5f79499b7f-vrvvg
+Experiment                    : ends at 2026-07-04 15:43:40.561467 (77704.3375951) - 315.85s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Hardware Benchmark (sysbench)
+* Type: hardware
+* Duration: 316s 
+* Code: 1783172304
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: sysbench.
+  * Duration per round is 60s, capping each of the CPU and memory phases (see images/hardware/benchmarker/run_sysbench.sh).
+  * Total sysbench thread count(s) swept: [2], split across pod count(s): [1].
+  * CPU phase: sysbench cpu --cpu-max-prime=20000 (fixed).
+  * Memory phase: sysbench memory --memory-block-size=1K --memory-total-size=10G (fixed; may finish before the duration cap if this transfers first).
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [2] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Number of tenants is 4, one container per tenant.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:804616
+  * cpu_list:0-223
+  * requests_cpu:2
+  * requests_memory:16Gi
+  * limits_cpu:2
+  * eval_parameters
+    * code:1783172304
+* Hardware-2-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:804882
+  * cpu_list:0-223
+  * requests_cpu:2
+  * requests_memory:16Gi
+  * limits_cpu:2
+  * eval_parameters
+    * code:1783172304
+* Hardware-3-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:806223
+  * cpu_list:0-223
+  * requests_cpu:2
+  * requests_memory:16Gi
+  * limits_cpu:2
+  * eval_parameters
+    * code:1783172304
+* Hardware-4-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:806934
+  * cpu_list:0-223
+  * requests_cpu:2
+  * requests_memory:16Gi
+  * limits_cpu:2
+  * eval_parameters
+    * code:1783172304
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783172304-66bf9895-n7ntf: 0
+* bexhoma-sut-hardware-2-1783172304-7597944db7-qdgwx: 0
+* bexhoma-sut-hardware-3-1783172304-588d74db47-2ptfq: 0
+* bexhoma-sut-hardware-4-1783172304-5f79499b7f-vrvvg: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-2 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-3 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-4 - Experiment 1 Client 1: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-2 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-3 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-4 - Experiment 1 Client 1: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |        140 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2447.43 |                                60.00 |                               0.83 |                             2914074.81 |                                     2845.78 |                                  0.00 |        0 |
+| Hardware-2-1-1-1-1 | Hardware-2-1-1 | Hardware-2-1-1-1 |                1 |        1 |               1 |       1 |        118 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2445.07 |                                60.00 |                               0.83 |                             1730371.91 |                                     1689.82 |                                  0.00 |        0 |
+| Hardware-3-1-1-1-1 | Hardware-3-1-1 | Hardware-3-1-1-1 |                1 |        1 |               1 |       1 |         88 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2445.52 |                                60.00 |                               0.83 |                             6204183.50 |                                     6058.77 |                                  0.00 |        0 |
+| Hardware-4-1-1-1-1 | Hardware-4-1-1 | Hardware-4-1-1-1 |                1 |        1 |               1 |       1 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2446.26 |                                60.00 |                               0.83 |                             2941059.14 |                                     2872.13 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS             | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   tenant_id |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-----------------|:---------------|-----------------:|---------:|----------------:|------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-0 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |           0 |        140 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2447.43 |                                60.00 |                               0.83 |                             2914074.81 |                                     2845.78 |                                  0.00 |        0 |
+| Hardware-2-1-1-1 | Hardware-2-1-1 |                1 |        1 |               1 |           1 |           1 |        118 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2445.07 |                                60.00 |                               0.83 |                             1730371.91 |                                     1689.82 |                                  0.00 |        0 |
+| Hardware-3-1-1-2 | Hardware-3-1-1 |                1 |        1 |               1 |           1 |           2 |         88 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2445.52 |                                60.00 |                               0.83 |                             6204183.50 |                                     6058.77 |                                  0.00 |        0 |
+| Hardware-4-1-1-3 | Hardware-4-1-1 |                1 |        1 |               1 |           1 |           3 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  2 |                                2446.26 |                                60.00 |                               0.83 |                             2941059.14 |                                     2872.13 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |       122.16 |      2.00 |           0.01 |                  0.01 |
+| Hardware-2-1-1-1 |        71.80 |      2.00 |           0.01 |                  0.01 |
+| Hardware-3-1-1-1 |        90.52 |      1.84 |           0.00 |                  0.00 |
+| Hardware-4-1-1-1 |        72.28 |      2.00 |           0.01 |                  0.01 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         0.23 |      0.01 |           0.00 |                  0.00 |
+| Hardware-2-1-1-1 |         0.41 |      0.01 |           0.00 |                  0.00 |
+| Hardware-3-1-1-1 |         0.30 |      0.01 |           0.00 |                  0.00 |
+| Hardware-4-1-1-1 |         0.25 |      0.01 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero CPU events/sec
