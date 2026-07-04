@@ -185,6 +185,10 @@ if __name__ == '__main__':
                                                             HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
                                                             HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
                                                             HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
+                                                            # HARDWARE_THREADS is sysbench's own thread count
+                                                            # (--threads); harmless duplication for fio runs,
+                                                            # where it's simply not read by run_fio.sh.
+                                                            HARDWARE_THREADS=str(benchmarking_threads_per_pod),
                                                             BEXHOMA_TENANT_BY=config.tenant_per,
                                                             BEXHOMA_TENANT_NUM=config.num_tenants,
                                                             BEXHOMA_TENANT_ID=tenant,
@@ -229,6 +233,10 @@ if __name__ == '__main__':
                                                         HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
                                                         HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
                                                         HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
+                                                        # HARDWARE_THREADS is sysbench's own thread count
+                                                        # (--threads); harmless duplication for fio runs,
+                                                        # where it's simply not read by run_fio.sh.
+                                                        HARDWARE_THREADS=str(benchmarking_threads_per_pod),
                                                     )
             config.add_benchmark_list(executor_list)
     ##############

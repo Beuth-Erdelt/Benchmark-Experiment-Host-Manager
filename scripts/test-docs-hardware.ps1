@@ -68,7 +68,7 @@ bexhoma hardware `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
   -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rss 80Gi                        <# fio makes one -xts-sized file per numjobs thread; 16*4G=64G peak, so 50Gi is not enough #> `
   -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
@@ -299,7 +299,7 @@ bexhoma hardware `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
   -tr                              <# verify result meets basic sanity requirements #> `
   -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rss 150Gi                       <# fio makes one -xts-sized file per backend; 32*4G=128G peak, so 50Gi is not enough #> `
   -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
@@ -405,6 +405,137 @@ bexhoma hardware `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_oltp_wal_contention_proxy.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k  iodepth=64"
+
+
+###########################################
+##### Sysbench CPU noisy-neighbor #########
+###########################################
+# The four commands below all use -xht sysbench (CPU/memory, no disk I/O, so no
+# -rst/-rss/-rsr needed) and share one investigation: does a Kubernetes CPU
+# limit (-lc) on the SUT container actually isolate co-located workloads, and
+# how much of that isolation survives once you look at the harness rather than
+# the cgroup itself. Command 13 calibrates the per-pod saturation point;
+# 14/15 are cheap single-SUT sanity checks that don't need a second SUT pod;
+# 16 is the actual noisy-neighbor test, co-locating several independent SUT
+# pods (via -mtn/-mtb container) on one node.
+
+
+#### 13. Sysbench CPU-quota calibration (thread sweep)
+# Single SUT pod, -lc/-rc 2 (hard 2-core ceiling, request==limit so no
+# bursting). Sweeps sysbench's own thread count (-nbt) at fixed -nbp 1: events
+# per second should roughly double from 1->2 threads, then flatten for 4 and 8
+# (a 2-core cgroup can't run more concurrent CPU-bound threads than it has
+# cores), and -mc's CPU utilization for this SUT container should plateau at
+# ~2 cores from -nbt=2 onward. The threads-per-pod value found here where
+# events/sec first plateaus is the "saturation point" used as a fixed
+# parameter in commands 14-16.
+bexhoma hardware `
+  -dbms Hardware                    <# hardware target(s) to test #> `
+  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -nbp 1                             <# benchmarking pod count, fixed #> `
+  -nbt 1,2,4,8                       <# sysbench --threads to sweep (comma-separated) #> `
+  -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
+  -m                                 <# collect SUT resource metrics #> `
+  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
+  -tr                                <# verify result meets basic sanity requirements #> `
+  -lc 2                              <# CPU limit for the SUT pod: calibration ceiling #> `
+  -rc 2                              <# CPU request for the SUT pod, matches -lc #> `
+  -rnn $BEXHOMA_NODE_SUT             <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_cpu_quota_calibration.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench CPU quota calibration  lc=2  threads=1,2,4,8"
+
+
+#### 14. Sysbench harness-overhead sweep (-nbp)
+# Same fixed total of 4 sysbench threads against the same -lc 2 SUT, but
+# re-partitioned across a growing number of separate benchmarker pods/SSH
+# sessions (-nbp 1,2,4) instead of separate --threads inside one pod. Since
+# the SUT's cgroup quota doesn't care about client-side process boundaries,
+# aggregate events/sec should stay flat across all three rounds; a
+# measurable drop as -nbp grows would point to benchmarker-side overhead
+# (extra SSH sessions, extra pod-sync latency), not a hardware/cgroup finding.
+bexhoma hardware `
+  -dbms Hardware                    <# hardware target(s) to test #> `
+  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -nbp 1,2,4                         <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 4                             <# total sysbench threads, fixed, split across -nbp #> `
+  -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
+  -m                                 <# collect SUT resource metrics #> `
+  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
+  -tr                                <# verify result meets basic sanity requirements #> `
+  -lc 2                              <# CPU limit for the SUT pod, fixed #> `
+  -rc 2                              <# CPU request for the SUT pod, matches -lc #> `
+  -rnn $BEXHOMA_NODE_SUT             <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_nbp_overhead_sweep.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods=1,2,4"
+
+
+#### 15. Sysbench shared-SUT saturation sweep (-ne)
+# Same -lc 2 SUT, but this time -ne actually grows total demand: each
+# additional parallel client submits another full -nbt-threads pod (see
+# hardware.py, benchmarking_pods_scaled = num_executor * benchmarking_pods),
+# so -ne 1,2,4,8 at -nbt 2 -nbp 1 pushes 2, 4, 8, then 16 total sysbench
+# threads against the same fixed 2-core cgroup, all in one shared container -
+# no second SUT pod involved. Aggregate events/sec should plateau once total
+# demand exceeds ~2 cores' worth of throughput; this is the oversubscription
+# curve for a single shared cgroup, the baseline command 16 compares against.
+bexhoma hardware `
+  -dbms Hardware                    <# hardware target(s) to test #> `
+  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -nbp 1                             <# benchmarking pod count, fixed #> `
+  -nbt 2                             <# threads per benchmarking pod, fixed at the saturation point #> `
+  -ne 1,2,4,8                        <# parallel client counts to sweep (comma-separated) #> `
+  -m                                 <# collect SUT resource metrics #> `
+  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
+  -tr                                <# verify result meets basic sanity requirements #> `
+  -lc 2                              <# CPU limit for the SUT pod, fixed #> `
+  -rc 2                              <# CPU request for the SUT pod, matches -lc #> `
+  -rnn $BEXHOMA_NODE_SUT             <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_ne_saturation_sweep.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench ne saturation sweep  lc=2  threads=2  clients=1,2,4,8"
+
+
+#### 16. Sysbench co-located noisy-neighbor test (-mtn/-mtb container)
+# The actual cross-tenant test: -mtn 4 -mtb container creates 4 independent
+# SutConfiguration objects (4 separate SUT pods, 4 separate cgroups, see
+# hardware.py), each -lc/-rc 2 like command 13, all pinned to the same node
+# via -rnn. BEXHOMA_TENANT_BY=container makes every tenant's benchmarker pod
+# wait on one shared experiment-level Redis counter before starting sysbench
+# (see images/hardware/benchmarker/benchmarker.sh), so all four 2-thread
+# sysbench runs begin at the same synchronized instant instead of drifting
+# apart with each pod's own scheduling jitter. Compare each tenant's
+# events/sec (get_summary_benchmark_per_phase_multitenant groups one row per
+# tenant) against the single-pod baseline from command 13 at threads=2: flat
+# per-tenant throughput means Kubernetes' CPU quotas actually isolate
+# co-located pods on this node; a per-tenant dip points to contention the
+# quotas don't cover (shared LLC, memory bandwidth).
+bexhoma hardware `
+  -dbms Hardware                    <# hardware target(s) to test #> `
+  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -nbp 1                             <# benchmarking pod count per tenant, fixed #> `
+  -nbt 2                             <# threads per benchmarking pod, fixed at the saturation point #> `
+  -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
+  -m                                 <# collect SUT resource metrics #> `
+  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
+  -tr                                <# verify result meets basic sanity requirements #> `
+  -lc 2                              <# CPU limit per tenant SUT pod #> `
+  -rc 2                              <# CPU request per tenant SUT pod, matches -lc #> `
+  -mtb container                     <# tenancy granularity: one SUT pod per tenant #> `
+  -mtn 4                             <# number of co-located tenants (SUT pods) #> `
+  -rnn $BEXHOMA_NODE_SUT             <# schedule every tenant's SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_noisy_neighbor.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench noisy-neighbor test  lc=2  threads=2  tenants=4"
 
 
 ###########################################

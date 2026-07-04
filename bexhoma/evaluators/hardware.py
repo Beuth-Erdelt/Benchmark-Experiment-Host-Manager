@@ -2,8 +2,9 @@
 Evaluator for Hardware (fio/sysbench) experiments.
 
 Provides :class:`HardwareEvaluator`, which extends :class:`LogEvaluator` to parse and
-aggregate fio disk I/O results (IOPS, bandwidth, completion-latency percentiles)
-produced by ``images/hardware/benchmarker``.
+aggregate fio disk I/O results (IOPS, bandwidth, completion-latency percentiles) and
+sysbench CPU/memory results (events/sec, throughput, completion latency) produced by
+``images/hardware/benchmarker``.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -18,15 +19,16 @@ from .logger import LogEvaluator
 
 __all__ = ["HardwareEvaluator"]
 
-# KEY:VALUE lines echoed by benchmarker.sh (identity/scaling) and run_fio.sh
-# (workload parameters and results); see images/hardware/benchmarker/*.sh.
+# KEY:VALUE lines echoed by benchmarker.sh (identity/scaling), run_fio.sh
+# (fio parameters/results) and run_sysbench.sh (sysbench results); see
+# images/hardware/benchmarker/*.sh.
 _KEYS_IDENTITY = [
     'BEXHOMA_CONNECTION', 'BEXHOMA_CONFIGURATION', 'BEXHOMA_EXPERIMENT',
     'BEXHOMA_EXPERIMENT_RUN', 'BEXHOMA_CLIENT', 'BEXHOMA_BENCHMARK_RUN',
     'BEXHOMA_CHILD', 'BEXHOMA_NUM_PODS',
 ]
 _KEYS_PARAMETERS = [
-    'HARDWARE_TYPE', 'HARDWARE_SIZE', 'HARDWARE_DURATION',
+    'HARDWARE_TYPE', 'HARDWARE_SIZE', 'HARDWARE_DURATION', 'HARDWARE_THREADS',
     'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
     'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
     'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
@@ -37,6 +39,11 @@ _KEYS_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
 for _label in _PERCENTILE_LABELS:
     _KEYS_RESULTS.append(f'HARDWARE_FIO_READ_LAT_{_label}_MS')
     _KEYS_RESULTS.append(f'HARDWARE_FIO_WRITE_LAT_{_label}_MS')
+_KEYS_RESULTS += [
+    'HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC', 'HARDWARE_SYSBENCH_CPU_TOTAL_TIME_S',
+    'HARDWARE_SYSBENCH_CPU_LAT_P95_MS', 'HARDWARE_SYSBENCH_MEMORY_OPS_PER_SEC',
+    'HARDWARE_SYSBENCH_MEMORY_THROUGHPUT_MIBPS', 'HARDWARE_SYSBENCH_MEMORY_LAT_P95_MS',
+]
 
 _NATURAL_SORT_DIGIT_WIDTH = 10  # zero-pad width; comfortably covers phase strings like "Hardware-1-1-128"
 
@@ -61,11 +68,12 @@ class HardwareEvaluator(LogEvaluator):
     Evaluator for a Hardware (fio) experiment.
 
     Parses per-pod log files for the ``KEY:VALUE`` parameter and result lines
-    echoed by ``benchmarker.sh``/``run_fio.sh`` and assembles them into
-    DataFrames. Aggregation over parallel pods follows the same pattern as the
-    other logger-based evaluators. ``HARDWARE_TYPE=sysbench`` logs are parsed
-    for identity columns only — the CPU/memory result columns are not yet
-    extracted.
+    echoed by ``benchmarker.sh``/``run_fio.sh``/``run_sysbench.sh`` and assembles
+    them into DataFrames. Aggregation over parallel pods follows the same pattern
+    as the other logger-based evaluators. A given experiment runs either fio or
+    sysbench rounds (``-xht`` is not swept), so the columns of the inactive tool
+    are always present but filled with ``0``, the same convention already used
+    for fio's own read/write split.
 
     :param code: Experiment identifier — also the name of the result sub-folder.
     :param path: Root path that contains the result folders.
@@ -76,10 +84,11 @@ class HardwareEvaluator(LogEvaluator):
         """
         Parses a Hardware pod log file into a DataFrame.
 
-        Extracts identity fields, fio workload parameters, and — for
-        ``HARDWARE_TYPE=fio`` — IOPS, bandwidth, and completion-latency
-        percentiles from the ``KEY:VALUE`` lines echoed by
-        ``benchmarker.sh``/``run_fio.sh``.
+        Extracts identity fields, workload parameters, and — depending on
+        ``HARDWARE_TYPE`` — either fio's IOPS/bandwidth/completion-latency
+        percentiles or sysbench's CPU events/sec and memory throughput/latency,
+        from the ``KEY:VALUE`` lines echoed by
+        ``benchmarker.sh``/``run_fio.sh``/``run_sysbench.sh``.
 
         :param filename: Absolute path to the Hardware benchmarker log file.
         :type filename: str
@@ -158,6 +167,7 @@ class HardwareEvaluator(LogEvaluator):
             'experiment_run': 'int', 'code': 'int', 'client': 'int', 'benchmark_run': 'int',
             'child': 'int', 'pod': 'str', 'pod_count': 'int', 'errors': 'int',
             'hardware_type': 'str', 'hardware_size': 'str', 'hardware_duration': 'float',
+            'hardware_threads': 'int',
             'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
             'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
@@ -178,9 +188,10 @@ class HardwareEvaluator(LogEvaluator):
         """
         Aggregates parallel-pod Hardware result rows into one row per group.
 
-        Groups by ``columns``; IOPS and bandwidth columns are summed across
-        pods (aggregate throughput), latency percentile columns take the max
-        across pods (worst observed tail latency).
+        Groups by ``columns``; IOPS, bandwidth, events/sec and throughput
+        columns are summed across pods (aggregate throughput), latency
+        percentile columns take the max across pods (worst observed tail
+        latency).
 
         :param df: Typed Hardware benchmarking DataFrame.
         :type df: pandas.DataFrame
@@ -195,10 +206,12 @@ class HardwareEvaluator(LogEvaluator):
                 'code': 'max', 'job': 'max', 'client': 'max', 'benchmark_run': 'max',
                 'pod': 'sum', 'pod_count': 'count', 'errors': 'sum',
                 'hardware_duration': 'max', 'hardware_fio_numjobs': 'sum',
+                'hardware_threads': 'sum', 'hardware_sysbench_cpu_total_time_s': 'max',
                 'tenant_id': 'min',
             }
             for col in grp.columns:
-                if col.endswith('_iops') or col.endswith('_kbps'):
+                if (col.endswith('_iops') or col.endswith('_kbps')
+                        or col.endswith('_per_sec') or col.endswith('_mibps')):
                     aggregate[col] = 'sum'
                 elif col.endswith('_ms'):
                     aggregate[col] = 'max'
@@ -237,7 +250,11 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_fio_rwmixread', 'hardware_fio_numjobs',
             'hardware_fio_read_iops', 'hardware_fio_write_iops',
             'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
-            'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
+            'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+            'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
+            'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
+            'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
+            'hardware_sysbench_memory_lat_p95_ms', 'errors',
         ]
         df.fillna(0, inplace=True)
         df_plot = self.benchmarking_set_datatypes(df)
@@ -272,7 +289,11 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_fio_rwmixread',
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
-                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
+                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+                'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
+                'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
+                'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
+                'hardware_sysbench_memory_lat_p95_ms', 'errors',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -310,7 +331,11 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_fio_rwmixread',
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
-                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
+                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+                'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
+                'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
+                'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
+                'hardware_sysbench_memory_lat_p95_ms', 'errors',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -322,15 +347,19 @@ class HardwareEvaluator(LogEvaluator):
     def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
                      workflow_actual: dict, workflow_planned: dict, **extra) -> None:
         """
-        Record Hardware pass/fail tests: workflow completeness and, for fio, that
-        every round measured something on at least one of read/write.
+        Record Hardware pass/fail tests: workflow completeness and, depending on
+        ``HARDWARE_TYPE``, that every round measured something.
 
-        A round with both ``hardware_fio_read_iops`` and ``hardware_fio_write_iops``
+        A fio round with both ``hardware_fio_read_iops`` and ``hardware_fio_write_iops``
         at 0 did not produce a usable fio measurement (e.g. a full PVC or a local
         disk-quota error while collecting results, as seen for round 10 of
         experiment 1783115274) rather than a legitimate all-zero result — a
         ``randread`` round always has 0 write IOPS and vice versa, so only the
-        combination of both being 0 indicates a failed round.
+        combination of both being 0 indicates a failed round. A sysbench round
+        with 0 CPU events/sec did not produce a usable CPU measurement (the
+        memory sub-test can legitimately run with 0 CPU events only if
+        ``HARDWARE_THREADS`` starves the CPU test, which does not happen with the
+        image's fixed CPU-then-memory sequence, so 0 always indicates a failure).
 
         :param experiment: The owning experiment object.
         :param df_loading: Per-run loading DataFrame; always empty for Hardware.
@@ -354,4 +383,12 @@ class HardwareEvaluator(LogEvaluator):
                     passed,
                     "Execution Phase: every round has non-zero read or write IOPS" if passed
                     else "Execution Phase: at least one round has 0 IOPS for both read and write"
+                )
+            has_sysbench_columns = 'hardware_sysbench_cpu_events_per_sec' in df_reduced.columns
+            if hardware_type == 'sysbench' and not df_reduced.empty and has_sysbench_columns:
+                passed = not (df_reduced['hardware_sysbench_cpu_events_per_sec'] == 0).any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero CPU events/sec" if passed
+                    else "Execution Phase: at least one round has 0 CPU events/sec"
                 )

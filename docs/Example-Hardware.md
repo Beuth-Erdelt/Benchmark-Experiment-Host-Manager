@@ -46,11 +46,22 @@ mkdir -p $LOG_DIR
 ```
 
 Unlike every other entry script, `hardware.py` has no loader — there is nothing to import
-before benchmarking, so every command below goes straight to `run`. All twelve commands share
-the same `Hardware-1` SUT/PVC and run **sequentially**; two `hardware.py run` invocations must
-never overlap in time, because the PVC name is fixed (`storage_label='hardware'`, not scoped by
-experiment code) and a second SUT pod would either fail to attach the volume or silently write
-into the same test-file path as the first (see the project notes on `-rsr` and PVC sharing).
+before benchmarking, so every command below goes straight to `run`. The page covers two groups
+of commands: twelve `-xht fio` disk-I/O commands, and four `-xht sysbench` CPU/memory commands.
+
+The twelve fio commands all share the same `Hardware-1` SUT/PVC and run **sequentially**; two
+`hardware.py run` invocations must never overlap in time, because the PVC name is fixed
+(`storage_label='hardware'`, not scoped by experiment code) and a second SUT pod would either
+fail to attach the volume or silently write into the same test-file path as the first (see the
+project notes on `-rsr` and PVC sharing). Each of them passes `-rsr` so it starts from a freshly
+recreated, empty volume rather than inheriting whatever an earlier command left on the PVC — fio
+creates one full `-xts`-sized file per `numjobs` thread with no cleanup between rounds by
+default, so `-rss` is sized per command to the largest single round it will run (most stay at the
+default `50Gi`; the numjobs and group-commit sweeps go up to `80Gi`/`150Gi` since they sweep
+`numjobs` as high as 16/32).
+
+The four sysbench commands (13-16) are CPU/memory only — no disk I/O, so none of them use
+`-rst`/`-rss`/`-rsr` and the PVC-sharing constraint above doesn't apply to them.
 
 The fio workload flags (`-xfrw`, `-xfbs`, `-xfid`, `-xfe`, `-xfsy`, `-xffd`, `-xfmx`) each accept
 a comma-separated list. Every combination across the lists is run as one more sequential round
@@ -85,8 +96,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_depth_sweep.log
 ```
@@ -530,8 +542,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_depth_sweep_refine.log
 ```
@@ -834,8 +847,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
+  -rsr \
+  -rss 80Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_numjobs_sweep.log
 ```
@@ -1161,8 +1175,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_blocksize_sweep.log
 ```
@@ -1553,8 +1568,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_depth_sweep_8k.log
 ```
@@ -1988,8 +2004,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_random_page_cost.log
 ```
@@ -2144,8 +2161,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_sync_fsync.log
 ```
@@ -2273,8 +2291,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_sync_fdatasync.log
 ```
@@ -2405,8 +2424,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
+  -rsr \
+  -rss 150Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_group_commit.log
 ```
@@ -2641,8 +2661,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_record_size.log
 ```
@@ -2852,8 +2873,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_checkpoint_writeback.log
 ```
@@ -3092,8 +3114,9 @@ bexhoma hardware \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
-  -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_oltp_wal_contention_proxy.log
 ```
@@ -3224,15 +3247,156 @@ in particular) precisely because they were measured on this cluster's actual sto
 assumed — re-run against your own storage class and node hardware before trusting a config change
 derived from them, and keep `-rnn` consistent across commands you intend to compare directly.
 
-## Sysbench CPU and RAM benchmarks
+## Sysbench CPU noisy-neighbor benchmarks
 
-*(planned — not yet implemented)*
+Unlike the fio sweeps above, these four commands (`-xht sysbench`) are not about
+characterizing storage — they use no disk I/O at all, so none of them need `-rst`/`-rss`/`-rsr`.
+The question they investigate is whether a Kubernetes CPU limit (`-lc`) on the SUT container
+actually **isolates** co-located workloads from each other, the way it's supposed to. Command 13
+calibrates the per-pod saturation point; 14 and 15 are cheap sanity checks against a single SUT
+(no second SUT pod needed); 16 is the actual cross-tenant test.
 
-`-xht sysbench` already exists as a `hardware_type` choice, and the evaluator (see
-`bexhoma/evaluators/hardware.py`) already parses the identity columns from a sysbench log; what's
-missing is the CPU/memory result parsing itself and a set of `test-docs-hardware.ps1` commands
-analogous to the fio sweeps above. This section will cover CPU throughput and memory
-bandwidth/latency sweeps once that lands.
+References:
+1. sysbench: https://github.com/akopytov/sysbench
+1. Kubernetes CPU limits and CFS quota: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+
+### 13. CPU-quota calibration (thread sweep)
+
+A single SUT pod, `-lc 2 -rc 2` (request equals limit, so the CPU quota is a hard ceiling, not a
+burstable one), sweeping sysbench's own thread count (`-nbt`) at a fixed `-nbp 1`:
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sysbench \
+  -nbp 1 \
+  -nbt 1,2,4,8 \
+  -ne 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 2 \
+  -rc 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sysbench_cpu_quota_calibration.log
+```
+
+Expected shape: `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC` should roughly double from 1 to 2 threads,
+then flatten across 4 and 8 threads — a 2-core cgroup cannot run more concurrent CPU-bound
+threads than it has cores, no matter how many the workload offers it. `-mc`'s node-level CPU
+utilization for this SUT container should plateau at ~2 cores from `-nbt=2` onward, confirming the
+monitoring pipeline actually reflects the cgroup quota rather than host-wide usage. The
+thread count where events/sec first plateaus is the "saturation point" (2, on a 2-core limit)
+used as a fixed parameter in commands 14-16.
+
+### 14. Harness-overhead sweep (`-nbp`)
+
+The same fixed total of 4 sysbench threads against the same `-lc 2` SUT, but re-partitioned
+across a growing number of separate benchmarker pods/SSH sessions (`-nbp`) instead of more
+`--threads` inside one pod:
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sysbench \
+  -nbp 1,2,4 \
+  -nbt 4 \
+  -ne 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 2 \
+  -rc 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sysbench_nbp_overhead_sweep.log
+```
+
+`hardware.py` computes `threads_per_pod = -nbt / -nbp`, so the *total* sysbench thread count
+stays at 4 across all three rounds — only the number of separate pods carrying them changes (1
+pod × 4 threads, 2 pods × 2 threads, 4 pods × 1 thread). Since the SUT's cgroup quota doesn't
+care about client-side process boundaries, aggregate `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC`
+should stay flat across all three rounds. A measurable drop as `-nbp` grows points to
+benchmarker-side overhead (extra SSH sessions, extra pod-sync latency via the Redis counters in
+`experiments/base.py`), not a hardware or cgroup finding — a useful check before trusting any
+multi-pod comparison later.
+
+### 15. Shared-SUT saturation sweep (`-ne`)
+
+The same `-lc 2` SUT, but this time `-ne` actually grows total demand instead of just
+re-partitioning it — each additional parallel client submits another full `-nbt`-threads pod
+(`benchmarking_pods_scaled = num_executor * benchmarking_pods` in `hardware.py`):
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sysbench \
+  -nbp 1 \
+  -nbt 2 \
+  -ne 1,2,4,8 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 2 \
+  -rc 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sysbench_ne_saturation_sweep.log
+```
+
+At `-nbt 2 -nbp 1`, `-ne 1,2,4,8` pushes 2, 4, 8, then 16 total sysbench threads against the same
+fixed 2-core cgroup — all inside **one** shared SUT container, no second SUT pod involved.
+Aggregate events/sec should plateau once total demand exceeds roughly 2 cores' worth of
+throughput; this single-cgroup oversubscription curve is the baseline that command 16's
+cross-tenant result gets compared against.
+
+### 16. Co-located noisy-neighbor test (`-mtn`/`-mtb container`)
+
+The actual cross-tenant test. `-mtn 4 -mtb container` creates 4 independent `SutConfiguration`
+objects — 4 separate SUT pods, 4 separate cgroups — each `-lc 2 -rc 2` like command 13, all
+pinned to the same physical node via `-rnn`:
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sysbench \
+  -nbp 1 \
+  -nbt 2 \
+  -ne 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 2 \
+  -rc 2 \
+  -mtb container \
+  -mtn 4 \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sysbench_noisy_neighbor.log
+```
+
+`BEXHOMA_TENANT_BY=container` makes every tenant's benchmarker pod wait on one shared
+experiment-level Redis counter (`bexhoma-benchmarker-podcount-exp-<experiment>`, see
+`images/hardware/benchmarker/benchmarker.sh`) before starting sysbench, so all four 2-thread runs
+begin at the same synchronized instant instead of drifting apart with each pod's own scheduling
+jitter — otherwise a pod that happens to start stressing the node a few seconds before another
+would make the comparison meaningless. `get_summary_benchmark_per_phase_multitenant()` groups the
+result by `(phase, tenant_id)`, giving one row per co-located SUT pod. Compare each tenant's
+`HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC` against the single-pod baseline from command 13 at
+`threads=2`: flat per-tenant throughput means Kubernetes' CPU quotas actually isolate co-located
+pods on this node; a per-tenant dip below that baseline points to contention the CPU quota alone
+doesn't cover — shared last-level cache or memory bandwidth are the usual suspects, since CFS
+quota only accounts for CPU time, not the cache/bandwidth a core's neighbor also draws on.
+
+### Result
+
+*(pending a run against a live cluster — unlike the fio sweeps above, these four commands have
+not yet been executed against real hardware, so no captured `Result` tables are included here.
+The commands are ready to run as-is via
+[`scripts/test-docs-hardware.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-hardware.ps1)
+commands 13-16; this section should be filled in with real log output the same way the fio
+sections above were, rather than with invented numbers.)*
 
 ## Adjust Parameters
 
