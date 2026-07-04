@@ -5,3 +5,10 @@
 .wy-side-nav-search > div.version {
     color: #5A6B85;
 }
+/* Mobile top bar: dark background so the white hamburger icon stays visible */
+.wy-nav-top {
+    background: #1B2A4A;
+}
+.wy-nav-top a {
+    color: #FFFFFF;
+}
