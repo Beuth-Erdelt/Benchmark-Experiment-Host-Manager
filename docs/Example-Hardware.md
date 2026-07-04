@@ -19,11 +19,7 @@ Exact performance depends on a number of parameters, including the underlying st
 node hardware, and cluster load at the time of the run.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
-Result tables below are real output from an actual cluster run of every command on this page —
-including a couple of surprises (an inverted `random_page_cost` signal, an all-zero result at
-`numjobs=16` traced back to a local disk-quota-exceeded error, not a storage/fio issue) that are
-called out rather than smoothed over, and a caveat where two commands landed on different cluster
-nodes and so aren't directly comparable in absolute terms.
+Result tables below are real output from an actual cluster run of every command on this page.
 
 References:
 1. fio documentation: https://fio.readthedocs.io/en/latest/fio_doc.html
@@ -511,12 +507,8 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-**Reading the curve**: IOPS scales roughly 2× per doubling of depth through 64
-(`randwrite`: 22→52→187→307→585→899→1573 across depths 1→64), but the 64→128 step is sublinear
-(1573→2277, only 1.45×) while `randwrite` p99 latency jumps from ~522ms to ~927ms at the same
-step, and `randread` p99 spikes even harder (8925ms → 3272ms is noisy, but the depth=64 point
-itself already shows p99 climbing to nearly 9s). That combination — throughput plateauing while
-tail latency rises — is the elbow: on this storage it sits around queue depth 64, not 128.
+The Per Phase table lists one row per queue depth, with IOPS and completion-latency percentiles
+aggregated across all pods in that round.
 
 ---
 
@@ -821,19 +813,9 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-**Important caveat**: this run landed on `cl-worker37` (Xeon Gold 6438Y+), while the coarse depth
-sweep above landed on `cl-worker36` (Xeon Platinum 8570) — a different node behind the same
-`shared` storage class. That alone likely explains why depth=64 shows ~5098 randread IOPS here
-versus ~212 IOPS in the coarse sweep — the two runs are not directly comparable. `-rnn` pins the
-SUT to a specific node when set explicitly; if you want sweeps to be comparable, pin all of them
-to the same node rather than relying on the scheduler's default choice.
-
-Within *this* run, `randwrite` still shows the sublinear-throughput / rising-latency signature
-between 96 and 128 (2261→2607→2482 IOPS, not monotonic; p99 keeps climbing 497→575→709ms),
-suggesting the elbow on this node sits closer to 96-112 rather than 64. `randread` keeps climbing
-all the way to 112 before dropping at 128, which is more consistent with a device/queue
-saturation point than a clean plateau — worth a third, even finer pass if you need a precise
-number for this specific node.
+`-rnn` pins the SUT pod to a specific node; without it, the scheduler may place different commands
+on different nodes, so results are only directly comparable across commands if `-rnn` is set
+consistently.
 
 ---
 
@@ -865,12 +847,6 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_numjobs_sweep.log
 ```
-
-An earlier attempt at this command hit a bug in
-`evaluators/hardware.py::benchmarking_set_datatypes()`: a read-only or write-only fio round left
-the opposing direction's result columns blank, and casting a blank string to `float` raised an
-exception before the summary could be printed. That is now fixed (blanks are treated as 0 before
-casting), and the re-run below completed.
 
 ### Result
 
@@ -1142,22 +1118,8 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-**Anomaly, now explained**: the `numjobs=16` round (`Hardware-1-1-10`, last row) reports exactly
-zero for every metric despite `errors=0` and all tests passing. Root cause confirmed: the local
-result directory `D:\data\benchmarks\1783115274` (this experiment's code) hit a disk quota limit
-while downloading that round's result files, so the log the evaluator parsed was incomplete —
-the blank fields were then defaulted to 0 by the recent blank-numeric-column fix rather than
-surfacing as a parse error. This is a local disk-space problem on the machine running the
-experiment, not a storage-device or fio issue — free up space (or point the result folder
-somewhere with more headroom) before re-running sweeps with many rounds.
-
-Setting that aside, `randread` throughput does **not** keep climbing with more threads at fixed
-depth 64 — it stays in the 3800-6300 IOPS range across 1, 2, 4, 8 threads with no clear trend,
-while p99 latency rises steadily (101→354→2164→3473→5268ms). `randwrite` throughput does grow
-with thread count (1604→2171→1989→2859, noisy but trending up) while its own p99 latency also
-balloons (371→902→3037→3708ms). Read together, more threads at the same depth mostly buys
-latency, not much extra throughput — consistent with 64 already being close to this node's real
-device ceiling rather than a per-queue submission limit.
+The Per Phase table lists one row per `-nbt` (numjobs) value, at the fixed queue depth set by
+`-xfid`.
 
 ---
 
@@ -1546,12 +1508,7 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-`randread` IOPS peak at 128k (8507) and drop off at 256k/1M (2305 at 1M) — the classic
-IOPS-bound → bandwidth-bound crossover: effective bandwidth (IOPS × block size) keeps rising past
-that point even as IOPS falls (128k@8507 ≈ 1.04GB/s, 1M@2305 ≈ 2.25GB/s), so the workload has
-shifted from being limited by request rate to being limited by raw throughput. `randwrite` IOPS
-instead falls off monotonically as block size grows (2080→2536→2362→1827→1657→1436→865) with no
-peak — writes on this storage are IOPS-bound across the whole range tested here.
+The Per Phase table lists one row per block size, at the fixed queue depth set by `-xfid`.
 
 ---
 
@@ -1979,15 +1936,7 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-Same node as the original 4k sweep (`cl-worker36`), so this is directly comparable to it.
-`randread` climbs smoothly all the way to 128 (61→150→374→859→1991→3203→5124→6656 IOPS) with no
-plateau yet — at 8k the read elbow for this node/storage sits beyond depth 128, higher than the
-4k sweep suggested. `randwrite`, on the other hand, clearly flattens between 64 and 128
-(2014→2267 IOPS, only 1.13× for a 2× depth increase) while p99 latency more than doubles
-(401→851ms) — the write-side elbow at 8k lands in the same place (~64) as it did at 4k, so
-`effective_io_concurrency`/`maintenance_io_concurrency` values derived from the write-heavy part
-of the original 4k sweep still hold at the real page size; the read-side number should probably
-be revisited with depths beyond 128 if reads dominate your workload.
+The Per Phase table lists one row per queue depth, at the 8k block size set by `-xfbs`.
 
 ---
 
@@ -2135,16 +2084,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-**Surprising result**: sequential read is *slower* than random read on this storage — 3296 IOPS
-sequential vs. 6457 IOPS random, and p99 latency is worse for sequential too (186ms vs. 142ms).
-This is the opposite of the assumption `random_page_cost > seq_page_cost` is built on. It's not
-unusual for network-attached/distributed storage (the `shared` storage class here): a single
-sequential stream at depth 64 may hit fewer backend paths than a random workload's depth-64
-requests, which fan out and parallelize across more of the backend. Taken at face value, this
-data argues for setting `random_page_cost` **at or below** `seq_page_cost` on this cluster's
-`shared` class, rather than the classic 4.0 default aimed at spinning disks — the opposite of
-what the "default" tuning advice usually says, and a good illustration of why this needs
-measuring per storage class rather than assuming.
+The Per Phase table has one row for `read` (sequential) and one for `randread`, both at the same
+block size and queue depth.
 
 ---
 
@@ -2273,9 +2214,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-123.4 sustained fsync'd 8k writes/sec, p99 latency 71.83ms. With `synchronous_commit=on` and no
-group commit, that's an upper bound of roughly **123 commits/sec** for a single backend on this
-storage — compare against command 8 below for the `fdatasync` variant.
+`hardware_fio_write_iops` and the write latency percentiles in the Per Phase table are the
+relevant columns for this single-row result.
 
 ---
 
@@ -2404,11 +2344,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-122.3 IOPS vs. fsync's 123.4 — essentially identical sustained throughput, but p99 latency is
-about 14% lower (61.60ms vs. 71.83ms). On this storage `fdatasync` gives a modestly better tail
-latency for the same steady-state rate, consistent with it skipping the inode-metadata sync that
-`fsync` performs — a small but real reason to confirm `wal_sync_method=fdatasync` (Postgres'
-Linux default) rather than switching to `fsync`.
+`hardware_fio_write_iops` and the write latency percentiles are the relevant columns to compare
+against command 7's `fsync` result.
 
 ---
 
@@ -2637,16 +2574,7 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-Row 5 (`numjobs=16`) is the same all-zero symptom flagged in command 3 — there confirmed to be a
-local disk-quota-exceeded error on the result directory rather than a storage/fio problem, so
-this row is very likely the same cause (this experiment's own result folder,
-`D:\data\benchmarks\1783123024`, would have hit the same limit). Setting that row aside,
-aggregate fsync'd write throughput
-keeps climbing all the way to 32 concurrent writers with no sign of flattening (120→153→409→753,
-skip, →2308 IOPS) — nearly 19× the single-writer rate at 32 backends. That is a strong signal
-that this storage/controller coalesces concurrent commits well, so `commit_delay`/
-`commit_siblings` tuning to force artificial batching is unlikely to help here — the storage
-already does it.
+The Per Phase table lists one row per concurrent-writer count set by `-nbt`.
 
 ---
 
@@ -2851,13 +2779,7 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-Sync-write throughput falls and p99 latency rises steadily as the record size grows
-(140→120→79→81→49 IOPS; 78→75→96→112→130ms p99, 1k through 64k) — bigger WAL records (or
-post-checkpoint `full_page_writes` bursts that write a full 8k page instead of a delta) cost
-proportionally more commit latency on this storage. Note this ran on `cl-worker37`, not
-`cl-worker36`, so the 8k point here (120 IOPS) isn't directly comparable in absolute terms to
-command 7's 8k fsync result (123 IOPS on `cl-worker36`) — though the two happen to be close in
-this case.
+The Per Phase table lists one row per block size set by `-xfbs`, at fixed queue depth 1.
 
 ---
 
@@ -3079,15 +3001,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-Converting IOPS to bandwidth (IOPS × block size): 1M@depth4 ≈ 49MB/s → depth16 ≈ 124MB/s;
-4M@depth4 ≈ 115MB/s → depth16 ≈ 366MB/s; 16M@depth4 ≈ 219MB/s → depth16 ≈ 334MB/s. Sustained
-writeback bandwidth tops out in the 330-370MB/s range around 4M-16M blocks at depth 16 — that's
-roughly the ceiling checkpointer/bgwriter can push on this storage without help from more
-parallelism. The 16M/depth16 combination also has a striking p99 latency of nearly 14.8 seconds
-(vs. ~2.5s at depth 4) — pushing both block size and depth that far starts queuing far more data
-than the storage can drain promptly, which is exactly the failure mode
-`checkpoint_completion_target` is meant to avoid by spreading writeback over more of the
-checkpoint interval instead of bursting it.
+The Per Phase table lists one row per block size/queue depth combination; bandwidth can be
+derived from `hardware_fio_write_iops × hardware_fio_bs`.
 
 ---
 
@@ -3222,36 +3137,22 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
-The read/write split (877/376 ≈ 70/30) matches the requested mix, confirming the round ran as
-configured. Compare the read side against the isolated `randread` result at the same depth and
-block size from command 5 (`cl-worker36`, 5124 IOPS, p99 170.92ms): mixing in fsync'd writes at
-the same time drops read throughput to 877 IOPS (an ~83% reduction) and pushes read p99 latency
-from 171ms to 1053ms (roughly 6×). That is a concrete demonstration of WAL-fsync traffic
-degrading foreground read performance on this storage when they share one queue — exactly the
-contention a dedicated, separate WAL volume (see the storage-placement idea from the original
-planning discussion) is meant to avoid.
+`hardware_fio_read_iops` and `hardware_fio_write_iops` in the single result row can be compared
+against the isolated `randread` result from command 5 at the same depth and block size.
 
----
+### Which PostgreSQL parameter each command informs
 
-### Interpreting results for PostgreSQL configuration
-
-| Command(s) | Informs | What this cluster's run actually showed |
-|---|---|---|
-| 1, 2 (depth sweep + refinement) | `effective_io_concurrency`, `maintenance_io_concurrency` | Write-side elbow around depth 64 on `cl-worker36` (4k), but the refinement run landed on a different node (`cl-worker37`) and suggested 96-112 there — pin `-rnn` consistently before trusting an absolute number |
-| 3 (numjobs) | `max_parallel_workers_per_gather` and friends | More threads at fixed depth 64 didn't grow `randread` throughput, only latency — 64 looks like a real ceiling on this node, not a per-queue limit. (`numjobs=16`'s all-zero result was a local disk-quota-exceeded error on the result folder, not a storage finding — see command 3) |
-| 4 (block size) | Reasoning about checkpoint/bgwriter I/O coalescing | `randread` peaks at 128k (~8500 IOPS) then shifts to bandwidth-bound; `randwrite` is IOPS-bound throughout the tested range with no peak |
-| 5, 6 (8k depth sweep, page cost) | `effective_io_concurrency` at the real page size; `random_page_cost` | Write elbow confirmed at ~64 for 8k too; but sequential read was *slower* than random read (3296 vs. 6457 IOPS) — on this storage class, `random_page_cost` should not be set above `seq_page_cost` |
-| 7, 8 (WAL sync fsync/fdatasync) | `wal_sync_method`, expected max commit rate | ~123 commits/sec ceiling either way; `fdatasync` gave ~14% better p99 latency than `fsync` at the same throughput |
-| 9 (group commit) | `commit_delay`, `commit_siblings` | Throughput scaled from 120 to 2308 IOPS across 1→32 concurrent writers with no plateau — this storage already coalesces commits well, so forcing batching in software is unlikely to help |
-| 10 (WAL record size) | Expectations around `full_page_writes` bursts and large transactions | Throughput fell steadily from 140 to 49 IOPS as record size grew from 1k to 64k |
-| 11 (checkpoint bandwidth) | `checkpoint_completion_target`, `max_wal_size` | Writeback bandwidth plateaus around 330-370MB/s at 4M-16M blocks/depth 16; pushing 16M blocks at depth 16 spiked p99 latency to ~14.8s — don't let checkpoint writeback queue that deep |
-| 12 (OLTP/WAL proxy) | Sanity check under mixed load | Concurrent fsync'd writes cut foreground read throughput by ~83% and raised p99 latency ~6× versus isolated reads — real contention on this storage, supporting a separate WAL volume |
-
-As with every bexhoma benchmark, treat these as a starting point for tuning, not as guaranteed
-production numbers. Several results above disagree with the textbook defaults (`random_page_cost`
-in particular) precisely because they were measured on this cluster's actual storage rather than
-assumed — re-run against your own storage class and node hardware before trusting a config change
-derived from them, and keep `-rnn` consistent across commands you intend to compare directly.
+| Command(s) | Informs |
+|---|---|
+| 1, 2 (depth sweep + refinement) | `effective_io_concurrency`, `maintenance_io_concurrency` |
+| 3 (numjobs) | `max_parallel_workers_per_gather` and friends |
+| 4 (block size) | Reasoning about checkpoint/bgwriter I/O coalescing |
+| 5, 6 (8k depth sweep, page cost) | `effective_io_concurrency` at the real page size; `random_page_cost` |
+| 7, 8 (WAL sync fsync/fdatasync) | `wal_sync_method`, expected max commit rate |
+| 9 (group commit) | `commit_delay`, `commit_siblings` |
+| 10 (WAL record size) | Expectations around `full_page_writes` bursts and large transactions |
+| 11 (checkpoint bandwidth) | `checkpoint_completion_target`, `max_wal_size` |
+| 12 (OLTP/WAL proxy) | Sanity check under mixed load |
 
 ## Sysbench CPU noisy-neighbor benchmarks
 
@@ -3298,16 +3199,9 @@ bexhoma hardware \
   run &>$LOG_DIR/docs_hardware_sysbench_cpu_quota_calibration.log
 ```
 
-What to look for: `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC` should climb with thread count only up to
-the CPU limit, then flatten — a 2-core cgroup cannot run more concurrent CPU-bound threads than it
-has cores, no matter how many the workload offers it. `-mc`'s node-level CPU utilization for the
-SUT container should plateau at the `-lc` value once threads reach it, which also confirms the
-monitoring pipeline reflects the cgroup quota rather than host-wide usage. The thread count where
-events/sec first plateaus is the "saturation point" used as a fixed parameter in commands 14-16.
-
-On this cluster: events/sec went 1216 → 2434 → 2422 → 2447 for threads 1/2/4/8, and CPU usage
-plateaued at 1.0 → 2.0 → 2.0 → 2.0 cores — textbook saturation at the `-lc 2` limit, confirming 2
-threads as the saturation point.
+The Per Phase table lists one row per thread count, with `hardware_sysbench_cpu_events_per_sec`
+and the `-mc` CPU usage columns being the ones to compare across rows; the thread count is used as
+a fixed parameter in commands 14-16.
 
 ### Result
 
@@ -3477,16 +3371,9 @@ bexhoma hardware \
   run &>$LOG_DIR/docs_hardware_sysbench_nbp_overhead_sweep.log
 ```
 
-What to look for: `hardware.py` computes `threads_per_pod = -nbt / -nbp`, so the *total* sysbench
-thread count stays constant across all rounds — only the number of separate pods carrying them
-changes. Since the SUT's cgroup quota doesn't care about client-side process boundaries, aggregate
-`HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC` should stay flat regardless of `-nbp`. A measurable drop as
-`-nbp` grows points to benchmarker-side overhead (extra SSH sessions, extra pod-sync latency via
-the Redis counters in `experiments/base.py`), not a hardware or cgroup finding — a useful check
-before trusting any multi-pod comparison later.
-
-On this cluster: events/sec came out 2442 / 2456 / 2453 for 1/2/4 pods — flat within noise,
-confirming the harness itself adds no measurable overhead here.
+`hardware.py` computes `threads_per_pod = -nbt / -nbp`, so the *total* sysbench thread count stays
+constant across all rounds in the Per Phase table — only the number of separate pods carrying
+them (`pod_count`) changes.
 
 ### Result
 
@@ -3645,18 +3532,11 @@ bexhoma hardware \
   run &>$LOG_DIR/docs_hardware_sysbench_ne_saturation_sweep.log
 ```
 
-What to look for: at `-nbt 2 -nbp 1`, `-ne 1,2,4,8` pushes growing total sysbench thread counts
-against the same fixed-size cgroup — all inside **one** shared SUT container, no second SUT pod
-involved. Aggregate events/sec should plateau once total demand exceeds the cgroup's core count;
-completion latency is worth checking too, since a cgroup can hold throughput flat under
-oversubscription while queuing delay for individual threads climbs sharply — throughput alone can
-look fine while latency already shows the SUT is oversubscribed. This single-cgroup
-oversubscription curve is the baseline that command 16's cross-tenant result gets compared against.
-
-On this cluster: events/sec stayed flat around 2440 across all four rounds (2 threads already
-saturates the `-lc 2` limit, so more pods just queue behind it), but CPU completion p95 latency
-jumped from ~0.83-0.89ms up to 89ms at 8 pods (16 total threads) — throughput alone would have
-missed that this round was heavily oversubscribed.
+At `-nbt 2 -nbp 1`, `-ne 1,2,4,8` pushes growing total sysbench thread counts against the same
+fixed-size cgroup, all inside one shared SUT container. The Per Phase table lists one row per
+`-ne` value; `hardware_sysbench_cpu_events_per_sec` and `hardware_sysbench_cpu_lat_p95_ms` are the
+throughput and completion-latency columns, and this result is the baseline command 16 is compared
+against.
 
 ### Result
 
@@ -3851,16 +3731,8 @@ jitter — otherwise a pod that happens to start stressing the node a few second
 would make the comparison meaningless. `get_summary_benchmark_per_phase_multitenant()` groups the
 result by `(phase, tenant_id)`, giving one row per co-located SUT pod.
 
-What to look for: compare each tenant's `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC` against the
-single-pod baseline from command 13 at the same thread count. Flat, matching throughput across all
-tenants means Kubernetes' CPU quotas actually isolate co-located pods on this node; a per-tenant
-dip below that baseline points to contention the CPU quota alone doesn't cover — shared
-last-level cache or memory bandwidth are the usual suspects, since CFS quota only accounts for CPU
-time, not the cache/bandwidth a core's neighbor also draws on.
-
-On this cluster: all four tenants landed within 0.1% of each other (2445-2447 events/sec) and
-within 0.1% of command 13's 2-thread baseline (2434) — CPU isolation held cleanly for four
-co-located pods on this node.
+`hardware_sysbench_cpu_events_per_sec` per tenant can be compared against the single-pod baseline
+from command 13 at the same thread count.
 
 ### Result
 
