@@ -1,0 +1,7 @@
+/* Bexhoma: readable project name and version on white nav header */
+.wy-side-nav-search > a {
+    color: #1B2A4A;
+}
+.wy-side-nav-search > div.version {
+    color: #5A6B85;
+}
