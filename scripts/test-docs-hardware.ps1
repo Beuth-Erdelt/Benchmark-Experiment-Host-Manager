@@ -418,6 +418,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio OLTP/W
 # 14/15 are cheap single-SUT sanity checks that don't need a second SUT pod;
 # 16 is the actual noisy-neighbor test, co-locating several independent SUT
 # pods (via -mtn/-mtb container) on one node.
+#
+# -xtd 60 caps each of run_sysbench.sh's two phases (CPU, then memory) at 60s
+# (see images/hardware/benchmarker/run_sysbench.sh); without it, sysbench
+# falls back to its own short built-in default and a round can finish before
+# -m/-mc's Prometheus scrape interval ever samples it, showing no monitoring
+# data at all. Total round length is therefore roughly up to 2x60s (memory
+# can finish earlier if its 10G transfers before the time limit) plus SSH/pod
+# overhead - about 1-2 minutes per round, the "duration" column in the result
+# DataFrame is the actual measured value (BEXHOMA_DURATION).
 
 
 #### 13. Sysbench CPU-quota calibration (thread sweep)
@@ -432,6 +441,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio OLTP/W
 bexhoma hardware `
   -dbms Hardware                    <# hardware target(s) to test #> `
   -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
   -nbp 1                             <# benchmarking pod count, fixed #> `
   -nbt 1,2,4,8                       <# sysbench --threads to sweep (comma-separated) #> `
   -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
@@ -459,6 +469,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench C
 bexhoma hardware `
   -dbms Hardware                    <# hardware target(s) to test #> `
   -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
   -nbp 1,2,4                         <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 4                             <# total sysbench threads, fixed, split across -nbp #> `
   -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
@@ -487,6 +498,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench n
 bexhoma hardware `
   -dbms Hardware                    <# hardware target(s) to test #> `
   -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
   -nbp 1                             <# benchmarking pod count, fixed #> `
   -nbt 2                             <# threads per benchmarking pod, fixed at the saturation point #> `
   -ne 1,2,4,8                        <# parallel client counts to sweep (comma-separated) #> `
@@ -520,6 +532,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench n
 bexhoma hardware `
   -dbms Hardware                    <# hardware target(s) to test #> `
   -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
   -nbp 1                             <# benchmarking pod count per tenant, fixed #> `
   -nbt 2                             <# threads per benchmarking pod, fixed at the saturation point #> `
   -ne 1                              <# parallel client counts to sweep (comma-separated) #> `

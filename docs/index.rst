@@ -27,6 +27,7 @@
     ./Queries-TPC-H.md
     ./Example-TPC-DS.md
     ./Queries-TPC-DS.md
+    ./Example-Hardware.md
     ./Example-Citus.md
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
@@ -38,7 +39,6 @@
     ./Example-custom.md
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
-    ./Example-Hardware.md
     ./Tool.md
     ./Concept.md
     ./TestCases.md
