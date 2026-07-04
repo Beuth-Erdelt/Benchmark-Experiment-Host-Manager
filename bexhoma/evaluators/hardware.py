@@ -187,10 +187,12 @@ class HardwareEvaluator(LogEvaluator):
             if dtype in ('int', 'float') and column in df.columns
         ]
         df = df.copy()
-        # astype() right below sets the real dtypes anyway, so the replace()
-        # inferred dtype doesn't matter; infer_objects(copy=False) just opts
-        # into pandas' future default to silence the downcasting FutureWarning.
-        df[numeric_columns] = df[numeric_columns].replace('', 0).infer_objects(copy=False)
+        # replace('', 0) on an all-blank object column emits pandas' downcasting
+        # FutureWarning eagerly during its own execution - chaining
+        # infer_objects() afterward doesn't help, since the warning already
+        # fired. to_numeric()+fillna() sidesteps replace() entirely and also
+        # copes with any stray non-numeric string, not just exact ''.
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
         df_typed = df.astype(dtype_map)
         return df_typed
 
@@ -272,7 +274,14 @@ class HardwareEvaluator(LogEvaluator):
         for col in columns:
             if col in df_plot.columns:
                 df_plot_filtered[col] = df_plot.loc[:, col]
-        df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client'])
+        df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+        # index (connection, e.g. "Hardware-1-1-2-1-1") already encodes
+        # configuration-experimentRun-client-benchmarkRun-child in that
+        # positional order, so natural-sorting it (like get_summary_benchmark_per_phase
+        # does for 'phase') orders by experiment_run/client/child together,
+        # instead of leaving same-(experiment_run, client) rows in whatever
+        # order the underlying log files happened to be globbed in.
+        df_plot_filtered = df_plot_filtered.sort_index(key=lambda idx: idx.map(_natural_sort_key))
         return df_plot_filtered
 
     def get_summary_benchmark_per_phase(self):
