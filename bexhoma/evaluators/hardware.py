@@ -123,6 +123,11 @@ class HardwareEvaluator(LogEvaluator):
             # only present for -mtb container experiments (hardware.py); -1 marks single-tenant runs
             tenant_id_match = re.findall(r'BEXHOMA_TENANT_ID:(\d+)', stdout)
             tenant_id = int(tenant_id_match[0]) if tenant_id_match else -1
+            # measured wall-clock duration of this pod's benchmarker.sh run (fio or
+            # sysbench CPU+memory combined), same BEXHOMA_DURATION convention other
+            # evaluators (e.g. evaluators/benchbase.py) already parse as 'duration'
+            duration_match = re.findall(r'BEXHOMA_DURATION:(\d+)', stdout)
+            duration = int(duration_match[0]) if duration_match else 0
             phase = configuration_name + '-' + experiment_run + '-' + client
             job = connection_name
             connection = connection_name + '-' + child
@@ -131,7 +136,7 @@ class HardwareEvaluator(LogEvaluator):
                 'configuration': configuration_name, 'experiment_run': experiment_run,
                 'client': client, 'benchmark_run': benchmark_run, 'child': child,
                 'pod': pod_name, 'pod_count': pod_count, 'code': code, 'errors': num_errors,
-                'tenant_id': tenant_id,
+                'tenant_id': tenant_id, 'duration': duration,
             }
             for key in _KEYS_PARAMETERS + _KEYS_RESULTS:
                 row[key.lower()] = values[key]
@@ -151,9 +156,9 @@ class HardwareEvaluator(LogEvaluator):
         direction's ``KEY:VALUE`` lines, so :meth:`log_to_df` defaults those
         columns to ``''``; such blanks are treated as ``0`` here before casting.
 
-        Adds a ``tenant_id`` column (value ``-1``) when the column is absent so that
-        DataFrames loaded from older pickles (predating ``-mtb container`` support)
-        remain compatible.
+        Adds a ``tenant_id`` column (value ``-1``) and a ``duration`` column (value
+        ``0``) when absent, so DataFrames loaded from older pickles (predating
+        ``-mtb container`` support / ``BEXHOMA_DURATION`` parsing) remain compatible.
 
         :param df: DataFrame of raw Hardware benchmarking results.
         :type df: pandas.DataFrame
@@ -162,6 +167,8 @@ class HardwareEvaluator(LogEvaluator):
         """
         if 'tenant_id' not in df.columns:
             df = df.assign(tenant_id=-1)
+        if 'duration' not in df.columns:
+            df = df.assign(duration=0)
         dtype_map = {
             'connection': 'str', 'phase': 'str', 'job': 'str', 'configuration': 'str',
             'experiment_run': 'int', 'code': 'int', 'client': 'int', 'benchmark_run': 'int',
@@ -171,7 +178,7 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
             'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
-            'hardware_fio_rwmixread': 'int', 'tenant_id': 'int',
+            'hardware_fio_rwmixread': 'int', 'tenant_id': 'int', 'duration': 'int',
         }
         for key in _KEYS_RESULTS:
             dtype_map[key.lower()] = 'float'
@@ -180,7 +187,10 @@ class HardwareEvaluator(LogEvaluator):
             if dtype in ('int', 'float') and column in df.columns
         ]
         df = df.copy()
-        df[numeric_columns] = df[numeric_columns].replace('', 0)
+        # astype() right below sets the real dtypes anyway, so the replace()
+        # inferred dtype doesn't matter; infer_objects(copy=False) just opts
+        # into pandas' future default to silence the downcasting FutureWarning.
+        df[numeric_columns] = df[numeric_columns].replace('', 0).infer_objects(copy=False)
         df_typed = df.astype(dtype_map)
         return df_typed
 
@@ -207,7 +217,7 @@ class HardwareEvaluator(LogEvaluator):
                 'pod': 'sum', 'pod_count': 'count', 'errors': 'sum',
                 'hardware_duration': 'max', 'hardware_fio_numjobs': 'sum',
                 'hardware_threads': 'sum', 'hardware_sysbench_cpu_total_time_s': 'max',
-                'tenant_id': 'min',
+                'tenant_id': 'min', 'duration': 'max',
             }
             for col in grp.columns:
                 if (col.endswith('_iops') or col.endswith('_kbps')
@@ -244,7 +254,7 @@ class HardwareEvaluator(LogEvaluator):
         if df.empty:
             return pd.DataFrame()
         columns = [
-            'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child',
+            'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child', 'duration',
             'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
             'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
             'hardware_fio_rwmixread', 'hardware_fio_numjobs',
@@ -282,7 +292,7 @@ class HardwareEvaluator(LogEvaluator):
             df_aggregated = df_aggregated.sort_values(
                 by='phase', key=lambda col: col.map(_natural_sort_key)
             ).round(2)
-            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count']
+            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'duration']
             columns = [
                 'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
                 'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
@@ -324,7 +334,7 @@ class HardwareEvaluator(LogEvaluator):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'client', 'pod_count']).round(2)
-            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'tenant_id']
+            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'tenant_id', 'duration']
             columns = [
                 'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
                 'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',

@@ -3256,6 +3256,15 @@ actually **isolates** co-located workloads from each other, the way it's suppose
 calibrates the per-pod saturation point; 14 and 15 are cheap sanity checks against a single SUT
 (no second SUT pod needed); 16 is the actual cross-tenant test.
 
+Each command sets `-xtd 60`, capping both of `run_sysbench.sh`'s phases (CPU, then memory) at 60
+seconds instead of sysbench's own short built-in default — without it, a round can finish before
+`-m`/`-mc`'s Prometheus scrape interval ever samples it, showing no monitoring data at all. Total
+round length ends up roughly 1-2 minutes (up to 2x60s, since the memory phase can finish earlier
+once its 10G transfers, plus SSH/pod overhead). The result DataFrame's `duration` column reports
+the actual measured wall-clock length (`BEXHOMA_DURATION`) for every hardware benchmark — fio or
+sysbench — so a suspiciously short round is visible directly in the table rather than only in the
+raw log.
+
 References:
 1. sysbench: https://github.com/akopytov/sysbench
 1. Kubernetes CPU limits and CFS quota: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
@@ -3269,6 +3278,7 @@ burstable one), sweeping sysbench's own thread count (`-nbt`) at a fixed `-nbp 1
 bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
+  -xtd 60 \
   -nbp 1 \
   -nbt 1,2,4,8 \
   -ne 1 \
@@ -3300,6 +3310,7 @@ across a growing number of separate benchmarker pods/SSH sessions (`-nbp`) inste
 bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
+  -xtd 60 \
   -nbp 1,2,4 \
   -nbt 4 \
   -ne 1 \
@@ -3332,6 +3343,7 @@ re-partitioning it — each additional parallel client submits another full `-nb
 bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
+  -xtd 60 \
   -nbp 1 \
   -nbt 2 \
   -ne 1,2,4,8 \
@@ -3361,6 +3373,7 @@ pinned to the same physical node via `-rnn`:
 bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
+  -xtd 60 \
   -nbp 1 \
   -nbt 2 \
   -ne 1 \

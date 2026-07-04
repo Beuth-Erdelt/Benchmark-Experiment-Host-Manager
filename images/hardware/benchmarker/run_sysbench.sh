@@ -5,6 +5,7 @@ echo "BEXHOMA_HOST:$BEXHOMA_HOST"
 echo "BEXHOMA_SUT_USER:$BEXHOMA_SUT_USER"
 echo "BEXHOMA_SUT_KEY:$BEXHOMA_SUT_KEY"
 echo "HARDWARE_THREADS:$HARDWARE_THREADS"
+echo "HARDWARE_DURATION:$HARDWARE_DURATION"
 
 ######################## Set SSH options ########################
 # bexhoma-service maps the SUT's real SSH port (22) to service port 9091,
@@ -22,16 +23,24 @@ RESULT_CPU="/results/$BEXHOMA_EXPERIMENT/sysbench.$BEXHOMA_CONNECTION.$BEXHOMA_C
 RESULT_MEMORY="/results/$BEXHOMA_EXPERIMENT/sysbench.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.memory.txt"
 
 ######################## Run sysbench CPU benchmark ########################
+# --time bounds the run to HARDWARE_DURATION seconds (same knob -xtd already
+# uses for fio's --runtime), so a round's actual wall-clock length is
+# controllable and long enough for -m/-mc monitoring to sample it; without
+# --time, sysbench cpu falls back to its own short built-in default.
 echo "=== sysbench CPU ==="
 ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" \
-  "sysbench cpu --cpu-max-prime=20000 --threads=${HARDWARE_THREADS} run" > "$RESULT_CPU"
+  "sysbench cpu --cpu-max-prime=20000 --threads=${HARDWARE_THREADS} --time=${HARDWARE_DURATION} run" > "$RESULT_CPU"
 cat "$RESULT_CPU"
 echo "$RESULT_CPU"
 
 ######################## Run sysbench memory benchmark ########################
+# --time=HARDWARE_DURATION caps this phase the same way; --memory-total-size
+# still applies too, so on very fast memory this phase can finish earlier
+# than HARDWARE_DURATION once 10G has been transferred - that's fine, the CPU
+# phase above already spends the full HARDWARE_DURATION.
 echo "=== sysbench Memory ==="
 ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" \
-  "sysbench memory --memory-block-size=1K --memory-total-size=10G --threads=${HARDWARE_THREADS} run" > "$RESULT_MEMORY"
+  "sysbench memory --memory-block-size=1K --memory-total-size=10G --threads=${HARDWARE_THREADS} --time=${HARDWARE_DURATION} run" > "$RESULT_MEMORY"
 cat "$RESULT_MEMORY"
 echo "$RESULT_MEMORY"
 
