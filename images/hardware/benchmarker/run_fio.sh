@@ -27,7 +27,11 @@ echo "HARDWARE_TEST_DIR (scoped to pod):$HARDWARE_TEST_DIR"
 # bexhoma-service maps the SUT's real SSH port (22) to service port 9091,
 # same as every other DBMS's port-dbms mapping (see deploymenttemplate-Hardware.yml).
 SSH_PORT=9091
-SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+# LogLevel=ERROR suppresses ssh's "Warning: Permanently added ... to the list of
+# known hosts" notice, which would otherwise print on every single call since
+# UserKnownHostsFile=/dev/null discards the host key each time; real errors
+# (connection failures, etc.) still print at this log level.
+SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
 
 ######################## Create test directory on SUT ########################
 ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "mkdir -p ${HARDWARE_TEST_DIR}"

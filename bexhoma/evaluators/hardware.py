@@ -111,6 +111,9 @@ class HardwareEvaluator(LogEvaluator):
             benchmark_run = values['BEXHOMA_BENCHMARK_RUN'] or '1'
             child = values['BEXHOMA_CHILD']
             pod_count = values['BEXHOMA_NUM_PODS']
+            # only present for -mtb container experiments (hardware.py); -1 marks single-tenant runs
+            tenant_id_match = re.findall(r'BEXHOMA_TENANT_ID:(\d+)', stdout)
+            tenant_id = int(tenant_id_match[0]) if tenant_id_match else -1
             phase = configuration_name + '-' + experiment_run + '-' + client
             job = connection_name
             connection = connection_name + '-' + child
@@ -119,6 +122,7 @@ class HardwareEvaluator(LogEvaluator):
                 'configuration': configuration_name, 'experiment_run': experiment_run,
                 'client': client, 'benchmark_run': benchmark_run, 'child': child,
                 'pod': pod_name, 'pod_count': pod_count, 'code': code, 'errors': num_errors,
+                'tenant_id': tenant_id,
             }
             for key in _KEYS_PARAMETERS + _KEYS_RESULTS:
                 row[key.lower()] = values[key]
@@ -138,11 +142,17 @@ class HardwareEvaluator(LogEvaluator):
         direction's ``KEY:VALUE`` lines, so :meth:`log_to_df` defaults those
         columns to ``''``; such blanks are treated as ``0`` here before casting.
 
+        Adds a ``tenant_id`` column (value ``-1``) when the column is absent so that
+        DataFrames loaded from older pickles (predating ``-mtb container`` support)
+        remain compatible.
+
         :param df: DataFrame of raw Hardware benchmarking results.
         :type df: pandas.DataFrame
         :return: DataFrame with columns cast to correct types.
         :rtype: pandas.DataFrame
         """
+        if 'tenant_id' not in df.columns:
+            df = df.assign(tenant_id=-1)
         dtype_map = {
             'connection': 'str', 'phase': 'str', 'job': 'str', 'configuration': 'str',
             'experiment_run': 'int', 'code': 'int', 'client': 'int', 'benchmark_run': 'int',
@@ -151,7 +161,7 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
             'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
-            'hardware_fio_rwmixread': 'int',
+            'hardware_fio_rwmixread': 'int', 'tenant_id': 'int',
         }
         for key in _KEYS_RESULTS:
             dtype_map[key.lower()] = 'float'
@@ -162,8 +172,6 @@ class HardwareEvaluator(LogEvaluator):
         df = df.copy()
         df[numeric_columns] = df[numeric_columns].replace('', 0)
         df_typed = df.astype(dtype_map)
-        if 'tenant_id' not in df_typed.columns:
-            df_typed = df_typed.assign(tenant_id=-1)
         return df_typed
 
     def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
@@ -275,12 +283,41 @@ class HardwareEvaluator(LogEvaluator):
 
     def get_summary_benchmark_per_phase_multitenant(self):
         """
-        Hardware has no multi-tenant concept; delegates to :meth:`get_summary_benchmark_per_phase`.
+        Returns benchmarking results aggregated per phase and tenant, one row per
+        ``(phase, tenant_id)``.
 
-        :return: Same as :meth:`get_summary_benchmark_per_phase`.
+        Used for ``-mtb container`` co-located noisy-neighbor experiments (see
+        ``hardware.py``), where each tenant is a separate SUT pod pinned to the
+        same node. Like :meth:`get_summary_benchmark_per_phase` but groups by
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row
+        instead of being aggregated away.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
+                 empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
-        return self.get_summary_benchmark_per_phase()
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'client', 'pod_count']).round(2)
+            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'tenant_id']
+            columns = [
+                'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+                'hardware_fio_rwmixread',
+                'hardware_fio_read_iops', 'hardware_fio_write_iops',
+                'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
+                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms', 'errors',
+            ]
+            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:, col]
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+        return df_aggregated_reduced
 
     def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
                      workflow_actual: dict, workflow_planned: dict, **extra) -> None:

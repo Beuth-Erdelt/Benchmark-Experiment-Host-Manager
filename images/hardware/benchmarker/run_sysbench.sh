@@ -10,7 +10,11 @@ echo "HARDWARE_THREADS:$HARDWARE_THREADS"
 # bexhoma-service maps the SUT's real SSH port (22) to service port 9091,
 # same as every other DBMS's port-dbms mapping (see deploymenttemplate-Hardware.yml).
 SSH_PORT=9091
-SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+# LogLevel=ERROR suppresses ssh's "Warning: Permanently added ... to the list of
+# known hosts" notice, which would otherwise print on every single call since
+# UserKnownHostsFile=/dev/null discards the host key each time; real errors
+# (connection failures, etc.) still print at this log level.
+SSH_OPTS="-p ${SSH_PORT} -i ${BEXHOMA_SUT_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
 
 ######################## Store raw results ########################
 UUID=$(cat /proc/sys/kernel/random/uuid)

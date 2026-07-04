@@ -36,6 +36,10 @@ ENV BEXHOMA_NUM_PODS=1
 ENV BEXHOMA_CHILD=1
 ENV BEXHOMA_RNGSEED=123
 
+# Multi-tenancy (container tenancy only — see -mtb/-mtn in hardware.py)
+ENV BEXHOMA_TENANT_BY=""
+ENV BEXHOMA_TENANT_NUM=""
+
 # Pod synchronisation
 ENV BEXHOMA_TIME_START=0
 ENV BEXHOMA_TIME_NOW=0

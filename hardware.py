@@ -137,46 +137,100 @@ if __name__ == '__main__':
     ### add configs of hardware targets to be tested
     ##############
     if "Hardware" in args.dbms or len(args.dbms) == 0:
-        config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')
-        # storageClassName follows -rst as usual (defaults to None — no PVC,
-        # /database lives in the SUT container's own ephemeral storage; see
-        # images/hardware/sut/Dockerfile, which bakes the directory in so it
-        # exists either way). Pass -rst explicitly to benchmark real PVC-backed
-        # storage instead.
-        config.set_storage(
-            storageConfiguration='hardware'
-        )
-        executor_list = []
-        for fio_rw in list_fio_rw:
-            for fio_bs in list_fio_bs:
-                for fio_iodepth in list_fio_iodepth:
-                    for fio_engine in list_fio_engine:
-                        for fio_fsync in list_fio_fsync:
-                            for fio_fdatasync in list_fio_fdatasync:
-                                for fio_rwmixread in list_fio_rwmixread:
-                                    # rwmixread only affects randrw; skip redundant rounds otherwise
-                                    if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
-                                        continue
-                                    for benchmarking_threads in num_benchmarking_threads:
-                                        for benchmarking_pods in num_benchmarking_pods:
-                                            for num_executor in list_clients:
-                                                benchmarking_pods_scaled = num_executor * benchmarking_pods
-                                                # -nbt (threads per benchmarking pod) maps to fio's own per-pod
-                                                # numjobs concurrency, same role -nbt plays for YCSB_THREADCOUNT /
-                                                # BENCHBASE_TERMINALS / HAMMERDB_VUSERS in the other entry scripts.
-                                                benchmarking_threads_per_pod = int(benchmarking_threads / benchmarking_pods)
-                                                executor_list.append(benchmarking_pods_scaled)
-                                                config.add_benchmarking_parameters(
-                                                    HARDWARE_FIO_RW=fio_rw,
-                                                    HARDWARE_FIO_BS=fio_bs,
-                                                    HARDWARE_FIO_IODEPTH=str(fio_iodepth),
-                                                    HARDWARE_FIO_ENGINE=fio_engine,
-                                                    HARDWARE_FIO_FSYNC=str(fio_fsync),
-                                                    HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
-                                                    HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
-                                                    HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
-                                                )
-        config.add_benchmark_list(executor_list)
+        if experiment.tenant_per == 'container':
+            # One SutConfiguration (one SUT pod) per tenant, all sharing the
+            # same -rc/-lc/-rnn snapshot (set on experiment.resources before
+            # this loop runs), so -mtn N pins N independent, identically
+            # CPU-limited SUT pods onto the same node for co-located
+            # noisy-neighbor testing. BEXHOMA_TENANT_BY=container makes every
+            # tenant's benchmarker pod wait on the shared
+            # bexhoma-benchmarker-podcount-exp-<code> counter (see
+            # experiments/base.py work_benchmark_list()), so all tenants'
+            # sysbench/fio runs start at the same synchronized instant instead
+            # of drifting apart with each pod's own scheduling/startup jitter.
+            for tenant in range(experiment.num_tenants):
+                config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')
+                # PVC name mirrors the tenant naming used by benchbase.py/ycsb.py
+                # ('{docker}-{tenant}-{num_tenants}'), so each tenant's SUT gets
+                # its own volume instead of colliding on the shared 'hardware' one.
+                config.set_storage(
+                    storageConfiguration=f'hardware-{tenant}-{config.num_tenants}'
+                )
+                executor_list = []
+                for fio_rw in list_fio_rw:
+                    for fio_bs in list_fio_bs:
+                        for fio_iodepth in list_fio_iodepth:
+                            for fio_engine in list_fio_engine:
+                                for fio_fsync in list_fio_fsync:
+                                    for fio_fdatasync in list_fio_fdatasync:
+                                        for fio_rwmixread in list_fio_rwmixread:
+                                            # rwmixread only affects randrw; skip redundant rounds otherwise
+                                            if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
+                                                continue
+                                            for benchmarking_threads in num_benchmarking_threads:
+                                                for benchmarking_pods in num_benchmarking_pods:
+                                                    for num_executor in list_clients:
+                                                        benchmarking_pods_scaled = num_executor * benchmarking_pods
+                                                        # -nbt (threads per benchmarking pod) maps to fio's own per-pod
+                                                        # numjobs concurrency, same role -nbt plays for YCSB_THREADCOUNT /
+                                                        # BENCHBASE_TERMINALS / HAMMERDB_VUSERS in the other entry scripts.
+                                                        benchmarking_threads_per_pod = int(benchmarking_threads / benchmarking_pods)
+                                                        executor_list.append(benchmarking_pods_scaled)
+                                                        config.add_benchmarking_parameters(
+                                                            HARDWARE_FIO_RW=fio_rw,
+                                                            HARDWARE_FIO_BS=fio_bs,
+                                                            HARDWARE_FIO_IODEPTH=str(fio_iodepth),
+                                                            HARDWARE_FIO_ENGINE=fio_engine,
+                                                            HARDWARE_FIO_FSYNC=str(fio_fsync),
+                                                            HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
+                                                            HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
+                                                            HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
+                                                            BEXHOMA_TENANT_BY=config.tenant_per,
+                                                            BEXHOMA_TENANT_NUM=config.num_tenants,
+                                                            BEXHOMA_TENANT_ID=tenant,
+                                                        )
+                config.add_benchmark_list(executor_list)
+        else:
+            config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')
+            # storageClassName follows -rst as usual (defaults to None — no PVC,
+            # /database lives in the SUT container's own ephemeral storage; see
+            # images/hardware/sut/Dockerfile, which bakes the directory in so it
+            # exists either way). Pass -rst explicitly to benchmark real PVC-backed
+            # storage instead.
+            config.set_storage(
+                storageConfiguration='hardware'
+            )
+            executor_list = []
+            for fio_rw in list_fio_rw:
+                for fio_bs in list_fio_bs:
+                    for fio_iodepth in list_fio_iodepth:
+                        for fio_engine in list_fio_engine:
+                            for fio_fsync in list_fio_fsync:
+                                for fio_fdatasync in list_fio_fdatasync:
+                                    for fio_rwmixread in list_fio_rwmixread:
+                                        # rwmixread only affects randrw; skip redundant rounds otherwise
+                                        if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
+                                            continue
+                                        for benchmarking_threads in num_benchmarking_threads:
+                                            for benchmarking_pods in num_benchmarking_pods:
+                                                for num_executor in list_clients:
+                                                    benchmarking_pods_scaled = num_executor * benchmarking_pods
+                                                    # -nbt (threads per benchmarking pod) maps to fio's own per-pod
+                                                    # numjobs concurrency, same role -nbt plays for YCSB_THREADCOUNT /
+                                                    # BENCHBASE_TERMINALS / HAMMERDB_VUSERS in the other entry scripts.
+                                                    benchmarking_threads_per_pod = int(benchmarking_threads / benchmarking_pods)
+                                                    executor_list.append(benchmarking_pods_scaled)
+                                                    config.add_benchmarking_parameters(
+                                                        HARDWARE_FIO_RW=fio_rw,
+                                                        HARDWARE_FIO_BS=fio_bs,
+                                                        HARDWARE_FIO_IODEPTH=str(fio_iodepth),
+                                                        HARDWARE_FIO_ENGINE=fio_engine,
+                                                        HARDWARE_FIO_FSYNC=str(fio_fsync),
+                                                        HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
+                                                        HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
+                                                        HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
+                                                    )
+            config.add_benchmark_list(executor_list)
     ##############
     ### branch for workflows
     ##############

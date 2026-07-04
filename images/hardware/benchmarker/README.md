@@ -31,6 +31,18 @@ Pods always synchronise before starting: each pod decrements the Redis counter
 * `BEXHOMA_TIME_START`: Optional RFC-3339 timestamp. When non-zero, the pod sleeps until this time before starting.
 * `BEXHOMA_TIME_NOW`: Informational timestamp of the planned start, echoed to the log.
 
+### Multi-tenancy
+
+* `BEXHOMA_TENANT_BY`: Tenancy mode. Only `container` is meaningful for Hardware (one SUT pod per tenant, all pinned to the same node via `-rnn`); empty means no tenancy. Echoed to the log.
+* `BEXHOMA_TENANT_NUM`: Total number of tenants (`-mtn`). Echoed to the log.
+* `BEXHOMA_TENANT_ID`: This tenant's 0-based index, injected directly as a benchmarking parameter by `hardware.py` (no shell-side computation, unlike the `schema`/`database` tenancy modes used by other benchmark types). Echoed to the log.
+
+When `BEXHOMA_TENANT_BY=container`, this pod additionally decrements and polls the
+experiment-level Redis counter `bexhoma-benchmarker-podcount-exp-<EXPERIMENT>` before
+starting its workload, so that every co-located tenant's sysbench/fio run begins at the
+same synchronized instant — the basis for co-located noisy-neighbor experiments (`-mtn N
+-mtb container` on `hardware.py`, each tenant getting its own `-rc`/`-lc` CPU quota).
+
 ### SUT connection
 
 * `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile. SSH connects on port 9091, not 22 — `bexhoma-service` maps the SUT's real SSH port (22) to service port 9091 (`port-dbms`), the same port every other DBMS's client connects through.
