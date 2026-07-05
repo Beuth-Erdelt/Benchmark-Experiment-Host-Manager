@@ -21,7 +21,7 @@
 
 
 
-#### Hardware fio queue-depth sweep
+#### 1. Hardware fio queue-depth sweep
 bexhoma hardware `
   -dbms Hardware                   <# hardware target(s) to test #> `
   -xht fio                         <# benchmark tool: fio (disk I/O) #> `
@@ -44,14 +44,44 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio depth sweep  rw=randread,randwrite  iodepth=1..128"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 1. Hardware fio depth sweep  rw=randread,randwrite  iodepth=1..128"
 
 
-#### Hardware fio numjobs sweep at fixed queue depth (elbow check)
-# The depth sweep above plateaus around iodepth=64. This fixes -xfid 64 and
-# sweeps -nbt (numjobs per pod) instead: if IOPS keep climbing with more
-# threads at the same depth, 64 was a per-queue submission limit, not a real
-# device ceiling; if IOPS stay flat, 64 is the actual hardware limit.
+#### 2. Hardware fio depth-sweep refinement around the elbow
+# The coarse sweep above (1) only localizes the elbow to "somewhere between
+# 64 and 128" (each doubling step covers a wide range). This does a linear
+# pass inside that bracket to pinpoint the actual knee instead of just the
+# bracket containing it.
+bexhoma hardware `
+  -dbms Hardware                   <# hardware target(s) to test #> `
+  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                          <# fio test file size #> `
+  -xtd 60                          <# seconds per fio round #> `
+  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
+  -xfbs 4k                         <# fio block size, fixed #> `
+  -xfid 64,80,96,112,128           <# linear refinement around the elbow (comma-separated) #> `
+  -xfe libaio                      <# fio ioengine #> `
+  -nbp 1                           <# benchmarking pod count #> `
+  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
+  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
+  -m                               <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
+  -tr                              <# verify result meets basic sanity requirements #> `
+  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                        <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_refine.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 2. Hardware fio depth sweep refine  rw=randread,randwrite  iodepth=64,80,96,112,128"
+
+
+#### 3. Hardware fio numjobs sweep at fixed queue depth (elbow check)
+# Fixes -xfid 64 (the elbow found above) and sweeps -nbt (numjobs per pod)
+# instead of depth: if IOPS keep climbing with more threads at the same
+# depth, 64 was a per-queue submission limit, not a real device ceiling; if
+# IOPS stay flat, 64 is the actual hardware limit.
 bexhoma hardware `
   -dbms Hardware                   <# hardware target(s) to test #> `
   -xht fio                         <# benchmark tool: fio (disk I/O) #> `
@@ -74,10 +104,10 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_numjobs_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio numjobs sweep  rw=randread,randwrite  iodepth=64  numjobs=1..16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 3. Hardware fio numjobs sweep  rw=randread,randwrite  iodepth=64  numjobs=1..16"
 
 
-#### Hardware fio block-size sweep at fixed queue depth (throughput curve)
+#### 4. Hardware fio block-size sweep at fixed queue depth (throughput curve)
 # Also fixes -xfid 64, but sweeps -xfbs instead of numjobs: this finds the
 # best block size at the queue depth already identified as the elbow, and
 # shows where the workload shifts from IOPS-bound (small blocks) to
@@ -104,37 +134,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_blocksize_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio block-size sweep  rw=randread,randwrite  iodepth=64  bs=4k..1M"
-
-
-#### Hardware fio depth-sweep refinement around the elbow
-# The coarse depth sweep above only localizes the elbow to "somewhere between
-# 64 and 128" (each doubling step covers a wide range). This does a linear
-# pass inside that bracket to pinpoint the actual knee instead of just the
-# bracket containing it.
-bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
-  -xfbs 4k                         <# fio block size, fixed #> `
-  -xfid 64,80,96,112,128           <# linear refinement around the elbow (comma-separated) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_refine.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio depth sweep refine  rw=randread,randwrite  iodepth=64,80,96,112,128"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 4. Hardware fio block-size sweep  rw=randread,randwrite  iodepth=64  bs=4k..1M"
 
 
 ###########################################
@@ -145,7 +145,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio depth 
 # numbers at the actual unit of I/O Postgres uses.
 
 
-#### Hardware fio depth sweep at PostgreSQL's page size (8k)
+#### 5. Hardware fio depth sweep at PostgreSQL's page size (8k)
 # Same shape as the original depth sweep, but bs=8k instead of 4k. This is the
 # number that actually calibrates effective_io_concurrency /
 # maintenance_io_concurrency, PostgreSQL's own prefetch-depth knobs.
@@ -171,10 +171,10 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_8k.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio depth sweep 8k  rw=randread,randwrite  iodepth=1..128"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 5. Hardware fio depth sweep 8k  rw=randread,randwrite  iodepth=1..128"
 
 
-#### Hardware fio random_page_cost calibration
+#### 6. Hardware fio random_page_cost calibration
 # Sequential vs. random read at the same block size and depth. The
 # latency/throughput ratio between the two rounds gives a device-specific
 # number to replace random_page_cost's spinning-disk-era default of 4.0
@@ -201,21 +201,17 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_random_page_cost.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio random_page_cost calibration  rw=read,randread  iodepth=64"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 6. Hardware fio random_page_cost calibration  rw=read,randread  iodepth=64"
 
 
 ###########################################
 ######### WAL / durability (fsync) #######
 ###########################################
 # All four commands below share one shape: sequential 8k writes simulating
-# WAL append, varying only the axis under test. -rsr is intentionally NOT set
-# here (see project notes) - add it if you want every command to start from a
-# freshly-provisioned volume instead of inheriting the previous command's
-# write history, which matters more for these absolute-latency tests than for
-# the relative-scaling sweeps above.
+# WAL append, varying only the axis under test.
 
 
-#### Hardware fio WAL sync-write latency (fsync)
+#### 7. Hardware fio WAL sync-write latency (fsync)
 # Sequential 8k write + fsync after every write, depth 1, single thread. This
 # is "how fast can one backend commit with synchronous_commit=on and no
 # batching" - max TPS is approximately 1/latency. wal_sync_method=fsync.
@@ -242,10 +238,10 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fsync.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio WAL sync-write fsync  bs=8k  iodepth=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 7. Hardware fio WAL sync-write fsync  bs=8k  iodepth=1"
 
 
-#### Hardware fio WAL sync-write latency (fdatasync)
+#### 8. Hardware fio WAL sync-write latency (fdatasync)
 # Same as above but fdatasync instead of fsync. fdatasync skips the
 # inode-metadata sync fsync does, and is PostgreSQL's Linux default
 # (wal_sync_method=fdatasync) - compare its latency against the fsync run
@@ -273,10 +269,10 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fdatasync.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio WAL sync-write fdatasync  bs=8k  iodepth=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 8. Hardware fio WAL sync-write fdatasync  bs=8k  iodepth=1"
 
 
-#### Hardware fio WAL group-commit scaling
+#### 9. Hardware fio WAL group-commit scaling
 # Same sync-write profile as above, sweeping concurrent committing backends
 # (-nbt) instead of a single one. If aggregate fsyncs/sec keeps climbing with
 # more concurrent writers, the storage/controller coalesces concurrent
@@ -305,10 +301,10 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_group_commit.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio WAL group commit  bs=8k  iodepth=1  backends=1..32"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 9. Hardware fio WAL group commit  bs=8k  iodepth=1  backends=1..32"
 
 
-#### Hardware fio WAL record-size sweep
+#### 10. Hardware fio WAL record-size sweep
 # Same sync-write profile, sweeping the WAL record size instead of backend
 # count. Bigger transactions (or post-checkpoint full_page_writes bursts)
 # write more before fsync - this shows how sync-write latency grows with
@@ -336,7 +332,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_record_size.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio WAL record size  bs=1k..64k  iodepth=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 10. Hardware fio WAL record size  bs=1k..64k  iodepth=1"
 
 
 ###########################################
@@ -344,7 +340,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio WAL re
 ###########################################
 
 
-#### Hardware fio checkpoint writeback bandwidth
+#### 11. Hardware fio checkpoint writeback bandwidth
 # Large-block sequential writes without a per-write fsync, approximating how
 # fast checkpointer/bgwriter can flush dirty pages during a checkpoint.
 bexhoma hardware `
@@ -369,10 +365,10 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_checkpoint_writeback.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio checkpoint writeback  bs=1M..16M  iodepth=4,16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 11. Hardware fio checkpoint writeback  bs=1M..16M  iodepth=4,16"
 
 
-#### Hardware fio OLTP/WAL contention proxy
+#### 12. Hardware fio OLTP/WAL contention proxy
 # Single-profile approximation of foreground OLTP traffic contending with WAL
 # flushes on one queue: mixed random read/write with fsync on the write side.
 # This is NOT the same as true concurrent checkpoint+WAL+OLTP contention
@@ -404,7 +400,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_oltp_wal_contention_proxy.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k  iodepth=64"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 12. Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k  iodepth=64"
 
 
 ###########################################
@@ -455,7 +451,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_cpu_quota_calibration.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench CPU quota calibration  lc=2  threads=1,2,4,8"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 13. Hardware sysbench CPU quota calibration  lc=2  threads=1,2,4,8"
 
 
 #### 14. Sysbench harness-overhead sweep (-nbp)
@@ -483,7 +479,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_nbp_overhead_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods=1,2,4"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 14. Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods=1,2,4"
 
 
 #### 15. Sysbench shared-SUT saturation sweep (-ne)
@@ -512,7 +508,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_ne_saturation_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench ne saturation sweep  lc=2  threads=2  clients=1,2,4,8"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 15. Hardware sysbench ne saturation sweep  lc=2  threads=2  clients=1,2,4,8"
 
 
 #### 16. Sysbench co-located noisy-neighbor test (-mtn/-mtb container)
@@ -548,7 +544,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_noisy_neighbor.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware sysbench noisy-neighbor test  lc=2  threads=2  tenants=4"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 16. Hardware sysbench noisy-neighbor test  lc=2  threads=2  tenants=4"
 
 
 ###########################################

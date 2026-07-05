@@ -10,9 +10,9 @@ against the actual storage a cluster provides — for example finding the queue 
 [PostgreSQL](https://www.postgresql.org/)'s `effective_io_concurrency` should target, a realistic
 `random_page_cost`, or the raw fsync latency that bounds commit throughput under
 `synchronous_commit=on`. This page walks through the fio sweeps in
-[`scripts/test-docs-hardware.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-hardware.ps1)
-and explains what each one is for (unlike most other benchmarks in this repo, there is no `.sh`
-twin of this script yet).
+[`scripts/test-docs-hardware.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-hardware.ps1) /
+[`scripts/test-docs-hardware.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-hardware.sh)
+and explains what each one is for.
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters, including the underlying storage class,
